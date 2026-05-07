@@ -217,7 +217,7 @@ class Navigator @Inject()() {
          | ReasonForReliefPage | TotalConsiderationOfLinkedTransactionPage | PurchaserEligibleToClaimReliefPage  | TransactionPartialReliefPage
          | CharityRegisteredNumberPage | ClaimingPartialReliefAmountPage | TransactionDeferringPaymentPage | TransactionUseOfLandOrPropertyPage
          | ConsiderationsAffectedUncertainPage | TransactionRulingFollowedPage | SaleOfBusinessPage | TransactionRestrictionsCovenantsAndConditionsPage
-         | Cap1OrNsbcPage | TransactionSaleOfBusinessAssetsPage | IsLandOrPropertyExchangedPage | TotalAssetsConsiderationPage => true
+         | Cap1OrNsbcPage | TransactionSaleOfBusinessAssetsPage | IsLandOrPropertyExchangedPage | TotalAssetsConsiderationPage | IsPurchaserRegisteredWithCISPage => true
 
     case _ => false
   }
@@ -279,6 +279,8 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.TransactionAddressController.redirectToAddressLookupTransaction()
     case TotalAssetsConsiderationPage =>
       _ => controllers.transaction.routes.Cap1OrNsbcController.onPageLoad(NormalMode)
+    case IsPurchaserRegisteredWithCISPage => //TODO DTR-4325 - redirect to What is Purchaser CIS number page
+      _ => controllers.transaction.routes.IsPurchaserRegisteredWithCISController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

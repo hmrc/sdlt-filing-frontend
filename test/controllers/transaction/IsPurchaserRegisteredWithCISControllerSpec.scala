@@ -18,42 +18,43 @@ package controllers.transaction
 
 import base.SpecBase
 import controllers.routes
-import forms.transaction.ReasonForReliefFormProvider
+import forms.transaction.IsPurchaserRegisteredWithCISFormProvider
 import models.NormalMode
-import models.transaction.ReasonForRelief
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.transaction.ReasonForReliefPage
+import pages.transaction.IsPurchaserRegisteredWithCISPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.transaction.ReasonForReliefView
+import views.html.transaction.IsPurchaserRegisteredWithCISView
 
 import scala.concurrent.Future
 
-class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
+class IsPurchaserRegisteredWithCISControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val reasonForReliefRoute = controllers.transaction.routes.ReasonForReliefController.onPageLoad(NormalMode).url
-
-  val formProvider = new ReasonForReliefFormProvider()
+  val formProvider = new IsPurchaserRegisteredWithCISFormProvider()
   val form = formProvider()
 
-  "ReasonForRelief Controller" - {
+  lazy val isPurchaserRegisteredWithCISRoute = controllers.transaction.routes.IsPurchaserRegisteredWithCISController.onPageLoad(NormalMode).url
+
+  "IsPurchaserRegisteredWithCIS Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, reasonForReliefRoute)
+        val request = FakeRequest(GET, isPurchaserRegisteredWithCISRoute)
+
         val result = route(application, request).value
-        val view = application.injector.instanceOf[ReasonForReliefView]
+
+        val view = application.injector.instanceOf[IsPurchaserRegisteredWithCISView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
@@ -62,64 +63,27 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(ReasonForReliefPage, ReasonForRelief.values.head).success.value
+      val userAnswers = emptyUserAnswers.set(IsPurchaserRegisteredWithCISPage, true).success.value
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, reasonForReliefRoute)
-        val view = application.injector.instanceOf[ReasonForReliefView]
+        val request = FakeRequest(GET, isPurchaserRegisteredWithCISRoute)
+
+        val view = application.injector.instanceOf[IsPurchaserRegisteredWithCISView]
+
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(ReasonForRelief.values.head), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
       }
     }
 
-    "must redirect to IsPurchaserRegisteredWithCIS when partExchange is submitted" in {
+    //TODO DTR-4325 redirect to What is Purchaser CIS number
+    "must redirect to the next page when Yes is selected" in {
 
       val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, reasonForReliefRoute)
-            .withFormUrlEncodedBody(("value", "partExchange"))
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.transaction.routes.IsPurchaserRegisteredWithCISController.onPageLoad(NormalMode).url
-      }
-    }
-
-    "must redirect to AddRegisteredCharityNumber when charitiesRelief is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, reasonForReliefRoute)
-            .withFormUrlEncodedBody(("value", "charitiesRelief"))
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(NormalMode).url
-      }
-    }
-
-    "must redirect to the next page when any other valid value is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
@@ -132,12 +96,38 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, reasonForReliefRoute)
-            .withFormUrlEncodedBody(("value", "relocationOfEmployment"))
+          FakeRequest(POST, isPurchaserRegisteredWithCISRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+
+    "must redirect to the next page when No is selected" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, isPurchaserRegisteredWithCISRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(NormalMode).url
       }
     }
 
@@ -147,10 +137,13 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, reasonForReliefRoute)
-            .withFormUrlEncodedBody(("value", "invalid value"))
-        val boundForm = form.bind(Map("value" -> "invalid value"))
-        val view = application.injector.instanceOf[ReasonForReliefView]
+          FakeRequest(POST, isPurchaserRegisteredWithCISRoute)
+            .withFormUrlEncodedBody(("value", ""))
+
+        val boundForm = form.bind(Map("value" -> ""))
+
+        val view = application.injector.instanceOf[IsPurchaserRegisteredWithCISView]
+
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
@@ -163,7 +156,8 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, reasonForReliefRoute)
+        val request = FakeRequest(GET, isPurchaserRegisteredWithCISRoute)
+
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -177,8 +171,9 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, reasonForReliefRoute)
-            .withFormUrlEncodedBody(("value", ReasonForRelief.values.head.toString))
+          FakeRequest(POST, isPurchaserRegisteredWithCISRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
