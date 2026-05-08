@@ -14,21 +14,10 @@
  * limitations under the License.
  */
 
-package viewmodels.taxCalculation
+package utils.taxCalculation
 
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.all.{SummaryListRowViewModel, ValueViewModel}
-import viewmodels.implicits.*
-
-object PenaltiesSummary {
-
-  def row(penalties:BigDecimal)(implicit messages: Messages): SummaryListRow = {
-    SummaryListRowViewModel(
-      key = messages("taxCalculation.totalAmountDue.summaryList.penaltiesDue"),
-      value = ValueViewModel(Text(penalties.toString()))
-    )
-  }
-  
+object PenaltiesValue {
+  val maximumPenalty: BigDecimal = 200
+  val minimumPenalty: BigDecimal = 100
+  val noPenalty: BigDecimal = 0
 }

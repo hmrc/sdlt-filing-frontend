@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package viewmodels.taxCalculation
+package utils.taxCalculation
 
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.all.{SummaryListRowViewModel, ValueViewModel}
-import viewmodels.implicits.*
+import java.time.LocalDate
 
-object PenaltiesSummary {
+trait DateUtil {
+  implicit class DateHelper(dt: LocalDate) {
+    def onOrAfter(compDate: LocalDate): Boolean = {
+      dt.isAfter(compDate) || dt.isEqual(compDate)
+    }
 
-  def row(penalties:BigDecimal)(implicit messages: Messages): SummaryListRow = {
-    SummaryListRowViewModel(
-      key = messages("taxCalculation.totalAmountDue.summaryList.penaltiesDue"),
-      value = ValueViewModel(Text(penalties.toString()))
-    )
+    def onOrBefore(compDate: LocalDate): Boolean = {
+      dt.isBefore(compDate) || dt.isEqual(compDate)
+    }
+
   }
-  
 }

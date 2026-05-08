@@ -17,35 +17,42 @@
 package utils.taxCalculation
 
 import models.UserAnswers
-import models.taxCalculation.FreeHoldSelfAssessedTotalAmountDue
+import models.taxCalculation.{FreeHoldSelfAssessedTotalAmountDue, TotalAmountDue}
+import org.apache.pekko.actor.typed.delivery.internal.ProducerControllerImpl.Request
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.all.SummaryListViewModel
 import viewmodels.taxCalculation.{PenaltiesSummary, SdltDueSummary, TotalAmountDueSummary}
 
-object CalculatedTotalDueHelper {
-  
-  def calculateFreeHoldSelfAssessedTotalAmountSummaryRow(userAnswers: UserAnswers, sdltTaxDue:Int):FreeHoldSelfAssessedTotalAmountDue =
+import java.time.LocalDate
+import scala.math
+
+object CalculatedTotalDueHelper extends PenaltyCalculator {
+
+  def createFreeHoldSelfAssessedTotalAmountDue(sdltTaxDue: Int, effectiveDate: LocalDate): FreeHoldSelfAssessedTotalAmountDue = {
     FreeHoldSelfAssessedTotalAmountDue(
-      sdltDue = convertSdltDueToBigDecimal(sdltTaxDue),
-      penalties = calculatePenalties(),
-      total = calculateTotalAmountDue(convertSdltDueToBigDecimal(sdltTaxDue), calculatePenalties())
+      convertSdltDueToBigDecimal(sdltTaxDue),
+      getPenalty(effectiveDate),
+      calculateTotalAmountDue(convertSdltDueToBigDecimal(sdltTaxDue), getPenalty(effectiveDate))
     )
+  }
   
-  def getSummaryListRows(userAnswers: UserAnswers, sdltTaxDue:Int)(implicit messages:Messages):SummaryList = SummaryListViewModel(
+  def createTotalAmountDue(value:String):TotalAmountDue = {
+    TotalAmountDue(value)
+  }
+
+  def getSummaryListRows(sdltTaxDue: Int, effectiveDate: LocalDate)(implicit messages: Messages): SummaryList = SummaryListViewModel(
     Seq(
       SdltDueSummary.row(convertSdltDueToBigDecimal(sdltTaxDue)),
-      PenaltiesSummary.row(calculatePenalties()),
-      TotalAmountDueSummary.row(calculateTotalAmountDue(convertSdltDueToBigDecimal(sdltTaxDue), calculatePenalties()))
-    )
+      PenaltiesSummary.row(getPenalty(effectiveDate)),
+      TotalAmountDueSummary.row(calculateTotalAmountDue(convertSdltDueToBigDecimal(sdltTaxDue), getPenalty(effectiveDate))))
   )
-  
-  private def convertSdltDueToBigDecimal(sdltDue:Int):BigDecimal = BigDecimal(sdltDue)
 
-  private def calculatePenalties(): BigDecimal = {
-    123456
-  }
-  private def calculateTotalAmountDue(sdltTaxDue:BigDecimal, penalties:BigDecimal):BigDecimal = sdltTaxDue + penalties
-  
+  private def getPenalty(effectiveDate: LocalDate): BigDecimal = calculatePenalties(effectiveDate)
+
+  private def convertSdltDueToBigDecimal(sdltDue: Int): BigDecimal = BigDecimal(sdltDue)
+
+  private def calculateTotalAmountDue(sdltTaxDue: BigDecimal, penalties: BigDecimal): BigDecimal = sdltTaxDue + penalties
+
 
 }
