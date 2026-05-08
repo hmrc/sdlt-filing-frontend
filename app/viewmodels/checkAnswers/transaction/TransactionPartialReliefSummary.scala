@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.transaction
 
 import models.{CheckMode, UserAnswers}
-import pages.transaction.TransactionPartialReliefPage
+import pages.transaction.{PurchaserEligibleToClaimReliefPage, TransactionPartialReliefPage}
 import play.api.i18n.Messages
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
@@ -26,26 +26,27 @@ import viewmodels.implicits.*
 
 object TransactionPartialReliefSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryRowResult] = {
     val changeRoute = controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(CheckMode)
     val label = messages("transaction.transactionPartialRelief.checkYourAnswersLabel")
 
-    answers.get(TransactionPartialReliefPage).map { answer =>
-
-      val value = if (answer) "site.yes" else "site.no"
-
-      Row(
-        SummaryListRowViewModel(
-          key     = label,
-          value   = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", changeRoute.url)
-              .withVisuallyHiddenText(messages("transaction.transactionPartialRelief.change.hidden"))
+    (answers.get(TransactionPartialReliefPage), answers.get(PurchaserEligibleToClaimReliefPage)) match {
+      case (Some(answer), _) =>
+        val value = if (answer) "site.yes" else "site.no"
+        Some(Row(
+          SummaryListRowViewModel(
+            key     = label,
+            value   = ValueViewModel(value),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("transaction.transactionPartialRelief.change.hidden"))
+            )
           )
-        )
-      )
-    }.getOrElse {
-      Missing(changeRoute)
+        ))
+      case (None, Some(true)) =>
+        Some(Missing(changeRoute))
+      case _ =>
+        None
     }
   }
 }

@@ -112,7 +112,7 @@ class TransactionCheckYourAnswersController @Inject()(
       ReasonForReliefSummary.row(ua),
       AddRegisteredCharityNumberSummary.row(ua),
       CharityRegisteredNumberSummary.row(ua),
-      Some(TransactionPartialReliefSummary.row(ua)),
+      TransactionPartialReliefSummary.row(ua),
       ClaimingPartialReliefAmountSummary.row(ua)
     ).flatten
 

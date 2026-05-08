@@ -1245,7 +1245,7 @@ transaction.totalConsiderationOfTransaction.li3                                 
 transaction.totalConsiderationOfTransaction.li4                                     = payment of the vendor’s legal costs
 transaction.totalConsiderationOfTransaction.h2                                      = What is the total consideration in money or money’s worth?
 transaction.totalConsiderationOfTransaction.hint                                    = Enter the value in whole pounds only, for example £200,000
-transaction.totalConsiderationOfTransaction.checkYourAnswersLabel                   = What is the total consideration in money or money's worth?
+transaction.totalConsiderationOfTransaction.checkYourAnswersLabel                   = What is the total consideration in money or money’s worth?
 transaction.totalConsiderationOfTransaction.error.required                          = Enter the total consideration in money or money’s worth, in pounds
 transaction.totalConsiderationOfTransaction.error.invalidNumeric                    = The total consideration in money or money’s worth must only include commas and numbers 0 to 9
 transaction.totalConsiderationOfTransaction.error.invalidWholeNumber                = Enter the total consideration in money or money’s worth in whole pounds
@@ -1302,7 +1302,7 @@ transaction.addRegisteredCharityNumber.p2.link                                  
 transaction.addRegisteredCharityNumber.p3                                           = For Northern Ireland, visit <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
 transaction.addRegisteredCharityNumber.p3.suffix                                    = the Charity Commission for Northern Ireland (opens in new tab)
 transaction.addRegisteredCharityNumber.p3.link                                      = https://www.charitycommissionni.org.uk/charity-search/?pageNumber=1
-transaction.addRegisteredCharityNumber.checkYourAnswersLabel                        = Do you know the charity's registered number?
+transaction.addRegisteredCharityNumber.checkYourAnswersLabel                        = Do you know the charity’s registered number?
 transaction.addRegisteredCharityNumber.error.required                               = Select yes if you know the charity’s registered number
 transaction.addRegisteredCharityNumber.change.hidden                                = Registered charity number
 transaction.addRegisteredCharityNumber.missing                                     = Select registered charity number
@@ -1467,7 +1467,7 @@ taxCalculation.calculation.returnToTaxCalculation                               
 
 transaction.charityRegisteredNumber.title                                           = What is the charity’s registered number?
 transaction.charityRegisteredNumber.heading                                         = What is the charity’s registered number?
-transaction.charityRegisteredNumber.checkYourAnswersLabel                           = Charity's registered number
+transaction.charityRegisteredNumber.checkYourAnswersLabel                           = Charity’s registered number
 transaction.charityRegisteredNumber.hint                                            = Their charity number should be 5-8 digits long and may contain letters
 transaction.charityRegisteredNumber.error.required                                  = Enter the charity’s registered number
 transaction.charityRegisteredNumber.error.length                                    = The charity’s registered number must be 14 characters or fewer
