@@ -27,7 +27,11 @@ case object MissingFullReturnError extends MissingDataError {
 }
 
 case object MissingAboutTheLandError extends MissingDataError {
-  val message = "Could not find the first land in User answers"
+  val message = "Could not find the main land in User answers"
+}
+
+case object MissingMainLandIdError extends MissingDataError {
+  val message = "ReturnInfo.mainLandID not set in User answers"
 }
 
 case object MissingAboutTheTransactionError extends MissingDataError {
@@ -46,6 +50,10 @@ case class MissingLeaseAnswerError(value: String) extends MissingDataError {
   val message = s"Could not find user answer from 'About the Lease': $value"
 }
 
+case object MissingPremiumCalcError extends MissingDataError {
+  val message = "TaxCalculationResult missing premium CalculationDetails"
+}
+
 case class InvalidDateError(value: String) extends BuildRequestError {
   val message = s"Invalid date: $value"
 }
@@ -60,4 +68,8 @@ case class UnknownPropertyTypeError(value: String) extends BuildRequestError {
 
 case class InvalidReliefReasonError(value: String) extends BuildRequestError {
   val message = s"Invalid relief reason (not an integer): $value"
+}
+
+case class InvalidYesNoAnswerError(value: String) extends BuildRequestError {
+  val message = s"Invalid yes/no answer: $value"
 }

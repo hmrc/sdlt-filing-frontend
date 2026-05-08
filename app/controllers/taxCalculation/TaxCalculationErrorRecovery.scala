@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-package config
+package controllers.taxCalculation
 
-trait CurrencyFormatter {
-  def currencyFormat(amt: BigDecimal): String = f"£$amt%,1.2f".replace(".00","")
+import controllers.routes.{NoReturnReferenceController, ReturnTaskListController}
+import models.taxCalculation.{BuildRequestError, MissingFullReturnError}
+import play.api.mvc.Call
 
-  implicit class IntToCurrency(amt: Int) {
-    def toCurrency: String = currencyFormat(BigDecimal(amt))
-  }
+trait TaxCalculationErrorRecovery {
 
-  implicit class BigDecimalToCurrency(amt: BigDecimal) {
-    def toCurrency: String = currencyFormat(amt)
-  }
-
-  implicit class IntToPercentage(amt: Int) {
-    def toPercentage: String = s"$amt%"
+  protected def errorHandler(err: BuildRequestError): Call = err match {
+    case MissingFullReturnError => NoReturnReferenceController.onPageLoad()
+    case _                      => ReturnTaskListController.onPageLoad()
   }
 }
-
-object CurrencyFormatter extends CurrencyFormatter
