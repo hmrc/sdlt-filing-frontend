@@ -27,7 +27,6 @@ class FreeholdSelfAssessedPagesSpec extends SpecBase {
     FreeholdSelfAssessedAmountPage               -> "freeholdSelfAssessedAmount",
     FreeholdSelfAssessedPenaltiesAndInterestPage -> "freeholdSelfAssessedPenaltiesAndInterest"
   )
-  private val 
 
   "Freehold self-assessed pages" - {
 

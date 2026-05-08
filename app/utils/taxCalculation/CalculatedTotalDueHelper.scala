@@ -16,9 +16,7 @@
 
 package utils.taxCalculation
 
-import models.UserAnswers
 import models.taxCalculation.{FreeHoldSelfAssessedTotalAmountDue, TotalAmountDue}
-import org.apache.pekko.actor.typed.delivery.internal.ProducerControllerImpl.Request
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.all.SummaryListViewModel

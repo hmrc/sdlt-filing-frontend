@@ -23,13 +23,18 @@ import javax.inject.Inject
 
 class TotalAmountToPayFormProvider @Inject() extends Mappings {
 
-  private val totalAmountToPayRegex = "^[0-9,]*(\\.[0-9]+)?$\t^[0-9,]+[.]{0,1}[0]{0,2}"
   private val maximumLength :Int = 16
+  private val maximumValue:BigDecimal = BigDecimal(9999999999L)
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("taxCalculation.totalAmountDue.totalAmountToPay.heading2")
-        .verifying(regexp(totalAmountToPayRegex, "taxCalculation.totalAmountDue.totalAmountToPay.error.invalid"))
+      "value" -> wholeNumberCurrency(
+        requiredKey = "taxCalculation.totalAmountDue.totalAmountToPay.error.required",
+        invalidNumericKey = "taxCalculation.totalAmountDue.totalAmountToPay.error.invalidNumeric",
+        invalidWholeNumberKey = "taxCalculation.totalAmountDue.totalAmountToPay.error.invalidWholeNumber",
+        maxValueKey = "taxCalculation.totalAmountDue.totalAmountToPay.error.maximum",
+        maxValue = maximumValue
+      )
         .verifying(maxLength(maximumLength, "taxCalculation.totalAmountDue.totalAmountToPay.error.length"))
     )
 

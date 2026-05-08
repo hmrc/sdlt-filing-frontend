@@ -334,7 +334,7 @@ class Navigator @Inject()() {
   private def freeholdSelfAssessedRoutes(page: Page): UserAnswers => Call = page match {
     case FreeholdSelfAssessedCannotCalculateTaxPage   => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
     case FreeholdSelfAssessedAmountPage               => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
-    case FreeholdSelfAssessedTotalAmountDuePage       => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case FreeholdSelfAssessedTotalAmountDuePage       => _ => controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSdltNotCalculatedPenaltiesAndInterestController.onPageLoad()
     case FreeholdSelfAssessedPenaltiesAndInterestPage => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
     case _                                            => _ => routes.IndexController.onPageLoad()
   }
