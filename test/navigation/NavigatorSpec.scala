@@ -388,15 +388,15 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(TransactionSaleOfBusinessAssetsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TotalAssetsConsiderationController.onPageLoad(NormalMode)
         }
 
-        "go from TransactionRestrictionsCovenantsAndConditionsPage to DescriptionOfRestrictionsCovenantsAndConditionsPage" in { // TODO DTR-3480: SPRINT 15 redirect to tr-14a What are the restrictions, covenants or conditions affecting the value of the interest transferred or granted?
-          navigator.nextPage(TransactionRestrictionsCovenantsAndConditionsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(NormalMode)
+        "go from TransactionRestrictionsCovenantsAndConditionsPage to DescriptionOfRestrictionsCovenantsAndConditionsPage" in {
+          navigator.nextPage(TransactionRestrictionsCovenantsAndConditionsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.DescriptionOfRestrictionsController.onPageLoad(NormalMode)
         }
 
         "go from Cap1OrNsbcPage to TransactionRulingFollowedPage" in {
           navigator.nextPage(Cap1OrNsbcPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionRulingFollowedController.onPageLoad(NormalMode)
         }
 
-        "go from IsLandOrPropertyExchangedPage to exchange or part exchange Address Lookup integration" in { 
+        "go from IsLandOrPropertyExchangedPage to exchange or part exchange Address Lookup integration" in {
           navigator.nextPage(IsLandOrPropertyExchangedPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionAddressController.redirectToAddressLookupTransaction()
         }
 
@@ -413,6 +413,10 @@ class NavigatorSpec extends SpecBase {
 
         "go from TypeOfLeasePage to ls-2" in { //TODO - DTR-3506 - SPRINT 15 - update to what is the start date ls-2
           navigator.nextPage(TypeOfLeasePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.TypeOfLeaseController.onPageLoad(NormalMode)
+        }
+
+        "go from DescriptionOfRestrictionsPage to IsLandOrPropertyExchangedPage" in {
+          navigator.nextPage(DescriptionOfRestrictionsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(NormalMode)
         }
       }
 

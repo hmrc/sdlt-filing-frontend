@@ -219,7 +219,7 @@ class Navigator @Inject()() {
          | CharityRegisteredNumberPage | ClaimingPartialReliefAmountPage | TransactionDeferringPaymentPage | TransactionUseOfLandOrPropertyPage
          | ConsiderationsAffectedUncertainPage | TransactionRulingFollowedPage | SaleOfBusinessPage | TransactionRestrictionsCovenantsAndConditionsPage
          | Cap1OrNsbcPage | TransactionSaleOfBusinessAssetsPage | IsLandOrPropertyExchangedPage | TotalAssetsConsiderationPage
-         | IsPurchaserRegisteredWithCISPage | TransactionCisNumberPage => true
+         | IsPurchaserRegisteredWithCISPage | TransactionCisNumberPage | DescriptionOfRestrictionsPage => true
 
     case _ => false
   }
@@ -273,8 +273,8 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.TransactionSaleOfBusinessAssetsController.onPageLoad(NormalMode)
     case TransactionRulingFollowedPage =>
       _ => controllers.transaction.routes.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(NormalMode)
-    case TransactionRestrictionsCovenantsAndConditionsPage => // TODO DTR-3480: SPRINT 15 redirect to tr-14a What are the restrictions, covenants or conditions affecting the value of the interest transferred or granted?
-      _ => controllers.transaction.routes.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(NormalMode)
+    case TransactionRestrictionsCovenantsAndConditionsPage =>
+      _ => controllers.transaction.routes.DescriptionOfRestrictionsController.onPageLoad(NormalMode)
     case Cap1OrNsbcPage =>
       _ => controllers.transaction.routes.TransactionRulingFollowedController.onPageLoad(NormalMode)
     case TransactionSaleOfBusinessAssetsPage =>
@@ -285,6 +285,8 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.Cap1OrNsbcController.onPageLoad(NormalMode)
     case IsPurchaserRegisteredWithCISPage =>
       _ => controllers.transaction.routes.TransactionCisNumberController.onPageLoad(NormalMode)
+    case DescriptionOfRestrictionsPage =>
+      _ => controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
