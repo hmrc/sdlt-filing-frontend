@@ -25,13 +25,15 @@ import play.api.libs.json.JsObject
 import play.api.mvc.*
 import repositories.SessionRepository
 import services.checkAnswers.CheckAnswersService
+import services.transaction.PopulateTransactionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.transaction.*
 import views.html.transaction.TransactionCheckYourAnswersView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class TransactionCheckYourAnswersController @Inject()(
   override val messagesApi: MessagesApi,
@@ -40,31 +42,45 @@ class TransactionCheckYourAnswersController @Inject()(
   requireData: DataRequiredAction,
   sessionRepository: SessionRepository,
   checkAnswersService: CheckAnswersService,
+  populateTransactionService: PopulateTransactionService,
   val controllerComponents: MessagesControllerComponents,
   view: TransactionCheckYourAnswersView
 )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      sessionRepository.get(request.userAnswers.id).map {
+      sessionRepository.get(request.userAnswers.id).flatMap {
         case None =>
-          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
         case Some(userAnswers) =>
           if (userAnswers.returnId.isEmpty) {
-            Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+            Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
           } else {
             val isTransactionDataEmpty =
               (userAnswers.data \ "transactionCurrent").asOpt[JsObject].forall(_.values.isEmpty)
 
             if (isTransactionDataEmpty) {
-              Redirect(controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad())
+              populateFromTransaction(userAnswers)
             } else {
-              renderOrRedirect(userAnswers)
+              Future.successful(renderOrRedirect(userAnswers))
             }
           }
       }
   }
+
+  private def populateFromTransaction(userAnswers: UserAnswers)(implicit request: Request[_]): Future[Result] =
+    userAnswers.fullReturn.flatMap(_.transaction) match {
+      case None =>
+        Future.successful(Redirect(controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad()))
+      case Some(transaction) =>
+        populateTransactionService.populateTransactionInSession(transaction, userAnswers) match {
+          case Success(populated) =>
+            sessionRepository.set(populated).map(_ => renderOrRedirect(populated))
+          case Failure(_) =>
+            Future.successful(Redirect(controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad()))
+        }
+    }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
