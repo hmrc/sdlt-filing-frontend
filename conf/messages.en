@@ -1345,6 +1345,12 @@ transaction.ReasonForRelief.reliefForFreeport                                   
 transaction.ReasonForRelief.reliefInvestmentZone                                    = 37 - Relief for Investment Zone tax site
 transaction.ReasonForRelief.seedingRelief                                           = 38 - Seeding Relief
 
+transaction.isPurchaserRegisteredWithCIS.title                                      = Is the purchaser registered with the Construction Industry Scheme (CIS)?
+transaction.isPurchaserRegisteredWithCIS.heading                                    = Is the purchaser registered with the Construction Industry Scheme (CIS)?
+transaction.isPurchaserRegisteredWithCIS.checkYourAnswersLabel                      = Is the purchaser registered with the Construction Industry Scheme (CIS)?
+transaction.isPurchaserRegisteredWithCIS.error.required                             = Select yes if the purchaser is registered with the Construction Industry Scheme (CIS)?
+transaction.isPurchaserRegisteredWithCIS.change.hidden                              = Is the purchaser registered with the Construction Industry Scheme (CIS)?
+
 transaction.totalConsiderationOfLinkedTransaction.title                             = Total consideration of all linked transactions
 transaction.totalConsiderationOfLinkedTransaction.heading                           = Total consideration of all linked transactions
 transaction.totalConsiderationOfLinkedTransaction.p1                                = When two or more transactions are linked, SDLT is calculated on the aggregate total consideration. You must include any payable VAT for all linked transactions, and anything of value (money’s worth) given by the purchaser as part of the transaction, like the release or assumption of a debt.

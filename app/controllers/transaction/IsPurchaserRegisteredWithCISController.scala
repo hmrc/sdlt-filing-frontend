@@ -17,37 +17,37 @@
 package controllers.transaction
 
 import controllers.actions.*
-import forms.transaction.ReasonForReliefFormProvider
-import models.{Mode, NormalMode}
+import forms.transaction.IsPurchaserRegisteredWithCISFormProvider
+import models.Mode
 import navigation.Navigator
-import pages.transaction.ReasonForReliefPage
+import pages.transaction.IsPurchaserRegisteredWithCISPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.transaction.ReasonForReliefView
+import views.html.transaction.IsPurchaserRegisteredWithCISView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReasonForReliefController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       sessionRepository: SessionRepository,
-                                       navigator: Navigator,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       formProvider: ReasonForReliefFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: ReasonForReliefView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class IsPurchaserRegisteredWithCISController @Inject()(
+                                         override val messagesApi: MessagesApi,
+                                         sessionRepository: SessionRepository,
+                                         navigator: Navigator,
+                                         identify: IdentifierAction,
+                                         getData: DataRetrievalAction,
+                                         requireData: DataRequiredAction,
+                                         formProvider: IsPurchaserRegisteredWithCISFormProvider,
+                                         val controllerComponents: MessagesControllerComponents,
+                                         view: IsPurchaserRegisteredWithCISView
+                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(ReasonForReliefPage) match {
+      val preparedForm = request.userAnswers.get(IsPurchaserRegisteredWithCISPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -64,15 +64,14 @@ class ReasonForReliefController @Inject()(
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReasonForReliefPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsPurchaserRegisteredWithCISPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
-            if (value.toString == "partExchange") {
-              Redirect(controllers.transaction.routes.IsPurchaserRegisteredWithCISController.onPageLoad(mode))
-            } else if (value.toString == "charitiesRelief") {
-              Redirect(controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(NormalMode))
+            if (value) {
+              //TODO DTR-4325 redirect to What is Purchaser CIS number
+              Redirect(navigator.nextPage(IsPurchaserRegisteredWithCISPage, mode, updatedAnswers))
             } else {
-              Redirect(navigator.nextPage(ReasonForReliefPage, mode, updatedAnswers))
+              Redirect(controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(mode))
             }
           }
       )

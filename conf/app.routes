@@ -502,6 +502,11 @@ POST       /about-the-transaction/claiming-partial-relief                       
 GET        /about-the-transaction/claiming-partial-relief/change                                     controllers.transaction.ClaimingPartialReliefAmountController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/claiming-partial-relief/change                                     controllers.transaction.ClaimingPartialReliefAmountController.onSubmit(mode: Mode = CheckMode)
 
+GET        /about-the-transaction/is-the-purchaser-registered-with-CIS                               controllers.transaction.IsPurchaserRegisteredWithCISController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/is-the-purchaser-registered-with-CIS                               controllers.transaction.IsPurchaserRegisteredWithCISController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/is-the-purchaser-registered-with-CIS/change                        controllers.transaction.IsPurchaserRegisteredWithCISController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/is-the-purchaser-registered-with-CIS/change                        controllers.transaction.IsPurchaserRegisteredWithCISController.onSubmit(mode: Mode = CheckMode)
+
 GET        /about-the-transaction/enter-registered-charity-number                                    controllers.transaction.CharityRegisteredNumberController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-transaction/enter-registered-charity-number                                    controllers.transaction.CharityRegisteredNumberController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-transaction/enter-registered-charity-number/change                             controllers.transaction.CharityRegisteredNumberController.onPageLoad(mode: Mode = CheckMode)
