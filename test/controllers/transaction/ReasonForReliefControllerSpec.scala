@@ -25,7 +25,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.transaction.ReasonForReliefPage
+import pages.transaction.{AddRegisteredCharityNumberPage, CharityRegisteredNumberPage, ReasonForReliefPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -198,6 +198,31 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
         val request =
           FakeRequest(POST, reasonForReliefRouteCheckMode)
             .withFormUrlEncodedBody(("value", "relocationOfEmployment"))
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
+      }
+    }
+
+    "must clear charity sub-pages and redirect to CYA when a non-charitiesRelief value is submitted in check mode" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers = emptyUserAnswers
+        .set(AddRegisteredCharityNumberPage, true).success.value
+        .set(CharityRegisteredNumberPage, "CS123456").success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, reasonForReliefRouteCheckMode)
+            .withFormUrlEncodedBody(("value", "partExchange"))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER

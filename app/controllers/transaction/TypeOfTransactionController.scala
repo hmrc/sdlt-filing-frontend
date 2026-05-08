@@ -78,7 +78,7 @@ class TypeOfTransactionController @Inject()(
                 Success(updatedAnswers)
             }
             _              <- sessionRepository.set(finalAnswers)
-          } yield Redirect(navigator.nextPage(TypeOfTransactionPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(TypeOfTransactionPage, mode, finalAnswers))
       )
   }
 }

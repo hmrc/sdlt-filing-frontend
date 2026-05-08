@@ -17,7 +17,7 @@
 package controllers.transaction
 
 import base.SpecBase
-import models.UserAnswers
+import models.{FullReturn, Transaction, UserAnswers}
 import models.prelimQuestions.TransactionType
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
@@ -29,14 +29,17 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
+import services.transaction.PopulateTransactionService
 import viewmodels.govuk.SummaryListFluency
 
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class TransactionCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with MockitoSugar with BeforeAndAfterEach {
 
-  private val mockSessionRepository = mock[SessionRepository]
+  private val mockSessionRepository         = mock[SessionRepository]
+  private val mockPopulateTransactionService = mock[PopulateTransactionService]
 
   implicit val request: FakeRequest[_] = FakeRequest()
   implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
@@ -44,6 +47,7 @@ class TransactionCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockSessionRepository)
+    reset(mockPopulateTransactionService)
   }
 
   private val baseUserAnswers = UserAnswers(
@@ -66,6 +70,17 @@ class TransactionCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
     .set(TransactionLinkedTransactionsPage, false).success.value
     .set(PurchaserEligibleToClaimReliefPage, false).success.value
     .set(TransactionPartialReliefPage, false).success.value
+
+  private val userAnswersWithTransaction = UserAnswers(
+    id = "12345",
+    returnId = Some("AB2346"),
+    storn = "TESTSTORN",
+    fullReturn = Some(FullReturn(
+      stornId = "TESTSTORN",
+      returnResourceRef = "AB2346",
+      transaction = Some(Transaction())
+    ))
+  )
 
   "TransactionCheckYourAnswers Controller" - {
 
@@ -188,6 +203,48 @@ class TransactionCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           contentAsString(result) must not include "transaction.totalConsiderationOfTransaction.checkYourAnswersLabel"
           contentAsString(result) must not include "transaction.transactionVatIncluded.checkYourAnswersLabel"
           contentAsString(result) must not include "transaction.transactionFormsOfConsideration.checkYourAnswersLabel"
+        }
+      }
+
+      "must call populateTransactionInSession and render the page when fullReturn.transaction is present and population succeeds" in {
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswersWithTransaction)))
+        when(mockPopulateTransactionService.populateTransactionInSession(any(), any())).thenReturn(Success(completeUserAnswers))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswersWithTransaction))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[PopulateTransactionService].toInstance(mockPopulateTransactionService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual OK
+        }
+      }
+
+      "must redirect to TransactionBeforeYouStart when fullReturn.transaction is present but population fails" in {
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswersWithTransaction)))
+        when(mockPopulateTransactionService.populateTransactionInSession(any(), any())).thenReturn(Failure(new RuntimeException("Population failed")))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswersWithTransaction))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[PopulateTransactionService].toInstance(mockPopulateTransactionService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
         }
       }
     }
