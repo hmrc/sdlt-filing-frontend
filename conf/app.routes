@@ -626,6 +626,11 @@ POST       /about-the-transaction/what-is-the-CIS-number                        
 GET        /about-the-transaction/what-is-the-CIS-number/change                                      controllers.transaction.TransactionCisNumberController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/what-is-the-CIS-number/change                                      controllers.transaction.TransactionCisNumberController.onSubmit(mode: Mode = CheckMode)
 
+GET        /about-the-transaction/description-of-restrictions-covenants-and-conditions               controllers.transaction.DescriptionOfRestrictionsController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/description-of-restrictions-covenants-and-conditions               controllers.transaction.DescriptionOfRestrictionsController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/description-of-restrictions-covenants-and-conditions/change        controllers.transaction.DescriptionOfRestrictionsController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/description-of-restrictions-covenants-and-conditions/change        controllers.transaction.DescriptionOfRestrictionsController.onSubmit(mode: Mode = CheckMode)
+
 GET        /about-the-lease/before-you-start                                                         controllers.lease.LeaseBeforeYouStartController.onPageLoad()
 
 GET         /about-the-transaction/transaction-address-lookup                                        controllers.transaction.TransactionAddressController.redirectToAddressLookupTransaction(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)

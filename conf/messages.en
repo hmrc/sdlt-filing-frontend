@@ -1583,6 +1583,17 @@ transaction.cisNumber.error.length                                              
 transaction.cisNumber.invalid                                                       = invalid error
 transaction.cisNumber.change.hidden                                                 = The purchaser’s CIS registration number
 
+transaction.descriptionOfRestrictions.title                                         = What are the restrictions, covenants or conditions affecting the value of the interest transferred or granted? - About the transaction
+transaction.descriptionOfRestrictions.heading                                       = What are the restrictions, covenants or conditions affecting the value of the interest transferred or granted?
+transaction.descriptionOfRestrictions.subHeading                                    = Have you applied for a CAP1 or NSBC in relation to this transaction?
+transaction.descriptionOfRestrictions.hint                                          = Provide a brief description, like a vendor`s right to buy back at less than market value
+transaction.descriptionOfRestrictions.error.required                                = Enter a brief description of the restrictions, covenants or conditions affecting the value of the interest transferred or granted
+transaction.descriptionOfRestrictions.error.regex                                   = The brief description of the restrictions, covenants or conditions must only include letters a to z, numbers 0 to 9, apostrophes, hyphens and spaces
+transaction.descriptionOfRestrictions.error.length                                  = The brief description of the restrictions, covenants or conditions must be 42 characters or fewer
+transaction.descriptionOfRestrictions.checkYourAnswersLabel                         = What are the restrictions, covenants or conditions?
+transaction.descriptionOfRestrictions.change.hidden                                 = Restrictions, covenants or conditions
+transaction.descriptionOfRestrictions.missing                                       = Enter Restrictions, covenants or conditions
+
 lease.beforeYouStart.p1                                                             = In this section, you need to tell us about the lease on the land or property.
 lease.beforeYouStart.p2                                                             = We will ask for:
 lease.beforeYouStart.l1.li1                                                         = the type of lease
