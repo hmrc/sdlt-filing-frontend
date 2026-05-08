@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-package config
+package utils
 
-trait CurrencyFormatter {
-  def currencyFormat(amt: BigDecimal): String = f"£$amt%,1.2f".replace(".00","")
+import play.api.i18n.Messages
 
-  implicit class IntToCurrency(amt: Int) {
-    def toCurrency: String = currencyFormat(BigDecimal(amt))
-  }
+case object UnrecognisedYesNoError
 
-  implicit class BigDecimalToCurrency(amt: BigDecimal) {
-    def toCurrency: String = currencyFormat(amt)
-  }
-
-  implicit class IntToPercentage(amt: Int) {
-    def toPercentage: String = s"$amt%"
-  }
+object YesNoHelper {
+  def toYesNo(s: String)(implicit messages: Messages): Either[UnrecognisedYesNoError.type, String] =
+    s.toLowerCase match {
+      case "yes" => Right(messages("site.yes"))
+      case "no"  => Right(messages("site.no"))
+      case _     => Left(UnrecognisedYesNoError)
+    }
 }
-
-object CurrencyFormatter extends CurrencyFormatter

@@ -19,6 +19,7 @@ package services.taxCalculation
 import models.*
 import models.land.LandTypeOfProperty
 import models.taxCalculation.*
+import utils.DateTimeFormats.*
 
 import java.time.*
 import java.time.temporal.ChronoUnit
@@ -35,16 +36,18 @@ object TaxCalcRequestValidator {
   def buildRequest(userAnswers: UserAnswers): Either[BuildRequestError, SdltCalculationRequest] =
     for {
       fullReturn       <- userAnswers.fullReturn.toRight(MissingFullReturnError)
-      land             <- fullReturn.land.flatMap(_.headOption).toRight(MissingAboutTheLandError)
+      mainLandId       <- fullReturn.returnInfo.flatMap(_.mainLandID).toRight(MissingMainLandIdError)
+      land             <- fullReturn.land.flatMap(_.find(_.landID.contains(mainLandId))).toRight(MissingAboutTheLandError)
       transaction      <- fullReturn.transaction.toRight(MissingAboutTheTransactionError)
       interestCode     <- land.interestCreatedTransferred.toRight(MissingLandAnswerError("interestCreatedTransferred"))
       propertyCode     <- land.propertyType.toRight(MissingLandAnswerError("propertyType"))
       propertyType     <- PropertyTypes.fromCode(propertyCode).toRight(UnknownPropertyTypeError(propertyCode))
       effectiveDate    <- transaction.effectiveDate.toRight(MissingTransactionAnswerError("effectiveDate"))
-      parsedDate       <- Try(LocalDate.parse(effectiveDate)).toOption.toRight(InvalidDateError(effectiveDate))
+      parsedDate       <- parseDate(effectiveDate).left.map(_ => InvalidDateError(effectiveDate))
       premium          <- transaction.totalConsideration.toRight(MissingTransactionAnswerError("totalConsideration"))
       transDesc        <- transaction.transactionDescription.toRight(MissingTransactionAnswerError("transactionDescription"))
       holdingType      <- HoldingTypes.fromCode(transDesc).toRight(UnknownHoldingTypeError(transDesc))
+      isLinkedRaw      <- transaction.isLinked.toRight(MissingTransactionAnswerError("isLinked"))
       leaseDetails     <- fullReturn.lease.fold(Right(None))(buildLeaseDetails(_, transaction, parsedDate))
       taxReliefDetails <- getTaxReliefDetails(transaction)
     } yield SdltCalculationRequest(
@@ -60,7 +63,7 @@ object TaxCalcRequestValidator {
       leaseDetails        = leaseDetails,
       relevantRentDetails = fullReturn.lease.map(buildRelevantRentDetails),
       firstTimeBuyer      = Some(if (transaction.reliefReason.contains(FIRST_TIME_BUYER_RELIEF)) "Yes" else "No"),
-      isLinked            = transaction.isLinked.map(_.toUpperCase == YES),
+      isLinked            = Some(isLinkedRaw.toUpperCase == YES),
       interestTransferred = Some(interestCode),
       taxReliefDetails    = taxReliefDetails,
       isMultipleLand      = fullReturn.land.map(_.size > 1),
@@ -68,8 +71,8 @@ object TaxCalcRequestValidator {
     )
 
   private def getTaxReliefDetails(transaction: Transaction): Either[BuildRequestError, Option[TaxReliefDetails]] =
-    transaction.claimingRelief.map(_.toUpperCase) match {
-      case Some(YES) =>
+    transaction.claimingRelief.map(_.toUpperCase).toRight(MissingTransactionAnswerError("claimingRelief")).flatMap {
+      case YES =>
         for {
           reliefReason <- transaction.reliefReason.toRight(MissingTransactionAnswerError("reliefReason"))
           reliefCode   <- Try(reliefReason.toInt).toOption.toRight(InvalidReliefReasonError(reliefReason))
@@ -77,7 +80,7 @@ object TaxCalcRequestValidator {
           taxReliefCode   = reliefCode,
           isPartialRelief = Some(transaction.reliefAmount.isDefined)
         ))
-      case _ => Right(None)
+      case _   => Right(None)
     }
 
   private def handleNonUkResident(residency: Option[Residency], effectiveDate: LocalDate, propertyType: PropertyTypes.Value): Option[String] =
@@ -108,8 +111,8 @@ object TaxCalcRequestValidator {
     for {
       contractStartDate    <- lease.contractStartDate.toRight(MissingLeaseAnswerError("contractStartDate"))
       contractEndDate      <- lease.contractEndDate.toRight(MissingLeaseAnswerError("contractEndDate"))
-      validStartDate       <- Try(LocalDate.parse(contractStartDate)).toOption.toRight(InvalidDateError(contractStartDate))
-      validEndDate         <- Try(LocalDate.parse(contractEndDate)).toOption.toRight(InvalidDateError(contractEndDate))
+      validStartDate       <- parseDate(contractStartDate).left.map(_ => InvalidDateError(contractStartDate))
+      validEndDate         <- parseDate(contractEndDate).left.map(_ => InvalidDateError(contractEndDate))
       calculationStartDate  = if (effectiveDate.isAfter(validStartDate)) effectiveDate else validStartDate
       years                 = Period.between(calculationStartDate, validEndDate.plusDays(1)).getYears
       partialStart          = calculationStartDate.plusYears(years)

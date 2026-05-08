@@ -16,10 +16,14 @@
 
 package utils
 
-import play.api.i18n.Lang
+import play.api.i18n.{Lang, Messages}
 
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import scala.util.Try
+
+case object UnparseableDateError
 
 object DateTimeFormats {
 
@@ -36,4 +40,19 @@ object DateTimeFormats {
 
   val dateTimeHintFormat: DateTimeFormatter =
     DateTimeFormatter.ofPattern("d M yyyy")
+
+  private val UK_DATE = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+
+  def parseDate(s: String): Either[UnparseableDateError.type, LocalDate] = {
+    Try(LocalDate.parse(s)).toOption
+      .orElse(Try(LocalDate.parse(s, UK_DATE)).toOption)
+      .toRight(UnparseableDateError)
+  }
+  
+  implicit class LocalDateFormatting(date: LocalDate) {
+    def toLongDate(implicit messages: Messages): String = {
+      implicit val lang: Lang = messages.lang
+      date.format(dateTimeFormat())
+    }
+  }
 }

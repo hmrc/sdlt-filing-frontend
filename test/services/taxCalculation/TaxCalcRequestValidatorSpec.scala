@@ -30,13 +30,14 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
     effectiveDate: String = "2025-06-15",
     consideration: BigDecimal = 250000,
     isLinked: Option[String] = Some("no"),
-    claimingRelief: Option[String] = None,
+    claimingRelief: Option[String] = Some("no"),
     reliefReason: Option[String] = None,
     reliefAmount: Option[BigDecimal] = None,
     isNonUkResident: Option[String] = Some("no")
   ): FullReturn = FullReturn(
     stornId = "STORN", returnResourceRef = "REF",
-    land = Some(Seq(Land(propertyType = Some(propertyType), interestCreatedTransferred = Some("FPF")))),
+    returnInfo = Some(ReturnInfo(mainLandID = Some("L1"))),
+    land = Some(Seq(Land(landID = Some("L1"), propertyType = Some(propertyType), interestCreatedTransferred = Some("FPF")))),
     transaction = Some(Transaction(
       transactionDescription = Some("F"), effectiveDate = Some(effectiveDate),
       totalConsideration = Some(consideration), isLinked = isLinked,
@@ -55,10 +56,12 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
     startingRent: Option[String] = None
   ): FullReturn = FullReturn(
     stornId = "STORN", returnResourceRef = "REF",
-    land = Some(Seq(Land(propertyType = Some("01"), interestCreatedTransferred = Some("LG")))),
+    returnInfo = Some(ReturnInfo(mainLandID = Some("L1"))),
+    land = Some(Seq(Land(landID = Some("L1"), propertyType = Some("01"), interestCreatedTransferred = Some("LG")))),
     transaction = Some(Transaction(
       transactionDescription = Some("L"), effectiveDate = Some(effectiveDate),
-      totalConsideration = Some(consideration), isLinked = Some("no")
+      totalConsideration = Some(consideration), isLinked = Some("no"),
+      claimingRelief = Some("no")
     )),
     residency = Some(Residency(isNonUkResidents = Some("no"))),
     lease = Some(Lease(
@@ -88,13 +91,38 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
       }
 
       "must fail when interestCreatedTransferred is missing" in {
-        val fr = freeholdReturn().copy(land = Some(Seq(Land(propertyType = Some("01")))))
+        val fr = freeholdReturn().copy(land = Some(Seq(Land(landID = Some("L1"), propertyType = Some("01")))))
         TaxCalcRequestValidator.buildRequest(userAnswersWith(fr)) mustBe Left(MissingLandAnswerError("interestCreatedTransferred"))
       }
 
       "must fail when propertyType is missing" in {
-        val fr = freeholdReturn().copy(land = Some(Seq(Land(interestCreatedTransferred = Some("FPF")))))
+        val fr = freeholdReturn().copy(land = Some(Seq(Land(landID = Some("L1"), interestCreatedTransferred = Some("FPF")))))
         TaxCalcRequestValidator.buildRequest(userAnswersWith(fr)) mustBe Left(MissingLandAnswerError("propertyType"))
+      }
+
+      "must fail when ReturnInfo.mainLandID is missing" in {
+        val fr = freeholdReturn().copy(returnInfo = Some(ReturnInfo()))
+        TaxCalcRequestValidator.buildRequest(userAnswersWith(fr)) mustBe Left(MissingMainLandIdError)
+      }
+
+      "must fail when no land in the list matches mainLandID" in {
+        val fr = freeholdReturn().copy(
+          returnInfo = Some(ReturnInfo(mainLandID = Some("L99"))),
+          land       = Some(Seq(Land(landID = Some("L1"), propertyType = Some("01"), interestCreatedTransferred = Some("FPF"))))
+        )
+        TaxCalcRequestValidator.buildRequest(userAnswersWith(fr)) mustBe Left(MissingAboutTheLandError)
+      }
+
+      "must select the main land by mainLandID, not by position in the list" in {
+        val notMain = Land(landID = Some("L1"), propertyType = Some("02"), interestCreatedTransferred = Some("LG"))
+        val main    = Land(landID = Some("L2"), propertyType = Some("01"), interestCreatedTransferred = Some("FPF"))
+        val fr = freeholdReturn().copy(
+          returnInfo = Some(ReturnInfo(mainLandID = Some("L2"))),
+          land       = Some(Seq(notMain, main))
+        )
+        TaxCalcRequestValidator.buildRequest(userAnswersWith(fr)).map { req =>
+          (req.propertyType.toString, req.interestTransferred)
+        } mustBe Right(("residential", Some("FPF")))
       }
 
       "must fail when totalConsideration is missing" in {
@@ -103,6 +131,11 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
         )))
         TaxCalcRequestValidator.buildRequest(userAnswersWith(fr)) mustBe Left(MissingTransactionAnswerError("totalConsideration"))
       }
+
+      "must fail when isLinked is missing" in {
+        TaxCalcRequestValidator.buildRequest(userAnswersWith(freeholdReturn(isLinked = None))) mustBe
+          Left(MissingTransactionAnswerError("isLinked"))
+      }
     }
 
     "invalid values" - {
@@ -110,6 +143,21 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
       "must fail when effectiveDate is unparseable" in {
         TaxCalcRequestValidator.buildRequest(userAnswersWith(freeholdReturn(effectiveDate = "not-a-date"))) mustBe
           Left(InvalidDateError("not-a-date"))
+      }
+
+      "must accept effectiveDate in legacy UK format dd/MM/yyyy" in {
+        TaxCalcRequestValidator.buildRequest(userAnswersWith(freeholdReturn(effectiveDate = "24/09/2025"))).map { req =>
+          (req.effectiveDateDay, req.effectiveDateMonth, req.effectiveDateYear)
+        } mustBe Right((24, 9, 2025))
+      }
+
+      "must accept lease contract dates in legacy UK format dd/MM/yyyy" in {
+        TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(startDate = "01/01/2025", endDate = "31/12/2025", effectiveDate = "01/07/2025")
+        )).flatMap(_.leaseDetails.toRight("missing leaseDetails")).map { ld =>
+          (ld.startDateDay, ld.startDateMonth, ld.startDateYear,
+           ld.endDateDay,   ld.endDateMonth,   ld.endDateYear)
+        } mustBe Right((1, 1, 2025, 31, 12, 2025))
       }
 
       "must fail when transactionDescription is unrecognised" in {
@@ -139,7 +187,7 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
       "must map A to freehold" in {
         val fr = freeholdReturn().copy(transaction = Some(Transaction(
           transactionDescription = Some("A"), effectiveDate = Some("2025-06-15"),
-          totalConsideration = Some(250000), isLinked = Some("no")
+          totalConsideration = Some(250000), isLinked = Some("no"), claimingRelief = Some("no")
         )))
         TaxCalcRequestValidator.buildRequest(userAnswersWith(fr)).toOption.get.holdingType mustBe HoldingTypes.freehold
       }
@@ -225,6 +273,11 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
         TaxCalcRequestValidator.buildRequest(userAnswersWith(freeholdReturn())).toOption.get.taxReliefDetails mustBe None
       }
 
+      "must fail when claimingRelief is missing entirely" in {
+        TaxCalcRequestValidator.buildRequest(userAnswersWith(freeholdReturn(claimingRelief = None))) mustBe
+          Left(MissingTransactionAnswerError("claimingRelief"))
+      }
+
       "must fail when claiming relief but reliefReason is missing" in {
         TaxCalcRequestValidator.buildRequest(userAnswersWith(freeholdReturn(claimingRelief = Some("yes")))) mustBe
           Left(MissingTransactionAnswerError("reliefReason"))
@@ -268,6 +321,14 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
         ld.leaseTerm.years mustBe 0
         ld.leaseTerm.days mustBe 183
         ld.leaseTerm.daysInPartialYear mustBe 183
+      }
+
+      "must use the effective date as the calculation start when it falls after the contract start" in {
+        val ld = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(startDate = "2025-01-01", endDate = "2025-12-31", effectiveDate = "2025-07-01")
+        )).toOption.get.leaseDetails.get
+        ld.leaseTerm.years mustBe 0
+        ld.leaseTerm.days  mustBe 184
       }
 
       "must send correct number of rent entries for a 3 year lease" in {

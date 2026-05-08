@@ -545,6 +545,7 @@ GET        /tax-calculation/before-you-start                                    
 GET         /tax-calculation/freehold-calculated/before-you-start               controllers.taxCalculation.freeholdTaxCalculated.FreeholdTaxCalculatedBYSController.onPageLoad()
 #GET        /tax-calculation/freehold-calculated/sdlt                           controllers.FreeholdSdltCalculatedController.onPageLoad()
 #POST       /tax-calculation/freehold-calculated/sdlt                           controllers.FreeholdSdltCalculatedController.onSubmit()
+GET         /tax-calculation/freehold-calculated/SDLT-breakdown                 controllers.taxCalculation.freeholdTaxCalculated.FreeholdCalculatedSdltBreakdownController.onPageLoad()
 #GET        /tax-calculation/freehold-calculated/self-assessment                controllers.FreeholdSdltCalculatedSelfAssessmentController.onPageLoad()
 #POST       /tax-calculation/freehold-calculated/self-assessment                controllers.FreeholdSdltCalculatedSelfAssessmentController.onSubmit()
 #GET        /tax-calculation/freehold-calculated/total-amount-due               controllers.FreeholdSdltCalculatedTotalDueController.onPageLoad()
