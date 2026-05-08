@@ -46,8 +46,7 @@ class TransactionAddressController @Inject()(
       val journeyId = transactionQuestionsAddress
       val addressConfig = MandatoryFieldsConfigModel(
         addressLine1 = Some(true),
-        town = Some(true),
-        postcode = Some(true)
+        town = Some(true)
       )
 
       sessionRepository.get(request.userAnswers.id).flatMap {

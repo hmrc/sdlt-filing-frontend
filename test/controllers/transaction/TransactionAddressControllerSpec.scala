@@ -14,30 +14,40 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.transaction
 
+import base.SpecBase
+import models.UserAnswers
+import models.address.{Address, Country}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.{times, verify, when}
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.inject.bind
+import play.api.libs.json.Json
+import play.api.mvc.Call
+import play.api.test.FakeRequest
+import play.api.test.Helpers.*
+import repositories.SessionRepository
+import services.AddressLookupService
 
- import base.SpecBase
- import models.address.{Address, Country}
- import models.UserAnswers
- import org.mockito.ArgumentMatchers.{any, eq as eqTo}
- import org.mockito.Mockito.{times, verify, when}
- import org.scalatestplus.mockito.MockitoSugar
- import play.api.inject.bind
- import play.api.libs.json.Json
- import play.api.mvc.Call
- import play.api.test.FakeRequest
- import play.api.test.Helpers.*
- import repositories.SessionRepository
- import services.AddressLookupService
-
- import java.time.Instant
- import scala.concurrent.Future
+import java.time.Instant
+import scala.concurrent.Future
 
 class TransactionAddressControllerSpec extends SpecBase with MockitoSugar {
 
   val testAddress: Address = Address(
     "16 Coniston Court",
+    Some("Holtransaction road"),
+    None,
+    None,
+    None,
+    None,
+    Some(Country(Some("UK"), Some("United Kingdom"))),
+    false
+  )
+
+  val testAddressWithPostcode: Address = Address(
+    "17 Coniston Court",
     Some("Holtransaction road"),
     None,
     None,
@@ -222,6 +232,34 @@ class TransactionAddressControllerSpec extends SpecBase with MockitoSugar {
           verify(mockAddressLookupService, times(1)).saveAddressDetails(any(), any())(any(), any())
         }
       }
+
+      "must redirect when address with postcode is successfully saved" in {
+        val mockAddressLookupService = mock[AddressLookupService]
+
+        when(mockAddressLookupService.getAddressById(eqTo("test-id"))(any()))
+          .thenReturn(Future.successful(testAddressWithPostcode))
+        when(mockAddressLookupService.saveAddressDetails(any(), any())(any(), any()))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, addressLookupCallbackRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionAddressController.redirectToAddressLookupTransaction().url //TODO DTR-3492: SPRINT-15 - Is this transaction pursuant to a previous option agreement? - tr-16
+
+          verify(mockAddressLookupService, times(1)).getAddressById(eqTo("test-id"))(any())
+          verify(mockAddressLookupService, times(1)).saveAddressDetails(any(), any())(any(), any())
+        }
+      }
+
 
       "must redirect to Journey Recovery when address save fails" in {
         val mockAddressLookupService = mock[AddressLookupService]
