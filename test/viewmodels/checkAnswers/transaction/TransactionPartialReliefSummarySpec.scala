@@ -18,7 +18,7 @@ package viewmodels.checkAnswers.transaction
 
 import base.SpecBase
 import models.CheckMode
-import pages.transaction.TransactionPartialReliefPage
+import pages.transaction.{PurchaserEligibleToClaimReliefPage, TransactionPartialReliefPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
@@ -38,7 +38,7 @@ class TransactionPartialReliefSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(TransactionPartialReliefPage, true).success.value
 
-          val row = TransactionPartialReliefSummary.row(userAnswers)
+          val row = TransactionPartialReliefSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
           val result = row match {
             case Row(r) => r
@@ -67,7 +67,7 @@ class TransactionPartialReliefSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(TransactionPartialReliefPage, false).success.value
 
-          val row = TransactionPartialReliefSummary.row(userAnswers)
+          val row = TransactionPartialReliefSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
           val result = row match {
             case Row(r) => r
@@ -90,13 +90,16 @@ class TransactionPartialReliefSummarySpec extends SpecBase {
 
     "when partial relief is not present" - {
 
-      "must return a Missing and redirect call to missing page when data is not present" in {
+      "must return a Missing when purchaser is eligible to claim relief but answer is missing" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = TransactionPartialReliefSummary.row(emptyUserAnswers)
+          val userAnswers = emptyUserAnswers
+            .set(PurchaserEligibleToClaimReliefPage, true).success.value
+
+          val result = TransactionPartialReliefSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
           result match {
             case Missing(call) =>
@@ -105,6 +108,16 @@ class TransactionPartialReliefSummarySpec extends SpecBase {
             case Row(_) =>
               fail("Expected Missing but got Row")
           }
+        }
+      }
+
+      "must return None when purchaser is not eligible to claim relief" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          TransactionPartialReliefSummary.row(emptyUserAnswers) mustBe None
         }
       }
     }
