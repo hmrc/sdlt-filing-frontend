@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package controllers.taxCalculation.freeholdSelfAssessed
+package controllers.taxCalculation.freeholdTaxCalculated
 
 import base.SpecBase
+import controllers.taxCalculation.PenaltiesAndInterestExtension
 import forms.taxCalculation.PenaltiesAndInterestFormProvider
-import models.{NormalMode, UserAnswers}
 import models.taxCalculation.TaxCalculationFlow
+import models.taxCalculation.TaxCalculationFlow.*
+import models.{NormalMode, UserAnswers}
 import pages.taxCalculation.TaxCalculationFlowPage
 import play.api.Application
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import views.html.taxCalculation.freeholdTaxCalculated.FreeholdTaxCalculatedAmountWithPenaltiesView
+import views.html.taxCalculation.AmountWithPenaltiesView
 
-class FreeholdSdltCalculatedPenaltiesAndInterestControllerSpec extends SpecBase {
+class FreeholdTaxCalculatedPenaltiesAndInterestControllerSpec extends SpecBase {
 
-  trait Fixture {
+  trait Fixture extends PenaltiesAndInterestExtension {
     val form = new PenaltiesAndInterestFormProvider()()
     val answersFreeHold: UserAnswers = emptyUserAnswers.set(TaxCalculationFlowPage,
       TaxCalculationFlow.FreeholdTaxCalculated).success.value
@@ -36,7 +38,7 @@ class FreeholdSdltCalculatedPenaltiesAndInterestControllerSpec extends SpecBase 
       TaxCalculationFlow.LeaseholdSelfAssessed).success.value
   }
 
-  "PenaltiesAndInterestControllerSpec" - {
+  "FreeholdTaxCalculatedPenaltiesAndInterestController" - {
 
     "return OK for GET :: correct flow state" in new Fixture {
       val application: Application = applicationBuilder(userAnswers = Some(answersFreeHold)).build()
@@ -47,10 +49,11 @@ class FreeholdSdltCalculatedPenaltiesAndInterestControllerSpec extends SpecBase 
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[FreeholdTaxCalculatedAmountWithPenaltiesView]
+        val view = application.injector.instanceOf[AmountWithPenaltiesView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, pageTitle = getPageTitle(flow = FreeholdTaxCalculated)(messages(application)),
+          postAction(FreeholdTaxCalculated, NormalMode))(request, messages(application)).toString
       }
     }
 

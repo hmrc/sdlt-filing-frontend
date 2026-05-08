@@ -16,6 +16,8 @@
 
 @import views.html.components.*
 @import models.CheckMode
+@import models.taxCalculation.TaxCalculationFlow
+@import models.taxCalculation.TaxCalculationFlow.*
 
 @this(
         layout: templates.Layout,
@@ -28,9 +30,9 @@
         caption: Caption
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], pageTitle: String, postAction: Call)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("taxCalculation.penaltiesAndInterest.scenario-one.title"))) {
+@layout(pageTitle = title(form, pageTitle )) {
 
     @caption(messages("site.taxCalculation.caption"))
 
@@ -38,20 +40,16 @@
         @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
     }
 
-    @formHelper(action = controllers.taxCalculation
-            .freeholdTaxCalculated.routes
-            .FreeholdSdltCalculatedPenaltiesAndInterestController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = postAction, Symbol("autoComplete") -> "off") {
 
         @govukRadios(
             RadiosViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("taxCalculation.penaltiesAndInterest.scenario-one.heading")).asPageHeading(),
+                legend = LegendViewModel(messages("taxCalculation.penaltiesAndInterest.freehold-tax-calculated.heading")).asPageHeading(),
                 items = PenaltiesAndInterest.options
             )
         )
-
         @govukButton( ButtonViewModel(messages("taxCalculation.penaltiesAndInterest.button")) )
-
     }
 
 }
