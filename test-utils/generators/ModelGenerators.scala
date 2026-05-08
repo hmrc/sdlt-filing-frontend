@@ -18,15 +18,21 @@ package generators
 
 import models.*
 import models.land.*
+import models.lease.TypeOfLease
 import models.prelimQuestions.TransactionType
 import models.purchaser.*
 import models.purchaserAgent.*
-import models.transaction.{TransactionFormsOfConsideration, TransactionSaleOfBusinessAssets, TransactionRulingFollowed, TransactionUseOfLandOrProperty}
+import models.transaction.{TransactionFormsOfConsideration, TransactionRulingFollowed, TransactionSaleOfBusinessAssets, TransactionUseOfLandOrProperty}
 import models.vendor.whoIsTheVendor
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
+
+  implicit lazy val arbitraryTypeOfLease: Arbitrary[TypeOfLease] =
+    Arbitrary {
+      Gen.oneOf(TypeOfLease.values.toSeq)
+    }
 
   implicit lazy val arbitraryTransactionRulingFollowed: Arbitrary[TransactionRulingFollowed] =
     Arbitrary {
