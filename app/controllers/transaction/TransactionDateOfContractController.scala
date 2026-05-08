@@ -18,7 +18,7 @@ package controllers.transaction
 
 import controllers.actions.*
 import forms.transaction.TransactionDateOfContractFormProvider
-import models.Mode
+import models.{Mode, NormalMode}
 import models.prelimQuestions.TransactionType.GrantOfLease
 import navigation.Navigator
 import pages.transaction.{TransactionDateOfContractPage, TypeOfTransactionPage}
@@ -70,15 +70,15 @@ class TransactionDateOfContractController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(TransactionDateOfContractPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
-            request.userAnswers.get(TypeOfTransactionPage) match {
-              case Some(GrantOfLease) =>
-                Redirect(controllers.transaction.routes.TransactionLinkedTransactionsController.onPageLoad(mode))
-              case Some(_) =>
-                Redirect(navigator.nextPage(TransactionDateOfContractPage, mode, updatedAnswers))
-              case _ =>
-                Redirect(controllers.transaction.routes.TypeOfTransactionController.onPageLoad(mode))
+            if (mode == NormalMode) {
+              request.userAnswers.get(TypeOfTransactionPage) match {
+                case Some(GrantOfLease) => Redirect(controllers.transaction.routes.TransactionLinkedTransactionsController.onPageLoad(mode))
+                case Some(_)            => Redirect(navigator.nextPage(TransactionDateOfContractPage, mode, updatedAnswers))
+                case None               => Redirect(controllers.transaction.routes.TypeOfTransactionController.onPageLoad(mode))
+              }
+            } else {
+              Redirect(navigator.nextPage(TransactionDateOfContractPage, mode, updatedAnswers))
             }
-
           }
       )
   }

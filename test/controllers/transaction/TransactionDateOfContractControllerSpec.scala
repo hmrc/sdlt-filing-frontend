@@ -19,7 +19,7 @@ package controllers.transaction
 import base.SpecBase
 import controllers.routes
 import forms.transaction.TransactionDateOfContractFormProvider
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import models.prelimQuestions.TransactionType.{ConveyanceTransfer, GrantOfLease}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -49,7 +49,8 @@ class TransactionDateOfContractControllerSpec extends SpecBase with MockitoSugar
 
   val validAnswer = time.today
 
-  lazy val transactionDateOfContractRoute = controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(NormalMode).url
+  lazy val transactionDateOfContractRoute          = controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(NormalMode).url
+  lazy val transactionDateOfContractRouteCheckMode = controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(CheckMode).url
 
   def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(GET, transactionDateOfContractRoute)
@@ -140,6 +141,38 @@ class TransactionDateOfContractControllerSpec extends SpecBase with MockitoSugar
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+
+    "must redirect to the Transaction CYA page when valid data is submitted in check mode for grant of lease" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers = emptyUserAnswers
+        .set(TypeOfTransactionPage, GrantOfLease).success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, transactionDateOfContractRouteCheckMode)
+            .withFormUrlEncodedBody(
+              "value.day"   -> validAnswer.getDayOfMonth.toString,
+              "value.month" -> validAnswer.getMonthValue.toString,
+              "value.year"  -> validAnswer.getYear.toString
+            )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
       }
     }
 

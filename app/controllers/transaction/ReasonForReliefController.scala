@@ -67,10 +67,10 @@ class ReasonForReliefController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ReasonForReliefPage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
-            if (value.toString == "partExchange") {
+            if (value.toString == "partExchange" && mode == NormalMode) {
               Redirect(controllers.transaction.routes.IsPurchaserRegisteredWithCISController.onPageLoad(mode))
-            } else if (value.toString == "charitiesRelief") {
-              Redirect(controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(NormalMode))
+            } else if (value.toString == "charitiesRelief" && mode == NormalMode) {
+              Redirect(controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(mode))
             } else {
               Redirect(navigator.nextPage(ReasonForReliefPage, mode, updatedAnswers))
             }

@@ -19,7 +19,7 @@ package controllers.transaction
 import base.SpecBase
 import controllers.routes
 import forms.transaction.ReasonForReliefFormProvider
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import models.transaction.ReasonForRelief
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -39,7 +39,8 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val reasonForReliefRoute = controllers.transaction.routes.ReasonForReliefController.onPageLoad(NormalMode).url
+  lazy val reasonForReliefRoute          = controllers.transaction.routes.ReasonForReliefController.onPageLoad(NormalMode).url
+  lazy val reasonForReliefRouteCheckMode = controllers.transaction.routes.ReasonForReliefController.onPageLoad(CheckMode).url
 
   val formProvider = new ReasonForReliefFormProvider()
   val form = formProvider()
@@ -138,6 +139,69 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+
+    "must redirect to the Transaction CYA page when partExchange is submitted in check mode" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, reasonForReliefRouteCheckMode)
+            .withFormUrlEncodedBody(("value", "partExchange"))
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
+      }
+    }
+
+    "must redirect to the Transaction CYA page when charitiesRelief is submitted in check mode" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, reasonForReliefRouteCheckMode)
+            .withFormUrlEncodedBody(("value", "charitiesRelief"))
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
+      }
+    }
+
+    "must redirect to the Transaction CYA page when any other valid value is submitted in check mode" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, reasonForReliefRouteCheckMode)
+            .withFormUrlEncodedBody(("value", "relocationOfEmployment"))
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
       }
     }
 
