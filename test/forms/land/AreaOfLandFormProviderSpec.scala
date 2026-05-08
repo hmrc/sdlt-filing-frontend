@@ -83,12 +83,11 @@ class AreaOfLandFormProviderSpec extends StringFieldBehaviours {
         oneOf(Seq("0.000", "1234567890.234", "300.123", "0", "123.12", "300"))
       )
 
-      behave like fieldWithMaxLength(
-        form,
-        fieldName,
-        maxLength = maxLength,
-        lengthError = FormError(fieldName, lengthKey)
-      )
+      "must not bind strings longer than 14 characters" in {
+        val longValue = "1" * 15
+        val result = form.bind(Map(fieldName -> longValue))
+        result.errors must contain(FormError(fieldName, lengthKey, Seq()))
+      }
 
       behave like mandatoryField(
         form,
@@ -97,8 +96,8 @@ class AreaOfLandFormProviderSpec extends StringFieldBehaviours {
       )
 
       "fail with invalid error with invalid values" in {
-        val invalidSquareMetresValues = Seq("-1", "1.1234", "test")
-        invalidSquareMetresValues.foreach { v =>
+        val invalidValues = Seq("-1", "1.1234", "test")
+        invalidValues.foreach { v =>
           val result = form.bind(Map(fieldName -> v))
           result.errors must contain only FormError(fieldName, invalidKey, Seq.empty)
         }
