@@ -16,16 +16,20 @@
 
 package utils.taxCalculation
 
-import models.taxCalculation.{FreeHoldSelfAssessedTotalAmountDue, TotalAmountDue}
+import models.UserAnswers
+import models.taxCalculation.*
+import pages.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedTotalAmountDueSummaryPage
+import play.api.Logging
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.all.SummaryListViewModel
 import viewmodels.taxCalculation.{PenaltiesSummary, SdltDueSummary, TotalAmountDueSummary}
 
+import scala.util.Try
 import java.time.LocalDate
 import scala.math
 
-object CalculatedTotalDueHelper extends PenaltyCalculator {
+object CalculatedTotalDueHelper extends PenaltyCalculator with Logging {
 
   def createFreeHoldSelfAssessedTotalAmountDue(sdltTaxDue: Int, effectiveDate: LocalDate): FreeHoldSelfAssessedTotalAmountDue = {
     FreeHoldSelfAssessedTotalAmountDue(
@@ -35,20 +39,50 @@ object CalculatedTotalDueHelper extends PenaltyCalculator {
     )
   }
   
-  def createTotalAmountDue(value:String):TotalAmountDue = {
+  def totalAmountDue(value:String):TotalAmountDue = {
     TotalAmountDue(value)
   }
 
-  def getSummaryListRows(sdltTaxDue: Int, effectiveDate: LocalDate)(implicit messages: Messages): SummaryList = SummaryListViewModel(
-    Seq(
-      SdltDueSummary.row(convertSdltDueToBigDecimal(sdltTaxDue)),
-      PenaltiesSummary.row(getPenalty(effectiveDate)),
-      TotalAmountDueSummary.row(calculateTotalAmountDue(convertSdltDueToBigDecimal(sdltTaxDue), getPenalty(effectiveDate))))
-  )
+  def getEffectiveDate(userAnswers: UserAnswers):Either[EffectiveDateOfTransactionError, LocalDate] = {
+    userAnswers.fullReturn
+      .flatMap(_.transaction)
+      .flatMap(_.effectiveDate) match {
+      case Some(effectiveDate) =>
+        parseIntoLocalDate(effectiveDate) match {
+          case Some(date) =>
+            logger.error("[CalculatedTotalDueHelper][getEffectiveDate] effective date of transaction retrieved successfully")
+            Right(date)
+          case None =>
+            logger.error("[CalculatedTotalDueHelper][getEffectiveDate] Cannot parse effective date of transaction into valid format")
+            Left(InvalidEffectiveDateOfTransactionError)
+        }
+      case None =>
+        logger.error("[CalculatedTotalDueHelper][getEffectiveDate] Cannot retrieve effective date of transaction")
+        Left(MissingEffectiveDateOfTransactionError)
 
-  private def getPenalty(effectiveDate: LocalDate): BigDecimal = calculatePenalties(effectiveDate)
+    }
+  }
+
+  def getSummaryListRows(userAnswers: UserAnswers)(implicit messages: Messages): Option[SummaryList] =
+    userAnswers.get(FreeholdSelfAssessedTotalAmountDueSummaryPage).map { freeholdSelfAssessedTotalAmountDuePage =>
+      SummaryListViewModel(
+        Seq(
+          SdltDueSummary.row(freeholdSelfAssessedTotalAmountDuePage.sdltDue),
+          PenaltiesSummary.row(freeholdSelfAssessedTotalAmountDuePage.penalties),
+          TotalAmountDueSummary.row(freeholdSelfAssessedTotalAmountDuePage.total)
+        )
+      )
+    }
+
+  private def parseIntoLocalDate(effectiveDate: String): Option[LocalDate] = {
+    Try {
+      LocalDate.parse(effectiveDate)
+    }.toOption
+  }
 
   private def convertSdltDueToBigDecimal(sdltDue: Int): BigDecimal = BigDecimal(sdltDue)
+
+  private def getPenalty(effectiveDate: LocalDate): BigDecimal = calculatePenalties(effectiveDate)
 
   private def calculateTotalAmountDue(sdltTaxDue: BigDecimal, penalties: BigDecimal): BigDecimal = sdltTaxDue + penalties
 

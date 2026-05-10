@@ -18,13 +18,11 @@ package controllers.taxCalculation.freeholdSelfAssessed
 
 import controllers.actions.*
 import forms.taxCalculation.TotalAmountToPayFormProvider
+import models.taxCalculation.*
 import models.taxCalculation.TaxCalculationFlow.FreeholdSelfAssessed
-import models.taxCalculation.{MissingDataError, MissingFullReturnError}
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.taxCalculation.CalculatedSdltDuePage
 import pages.taxCalculation.freeholdSelfAssessed.*
-import pages.transaction.TransactionEffectiveDatePage
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -35,6 +33,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.taxCalculation.CalculatedTotalDueHelper
 import views.html.taxCalculation.freeholdSelfAssessed.TotalAmountDueView
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -58,22 +57,35 @@ class FreeholdSdltNotCalculatedTotalDueController @Inject()(
     sdltCalculationService.validateAsyncFlow(FreeholdSelfAssessed) {
       sdltCalculationService.calculateStampDutyLandTax(request.userAnswers).flatMap {
         case Right(result) =>
-          request.userAnswers.get(TransactionEffectiveDatePage) match {
-            case Some(effectiveDate) =>
+          CalculatedTotalDueHelper.getEffectiveDate(request.userAnswers) match {
+            case Right(effectiveDateOfTransaction) =>
+              val freeHoldSelfAssessedTotalAmountDue = 
+                CalculatedTotalDueHelper
+                  .createFreeHoldSelfAssessedTotalAmountDue(result.totalTax, effectiveDateOfTransaction)
               for {
-                updatedUserAnswers <- Future.fromTry(request.userAnswers.set(CalculatedSdltDuePage, result.totalTax))
+                updatedUserAnswers <- Future.fromTry(request.userAnswers.set(FreeholdSelfAssessedTotalAmountDueSummaryPage, freeHoldSelfAssessedTotalAmountDue))
                 _ <- sessionRepository.set(updatedUserAnswers)
               } yield {
                 val preparedForm = request.userAnswers.get(TotalAmountDuePage) match {
                   case None => form
                   case Some(value) => form.fill(value.amount)
                 }
-                val summaryListRow = CalculatedTotalDueHelper.getSummaryListRows(result.totalTax, effectiveDate)
-                Ok(view(preparedForm, summaryListRow, mode))
+                CalculatedTotalDueHelper.getSummaryListRows(updatedUserAnswers) match {
+                  case Some(summaryListRow) => Ok(view(preparedForm, summaryListRow, mode))
+                  case None =>
+                    logger.warn(s"[FreeholdSelfAssessedSdltCalculatedTotalDueController][onSubmit] Cannot retrieve FreeholdSelfAssessedTotalAmountDueSummaryPage for summary List row  from userAnswers")
+                    Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+                }
               }
-            case None =>
-              logger.error(s"[FreeholdSelfAssessedSdltCalculatedTotalDueController][onPageLoad] couldn't retrieve effective date of transaction")
-              Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
+            case Left(error) => error match {
+              case InvalidEffectiveDateOfTransactionError =>
+                logger.error(s"[FreeholdSelfAssessedSdltCalculatedTotalDueController][onPageLoad] effective date parsing failed invalid date:${error.message}")
+                Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+
+              case MissingEffectiveDateOfTransactionError =>
+                logger.error(s"[FreeholdSelfAssessedSdltCalculatedTotalDueController][onPageLoad] missing effective date of transaction from userAnswers:${error.message}")
+                Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+            }
           }
         case Left(error: MissingDataError) => error match {
           case MissingFullReturnError =>
@@ -90,28 +102,26 @@ class FreeholdSdltNotCalculatedTotalDueController @Inject()(
 
   def onSubmit(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     sdltCalculationService.validateAsyncFlow(FreeholdSelfAssessed) {
-      (request.userAnswers.get(CalculatedSdltDuePage), request.userAnswers.get(TransactionEffectiveDatePage)) match {
-        case (Some(sdltDue), Some(effectiveDate)) =>
+      val summaryListRow = CalculatedTotalDueHelper.getSummaryListRows(request.userAnswers)
+      summaryListRow match {
+        case Some(summaryListRow) =>
           form.bindFromRequest()
             .fold(
               formWithErrors =>
-                logger.warn(s"[FreeholdSelfAssessedSdltCalculatedTotalDueController][onSubmit] Error with the user inputted value")
-                Future.successful(BadRequest(view(formWithErrors, CalculatedTotalDueHelper.getSummaryListRows(sdltDue, effectiveDate), mode))),
+                logger.warn(s"[FreeholdSelfAssessedSdltCalculatedTotalDueController][onSubmit] error with the user total amount due value")
+                Future.successful(BadRequest(view(formWithErrors, summaryListRow, mode))),
               value =>
+                val totalAmountDue = CalculatedTotalDueHelper.totalAmountDue(value)
                 for {
-                  updatedUserAnswerWithSummaryListRows <- Future.fromTry(request.userAnswers.set(FreeholdSelfAssessedTotalAmountDueSummaryPage, 
-                    CalculatedTotalDueHelper.createFreeHoldSelfAssessedTotalAmountDue(sdltDue, effectiveDate)))
-                  updatedUserAnswersWithSummaryListRowsAndTotalSdltDueValue <- Future.fromTry(updatedUserAnswerWithSummaryListRows.set(TotalAmountDuePage,
-                    CalculatedTotalDueHelper.createTotalAmountDue(value)))
-                  _ <- sessionRepository.set(updatedUserAnswersWithSummaryListRowsAndTotalSdltDueValue)
-                } 
-                yield{
+                  updateUserAnswers <- Future.fromTry(request.userAnswers.set(TotalAmountDuePage, totalAmountDue))
+                  _ <- sessionRepository.set(updateUserAnswers)
+                } yield {
                   logger.info(s"[FreeholdSelfAssessedSdltCalculatedTotalDueController][onSubmit] user answers saved redirecting")
-                  Redirect(navigator.nextPage(FreeholdSelfAssessedTotalAmountDueSummaryPage, mode, updatedUserAnswersWithSummaryListRowsAndTotalSdltDueValue))
+                  Redirect(navigator.nextPage(FreeholdSelfAssessedTotalAmountDueSummaryPage, mode, updateUserAnswers))
                 }
             )
-        case (_, _) =>
-          logger.error(s"[FreeholdSelfAssessedSdltCalculatedTotalDueController][onSubmit] Couldn't load from session data:")
+        case None =>
+          logger.warn(s"[FreeholdSelfAssessedSdltCalculatedTotalDueController][onSubmit] Cannot retrieve FreeholdSelfAssessedTotalAmountDueSummaryPage for summary List row  from userAnswers")
           Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       }
     }

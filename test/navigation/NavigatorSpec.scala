@@ -446,7 +446,7 @@ class NavigatorSpec extends SpecBase {
         }
 
         "go from FreeholdSelfAssessedTotalAmountDuePage to Index page" in {
-          navigator.nextPage(FreeholdSelfAssessedTotalAmountDuePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+          navigator.nextPage(FreeholdSelfAssessedTotalAmountDuePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSdltNotCalculatedPenaltiesAndInterestController.onPageLoad()
         }
 
         "go from FreeholdSelfAssessedPenaltiesAndInterestPage to Index page" in {
