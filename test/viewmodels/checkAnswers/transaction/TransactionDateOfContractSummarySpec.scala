@@ -18,57 +18,80 @@ package viewmodels.checkAnswers.transaction
 
 import base.SpecBase
 import models.CheckMode
-import pages.transaction.TransactionDateOfContractPage
+import pages.transaction.{TransactionAddDateOfContractPage, TransactionDateOfContractPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, Text}
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 import java.time.LocalDate
 
 class TransactionDateOfContractSummarySpec extends SpecBase {
-  "must return a summary list row with the transaction contract date" in {
-    val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-    running(application) {
-      implicit val msgs: Messages = messages(application)
+  "TransactionDateOfContractSummary" - {
 
-      val userAnswers = emptyUserAnswers
-        .set(TransactionDateOfContractPage, LocalDate.of(2022, 10, 26)).success.value
+    "when date of contract is present" - {
 
-      val result = TransactionDateOfContractSummary.row(userAnswers)
+      "must return Some(Row) with the contract date and change link" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-      result.key.content.asHtml.toString() mustEqual msgs("transaction.transactionDateOfContract.checkYourAnswersLabel")
+        running(application) {
+          implicit val msgs: Messages = messages(application)
 
-      val htmlContent = result.value.content.asInstanceOf[Text].asHtml.toString()
-      htmlContent mustEqual msgs("26 10 2022")
+          val userAnswers = emptyUserAnswers
+            .set(TransactionDateOfContractPage, LocalDate.of(2022, 10, 26)).success.value
 
-      result.actions.get.items.size mustEqual 1
-      result.actions.get.items.head.href mustEqual controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(CheckMode).url
-      result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-      result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.transactionDateOfContract.change.hidden")
+          val row = TransactionDateOfContractSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+
+          val result = row match {
+            case Row(r) => r
+            case _      => fail("Expected Row but got Missing")
+          }
+
+          result.key.content.asHtml.toString() mustEqual msgs("transaction.transactionDateOfContract.checkYourAnswersLabel")
+          result.value.content.asHtml.toString() mustEqual msgs("26 10 2022")
+          result.actions.get.items.size mustEqual 1
+          result.actions.get.items.head.href mustEqual controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.transactionDateOfContract.change.hidden")
+        }
+      }
+    }
+
+    "when date of contract is absent but add date of contract is true" - {
+
+      "must return Some(Missing) with the correct redirect call" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers
+            .set(TransactionAddDateOfContractPage, true).success.value
+
+          val result = TransactionDateOfContractSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(CheckMode)
+
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
+        }
+      }
+    }
+
+    "when add date of contract is false or absent" - {
+
+      "must return None" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          TransactionDateOfContractSummary.row(emptyUserAnswers) mustBe None
+        }
+      }
     }
   }
-
-  "must return a summary list row with a link to enter transaction contract date when userAnswers is empty" in {
-
-    val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-    running(application) {
-      implicit val msgs: Messages = messages(application)
-
-      val userAnswers = emptyUserAnswers
-
-      val result = TransactionDateOfContractSummary.row(userAnswers)
-
-      result.key.content.asHtml.toString() mustEqual msgs("transaction.transactionDateOfContract.checkYourAnswersLabel")
-
-      val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-
-      htmlContent must include("govuk-link")
-      htmlContent must include(controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(CheckMode).url)
-      htmlContent must include(msgs("transaction.transactionDateOfContract.missing"))
-      result.actions mustBe None
-    }
-  }
-
 }

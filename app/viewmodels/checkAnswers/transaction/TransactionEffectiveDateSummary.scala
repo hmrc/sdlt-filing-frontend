@@ -19,43 +19,31 @@ package viewmodels.checkAnswers.transaction
 import models.{CheckMode, UserAnswers}
 import pages.transaction.TransactionEffectiveDatePage
 import play.api.i18n.{Lang, Messages}
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.DateTimeFormats.dateTimeFormat
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object TransactionEffectiveDateSummary  {
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode)
 
-    val changeRoute = controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode).url
-    val checkYourAnswersLabelMsg = messages("transaction.transactionEffectiveDate.checkYourAnswersLabel")
-    val displayMissingMsgContent = messages("transaction.transactionEffectiveDate.missing")
-    
-    answers.flatMap(_.get(TransactionEffectiveDatePage)).map {
-      answer =>
-
-        implicit val lang: Lang = messages.lang
-
+    answers.get(TransactionEffectiveDatePage).map { answer =>
+      implicit val lang: Lang = messages.lang
+      Row(
         SummaryListRowViewModel(
-          key     = checkYourAnswersLabelMsg,
+          key     = "transaction.transactionEffectiveDate.checkYourAnswersLabel",
           value   = ValueViewModel(answer.format(dateTimeFormat())),
           actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
+            ActionItemViewModel("site.change", changeRoute.url)
               .withVisuallyHiddenText(messages("transaction.transactionEffectiveDate.change.hidden"))
           )
         )
+      )
     }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">$displayMissingMsgContent</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = checkYourAnswersLabelMsg,
-        value = value
-      )
+      Missing(changeRoute)
     }
+  }
 }

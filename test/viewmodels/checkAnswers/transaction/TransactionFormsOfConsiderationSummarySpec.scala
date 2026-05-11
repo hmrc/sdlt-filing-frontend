@@ -23,12 +23,15 @@ import pages.transaction.TransactionFormsOfConsiderationPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class TransactionFormsOfConsiderationSummarySpec extends SpecBase {
 
   "TransactionFormsOfConsiderationSummary" - {
 
-    "must return a summary list row with forms of consideration" in {
+    "when forms of consideration are present" - {
+
+      "must return a summary list row with forms of consideration" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
         running(application) {
           implicit val msgs: Messages = messages(application)
@@ -47,7 +50,12 @@ class TransactionFormsOfConsiderationSummarySpec extends SpecBase {
               contingent = "no",
             )).success.value
 
-          val result = TransactionFormsOfConsiderationSummary.row(userAnswers)
+          val row = TransactionFormsOfConsiderationSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("transaction.transactionFormsOfConsideration.checkYourAnswersLabel")
 
@@ -60,27 +68,28 @@ class TransactionFormsOfConsiderationSummarySpec extends SpecBase {
           result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.transactionFormsOfConsideration.change.hidden")
         }
       }
+    }
 
-    "must return a summary list row with a link to enter forms of consideration when userAnswers is empty" in {
+    "when forms of consideration are not present" - {
+
+      "must return a Missing and redirect call to missing page when data is not present" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers = emptyUserAnswers
+          val result = TransactionFormsOfConsiderationSummary.row(emptyUserAnswers)
 
-          val result = TransactionFormsOfConsiderationSummary.row(userAnswers)
-          
-          result.key.content.asHtml.toString() mustEqual msgs("transaction.transactionFormsOfConsideration.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.transaction.routes.TransactionFormsOfConsiderationController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.transaction.routes.TransactionFormsOfConsiderationController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("transaction.transactionFormsOfConsideration.missing"))
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
+    }
   }
 }

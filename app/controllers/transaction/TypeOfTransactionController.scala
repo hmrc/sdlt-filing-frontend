@@ -19,8 +19,9 @@ package controllers.transaction
 import controllers.actions.*
 import forms.transaction.TypeOfTransactionFormProvider
 import models.Mode
+import models.prelimQuestions.TransactionType
 import navigation.Navigator
-import pages.transaction.TypeOfTransactionPage
+import pages.transaction.*
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -29,6 +30,7 @@ import views.html.transaction.TypeOfTransactionView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 class TypeOfTransactionController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -65,8 +67,18 @@ class TypeOfTransactionController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(TypeOfTransactionPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(TypeOfTransactionPage, mode, updatedAnswers))
+            finalAnswers   <- Future.fromTry {
+              if value == TransactionType.GrantOfLease then
+                updatedAnswers
+                  .remove(TotalConsiderationOfTransactionPage)
+                  .flatMap(_.remove(TransactionVatIncludedPage))
+                  .flatMap(_.remove(TransactionVatAmountPage))
+                  .flatMap(_.remove(TransactionFormsOfConsiderationPage))
+              else
+                Success(updatedAnswers)
+            }
+            _              <- sessionRepository.set(finalAnswers)
+          } yield Redirect(navigator.nextPage(TypeOfTransactionPage, mode, finalAnswers))
       )
   }
 }

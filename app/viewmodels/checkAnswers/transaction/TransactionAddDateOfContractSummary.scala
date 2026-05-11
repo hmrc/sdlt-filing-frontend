@@ -19,38 +19,33 @@ package viewmodels.checkAnswers.transaction
 import models.{CheckMode, UserAnswers}
 import pages.transaction.TransactionAddDateOfContractPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object TransactionAddDateOfContractSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
-    val changeRoute = controllers.transaction.routes.TransactionAddDateOfContractController.onPageLoad(CheckMode).url
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.transaction.routes.TransactionAddDateOfContractController.onPageLoad(CheckMode)
     val label = messages("transaction.addDateOfContract.checkYourAnswersLabel")
-    answers.get(TransactionAddDateOfContractPage).map {
-      answer =>
 
-        val value = if (answer) "site.yes" else "site.no"
+    answers.get(TransactionAddDateOfContractPage).map { answer =>
 
+      val value = if (answer) "site.yes" else "site.no"
+
+      Row(
         SummaryListRowViewModel(
           key     = label,
           value   = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
+            ActionItemViewModel("site.change", changeRoute.url)
               .withVisuallyHiddenText(messages("transaction.addDateOfContract.change.hidden"))
           )
         )
+      )
     }.getOrElse {
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">${messages("transaction.addDateOfContract.missing")}</a>""")
-      )
-      SummaryListRowViewModel(
-        key = label,
-        value = value
-      )
+      Missing(changeRoute)
     }
   }
 }

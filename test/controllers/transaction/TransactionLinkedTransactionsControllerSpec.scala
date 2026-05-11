@@ -18,7 +18,7 @@ package controllers.transaction
 
 import base.SpecBase
 import forms.transaction.TransactionLinkedTransactionsFormProvider
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -40,7 +40,8 @@ class TransactionLinkedTransactionsControllerSpec extends SpecBase with MockitoS
   val formProvider = new TransactionLinkedTransactionsFormProvider()
   val form = formProvider()
 
-  lazy val transactionLinkedTransactionsRoute = controllers.transaction.routes.TransactionLinkedTransactionsController.onPageLoad(NormalMode).url
+  lazy val transactionLinkedTransactionsRoute          = controllers.transaction.routes.TransactionLinkedTransactionsController.onPageLoad(NormalMode).url
+  lazy val transactionLinkedTransactionsRouteCheckMode = controllers.transaction.routes.TransactionLinkedTransactionsController.onPageLoad(CheckMode).url
 
   "TransactionLinkedTransactions Controller" - {
 
@@ -115,6 +116,31 @@ class TransactionLinkedTransactionsControllerSpec extends SpecBase with MockitoS
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.transaction.routes.PurchaserEligibleToClaimReliefController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to the Transaction CYA page when No is submitted in check mode" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, transactionLinkedTransactionsRouteCheckMode)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
       }
     }
 

@@ -18,10 +18,10 @@ package viewmodels.checkAnswers.transaction
 
 import base.SpecBase
 import models.CheckMode
-import pages.transaction.ClaimingPartialReliefAmountPage
+import pages.transaction.{ClaimingPartialReliefAmountPage, TransactionPartialReliefPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class ClaimingPartialReliefAmountSummarySpec extends SpecBase {
 
@@ -41,7 +41,12 @@ class ClaimingPartialReliefAmountSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(ClaimingPartialReliefAmountPage, value).success.value
 
-          val result = ClaimingPartialReliefAmountSummary.row(userAnswers)
+          val row = ClaimingPartialReliefAmountSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("transaction.claimingPartialReliefAmount.checkYourAnswersLabel")
 
@@ -58,23 +63,36 @@ class ClaimingPartialReliefAmountSummarySpec extends SpecBase {
 
     "when the partial relief amount is not present" - {
 
-      "must return a summary list row with a missing link" in {
+      "must return a Missing and redirect call to missing page when partial relief is true but amount is missing" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = ClaimingPartialReliefAmountSummary.row(emptyUserAnswers)
+          val userAnswers = emptyUserAnswers
+            .set(TransactionPartialReliefPage, true).success.value
 
-          result.key.content.asHtml.toString() mustEqual msgs("transaction.claimingPartialReliefAmount.checkYourAnswersLabel")
+          val result = ClaimingPartialReliefAmountSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.transaction.routes.ClaimingPartialReliefAmountController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("transaction.claimingPartialReliefAmount.missing"))
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.transaction.routes.ClaimingPartialReliefAmountController.onPageLoad(CheckMode)
 
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
+        }
+      }
+
+      "must return None when partial relief is not set" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          ClaimingPartialReliefAmountSummary.row(emptyUserAnswers) mustBe None
         }
       }
     }

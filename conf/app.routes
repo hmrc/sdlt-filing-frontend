@@ -415,6 +415,9 @@ POST        /about-the-purchaser/confirm-purchasers-address                     
 GET         /about-the-purchaser/confirm-purchasers-address/change                                   controllers.purchaser.ConfirmPurchaserAddressController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-purchaser/confirm-purchasers-address/change                                   controllers.purchaser.ConfirmPurchaserAddressController.onSubmit(mode: Mode = CheckMode)
 
+GET         /about-the-transaction/check-answers                                                     controllers.transaction.TransactionCheckYourAnswersController.onPageLoad()
+POST        /about-the-transaction/check-answers                                                     controllers.transaction.TransactionCheckYourAnswersController.onSubmit()
+
 GET         /about-the-transaction/before-you-start                                                  controllers.transaction.TransactionBeforeYouStartController.onPageLoad()
 
 GET        /about-the-transaction/type-of-transaction                                                controllers.transaction.TypeOfTransactionController.onPageLoad(mode: Mode = NormalMode)

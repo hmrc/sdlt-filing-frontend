@@ -20,7 +20,7 @@ import controllers.actions.*
 import forms.transaction.PurchaserEligibleToClaimReliefFormProvider
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.transaction.PurchaserEligibleToClaimReliefPage
+import pages.transaction.{AddRegisteredCharityNumberPage, CharityRegisteredNumberPage, ClaimingPartialReliefAmountPage, PurchaserEligibleToClaimReliefPage, ReasonForReliefPage, TransactionPartialReliefPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -29,6 +29,7 @@ import views.html.transaction.PurchaserEligibleToClaimReliefView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 class PurchaserEligibleToClaimReliefController @Inject()(
                                          override val messagesApi: MessagesApi,
@@ -65,12 +66,22 @@ class PurchaserEligibleToClaimReliefController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserEligibleToClaimReliefPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            finalAnswers   <- Future.fromTry {
+              if !value then
+                updatedAnswers
+                  .remove(ReasonForReliefPage)
+                  .flatMap(_.remove(AddRegisteredCharityNumberPage))
+                  .flatMap(_.remove(CharityRegisteredNumberPage))
+                  .flatMap(_.remove(TransactionPartialReliefPage))
+                  .flatMap(_.remove(ClaimingPartialReliefAmountPage))
+              else Success(updatedAnswers)
+            }
+            _              <- sessionRepository.set(finalAnswers)
           } yield {
-            if(value) {
-              Redirect(navigator.nextPage(PurchaserEligibleToClaimReliefPage, mode, updatedAnswers))
+            if (!value && mode == NormalMode) {
+              Redirect(controllers.transaction.routes.ConsiderationsAffectedUncertainController.onPageLoad(mode))
             } else {
-              Redirect(controllers.transaction.routes.ConsiderationsAffectedUncertainController.onPageLoad(NormalMode))
+              Redirect(navigator.nextPage(PurchaserEligibleToClaimReliefPage, mode, finalAnswers))
             }
           }
       )

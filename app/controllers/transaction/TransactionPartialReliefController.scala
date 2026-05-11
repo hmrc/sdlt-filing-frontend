@@ -20,7 +20,7 @@ import controllers.actions.*
 import forms.transaction.TransactionPartialReliefFormProvider
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.transaction.TransactionPartialReliefPage
+import pages.transaction.{ClaimingPartialReliefAmountPage, TransactionPartialReliefPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -29,6 +29,7 @@ import views.html.transaction.TransactionPartialReliefView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 class TransactionPartialReliefController @Inject()(
                                          override val messagesApi: MessagesApi,
@@ -65,12 +66,16 @@ class TransactionPartialReliefController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(TransactionPartialReliefPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            finalAnswers   <- Future.fromTry {
+              if !value then updatedAnswers.remove(ClaimingPartialReliefAmountPage)
+              else Success(updatedAnswers)
+            }
+            _              <- sessionRepository.set(finalAnswers)
           } yield {
-            if (value) {
-              Redirect(navigator.nextPage(TransactionPartialReliefPage, mode, updatedAnswers))
+            if (!value && mode == NormalMode) {
+              Redirect(controllers.transaction.routes.ConsiderationsAffectedUncertainController.onPageLoad(mode))
             } else {
-              Redirect(controllers.transaction.routes.ConsiderationsAffectedUncertainController.onPageLoad(NormalMode))
+              Redirect(navigator.nextPage(TransactionPartialReliefPage, mode, finalAnswers))
             }
           }
       )
