@@ -16,12 +16,45 @@
 
 package controllers.taxCalculation
 
-import models.UserAnswers
+import models.{Mode, UserAnswers}
 import models.taxCalculation.TaxCalculationFlow
 import pages.taxCalculation.TaxCalculationFlowPage
-
+import play.api.mvc.Call
+import models.taxCalculation.TaxCalculationFlow.*
+import play.api.i18n.Messages
 
 trait PenaltiesAndInterestExtension {
+
+  def getPageTitle(flow: TaxCalculationFlow)
+                  (implicit messages: Messages): String = flow match {
+    case FreeholdTaxCalculated =>
+      messages ("taxCalculation.penaltiesAndInterest.freehold-tax-calculated.title")
+    case FreeholdSelfAssessed =>
+      messages ("taxCalculation.penaltiesAndInterest.freehold-tax-not-calculated.title")
+    case LeaseholdTaxCalculated =>
+      messages ("taxCalculation.penaltiesAndInterest.freehold-tax-calculated.title")
+    case LeaseholdSelfAssessed =>
+      messages ("taxCalculation.penaltiesAndInterest.freehold-tax-calculated.title")
+  }
+
+  def postAction(flow: TaxCalculationFlow, mode: Mode): Call = flow match {
+    case FreeholdTaxCalculated =>
+      controllers.taxCalculation
+        .freeholdTaxCalculated.routes
+        .FreeholdSdltCalculatedPenaltiesAndInterestController.onSubmit(mode)
+    case FreeholdSelfAssessed =>
+      controllers.taxCalculation
+        .freeholdSelfAssessed.routes
+        .FreeholdSelfAssessedPenaltiesAndInterestController.onSubmit(mode)
+    case LeaseholdTaxCalculated =>
+      controllers.taxCalculation
+        .freeholdTaxCalculated.routes
+        .FreeholdSdltCalculatedPenaltiesAndInterestController.onSubmit(mode)
+    case LeaseholdSelfAssessed =>
+      controllers.taxCalculation
+        .freeholdTaxCalculated.routes
+        .FreeholdSdltCalculatedPenaltiesAndInterestController.onSubmit(mode)
+  }
 
   def validateFlow(userAnswers: UserAnswers)
                   (expectedFlow: TaxCalculationFlow): Option[Throwable] = {

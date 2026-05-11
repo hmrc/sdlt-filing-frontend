@@ -26,6 +26,6 @@ class PenaltiesAndInterestFormProvider @Inject() extends Mappings {
 
   def apply(): Form[PenaltiesAndInterest] =
     Form(
-      "value" -> enumerable[PenaltiesAndInterest]("taxCalculation.penaltiesAndInterest.scenario-one.error.required")
+      "value" -> enumerable[PenaltiesAndInterest]("taxCalculation.penaltiesAndInterest.error.required")
     )
 }

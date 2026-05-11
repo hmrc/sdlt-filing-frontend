@@ -1417,9 +1417,13 @@ taxCalculation.beforeStart.bullet5                                              
 
 taxCalculation.penaltiesAndInterest.button                                          = Save and continue
 
-taxCalculation.penaltiesAndInterest.scenario-one.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Freehold calculated
-taxCalculation.penaltiesAndInterest.scenario-one.heading                            = Does the amount you intend to pay include penalties and interest charges?
-taxCalculation.penaltiesAndInterest.scenario-one.error.required                     = Select yes if the amount you intend to pay includes penalties and interest charges
+taxCalculation.penaltiesAndInterest.freehold-tax-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Freehold calculated
+taxCalculation.penaltiesAndInterest.freehold-tax-calculated.heading                            = Does the amount you intend to pay include penalties and interest charges?
+taxCalculation.penaltiesAndInterest.error.required                                  = Select yes if the amount you intend to pay includes penalties and interest charges
+
+taxCalculation.penaltiesAndInterest.freehold-tax-not-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Freehold not calculated – Stamp Taxes Online
+taxCalculation.penaltiesAndInterest.freehold-tax-not-calculated.heading                            = Does the amount you intend to pay include penalties and interest charges?
+taxCalculation.penaltiesAndInterest.checkYourAnswersLabel                           = Not yet implemented / part of the work for CYA page
 
 taxCalculation.calculation.freehold.title                                           = SDLT breakdown - Tax calculation - Freehold calculated
 taxCalculation.calculation.heading                                                  = SDLT breakdown

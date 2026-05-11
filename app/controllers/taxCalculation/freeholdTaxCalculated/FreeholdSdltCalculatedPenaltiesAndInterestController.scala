@@ -22,10 +22,9 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import controllers.routes.ReturnTaskListController
 import controllers.taxCalculation.PenaltiesAndInterestExtension
 import forms.taxCalculation.PenaltiesAndInterestFormProvider
-import models.taxCalculation.TaxCalculationFlow.FreeholdTaxCalculated
-import models.{Mode, NormalMode, PenaltiesAndInterest}
+import models.taxCalculation.TaxCalculationFlow.{FreeholdTaxCalculated}
+import models.{Mode, PenaltiesAndInterest}
 import navigation.Navigator
-import pages.taxCalculation.freeholdSelfAssessed.*
 import pages.taxCalculation.freeholdTaxCalculated.FreeholdTaxCalculatedPenaltiesAndInterestPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,7 +32,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.LoggingUtil
-import views.html.taxCalculation.freeholdTaxCalculated.FreeholdTaxCalculatedAmountWithPenaltiesView
+import views.html.taxCalculation.AmountWithPenaltiesView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -49,24 +48,24 @@ class FreeholdSdltCalculatedPenaltiesAndInterestController @Inject()(
                                                                       val controllerComponents: MessagesControllerComponents,
                                                                       sdltCalculationService: SdltCalculationService,
                                                                       navigator: Navigator,
-                                                                      view: FreeholdTaxCalculatedAmountWithPenaltiesView
+                                                                      view: AmountWithPenaltiesView
                                                                     )(implicit ec: ExecutionContext) extends FrontendBaseController
   with I18nSupport with PenaltiesAndInterestExtension with LoggingUtil {
 
   private val form: Form[PenaltiesAndInterest] = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       validateFlow(request.userAnswers)(FreeholdTaxCalculated) match {
         case None =>
-          Ok(view(form, mode))
+          Ok(view(form, getPageTitle(flow = FreeholdTaxCalculated), postAction(FreeholdTaxCalculated, mode)))
         case Some(firstErrorFound) =>
           errorLog(s"[FreeholdSdltCalculatedPenaltiesAndInterestController][onPageLoad] invalid flow state: $firstErrorFound")
           Redirect(ReturnTaskListController.onPageLoad())
       }
   }
 
-  def onSubmit(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       validateFlow(request.userAnswers)(FreeholdTaxCalculated) match {
         case None =>
@@ -74,12 +73,12 @@ class FreeholdSdltCalculatedPenaltiesAndInterestController @Inject()(
             .bindFromRequest()
             .fold(
               formWithErrors =>
-                Future.successful(BadRequest(view(formWithErrors, mode))),
+                Future.successful(BadRequest(view(formWithErrors, getPageTitle(flow = FreeholdTaxCalculated), postAction(FreeholdTaxCalculated, mode)))),
               {
                 yesOrNoSelected =>
                   sdltCalculationService
                     .savePenaltiesAndInterestYesNoAnswer(
-                      key = FreeholdSelfAssessedPenaltiesAndInterestPage,
+                      key = FreeholdTaxCalculatedPenaltiesAndInterestPage,
                       value = yesOrNoSelected)
                     .map { _ =>
                       infoLog(s"[FreeholdSdltCalculatedPenaltiesAndInterestController][onSubmit] userAnswer saved :: redirecting")
