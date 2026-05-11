@@ -17,7 +17,7 @@
 package controllers.transaction
 
 import base.SpecBase
-import models.UserAnswers
+import models.{NormalMode, UserAnswers}
 import models.address.{Address, Country}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{times, verify, when}
@@ -226,7 +226,7 @@ class TransactionAddressControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionAddressController.redirectToAddressLookupTransaction().url //TODO DTR-3492: SPRINT-15 - Is this transaction pursuant to a previous option agreement? - tr-16
+          redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionExercisingAnOptionController.onPageLoad(NormalMode).url
 
           verify(mockAddressLookupService, times(1)).getAddressById(eqTo("test-id"))(any())
           verify(mockAddressLookupService, times(1)).saveAddressDetails(any(), any())(any(), any())
@@ -253,7 +253,7 @@ class TransactionAddressControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionAddressController.redirectToAddressLookupTransaction().url //TODO DTR-3492: SPRINT-15 - Is this transaction pursuant to a previous option agreement? - tr-16
+          redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionExercisingAnOptionController.onPageLoad(NormalMode).url
 
           verify(mockAddressLookupService, times(1)).getAddressById(eqTo("test-id"))(any())
           verify(mockAddressLookupService, times(1)).saveAddressDetails(any(), any())(any(), any())
@@ -309,7 +309,7 @@ class TransactionAddressControllerSpec extends SpecBase with MockitoSugar {
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionAddressController.redirectToAddressLookupTransaction().url //TODO DTR-3492: SPRINT-15 - Is this transaction pursuant to a previous option agreement? - tr-16
+            redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionExercisingAnOptionController.onPageLoad(NormalMode).url
 
             verify(mockAddressLookupService, times(1)).getAddressById(eqTo(addressId))(any())
           }

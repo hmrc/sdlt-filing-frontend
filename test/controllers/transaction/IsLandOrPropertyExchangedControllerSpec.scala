@@ -106,7 +106,6 @@ class IsLandOrPropertyExchangedControllerSpec extends SpecBase with MockitoSugar
       }
     }
 
-    //TODO DTR-3492: SPRINT-15 - Is this transaction pursuant to a previous option agreement? - tr-16
     "must redirect to s this transaction pursuant to a previous option agreement? when 'No' is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
@@ -128,7 +127,7 @@ class IsLandOrPropertyExchangedControllerSpec extends SpecBase with MockitoSugar
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionExercisingAnOptionController.onPageLoad(NormalMode).url
       }
     }
 

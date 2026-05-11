@@ -69,8 +69,8 @@ class IsLandOrPropertyExchangedController @Inject()(
           } yield {
             if (value) {
               Redirect(navigator.nextPage(IsLandOrPropertyExchangedPage, mode, updatedAnswers))
-            } else { //TODO DTR-3492: SPRINT-15 - Is this transaction pursuant to a previous option agreement? - tr-16
-              Redirect(controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(NormalMode))
+            } else {
+              Redirect(controllers.transaction.routes.TransactionExercisingAnOptionController.onPageLoad(NormalMode))
             }
           }
       )
