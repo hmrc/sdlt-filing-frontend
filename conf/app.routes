@@ -641,7 +641,6 @@ GET         /about-the-transaction/transaction-address-return                   
 GET         /about-the-transaction/transaction-address-return/change                                 controllers.transaction.TransactionAddressController.addressLookupCallbackChangeTransaction(id: String ?= "", mode: Mode = NormalMode)
 
 
-
 GET        /about-the-lease/type-of-lease                                                            controllers.lease.TypeOfLeaseController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-lease/type-of-lease                                                            controllers.lease.TypeOfLeaseController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-lease/type-of-lease/change                                                     controllers.lease.TypeOfLeaseController.onPageLoad(mode: Mode = CheckMode)
