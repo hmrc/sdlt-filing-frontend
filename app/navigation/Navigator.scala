@@ -287,8 +287,8 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.TransactionCisNumberController.onPageLoad(NormalMode)
     case DescriptionOfRestrictionsPage =>
       _ => controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(NormalMode)
-    case TransactionExercisingAnOptionPage => // TODO DTR-3496 - Sprint 15: Redirect to CYA page
-      _ => controllers.transaction.routes.TransactionExercisingAnOptionController.onPageLoad(NormalMode)
+    case TransactionExercisingAnOptionPage =>
+      _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

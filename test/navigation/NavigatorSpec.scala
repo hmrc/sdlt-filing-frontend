@@ -407,9 +407,9 @@ class NavigatorSpec extends SpecBase {
         "go from IsPurchaserRegisteredWithCISPage to TransactionCisNumberPage" in {
           navigator.nextPage(IsPurchaserRegisteredWithCISPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCisNumberController.onPageLoad(NormalMode)
         }
-        // TODO DTR-3496 - Sprint 15: Redirect to CYA page
+
         "go from TransactionExercisingAnOptionPage to CYA page" in {
-          navigator.nextPage(TransactionExercisingAnOptionPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionExercisingAnOptionController.onPageLoad(NormalMode)
+          navigator.nextPage(TransactionExercisingAnOptionPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
         }
       }
 
