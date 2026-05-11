@@ -408,7 +408,7 @@ class TransactionAddressControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url //TODO DTR-4817 : SPRINT-15  for Transaction CYA Page
+          redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
 
           verify(mockAddressLookupService, times(1)).getAddressById(eqTo("test-id"))(any())
           verify(mockAddressLookupService, times(1)).saveAddressDetails(any(), any())(any(), any())
@@ -534,7 +534,7 @@ class TransactionAddressControllerSpec extends SpecBase with MockitoSugar {
 
             status(result) mustEqual SEE_OTHER
 
-            redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url //TODO DTR-4817 : SPRINT-15  for Transaction CYA Page
+            redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
 
             verify(mockAddressLookupService, times(1)).getAddressById(eqTo(addressId))(any())
           }

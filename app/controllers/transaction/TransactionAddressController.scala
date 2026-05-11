@@ -88,8 +88,8 @@ class TransactionAddressController @Inject()(
       for {
         address <- addressLookupService.getAddressById(id)
         updated <- addressLookupService.saveAddressDetails(address, TransactionAddressPage)
-      } yield if (updated) { //TODO DTR-4817 : SPRINT-15  for Transaction CYA Page
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+      } yield if (updated) {
+        Redirect(controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad())
       } else {
         Redirect(routes.JourneyRecoveryController.onPageLoad())
       }
