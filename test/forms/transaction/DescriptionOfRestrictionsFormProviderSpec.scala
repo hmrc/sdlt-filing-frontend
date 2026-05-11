@@ -31,7 +31,7 @@ class DescriptionOfRestrictionsFormProviderSpec extends StringFieldBehaviours {
   val form = new DescriptionOfRestrictionsFormProvider()()
 
   private val allowedChars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 -`"
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 "
 
   private val validStrings: Gen[String] =
     Gen.choose(1, maxLength).flatMap { size =>

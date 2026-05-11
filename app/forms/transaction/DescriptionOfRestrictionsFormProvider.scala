@@ -24,7 +24,7 @@ import javax.inject.Inject
 class DescriptionOfRestrictionsFormProvider @Inject() extends Mappings {
 
   private val characterRegex =
-    """^[A-Za-z0-9 -`\\s\\.]*$"""
+    """^[A-Za-z0-9 \s\.]*$"""
 
   def apply(): Form[String] =
     Form(
