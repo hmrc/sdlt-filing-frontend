@@ -18,44 +18,43 @@ package controllers.transaction
 
 import base.SpecBase
 import controllers.routes
-import forms.transaction.IsLandOrPropertyExchangedFormProvider
+import forms.transaction.TransactionExercisingAnOptionFormProvider
 import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.transaction.IsLandOrPropertyExchangedPage
-import play.api.data.Form
+import pages.transaction.TransactionExercisingAnOptionPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.transaction.IsLandOrPropertyExchangedView
+import views.html.transaction.TransactionExercisingAnOptionView
 
 import scala.concurrent.Future
 
-class IsLandOrPropertyExchangedControllerSpec extends SpecBase with MockitoSugar {
+class TransactionExercisingAnOptionControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new IsLandOrPropertyExchangedFormProvider()
-  val form: Form[Boolean] = formProvider()
+  val formProvider = new TransactionExercisingAnOptionFormProvider()
+  val form = formProvider()
 
-  lazy val isLandOrPropertyExchangedRoute: String = controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(NormalMode).url
+  lazy val transactionExercisingAnOptionRoute = controllers.transaction.routes.TransactionExercisingAnOptionController.onPageLoad(NormalMode).url
 
-  "IsLandOrPropertyExchanged Controller" - {
+  "TransactionExercisingAnOption Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, isLandOrPropertyExchangedRoute)
+        val request = FakeRequest(GET, transactionExercisingAnOptionRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[IsLandOrPropertyExchangedView]
+        val view = application.injector.instanceOf[TransactionExercisingAnOptionView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
@@ -64,14 +63,14 @@ class IsLandOrPropertyExchangedControllerSpec extends SpecBase with MockitoSugar
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(IsLandOrPropertyExchangedPage, true).success.value
+      val userAnswers = emptyUserAnswers.set(TransactionExercisingAnOptionPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, isLandOrPropertyExchangedRoute)
+        val request = FakeRequest(GET, transactionExercisingAnOptionRoute)
 
-        val view = application.injector.instanceOf[IsLandOrPropertyExchangedView]
+        val view = application.injector.instanceOf[TransactionExercisingAnOptionView]
 
         val result = route(application, request).value
 
@@ -80,7 +79,7 @@ class IsLandOrPropertyExchangedControllerSpec extends SpecBase with MockitoSugar
       }
     }
 
-    "must redirect via navigator when 'Yes' is submitted" in {
+    "must redirect to the next page when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -96,7 +95,7 @@ class IsLandOrPropertyExchangedControllerSpec extends SpecBase with MockitoSugar
 
       running(application) {
         val request =
-          FakeRequest(POST, isLandOrPropertyExchangedRoute)
+          FakeRequest(POST, transactionExercisingAnOptionRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -106,43 +105,18 @@ class IsLandOrPropertyExchangedControllerSpec extends SpecBase with MockitoSugar
       }
     }
 
-    "must redirect to s this transaction pursuant to a previous option agreement? when 'No' is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, isLandOrPropertyExchangedRoute)
-            .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionExercisingAnOptionController.onPageLoad(NormalMode).url
-      }
-    }
-
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request =
-          FakeRequest(POST, isLandOrPropertyExchangedRoute)
+          FakeRequest(POST, transactionExercisingAnOptionRoute)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[IsLandOrPropertyExchangedView]
+        val view = application.injector.instanceOf[TransactionExercisingAnOptionView]
 
         val result = route(application, request).value
 
@@ -156,7 +130,7 @@ class IsLandOrPropertyExchangedControllerSpec extends SpecBase with MockitoSugar
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, isLandOrPropertyExchangedRoute)
+        val request = FakeRequest(GET, transactionExercisingAnOptionRoute)
 
         val result = route(application, request).value
 
@@ -171,7 +145,7 @@ class IsLandOrPropertyExchangedControllerSpec extends SpecBase with MockitoSugar
 
       running(application) {
         val request =
-          FakeRequest(POST, isLandOrPropertyExchangedRoute)
+          FakeRequest(POST, transactionExercisingAnOptionRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value

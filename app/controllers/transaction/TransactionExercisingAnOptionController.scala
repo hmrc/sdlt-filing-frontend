@@ -17,29 +17,29 @@
 package controllers.transaction
 
 import controllers.actions.*
-import forms.transaction.IsLandOrPropertyExchangedFormProvider
-import models.{Mode, NormalMode}
+import forms.transaction.TransactionExercisingAnOptionFormProvider
+import models.Mode
 import navigation.Navigator
-import pages.transaction.IsLandOrPropertyExchangedPage
+import pages.transaction.TransactionExercisingAnOptionPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.transaction.IsLandOrPropertyExchangedView
+import views.html.transaction.TransactionExercisingAnOptionView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IsLandOrPropertyExchangedController @Inject()(
+class TransactionExercisingAnOptionController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          sessionRepository: SessionRepository,
                                          navigator: Navigator,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         formProvider: IsLandOrPropertyExchangedFormProvider,
+                                         formProvider: TransactionExercisingAnOptionFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
-                                         view: IsLandOrPropertyExchangedView
+                                         view: TransactionExercisingAnOptionView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
@@ -47,7 +47,7 @@ class IsLandOrPropertyExchangedController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(IsLandOrPropertyExchangedPage) match {
+      val preparedForm = request.userAnswers.get(TransactionExercisingAnOptionPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -64,15 +64,9 @@ class IsLandOrPropertyExchangedController @Inject()(
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(IsLandOrPropertyExchangedPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(TransactionExercisingAnOptionPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield {
-            if (value) {
-              Redirect(navigator.nextPage(IsLandOrPropertyExchangedPage, mode, updatedAnswers))
-            } else {
-              Redirect(controllers.transaction.routes.TransactionExercisingAnOptionController.onPageLoad(NormalMode))
-            }
-          }
+          } yield Redirect(navigator.nextPage(TransactionExercisingAnOptionPage, mode, updatedAnswers))
       )
   }
 }

@@ -1566,8 +1566,8 @@ transaction.cap1OrNsbc.change.hidden                                            
 
 transaction.isLandOrPropertyExchanged.title                                         = The exchange or part exchange of the land or property
 transaction.isLandOrPropertyExchanged.heading                                       = The exchange or part exchange of the land or property
-transaction.isLandOrPropertyExchanged.subheading                                     = Is any land or property being exchanged or part exchanged as part of this transaction?
-transaction.isLandOrPropertyExchanged.paragraph                                    = Exchange or part exchange is when two parties are both receiving and releasing an area of land or property. This is treated as two separate transactions where each party is both a vendor and a purchaser.
+transaction.isLandOrPropertyExchanged.subheading                                    = Is any land or property being exchanged or part exchanged as part of this transaction?
+transaction.isLandOrPropertyExchanged.paragraph                                     = Exchange or part exchange is when two parties are both receiving and releasing an area of land or property. This is treated as two separate transactions where each party is both a vendor and a purchaser.
 transaction.isLandOrPropertyExchanged.checkYourAnswersLabel                         = Is any land or property being exchanged or part exchanged as part of this transaction?
 transaction.isLandOrPropertyExchanged.error.required                                = Select yes if any land or property is being exchanged or part exchanged as part of this transaction
 transaction.isLandOrPropertyExchanged.change.hidden                                 = Is any land or property being exchanged or part exchanged as part of this transaction?
@@ -1602,6 +1602,14 @@ transaction.descriptionOfRestrictions.error.regex                               
 transaction.descriptionOfRestrictions.error.length                                  = The brief description of the restrictions, covenants or conditions must be 42 characters or fewer
 transaction.descriptionOfRestrictions.checkYourAnswersLabel                         = What are the restrictions, covenants or conditions?
 transaction.descriptionOfRestrictions.change.hidden                                 = Restrictions, covenants or conditions
+
+transaction.transactionExercisingAnOption.title                                     = Exercising an option
+transaction.transactionExercisingAnOption.heading                                   = Exercising an option
+transaction.transactionExercisingAnOption.p                                         = This is when the transaction is the result of an option being exercised. The grant of an option and the subsequent purchase of the land or property are typically linked but considered two separate transactions.
+transaction.transactionExercisingAnOption.subheading                                = Is this transaction pursuant to a previous option agreement?
+transaction.transactionExercisingAnOption.checkYourAnswersLabel                     = Is this transaction pursuant to a previous option agreement?
+transaction.transactionExercisingAnOption.error.required                            = Select yes if this transaction is pursuant to a previous option agreement
+transaction.transactionExercisingAnOption.change.hidden                             = Is this transaction pursuant to a previous option agreement?
 
 lease.beforeYouStart.p1                                                             = In this section, you need to tell us about the lease on the land or property.
 lease.beforeYouStart.p2                                                             = We will ask for:

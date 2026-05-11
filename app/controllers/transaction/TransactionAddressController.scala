@@ -18,12 +18,12 @@ package controllers.transaction
 
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.routes
-import play.api.i18n.{I18nSupport, MessagesApi}
 import models.Mode
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import models.address.AddressLookupJourneyIdentifier.transactionQuestionsAddress
 import models.address.MandatoryFieldsConfigModel
 import pages.transaction.TransactionAddressPage
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.AddressLookupService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -76,8 +76,8 @@ class TransactionAddressController @Inject()(
       for {
         address <- addressLookupService.getAddressById(id)
         updated <- addressLookupService.saveAddressDetails(address, TransactionAddressPage)
-      } yield if (updated) { //TODO DTR-3492: SPRINT-15 - Is this transaction pursuant to a previous option agreement? - tr-16
-        Redirect(controllers.transaction.routes.TransactionAddressController.redirectToAddressLookupTransaction())
+      } yield if (updated) {
+        Redirect(controllers.transaction.routes.TransactionExercisingAnOptionController.onPageLoad(mode))
       } else {
         Redirect(routes.JourneyRecoveryController.onPageLoad())
       }

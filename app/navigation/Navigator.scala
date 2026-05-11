@@ -219,7 +219,7 @@ class Navigator @Inject()() {
          | CharityRegisteredNumberPage | ClaimingPartialReliefAmountPage | TransactionDeferringPaymentPage | TransactionUseOfLandOrPropertyPage
          | ConsiderationsAffectedUncertainPage | TransactionRulingFollowedPage | SaleOfBusinessPage | TransactionRestrictionsCovenantsAndConditionsPage
          | Cap1OrNsbcPage | TransactionSaleOfBusinessAssetsPage | IsLandOrPropertyExchangedPage | TotalAssetsConsiderationPage
-         | IsPurchaserRegisteredWithCISPage | TransactionCisNumberPage | DescriptionOfRestrictionsPage => true
+         | IsPurchaserRegisteredWithCISPage | TransactionCisNumberPage | DescriptionOfRestrictionsPage | TransactionExercisingAnOptionPage => true
 
     case _ => false
   }
@@ -287,6 +287,8 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.TransactionCisNumberController.onPageLoad(NormalMode)
     case DescriptionOfRestrictionsPage =>
       _ => controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(NormalMode)
+    case TransactionExercisingAnOptionPage =>
+      _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

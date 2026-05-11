@@ -637,6 +637,11 @@ POST       /about-the-transaction/description-of-restrictions-covenants-and-cond
 GET        /about-the-transaction/description-of-restrictions-covenants-and-conditions/change        controllers.transaction.DescriptionOfRestrictionsController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/description-of-restrictions-covenants-and-conditions/change        controllers.transaction.DescriptionOfRestrictionsController.onSubmit(mode: Mode = CheckMode)
 
+GET        /about-the-transaction/exercising-an-option                                               controllers.transaction.TransactionExercisingAnOptionController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-transaction/exercising-an-option                                               controllers.transaction.TransactionExercisingAnOptionController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-transaction/exercising-an-option/change                                        controllers.transaction.TransactionExercisingAnOptionController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-transaction/exercising-an-option/change                                        controllers.transaction.TransactionExercisingAnOptionController.onSubmit(mode: Mode = CheckMode)
+
 GET        /about-the-lease/before-you-start                                                         controllers.lease.LeaseBeforeYouStartController.onPageLoad()
 
 GET         /about-the-transaction/transaction-address-lookup                                        controllers.transaction.TransactionAddressController.redirectToAddressLookupTransaction(mode: Mode = NormalMode, changeRoute: Option[String] ?= None)
