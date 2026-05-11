@@ -17,44 +17,36 @@
 package viewmodels.checkAnswers.transaction
 
 import models.{CheckMode, UserAnswers}
-import pages.transaction.TransactionDateOfContractPage
+import pages.transaction.{TransactionAddDateOfContractPage, TransactionDateOfContractPage}
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.DateTimeFormats.dateTimeHintFormat
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object TransactionDateOfContractSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryRowResult] = {
+    val changeRoute = controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(CheckMode)
+    val label = messages("transaction.transactionDateOfContract.checkYourAnswersLabel")
 
-    val changeRoute = controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(CheckMode).url
-    val checkYourAnswersLabelMsg = messages("transaction.transactionDateOfContract.checkYourAnswersLabel")
-    val hiddenMsg = messages("transaction.transactionDateOfContract.change.hidden")
-    val displayMissingMsgContent = messages("transaction.transactionDateOfContract.missing")
-
-    answers.get(TransactionDateOfContractPage).map {
-      answer =>
-        
-        SummaryListRowViewModel(
-          key     = checkYourAnswersLabelMsg,
-          value   = ValueViewModel(answer.format(dateTimeHintFormat)),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(hiddenMsg)
+    (answers.get(TransactionDateOfContractPage), answers.get(TransactionAddDateOfContractPage)) match {
+      case (Some(date), _) =>
+        Some(Row(
+          SummaryListRowViewModel(
+            key     = label,
+            value   = ValueViewModel(date.format(dateTimeHintFormat)),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("transaction.transactionDateOfContract.change.hidden"))
+            )
           )
-        )
-    }.getOrElse{
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">$displayMissingMsgContent</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = checkYourAnswersLabelMsg,
-        value = value
-      )
+        ))
+      case (None, Some(true)) =>
+        Some(Missing(changeRoute))
+      case _ =>
+        None
     }
+  }
 }

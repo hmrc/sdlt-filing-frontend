@@ -149,7 +149,7 @@ class TransactionTaskListSpec extends SpecBase {
           section.heading mustBe messagesInstance("tasklist.transactionQuestion.heading")
           messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.transactionQuestion.details")
           row.status mustBe TLCompleted
-          row.url mustBe controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
+          row.url mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
         }
       }
 

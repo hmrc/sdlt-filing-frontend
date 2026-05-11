@@ -219,7 +219,7 @@ class Navigator @Inject()() {
          | CharityRegisteredNumberPage | ClaimingPartialReliefAmountPage | TransactionDeferringPaymentPage | TransactionUseOfLandOrPropertyPage
          | ConsiderationsAffectedUncertainPage | TransactionRulingFollowedPage | SaleOfBusinessPage | TransactionRestrictionsCovenantsAndConditionsPage
          | Cap1OrNsbcPage | TransactionSaleOfBusinessAssetsPage | IsLandOrPropertyExchangedPage | TotalAssetsConsiderationPage
-         | IsPurchaserRegisteredWithCISPage | TransactionCisNumberPage => true
+         | IsPurchaserRegisteredWithCISPage | TransactionCisNumberPage | DescriptionOfRestrictionsPage => true
 
     case _ => false
   }
@@ -273,8 +273,8 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.TransactionSaleOfBusinessAssetsController.onPageLoad(NormalMode)
     case TransactionRulingFollowedPage =>
       _ => controllers.transaction.routes.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(NormalMode)
-    case TransactionRestrictionsCovenantsAndConditionsPage => // TODO DTR-3480: SPRINT 15 redirect to tr-14a What are the restrictions, covenants or conditions affecting the value of the interest transferred or granted?
-      _ => controllers.transaction.routes.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(NormalMode)
+    case TransactionRestrictionsCovenantsAndConditionsPage =>
+      _ => controllers.transaction.routes.DescriptionOfRestrictionsController.onPageLoad(NormalMode)
     case Cap1OrNsbcPage =>
       _ => controllers.transaction.routes.TransactionRulingFollowedController.onPageLoad(NormalMode)
     case TransactionSaleOfBusinessAssetsPage =>
@@ -285,6 +285,8 @@ class Navigator @Inject()() {
       _ => controllers.transaction.routes.Cap1OrNsbcController.onPageLoad(NormalMode)
     case IsPurchaserRegisteredWithCISPage =>
       _ => controllers.transaction.routes.TransactionCisNumberController.onPageLoad(NormalMode)
+    case DescriptionOfRestrictionsPage =>
+      _ => controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
@@ -415,6 +417,24 @@ class Navigator @Inject()() {
     case LandSendingPlanByPostPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
     case LandMineralsOrMineralRightsPage => _ => controllers.land.routes.LandCheckYourAnswersController.onPageLoad()
     case LandSelectMeasurementUnitPage => _ => controllers.land.routes.AreaOfLandController.onPageLoad(CheckMode)
+
+    case TypeOfTransactionPage                    => _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+    case ConfirmTypeOfTransactionPage             => _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+    case TransactionEffectiveDatePage             => _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+    case TransactionAddDateOfContractPage         => _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+    case TransactionDateOfContractPage            => _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+    case TotalConsiderationOfTransactionPage      => _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+    case TransactionVatIncludedPage               => _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+    case TransactionVatAmountPage                 => _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+    case TransactionFormsOfConsiderationPage      => _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+    case TransactionLinkedTransactionsPage        => _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+    case TotalConsiderationOfLinkedTransactionPage => _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+    case PurchaserEligibleToClaimReliefPage       => _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+    case ReasonForReliefPage                      => _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+    case AddRegisteredCharityNumberPage           => _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+    case CharityRegisteredNumberPage              => _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+    case TransactionPartialReliefPage             => _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+    case ClaimingPartialReliefAmountPage          => _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
 
     // TODO: To be updated once Tax Calculation CYA pages built
     case FreeholdTaxCalculatedPenaltiesAndInterestPage  => _ => routes.IndexController.onPageLoad()

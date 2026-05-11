@@ -17,44 +17,42 @@
 package controllers.transaction
 
 import base.SpecBase
-import forms.transaction.TransactionLinkedTransactionsFormProvider
-import models.{CheckMode, NormalMode}
+import controllers.routes
+import forms.transaction.DescriptionOfRestrictionsFormProvider
+import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.transaction.TransactionLinkedTransactionsPage
+import pages.transaction.DescriptionOfRestrictionsPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import views.html.transaction.TransactionLinkedTransactionsView
+import views.html.transaction.DescriptionOfRestrictionsView
 
 import scala.concurrent.Future
 
-class TransactionLinkedTransactionsControllerSpec extends SpecBase with MockitoSugar {
+class DescriptionOfRestrictionsControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new TransactionLinkedTransactionsFormProvider()
+  lazy val descriptionOfRestrictionsRoute = controllers.transaction.routes.DescriptionOfRestrictionsController.onPageLoad(NormalMode).url
+
+  val formProvider = new DescriptionOfRestrictionsFormProvider()
   val form = formProvider()
 
-  lazy val transactionLinkedTransactionsRoute          = controllers.transaction.routes.TransactionLinkedTransactionsController.onPageLoad(NormalMode).url
-  lazy val transactionLinkedTransactionsRouteCheckMode = controllers.transaction.routes.TransactionLinkedTransactionsController.onPageLoad(CheckMode).url
-
-  "TransactionLinkedTransactions Controller" - {
+  "DescriptionOfRestrictions Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, transactionLinkedTransactionsRoute)
-
+        val request = FakeRequest(GET, descriptionOfRestrictionsRoute)
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[TransactionLinkedTransactionsView]
+        val view = application.injector.instanceOf[DescriptionOfRestrictionsView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
@@ -63,26 +61,22 @@ class TransactionLinkedTransactionsControllerSpec extends SpecBase with MockitoS
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(TransactionLinkedTransactionsPage, true).success.value
-
+      val userAnswers = emptyUserAnswers.set(DescriptionOfRestrictionsPage, "test answer").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, transactionLinkedTransactionsRoute)
-
-        val view = application.injector.instanceOf[TransactionLinkedTransactionsView]
-
+        val request = FakeRequest(GET, descriptionOfRestrictionsRoute)
+        val view = application.injector.instanceOf[DescriptionOfRestrictionsView]
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill("test answer"), NormalMode)(request, messages(application)).toString
       }
     }
 
-    "must redirect to the next page via navigator when YES is submitted" in {
+    "must redirect to the next page when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
@@ -95,52 +89,12 @@ class TransactionLinkedTransactionsControllerSpec extends SpecBase with MockitoS
 
       running(application) {
         val request =
-          FakeRequest(POST, transactionLinkedTransactionsRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
+          FakeRequest(POST, descriptionOfRestrictionsRoute)
+            .withFormUrlEncodedBody(("value", "test answer"))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
-      }
-    }
-
-    "must redirect to tr-8 is the purchaser eligible to claim relief when NO is answered" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(POST, transactionLinkedTransactionsRoute)
-          .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.transaction.routes.PurchaserEligibleToClaimReliefController.onPageLoad(NormalMode).url
-      }
-    }
-
-    "must redirect to the Transaction CYA page when No is submitted in check mode" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, transactionLinkedTransactionsRouteCheckMode)
-            .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
       }
     }
 
@@ -150,13 +104,10 @@ class TransactionLinkedTransactionsControllerSpec extends SpecBase with MockitoS
 
       running(application) {
         val request =
-          FakeRequest(POST, transactionLinkedTransactionsRoute)
+          FakeRequest(POST, descriptionOfRestrictionsRoute)
             .withFormUrlEncodedBody(("value", ""))
-
         val boundForm = form.bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[TransactionLinkedTransactionsView]
-
+        val view = application.injector.instanceOf[DescriptionOfRestrictionsView]
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
@@ -169,12 +120,11 @@ class TransactionLinkedTransactionsControllerSpec extends SpecBase with MockitoS
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, transactionLinkedTransactionsRoute)
-
+        val request = FakeRequest(GET, descriptionOfRestrictionsRoute)
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
 
@@ -184,13 +134,12 @@ class TransactionLinkedTransactionsControllerSpec extends SpecBase with MockitoS
 
       running(application) {
         val request =
-          FakeRequest(POST, transactionLinkedTransactionsRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
+          FakeRequest(POST, descriptionOfRestrictionsRoute)
+            .withFormUrlEncodedBody(("value", "test answer"))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }

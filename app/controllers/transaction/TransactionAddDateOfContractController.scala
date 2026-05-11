@@ -18,10 +18,10 @@ package controllers.transaction
 
 import controllers.actions.*
 import forms.transaction.TransactionAddDateOfContractFormProvider
-import models.Mode
+import models.{Mode, NormalMode}
 import models.prelimQuestions.TransactionType.GrantOfLease
 import navigation.Navigator
-import pages.transaction.{TransactionAddDateOfContractPage, TypeOfTransactionPage}
+import pages.transaction.{TransactionAddDateOfContractPage, TransactionDateOfContractPage, TypeOfTransactionPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -30,6 +30,7 @@ import views.html.transaction.TransactionAddDateOfContractView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 class TransactionAddDateOfContractController @Inject()(
                                          override val messagesApi: MessagesApi,
@@ -66,17 +67,20 @@ class TransactionAddDateOfContractController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(TransactionAddDateOfContractPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            finalAnswers   <- Future.fromTry {
+              if !value then updatedAnswers.remove(TransactionDateOfContractPage)
+              else Success(updatedAnswers)
+            }
+            _              <- sessionRepository.set(finalAnswers)
           } yield {
-            (value, request.userAnswers.get(TypeOfTransactionPage)) match {
-              case (true, Some(_)) =>
-                Redirect(navigator.nextPage(TransactionAddDateOfContractPage, mode, updatedAnswers))
-              case (false, Some(GrantOfLease)) =>
-                Redirect(controllers.transaction.routes.TransactionLinkedTransactionsController.onPageLoad(mode))
-              case (false, Some(_)) =>
-                Redirect(controllers.transaction.routes.TotalConsiderationOfTransactionController.onPageLoad(mode))
-              case _ =>
-                Redirect(controllers.transaction.routes.TypeOfTransactionController.onPageLoad(mode))
+            if (!value && mode == NormalMode) {
+              request.userAnswers.get(TypeOfTransactionPage) match {
+                case Some(GrantOfLease) => Redirect(controllers.transaction.routes.TransactionLinkedTransactionsController.onPageLoad(mode))
+                case Some(_)            => Redirect(controllers.transaction.routes.TotalConsiderationOfTransactionController.onPageLoad(mode))
+                case None               => Redirect(controllers.transaction.routes.TypeOfTransactionController.onPageLoad(mode))
+              }
+            } else {
+              Redirect(navigator.nextPage(TransactionAddDateOfContractPage, mode, finalAnswers))
             }
           }
       )

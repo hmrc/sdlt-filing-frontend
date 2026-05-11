@@ -19,41 +19,33 @@ package viewmodels.checkAnswers.transaction
 import models.{CheckMode, UserAnswers}
 import pages.transaction.PurchaserEligibleToClaimReliefPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object PurchaserEligibleToClaimReliefSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
-
-    val changeRoute = controllers.transaction.routes.PurchaserEligibleToClaimReliefController.onPageLoad(CheckMode).url
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.transaction.routes.PurchaserEligibleToClaimReliefController.onPageLoad(CheckMode)
     val label = messages("transaction.purchaserEligibleToClaimRelief.checkYourAnswersLabel")
-    
-    answers.get(PurchaserEligibleToClaimReliefPage).map {
-      answer =>
 
-        val value = if (answer) "site.yes" else "site.no"
+    answers.get(PurchaserEligibleToClaimReliefPage).map { answer =>
 
+      val value = if (answer) "site.yes" else "site.no"
+
+      Row(
         SummaryListRowViewModel(
-          key = label,
+          key   = label,
           value = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
+            ActionItemViewModel("site.change", changeRoute.url)
               .withVisuallyHiddenText(messages("transaction.purchaserEligibleToClaimRelief.change.hidden"))
           )
         )
+      )
     }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(s"""<a href="$changeRoute" class="govuk-link">${messages("transaction.purchaserEligibleToClaimRelief.missing")}</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = label,
-        value = value
-      )
+      Missing(changeRoute)
     }
   }
 }

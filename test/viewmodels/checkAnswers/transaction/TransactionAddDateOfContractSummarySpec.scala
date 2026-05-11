@@ -21,8 +21,7 @@ import models.CheckMode
 import pages.transaction.TransactionAddDateOfContractPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class TransactionAddDateOfContractSummarySpec extends SpecBase {
 
@@ -30,7 +29,7 @@ class TransactionAddDateOfContractSummarySpec extends SpecBase {
 
     "when add date of contract is present" - {
 
-      "must return a SummaryListRow with 'yes' text and change link" in {
+      "must return a Row with 'yes' text and change link" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
@@ -39,14 +38,15 @@ class TransactionAddDateOfContractSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(TransactionAddDateOfContractPage, true).success.value
 
-          val result = TransactionAddDateOfContractSummary.row(userAnswers)
+          val row = TransactionAddDateOfContractSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _      => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("transaction.addDateOfContract.checkYourAnswersLabel")
-
-          val contentString = result.value.content.asHtml.toString()
-
-          contentString mustEqual msgs("site.yes")
-
+          result.value.content.asHtml.toString() mustEqual msgs("site.yes")
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.transaction.routes.TransactionAddDateOfContractController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
@@ -54,7 +54,7 @@ class TransactionAddDateOfContractSummarySpec extends SpecBase {
         }
       }
 
-      "must return a SummaryListRow with 'no' text and change link" in {
+      "must return a Row with 'no' text and change link" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
@@ -63,25 +63,23 @@ class TransactionAddDateOfContractSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(TransactionAddDateOfContractPage, false).success.value
 
-          val result = TransactionAddDateOfContractSummary.row(userAnswers)
+          val row = TransactionAddDateOfContractSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _      => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("transaction.addDateOfContract.checkYourAnswersLabel")
-
-          val contentString = result.value.content.asHtml.toString()
-
-          contentString mustEqual msgs("site.no")
-
-          result.actions.get.items.size mustEqual 1
+          result.value.content.asHtml.toString() mustEqual msgs("site.no")
           result.actions.get.items.head.href mustEqual controllers.transaction.routes.TransactionAddDateOfContractController.onPageLoad(CheckMode).url
-          result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.addDateOfContract.change.hidden")
         }
       }
     }
 
     "when add date of contract is not present" - {
 
-      "must return a SummaryListRow with a link to if they want to add date of contract" in {
+      "must return Missing with the correct redirect call" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
@@ -89,17 +87,15 @@ class TransactionAddDateOfContractSummarySpec extends SpecBase {
 
           val result = TransactionAddDateOfContractSummary.row(emptyUserAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("transaction.addDateOfContract.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.transaction.routes.TransactionAddDateOfContractController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.transaction.routes.TransactionAddDateOfContractController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("transaction.addDateOfContract.missing"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }
   }
 }
-

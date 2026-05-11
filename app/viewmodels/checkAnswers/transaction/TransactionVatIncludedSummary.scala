@@ -19,36 +19,32 @@ package viewmodels.checkAnswers.transaction
 import models.{CheckMode, UserAnswers}
 import pages.transaction.TransactionVatIncludedPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object TransactionVatIncludedSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
-    answers.get(TransactionVatIncludedPage).map {
-      answer =>
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.transaction.routes.TransactionVatIncludedController.onPageLoad(CheckMode)
 
-        val value = if (answer) "site.yes" else "site.no"
+    answers.get(TransactionVatIncludedPage).map { answer =>
 
+      val value = if (answer) "site.yes" else "site.no"
+
+      Row(
         SummaryListRowViewModel(
           key     = "transaction.transactionVatIncluded.checkYourAnswersLabel",
           value   = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.transaction.routes.TransactionVatIncludedController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", changeRoute.url)
               .withVisuallyHiddenText(messages("transaction.transactionVatIncluded.change.hidden"))
           )
         )
-    }.getOrElse{
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="${controllers.transaction.routes.TransactionVatIncludedController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("transaction.transactionVatIncluded.missing")}</a>""")
       )
-
-      SummaryListRowViewModel(
-        key = "transaction.transactionVatIncluded.checkYourAnswersLabel",
-        value = value
-      )
+    }.getOrElse {
+      Missing(changeRoute)
     }
+  }
 }

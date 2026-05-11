@@ -17,31 +17,29 @@
 package controllers.transaction
 
 import controllers.actions.*
-import forms.transaction.TypeOfTransactionFormProvider
+import forms.transaction.DescriptionOfRestrictionsFormProvider
 import models.Mode
-import models.prelimQuestions.TransactionType
 import navigation.Navigator
-import pages.transaction.*
+import pages.transaction.DescriptionOfRestrictionsPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.transaction.TypeOfTransactionView
+import views.html.transaction.DescriptionOfRestrictionsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Success
 
-class TypeOfTransactionController @Inject()(
+class DescriptionOfRestrictionsController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        sessionRepository: SessionRepository,
                                        navigator: Navigator,
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
-                                       formProvider: TypeOfTransactionFormProvider,
+                                       formProvider: DescriptionOfRestrictionsFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
-                                       view: TypeOfTransactionView
+                                       view: DescriptionOfRestrictionsView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
@@ -49,7 +47,7 @@ class TypeOfTransactionController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(TypeOfTransactionPage) match {
+      val preparedForm = request.userAnswers.get(DescriptionOfRestrictionsPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -66,19 +64,11 @@ class TypeOfTransactionController @Inject()(
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(TypeOfTransactionPage, value))
-            finalAnswers   <- Future.fromTry {
-              if value == TransactionType.GrantOfLease then
-                updatedAnswers
-                  .remove(TotalConsiderationOfTransactionPage)
-                  .flatMap(_.remove(TransactionVatIncludedPage))
-                  .flatMap(_.remove(TransactionVatAmountPage))
-                  .flatMap(_.remove(TransactionFormsOfConsiderationPage))
-              else
-                Success(updatedAnswers)
-            }
-            _              <- sessionRepository.set(finalAnswers)
-          } yield Redirect(navigator.nextPage(TypeOfTransactionPage, mode, finalAnswers))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(DescriptionOfRestrictionsPage, value))
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield {
+              Redirect(navigator.nextPage(DescriptionOfRestrictionsPage, mode, updatedAnswers))
+          }
       )
   }
 }

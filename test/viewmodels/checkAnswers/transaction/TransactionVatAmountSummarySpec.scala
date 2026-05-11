@@ -18,10 +18,10 @@ package viewmodels.checkAnswers.transaction
 
 import base.SpecBase
 import models.CheckMode
-import pages.transaction.TransactionVatAmountPage
+import pages.transaction.{TransactionVatAmountPage, TransactionVatIncludedPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class TransactionVatAmountSummarySpec extends SpecBase {
 
@@ -41,7 +41,12 @@ class TransactionVatAmountSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(TransactionVatAmountPage, value).success.value
 
-          val result = TransactionVatAmountSummary.row(userAnswers)
+          val row = TransactionVatAmountSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("transaction.vatAmount.checkYourAnswersLabel")
 
@@ -58,23 +63,36 @@ class TransactionVatAmountSummarySpec extends SpecBase {
 
     "when the vat amount is not present" - {
 
-      "must return a summary list row with a missing link" in {
+      "must return a Missing and redirect call to missing page when VAT is included but amount is missing" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = TransactionVatAmountSummary.row(emptyUserAnswers)
+          val userAnswers = emptyUserAnswers
+            .set(TransactionVatIncludedPage, true).success.value
 
-          result.key.content.asHtml.toString() mustEqual msgs("transaction.vatAmount.checkYourAnswersLabel")
+          val result = TransactionVatAmountSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.transaction.routes.TransactionVatAmountController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("transaction.vatAmount.missing"))
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.transaction.routes.TransactionVatAmountController.onPageLoad(CheckMode)
 
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
+        }
+      }
+
+      "must return None when VAT is not included" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          TransactionVatAmountSummary.row(emptyUserAnswers) mustBe None
         }
       }
     }

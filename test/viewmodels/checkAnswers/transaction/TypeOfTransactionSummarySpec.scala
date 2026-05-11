@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,15 +23,15 @@ import pages.transaction.TypeOfTransactionPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class TypeOfTransactionSummarySpec extends SpecBase {
 
-  "TransactionTypeSummary" - {
+  "TypeOfTransactionSummary" - {
 
     "when transaction type is present" - {
 
-      "must return a summary list row with transaction type value and change link" in {
-
+      "must return a Row with transaction type value and change link" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
@@ -40,7 +40,12 @@ class TypeOfTransactionSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(TypeOfTransactionPage, TransactionType.ConveyanceTransfer).success.value
 
-          val result = TypeOfTransactionSummary.row(Some(userAnswers))
+          val row = TypeOfTransactionSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _      => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("prelim.transactionType.checkYourAnswersLabel")
 
@@ -55,7 +60,6 @@ class TypeOfTransactionSummarySpec extends SpecBase {
       }
 
       "must display the correct message for different transaction types" in {
-
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
@@ -72,78 +76,42 @@ class TypeOfTransactionSummarySpec extends SpecBase {
             val userAnswers = emptyUserAnswers
               .set(TypeOfTransactionPage, transactionType).success.value
 
-            val result = TypeOfTransactionSummary.row(Some(userAnswers))
+            val row = TypeOfTransactionSummary.row(userAnswers)
+
+            val result = row match {
+              case Row(r) => r
+              case _      => fail("Expected Row but got Missing")
+            }
 
             val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
             htmlContent mustEqual msgs(s"prelim.transactionType.$transactionType")
           }
         }
       }
-
-      "must properly escape special characters in transaction type message" in {
-
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-        running(application) {
-          implicit val msgs: Messages = messages(application)
-
-          val userAnswers = emptyUserAnswers
-            .set(TypeOfTransactionPage, TransactionType.ConveyanceTransfer).success.value
-
-          val result = TypeOfTransactionSummary.row(Some(userAnswers))
-
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent.nonEmpty mustBe true
-          result.value.content mustBe a[HtmlContent]
-        }
-      }
     }
 
     "when transaction type is not present" - {
 
-      "must return a summary list row with a link to enter transaction type" in {
-
+      "must return Missing with the correct redirect call" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = TypeOfTransactionSummary.row(Some(emptyUserAnswers))
+          val result = TypeOfTransactionSummary.row(emptyUserAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("prelim.transactionType.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.transaction.routes.TypeOfTransactionController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.transaction.routes.TypeOfTransactionController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("prelim.transactionType.link.message"))
-
-          result.actions mustBe None
-        }
-      }
-
-      "must return a summary list row with a link when UserAnswers is None" in {
-
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-        running(application) {
-          implicit val msgs: Messages = messages(application)
-
-          val result = TypeOfTransactionSummary.row(None)
-
-          result.key.content.asHtml.toString() mustEqual msgs("prelim.transactionType.checkYourAnswersLabel")
-
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.transaction.routes.TypeOfTransactionController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("prelim.transactionType.link.message"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }
 
     "must use CheckMode for the change link" in {
-
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
@@ -152,7 +120,12 @@ class TypeOfTransactionSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(TypeOfTransactionPage, TransactionType.ConveyanceTransfer).success.value
 
-        val result = TypeOfTransactionSummary.row(Some(userAnswers))
+        val row = TypeOfTransactionSummary.row(userAnswers)
+
+        val result = row match {
+          case Row(r) => r
+          case _      => fail("Expected Row but got Missing")
+        }
 
         result.actions.get.items.head.href mustEqual controllers.transaction.routes.TypeOfTransactionController.onPageLoad(CheckMode).url
       }

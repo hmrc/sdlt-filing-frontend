@@ -16,36 +16,35 @@
 
 package viewmodels.checkAnswers.transaction
 
-import models.transaction.ReasonForRelief
 import models.{CheckMode, UserAnswers}
-import pages.transaction.{AddRegisteredCharityNumberPage, ReasonForReliefPage}
+import pages.transaction.{PurchaserEligibleToClaimReliefPage, ReasonForReliefPage}
 import play.api.i18n.Messages
+import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object AddRegisteredCharityNumberSummary {
+object ReasonForReliefSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryRowResult] = {
-    val changeRoute = controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(CheckMode)
-    val label = messages("transaction.addRegisteredCharityNumber.checkYourAnswersLabel")
+    val changeRoute = controllers.transaction.routes.ReasonForReliefController.onPageLoad(CheckMode)
+    val label = messages("transaction.ReasonForRelief.checkYourAnswersLabel")
 
-    (answers.get(AddRegisteredCharityNumberPage), answers.get(ReasonForReliefPage)) match {
-      case (Some(answer), _) =>
-        val value = if (answer) "site.yes" else "site.no"
-
+    (answers.get(ReasonForReliefPage), answers.get(PurchaserEligibleToClaimReliefPage)) match {
+      case (Some(reason), _) =>
         Some(Row(
           SummaryListRowViewModel(
-            key   = label,
-            value = ValueViewModel(value),
+            key     = label,
+            value   = ValueViewModel(HtmlContent(HtmlFormat.escape(messages(s"transaction.ReasonForRelief.${reason.toString}")))),
             actions = Seq(
               ActionItemViewModel("site.change", changeRoute.url)
-                .withVisuallyHiddenText(messages("transaction.addRegisteredCharityNumber.change.hidden"))
+                .withVisuallyHiddenText(messages("transaction.ReasonForRelief.change.hidden"))
             )
           )
         ))
-      case (None, Some(ReasonForRelief.CharitiesRelief)) =>
+      case (None, Some(true)) =>
         Some(Missing(changeRoute))
       case _ =>
         None

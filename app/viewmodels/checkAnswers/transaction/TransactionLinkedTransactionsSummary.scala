@@ -19,36 +19,32 @@ package viewmodels.checkAnswers.transaction
 import models.{CheckMode, UserAnswers}
 import pages.transaction.TransactionLinkedTransactionsPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object TransactionLinkedTransactionsSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
-    answers.get(TransactionLinkedTransactionsPage).map {
-      answer =>
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.transaction.routes.TransactionLinkedTransactionsController.onPageLoad(CheckMode)
 
-        val value = if (answer) "site.yes" else "site.no"
+    answers.get(TransactionLinkedTransactionsPage).map { answer =>
 
+      val value = if (answer) "site.yes" else "site.no"
+
+      Row(
         SummaryListRowViewModel(
           key     = "transaction.linkedTransactions.checkYourAnswersLabel",
           value   = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.transaction.routes.TransactionLinkedTransactionsController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", changeRoute.url)
               .withVisuallyHiddenText(messages("transaction.linkedTransactions.change.hidden"))
           )
         )
+      )
     }.getOrElse {
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="${controllers.transaction.routes.TransactionLinkedTransactionsController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("transaction.linkedTransactions.missing")}</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = "transaction.linkedTransactions.checkYourAnswersLabel",
-        value = value
-      )
+      Missing(changeRoute)
     }
+  }
 }

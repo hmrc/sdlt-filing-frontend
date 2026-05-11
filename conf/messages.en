@@ -1168,7 +1168,7 @@ transaction.transactionEffectiveDate.details.summary                            
 transaction.transactionEffectiveDate.details.content                                = The effective date of transaction can be brought forward if the contract is substantially performed prior to completion. Substantial performance occurs when the purchaser pays 90% or more of the total price, occupies 90% or more of the property, or pays any rent.
 transaction.transactionEffectiveDate.p                                              = This is typically the date when the transaction is legally completed. This means the land or property has changed ownership and the purchaser becomes liable to pay SDLT.
 transaction.transactionEffectiveDate.hint                                           = For example, 27 3 2023
-transaction.transactionEffectiveDate.checkYourAnswersLabel                          = Effective date of the transaction
+transaction.transactionEffectiveDate.checkYourAnswersLabel                          = Effective date of transaction
 transaction.transactionEffectiveDate.error.required.all                             = Enter the effective date of the transaction
 transaction.transactionEffectiveDate.error.required.two                             = The effective date of transaction must include {0} and {1}
 transaction.transactionEffectiveDate.error.required                                 = The effective date of the transaction must include a {0}
@@ -1227,7 +1227,7 @@ transaction.transactionVatIncluded.missing                                      
 transaction.transactionDateOfContract.title                                         = What is the date of contract or conclusion of missives?
 transaction.transactionDateOfContract.heading                                       = What is the date of contract or conclusion of missives?
 transaction.transactionDateOfContract.hint                                          = For example, 27 3 2023
-transaction.transactionDateOfContract.checkYourAnswersLabel                         = Contract date or conclusion of missives
+transaction.transactionDateOfContract.checkYourAnswersLabel                         = Date of contract or conclusion of missives
 transaction.transactionDateOfContract.error.required.all                            = Enter the date of contract
 transaction.transactionDateOfContract.error.required.two                            = The date of contract must include {0} and {1}
 transaction.transactionDateOfContract.error.required                                = The date of contract must include {0}
@@ -1302,7 +1302,7 @@ transaction.addRegisteredCharityNumber.p2.link                                  
 transaction.addRegisteredCharityNumber.p3                                           = For Northern Ireland, visit <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
 transaction.addRegisteredCharityNumber.p3.suffix                                    = the Charity Commission for Northern Ireland (opens in new tab)
 transaction.addRegisteredCharityNumber.p3.link                                      = https://www.charitycommissionni.org.uk/charity-search/?pageNumber=1
-transaction.addRegisteredCharityNumber.checkYourAnswersLabel                        = Registered charity number
+transaction.addRegisteredCharityNumber.checkYourAnswersLabel                        = Do you know the charity’s registered number?
 transaction.addRegisteredCharityNumber.error.required                               = Select yes if you know the charity’s registered number
 transaction.addRegisteredCharityNumber.change.hidden                                = Registered charity number
 transaction.addRegisteredCharityNumber.missing                                     = Select registered charity number
@@ -1356,7 +1356,7 @@ transaction.totalConsiderationOfLinkedTransaction.heading                       
 transaction.totalConsiderationOfLinkedTransaction.p1                                = When two or more transactions are linked, SDLT is calculated on the aggregate total consideration. You must include any payable VAT for all linked transactions, and anything of value (money’s worth) given by the purchaser as part of the transaction, like the release or assumption of a debt.
 transaction.totalConsiderationOfLinkedTransaction.h2                                = What is the total consideration in money or money’s worth of all transactions?
 transaction.totalConsiderationOfLinkedTransaction.hint                              = Enter the value in whole pounds only, for example £200,000
-transaction.totalConsiderationOfLinkedTransaction.checkYourAnswersLabel             = totalConsiderationOfLinkedTransaction
+transaction.totalConsiderationOfLinkedTransaction.checkYourAnswersLabel             = Total consideration of all linked transactions
 transaction.totalConsiderationOfLinkedTransaction.error.required                    = Enter the total consideration in money or money’s worth of all transactions, in pounds
 transaction.totalConsiderationOfLinkedTransaction.error.invalidNumeric              = The total consideration in money or money’s worth of all transactions must only include numbers 0 to 9 and commas
 transaction.totalConsiderationOfLinkedTransaction.error.invalidWholeNumber          = Enter the total consideration in money or money’s worth of all transactions in whole pounds
@@ -1369,7 +1369,7 @@ transaction.purchaserEligibleToClaimRelief.title                                
 transaction.purchaserEligibleToClaimRelief.heading                                  = Claiming relief
 transaction.purchaserEligibleToClaimRelief.p1                                       = Relief means any reduction or exemption to the amount of payable SDLT, based on specific circumstances or criteria, like First Time Buyers’ Relief.
 transaction.purchaserEligibleToClaimRelief.h2                                       = Is the purchaser eligible to claim relief?
-transaction.purchaserEligibleToClaimRelief.checkYourAnswersLabel                    = Claiming relief
+transaction.purchaserEligibleToClaimRelief.checkYourAnswersLabel                    = Is the purchaser eligible to claim relief?
 transaction.purchaserEligibleToClaimRelief.error.required                           = Select yes if the purchaser is eligible to claim relief
 transaction.purchaserEligibleToClaimRelief.change.hidden                            = Claiming relief
 transaction.purchaserEligibleToClaimRelief.change.missing                           = Select if purchaser is eligible to claim relief
@@ -1388,13 +1388,19 @@ transaction.claimingPartialReliefAmount.heading                                 
 transaction.claimingPartialReliefAmount.p1                                          = When claiming relief on part of the land or property, only enter the amount that remains chargeable to SDLT.
 transaction.claimingPartialReliefAmount.h2                                          = How much relief is being claimed on part of the land or property?
 transaction.claimingPartialReliefAmount.hint                                        = Enter the value in whole pounds only, for example £200,000
-transaction.claimingPartialReliefAmount.checkYourAnswersLabel                       = How much relief is being claimed on part of the land or property?
+transaction.claimingPartialReliefAmount.checkYourAnswersLabel                       = Amount of partial relief being claimed
 transaction.claimingPartialReliefAmount.error.required                              = Enter the amount of relief being claimed on part of the land or property, in pounds
 transaction.claimingPartialReliefAmount.error.invalidNumeric                        = The amount of relief being claimed on part of the land or property must only include numbers 0 to 9 and commas
 transaction.claimingPartialReliefAmount.error.invalidWholeNumber                    = Enter the amount of relief being claimed on part of the land or property in whole pounds
 transaction.claimingPartialReliefAmount.error.maximum                               = The amount of relief being claimed on part of the land or property must be equal to or less than £9,999,999,999
 transaction.claimingPartialReliefAmount.change.hidden                               = the amount of relief being claimed on part of the land or property
 transaction.claimingPartialReliefAmount.missing                                     = Enter the amount of relief being claimed on part of the land or property
+
+transaction.checkYourAnswers.title                                                    = Check your answers - About the transaction
+transaction.purchaserEligibleToClaimRelief.missing                                    = Select if the purchaser is eligible to claim relief
+transaction.ReasonForRelief.checkYourAnswersLabel                                     = Reason for claiming relief
+transaction.ReasonForRelief.change.hidden                                             = reason for claiming relief
+transaction.ReasonForRelief.missing                                                   = Enter the reason for claiming relief
 
 taxCalculation.beforeStart.title.freehold.taxCalculated                             = Before you start - Tax calculation - Freehold calculated
 taxCalculation.beforeStart.title.freehold.taxNotCalculated                          = Before you start - Tax calculation - Freehold not calculated
@@ -1465,7 +1471,7 @@ taxCalculation.calculation.returnToTaxCalculation                               
 
 transaction.charityRegisteredNumber.title                                           = What is the charity’s registered number?
 transaction.charityRegisteredNumber.heading                                         = What is the charity’s registered number?
-transaction.charityRegisteredNumber.checkYourAnswersLabel                           = Charity Registered Number
+transaction.charityRegisteredNumber.checkYourAnswersLabel                           = Charity’s registered number
 transaction.charityRegisteredNumber.hint                                            = Their charity number should be 5-8 digits long and may contain letters
 transaction.charityRegisteredNumber.error.required                                  = Enter the charity’s registered number
 transaction.charityRegisteredNumber.error.length                                    = The charity’s registered number must be 14 characters or fewer
@@ -1586,6 +1592,16 @@ transaction.cisNumber.error.required                                            
 transaction.cisNumber.error.length                                                  = The purchaser’s CIS number must be 14 characters or less
 transaction.cisNumber.invalid                                                       = invalid error
 transaction.cisNumber.change.hidden                                                 = The purchaser’s CIS registration number
+
+transaction.descriptionOfRestrictions.title                                         = What are the restrictions, covenants or conditions affecting the value of the interest transferred or granted? - About the transaction
+transaction.descriptionOfRestrictions.heading                                       = What are the restrictions, covenants or conditions affecting the value of the interest transferred or granted?
+transaction.descriptionOfRestrictions.subHeading                                    = Have you applied for a CAP1 or NSBC in relation to this transaction?
+transaction.descriptionOfRestrictions.hint                                          = Provide a brief description, like a vendor`s right to buy back at less than market value
+transaction.descriptionOfRestrictions.error.required                                = Enter a brief description of the restrictions, covenants or conditions affecting the value of the interest transferred or granted
+transaction.descriptionOfRestrictions.error.regex                                   = The brief description of the restrictions, covenants or conditions must only include letters a to z, numbers 0 to 9, spaces and full stops
+transaction.descriptionOfRestrictions.error.length                                  = The brief description of the restrictions, covenants or conditions must be 42 characters or fewer
+transaction.descriptionOfRestrictions.checkYourAnswersLabel                         = What are the restrictions, covenants or conditions?
+transaction.descriptionOfRestrictions.change.hidden                                 = Restrictions, covenants or conditions
 
 lease.beforeYouStart.p1                                                             = In this section, you need to tell us about the lease on the land or property.
 lease.beforeYouStart.p2                                                             = We will ask for:

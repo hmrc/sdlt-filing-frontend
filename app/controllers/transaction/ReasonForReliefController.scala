@@ -20,7 +20,7 @@ import controllers.actions.*
 import forms.transaction.ReasonForReliefFormProvider
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.transaction.ReasonForReliefPage
+import pages.transaction.{AddRegisteredCharityNumberPage, CharityRegisteredNumberPage, ReasonForReliefPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -29,6 +29,7 @@ import views.html.transaction.ReasonForReliefView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 class ReasonForReliefController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -65,14 +66,21 @@ class ReasonForReliefController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ReasonForReliefPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            finalAnswers   <- Future.fromTry {
+              if (value.toString != "charitiesRelief")
+                updatedAnswers
+                  .remove(AddRegisteredCharityNumberPage)
+                  .flatMap(_.remove(CharityRegisteredNumberPage))
+              else Success(updatedAnswers)
+            }
+            _              <- sessionRepository.set(finalAnswers)
           } yield {
-            if (value.toString == "partExchange") {
+            if (value.toString == "partExchange" && mode == NormalMode) {
               Redirect(controllers.transaction.routes.IsPurchaserRegisteredWithCISController.onPageLoad(mode))
-            } else if (value.toString == "charitiesRelief") {
-              Redirect(controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(NormalMode))
+            } else if (value.toString == "charitiesRelief" && mode == NormalMode) {
+              Redirect(controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(mode))
             } else {
-              Redirect(navigator.nextPage(ReasonForReliefPage, mode, updatedAnswers))
+              Redirect(navigator.nextPage(ReasonForReliefPage, mode, finalAnswers))
             }
           }
       )

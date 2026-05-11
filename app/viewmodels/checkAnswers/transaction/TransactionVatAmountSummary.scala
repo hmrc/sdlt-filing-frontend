@@ -17,40 +17,36 @@
 package viewmodels.checkAnswers.transaction
 
 import models.{CheckMode, UserAnswers}
-import pages.transaction.TransactionVatAmountPage
+import pages.transaction.{TransactionVatAmountPage, TransactionVatIncludedPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object TransactionVatAmountSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
-    val changeRoute = controllers.transaction.routes.TransactionVatAmountController.onPageLoad(CheckMode).url
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryRowResult] = {
+    val changeRoute = controllers.transaction.routes.TransactionVatAmountController.onPageLoad(CheckMode)
     val label = messages("transaction.vatAmount.checkYourAnswersLabel")
-    answers.get(TransactionVatAmountPage).map {
-      answer =>
 
-        SummaryListRowViewModel(
-          key     = label,
-          value   = ValueViewModel(HtmlFormat.escape(s"£$answer").toString),
-          actions = Seq(
-            ActionItemViewModel("site.change",changeRoute)
-              .withVisuallyHiddenText(messages("transaction.vatAmount.change.hidden"))
+    (answers.get(TransactionVatAmountPage), answers.get(TransactionVatIncludedPage)) match {
+      case (Some(amount), _) =>
+        Some(Row(
+          SummaryListRowViewModel(
+            key     = label,
+            value   = ValueViewModel(HtmlFormat.escape(s"£$amount").toString),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("transaction.vatAmount.change.hidden"))
+            )
           )
-        )
-    }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">${messages("transaction.vatAmount.missing")}</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = label,
-        value = value
-      )
+        ))
+      case (None, Some(true)) =>
+        Some(Missing(changeRoute))
+      case _ =>
+        None
     }
+  }
 }
