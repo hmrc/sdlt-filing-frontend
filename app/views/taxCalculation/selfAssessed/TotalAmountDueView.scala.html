@@ -15,7 +15,7 @@
  *@
 
 @import viewmodels.InputWidth._
-@import viewmodels.taxCalculation.TotalAmountDueViewModel
+@import viewmodels.taxCalculation.selfAssessedViewModels.TotalAmountDueViewModel
 @import views.html.components._
 
 @this(
@@ -36,16 +36,16 @@
 @layout(pageTitle = title(form, messages("taxCalculation.totalAmountDue.title"), section = Some(messages(sectionKey)))) {
 
     @formHelper(action = postAction) {
-
+    
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-
+        
         @caption(messages("site.taxCalculation.caption"))
         @h1(messages("taxCalculation.totalAmountDue.heading"))
-
+        
         @govukSummaryList(viewModel.totalAmountDueSummary)
-
+        
         @govukInput(
             InputViewModel(
                 field = form("value"),
@@ -55,7 +55,7 @@
             .withPrefix(PrefixOrSuffix(content = Text(messages("site.money.prefix"))))
             .withHint(HintViewModel(Text(messages("taxCalculation.totalAmountDue.hint"))))
         )
-
+        
         @govukButton(ButtonViewModel(messages("site.save.continue")))
     }
 }
