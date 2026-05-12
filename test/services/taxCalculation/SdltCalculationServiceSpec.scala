@@ -182,6 +182,43 @@ class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeA
     }
   }
 
+  "whenInFlowAsync" - {
+
+    "must run the onAllowed block when the session has the expected flow recorded" in {
+      val answers = emptyUserAnswers.set(TaxCalculationFlowPage, TaxCalculationFlow.FreeholdTaxCalculated).success.value
+      implicit val req: DataRequest[?] = DataRequest(FakeRequest(), userAnswersId, answers)
+
+      val result = service.whenInFlowAsync(TaxCalculationFlow.FreeholdTaxCalculated) {
+        Future.successful(Results.Ok("rendered"))
+      }
+
+      result.futureValue.header.status mustBe OK
+    }
+
+    "must redirect to the return task list when the session has a different flow recorded" in {
+      val answers = emptyUserAnswers.set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdSelfAssessed).success.value
+      implicit val req: DataRequest[?] = DataRequest(FakeRequest(), userAnswersId, answers)
+
+      val result = service.whenInFlowAsync(TaxCalculationFlow.FreeholdTaxCalculated) {
+        Future.successful(Results.Ok("should not render"))
+      }
+
+      result.futureValue.header.status mustBe SEE_OTHER
+      result.futureValue.header.headers("Location") mustBe controllers.routes.ReturnTaskListController.onPageLoad().url
+    }
+
+    "must redirect to the return task list when no flow has been recorded in the session" in {
+      implicit val req: DataRequest[?] = DataRequest(FakeRequest(), userAnswersId, emptyUserAnswers)
+
+      val result = service.whenInFlowAsync(TaxCalculationFlow.FreeholdTaxCalculated) {
+        Future.successful(Results.Ok("should not render"))
+      }
+
+      result.futureValue.header.status mustBe SEE_OTHER
+      result.futureValue.header.headers("Location") mustBe controllers.routes.ReturnTaskListController.onPageLoad().url
+    }
+  }
+
   "savePenaltiesAndInterestYesNoAnswer" - {
 
     implicit val dataRequest: DataRequest[AnyContentAsEmpty.type] = DataRequest(

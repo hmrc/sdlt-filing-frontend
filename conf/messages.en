@@ -45,6 +45,7 @@ site.ukResidency.caption                                                        
 site.transaction.caption                                                            = About the transaction
 site.lease.caption                                                                  = About the lease
 site.taxCalculation.caption                                                         = Tax calculation
+site.taxCalculation.leaseholdSelfAssessed.caption                                   = Tax calculation - Leasehold not calculated
 
 site.vendor.theVendor                                                               = the vendor
 site.purchaser.thePurchaser                                                         = the purchaser
@@ -1468,6 +1469,22 @@ taxCalculation.calculation.propertyType.03                                      
 taxCalculation.calculation.propertyType.04                                          = 04 - Additional residential
 
 taxCalculation.calculation.returnToTaxCalculation                                   = Return to tax calculation
+
+taxCalculation.taxDueOnNpv.title                                                    = What is the tax due on the NPV?
+taxCalculation.taxDueOnNpv.heading                                                  = Tax due on the NPV
+taxCalculation.taxDueOnNpv.p1                                                       = You entered the NPV as: £{0}
+taxCalculation.taxDueOnNpv.p2                                                       = You can <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+taxCalculation.taxDueOnNpv.p2.linkText                                              = use the SDLT calculator to work out the correct amount (opens in a new tab)
+taxCalculation.taxDueOnNpv.p2.link                                                  = https://www.tax.service.gov.uk/calculate-stamp-duty-land-tax/#!/intro
+taxCalculation.taxDueOnNpv.h2                                                       = What is the tax due on the NPV?
+taxCalculation.taxDueOnNpv.hint                                                     = Enter the amount in whole pounds only, for example £10,000
+taxCalculation.taxDueOnNpv.error.required                                           = Enter the tax due on the NPV, in pounds
+taxCalculation.taxDueOnNpv.error.invalidNumeric                                     = The tax due on the NPV must only include commas and numbers 0 to 9
+taxCalculation.taxDueOnNpv.error.invalidWholeNumber                                 = Enter the tax due on the NPV in whole pounds
+taxCalculation.taxDueOnNpv.error.maximum                                            = The tax due on the NPV must be equal to or less than £9,999,999,999
+taxCalculation.taxDueOnNpv.error.length                                             = The tax due on the NPV must be 16 characters or fewer
+taxCalculation.taxDueOnNpv.checkYourAnswersLabel                                    = Tax due on NPV
+taxCalculation.taxDueOnNpv.change.hidden                                            = tax due on NPV
 
 transaction.charityRegisteredNumber.title                                           = What is the charity’s registered number?
 transaction.charityRegisteredNumber.heading                                         = What is the charity’s registered number?
