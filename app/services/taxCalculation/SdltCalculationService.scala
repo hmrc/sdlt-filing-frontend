@@ -43,6 +43,12 @@ class SdltCalculationService @Inject()(
     if (request.userAnswers.get(TaxCalculationFlowPage).contains(expected)) onAllowed
     else Redirect(ReturnTaskListController.onPageLoad())
 
+  def whenInFlowAsync(expected: TaxCalculationFlow)
+                     (onAllowed: => Future[Result])
+                     (implicit request: DataRequest[?]): Future[Result] =
+    if (request.userAnswers.get(TaxCalculationFlowPage).contains(expected)) onAllowed
+    else Future.successful(Redirect(ReturnTaskListController.onPageLoad()))
+
   def calculateStampDutyLandTax(userAnswers: UserAnswers)
                                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[MissingDataError, TaxCalculationResult]] =
     TaxCalcRequestValidator.buildRequest(userAnswers) match {

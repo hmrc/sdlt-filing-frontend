@@ -483,8 +483,9 @@ class NavigatorSpec extends SpecBase {
 
       "leasehold self-assessed routes" - {
 
-        "go from LeaseholdSelfAssessedPremiumPayableTaxPage to Index page" in {
-          navigator.nextPage(LeaseholdSelfAssessedPremiumPayableTaxPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        "go from LeaseholdSelfAssessedPremiumPayableTaxPage to LeaseholdSelfAssessedNpvTaxPage page" in {
+          navigator.nextPage(LeaseholdSelfAssessedPremiumPayableTaxPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
+            controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedTaxDueOnNpvController.onPageLoad(NormalMode)
         }
 
         "go from LeaseholdSelfAssessedNpvTaxPage to Index page" in {
