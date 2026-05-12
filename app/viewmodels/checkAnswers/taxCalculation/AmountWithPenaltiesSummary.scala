@@ -31,7 +31,7 @@ import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 
-object AmountWithPenaltiesSummary  {
+object AmountWithPenaltiesSummary {
 
   def row(flowKey: QuestionPage[Boolean])(answers: UserAnswers)
          (implicit messages: Messages): SummaryRowResult = {
@@ -45,12 +45,12 @@ object AmountWithPenaltiesSummary  {
         controllers.taxCalculation
           .freeholdSelfAssessed.routes
           .FreeholdSelfAssessedPenaltiesAndInterestController.onPageLoad(CheckMode)
-
-      // TODO: DTR-4799 => apply changes for Screen 3 and 4 when appropriate
       case LeaseholdTaxCalculatedPenaltiesAndInterestPage =>
         controllers.taxCalculation
-          .freeholdTaxCalculated.routes
-          .FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(CheckMode)
+          .leaseholdTaxCalculated.routes
+          .LeaseholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(CheckMode)
+
+      // TODO: DTR-4799 => apply changes for Screen 4
       case LeaseholdSelfAssessedPenaltiesAndInterestPage =>
         controllers.taxCalculation
           .freeholdTaxCalculated.routes
@@ -62,12 +62,12 @@ object AmountWithPenaltiesSummary  {
       answer =>
         Row(
           SummaryListRowViewModel(
-            key     = "taxCalculation.penaltiesAndInterest.checkYourAnswersLabel",
-            value   = ValueViewModel( HtmlContent( HtmlFormat.escape(answer.toString) ) ),
-            actions = Seq( ActionItemViewModel("site.change", changeRoute.url) )
+            key = "taxCalculation.penaltiesAndInterest.checkYourAnswersLabel",
+            value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer.toString))),
+            actions = Seq(ActionItemViewModel("site.change", changeRoute.url))
           )
         )
-    }.getOrElse( Missing(changeRoute) )
+    }.getOrElse(Missing(changeRoute))
 
   }
 }

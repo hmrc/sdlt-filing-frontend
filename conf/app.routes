@@ -584,8 +584,10 @@ GET         /tax-calculation/leasehold-calculated/before-you-start              
 #POST       /tax-calculation/leasehold-calculated/self-assessment                controllers.LeaseholdSdltCalculatedSelfAssessmentController.onSubmit()
 #GET        /tax-calculation/leasehold-calculated/total-amount-due               controllers.LeaseholdSdltCalculatedTotalDueController.onPageLoad()
 #POST       /tax-calculation/leasehold-calculated/total-amount-due               controllers.LeaseholdSdltCalculatedTotalDueController.onSubmit()
-#GET        /tax-calculation/leasehold-calculated/penalties-and-interest-charges controllers.LeaseholdSdltCalculatedPenaltiesAndInterestController.onPageLoad()
-#POST       /tax-calculation/leasehold-calculated/penalties-and-interest-charges controllers.LeaseholdSdltCalculatedPenaltiesAndInterestController.onSubmit()
+GET        /tax-calculation/leasehold-calculated/are-penalties-and-interest-included        controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(mode: Mode = NormalMode)
+POST       /tax-calculation/leasehold-calculated/are-penalties-and-interest-included        controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdSdltCalculatedPenaltiesAndInterestController.onSubmit(mode: Mode = NormalMode)
+GET        /tax-calculation/leasehold-calculated/are-penalties-and-interest-included/change controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(mode: Mode = CheckMode)
+POST       /tax-calculation/leasehold-calculated/are-penalties-and-interest-included/change controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdSdltCalculatedPenaltiesAndInterestController.onSubmit(mode: Mode = CheckMode)
 #GET        /tax-calculation/leasehold-calculated/check-your-answers             controllers.LeaseholdSdltCalculatedCheckYourAnswersController.onPageLoad()
 #POST       /tax-calculation/leasehold-calculated/check-your-answers             controllers.LeaseholdSdltCalculatedCheckYourAnswersController.onSubmit()
 

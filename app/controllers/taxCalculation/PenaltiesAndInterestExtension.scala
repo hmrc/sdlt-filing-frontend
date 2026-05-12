@@ -32,7 +32,7 @@ trait PenaltiesAndInterestExtension {
     case FreeholdSelfAssessed =>
       messages ("taxCalculation.penaltiesAndInterest.freehold-tax-not-calculated.title")
     case LeaseholdTaxCalculated =>
-      messages ("taxCalculation.penaltiesAndInterest.freehold-tax-calculated.title")
+      messages ("taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.title")
     case LeaseholdSelfAssessed =>
       messages ("taxCalculation.penaltiesAndInterest.freehold-tax-calculated.title")
   }
@@ -48,8 +48,8 @@ trait PenaltiesAndInterestExtension {
         .FreeholdSelfAssessedPenaltiesAndInterestController.onSubmit(mode)
     case LeaseholdTaxCalculated =>
       controllers.taxCalculation
-        .freeholdTaxCalculated.routes
-        .FreeholdSdltCalculatedPenaltiesAndInterestController.onSubmit(mode)
+        .leaseholdTaxCalculated.routes
+        .LeaseholdSdltCalculatedPenaltiesAndInterestController.onSubmit(mode)
     case LeaseholdSelfAssessed =>
       controllers.taxCalculation
         .freeholdTaxCalculated.routes
