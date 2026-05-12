@@ -27,7 +27,7 @@ class LeaseholdSelfAssessedPremiumPayableTaxFormProvider @Inject() extends Mappi
 
   def apply(): Form[String] =
     Form(
-      "leaseholdSelfAssessedPremiumPayableTax" -> wholeNumberCurrency(
+      "value" -> wholeNumberCurrency(
         requiredKey = "taxCalculation.leaseholdSelfAssessed.premiumPayable.error.emptyValue",
         invalidNumericKey = "taxCalculation.leaseholdSelfAssessed.premiumPayable.error.invalidNumeric",
         invalidWholeNumberKey = "taxCalculation.leaseholdSelfAssessed.premiumPayable.error.invalidWholeNumber",

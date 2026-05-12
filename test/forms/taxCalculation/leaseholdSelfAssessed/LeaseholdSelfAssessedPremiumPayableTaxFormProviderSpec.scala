@@ -30,9 +30,9 @@ class LeaseholdSelfAssessedPremiumPayableTaxFormProviderSpec extends StringField
 
   val form = new LeaseholdSelfAssessedPremiumPayableTaxFormProvider()()
 
-  ".leaseholdSelfAssessedPremiumPayableTax" - {
+  ".value" - {
 
-    val fieldName = "leaseholdSelfAssessedPremiumPayableTax"
+    val fieldName = "value"
 
     behave like fieldThatBindsValidData(
       form,

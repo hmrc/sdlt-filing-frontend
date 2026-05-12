@@ -1504,7 +1504,7 @@ taxCalculation.genericPenaltiesDue.checkYourAnswersLabel                        
 taxCalculation.totalAmountDue.checkYourAnswersLabel                                 = Amount to be paid
 taxCalculation.totalAmountDue.change.hidden                                         = amount to be paid
 
-taxCalculation.leaseholdSelfAssessed.premiumPayable.title = What is the tax due on the total premium payable? - Tax calculation - Leasehold not calculated - Stamp Taxes Online - GOV.UK
+taxCalculation.leaseholdSelfAssessed.premiumPayable.title = What is the tax due on the total premium payable?
 taxCalculation.leaseholdSelfAssessed.premiumPayable.heading = What is the tax due on the total premium payable?
 taxCalculation.leaseholdSelfAssessed.premiumPayable.description = You entered the total premium payable as: £{0}
 taxCalculation.leaseholdSelfAssessed.premiumPayable.hint = Enter the amount in whole pounds only, for example £10,000

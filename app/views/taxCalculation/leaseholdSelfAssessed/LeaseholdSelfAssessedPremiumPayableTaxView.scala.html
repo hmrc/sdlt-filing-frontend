@@ -28,12 +28,12 @@
 
 @(form: Form[_], premiumPayable: String, mode: Mode)(implicit rh: RequestHeader, messages: Messages)
 
-@layout(pageTitle = title(form, messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.title"), section = Some(messages("site.taxCalculation.caption")))) {
+@layout(pageTitle = title(form, messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.title"), section = Some(messages("site.taxCalculation.leaseholdSelfAssessed.caption")))) {
 
     @formHelper(action = controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedPremiumPayableTaxController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("leaseholdSelfAssessedPremiumPayableTax" -> "TPPtax")))
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
         @caption(messages("site.taxCalculation.caption"))
@@ -41,14 +41,13 @@
 
         @govukInput(
             InputViewModel(
-                field = form("leaseholdSelfAssessedPremiumPayableTax"),
+                field = form("value"),
                 label = Label(
                     classes = "govuk-!-margin-bottom-4",
                     content = messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.description", premiumPayable)),
 
             )
             .asNumeric()
-            .withId("TPPtax")
             .withCssClass("govuk-input--width-10 govuk-label govuk-label--m")
             .withHint(HintViewModel(HtmlContent(messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.hint"))))
             .withPrefix(PrefixOrSuffix(content = Text(messages("site.money.prefix"))))
