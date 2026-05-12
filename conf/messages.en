@@ -1423,9 +1423,12 @@ taxCalculation.penaltiesAndInterest.freehold-tax-calculated.title               
 taxCalculation.penaltiesAndInterest.freehold-tax-calculated.heading                            = Does the amount you intend to pay include penalties and interest charges?
 taxCalculation.penaltiesAndInterest.error.required                                  = Select yes if the amount you intend to pay includes penalties and interest charges
 
-taxCalculation.penaltiesAndInterest.freehold-tax-not-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Freehold not calculated – Stamp Taxes Online
+taxCalculation.penaltiesAndInterest.freehold-tax-not-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Freehold not calculated
 taxCalculation.penaltiesAndInterest.freehold-tax-not-calculated.heading                            = Does the amount you intend to pay include penalties and interest charges?
 taxCalculation.penaltiesAndInterest.checkYourAnswersLabel                           = Not yet implemented / part of the work for CYA page
+
+taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Leasehold calculated
+taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.heading                            = Does the amount you intend to pay include penalties and interest charges?
 
 taxCalculation.calculation.freehold.title                                           = SDLT breakdown - Tax calculation - Freehold calculated
 taxCalculation.calculation.heading                                                  = SDLT breakdown
