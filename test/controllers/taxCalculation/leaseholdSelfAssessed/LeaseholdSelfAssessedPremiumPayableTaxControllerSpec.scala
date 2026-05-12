@@ -22,15 +22,25 @@ import forms.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedPremiumPa
 import org.scalatest.freespec.AnyFreeSpec
 import models.NormalMode
 import models.taxCalculation.TaxCalculationFlow
+import navigation.{FakeNavigator, Navigator}
+import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.any
+import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.taxCalculation.TaxCalculationFlowPage
 import pages.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedPremiumPayableTaxPage
+import play.api.inject.bind
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import repositories.SessionRepository
 import views.html.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedPremiumPayableTaxView
+
+import scala.concurrent.Future
 
 
 class LeaseholdSelfAssessedPremiumPayableTaxControllerSpec extends AnyFreeSpec with SpecBase {
 
+  def onwardRoute = Call("GET", "/foo")
   private val fullReturnWithLeaseData = emptyFullReturn.copy(lease = Some(completeLease))
   val form = new LeaseholdSelfAssessedPremiumPayableTaxFormProvider()()
   val premiumPayable = "50000.00"
@@ -70,6 +80,35 @@ class LeaseholdSelfAssessedPremiumPayableTaxControllerSpec extends AnyFreeSpec w
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form.fill("5000"), premiumPayable, NormalMode)(request, messages(application)).toString
+      }
+    }
+    "must redirect to next page when valid data is submitted in NormalMode" in {
+
+      val userAnswers = emptyUserAnswers
+        .copy(fullReturn = Some(fullReturnWithLeaseData))
+        .set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdSelfAssessed).success.value
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, premiumPayableRoute)
+            .withFormUrlEncodedBody(("leaseholdSelfAssessedPremiumPayableTax", "5000"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
     "must redirect to the ReturnTaskListController for a GET when not leasehold self-assessed" in {

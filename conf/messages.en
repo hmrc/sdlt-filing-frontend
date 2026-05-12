@@ -1506,13 +1506,11 @@ taxCalculation.totalAmountDue.change.hidden                                     
 
 taxCalculation.leaseholdSelfAssessed.premiumPayable.title = What is the tax due on the total premium payable? - Tax calculation - Leasehold not calculated - Stamp Taxes Online - GOV.UK
 taxCalculation.leaseholdSelfAssessed.premiumPayable.heading = What is the tax due on the total premium payable?
-taxCalculation.leaseholdSelfAssessed.premiumPayable.caption = Tax calculation
-taxCalculation.leaseholdSelfAssessed.premiumPayable.description = You entered the total premium payable as: £{0}.
+taxCalculation.leaseholdSelfAssessed.premiumPayable.description = You entered the total premium payable as: £{0}
 taxCalculation.leaseholdSelfAssessed.premiumPayable.hint = Enter the amount in whole pounds only, for example £10,000
 
 taxCalculation.leaseholdSelfAssessed.premiumPayable.checkYourAnswers                = Tax due on premium payable
 taxCalculation.leaseholdSelfAssessed.premiumPayable.change.hidden                   = tax due on premium payable
-taxCalculation.leaseholdSelfAssessed.premiumPayable.missing                         = Enter tax due on premium payable
 
 taxCalculation.leaseholdSelfAssessed.premiumPayable.error.emptyValue = Enter the tax due on the total premium payable, in pounds
 taxCalculation.leaseholdSelfAssessed.premiumPayable.error.maxLength = The tax due on the total premium payable must be 16 characters or fewer

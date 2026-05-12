@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.{HmrcPageHeading, PageHeading}
+@import views.html.components._
 
 @this(
         layout: templates.Layout,
@@ -22,25 +22,22 @@
         formHelper: FormWithCSRF,
         govukInput: GovukInput,
         govukButton: GovukButton,
-        hmrcPageHeading: HmrcPageHeading
+        h1: h1,
+        caption: Caption
 )
 
 @(form: Form[_], premiumPayable: String, mode: Mode)(implicit rh: RequestHeader, messages: Messages)
 
-@layout(pageTitle = title(form, messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.title"))) {
+@layout(pageTitle = title(form, messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.title"), section = Some(messages("site.taxCalculation.caption")))) {
 
     @formHelper(action = controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedPremiumPayableTaxController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("leaseholdSelfAssessedPremiumPayableTax" -> "TPPtax")))
         }
 
-        @hmrcPageHeading(PageHeading(
-            text           = messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.heading"),
-            headingClasses = Some("govuk-heading-l"),
-            captionClasses = Some("govuk-caption-l"),
-            section        = Some(messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.caption"))
-        ))
+        @caption(messages("site.taxCalculation.caption"))
+        @h1(messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.heading"))
 
         @govukInput(
             InputViewModel(
@@ -54,7 +51,7 @@
             .withId("TPPtax")
             .withCssClass("govuk-input--width-10 govuk-label govuk-label--m")
             .withHint(HintViewModel(HtmlContent(messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.hint"))))
-            .withPrefix(PrefixOrSuffix(content = Text("£")))
+            .withPrefix(PrefixOrSuffix(content = Text(messages("site.money.prefix"))))
         )
 
         @govukButton(ButtonViewModel("site.save.continue"))
