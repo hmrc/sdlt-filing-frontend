@@ -103,7 +103,7 @@ class LeaseholdSelfAssessedPremiumPayableTaxControllerSpec extends AnyFreeSpec w
       running(application) {
         val request =
           FakeRequest(POST, premiumPayableRoute)
-            .withFormUrlEncodedBody(("leaseholdSelfAssessedPremiumPayableTax", "5000"))
+            .withFormUrlEncodedBody(("value", "5000"))
 
         val result = route(application, request).value
 
