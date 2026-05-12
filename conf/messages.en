@@ -21,6 +21,7 @@ site.section.prefix                                                             
 site.fullStop                                                                       = .
 site.or                                                                             = or
 site.money.prefix                                                                   = £
+site.warning                                                                        = Warning
 
 # Site Errors
 site.error.generic.title                                                            = Generic Error (Content TBC)
