@@ -38,7 +38,7 @@
     @formHelper(action = postAction) {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "TPPtax")))
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
         @caption(messages("site.taxCalculation.caption"))
@@ -51,7 +51,6 @@
                 field = form("value"),
                 label = LabelViewModel(messages("taxCalculation.totalAmountDue.h2")).asPageSubHeading()
             )
-            .withId("TPPtax")
             .withWidth(Fixed10)
             .withPrefix(PrefixOrSuffix(content = Text(messages("site.money.prefix"))))
             .withHint(HintViewModel(Text(messages("taxCalculation.totalAmountDue.hint"))))
