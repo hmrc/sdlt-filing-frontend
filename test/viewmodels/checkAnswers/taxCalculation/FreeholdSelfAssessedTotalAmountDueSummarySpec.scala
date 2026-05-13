@@ -24,7 +24,7 @@ import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
-class FreeHoldSelfAssessedTotalAmountDueSummarySpec extends SpecBase {
+class FreeholdSelfAssessedTotalAmountDueSummarySpec extends SpecBase {
 
   "FreeHoldTaxNotCalculatedTotalAmountDueSummary" - {
 
@@ -52,7 +52,7 @@ class FreeHoldSelfAssessedTotalAmountDueSummarySpec extends SpecBase {
           htmlContent mustEqual "£43950"
 
           result.actions.get.items.size mustEqual 1
-          //result.actions.get.items.head.href mustEqual controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSdltNotCalculatedTotalDueController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSelfAssessedTotalAmountDueController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
           result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("taxCalculation.totalAmountDue.change.hidden")
         }
