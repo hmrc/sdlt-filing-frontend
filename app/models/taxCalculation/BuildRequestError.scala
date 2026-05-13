@@ -50,6 +50,10 @@ case class MissingLeaseAnswerError(value: String) extends MissingDataError {
   val message = s"Could not find user answer from 'About the Lease': $value"
 }
 
+case class MissingTaxCalculationAnswerError(value: String) extends MissingDataError {
+  val message = s"Could not extract 'Tax Calculation' journey answers from Full return: $value"
+}
+
 case object MissingPremiumCalcError extends MissingDataError {
   val message = "TaxCalculationResult missing premium CalculationDetails"
 }
