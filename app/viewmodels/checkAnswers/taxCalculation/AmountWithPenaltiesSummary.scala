@@ -49,12 +49,9 @@ object AmountWithPenaltiesSummary {
         controllers.taxCalculation
           .leaseholdTaxCalculated.routes
           .LeaseholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(CheckMode)
-
-      // TODO: DTR-4799 => apply changes for Screen 4
       case LeaseholdSelfAssessedPenaltiesAndInterestPage =>
-        controllers.taxCalculation
-          .freeholdTaxCalculated.routes
-          .FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(CheckMode)
+        controllers.taxCalculation.leaseholdSelfAssessed
+          .routes.LeaseholdSelfAssessedPenaltiesAndInterestController.onPageLoad(CheckMode)
     }
 
 

@@ -34,7 +34,7 @@ trait PenaltiesAndInterestExtension {
     case LeaseholdTaxCalculated =>
       messages ("taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.title")
     case LeaseholdSelfAssessed =>
-      messages ("taxCalculation.penaltiesAndInterest.freehold-tax-calculated.title")
+      messages ("taxCalculation.penaltiesAndInterest.leasehold-tax-not-calculated.title")
   }
 
   def postAction(flow: TaxCalculationFlow, mode: Mode): Call = flow match {
@@ -52,8 +52,8 @@ trait PenaltiesAndInterestExtension {
         .LeaseholdSdltCalculatedPenaltiesAndInterestController.onSubmit(mode)
     case LeaseholdSelfAssessed =>
       controllers.taxCalculation
-        .freeholdTaxCalculated.routes
-        .FreeholdSdltCalculatedPenaltiesAndInterestController.onSubmit(mode)
+        .leaseholdSelfAssessed.routes
+        .LeaseholdSelfAssessedPenaltiesAndInterestController.onSubmit(mode)
   }
 
   def validateFlow(userAnswers: UserAnswers)
