@@ -1723,3 +1723,15 @@ lease.typeOfLease.error.invalid                                                 
 lease.typeOfLease.error.invalidResidentialRule                                      = When the type of lease is ‘R - Residential’, the type of property must be ‘01 - Residential’ or ‘04 - Additional residential property liable to higher rate’
 lease.typeOfLease.error.invalidNonResidentialRule                                   = When the type of lease is ‘N - Non-residential’, the type of property must be ‘03 - Non-residential’
 lease.typeOfLease.error.invalidMixedRule                                            = When the type of lease is ‘M - Mixed use’, the type of property must be ‘02 - Mixed’
+
+lease.enterRentFreePeriod.title                                                     = Calculating the rent-free period
+lease.enterRentFreePeriod.heading                                                   = Calculating the rent-free period
+lease.enterRentFreePeriod.h2                                                        = How many months is the rent-free period?
+lease.enterRentFreePeriod.p1                                                        = Enter the number of months for any period where the tenant will not have to pay rent. If the rent-free period is longer than 99 months, enter 99.
+lease.enterRentFreePeriod.hint                                                      = Round the number of months up to a whole number, like 18
+lease.enterRentFreePeriod.checkYourAnswersLabel                                     = Rent-free period (months)
+lease.enterRentFreePeriod.error.required                                            = Enter the rent-free period
+lease.enterRentFreePeriod.error.invalid                                             = The rent-free period must only include numbers 0 to 9
+lease.enterRentFreePeriod.error.minValue                                            = The rent-free period must be at least one month
+lease.enterRentFreePeriod.error.maxValue                                            = The rent-free period must be 99 months or fewer
+lease.enterRentFreePeriod.change.hidden                                             = the rent-free period
