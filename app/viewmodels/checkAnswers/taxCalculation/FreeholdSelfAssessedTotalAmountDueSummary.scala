@@ -25,10 +25,10 @@ import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object FreeholdTaxNotCalculatedTotalAmountDueSummary {
+object FreeholdSelfAssessedTotalAmountDueSummary {
 
   def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
-    val changeRoute = controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSdltNotCalculatedTotalDueController.onPageLoad(CheckMode)
+    val changeRoute = controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSelfAssessedTotalAmountDueController.onPageLoad(CheckMode)
     val label = messages("taxCalculation.totalAmountDue.checkYourAnswersLabel")
 
     answers.flatMap(_.get(FreeholdSelfAssessedTotalAmountDuePage)).map { answer =>

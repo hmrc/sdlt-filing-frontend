@@ -33,7 +33,7 @@ import utils.TimeMachine
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class FreeholdSdltNotCalculatedTotalDueControllerSpec extends SpecBase with MockitoSugar {
+class FreeholdSelfAssessedTotalAmountDueControllerSpec extends SpecBase with MockitoSugar {
 
   private val today = LocalDate.of(2026, 5, 1)
 
@@ -82,7 +82,7 @@ class FreeholdSdltNotCalculatedTotalDueControllerSpec extends SpecBase with Mock
       val app = appWith(freeholdAnswers)
 
       running(app) {
-        val request = FakeRequest(GET, routes.FreeholdSdltNotCalculatedTotalDueController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, routes.FreeholdSelfAssessedTotalAmountDueController.onPageLoad(NormalMode).url)
         val result = route(app, request).value
 
         status(result) mustEqual OK
@@ -99,7 +99,7 @@ class FreeholdSdltNotCalculatedTotalDueControllerSpec extends SpecBase with Mock
       val app = appWith(previouslyAnswered)
 
       running(app) {
-        val request = FakeRequest(GET, routes.FreeholdSdltNotCalculatedTotalDueController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, routes.FreeholdSelfAssessedTotalAmountDueController.onPageLoad(NormalMode).url)
         val result = route(app, request).value
 
         status(result) mustEqual OK
@@ -113,7 +113,7 @@ class FreeholdSdltNotCalculatedTotalDueControllerSpec extends SpecBase with Mock
       val app = appWith(outOfFlow)
 
       running(app) {
-        val request = FakeRequest(GET, routes.FreeholdSdltNotCalculatedTotalDueController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, routes.FreeholdSelfAssessedTotalAmountDueController.onPageLoad(NormalMode).url)
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -128,7 +128,7 @@ class FreeholdSdltNotCalculatedTotalDueControllerSpec extends SpecBase with Mock
       val app = appWith(brokenAnswers)
 
       running(app) {
-        val request = FakeRequest(GET, routes.FreeholdSdltNotCalculatedTotalDueController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, routes.FreeholdSelfAssessedTotalAmountDueController.onPageLoad(NormalMode).url)
         val result = route(app, request).value
         status(result) mustEqual SEE_OTHER
       }
@@ -142,7 +142,7 @@ class FreeholdSdltNotCalculatedTotalDueControllerSpec extends SpecBase with Mock
       val app = appWith(brokenAnswers)
 
       running(app) {
-        val request = FakeRequest(GET, routes.FreeholdSdltNotCalculatedTotalDueController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, routes.FreeholdSelfAssessedTotalAmountDueController.onPageLoad(NormalMode).url)
         val result = route(app, request).value
         status(result) mustEqual SEE_OTHER
       }
@@ -153,7 +153,7 @@ class FreeholdSdltNotCalculatedTotalDueControllerSpec extends SpecBase with Mock
       val app = appWith(freeholdAnswers)
 
       running(app) {
-        val request = FakeRequest(POST, routes.FreeholdSdltNotCalculatedTotalDueController.onSubmit(NormalMode).url)
+        val request = FakeRequest(POST, routes.FreeholdSelfAssessedTotalAmountDueController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> "1000")
         val result = route(app, request).value
 
@@ -166,7 +166,7 @@ class FreeholdSdltNotCalculatedTotalDueControllerSpec extends SpecBase with Mock
       val app = appWith(freeholdAnswers)
 
       running(app) {
-        val request = FakeRequest(POST, routes.FreeholdSdltNotCalculatedTotalDueController.onSubmit(NormalMode).url)
+        val request = FakeRequest(POST, routes.FreeholdSelfAssessedTotalAmountDueController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody("value" -> "not-a-number")
 
         val result = route(app, request).value
@@ -183,7 +183,7 @@ class FreeholdSdltNotCalculatedTotalDueControllerSpec extends SpecBase with Mock
       val app = appWith(brokenAnswers)
       running(app) {
         val request =
-          FakeRequest(POST, routes.FreeholdSdltNotCalculatedTotalDueController.onSubmit(NormalMode).url)
+          FakeRequest(POST, routes.FreeholdSelfAssessedTotalAmountDueController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody("value" -> "invalid")
 
         val result = route(app, request).value

@@ -48,6 +48,7 @@ site.taxCalculation.caption                                                     
 site.taxCalculation.leaseholdSelfAssessed.caption                                   = Tax calculation - Leasehold not calculated
 site.taxCalculation.freeholdSdltCalculated.section                                  = Tax calculation - Freehold calculated
 site.taxCalculation.leaseholdSdltCalculated.section                                 = Tax calculation - Leasehold calculated
+site.taxCalculation.freeholdSelfAssessed.section                                    = Tax calculation - Freehold not calculated
 
 site.vendor.theVendor                                                               = the vendor
 site.purchaser.thePurchaser                                                         = the purchaser
@@ -1531,26 +1532,6 @@ transaction.charityRegisteredNumber.error.length                                
 transaction.charityRegisteredNumber.change.hidden                                   = Charity Registered Number
 transaction.charityRegisteredNumber.regex                                           = The charity’s registered number must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, question marks and spaces
 transaction.charityRegisteredNumber.missing                                         = Enter charity registered number
-
-
-taxCalculation.totalAmountDue.h2                                                    = What is the total amount you intend to pay with this return?
-taxCalculation.totalAmountDue.hint                                                  = Enter the amount in whole pounds only, for example £10,000
-taxCalculation.totalAmountDue.heading                                               = Total amount due
-taxCalculation.totalAmountDue.sdltDue                                               = SDLT due
-taxCalculation.totalAmountDue.penalties                                             = Penalties
-taxCalculation.totalAmountDue.total                                                 = Total
-taxCalculation.totalAmountDue.error.required                                        = Enter the total amount you intend to pay, in pounds
-taxCalculation.totalAmountDue.error.invalidNumeric                                  = The amount you intend to pay must only include commas and numbers 0 to 9
-taxCalculation.totalAmountDue.error.invalidWholeNumber                              = Enter the amount you intend to pay in whole pounds
-taxCalculation.totalAmountDue.error.maximum                                         = The amount you intend to pay must be equal to or less than £9,999,999,999
-taxCalculation.totalAmountDue.error.length                                          = The amount you intend to pay must be 16 characters or fewer
-
-taxCalculation.genericPenaltiesDue.checkYourAnswersLabel                            = Penalties due
-taxCalculation.totalAmountDue.checkYourAnswersLabel                          = Amount to be paid
-taxCalculation.totalAmountDue.change.hidden                                  = amount to be paid
-
-taxCalculation.freeholdSelfAssessed.title                                           = Total amount due - Tax calculation - Freehold not calculated
-
 
 transaction.deferringPayment.title                                                  = Deferring payment
 transaction.deferringPayment.heading                                                = Deferring payment

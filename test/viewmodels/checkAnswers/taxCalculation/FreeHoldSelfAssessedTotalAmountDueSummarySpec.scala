@@ -24,7 +24,7 @@ import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
-class FreeHoldTaxNotCalculatedTotalAmountDueSummarySpec extends SpecBase {
+class FreeHoldSelfAssessedTotalAmountDueSummarySpec extends SpecBase {
 
   "FreeHoldTaxNotCalculatedTotalAmountDueSummary" - {
 
@@ -39,7 +39,7 @@ class FreeHoldTaxNotCalculatedTotalAmountDueSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(FreeholdSelfAssessedTotalAmountDuePage, "43950").success.value
 
-          val row = FreeholdTaxNotCalculatedTotalAmountDueSummary.row(Some(userAnswers))
+          val row = FreeholdSelfAssessedTotalAmountDueSummary.row(Some(userAnswers))
 
           val result = row match {
             case Row(r) => r
@@ -68,11 +68,11 @@ class FreeHoldTaxNotCalculatedTotalAmountDueSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = FreeholdTaxNotCalculatedTotalAmountDueSummary.row(Some(emptyUserAnswers))
+          val result = FreeholdSelfAssessedTotalAmountDueSummary.row(Some(emptyUserAnswers))
 
           result match {
             case Missing(call) =>
-              call mustEqual controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSdltNotCalculatedTotalDueController.onPageLoad(CheckMode)
+              call mustEqual controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSelfAssessedTotalAmountDueController.onPageLoad(CheckMode)
 
             case Row(_) =>
               fail("Expected Missing but got Row")
@@ -87,11 +87,11 @@ class FreeHoldTaxNotCalculatedTotalAmountDueSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = FreeholdTaxNotCalculatedTotalAmountDueSummary.row(None)
+          val result = FreeholdSelfAssessedTotalAmountDueSummary.row(None)
 
           result match{
             case Missing(call) =>
-              call mustEqual controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSdltNotCalculatedTotalDueController.onPageLoad(CheckMode)
+              call mustEqual controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSelfAssessedTotalAmountDueController.onPageLoad(CheckMode)
 
             case Row(_) =>
               fail("Expected Missing but got Row")
@@ -109,14 +109,14 @@ class FreeHoldTaxNotCalculatedTotalAmountDueSummarySpec extends SpecBase {
 
         val userAnswers = emptyUserAnswers.set(FreeholdSelfAssessedTotalAmountDuePage, "1000").success.value
 
-        val row = FreeholdTaxNotCalculatedTotalAmountDueSummary.row(Some(userAnswers))
+        val row = FreeholdSelfAssessedTotalAmountDueSummary.row(Some(userAnswers))
 
         val result = row match {
           case Row(r) => r
           case _ => fail("Expected Row but got Missing")
         }
 
-        result.actions.get.items.head.href mustEqual controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSdltNotCalculatedTotalDueController.onPageLoad(CheckMode).url
+        result.actions.get.items.head.href mustEqual controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSelfAssessedTotalAmountDueController.onPageLoad(CheckMode).url
       }
     }
   }

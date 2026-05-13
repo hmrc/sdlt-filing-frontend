@@ -32,14 +32,14 @@ import repositories.SessionRepository
 import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.TimeMachine
-import viewmodels.taxCalculation.selfAssessed.TotalAmountDueViewModel
+import viewmodels.taxCalculation.selfAssessedViewModels.TotalAmountDueViewModel
 import views.html.taxCalculation.selfAssessed.TotalAmountDueView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FreeholdSdltNotCalculatedTotalDueController @Inject()(
+class FreeholdSelfAssessedTotalAmountDueController @Inject()(
                                                              override val messagesApi: MessagesApi,
                                                              identify: IdentifierAction,
                                                              getData: DataRetrievalAction,
@@ -56,9 +56,9 @@ class FreeholdSdltNotCalculatedTotalDueController @Inject()(
   private val form: Form[String] = formProvider()
 
   private val postAction: Mode => Call = mode =>
-    controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSdltNotCalculatedTotalDueController.onSubmit(mode)
+    controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSelfAssessedTotalAmountDueController.onSubmit(mode)
 
-  private val pageTitleKey: String = "taxCalculation.freeholdSelfAssessed.title"
+  private val sectionKey: String = "site.taxCalculation.freeholdSelfAssessed.section"
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -66,9 +66,9 @@ class FreeholdSdltNotCalculatedTotalDueController @Inject()(
         Future.successful(constructViewModel(request.userAnswers)).map {
           case Right(viewModel) =>
             val prepared = request.userAnswers.get(FreeholdSelfAssessedTotalAmountDuePage).fold(form)(form.fill)
-            Ok(view(prepared, viewModel, postAction(mode), pageTitleKey))
+            Ok(view(prepared, viewModel, postAction(mode), sectionKey))
           case Left(err) =>
-            logger.warn(s"[FreeholdSdltCalculatedTotalDueController][onPageLoad] failed: ${err.message}")
+            logger.warn(s"[FreeholdSelfAssessedTotalAmountDueController][onPageLoad] failed: ${err.message}")
             Redirect(errorHandler(err))
 
         }
@@ -83,9 +83,9 @@ class FreeholdSdltNotCalculatedTotalDueController @Inject()(
           formWithErrors =>
             constructViewModel(request.userAnswers) match {
               case Right(viewModel) =>
-                Future.successful(BadRequest(view(formWithErrors, viewModel, postAction(mode), pageTitleKey)))
+                Future.successful(BadRequest(view(formWithErrors, viewModel, postAction(mode), sectionKey)))
               case Left(err) =>
-                logger.warn(s"[FreeholdSdltCalculatedTotalDueController][onSubmit] failed: ${err.message}")
+                logger.warn(s"[FreeholdSelfAssessedTotalAmountDueController][onSubmit] failed: ${err.message}")
                 Future.successful(Redirect(errorHandler(err)))
             },
           value =>
