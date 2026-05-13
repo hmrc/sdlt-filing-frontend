@@ -1734,4 +1734,5 @@ lease.enterRentFreePeriod.error.required                                        
 lease.enterRentFreePeriod.error.invalid                                             = The rent-free period must only include numbers 0 to 9
 lease.enterRentFreePeriod.error.minValue                                            = The rent-free period must be at least one month
 lease.enterRentFreePeriod.error.maxValue                                            = The rent-free period must be 99 months or fewer
+lease.enterRentFreePeriod.error.maxLength                                           = The rent-free period must be 2 digits or less
 lease.enterRentFreePeriod.change.hidden                                             = the rent-free period

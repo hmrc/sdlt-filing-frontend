@@ -25,6 +25,7 @@ class LeaseEnterRentFreePeriodFormProvider @Inject() extends Mappings {
   
   private val maxValue = 99
   private val minValue = 1
+  private val maxLength = 2
 
   def apply(): Form[Int] =
     Form(
@@ -33,7 +34,10 @@ class LeaseEnterRentFreePeriodFormProvider @Inject() extends Mappings {
         "lease.enterRentFreePeriod.error.invalid",
         "lease.enterRentFreePeriod.error.invalid"
       )
-        .verifying(maximumValue(maxValue, "lease.enterRentFreePeriod.error.maxValue"))
-        .verifying(minimumValue(minValue, "lease.enterRentFreePeriod.error.minValue"))
+        .verifying(firstError(
+          maximumValue(maxValue, "lease.enterRentFreePeriod.error.maxValue"),
+          minimumValue(minValue, "lease.enterRentFreePeriod.error.minValue"),
+          maxLengthInt(maxLength, "lease.enterRentFreePeriod.error.maxLength")
+        ))
     )
 }
