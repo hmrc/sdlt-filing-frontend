@@ -438,8 +438,11 @@ class NavigatorSpec extends SpecBase {
         "go from LeaseThousandPoundsThresholdPage to ls-9?" in { // TODO : Update to Is VAT payable on the annual rent? - ls-9
           navigator.nextPage(LeaseThousandPoundsThresholdPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(NormalMode)
         }
-      }
 
+        "go from DoesLeaseIncludeRentFreePeriodPage to ls-5" in {
+          navigator.nextPage(LeaseEnterRentFreePeriodPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(NormalMode)
+        }
+      }
       "freehold tax calculated routes" - {
 
         "go from FreeholdTaxCalculatedSdltPage to Index page" in {
