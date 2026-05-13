@@ -49,6 +49,7 @@ site.taxCalculation.leaseholdSelfAssessed.caption                               
 site.taxCalculation.freeholdSdltCalculated.section                                  = Tax calculation - Freehold calculated
 site.taxCalculation.leaseholdSdltCalculated.section                                 = Tax calculation - Leasehold calculated
 site.taxCalculation.freeholdSelfAssessed.section                                    = Tax calculation - Freehold not calculated
+taxCalculation.confirmEffectiveDateOfTransaction.caption                            = Tax calculation
 
 site.vendor.theVendor                                                               = the vendor
 site.purchaser.thePurchaser                                                         = the purchaser
@@ -1509,6 +1510,9 @@ taxCalculation.totalAmountDue.error.invalidNumeric                           = T
 taxCalculation.totalAmountDue.error.invalidWholeNumber                       = Enter the amount you intend to pay in whole pounds
 taxCalculation.totalAmountDue.error.maximum                                  = The amount you intend to pay must be equal to or less than £9,999,999,999
 taxCalculation.totalAmountDue.error.length                                   = The amount you intend to pay must be 16 characters or fewer
+
+taxCalculation.confirmEffectiveDateOfTransaction.heading                     = Is {0} the effective date of the transaction?
+taxCalculation.confirmEffectiveDateOfTransaction.error.required              = Select yes if this is the effective date of the transaction
 
 taxCalculation.genericPenaltiesDue.checkYourAnswersLabel                            = Penalties due
 taxCalculation.totalAmountDue.checkYourAnswersLabel                                 = Amount to be paid
