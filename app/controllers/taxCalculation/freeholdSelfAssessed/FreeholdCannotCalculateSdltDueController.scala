@@ -37,10 +37,10 @@ class FreeholdCannotCalculateSdltDueController @Inject()(
                                                    view: CannotCalculateSdltDueView
                                                  ) extends FrontendBaseController with I18nSupport {
 
+  val sectionKey = "site.taxCalculation.freeholdSelfAssessed.section"
+
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val sectionKey = "site.taxCalculation.freeholdSelfAssessed.section"
-      
       sdltCalculationService.whenInFlow(FreeholdSelfAssessed) {
         Ok(view(sectionKey))
       }
