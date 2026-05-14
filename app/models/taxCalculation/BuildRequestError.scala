@@ -46,6 +46,11 @@ case class MissingTransactionAnswerError(value: String) extends MissingDataError
   val message = s"Could not find user answer from 'About the Transaction' journey: $value"
 }
 
+case class MissingSelfAssessedAmountDueError(value: String) extends MissingDataError {
+  val message = s"Could not find SDLT due: Self Assessment amount  from 'Freehold Self Assessment' journey: $value"
+}
+
+
 case class MissingLeaseAnswerError(value: String) extends MissingDataError {
   val message = s"Could not find user answer from 'About the Lease': $value"
 }
