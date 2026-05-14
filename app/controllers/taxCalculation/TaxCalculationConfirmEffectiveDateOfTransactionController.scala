@@ -16,7 +16,7 @@
 
 package controllers.taxCalculation
 
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.IdentifierAction
 import jakarta.inject.Singleton
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -26,18 +26,15 @@ import views.html.taxCalculation.TaxCalculationConfirmEffectiveDateOfTransaction
 
 import javax.inject.Inject
 
-
 @Singleton
 class TaxCalculationConfirmEffectiveDateOfTransactionController @Inject()(
                                                                            override val messagesApi: MessagesApi,
                                                                            identify: IdentifierAction,
-                                                                           getData: DataRetrievalAction,
-                                                                           requireData: DataRequiredAction,
                                                                            view: TaxCalculationConfirmEffectiveDateOfTransactionView,
                                                                            val controllerComponents: MessagesControllerComponents
                                                                          ) extends FrontendBaseController with I18nSupport with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = identify {
     implicit request =>
       Ok(view())
   }
