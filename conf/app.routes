@@ -564,8 +564,7 @@ POST       /tax-calculation/freehold-calculated/are-penalties-and-interest-inclu
 
 # ---- Tax calculation: Flow B (Freehold - Service cannot perform calculation) -------------------------------------
 GET         /tax-calculation/freehold-not-calculated/before-you-start               controllers.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedBYSController.onPageLoad()
-#GET        /tax-calculation/freehold-not-calculated/sdlt                           controllers.FreeholdSdltNotCalculatedController.onPageLoad()
-#POST       /tax-calculation/freehold-not-calculated/sdlt                           controllers.FreeholdSdltNotCalculatedController.onSubmit()
+GET        /tax-calculation/freehold-not-calculated/HMRC-cannot-calculate-SDLT-due                   controllers.taxCalculation.freeholdSelfAssessed.FreeholdCannotCalculateSdltDueController.onPageLoad()
 #GET        /tax-calculation/freehold-not-calculated/self-assessment                controllers.FreeholdSdltNotCalculatedSelfAssessmentController.onPageLoad()
 #POST       /tax-calculation/freehold-not-calculated/self-assessment                controllers.FreeholdSdltNotCalculatedSelfAssessmentController.onSubmit()
 GET        /tax-calculation/freehold-not-calculated/total-amount-due                controllers.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedTotalAmountDueController.onPageLoad(mode : Mode = NormalMode)

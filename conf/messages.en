@@ -1419,6 +1419,9 @@ taxCalculation.beforeStart.bullet3                                              
 taxCalculation.beforeStart.bullet4                                                  = the amount you intend to pay with this return
 taxCalculation.beforeStart.bullet5                                                  = if this amount includes penalties and fines
 
+taxCalculation.cannotCalculateSdltDue.title                                         = HMRC cannot calculate the SDLT due
+taxCalculation.cannotCalculateSdltDue.heading                                       = HMRC cannot calculate the SDLT due
+
 taxCalculation.penaltiesAndInterest.button                                          = Save and continue
 
 taxCalculation.penaltiesAndInterest.freehold-tax-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Freehold calculated
