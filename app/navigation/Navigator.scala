@@ -312,7 +312,7 @@ class Navigator @Inject()() {
   }
 
   private def isFreeholdSelfAssessedSection(page: Page): Boolean = page match {
-    case FreeholdSelfAssessedCannotCalculateTaxPage | FreeholdSelfAssessedAmountPage |
+    case FreeholdSelfAssessedAmountPage |
          FreeholdSelfAssessedTotalAmountDuePage | FreeholdSelfAssessedPenaltiesAndInterestPage => true
     case _ => false
   }
