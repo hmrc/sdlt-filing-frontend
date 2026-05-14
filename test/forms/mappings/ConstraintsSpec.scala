@@ -161,6 +161,24 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
     }
   }
 
+  "maxLengthInt" - {
+
+    "must return Valid for an int shorter than the allowed length" in {
+      val result = maxLengthInt(2, "error.length")(1)
+      result mustEqual Valid
+    }
+
+    "must return Valid for a string equal to the allowed length" in {
+      val result = maxLengthInt(2, "error.length")(12)
+      result mustEqual Valid
+    }
+
+    "must return Invalid for a string longer than the allowed length" in {
+      val result = maxLengthInt(2, "error.length")(123)
+      result mustEqual Invalid("error.length", 2)
+    }
+  }
+
   "maxDate" - {
 
     "must return Valid for a date before or equal to the maximum" in {

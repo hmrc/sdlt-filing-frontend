@@ -408,6 +408,10 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(IsPurchaserRegisteredWithCISPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCisNumberController.onPageLoad(NormalMode)
         }
 
+        "go from DescriptionOfRestrictionsPage to IsLandOrPropertyExchangedPage" in {
+          navigator.nextPage(DescriptionOfRestrictionsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(NormalMode)
+        }
+
         "go from TransactionExercisingAnOptionPage to CYA page" in {
           navigator.nextPage(TransactionExercisingAnOptionPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
         }
@@ -419,8 +423,8 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(TypeOfLeasePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.TypeOfLeaseController.onPageLoad(NormalMode)
         }
 
-        "go from DescriptionOfRestrictionsPage to IsLandOrPropertyExchangedPage" in {
-          navigator.nextPage(DescriptionOfRestrictionsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(NormalMode)
+        "go from LeaseEnterRentFreePeriodPage to AnnualStartingRent page" in { //TODO: - DTR-3518 - SPRINT 15 - update to What is the annual starting rent including VAT? - ls-5
+          navigator.nextPage(LeaseEnterRentFreePeriodPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(NormalMode)
         }
       }
 
