@@ -427,8 +427,12 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LeaseEnterRentFreePeriodPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(NormalMode)
         }
 
-        "go from LaterRentPage to 1000PoundThresholdPage" in { // TODO DTR-3524: Redirect to is the annual rent 1000 pounds or more ls-8
-          navigator.nextPage(LaterRentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LaterRentController.onPageLoad(NormalMode)
+        "go from LaterRentPage to LeaseThousandPoundsThresholdPage" in {
+          navigator.nextPage(LaterRentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(NormalMode)
+        }
+
+        "go from LeaseThousandPoundsThresholdPage to ls-9?" in { // TODO : Update to Is VAT payable on the annual rent? - ls-9
+          navigator.nextPage(LeaseThousandPoundsThresholdPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(NormalMode)
         }
       }
 

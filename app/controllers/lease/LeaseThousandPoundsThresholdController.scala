@@ -17,29 +17,29 @@
 package controllers.lease
 
 import controllers.actions.*
-import forms.lease.LaterRentFormProvider
+import forms.lease.LeaseThousandPoundsThresholdFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.lease.LaterRentPage
+import pages.lease.LeaseThousandPoundsThresholdPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.lease.LaterRentView
+import views.html.lease.LeaseThousandPoundsThresholdView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class LaterRentController @Inject()(
+class LeaseThousandPoundsThresholdController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          sessionRepository: SessionRepository,
                                          navigator: Navigator,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
-                                         formProvider: LaterRentFormProvider,
+                                         formProvider: LeaseThousandPoundsThresholdFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
-                                         view: LaterRentView
+                                         view: LeaseThousandPoundsThresholdView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
@@ -47,7 +47,7 @@ class LaterRentController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(LaterRentPage) match {
+      val preparedForm = request.userAnswers.get(LeaseThousandPoundsThresholdPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -64,9 +64,9 @@ class LaterRentController @Inject()(
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(LaterRentPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(LeaseThousandPoundsThresholdPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(LaterRentPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(LeaseThousandPoundsThresholdPage, mode, updatedAnswers))
       )
   }
 }
