@@ -66,6 +66,7 @@ class LaterRentController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(LaterRentPage, value))
             _              <- sessionRepository.set(updatedAnswers)
+            // TODO DTR-3524: Redirect to is the annual rent 1000 pounds or more ls-8
           } yield Redirect(navigator.nextPage(LaterRentPage, mode, updatedAnswers))
       )
   }
