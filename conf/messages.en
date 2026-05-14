@@ -1751,6 +1751,21 @@ lease.laterRent.checkYourAnswersLabel                                           
 lease.laterRent.error.required                                                      = Select yes if the later rent is known
 lease.laterRent.change.hidden                                                       = Later rent
 
+lease.leaseStartDate.title                                                          = Lease start date
+lease.leaseStartDate.heading                                                        = Lease start date
+lease.leaseStartDate.subHeading                                                     = What is the start date as specified in the lease?
+lease.leaseStartDate.hint                                                           = For example, 12 11 2007.
+lease.leaseStartDate.p                                                              = This date can be in the past or the future but must be entered exactly as specified in the lease. This is sometimes called the ‘term commencement date’.
+lease.leaseStartDate.checkYourAnswersLabel                                          = Lease start date
+lease.leaseStartDate.error.required.all                                             = Enter the start date as specified in the lease
+lease.leaseStartDate.error.required.two                                             = The start date as specified in the lease must include {0} and {1}
+lease.leaseStartDate.error.required                                                 = The start date as specified in the lease must include a {0}
+lease.leaseStartDate.error.invalid                                                  = The start date as specified in the lease must be a real date
+lease.leaseStartDate.change.hidden                                                  = Lease start date
+lease.leaseStartDate.error.date.range.min                                           = The start date as specified in the lease must be the same as or after 1 January 1500
+lease.leaseStartDate.error.leaseBeforeRentEndDate                                   = The start date as specified in the lease must be before the end date for starting rent
+lease.leaseStartDate.error.leaseStartBeforeLeaseEndDate                             = The start date as specified in the lease must be before the end date as specified in the lease
+
 lease.leaseThousandPoundsThreshold.title                                            = £1,000 threshold
 lease.leaseThousandPoundsThreshold.heading                                          = £1,000 threshold
 lease.leaseThousandPoundsThreshold.p                                                = This helps determine whether an SLDT return is required for the grant of a new lease. SDLT is only payable if:
