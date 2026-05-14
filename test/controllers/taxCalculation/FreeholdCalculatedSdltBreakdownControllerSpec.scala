@@ -27,11 +27,14 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import services.taxCalculation.SdltCalculationService
 import viewmodels.taxCalculation.CalculationResultViewModel
-import views.html.taxCalculation.freeholdTaxCalculated.FreeholdCalculatedSdltBreakdownView
+import views.html.taxCalculation.CalculatedSdltBreakdownView
 
 import scala.concurrent.Future
 
 class FreeholdCalculatedSdltBreakdownControllerSpec extends SpecBase with MockitoSugar {
+
+  private val breakdownUrl: String = controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdCalculatedSdltBreakdownController.onPageLoad().url
+  private val titleKey: String = "taxCalculation.calculation.freehold.title"
 
   private val sdltcResult = TaxCalculationResult(
     totalTax = 9000, resultHeading = None, resultHint = None, npv = None,
@@ -72,11 +75,11 @@ class FreeholdCalculatedSdltBreakdownControllerSpec extends SpecBase with Mockit
         val request = FakeRequest(GET, controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdCalculatedSdltBreakdownController.onPageLoad().url)
         val result  = route(app, request).value
 
-        val view     = app.injector.instanceOf[FreeholdCalculatedSdltBreakdownView]
+        val view     = app.injector.instanceOf[CalculatedSdltBreakdownView]
         val expected = CalculationResultViewModel.toViewModel(sdltcResult, freeholdAnswers)(messages(app)).toOption.value
 
         status(result)        mustEqual OK
-        contentAsString(result) mustEqual view(expected)(request, messages(app)).toString
+        contentAsString(result) mustEqual view(expected, breakdownUrl, titleKey)(request, messages(app)).toString
       }
     }
 

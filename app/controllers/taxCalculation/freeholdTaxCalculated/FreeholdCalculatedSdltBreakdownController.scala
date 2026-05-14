@@ -24,7 +24,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.taxCalculation.CalculationResultViewModel
-import views.html.taxCalculation.freeholdTaxCalculated.FreeholdCalculatedSdltBreakdownView
+import views.html.taxCalculation.CalculatedSdltBreakdownView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -37,8 +37,11 @@ class FreeholdCalculatedSdltBreakdownController @Inject()(
                                        requireData: DataRequiredAction,
                                        sdltCalculationService: SdltCalculationService,
                                        val controllerComponents: MessagesControllerComponents,
-                                       view: FreeholdCalculatedSdltBreakdownView
+                                       view: CalculatedSdltBreakdownView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging with TaxCalculationErrorRecovery {
+
+  private val breakdownUrl: String = controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdCalculatedSdltBreakdownController.onPageLoad().url
+  private val titleKey: String = "taxCalculation.calculation.freehold.title"
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -47,7 +50,7 @@ class FreeholdCalculatedSdltBreakdownController @Inject()(
         .map {
           case Right(result) =>
             CalculationResultViewModel.toViewModel(result, request.userAnswers) match {
-              case Right(vm) => Ok(view(vm))
+              case Right(vm) => Ok(view(vm, breakdownUrl, titleKey))
               case Left(err) =>
                 logger.warn(s"[FreeholdCalculatedSdltBreakdownController] Failed to construct view model: ${err.message}")
                 Redirect(errorHandler(err))
