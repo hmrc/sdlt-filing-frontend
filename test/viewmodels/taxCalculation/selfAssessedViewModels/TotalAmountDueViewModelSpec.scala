@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.taxCalculation
+package viewmodels.taxCalculation.selfAssessedViewModels
 
 import base.SpecBase
 import models.taxCalculation.*
@@ -22,12 +22,11 @@ import models.{FullReturn, Transaction, UserAnswers}
 import org.mockito.Mockito.when
 import org.scalatest.EitherValues
 import org.scalatestplus.mockito.MockitoSugar
-import pages.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedSelfAssessedAmountPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import utils.TimeMachine
-import viewmodels.taxCalculation.TotalAmountDueViewModel.toViewModel
+import viewmodels.taxCalculation.selfAssessedViewModels.TotalAmountDueViewModel.toViewModel
 
 import java.time.LocalDate
 
@@ -50,36 +49,50 @@ class TotalAmountDueViewModelSpec extends SpecBase with EitherValues with Mockit
       transaction       = Some(Transaction(effectiveDate = Some(effectiveDate)))
     )))
 
-  private val sdltcResult = TaxCalculationResult(43750, None, None, None, Seq.empty)
-
   ".toViewModel" - {
 
     "renders SDLT due, no penalty, and total when the transaction is within the 14-day filing window" in {
-      val vm = toViewModel(sdltcResult, answersWith(), stubbedTimeMachine, LeaseholdTaxCalculatedSelfAssessedAmountPage).value
+      val vm = toViewModel(
+        BigDecimal(25000),
+        answersWith(),
+        stubbedTimeMachine
+      ).value
 
       vm.totalAmountDueSummary.rows.map(_.value.content) mustEqual Seq(
-        Text("£43,750"),
+        Text("£25,000"),
         Text("£0"),
-        Text("£43,750")
+        Text("£25,000")
       )
     }
 
     "applies the £100 penalty band when the transaction is past the filing window but under 123 days old" in {
-      val vm = toViewModel(sdltcResult, answersWith(today.minusDays(60).toString), stubbedTimeMachine, LeaseholdTaxCalculatedSelfAssessedAmountPage).value
+      val vm = toViewModel(
+        BigDecimal(25000),
+        answersWith(today.minusDays(60).toString),
+        stubbedTimeMachine
+      ).value
 
-      vm.totalAmountDueSummary.rows.last.value.content mustBe Text("£43,850")
+      vm.totalAmountDueSummary.rows.last.value.content mustBe Text("£25,100")
       vm.totalAmountDueSummary.rows(1).value.content   mustBe Text("£100")
     }
 
     "applies the £200 penalty band when the transaction is 123+ days old" in {
-      val vm = toViewModel(sdltcResult, answersWith(today.minusDays(200).toString), stubbedTimeMachine, LeaseholdTaxCalculatedSelfAssessedAmountPage).value
+      val vm = toViewModel(
+        BigDecimal(25000),
+        answersWith(today.minusDays(200).toString),
+        stubbedTimeMachine
+      ).value
 
-      vm.totalAmountDueSummary.rows.last.value.content mustBe Text("£43,950")
+      vm.totalAmountDueSummary.rows.last.value.content mustBe Text("£25,200")
       vm.totalAmountDueSummary.rows(1).value.content   mustBe Text("£200")
     }
 
     "labels the rows in the correct order: SDLT due, Penalties, Total" in {
-      val vm = toViewModel(sdltcResult, answersWith(), stubbedTimeMachine, LeaseholdTaxCalculatedSelfAssessedAmountPage).value
+      val vm = toViewModel(
+        BigDecimal(25000),
+        answersWith(),
+        stubbedTimeMachine
+      ).value
 
       vm.totalAmountDueSummary.rows.map(_.key.content) mustEqual Seq(
         Text("taxCalculation.totalAmountDue.sdltDue"),
@@ -89,17 +102,31 @@ class TotalAmountDueViewModelSpec extends SpecBase with EitherValues with Mockit
     }
 
     "right-aligns every value cell so amounts line up against the column" in {
-      val vm = toViewModel(sdltcResult, answersWith(), stubbedTimeMachine, LeaseholdTaxCalculatedSelfAssessedAmountPage).value
+      val vm = toViewModel(
+        BigDecimal(25000),
+        answersWith(),
+        stubbedTimeMachine
+      ).value
+
       vm.totalAmountDueSummary.rows.map(_.value.classes).distinct mustEqual Seq("govuk-!-text-align-right")
     }
 
     "Left(MissingFullReturnError) when the session has no fullReturn" in {
-      toViewModel(sdltcResult, emptyUserAnswers, stubbedTimeMachine, LeaseholdTaxCalculatedSelfAssessedAmountPage) mustBe Left(MissingFullReturnError)
+      toViewModel(
+        BigDecimal(25000),
+        emptyUserAnswers,
+        stubbedTimeMachine
+      ) mustBe Left(MissingFullReturnError)
     }
 
     "Left(MissingAboutTheTransactionError) when fullReturn has no transaction" in {
       val noTransaction = emptyUserAnswers.copy(fullReturn = Some(FullReturn(stornId = "STORN", returnResourceRef = "REF")))
-      toViewModel(sdltcResult, noTransaction, stubbedTimeMachine, LeaseholdTaxCalculatedSelfAssessedAmountPage) mustBe Left(MissingAboutTheTransactionError)
+
+      toViewModel(
+        BigDecimal(25000),
+        noTransaction,
+        stubbedTimeMachine
+      ) mustBe Left(MissingAboutTheTransactionError)
     }
 
     "Left(MissingTransactionAnswerError) when effectiveDate is missing from the transaction" in {
@@ -107,25 +134,21 @@ class TotalAmountDueViewModelSpec extends SpecBase with EitherValues with Mockit
         stornId = "STORN", returnResourceRef = "REF",
         transaction = Some(Transaction(effectiveDate = None))
       )))
-      toViewModel(sdltcResult, noEffDate, stubbedTimeMachine, LeaseholdTaxCalculatedSelfAssessedAmountPage) mustBe Left(MissingTransactionAnswerError("effectiveDate"))
+
+      toViewModel(
+        BigDecimal(25000),
+        noEffDate,
+        stubbedTimeMachine
+      ) mustBe Left(MissingTransactionAnswerError("effectiveDate"))
     }
 
     "Left(InvalidDateError) when the effectiveDate string isn't a parseable date" in {
-      toViewModel(sdltcResult, answersWith("not-a-date"), stubbedTimeMachine, LeaseholdTaxCalculatedSelfAssessedAmountPage) mustBe Left(InvalidDateError("not-a-date"))
+      toViewModel(
+        BigDecimal(25000),
+        answersWith("not-a-date"),
+        stubbedTimeMachine
+      ) mustBe Left(InvalidDateError("not-a-date"))
     }
 
-    "uses the user's self-assessed amount over the sdltc total when one has been saved" in {
-      val overridden = answersWith().set(LeaseholdTaxCalculatedSelfAssessedAmountPage, "12500").success.value
-      val vm         = toViewModel(sdltcResult, overridden, stubbedTimeMachine, LeaseholdTaxCalculatedSelfAssessedAmountPage).value
-
-      vm.totalAmountDueSummary.rows.head.value.content mustBe Text("£12,500")
-      vm.totalAmountDueSummary.rows.last.value.content mustBe Text("£12,500")
-    }
-
-    "falls back to the sdltc total when no self-assessed amount has been saved" in {
-      val vm = toViewModel(sdltcResult, answersWith(), stubbedTimeMachine, LeaseholdTaxCalculatedSelfAssessedAmountPage).value
-
-      vm.totalAmountDueSummary.rows.head.value.content mustBe Text("£43,750")
-    }
   }
 }

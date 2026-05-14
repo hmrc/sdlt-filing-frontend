@@ -15,47 +15,45 @@
  *@
 
 @import viewmodels.InputWidth._
-@import viewmodels.taxCalculation.TotalAmountDueViewModel
 @import views.html.components._
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukSummaryList: GovukSummaryList,
     govukInput: GovukInput,
     govukButton: GovukButton,
     caption: Caption,
-    h1: h1
+    h1: h1,
+    p: Paragraph
 )
 
-@(form: Form[String], viewModel: TotalAmountDueViewModel, postAction: Call, sectionKey: String)(
-        implicit request: Request[_], messages: Messages
-)
+@(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("taxCalculation.totalAmountDue.title"), section = Some(messages(sectionKey)))) {
+@layout(pageTitle = title(form, messages("lease.enterRentFreePeriod.title"), section = Some(messages("site.lease.caption")))) {
 
-    @formHelper(action = postAction) {
+    @formHelper(action = controllers.lease.routes.LeaseEnterRentFreePeriodController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @caption(messages("site.taxCalculation.caption"))
-        @h1(messages("taxCalculation.totalAmountDue.heading"))
-
-        @govukSummaryList(viewModel.totalAmountDueSummary)
+        @caption(messages("site.lease.caption"))
+        @h1(messages("lease.enterRentFreePeriod.heading"))
+        @p(messages("lease.enterRentFreePeriod.p1"))
 
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("taxCalculation.totalAmountDue.h2")).asPageSubHeading()
+                label = LabelViewModel(messages("lease.enterRentFreePeriod.h2")).asPageSubHeading()
             )
-            .withWidth(Fixed10)
-            .withPrefix(PrefixOrSuffix(content = Text(messages("site.money.prefix"))))
-            .withHint(HintViewModel(Text(messages("taxCalculation.totalAmountDue.hint"))))
+            .withWidth(Fixed2)
+            .asNumeric()
+            .withHint(HintViewModel(HtmlContent(Html(messages("lease.enterRentFreePeriod.hint")))))
         )
 
-        @govukButton(ButtonViewModel(messages("site.save.continue")))
+        @govukButton(
+            ButtonViewModel(messages("site.save.continue"))
+        )
     }
 }

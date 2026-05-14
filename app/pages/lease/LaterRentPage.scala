@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package pages.taxCalculation.leaseholdSelfAssessed
+package pages.lease
 
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object LeaseholdSelfAssessedTotalAmountDuePage extends QuestionPage[String] {
+case object LaterRentPage extends QuestionPage[Boolean] {
 
-  override def path: JsPath = JsPath \ "taxCalculationCurrent" \ toString
+  override def path: JsPath = JsPath \ "leaseCurrent" \ toString
 
-  override def toString: String = "leaseholdSelfAssessedTotalAmountDue"
+  override def toString: String = "laterRent"
 }

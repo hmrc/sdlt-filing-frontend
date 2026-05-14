@@ -14,14 +14,32 @@
  * limitations under the License.
  */
 
-package pages.taxCalculation.leaseholdSelfAssessed
+package forms.lease
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-case object LeaseholdSelfAssessedTotalAmountDuePage extends QuestionPage[String] {
+class LaterRentFormProviderSpec extends BooleanFieldBehaviours {
 
-  override def path: JsPath = JsPath \ "taxCalculationCurrent" \ toString
+  val requiredKey = "lease.laterRent.error.required"
+  val invalidKey = "error.boolean"
 
-  override def toString: String = "leaseholdSelfAssessedTotalAmountDue"
+  val form = new LaterRentFormProvider()()
+
+  ".value" - {
+
+    val fieldName = "value"
+
+    behave like booleanField(
+      form,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
+    )
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
+    )
+  }
 }

@@ -46,8 +46,17 @@ case class MissingTransactionAnswerError(value: String) extends MissingDataError
   val message = s"Could not find user answer from 'About the Transaction' journey: $value"
 }
 
+case class MissingSelfAssessedAmountDueError(value: String) extends MissingDataError {
+  val message = s"Could not find SDLT due: Self Assessment amount  from 'Freehold Self Assessment' journey: $value"
+}
+
+
 case class MissingLeaseAnswerError(value: String) extends MissingDataError {
   val message = s"Could not find user answer from 'About the Lease': $value"
+}
+
+case class MissingTaxCalculationAnswerError(value: String) extends MissingDataError {
+  val message = s"Could not extract 'Tax Calculation' journey answers from Full return: $value"
 }
 
 case object MissingPremiumCalcError extends MissingDataError {

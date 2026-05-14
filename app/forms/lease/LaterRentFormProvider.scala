@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package pages.taxCalculation.leaseholdSelfAssessed
+package forms.lease
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import forms.mappings.Mappings
+import play.api.data.Form
 
-case object LeaseholdSelfAssessedTotalAmountDuePage extends QuestionPage[String] {
+import javax.inject.Inject
 
-  override def path: JsPath = JsPath \ "taxCalculationCurrent" \ toString
+class LaterRentFormProvider @Inject() extends Mappings {
 
-  override def toString: String = "leaseholdSelfAssessedTotalAmountDue"
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("lease.laterRent.error.required")
+    )
 }
