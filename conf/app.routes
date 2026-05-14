@@ -544,7 +544,7 @@ GET        /tax-calculation/before-you-start                                    
 #GET       /tax-calculation/leasehold-calculated/breakdown                      controllers.LeaseholdSdltCalculatedBreakdownController.onPageLoad()
 
 # ---- Tax calculation  -------------------------------------
-GET        /tax-calculation/confirm-effective-date-of-transactiont               controllers.taxCalculation.TaxCalculationConfirmEffectiveDateOfTransactionController.onPageLoad()
+GET        /tax-calculation/confirm-effective-date-of-transaction               controllers.taxCalculation.TaxCalculationConfirmEffectiveDateOfTransactionController.onPageLoad()
 
 
 # ---- Tax calculation: Flow A (Freehold - Service has performed calculation) -------------------------------------

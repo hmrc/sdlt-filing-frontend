@@ -36,6 +36,12 @@
 
     @caption(messages("site.taxCalculation.caption"))
 
-    @govukButton( ButtonViewModel(messages("taxCalculation.penaltiesAndInterest.button")) )
+    @h1(messages("taxCalculation.confirm.effectiveDateOfTransaction.heading"))
+
+    @p(messages("taxCalculation.confirm.effectiveDateOfTransaction.p1"))
+
+    @p(messages("taxCalculation.confirm.effectiveDateOfTransaction.p2"))
+
+    @govukButton( ButtonViewModel(messages("taxCalculation.confirm.effectiveDateOfTransaction.button")) )
 
 }
