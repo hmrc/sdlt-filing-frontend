@@ -613,8 +613,10 @@ GET        /tax-calculation/leasehold-not-calculated/total-amount-due           
 POST       /tax-calculation/leasehold-not-calculated/total-amount-due                                controllers.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedTotalAmountDueController.onSubmit(mode: Mode = NormalMode)
 GET        /tax-calculation/leasehold-not-calculated/total-amount-due/change                         controllers.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedTotalAmountDueController.onPageLoad(mode: Mode = CheckMode)
 POST       /tax-calculation/leasehold-not-calculated/total-amount-due/change                         controllers.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedTotalAmountDueController.onSubmit(mode: Mode = CheckMode)
-#GET       /tax-calculation/leasehold-not-calculated/penalties-and-interest-charges                  controllers.LeaseholdSdltNotCalculatedPenaltiesAndInterestController.onPageLoad()
-#POST      /tax-calculation/leasehold-not-calculated/penalties-and-interest-charges                  controllers.LeaseholdSdltNotCalculatedPenaltiesAndInterestController.onSubmit()
+GET        /tax-calculation/leasehold-not-calculated/are-penalties-and-interest-included             controllers.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedPenaltiesAndInterestController.onPageLoad(mode: Mode = NormalMode)
+POST       /tax-calculation/leasehold-not-calculated/are-penalties-and-interest-included             controllers.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedPenaltiesAndInterestController.onSubmit(mode: Mode = NormalMode)
+GET        /tax-calculation/leasehold-not-calculated/are-penalties-and-interest-included/change      controllers.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedPenaltiesAndInterestController.onPageLoad(mode: Mode = CheckMode)
+POST       /tax-calculation/leasehold-not-calculated/are-penalties-and-interest-included/change      controllers.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedPenaltiesAndInterestController.onSubmit(mode: Mode = CheckMode)
 #GET       /tax-calculation/leasehold-not-calculated/check-your-answers                              controllers.LeaseholdSdltNotCalculatedCheckYourAnswersController.onPageLoad()
 #POST      /tax-calculation/leasehold-not-calculated/check-your-answers                              controllers.LeaseholdSdltNotCalculatedCheckYourAnswersController.onSubmit()
 

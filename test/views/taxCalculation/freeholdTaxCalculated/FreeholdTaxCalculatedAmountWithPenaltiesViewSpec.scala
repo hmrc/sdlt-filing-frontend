@@ -74,12 +74,12 @@ class FreeholdTaxCalculatedAmountWithPenaltiesViewSpec extends SpecBase {
 
         val doc = Jsoup.parse(view(form, getPageTitle(flow = FreeholdTaxCalculated), postAction(FreeholdTaxCalculated, NormalMode)).toString())
 
-        val yesRadio = doc.getElementById("value_0")
-        yesRadio.attr("value") mustBe "yes"
+        val yesRadio = doc.getElementById("value")
+        yesRadio.attr("value") mustBe "true"
         yesRadio.parent().text() must include(msgs("site.yes"))
 
-        val noRadio = doc.getElementById("value_1")
-        noRadio.attr("value") mustBe "no"
+        val noRadio = doc.getElementById("value-2")
+        noRadio.attr("value") mustBe "false"
         noRadio.parent().text() must include(msgs("site.no"))
       }
     }

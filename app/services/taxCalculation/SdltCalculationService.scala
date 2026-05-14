@@ -18,20 +18,19 @@ package services.taxCalculation
 
 import connectors.SdltCalculationConnector
 import controllers.routes.ReturnTaskListController
-import models.PenaltiesAndInterest.AmountIncludePenaltiesAndInterestYes
 import models.requests.DataRequest
 import models.taxCalculation.{MissingDataError, TaxCalculationFlow, TaxCalculationResult}
-import models.{PenaltiesAndInterest, UserAnswers}
-import pages.taxCalculation.TaxCalculationFlowPage
+import models.UserAnswers
 import play.api.Logging
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import queries.Settable
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
-
+import pages.taxCalculation.TaxCalculationFlowPage
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+
 
 class SdltCalculationService @Inject()(
                                         connector: SdltCalculationConnector,
@@ -67,12 +66,11 @@ class SdltCalculationService @Inject()(
     }
 
   def savePenaltiesAndInterestYesNoAnswer(key: Settable[Boolean],
-                                          value: PenaltiesAndInterest)
+                                          value: Boolean)
                                          (implicit request: DataRequest[?]): Future[Boolean] = {
-    val valueToSave: Boolean = value == AmountIncludePenaltiesAndInterestYes
     for {
       updatedAnswers <- Future.fromTry {
-        request.userAnswers.set(key, valueToSave)
+        request.userAnswers.set(key, value)
       }
       persistenceResult <- sessionRepository.set(updatedAnswers)
     } yield

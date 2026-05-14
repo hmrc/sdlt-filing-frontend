@@ -1427,6 +1427,11 @@ taxCalculation.penaltiesAndInterest.error.required                              
 
 taxCalculation.penaltiesAndInterest.freehold-tax-not-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Freehold not calculated
 taxCalculation.penaltiesAndInterest.freehold-tax-not-calculated.heading                            = Does the amount you intend to pay include penalties and interest charges?
+
+taxCalculation.penaltiesAndInterest.leasehold-tax-not-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Leasehold not calculated
+taxCalculation.penaltiesAndInterest.leasehold-tax-not-calculated.heading                            = Does the amount you intend to pay include penalties and interest charges?
+
+
 taxCalculation.penaltiesAndInterest.checkYourAnswersLabel                           = Not yet implemented / part of the work for CYA page
 
 taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Leasehold calculated
