@@ -679,3 +679,8 @@ GET        /about-the-lease/later-rent                                          
 POST       /about-the-lease/later-rent                                                               controllers.lease.LaterRentController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-lease/later-rent/change                                                        controllers.lease.LaterRentController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-lease/later-rent/change                                                        controllers.lease.LaterRentController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-lease/1000-pound-threshold                                                     controllers.lease.LeaseThousandPoundsThresholdController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-lease/1000-pound-threshold                                                     controllers.lease.LeaseThousandPoundsThresholdController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-lease/1000-pound-threshold/change                                              controllers.lease.LeaseThousandPoundsThresholdController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-lease/1000-pound-threshold/change                                              controllers.lease.LeaseThousandPoundsThresholdController.onSubmit(mode: Mode = CheckMode)

@@ -1745,3 +1745,13 @@ lease.laterRent.paragraph                                                       
 lease.laterRent.checkYourAnswersLabel                                               = Is the later rent known?
 lease.laterRent.error.required                                                      = Select yes if the later rent is known
 lease.laterRent.change.hidden                                                       = Later rent
+
+lease.leaseThousandPoundsThreshold.title                                            = £1,000 threshold
+lease.leaseThousandPoundsThreshold.heading                                          = £1,000 threshold
+lease.leaseThousandPoundsThreshold.p                                                = This helps determine whether an SLDT return is required for the grant of a new lease. SDLT is only payable if:
+lease.leaseThousandPoundsThreshold.li1                                              = the annual rent is £1,000 or more
+lease.leaseThousandPoundsThreshold.li2                                              = the total premium (any payment other than rent) is £40,000 or more
+lease.leaseThousandPoundsThreshold.subheading                                       = Is the annual rent £1,000 or more?
+lease.leaseThousandPoundsThreshold.checkYourAnswersLabel                            = Annual rent £1,000 or more
+lease.leaseThousandPoundsThreshold.error.required                                   = Select yes if the annual rent is £1,000 or more
+lease.leaseThousandPoundsThreshold.change.hidden                                    = Is the annual rent £1,000 or more?
