@@ -293,7 +293,7 @@ class Navigator @Inject()() {
   }
 
   private def isLeaseSection(page: Page): Boolean = page match {
-    case TypeOfLeasePage | LeaseEnterRentFreePeriodPage => true
+    case TypeOfLeasePage | LeaseEnterRentFreePeriodPage | LaterRentPage => true
     case _ => false
   }
   
@@ -302,6 +302,8 @@ class Navigator @Inject()() {
       _ => controllers.lease.routes.TypeOfLeaseController.onPageLoad(NormalMode)
     case LeaseEnterRentFreePeriodPage => //TODO: - DTR-3518 - SPRINT 15 - update to What is the annual starting rent including VAT? - ls-5
       _ => controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(NormalMode)
+    case LaterRentPage => //TODO - DTR-3524 - SPRINT 15 - update to is the annual rent 1000 pounds or more ls-8
+      _ => controllers.lease.routes.LaterRentController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

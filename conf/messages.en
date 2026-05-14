@@ -1737,3 +1737,11 @@ lease.enterRentFreePeriod.error.minValue                                        
 lease.enterRentFreePeriod.error.maxValue                                            = The rent-free period must be 99 months or fewer
 lease.enterRentFreePeriod.error.maxLength                                           = The rent-free period must be 2 digits or less
 lease.enterRentFreePeriod.change.hidden                                             = the rent-free period
+
+lease.laterRent.title                                                               = Later rent
+lease.laterRent.heading                                                             = Later rent
+lease.laterRent.subheading                                                          = Is the later rent known?
+lease.laterRent.paragraph                                                           = This refers to any rent payable after the starting rent has ended. The later rent is only known if the full amount of all future rent payments is specified in the lease. If the rent is uncertain or no further rent is due, then the later rent is not known.
+lease.laterRent.checkYourAnswersLabel                                               = Is the later rent known?
+lease.laterRent.error.required                                                      = Select yes if the later rent is known
+lease.laterRent.change.hidden                                                       = Later rent
