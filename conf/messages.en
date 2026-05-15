@@ -1511,6 +1511,7 @@ taxCalculation.totalAmountDue.error.invalidWholeNumber                       = E
 taxCalculation.totalAmountDue.error.maximum                                  = The amount you intend to pay must be equal to or less than £9,999,999,999
 taxCalculation.totalAmountDue.error.length                                   = The amount you intend to pay must be 16 characters or fewer
 
+taxCalculation.confirmEffectiveDateOfTransaction.title                       = Is this the effective date of the transaction?
 taxCalculation.confirmEffectiveDateOfTransaction.heading                     = Is {0} the effective date of the transaction?
 taxCalculation.confirmEffectiveDateOfTransaction.error.required              = Select yes if this is the effective date of the transaction
 

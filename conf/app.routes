@@ -541,7 +541,8 @@ GET        /about-the-transaction/restrictions-covenants-and-conditions/change  
 POST       /about-the-transaction/restrictions-covenants-and-conditions/change                       controllers.transaction.TransactionRestrictionsCovenantsAndConditionsController.onSubmit(mode: Mode = CheckMode)
 
 GET        /tax-calculation/confirm-effective-date-of-transaction                                    controllers.taxCalculation.ConfirmEffectiveDateOfTransactionController.onPageLoad()
-GET        /tax-calculation/confirm-effective-date-of-transaction                                    controllers.taxCalculation.ConfirmEffectiveDateOfTransactionController.onSubmit()
+POST       /tax-calculation/confirm-effective-date-of-transaction                                    controllers.taxCalculation.ConfirmEffectiveDateOfTransactionController.onSubmit()
+
 GET        /tax-calculation/before-you-start                                    controllers.taxCalculation.TaxCalculationBeforeYouStartController.onPageLoad()
 #GET       /tax-calculation/leasehold-calculated/breakdown                      controllers.LeaseholdSdltCalculatedBreakdownController.onPageLoad()
 

@@ -16,32 +16,77 @@
 
 package controllers.taxCalculation
 
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.*
+import forms.taxCalculation.ConfirmEffectiveDateOfTransactionFormProvider
+import models.{CheckMode, NormalMode}
+import models.taxCalculation.BuildRequestError
+import navigation.Navigator
+import pages.taxCalculation.ConfirmEffectiveDateOfTransactionPage
 import play.api.Logging
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.EffectiveDateHelper
+import views.html.taxCalculation.ConfirmEffectiveDateOfTransactionYesNoView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ConfirmEffectiveDateOfTransactionController @Inject()(override val message: MessagesApi,
+class ConfirmEffectiveDateOfTransactionController @Inject()(override val messagesApi: MessagesApi,
                                                             identify: IdentifierAction,
                                                             getData: DataRetrievalAction,
                                                             requireData: DataRequiredAction,
+                                                            navigator: Navigator,
                                                             sessionRepository: SessionRepository,
-                                                            val controllerComponents: MessagesControllerComponents
-                                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
-  
-  
-  def onPageLoad():Action[AnyContent] = {
-     ???
+                                                            val controllerComponents: MessagesControllerComponents,
+                                                            formProvider: ConfirmEffectiveDateOfTransactionFormProvider,
+                                                            view: ConfirmEffectiveDateOfTransactionYesNoView
+                                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging with TaxCalculationErrorRecovery {
+
+
+  private val form: Form[Boolean] = formProvider()
+
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+    implicit request =>
+      EffectiveDateHelper.getEffectiveDate(request.userAnswers) match {
+        case Right(effectiveDate) =>
+          val preparedForm = request.userAnswers.get(ConfirmEffectiveDateOfTransactionPage).fold(form)(form.fill)
+          Ok(view(preparedForm, effectiveDate))
+        case Left(error) =>
+          logger.warn(s"[ConfirmEffectiveDateOfTransactionController][onPageLoad] failed: ${error.message}")
+          Redirect(errorHandler(error))
+      }
+
   }
-  
-  def onSubmit():Action[AnyContent] = {
-     ???
+
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors =>
+            EffectiveDateHelper.getEffectiveDate(request.userAnswers) match {
+              case Right(effectiveDate) =>
+                Future.successful(BadRequest(view(formWithErrors, effectiveDate)))
+              case Left(error) =>
+                logger.warn(s"[ConfirmEffectiveDateOfTransactionController][onSubmit] failed: ${error.message}")
+                Future.successful(Redirect(errorHandler(error)))
+            },
+          value =>
+            for {
+              updatedUserAnswers <- Future.fromTry(request.userAnswers.set(ConfirmEffectiveDateOfTransactionPage, value))
+              _ <- sessionRepository.set(updatedUserAnswers)
+            } yield {
+              if (value) {
+                Redirect(navigator.nextPage(ConfirmEffectiveDateOfTransactionPage, NormalMode, updatedUserAnswers))
+              }
+              else Redirect(controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode))
+            }
+        )
   }
+
 
 }
