@@ -18,7 +18,9 @@ package controllers.transaction
 
 import controllers.actions.*
 import models.UserAnswers
+import models.land.LandTypeOfProperty
 import models.prelimQuestions.TransactionType
+import models.transaction.ReasonForRelief
 import pages.transaction.*
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsObject
@@ -86,13 +88,13 @@ class TransactionCheckYourAnswersController @Inject()(
     implicit request =>
       sessionRepository.get(request.userAnswers.id).map {
         case Some(_) => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-        case None    => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        case None => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
   }
 
   private def renderOrRedirect(ua: UserAnswers)(implicit request: Request[_]): Result =
     checkAnswersService.redirectOrRender(buildRowResults(ua)) match {
-      case Left(call)         => Redirect(call)
+      case Left(call) => Redirect(call)
       case Right(summaryList) => Ok(view(summaryList))
     }
 
@@ -110,12 +112,55 @@ class TransactionCheckYourAnswersController @Inject()(
       TotalConsiderationOfLinkedTransactionSummary.row(ua),
       Some(PurchaserEligibleToClaimReliefSummary.row(ua)),
       ReasonForReliefSummary.row(ua),
+      Option.when(isPartExchange(ua))(IsPurchaserRegisteredWithCISSummary.row(ua)),
+      if (cisCheck(ua) && isPartExchange(ua)) TransactionCisNumberSummary.row(ua) else None,
       AddRegisteredCharityNumberSummary.row(ua),
       CharityRegisteredNumberSummary.row(ua),
       TransactionPartialReliefSummary.row(ua),
-      ClaimingPartialReliefAmountSummary.row(ua)
+      ClaimingPartialReliefAmountSummary.row(ua),
+      Some(ConsiderationsAffectedUncertainSummary.row(ua)),
+      Some(TransactionDeferringPaymentSummary.row(ua)),
+      if (propertyTypeCheck(ua)) Some(TransactionUseOfLandOrPropertySummary.row(ua)) else None,
+      Some(SaleOfBusinessSummary.row(ua)),
+      if (saleOfBusinessCheck(ua)) Some(TransactionSaleOfBusinessAssetsSummary.row(ua)) else None,
+      if (saleOfBusinessCheck(ua)) Some(TotalAssetsConsiderationSummary.row(ua)) else None,
+      Some(Cap1OrNsbcSummary.row(ua)),
+      if (cap1Check(ua)) Some(TransactionRulingFollowedSummary.row(ua)) else None,
+      Some(TransactionRestrictionsCovenantsAndConditionsSummary.row(ua)),
+      if (restrictionsCheck(ua)) Some(DescriptionOfRestrictionsSummary.row(ua)) else None,
+      Some(IsLandOrPropertyExchangedSummary.row(ua)),
+      if (landExchangedCheck(ua)) Some(TransactionAddressSummary.row(ua)) else None,
+      Some(TransactionExercisingAnOptionSummary.row(ua))
     ).flatten
 
   private def isGrantOfLease(ua: UserAnswers): Boolean =
     ua.get(TypeOfTransactionPage).contains(TransactionType.GrantOfLease)
+
+  private def isPartExchange(ua: UserAnswers): Boolean =
+    ua.get(ReasonForReliefPage).contains(ReasonForRelief.PartExchange)
+
+  private def cisCheck(ua: UserAnswers): Boolean =
+    ua.get(IsPurchaserRegisteredWithCISPage).contains(true)
+
+  private def propertyTypeCheck(ua: UserAnswers): Boolean =
+    val mainLandId = ua.fullReturn.flatMap(_.returnInfo).flatMap(_.mainLandID)
+    val typeOfProperty = ua.fullReturn.flatMap(_.land).flatMap(_.find(l => l.landID == mainLandId)).flatMap(_.propertyType)
+
+    typeOfProperty match {
+      case Some(LandTypeOfProperty.Mixed.toString | LandTypeOfProperty.NonResidential.toString) => true
+      case _ => false
+    }
+
+  private def saleOfBusinessCheck(ua: UserAnswers): Boolean =
+    ua.get(SaleOfBusinessPage).contains(true)
+
+  private def cap1Check(ua: UserAnswers): Boolean =
+    ua.get(Cap1OrNsbcPage).contains(true)
+
+  private def restrictionsCheck(ua: UserAnswers): Boolean =
+    ua.get(TransactionRestrictionsCovenantsAndConditionsPage).contains(true)
+
+  private def landExchangedCheck(ua: UserAnswers): Boolean =
+    ua.get(IsLandOrPropertyExchangedPage).contains(true)
+
 }

@@ -20,7 +20,7 @@ import controllers.actions.*
 import forms.transaction.IsLandOrPropertyExchangedFormProvider
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.transaction.IsLandOrPropertyExchangedPage
+import pages.transaction.{IsLandOrPropertyExchangedPage, TransactionAddressPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -29,6 +29,7 @@ import views.html.transaction.IsLandOrPropertyExchangedView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 class IsLandOrPropertyExchangedController @Inject()(
                                          override val messagesApi: MessagesApi,
@@ -65,12 +66,16 @@ class IsLandOrPropertyExchangedController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IsLandOrPropertyExchangedPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            finalAnswers <- Future.fromTry {
+              if !value then updatedAnswers.remove(TransactionAddressPage)
+              else Success(updatedAnswers)
+            }
+            _ <- sessionRepository.set(finalAnswers)
           } yield {
-            if (value) {
-              Redirect(navigator.nextPage(IsLandOrPropertyExchangedPage, mode, updatedAnswers))
-            } else {
+            if (!value && mode == NormalMode) {
               Redirect(controllers.transaction.routes.TransactionExercisingAnOptionController.onPageLoad(NormalMode))
+            } else {
+              Redirect(navigator.nextPage(IsLandOrPropertyExchangedPage, mode, finalAnswers))
             }
           }
       )

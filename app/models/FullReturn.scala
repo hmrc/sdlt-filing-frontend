@@ -379,6 +379,70 @@ case class Transaction(
 
 object Transaction {
   implicit val format: OFormat[Transaction] = Json.format[Transaction]
+
+  def from(userAnswers: UserAnswers): Future[Transaction] = {
+    val landSessionQuestions: LandSessionQuestions = (userAnswers.data \ "landCurrent").as[LandSessionQuestions]
+
+    val existingTransaction = for {
+      fullReturn <- userAnswers.fullReturn
+      transaction <- fullReturn.transaction
+      existing <- transaction.transactionID
+    } yield existing
+
+    Future.successful(Transaction(
+      transactionID = ???,
+      returnID = ???,
+      claimingRelief = ???,
+      reliefAmount = ???,
+      reliefReason = ???,
+      reliefSchemeNumber = ???,
+      isLinked = ???,
+      totalConsiderationLinked = ???,
+      totalConsideration = ???,
+      considerationBuild = ???,
+      considerationCash = ???,
+      considerationContingent = ???,
+      considerationDebt = ???,
+      considerationEmploy = ???,
+      considerationOther = ???,
+      considerationLand = ???,
+      considerationServices = ???,
+      considerationSharesQTD = ???,
+      considerationSharesUNQTD = ???,
+      considerationVAT = ???,
+      includesChattel = ???,
+      includesGoodwill = ???,
+      includesOther = ???,
+      includesStock = ???,
+      usedAsFactory = ???,
+      usedAsHotel = ???,
+      usedAsIndustrial = ???,
+      usedAsOffice = ???,
+      usedAsOther = ???,
+      usedAsShop = ???,
+      usedAsWarehouse = ???,
+      contractDate = ???,
+      isDependantOnFutureEvent = ???,
+      transactionDescription = ???,
+      newTransactionDescription = ???,
+      effectiveDate = ???,
+      isLandExchanged = ???,
+      exchangedLandHouseNumber = ???,
+      exchangedLandAddress1 = ???,
+      exchangedLandAddress2 = ???,
+      exchangedLandAddress3 = ???,
+      exchangedLandAddress4 = ???,
+      exchangedLandPostcode = ???,
+      agreedToDeferPayment = ???,
+      postTransRulingApplied = ???,
+      isPursuantToPreviousOption = ???,
+      restrictionsAffectInterest = ???,
+      restrictionDetails = ???,
+      postTransRulingFollowed = ???,
+      isPartOfSaleOfBusiness = ???,
+      totalConsiderationBusiness = ???
+    ))
+  }
 }
 
 case class ReturnAgent(

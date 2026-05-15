@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.transaction
 
 import models.{CheckMode, UserAnswers}
-import pages.transaction.TransactionCisNumberPage
+import pages.transaction.{IsPurchaserRegisteredWithCISPage, TransactionCisNumberPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
@@ -28,23 +28,26 @@ import viewmodels.implicits.*
 
 object TransactionCisNumberSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryRowResult] = {
     val changeRoute = controllers.transaction.routes.TransactionCisNumberController.onPageLoad(CheckMode)
-    answers.get(TransactionCisNumberPage).map {
-      answer =>
+    val label = messages("transaction.cisNumber.checkYourAnswersLabel")
 
-        Row(
+    (answers.get(TransactionCisNumberPage), answers.get(IsPurchaserRegisteredWithCISPage)) match {
+      case (Some(answer), _) =>
+        Some(Row(
           SummaryListRowViewModel(
-            key     = "transaction.cisNumber.checkYourAnswersLabel",
+            key     = label,
             value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
             actions = Seq(
               ActionItemViewModel("site.change", changeRoute.url)
                 .withVisuallyHiddenText(messages("transaction.cisNumber.change.hidden"))
             )
           )
-        )
-    }.getOrElse(
-      Missing(changeRoute)
-    )
+        ))
+      case (None, Some(true)) =>
+        Some(Missing(changeRoute))
+      case _ =>
+        None
+    }
   }
 }

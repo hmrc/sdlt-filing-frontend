@@ -20,7 +20,7 @@ import controllers.actions.*
 import forms.transaction.Cap1OrNsbcFormProvider
 import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.transaction.Cap1OrNsbcPage
+import pages.transaction.{Cap1OrNsbcPage, TransactionRulingFollowedPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -29,6 +29,7 @@ import views.html.transaction.Cap1OrNsbcView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 class Cap1OrNsbcController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -65,12 +66,16 @@ class Cap1OrNsbcController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(Cap1OrNsbcPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
+            finalAnswers <- Future.fromTry {
+              if !value then updatedAnswers.remove(TransactionRulingFollowedPage)
+              else Success(updatedAnswers)
+            }
+            _ <- sessionRepository.set(finalAnswers)
           } yield {
-            if (value) {
-              Redirect(navigator.nextPage(Cap1OrNsbcPage, mode, updatedAnswers))
-            } else {
+            if (!value && mode == NormalMode) {
               Redirect(controllers.transaction.routes.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(NormalMode))
+            } else {
+              Redirect(navigator.nextPage(Cap1OrNsbcPage, mode, updatedAnswers))
             }
           }
       )

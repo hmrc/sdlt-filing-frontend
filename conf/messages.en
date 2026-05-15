@@ -1206,7 +1206,7 @@ transaction.addDateOfContract.title                                             
 transaction.addDateOfContract.heading                                               = Date of contract
 transaction.addDateOfContract.h2                                                    = Do you know the date of contract or conclusion of missives?
 transaction.addDateOfContract.p1                                                    = The date of contract (or conclusion of missives) is when the agreement of sale becomes a binding contract between the purchaser and vendor, usually through the exchange of contracts. Typically, this is not the same day as the effective date of transaction.
-transaction.addDateOfContract.checkYourAnswersLabel                                 = Do you know the date of contract or conclusion of missives?
+transaction.addDateOfContract.checkYourAnswersLabel                                 = Contract or conclusion of missives
 transaction.addDateOfContract.error.required                                        = Select yes if you know the date of contract or conclusion of missives
 transaction.addDateOfContract.change.hidden                                         = Do you know the date of contract or conclusion of missives?
 transaction.addDateOfContract.missing                                               = Select if you know the date of contract or conclusion of missives
@@ -1249,7 +1249,7 @@ transaction.totalConsiderationOfTransaction.li3                                 
 transaction.totalConsiderationOfTransaction.li4                                     = payment of the vendor’s legal costs
 transaction.totalConsiderationOfTransaction.h2                                      = What is the total consideration in money or money’s worth?
 transaction.totalConsiderationOfTransaction.hint                                    = Enter the value in whole pounds only, for example £200,000
-transaction.totalConsiderationOfTransaction.checkYourAnswersLabel                   = What is the total consideration in money or money’s worth?
+transaction.totalConsiderationOfTransaction.checkYourAnswersLabel                   = Total consideration of the transaction
 transaction.totalConsiderationOfTransaction.error.required                          = Enter the total consideration in money or money’s worth, in pounds
 transaction.totalConsiderationOfTransaction.error.invalidNumeric                    = The total consideration in money or money’s worth must only include commas and numbers 0 to 9
 transaction.totalConsiderationOfTransaction.error.invalidWholeNumber                = Enter the total consideration in money or money’s worth in whole pounds
@@ -1264,7 +1264,7 @@ transaction.vatAmount.heading                                                   
 transaction.vatAmount.p1                                                            = The total consideration must reflect VAT rates on the effective date of transaction. Any subsequent changes do not affect the amount due.
 transaction.vatAmount.h2                                                            = What is the amount of VAT included in the total consideration?
 transaction.vatAmount.hint                                                          = Enter the value in whole pounds only, for example £200,000
-transaction.vatAmount.checkYourAnswersLabel                                         = What is the amount of VAT included in the total consideration?
+transaction.vatAmount.checkYourAnswersLabel                                         = Amount of VAT included in the total consideration
 transaction.vatAmount.error.required                                                = Enter the amount of VAT included in the total consideration, in pounds
 transaction.vatAmount.error.invalidNumeric                                          = The amount of VAT included in the total consideration must only include numbers 0 to 9 and commas
 transaction.vatAmount.error.invalidWholeNumber                                      = Enter the amount of VAT included in the total consideration in whole pounds
@@ -1574,13 +1574,14 @@ transaction.considerationsAffectedUncertain.p1                                  
 transaction.considerationsAffectedUncertain.p2                                      = Uncertain future events are typically defined as:
 transaction.considerationsAffectedUncertain.bullet1                                 = a contingent consideration, where a fixed sum is only paid, or not paid, when the uncertain future event occurs
 transaction.considerationsAffectedUncertain.bullet2                                 = a dependent consideration, where the amount or value of a consideration depends on the uncertain future event
+transaction.considerationsAffectedUncertain.checkYourAnswersLabel                   = Is any part of the consideration contingent or dependent on uncertain future events?
 
 transaction.rulingFollowed.title                                                    = Have you followed the ruling under CAP1 or NSBC when completing this return?
 transaction.rulingFollowed.heading                                                  = Have you followed the ruling under CAP1 or NSBC when completing this return?
 transaction.rulingFollowed.yes                                                      = Yes
 transaction.rulingFollowed.no                                                       = No
 transaction.rulingFollowed.RulingNotReceived                                        = Ruling not yet received
-transaction.rulingFollowed.checkYourAnswersLabel                                    = Have you followed the ruling under CAP1 or NSBC when completing this return?
+transaction.rulingFollowed.checkYourAnswersLabel                                    = CAP1 or NSBC ruling followed
 transaction.rulingFollowed.hint                                                     = If you’ve received a ruling, confirm that you have followed that ruling when completing this return
 transaction.rulingFollowed.error.required                                           = Select yes or no if you have received the ruling under CAP1 or NSBC, or select ‘Ruling not yet received’
 transaction.rulingFollowed.change.hidden                                            = if you have followed the ruling under CAP1 or NSBC when completing this return
