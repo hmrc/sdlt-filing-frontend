@@ -1419,6 +1419,12 @@ taxCalculation.beforeStart.bullet3                                              
 taxCalculation.beforeStart.bullet4                                                  = the amount you intend to pay with this return
 taxCalculation.beforeStart.bullet5                                                  = if this amount includes penalties and fines
 
+taxCalculation.calculatedSdltDue.title                                              = Calculated SDLT due
+taxCalculation.calculatedSdltDue.heading                                            = Calculated SDLT due is {0}
+taxCalculation.calculatedSdltDue.p1                                                 = The amount of SDLT due is based on the information you have entered when filing this return.
+taxCalculation.calculatedSdltDue.linkText                                           = Check your SDLT breakdown
+taxCalculation.calculatedSdltDue.checkYourAnswersLabel                              = HMRC calculated SDLT due
+
 taxCalculation.penaltiesAndInterest.button                                          = Save and continue
 
 taxCalculation.penaltiesAndInterest.freehold-tax-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Freehold calculated
