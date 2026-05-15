@@ -686,7 +686,13 @@ GET        /about-the-lease/1000-pound-threshold                                
 POST       /about-the-lease/1000-pound-threshold                                                     controllers.lease.LeaseThousandPoundsThresholdController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-lease/1000-pound-threshold/change                                              controllers.lease.LeaseThousandPoundsThresholdController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-lease/1000-pound-threshold/change                                              controllers.lease.LeaseThousandPoundsThresholdController.onSubmit(mode: Mode = CheckMode)
+
 GET        /about-the-lease/lease-start-date                                                         controllers.lease.LeaseStartDateController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-lease/lease-start-date                                                         controllers.lease.LeaseStartDateController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-lease/lease-start-date/change                                                  controllers.lease.LeaseStartDateController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-lease/lease-start-date/change                                                  controllers.lease.LeaseStartDateController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-lease/add-rent-free-period                                                     controllers.lease.DoesLeaseIncludeRentFreePeriodController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-lease/add-rent-free-period                                                     controllers.lease.DoesLeaseIncludeRentFreePeriodController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-lease/add-rent-free-period/change                                              controllers.lease.DoesLeaseIncludeRentFreePeriodController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-lease/add-rent-free-period/change                                              controllers.lease.DoesLeaseIncludeRentFreePeriodController.onSubmit(mode: Mode = CheckMode)

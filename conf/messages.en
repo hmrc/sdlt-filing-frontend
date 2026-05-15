@@ -1775,3 +1775,11 @@ lease.leaseThousandPoundsThreshold.subheading                                   
 lease.leaseThousandPoundsThreshold.checkYourAnswersLabel                            = Annual rent £1,000 or more
 lease.leaseThousandPoundsThreshold.error.required                                   = Select yes if the annual rent is £1,000 or more
 lease.leaseThousandPoundsThreshold.change.hidden                                    = Is the annual rent £1,000 or more?
+
+lease.doesLeaseIncludeRentFreePeriod.title                                          = Rent-free periods
+lease.doesLeaseIncludeRentFreePeriod.heading                                        = Rent-free periods
+lease.doesLeaseIncludeRentFreePeriod.checkYourAnswersLabel                          = Rent-free periods
+lease.doesLeaseIncludeRentFreePeriod.paragraph                                      = This is when a tenant pays no rent for an agreed period, usually as an incentive to sign the lease or compensation to cover fit-out costs. Rent-free periods typically start on the effective date of transaction or the start date as specified in the lease, whichever is later.
+lease.doesLeaseIncludeRentFreePeriod.subheading                                     = Does the lease include a rent-free period?
+lease.doesLeaseIncludeRentFreePeriod.error.required                                 = Select yes if the lease includes a rent-free period
+lease.doesLeaseIncludeRentFreePeriod.change.hidden                                  = Rent-free periods

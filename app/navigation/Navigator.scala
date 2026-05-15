@@ -293,7 +293,7 @@ class Navigator @Inject()() {
   }
 
   private def isLeaseSection(page: Page): Boolean = page match {
-    case TypeOfLeasePage | LeaseEnterRentFreePeriodPage | LaterRentPage | LeaseThousandPoundsThresholdPage | LeaseStartDatePage => true
+    case TypeOfLeasePage | LeaseEnterRentFreePeriodPage | LaterRentPage | LeaseThousandPoundsThresholdPage | LeaseStartDatePage  | DoesLeaseIncludeRentFreePeriodPage=> true
     case _ => false
   }
   
@@ -308,6 +308,9 @@ class Navigator @Inject()() {
       _ => controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(NormalMode)
     case LeaseThousandPoundsThresholdPage => // TODO - DTR-3530: update to Is VAT payable on the annual rent? - ls-9
       _ => controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(NormalMode)
+    case DoesLeaseIncludeRentFreePeriodPage =>
+      _ => controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(NormalMode)
+
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
