@@ -21,26 +21,26 @@
 
 @this(
         layout: templates.Layout,
-        formHelper: FormWithCSRF,
         govukButton: GovukButton,
         h1: h1,
         p: Paragraph,
         caption: Caption
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(nextPageUrl: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("site.beforeYouStart.heading"), section = Some(messages("site.lease.caption")))) {
 
-    @formHelper(action = controllers.taxCalculation.routes.TaxCalculationConfirmEffectiveDateOfTransactionController.onPageLoad()) {
-        @caption(messages("site.taxCalculation.caption"))
+    @caption(messages("site.taxCalculation.caption"))
 
-        @h1(messages("taxCalculation.confirm.effectiveDateOfTransaction.heading"))
+    @h1(messages("taxCalculation.confirm.effectiveDateOfTransaction.heading"))
 
-        @p(messages("taxCalculation.confirm.effectiveDateOfTransaction.p1"))
+    @p(messages("taxCalculation.confirm.effectiveDateOfTransaction.p1"))
 
-        @p(messages("taxCalculation.confirm.effectiveDateOfTransaction.p2"))
+    @p(messages("taxCalculation.confirm.effectiveDateOfTransaction.p2"))
 
-        @govukButton(ButtonViewModel(messages("taxCalculation.confirm.effectiveDateOfTransaction.button")))
-    }
+        @govukButton(
+                ButtonViewModel(messages("taxCalculation.confirm.effectiveDateOfTransaction.button"))
+                    .asLink(nextPageUrl))
+
 }

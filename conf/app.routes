@@ -546,7 +546,6 @@ GET        /tax-calculation/before-you-start                                    
 # ---- Tax calculation  -------------------------------------
 GET        /tax-calculation/confirm-effective-date-of-transaction               controllers.taxCalculation.TaxCalculationConfirmEffectiveDateOfTransactionController.onPageLoad()
 
-
 # ---- Tax calculation: Flow A (Freehold - Service has performed calculation) -------------------------------------
 
 GET         /tax-calculation/freehold-calculated/before-you-start               controllers.taxCalculation.freeholdTaxCalculated.FreeholdTaxCalculatedBYSController.onPageLoad()
