@@ -1760,3 +1760,21 @@ lease.leaseThousandPoundsThreshold.subheading                                   
 lease.leaseThousandPoundsThreshold.checkYourAnswersLabel                            = Annual rent £1,000 or more
 lease.leaseThousandPoundsThreshold.error.required                                   = Select yes if the annual rent is £1,000 or more
 lease.leaseThousandPoundsThreshold.change.hidden                                    = Is the annual rent £1,000 or more?
+
+lease.annualStartingRent.title                                                      = Annual starting rent
+lease.annualStartingRent.heading                                                    = Annual starting rent
+lease.annualStartingRent.subheading                                                 = What is the annual starting rent including VAT?
+lease.annualStartingRent.hint                                                       = Enter the value in whole pounds only, for example £10,000
+lease.annualStartingRent.p1                                                         = This is the annual rent payable on whichever date comes later:
+lease.annualStartingRent.li1                                                        = the effective date of the transaction
+lease.annualStartingRent.li2                                                        = the start date as specified in the lease
+lease.annualStartingRent.p2                                                         = You must include any VAT the landlord has opted to charge. If the rent is a token or nominal amount, like £1, or no rent is payable, enter ‘0’.
+lease.annualStartingRent.details.summary                                            = About variable or uncertain rent
+lease.annualStartingRent.details.content                                            = If the exact rent is uncertain (for example, linked to turnover), a reasonable estimate must be made. This should be based on available information, like a business plan or projected turnover, and used to calculate the Net Present Value (NPV) of the rent. Keep evidence of how the estimate was calculated in case requested by HMRC.
+lease.annualStartingRent.checkYourAnswersLabel                                      = Annual starting rent
+lease.annualStartingRent.error.required                                             = Enter the annual starting rent including VAT, in pounds
+lease.annualStartingRent.error.invalidNumeric                                       = The annual starting rent including VAT must only include numbers 0 to 9 and commas
+lease.annualStartingRent.error.invalidWholeNumber                                   = Enter the annual starting rent including VAT in whole pounds
+lease.annualStartingRent.error.maximum                                              = The annual starting rent including VAT must be equal to or less than £99,999,999
+lease.annualStartingRent.error.maxLength                                            = The annual starting rent including VAT must be 13 characters or fewer
+lease.annualStartingRent.change.hidden                                              = Annual starting rent
