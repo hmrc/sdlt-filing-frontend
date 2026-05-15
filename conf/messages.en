@@ -1421,6 +1421,12 @@ taxCalculation.beforeStart.bullet5                                              
 
 taxCalculation.cannotCalculateSdltDue.title                                         = HMRC cannot calculate the SDLT due
 taxCalculation.cannotCalculateSdltDue.heading                                       = HMRC cannot calculate the SDLT due
+taxCalculation.cannotCalculateSdltDue.p1                                            = The amount of SDLT due cannot be calculated because {0}
+taxCalculation.cannotCalculateSdltDue.reason1                                       = this return includes linked transactions. This means that HMRC does not have full visibility of each transaction.
+taxCalculation.cannotCalculateSdltDue.reason2                                       = this return includes a claim for partial relief. The tax due on partial relief depends on value judgements that can only be made by the purchaser.
+taxCalculation.cannotCalculateSdltDue.reason3                                       = this return includes a type of interest that falls outside of the SDLT calculation model.
+taxCalculation.cannotCalculateSdltDue.reason4                                       = this return includes a claim for Multiple Dwellings Relief. The tax due on this relief depends on the purchaser declaring the number of dwellings
+taxCalculation.cannotCalculateSdltDue.reason5                                       = the effective date of the transaction is before 23 March 2012. This date predates the modern SDLT calculation model.
 
 taxCalculation.penaltiesAndInterest.button                                          = Save and continue
 

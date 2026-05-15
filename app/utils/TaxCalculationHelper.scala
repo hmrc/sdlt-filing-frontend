@@ -22,9 +22,11 @@ import models.taxCalculation.{HoldingTypes, TaxCalculationFlow, TaxCalculationRe
 object TaxCalculationHelper {
 
   private val selfAssessedHeading: String = "Self-assessed"
+  private val effectiveDateHeading: String = "Effective date is before 2012/03/22"
 
   def calculationResponseType(result: TaxCalculationResult): CalculationResultType =
     if (result.resultHeading.contains(selfAssessedHeading)) TaxNotCalculated
+    else if(result.resultHeading.contains(effectiveDateHeading)) DateValidationError
     else TaxCalculated
 
   def holdingType(answers: UserAnswers): Option[HoldingTypes.Value] =
@@ -39,12 +41,15 @@ object TaxCalculationHelper {
     (holdingType(answers), calculationResponseType(result)) match {
       case (Some(HoldingTypes.freehold),  TaxCalculated)    => Some(TaxCalculationFlow.FreeholdTaxCalculated)
       case (Some(HoldingTypes.freehold),  TaxNotCalculated) => Some(TaxCalculationFlow.FreeholdSelfAssessed)
+      case (Some(HoldingTypes.freehold),  DateValidationError) => Some(TaxCalculationFlow.FreeholdSelfAssessed)
       case (Some(HoldingTypes.leasehold), TaxCalculated)    => Some(TaxCalculationFlow.LeaseholdTaxCalculated)
       case (Some(HoldingTypes.leasehold), TaxNotCalculated) => Some(TaxCalculationFlow.LeaseholdSelfAssessed)
+      case (Some(HoldingTypes.leasehold), DateValidationError) => Some(TaxCalculationFlow.LeaseholdSelfAssessed)
       case _                                                => None
     }
 
   sealed trait CalculationResultType
   case object TaxCalculated    extends CalculationResultType
   case object TaxNotCalculated extends CalculationResultType
+  case object DateValidationError extends CalculationResultType
 }

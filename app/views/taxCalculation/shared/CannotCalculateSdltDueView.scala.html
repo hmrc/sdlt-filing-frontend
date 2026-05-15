@@ -20,18 +20,22 @@
         layout: templates.Layout,
         govukButton: GovukButton,
         h1: h1,
+        p: Paragraph,
         caption: Caption
 )
 
-@(sectionKey: String)(implicit request: Request[_], messages: Messages)
+@(sectionKey: String, cannotCalculateReason: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("taxCalculation.cannotCalculateSdltDue.title"), section = Some(messages(sectionKey)))) {
     @caption(messages("site.taxCalculation.caption"))
     @h1(messages("taxCalculation.cannotCalculateSdltDue.heading"))
 
+    @p(messages("taxCalculation.cannotCalculateSdltDue.p1", messages(cannotCalculateReason)))
+
     @govukButton(
         ButtonViewModel(messages("site.continue"))
         .asLink("#")
+        .withCssClass("govuk-!-margin-top-2")
     )
 
 }

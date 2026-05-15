@@ -29,6 +29,7 @@ import play.api.mvc.Results.Redirect
 import queries.Settable
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.{EffectiveDateHelper, TaxCalculationResults}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -52,12 +53,15 @@ class SdltCalculationService @Inject()(
   def calculateStampDutyLandTax(userAnswers: UserAnswers)
                                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[MissingDataError, TaxCalculationResult]] =
     TaxCalcRequestValidator.buildRequest(userAnswers) match {
+      case Right(request) if EffectiveDateHelper.isBeforeMinimumEffectiveDate(userAnswers) =>
+        logger.info(s"[SdltCalculationService][calculateStampDutyLandTax] effective date is before 23/03/2012")
+        Future.successful(Right(TaxCalculationResults.pre2012Result))
       case Right(request) =>
         logger.info(s"[SdltCalculationService][calculateStampDutyLandTax] sending calculation request")
-        connector.calculateStampDutyLandTax(request).flatMap(_.result.headOption match {
-          case Some(result) => Future.successful(Right(result))
-          case None => Future.failed(new IllegalStateException("Calculation response contained no results"))
-        })
+            connector.calculateStampDutyLandTax(request).flatMap(_.result.headOption match {
+              case Some(result) => Future.successful(Right(result))
+              case None => Future.failed(new IllegalStateException("Calculation response contained no results"))
+            })
       case Left(error: MissingDataError) =>
         logger.error(s"[SdltCalculationService][calculateStampDutyLandTax] missing session data: ${error.message}")
         Future.successful(Left(error))
