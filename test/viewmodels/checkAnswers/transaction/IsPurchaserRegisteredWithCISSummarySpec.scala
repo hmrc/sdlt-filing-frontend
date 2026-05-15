@@ -110,4 +110,3 @@ class IsPurchaserRegisteredWithCISSummarySpec extends SpecBase {
     }
   }
 }
-

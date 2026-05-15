@@ -16,9 +16,11 @@
 
 package services.transaction
 
+import models.address.Address
 import models.{Transaction, UserAnswers}
 import models.prelimQuestions.TransactionType
-import models.transaction.TransactionFormsOfConsiderationAnswers
+import models.transaction.{TransactionFormsOfConsiderationAnswers, TransactionRulingFollowed,
+  TransactionSaleOfBusinessAssetsAnswers, TransactionUseOfLandOrPropertyAnswers}
 import pages.transaction.*
 
 import java.time.LocalDate
@@ -28,12 +30,18 @@ class PopulateTransactionService {
 
   def populateTransactionInSession(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] =
     for {
-      withTypeOfTransaction  <- typeOfTransactionPage(transaction, userAnswers)
-      withEffectiveDate      <- effectiveDatePage(transaction, withTypeOfTransaction)
-      withContractDate       <- contractDatePages(transaction, withEffectiveDate)
-      withConsideration      <- considerationPages(transaction, withContractDate)
-      withLinkedTransactions <- linkedTransactionPages(transaction, withConsideration)
-      finalAnswers           <- reliefPages(transaction, withLinkedTransactions)
+      withTypeOfTransaction               <- typeOfTransactionPage(transaction, userAnswers)
+      withEffectiveDate                   <- effectiveDatePage(transaction, withTypeOfTransaction)
+      withContractDate                    <- contractDatePages(transaction, withEffectiveDate)
+      withConsideration                   <- considerationPages(transaction, withContractDate)
+      withLinkedTransactions              <- linkedTransactionPages(transaction, withConsideration)
+      withReliefPages                     <- reliefPages(transaction, withLinkedTransactions)
+      withConsiderationDeferringPages     <- considerationDeferringPages(transaction, withLinkedTransactions)
+      withSaleBusinessPage                <- saleBusinessPage(transaction, withConsiderationDeferringPages)
+      withCap1OrNsbcPages                 <- cap1OrNsbcPages(transaction, withSaleBusinessPage)
+      withRestrictionPages                <- restrictionPages(transaction, withCap1OrNsbcPages)
+      withExchangeLandPages               <- exchangeLandPages(transaction, withRestrictionPages)
+      finalAnswers                        <- optionPage(transaction, withExchangeLandPages)
     } yield finalAnswers
 
   private def typeOfTransactionPage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] =
@@ -156,4 +164,127 @@ class PopulateTransactionService {
       case None =>
         userAnswers.set(AddRegisteredCharityNumberPage, false)
     }
+
+  //They share the same field in the DB
+  //  private def cisPages(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] =
+  //    transaction.reliefSchemeNumber match {
+  //      case Some(schemeNumber) =>
+  //        for {
+  //          withAddCharity <- userAnswers.set(AddRegisteredCharityNumberPage, true)
+  //          finalAnswers <- withAddCharity.set(CharityRegisteredNumberPage, schemeNumber)
+  //        } yield finalAnswers
+  //      case None =>
+  //        userAnswers.set(AddRegisteredCharityNumberPage, false)
+  //    }
+
+
+  private def considerationDeferringPages(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
+    val considerationCheck: Boolean = transaction.isDependantOnFutureEvent.exists(_.equalsIgnoreCase("YES"))
+    val deferringCheck: Boolean = transaction.agreedToDeferPayment.exists(_.equalsIgnoreCase("YES"))
+
+    for {
+      withConsideration <- userAnswers.set(ConsiderationsAffectedUncertainPage, considerationCheck)
+      withDeferring <- withConsideration.set(TransactionDeferringPaymentPage, deferringCheck)
+      finalAnswers <- propertyUsePage(transaction, withDeferring)
+    } yield finalAnswers
+  }
+
+  private def propertyUsePage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
+    val answers = TransactionUseOfLandOrPropertyAnswers(
+      office = if (transaction.usedAsOffice.toString.equalsIgnoreCase("yes")) "yes" else "no",
+      hotel = if (transaction.usedAsHotel.toString.equalsIgnoreCase("yes")) "yes" else "no",
+      shop = if (transaction.usedAsShop.toString.equalsIgnoreCase("yes")) "yes" else "no",
+      warehouse = if (transaction.usedAsWarehouse.toString.equalsIgnoreCase("yes")) "yes" else "no",
+      factory = if (transaction.usedAsFactory.toString.equalsIgnoreCase("yes")) "yes" else "no",
+      otherIndustrialUnit = if (transaction.usedAsIndustrial.toString.equalsIgnoreCase("yes")) "yes" else "no",
+      other = if (transaction.usedAsOther.toString.equalsIgnoreCase("yes")) "yes" else "no",
+    )
+    userAnswers.set(TransactionUseOfLandOrPropertyPage, answers)
+  }
+
+  private def includedSaleBusinessPage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
+    val answers = TransactionSaleOfBusinessAssetsAnswers(
+      stock = if (transaction.includesStock.toString.equalsIgnoreCase("yes")) "yes" else "no",
+      goodwill = if (transaction.includesGoodwill.toString.equalsIgnoreCase("yes")) "yes" else "no",
+      chattelsAndMoveables = if (transaction.includesChattel.toString.equalsIgnoreCase("yes")) "yes" else "no",
+      others = if (transaction.includesOther.toString.equalsIgnoreCase("yes")) "yes" else "no",
+    )
+    userAnswers.set(TransactionSaleOfBusinessAssetsPage, answers)
+  }
+
+
+  private def saleBusinessPage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
+    val total = transaction.totalConsiderationBusiness
+    total match {
+      case Some(totalConsideration) =>
+        for {
+          withSaleOfBusiness <- userAnswers.set(SaleOfBusinessPage, true)
+          withIncludedSaleBusinessPage <- includedSaleBusinessPage(transaction, withSaleOfBusiness)
+          finalAnswers <- withIncludedSaleBusinessPage.set(TotalAssetsConsiderationPage, total.toString)
+        } yield finalAnswers
+      case None =>
+        userAnswers.set(SaleOfBusinessPage, false)
+    }
+  }
+
+  private def cap1OrNsbcPages(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
+    val hasCap1OrNsbc = transaction.postTransRulingFollowed.exists(_.nonEmpty)
+
+    if (hasCap1OrNsbc) {
+      for {
+        withCap1OrNsbc <- userAnswers.set(Cap1OrNsbcPage, true)
+        finalAnswers <- rulingFollowedPage(transaction, withCap1OrNsbc)
+      } yield finalAnswers
+    } else {
+      userAnswers.set(Cap1OrNsbcPage, false)
+    }
+  }
+
+  private def rulingFollowedPage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
+    transaction.postTransRulingFollowed match {
+      case Some(value) if value.equalsIgnoreCase("yes") =>
+        userAnswers.set(TransactionRulingFollowedPage, TransactionRulingFollowed.Yes)
+      case Some(value) if value.equalsIgnoreCase("no") =>
+        userAnswers.set(TransactionRulingFollowedPage, TransactionRulingFollowed.No)
+      case Some(value) if value.equalsIgnoreCase("rulingNotReceived") =>
+        userAnswers.set(TransactionRulingFollowedPage, TransactionRulingFollowed.RulingNotReceived)
+      case _ =>
+        Success(userAnswers)
+    }
+  }
+
+  private def restrictionPages(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] =
+    transaction.restrictionDetails match {
+      case Some(details) =>
+        for {
+          withAddCharity <- userAnswers.set(TransactionRestrictionsCovenantsAndConditionsPage, true)
+          finalAnswers <- withAddCharity.set(DescriptionOfRestrictionsPage, details)
+        } yield finalAnswers
+      case None =>
+        userAnswers.set(TransactionRestrictionsCovenantsAndConditionsPage, false)
+    }
+
+  private def exchangeLandPages(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] =
+    transaction.exchangedLandAddress1 match {
+      case Some(landAddress1) =>
+        for {
+          withIsLandOrPropertyExchanged <- userAnswers.set(IsLandOrPropertyExchangedPage, true)
+          finalAnswers <- withIsLandOrPropertyExchanged.set(TransactionAddressPage,
+            Address(line1 = landAddress1, line2 = transaction.exchangedLandAddress2, line3 = transaction.exchangedLandAddress3,
+              line4 = transaction.exchangedLandAddress4, line5 = transaction.exchangedLandPostcode, postcode = transaction.exchangedLandPostcode))
+        } yield finalAnswers
+      case _ =>
+        userAnswers.set(IsLandOrPropertyExchangedPage, false)
+    }
+
+  private def optionPage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
+    val isPursuant = transaction.isPursuantToPreviousOption.exists(_.equalsIgnoreCase("YES"))
+    
+    if (isPursuant) {
+      userAnswers.set(TransactionExercisingAnOptionPage, true)
+    } else {
+      userAnswers.set(TransactionExercisingAnOptionPage, false)
+    }
+  }
+
 }

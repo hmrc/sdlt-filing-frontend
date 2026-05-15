@@ -22,52 +22,43 @@ import pages.transaction.TransactionUseOfLandOrPropertyPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object TransactionUseOfLandOrPropertySummary  {
+object TransactionUseOfLandOrPropertySummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(CheckMode)
+    val label = messages("transaction.transactionUseOfLandOrProperty.checkYourAnswersLabel")
+    val displayHiddenMsg = messages("transaction.transactionUseOfLandOrProperty.change.hidden")
 
-    val changeRoute = controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(CheckMode).url
-    val checkYourAnswersLabelMsg = messages("transaction.transactionUseOfLandOrProperty.checkYourAnswersLabel")
-    val displayMissingMsgContent = messages("transaction.transactionUseOfLandOrProperty.missing")
-    val displayHiddenMsgContent = messages("transaction.transactionUseOfLandOrProperty.change.hidden")
-    
-    answers.get(TransactionUseOfLandOrPropertyPage).map {
-      answersObject =>
-
-        val selectedItems = TransactionUseOfLandOrPropertyAnswers.toSet(answersObject).toSeq.sortBy(_.order)
-          .map(_.toString)
-
-        val value = ValueViewModel(
-          HtmlContent(
-            selectedItems.map {
-              answer => HtmlFormat.escape(messages(s"transaction.transactionUseOfLandOrProperty.$answer")).toString
-            }
-            .mkString(",<br>")
-          )
-        )
-
-        SummaryListRowViewModel(
-          key     = checkYourAnswersLabelMsg,
-          value   = value,
-          actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
-              .withVisuallyHiddenText(messages(displayHiddenMsgContent))
-          )
-        )
-    }.getOrElse {
+    answers.get(TransactionUseOfLandOrPropertyPage).map { answersObject =>
+      val selectedItems = TransactionUseOfLandOrPropertyAnswers.toSet(answersObject).toSeq.sortBy(_.order)
+        .map(_.toString)
 
       val value = ValueViewModel(
         HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">$displayMissingMsgContent</a>""")
+          selectedItems.map { answer =>
+              HtmlFormat.escape(messages(s"transaction.transactionUseOfLandOrProperty.$answer")).toString
+            }
+            .mkString(",<br>")
+        )
       )
 
-      SummaryListRowViewModel(
-        key = checkYourAnswersLabelMsg,
-        value = value
+      Row(
+        SummaryListRowViewModel(
+          key     = label,
+          value   = value,
+          actions = Seq(
+            ActionItemViewModel("site.change", changeRoute.url)
+              .withVisuallyHiddenText(displayHiddenMsg)
+          )
+        )
       )
+    }.getOrElse {
+      Missing(changeRoute)
     }
+  }
 }

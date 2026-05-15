@@ -18,9 +18,9 @@ package controllers.transaction
 
 import controllers.actions.*
 import forms.transaction.IsPurchaserRegisteredWithCISFormProvider
-import models.Mode
+import models.{Mode, NormalMode}
 import navigation.Navigator
-import pages.transaction.IsPurchaserRegisteredWithCISPage
+import pages.transaction.{IsPurchaserRegisteredWithCISPage, TransactionCisNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -29,6 +29,7 @@ import views.html.transaction.IsPurchaserRegisteredWithCISView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 class IsPurchaserRegisteredWithCISController @Inject()(
                                          override val messagesApi: MessagesApi,
@@ -65,13 +66,16 @@ class IsPurchaserRegisteredWithCISController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(IsPurchaserRegisteredWithCISPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            finalAnswers   <- Future.fromTry {
+              if value then Success(updatedAnswers)
+              else updatedAnswers.remove(TransactionCisNumberPage)
+            }
+            _              <- sessionRepository.set(finalAnswers)
           } yield {
-            if (value) {
-              //TODO DTR-4325 redirect to What is Purchaser CIS number
-              Redirect(navigator.nextPage(IsPurchaserRegisteredWithCISPage, mode, updatedAnswers))
-            } else {
+            if (!value && mode == NormalMode) {
               Redirect(controllers.transaction.routes.TransactionPartialReliefController.onPageLoad(mode))
+            } else {
+              Redirect(navigator.nextPage(IsPurchaserRegisteredWithCISPage, mode, finalAnswers))
             }
           }
       )

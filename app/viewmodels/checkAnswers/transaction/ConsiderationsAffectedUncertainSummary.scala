@@ -17,20 +17,20 @@
 package viewmodels.checkAnswers.transaction
 
 import models.{CheckMode, UserAnswers}
-import pages.transaction.TransactionDeferringPaymentPage
+import pages.transaction.ConsiderationsAffectedUncertainPage
 import play.api.i18n.Messages
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
-         
-object TransactionDeferringPaymentSummary  {
+
+object ConsiderationsAffectedUncertainSummary  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
-    val changeRoute = controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(CheckMode)
-    val label = messages("transaction.deferringPayment.checkYourAnswersLabel")
+    val changeRoute = controllers.transaction.routes.ConsiderationsAffectedUncertainController.onPageLoad(CheckMode)
+    val label = messages("transaction.considerationsAffectedUncertain.checkYourAnswersLabel")
 
-    answers.get(TransactionDeferringPaymentPage).map { answer =>
+    answers.get(ConsiderationsAffectedUncertainPage).map { answer =>
 
       val value = if (answer) "site.yes" else "site.no"
 
@@ -40,7 +40,7 @@ object TransactionDeferringPaymentSummary  {
           value = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", changeRoute.url)
-              .withVisuallyHiddenText(messages("transaction.deferringPayment.change.hidden"))
+              .withVisuallyHiddenText(messages("transaction.purchaserEligibleToClaimRelief.change.hidden"))
           )
         )
       )
