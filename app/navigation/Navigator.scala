@@ -310,7 +310,7 @@ class Navigator @Inject()() {
   }
 
   private def isFreeholdTaxCalculatedSection(page: Page): Boolean = page match {
-    case FreeholdTaxCalculatedSdltPage | FreeholdTaxCalculatedSelfAssessedAmountPage |
+    case FreeholdTaxCalculatedSelfAssessedAmountPage |
          FreeholdTaxCalculatedTotalAmountDuePage | FreeholdTaxCalculatedPenaltiesAndInterestPage  => true
     case _ => false
   }
@@ -334,7 +334,6 @@ class Navigator @Inject()() {
   }
 
   private def freeholdTaxCalculatedRoutes(page: Page): UserAnswers => Call = page match {
-    case FreeholdTaxCalculatedSdltPage                 => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
     case FreeholdTaxCalculatedSelfAssessedAmountPage   => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
     case FreeholdTaxCalculatedTotalAmountDuePage       => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
     case FreeholdTaxCalculatedPenaltiesAndInterestPage => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED

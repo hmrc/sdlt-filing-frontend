@@ -438,10 +438,6 @@ class NavigatorSpec extends SpecBase {
 
       "freehold tax calculated routes" - {
 
-        "go from FreeholdTaxCalculatedSdltPage to Index page" in {
-          navigator.nextPage(FreeholdTaxCalculatedSdltPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
-        }
-
         "go from FreeholdTaxCalculatedSelfAssessedAmountPage to Index page" in {
           navigator.nextPage(FreeholdTaxCalculatedSelfAssessedAmountPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
         }
