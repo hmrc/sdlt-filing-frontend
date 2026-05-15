@@ -33,18 +33,18 @@ class LeaseDatesService {
         .flatMap(_.lease)
 
     val leaseStartDate = userAnswers.get(LeaseStartDatePage)
-    val leaseEndDate = lease.flatMap(_.contractEndDate)
-    val startingRentEndDate = lease.flatMap(_.startingRentEndDate)
+    val leaseEndDate = lease.flatMap(_.contractEndDate) // TODO: Post implementation of DTR-3509 End Date will fetch from Page instead of fullreturn
+    val startingRentEndDate = lease.flatMap(_.startingRentEndDate) //TODO: Post implementation of 3521 date will fetch from Page instead of fullreturn
     
     (leaseStartDate, leaseEndDate, startingRentEndDate) match {
 
       case (None, _, _) | (_, None, _) | (_, _, None) =>
         LeaseDateValid
 
-      case (Some(leaseStart), _, Some(leaseRentStartEnd)) if leaseStart.isAfter(formateDate(leaseRentStartEnd)) =>
-        LeaseStartBeforRentEndDate
+      case (Some(leaseStart), _, Some(leaseRentStartEnd)) if leaseStart.isAfter(formatDate(leaseRentStartEnd)) =>
+        LeaseStartBeforeRentEndDate
 
-      case (Some(leaseStart), Some(leaseEnd),_) if formateDate(leaseEnd).isBefore(leaseStart) =>
+      case (Some(leaseStart), Some(leaseEnd),_) if formatDate(leaseEnd).isBefore(leaseStart) =>
         LeaseStartBeforeLeaseEndDate
 
       case _ =>
@@ -52,7 +52,7 @@ class LeaseDatesService {
     }
   }
 
-  private def formateDate(date: String) = {
+  private def formatDate(date: String) = {
     LocalDate.parse(date, formatter)
   }
 
@@ -64,7 +64,7 @@ object LeaseDatesService {
 
   case object LeaseDateValid extends LeaseDatesValidationResult
 
-  case object LeaseStartBeforRentEndDate extends LeaseDatesValidationResult
+  case object LeaseStartBeforeRentEndDate extends LeaseDatesValidationResult
 
   case object LeaseStartBeforeLeaseEndDate extends LeaseDatesValidationResult
 }

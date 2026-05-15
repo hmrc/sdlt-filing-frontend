@@ -19,15 +19,12 @@ package forms.lease
 import forms.behaviours.DateBehaviours
 
 import java.time.LocalDate
-//import forms.lease.LeaseStartDateFormProvider
-//import forms.transaction.TransactionEffectiveDateFormProvider
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
 import utils.TimeMachine
 
-// import java.time.{LocalDate, ZoneOffset}
 
 class LeaseStartDateFormProviderSpec  extends DateBehaviours with MockitoSugar {
   
@@ -43,7 +40,7 @@ def minDate = mockTimeMachine.today.minusYears(24)
 
 def maxDate = mockTimeMachine.today.plusYears(2)
 
-"TransactionEffectiveDateFormProvider" - {
+"LeaseStartDateFormProvider" - {
 
   "bind a valid date within the allowed range" in {
 

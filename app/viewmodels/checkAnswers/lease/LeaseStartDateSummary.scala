@@ -18,9 +18,8 @@ package viewmodels.checkAnswers.lease
 
 import models.{CheckMode, UserAnswers}
 import pages.lease.LeaseStartDatePage
-import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import play.api.i18n.{Lang, Messages}
+import utils.DateTimeFormats.dateTimeFormat
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 import viewmodels.checkAnswers.summary.SummaryRowResult
@@ -33,17 +32,11 @@ object LeaseStartDateSummary  {
     val label = messages("lease.leaseStartDate.checkYourAnswersLabel")
     answers.get(LeaseStartDatePage).map {
       answer =>
-
-        val value = ValueViewModel(
-          HtmlContent(
-            HtmlFormat.escape(messages(s"lease.typeOfLease.$answer"))
-          )
-        )
-
+        implicit val lang: Lang = messages.lang
         Row(
           SummaryListRowViewModel(
             key = label,
-            value = value,
+            value = ValueViewModel(answer.format(dateTimeFormat())),
             actions = Seq(
               ActionItemViewModel("site.change", changeRoute.url)
                 .withVisuallyHiddenText(messages("lease.leaseStartDate.change.hidden"))

@@ -89,7 +89,7 @@ class LeaseDatesServiceSpec extends SpecBase with Matchers {
       val fullReturnWithLeaseValidDates = fullReturn.copy(lease = Some(leaseWithLeaseStartDate))
       val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithLeaseValidDates)).set(LeaseStartDatePage, LocalDate.of(2006, 10, 26)).success.value
       val result = service.leaseDatesValidation(userAnswers)
-      result mustBe LeaseStartBeforRentEndDate
+      result mustBe LeaseStartBeforeRentEndDate
     }
   }
 }

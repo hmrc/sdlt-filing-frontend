@@ -50,8 +50,6 @@ class LeaseStartDateControllerSpec extends SpecBase with MockitoSugar {
 
   lazy val leaseStartDateRoute = controllers.lease.routes.LeaseStartDateController.onPageLoad(NormalMode).url
 
-  //override val emptyUserAnswers = UserAnswers(userAnswersId)
-
   def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(GET, leaseStartDateRoute)
 
