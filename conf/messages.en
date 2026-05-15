@@ -1488,6 +1488,15 @@ taxCalculation.calculation.propertyType.04                                      
 
 taxCalculation.calculation.returnToTaxCalculation                                   = Return to tax calculation
 
+taxCalculation.sdltSelfAssessment.checkYourAnswersLabel                             = Self-assessed amount of SDLT
+taxCalculation.sdltSelfAssessment.change.hidden                                     = self-assessed amount of SDLT
+
+taxCalculation.sdltSelfAssessment.error.required                                    = Enter the self-assessed amount of SDLT, in pounds
+taxCalculation.sdltSelfAssessment.error.invalidNumeric                              = The self-assessed amount of SDLT must only include commas and numbers 0 to 9
+taxCalculation.sdltSelfAssessment.error.invalidWholeNumber                          = Enter the self-assessed amount of SDLT in whole pounds
+taxCalculation.sdltSelfAssessment.error.maximum                                     = The self-assessed amount of SDLT must be equal to or less than £9,999,999,999
+taxCalculation.sdltSelfAssessment.error.length                                      = The self-assessed amount of SDLT must be 16 characters or fewer
+
 taxCalculation.taxDueOnNpv.title                                                    = What is the tax due on the NPV?
 taxCalculation.taxDueOnNpv.heading                                                  = Tax due on the NPV
 taxCalculation.taxDueOnNpv.p1                                                       = You entered the NPV as: £{0}
@@ -1513,13 +1522,6 @@ taxCalculation.sdltSelfAssessment.calculator.link                               
 taxCalculation.sdltSelfAssessment.calculator.text                                   = use the SDLT calculator to work out the correct amount (opens in a new tab)
 taxCalculation.sdltSelfAssessment.h2                                                = What is the self-assessed amount of SDLT?
 taxCalculation.sdltSelfAssessment.hint                                              = Enter the amount in whole pounds only, for example £10,000. This amount should not include any penalties or interest due.
-taxCalculation.sdltSelfAssessment.checkYourAnswersLabel                             = Self-assessed amount of SDLT
-taxCalculation.sdltSelfAssessment.change.hidden                                     = self-assessed amount of SDLT
-taxCalculation.sdltSelfAssessment.error.required                                    = Enter the self-assessed amount of SDLT, in pounds
-taxCalculation.sdltSelfAssessment.error.invalidNumeric                              = The self-assessed amount of SDLT must only include commas and numbers 0 to 9
-taxCalculation.sdltSelfAssessment.error.invalidWholeNumber                          = Enter the self-assessed amount of SDLT in whole pounds
-taxCalculation.sdltSelfAssessment.error.maximum                                     = The self-assessed amount of SDLT must be equal to or less than £9,999,999,999
-taxCalculation.sdltSelfAssessment.error.length                                      = The self-assessed amount of SDLT must be 16 characters or fewer
 
 taxCalculation.totalAmountDue.h2                                             = What is the total amount you intend to pay with this return?
 taxCalculation.totalAmountDue.hint                                           = Enter the amount in whole pounds only, for example £10,000
