@@ -16,7 +16,8 @@
 
 package utils
 
-import models.FullReturn
+import models.{FullReturn, UserAnswers}
+
 import java.time.format.DateTimeFormatter
 import java.time.LocalDate
 import scala.util.Try
@@ -52,5 +53,13 @@ object PropertyTypeHelper {
     }
 
     hasResidentialLand && effectiveDateOk
+  }
+  
+  def isResidentialProperty(answers: UserAnswers): Boolean = {
+    answers.fullReturn
+      .flatMap(_.land)
+      .getOrElse(Seq.empty)
+      .flatMap(_.propertyType)
+      .exists(ResidentialPropertyTypes.contains)
   }
 }

@@ -22,7 +22,7 @@ import java.time.LocalDate
 
 object EffectiveDateHelper {
 
-  private val minimumEffectiveDate = LocalDate.of(2012, 3, 23)
+  private val minimumEffectiveDate = LocalDate.of(2012, 3, 22)
 
   def isBeforeMinimumEffectiveDate(answers: UserAnswers): Boolean =
     answers.fullReturn

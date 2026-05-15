@@ -19,10 +19,10 @@ package utils
 import models.taxCalculation.TaxCalculationResult
 
 object TaxCalculationResults {
-  val pre2012Result =
+  val preMarch2012Result =
     TaxCalculationResult(
       totalTax = 0,
-      resultHeading = Some("Effective date is before 2012/03/23"),
+      resultHeading = Some("Effective date is before 2012/03/22"),
       resultHint = None,
       npv = None,
       taxCalcs = Seq.empty

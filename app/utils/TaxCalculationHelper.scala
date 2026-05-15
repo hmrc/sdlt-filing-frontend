@@ -26,7 +26,7 @@ object TaxCalculationHelper {
 
   def calculationResponseType(result: TaxCalculationResult): CalculationResultType =
     if (result.resultHeading.contains(selfAssessedHeading)) TaxNotCalculated
-    else if(result.resultHeading.contains(effectiveDateHeading)) DateValidationError
+    else if(result.resultHeading.contains(effectiveDateHeading)) PreMarch2012Date
     else TaxCalculated
 
   def holdingType(answers: UserAnswers): Option[HoldingTypes.Value] =
@@ -41,15 +41,15 @@ object TaxCalculationHelper {
     (holdingType(answers), calculationResponseType(result)) match {
       case (Some(HoldingTypes.freehold),  TaxCalculated)    => Some(TaxCalculationFlow.FreeholdTaxCalculated)
       case (Some(HoldingTypes.freehold),  TaxNotCalculated) => Some(TaxCalculationFlow.FreeholdSelfAssessed)
-      case (Some(HoldingTypes.freehold),  DateValidationError) => Some(TaxCalculationFlow.FreeholdSelfAssessed)
+      case (Some(HoldingTypes.freehold),  PreMarch2012Date) => Some(TaxCalculationFlow.FreeholdSelfAssessed)
       case (Some(HoldingTypes.leasehold), TaxCalculated)    => Some(TaxCalculationFlow.LeaseholdTaxCalculated)
       case (Some(HoldingTypes.leasehold), TaxNotCalculated) => Some(TaxCalculationFlow.LeaseholdSelfAssessed)
-      case (Some(HoldingTypes.leasehold), DateValidationError) => Some(TaxCalculationFlow.LeaseholdSelfAssessed)
+      case (Some(HoldingTypes.leasehold), PreMarch2012Date) => Some(TaxCalculationFlow.LeaseholdSelfAssessed)
       case _                                                => None
     }
 
   sealed trait CalculationResultType
   case object TaxCalculated    extends CalculationResultType
   case object TaxNotCalculated extends CalculationResultType
-  case object DateValidationError extends CalculationResultType
+  case object PreMarch2012Date extends CalculationResultType
 }
