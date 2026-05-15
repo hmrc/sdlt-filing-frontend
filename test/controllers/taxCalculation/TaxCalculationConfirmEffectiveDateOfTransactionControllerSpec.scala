@@ -36,7 +36,7 @@ class TaxCalculationConfirmEffectiveDateOfTransactionControllerSpec extends Spec
         val view = application.injector.instanceOf[TaxCalculationConfirmEffectiveDateOfTransactionView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("/")(request, messages(application)).toString
+        contentAsString(result) mustEqual view("/stamp-duty-land-tax-filing")(request, messages(application)).toString
       }
     }
 
