@@ -293,15 +293,17 @@ class Navigator @Inject()() {
   }
 
   private def isLeaseSection(page: Page): Boolean = page match {
-    case TypeOfLeasePage | LeaseEnterRentFreePeriodPage | LaterRentPage | LeaseThousandPoundsThresholdPage => true
+    case TypeOfLeasePage | LeaseEnterRentFreePeriodPage | LeaseStartingRentEndDatePage | LaterRentPage | LeaseThousandPoundsThresholdPage => true
     case _ => false
   }
-  
+
   private def leaseRoutes(page: Page): UserAnswers => Call = page match {
     case TypeOfLeasePage => //TODO - DTR-3506 - SPRINT 15 - update to what is the start date ls-2
       _ => controllers.lease.routes.TypeOfLeaseController.onPageLoad(NormalMode)
     case LeaseEnterRentFreePeriodPage => //TODO: - DTR-3518 - SPRINT 15 - update to What is the annual starting rent including VAT? - ls-5
       _ => controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(NormalMode)
+    case LeaseStartingRentEndDatePage =>
+      _ => controllers.lease.routes.LaterRentController.onPageLoad(NormalMode)
     case LaterRentPage =>
       _ => controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(NormalMode)
     case LeaseThousandPoundsThresholdPage => // TODO - DTR-3530: update to Is VAT payable on the annual rent? - ls-9

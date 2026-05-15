@@ -677,6 +677,11 @@ POST       /about-the-lease/enter-rent-free-period                              
 GET        /about-the-lease/enter-rent-free-period/change                                            controllers.lease.LeaseEnterRentFreePeriodController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-lease/enter-rent-free-period/change                                            controllers.lease.LeaseEnterRentFreePeriodController.onSubmit(mode: Mode = CheckMode)
 
+GET        /about-the-lease/end-of-annual-starting-rent                                               controllers.lease.LeaseStartingRentEndDateController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-lease/end-of-annual-starting-rent                                               controllers.lease.LeaseStartingRentEndDateController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-lease/end-of-annual-starting-rent/change                                        controllers.lease.LeaseStartingRentEndDateController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-lease/end-of-annual-starting-rent/change                                        controllers.lease.LeaseStartingRentEndDateController.onSubmit(mode: Mode = CheckMode)
+
 GET        /about-the-lease/later-rent                                                               controllers.lease.LaterRentController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-lease/later-rent                                                               controllers.lease.LaterRentController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-lease/later-rent/change                                                        controllers.lease.LaterRentController.onPageLoad(mode: Mode = CheckMode)

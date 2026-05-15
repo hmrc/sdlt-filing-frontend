@@ -1760,3 +1760,19 @@ lease.leaseThousandPoundsThreshold.subheading                                   
 lease.leaseThousandPoundsThreshold.checkYourAnswersLabel                            = Annual rent £1,000 or more
 lease.leaseThousandPoundsThreshold.error.required                                   = Select yes if the annual rent is £1,000 or more
 lease.leaseThousandPoundsThreshold.change.hidden                                    = Is the annual rent £1,000 or more?
+
+lease.leaseStartingRentEndDate.title                                                 = End of annual starting rent
+lease.leaseStartingRentEndDate.heading                                               = End of annual starting rent
+lease.leaseStartingRentEndDate.p1                                                    = This date will either be:
+lease.leaseStartingRentEndDate.l1.li1                                                = the day before the first rent review
+lease.leaseStartingRentEndDate.l1.li2                                                = the end of the fifth year of the lease term, if no review happens earlier
+lease.leaseStartingRentEndDate.p2                                                    = If a lease has been surrendered, this date will typically be the effective date of the transaction.
+lease.leaseStartingRentEndDate.subheading                                            = What is the end date for starting rent?
+lease.leaseStartingRentEndDate.hint                                                  = For example, 27 3 2023
+lease.leaseStartingRentEndDate.checkYourAnswersLabel                                 = End date for starting rent
+lease.leaseStartingRentEndDate.error.required.all                                    = Enter the end date for starting rent
+lease.leaseStartingRentEndDate.error.required.two                                    = The end date for starting rent must include a {0} and {1}
+lease.leaseStartingRentEndDate.error.required                                        = The end date for starting rent must include a {0}
+lease.leaseStartingRentEndDate.error.invalid                                         = The end date for starting rent must be a real date
+lease.leaseStartingRentEndDate.error.date.range.min                                  = The end date for starting rent must be the same as or after 1 January 1900
+lease.leaseStartingRentEndDate.change.hidden                                         = end date for starting rent
