@@ -436,6 +436,10 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(AnnualStartingRentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode)
         }
 
+        "go from LeaseStartingRentEndDatePage to LaterRent page" in {
+          navigator.nextPage(LeaseStartingRentEndDatePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LaterRentController.onPageLoad(NormalMode)
+        }
+
         "go from LaterRentPage to LeaseThousandPoundsThresholdPage" in {
           navigator.nextPage(LaterRentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(NormalMode)
         }
