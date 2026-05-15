@@ -24,7 +24,7 @@ class LeaseEnterRentFreePeriodFormProviderSpec extends IntFieldBehaviours {
   val requiredKey = "lease.enterRentFreePeriod.error.required"
   val maxValueKey = "lease.enterRentFreePeriod.error.maxValue"
   val minValueKey = "lease.enterRentFreePeriod.error.minValue"
-  val invalidKey = "lease.enterRentFreePeriod.error.invalid"
+  val invalidKey  = "lease.enterRentFreePeriod.error.invalid"
 
   val form = new LeaseEnterRentFreePeriodFormProvider()()
 
@@ -43,12 +43,29 @@ class LeaseEnterRentFreePeriodFormProviderSpec extends IntFieldBehaviours {
       validDataGenerator
     )
 
-    behave like intField(
-      form,
-      fieldName,
-      nonNumericError = FormError(fieldName, invalidKey),
-      wholeNumberError = FormError(fieldName, invalidKey)
-    )
+    "must not bind non-numeric numbers" in {
+      forAll(nonNumerics -> "nonNumeric") { nonNumeric =>
+        val result = form.bind(Map(fieldName -> nonNumeric)).apply(fieldName)
+        result.errors must contain only FormError(fieldName, invalidKey)
+      }
+    }
+
+    "must not bind decimals" in {
+      forAll(decimals -> "decimal") { decimal =>
+        val result = form.bind(Map(fieldName -> decimal)).apply(fieldName)
+        result.errors must contain only FormError(fieldName, invalidKey)
+      }
+    }
+
+    "must produce maxValue error for integers larger than Int.MaxValue" in {
+      val result = form.bind(Map(fieldName -> "2147483647983475845")).apply(fieldName)
+      result.errors must contain only FormError(fieldName, maxValueKey, Seq(maximum))
+    }
+
+    "must produce minValue error for integers smaller than Int.MinValue" in {
+      val result = form.bind(Map(fieldName -> "-2147483647983475845")).apply(fieldName)
+      result.errors must contain only FormError(fieldName, minValueKey, Seq(minimum))
+    }
 
     behave like mandatoryField(
       form,

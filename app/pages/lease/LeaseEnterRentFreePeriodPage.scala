@@ -19,7 +19,7 @@ package pages.lease
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object LeaseEnterRentFreePeriodPage extends QuestionPage[Int] {
+case object LeaseEnterRentFreePeriodPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ "leaseCurrent" \ toString
 
