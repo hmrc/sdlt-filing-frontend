@@ -1754,7 +1754,7 @@ lease.laterRent.change.hidden                                                   
 lease.leaseStartDate.title                                                          = Lease start date
 lease.leaseStartDate.heading                                                        = Lease start date
 lease.leaseStartDate.subHeading                                                     = What is the start date as specified in the lease?
-lease.leaseStartDate.hint                                                           = For example, 27 3 2023.
+lease.leaseStartDate.hint                                                           = For example, 27 3 2023
 lease.leaseStartDate.p                                                              = This date can be in the past or the future but must be entered exactly as specified in the lease. This is sometimes called the ‘term commencement date’.
 lease.leaseStartDate.checkYourAnswersLabel                                          = Lease start date
 lease.leaseStartDate.error.required.all                                             = Enter the start date as specified in the lease
