@@ -25,7 +25,7 @@ import pages.purchaserAgent.*
 import pages.vendor.*
 import pages.vendorAgent.*
 import pages.land.*
-import pages.lease.TypeOfLeasePage
+import pages.lease.*
 import pages.taxCalculation.freeholdTaxCalculated.*
 import pages.taxCalculation.freeholdSelfAssessed.*
 import pages.taxCalculation.leaseholdTaxCalculated.*
@@ -293,13 +293,19 @@ class Navigator @Inject()() {
   }
 
   private def isLeaseSection(page: Page): Boolean = page match {
-    case TypeOfLeasePage => true
+    case TypeOfLeasePage | LeaseEnterRentFreePeriodPage | LaterRentPage | LeaseThousandPoundsThresholdPage => true
     case _ => false
   }
   
   private def leaseRoutes(page: Page): UserAnswers => Call = page match {
     case TypeOfLeasePage => //TODO - DTR-3506 - SPRINT 15 - update to what is the start date ls-2
       _ => controllers.lease.routes.TypeOfLeaseController.onPageLoad(NormalMode)
+    case LeaseEnterRentFreePeriodPage => //TODO: - DTR-3518 - SPRINT 15 - update to What is the annual starting rent including VAT? - ls-5
+      _ => controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(NormalMode)
+    case LaterRentPage =>
+      _ => controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(NormalMode)
+    case LeaseThousandPoundsThresholdPage => // TODO - DTR-3530: update to Is VAT payable on the annual rent? - ls-9
+      _ => controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
@@ -354,7 +360,8 @@ class Navigator @Inject()() {
   private def leaseholdSelfAssessedRoutes(page: Page): UserAnswers => Call = page match {
     case LeaseholdSelfAssessedPremiumPayableTaxPage    =>
       _ => controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedTaxDueOnNpvController.onPageLoad(NormalMode)
-    case LeaseholdSelfAssessedNpvTaxPage               => _ =>  routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case LeaseholdSelfAssessedNpvTaxPage               =>
+      _ =>  controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedTotalAmountDueController.onPageLoad(NormalMode)
     case LeaseholdSelfAssessedTotalAmountDuePage       => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
     case LeaseholdSelfAssessedPenaltiesAndInterestPage => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
     case _                                             => _ => routes.IndexController.onPageLoad()

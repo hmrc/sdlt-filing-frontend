@@ -23,7 +23,7 @@ import controllers.routes.ReturnTaskListController
 import controllers.taxCalculation.PenaltiesAndInterestExtension
 import forms.taxCalculation.PenaltiesAndInterestFormProvider
 import models.taxCalculation.TaxCalculationFlow.FreeholdSelfAssessed
-import models.{Mode}
+import models.Mode
 import navigation.Navigator
 import pages.taxCalculation.freeholdSelfAssessed.*
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -32,6 +32,7 @@ import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.LoggingUtil
 import views.html.taxCalculation.AmountWithPenaltiesView
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -50,11 +51,14 @@ class FreeholdSelfAssessedPenaltiesAndInterestController @Inject()(
                                                                   )(implicit ec: ExecutionContext) extends FrontendBaseController
   with I18nSupport with PenaltiesAndInterestExtension with LoggingUtil {
 
+  private val form = formProvider()
+
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
+      val preparedForm = request.userAnswers.get(FreeholdSelfAssessedPenaltiesAndInterestPage).fold(form)(form.fill)
       validateFlow(request.userAnswers)(FreeholdSelfAssessed) match {
         case None =>
-          Ok(view(formProvider(), pageTitle = getPageTitle(flow = FreeholdSelfAssessed),
+          Ok(view(preparedForm, pageTitle = getPageTitle(flow = FreeholdSelfAssessed),
             postAction(FreeholdSelfAssessed, mode)))
         case Some(firstErrorFound) =>
           errorLog(s"[FreeholdSelfAssessedPenaltiesAndInterestController][onPageLoad] invalid flow state: $firstErrorFound")
@@ -66,7 +70,7 @@ class FreeholdSelfAssessedPenaltiesAndInterestController @Inject()(
     implicit request =>
       validateFlow(request.userAnswers)(FreeholdSelfAssessed) match {
         case None =>
-          formProvider()
+          form
             .bindFromRequest()
             .fold(
               formWithErrors =>

@@ -32,7 +32,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
-import models.PenaltiesAndInterest.AmountIncludePenaltiesAndInterestYes
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionException, Future}
@@ -229,7 +228,7 @@ class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeA
         .thenReturn(Future.successful(true))
       val result = service.savePenaltiesAndInterestYesNoAnswer(
         key = FreeholdSelfAssessedPenaltiesAndInterestPage,
-        value = AmountIncludePenaltiesAndInterestYes).futureValue
+        value = true).futureValue
       result mustBe true
       verify(mockSessionRepository, times(1)).set(any())
     }
@@ -239,7 +238,7 @@ class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeA
         .thenThrow(Error("ConnectionTimeOut"))
       val result =  service.savePenaltiesAndInterestYesNoAnswer(
           key = FreeholdSelfAssessedPenaltiesAndInterestPage,
-          value = AmountIncludePenaltiesAndInterestYes).failed.futureValue
+          value = true).failed.futureValue
       result mustBe an[ExecutionException]
       result.getCause.getMessage mustBe "ConnectionTimeOut"
     }

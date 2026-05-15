@@ -408,6 +408,10 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(IsPurchaserRegisteredWithCISPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCisNumberController.onPageLoad(NormalMode)
         }
 
+        "go from DescriptionOfRestrictionsPage to IsLandOrPropertyExchangedPage" in {
+          navigator.nextPage(DescriptionOfRestrictionsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(NormalMode)
+        }
+
         "go from TransactionExercisingAnOptionPage to CYA page" in {
           navigator.nextPage(TransactionExercisingAnOptionPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
         }
@@ -419,8 +423,16 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(TypeOfLeasePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.TypeOfLeaseController.onPageLoad(NormalMode)
         }
 
-        "go from DescriptionOfRestrictionsPage to IsLandOrPropertyExchangedPage" in {
-          navigator.nextPage(DescriptionOfRestrictionsPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.IsLandOrPropertyExchangedController.onPageLoad(NormalMode)
+        "go from LeaseEnterRentFreePeriodPage to AnnualStartingRent page" in { //TODO: - DTR-3518 - SPRINT 15 - update to What is the annual starting rent including VAT? - ls-5
+          navigator.nextPage(LeaseEnterRentFreePeriodPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(NormalMode)
+        }
+
+        "go from LaterRentPage to LeaseThousandPoundsThresholdPage" in {
+          navigator.nextPage(LaterRentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(NormalMode)
+        }
+
+        "go from LeaseThousandPoundsThresholdPage to ls-9?" in { // TODO : Update to Is VAT payable on the annual rent? - ls-9
+          navigator.nextPage(LeaseThousandPoundsThresholdPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(NormalMode)
         }
       }
 
@@ -488,8 +500,9 @@ class NavigatorSpec extends SpecBase {
             controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedTaxDueOnNpvController.onPageLoad(NormalMode)
         }
 
-        "go from LeaseholdSelfAssessedNpvTaxPage to Index page" in {
-          navigator.nextPage(LeaseholdSelfAssessedNpvTaxPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        "go from LeaseholdSelfAssessedNpvTaxPage to LeaseholdSelfAssessedTotalAmountDuePage page" in {
+          navigator.nextPage(LeaseholdSelfAssessedNpvTaxPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
+            controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedTotalAmountDueController.onPageLoad(NormalMode)
         }
 
         "go from LeaseholdSelfAssessedTotalAmountDuePage to Index page" in {

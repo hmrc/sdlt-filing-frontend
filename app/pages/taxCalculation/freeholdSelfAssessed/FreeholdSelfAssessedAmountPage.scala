@@ -19,7 +19,7 @@ package pages.taxCalculation.freeholdSelfAssessed
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object FreeholdSelfAssessedAmountPage extends QuestionPage[Boolean] {
+case object FreeholdSelfAssessedAmountPage extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ "taxCalculationCurrent" \ toString
 

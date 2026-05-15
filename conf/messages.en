@@ -48,6 +48,7 @@ site.taxCalculation.caption                                                     
 site.taxCalculation.leaseholdSelfAssessed.caption                                   = Tax calculation - Leasehold not calculated
 site.taxCalculation.freeholdSdltCalculated.section                                  = Tax calculation - Freehold calculated
 site.taxCalculation.leaseholdSdltCalculated.section                                 = Tax calculation - Leasehold calculated
+site.taxCalculation.freeholdSelfAssessed.section                                    = Tax calculation - Freehold not calculated
 
 site.vendor.theVendor                                                               = the vendor
 site.purchaser.thePurchaser                                                         = the purchaser
@@ -1426,6 +1427,11 @@ taxCalculation.penaltiesAndInterest.error.required                              
 
 taxCalculation.penaltiesAndInterest.freehold-tax-not-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Freehold not calculated
 taxCalculation.penaltiesAndInterest.freehold-tax-not-calculated.heading                            = Does the amount you intend to pay include penalties and interest charges?
+
+taxCalculation.penaltiesAndInterest.leasehold-tax-not-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Leasehold not calculated
+taxCalculation.penaltiesAndInterest.leasehold-tax-not-calculated.heading                            = Does the amount you intend to pay include penalties and interest charges?
+
+
 taxCalculation.penaltiesAndInterest.checkYourAnswersLabel                           = Not yet implemented / part of the work for CYA page
 
 taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Leasehold calculated
@@ -1730,3 +1736,34 @@ lease.typeOfLease.error.invalid                                                 
 lease.typeOfLease.error.invalidResidentialRule                                      = When the type of lease is ‘R - Residential’, the type of property must be ‘01 - Residential’ or ‘04 - Additional residential property liable to higher rate’
 lease.typeOfLease.error.invalidNonResidentialRule                                   = When the type of lease is ‘N - Non-residential’, the type of property must be ‘03 - Non-residential’
 lease.typeOfLease.error.invalidMixedRule                                            = When the type of lease is ‘M - Mixed use’, the type of property must be ‘02 - Mixed’
+
+lease.enterRentFreePeriod.title                                                     = Calculating the rent-free period
+lease.enterRentFreePeriod.heading                                                   = Calculating the rent-free period
+lease.enterRentFreePeriod.h2                                                        = How many months is the rent-free period?
+lease.enterRentFreePeriod.p1                                                        = Enter the number of months for any period where the tenant will not have to pay rent. If the rent-free period is longer than 99 months, enter 99.
+lease.enterRentFreePeriod.hint                                                      = Round the number of months up to a whole number, like 18
+lease.enterRentFreePeriod.checkYourAnswersLabel                                     = Rent-free period (months)
+lease.enterRentFreePeriod.error.required                                            = Enter the rent-free period
+lease.enterRentFreePeriod.error.invalid                                             = The rent-free period must only include numbers 0 to 9
+lease.enterRentFreePeriod.error.minValue                                            = The rent-free period must be at least one month
+lease.enterRentFreePeriod.error.maxValue                                            = The rent-free period must be 99 months or fewer
+lease.enterRentFreePeriod.error.maxLength                                           = The rent-free period must be 2 digits or less
+lease.enterRentFreePeriod.change.hidden                                             = the rent-free period
+
+lease.laterRent.title                                                               = Later rent
+lease.laterRent.heading                                                             = Later rent
+lease.laterRent.subheading                                                          = Is the later rent known?
+lease.laterRent.paragraph                                                           = This refers to any rent payable after the starting rent has ended. The later rent is only known if the full amount of all future rent payments is specified in the lease. If the rent is uncertain or no further rent is due, then the later rent is not known.
+lease.laterRent.checkYourAnswersLabel                                               = Is the later rent known?
+lease.laterRent.error.required                                                      = Select yes if the later rent is known
+lease.laterRent.change.hidden                                                       = Later rent
+
+lease.leaseThousandPoundsThreshold.title                                            = £1,000 threshold
+lease.leaseThousandPoundsThreshold.heading                                          = £1,000 threshold
+lease.leaseThousandPoundsThreshold.p                                                = This helps determine whether an SLDT return is required for the grant of a new lease. SDLT is only payable if:
+lease.leaseThousandPoundsThreshold.li1                                              = the annual rent is £1,000 or more
+lease.leaseThousandPoundsThreshold.li2                                              = the total premium (any payment other than rent) is £40,000 or more
+lease.leaseThousandPoundsThreshold.subheading                                       = Is the annual rent £1,000 or more?
+lease.leaseThousandPoundsThreshold.checkYourAnswersLabel                            = Annual rent £1,000 or more
+lease.leaseThousandPoundsThreshold.error.required                                   = Select yes if the annual rent is £1,000 or more
+lease.leaseThousandPoundsThreshold.change.hidden                                    = Is the annual rent £1,000 or more?

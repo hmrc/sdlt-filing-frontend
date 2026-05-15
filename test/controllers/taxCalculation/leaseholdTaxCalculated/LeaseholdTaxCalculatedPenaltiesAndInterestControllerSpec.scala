@@ -27,38 +27,62 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import views.html.taxCalculation.AmountWithPenaltiesView
 import controllers.taxCalculation.PenaltiesAndInterestExtension
+import pages.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedPenaltiesAndInterestPage
 import play.api.i18n.Messages
 
 class LeaseholdTaxCalculatedPenaltiesAndInterestControllerSpec extends SpecBase {
 
   trait Fixture extends PenaltiesAndInterestExtension {
     val form = new PenaltiesAndInterestFormProvider()()
-    val answersLeaseholdTaxCalculated: UserAnswers = emptyUserAnswers.set(TaxCalculationFlowPage,
-      TaxCalculationFlow.LeaseholdTaxCalculated).success.value
+    val preparedForm = form.fill(true)
+    val answersLeaseholdTaxCalculatedNoUserChoice: UserAnswers = emptyUserAnswers
+      .set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdTaxCalculated).success.value
+
+    val answersLeaseholdTaxCalculatedWithUserChoice: UserAnswers = emptyUserAnswers
+      .set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdTaxCalculated).success.value
+      .set(LeaseholdTaxCalculatedPenaltiesAndInterestPage, true).success.value
+
     val answersLeaseholdSelfAssessed: UserAnswers = emptyUserAnswers.set(TaxCalculationFlowPage,
       TaxCalculationFlow.LeaseholdSelfAssessed).success.value
   }
 
   "LeaseholdSdltCalculatedPenaltiesAndInterestController" - {
 
-    "return OK for GET :: correct flow state" in new Fixture {
-      Seq(NormalMode, CheckMode).foreach { contextMode =>
-        val application: Application = applicationBuilder(userAnswers = Some(answersLeaseholdTaxCalculated)).build()
+    "return OK for GET :: NormalMode" in new Fixture {
+      val application: Application = applicationBuilder(userAnswers = Some(answersLeaseholdTaxCalculatedNoUserChoice)).build()
 
-        running(application) {
-          implicit val msgs: Messages = messages(application)
-          val request = FakeRequest(GET,
-            controllers.taxCalculation.leaseholdTaxCalculated
-              .routes.LeaseholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(contextMode).url)
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+        val request = FakeRequest(GET,
+          controllers.taxCalculation.leaseholdTaxCalculated
+            .routes.LeaseholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(NormalMode).url)
 
-          val result = route(application, request).value
+        val result = route(application, request).value
 
-          val view = application.injector.instanceOf[AmountWithPenaltiesView]
+        val view = application.injector.instanceOf[AmountWithPenaltiesView]
 
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form, pageTitle = getPageTitle(flow = LeaseholdTaxCalculated),
-            postAction(LeaseholdTaxCalculated, contextMode))(request, messages(application)).toString
-        }
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, pageTitle = getPageTitle(flow = LeaseholdTaxCalculated),
+          postAction(LeaseholdTaxCalculated, NormalMode))(request, messages(application)).toString
+      }
+    }
+
+    "return OK for GET :: CheckMode: load user selected value" in new Fixture {
+      val application: Application = applicationBuilder(userAnswers = Some(answersLeaseholdTaxCalculatedWithUserChoice)).build()
+
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+        val request = FakeRequest(GET,
+          controllers.taxCalculation.leaseholdTaxCalculated
+            .routes.LeaseholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[AmountWithPenaltiesView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(preparedForm, pageTitle = getPageTitle(flow = LeaseholdTaxCalculated),
+          postAction(LeaseholdTaxCalculated, NormalMode))(request, messages(application)).toString
       }
     }
 
@@ -81,13 +105,13 @@ class LeaseholdTaxCalculatedPenaltiesAndInterestControllerSpec extends SpecBase 
 
     "return SEE_OTHER for POST : valid formData" in new Fixture {
       Seq(NormalMode, CheckMode).foreach { contextMode =>
-        val app: Application = applicationBuilder(userAnswers = Some(answersLeaseholdTaxCalculated)).build()
+        val app: Application = applicationBuilder(userAnswers = Some(answersLeaseholdTaxCalculatedNoUserChoice)).build()
 
         running(app) {
           val request = FakeRequest(POST,
             controllers.taxCalculation.leaseholdTaxCalculated
               .routes.LeaseholdSdltCalculatedPenaltiesAndInterestController.onSubmit(contextMode).url)
-            .withFormUrlEncodedBody(("value", "yes"))
+            .withFormUrlEncodedBody(("value", "true"))
 
           val result = route(app, request).value
 
@@ -99,7 +123,7 @@ class LeaseholdTaxCalculatedPenaltiesAndInterestControllerSpec extends SpecBase 
 
     "return BAD_REQUEST for POST : inValid formData" in new Fixture {
       Seq(NormalMode, CheckMode).foreach { contextMode =>
-        val application: Application = applicationBuilder(userAnswers = Some(answersLeaseholdTaxCalculated)).build()
+        val application: Application = applicationBuilder(userAnswers = Some(answersLeaseholdTaxCalculatedNoUserChoice)).build()
 
         running(application) {
           val request = FakeRequest(POST,

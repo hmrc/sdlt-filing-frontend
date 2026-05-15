@@ -23,10 +23,9 @@ import controllers.routes.ReturnTaskListController
 import controllers.taxCalculation.PenaltiesAndInterestExtension
 import forms.taxCalculation.PenaltiesAndInterestFormProvider
 import models.taxCalculation.TaxCalculationFlow.LeaseholdTaxCalculated
-import models.{Mode, PenaltiesAndInterest}
+import models.Mode
 import navigation.Navigator
 import pages.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedPenaltiesAndInterestPage
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.taxCalculation.SdltCalculationService
@@ -52,13 +51,14 @@ class LeaseholdSdltCalculatedPenaltiesAndInterestController @Inject()(
                                                                     )(implicit ec: ExecutionContext) extends FrontendBaseController
   with I18nSupport with PenaltiesAndInterestExtension with LoggingUtil {
 
-  private val form: Form[PenaltiesAndInterest] = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
+      val preparedForm = request.userAnswers.get(LeaseholdTaxCalculatedPenaltiesAndInterestPage).fold(form)(form.fill)
       validateFlow(request.userAnswers)(LeaseholdTaxCalculated) match {
         case None =>
-          Ok(view(form, getPageTitle(flow = LeaseholdTaxCalculated), postAction(LeaseholdTaxCalculated, mode)))
+          Ok(view(preparedForm, getPageTitle(flow = LeaseholdTaxCalculated), postAction(LeaseholdTaxCalculated, mode)))
         case Some(firstErrorFound) =>
           errorLog(s"[LeaseholdSdltCalculatedPenaltiesAndInterestController][onPageLoad] invalid flow state: $firstErrorFound")
           Redirect(ReturnTaskListController.onPageLoad())
