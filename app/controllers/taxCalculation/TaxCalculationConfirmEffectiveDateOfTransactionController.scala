@@ -33,8 +33,8 @@ class TaxCalculationConfirmEffectiveDateOfTransactionController @Inject()(
                                                                            view: TaxCalculationConfirmEffectiveDateOfTransactionView,
                                                                            val controllerComponents: MessagesControllerComponents
                                                                          ) extends FrontendBaseController with I18nSupport with Logging {
-
-  val nextPageUrl: String = controllers.taxCalculation.routes.TaxCalculationConfirmEffectiveDateOfTransactionController.onPageLoad().url
+  // TODO: DTR-5128 :: navigate to [Tc-2 Eff date] / change when this would be available/implemented
+  val nextPageUrl: String = controllers.routes.IndexController.onPageLoad().url
 
   def onPageLoad: Action[AnyContent] = identify {
     implicit request =>
