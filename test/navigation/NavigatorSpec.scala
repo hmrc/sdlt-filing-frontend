@@ -28,6 +28,7 @@ import pages.purchaserAgent.*
 import pages.taxCalculation.freeholdSelfAssessed.*
 import pages.taxCalculation.freeholdTaxCalculated.*
 import pages.taxCalculation.leaseholdSelfAssessed.*
+import pages.taxCalculation.ConfirmEffectiveDateOfTransactionPage
 import pages.taxCalculation.leaseholdTaxCalculated.*
 import pages.transaction.*
 import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
@@ -443,6 +444,14 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LeaseEnterRentFreePeriodPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(NormalMode)
         }
       }
+
+      "taxCalculation routes" - {
+        "go from ConfirmEffectiveDateOfTransactionPage to TaxCalculationBeforeYouStartController page" in {
+          navigator.nextPage(ConfirmEffectiveDateOfTransactionPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
+            controllers.taxCalculation.routes.TaxCalculationBeforeYouStartController.onPageLoad()
+        }
+      }
+
       "freehold tax calculated routes" - {
 
         "go from FreeholdTaxCalculatedSdltPage to Index page" in {
