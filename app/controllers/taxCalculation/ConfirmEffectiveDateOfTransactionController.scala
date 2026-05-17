@@ -64,29 +64,31 @@ class ConfirmEffectiveDateOfTransactionController @Inject()(override val message
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      form
-        .bindFromRequest()
-        .fold(
-          formWithErrors =>
-            EffectiveDateHelper.getEffectiveDate(request.userAnswers) match {
-              case Right(effectiveDate) =>
-                Future.successful(BadRequest(view(formWithErrors, effectiveDate)))
-              case Left(error) =>
-                logger.warn(s"[ConfirmEffectiveDateOfTransactionController][onSubmit] failed: ${error.message}")
-                Future.successful(Redirect(errorHandler(error)))
-            },
-          value =>
-            for {
-              updatedUserAnswers <- Future.fromTry(request.userAnswers.set(ConfirmEffectiveDateOfTransactionPage, value))
-              _ <- sessionRepository.set(updatedUserAnswers)
-            } yield {
-              if (value) {
-                Redirect(navigator.nextPage(ConfirmEffectiveDateOfTransactionPage, NormalMode, updatedUserAnswers))
-              }
-              else Redirect(controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode))
-            }
-        )
+      EffectiveDateHelper.getEffectiveDate(request.userAnswers) match {
+        case Right(effectiveDate) =>
+          form.bindFromRequest()
+            .fold(
+              formWithErrors =>
+                Future.successful(BadRequest(view(formWithErrors, effectiveDate))),
+              value =>
+                for {
+                  updatedUserAnswers <- Future.fromTry(request.userAnswers.set(ConfirmEffectiveDateOfTransactionPage, value))
+                  _ <- sessionRepository.set(updatedUserAnswers)
+                } yield {
+                  if (value) {
+                    logger.info(s"[ConfirmEffectiveDateOfTransactionController][onSubmit] User selected YES Redirecting to next page:")
+                    Redirect(navigator.nextPage(ConfirmEffectiveDateOfTransactionPage, NormalMode, updatedUserAnswers))
+                  }
+                  else {
+                    logger.info(s"[ConfirmEffectiveDateOfTransactionController][onSubmit] User selected NO Redirecting to TransactionEffectiveDateController  :")
+                    Redirect(controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode))
+                  }
+                }
+
+            )
+        case Left(error) =>
+          logger.warn(s"[ConfirmEffectiveDateOfTransactionController][onPageLoad] failed: ${error.message}")
+          Future.successful(Redirect(errorHandler(error)))
+      }
   }
-
-
 }

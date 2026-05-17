@@ -16,53 +16,79 @@
 
 package utils
 
+import base.SpecBase
+import models.taxCalculation.{InvalidDateError, MissingFullReturnError, MissingTransactionAnswerError, MissingAboutTheTransactionError}
+import models.{FullReturn, Land, ReturnInfo, Transaction}
+import org.scalatest.EitherValues.*
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import base.SpecBase
-import org.scalatest.EitherValues._
-import models.{FullReturn, Land, ReturnInfo, Transaction}
 
 
 class EffectiveDateHelperSpec extends AnyFreeSpec with SpecBase with Matchers {
 
-  private def userAnswersWithValidEffectiveDate(effectiveDate:String) = emptyUserAnswers.copy(fullReturn = Some(FullReturn(
-    stornId = "STORN",
-    returnResourceRef = "REF",
-    returnInfo = Some(ReturnInfo(mainLandID = Some("L1"))),
-    transaction = Some(Transaction(
-      effectiveDate = Some(effectiveDate),
-      totalConsideration = Some(BigDecimal(300000)),
-      claimingRelief = Some("no"),
-      transactionDescription = Some("F"),
-      isLinked = Some("no")
-    ))
-  )))
+  private def transaction(effectiveDate: Option[String]) = Some(Transaction(
+    effectiveDate = effectiveDate,
+    totalConsideration = Some(BigDecimal(300000)),
+    claimingRelief = Some("no"),
+    transactionDescription = Some("F"),
+    isLinked = Some("no")
+  ))
+
+  private def userAnswers(transaction: Option[Transaction] = None) =
+    emptyUserAnswers.copy(fullReturn = Some(FullReturn(
+      stornId = "STORN",
+      returnResourceRef = "REF",
+      returnInfo = Some(ReturnInfo(mainLandID = Some("L1"))),
+      transaction = transaction
+    )))
 
   ".getEffectiveDate" - {
 
-    "must format  and return effective date in English from transaction" in {
+    "must format  and return effective date in English from transaction when valid effective date of transaction is present" in {
 
-      val effectiveDate:String = "2020-06-07"
+      val validEffectiveDate: String = "2020-06-07"
+      val validTransaction = transaction(Some(validEffectiveDate))
 
-      val result = EffectiveDateHelper.getEffectiveDate(userAnswersWithValidEffectiveDate(effectiveDate))
+      val result = EffectiveDateHelper.getEffectiveDate(userAnswers(validTransaction))
 
-      result.value mustBe "7 June 2020"
+      result.value mustEqual "7 June 2020"
 
     }
 
     "must return MissingFullReturnError when fullReturn data is empty" in {
 
+      val result = EffectiveDateHelper.getEffectiveDate(emptyUserAnswers)
+
+      result.left.value mustBe MissingFullReturnError
+
     }
 
     "must return MissingAboutTheTransaction error when the transaction data is empty" in {
 
+      val result = EffectiveDateHelper.getEffectiveDate(userAnswers())
+
+      result.left.value mustBe MissingAboutTheTransactionError
+
     }
 
-    "must return MissingTransactionAnswerError when effective data is invalid" in {
+    "must return MissingTransactionAnswerError when effective date of transaction is empty" in {
+
+      val transactionWithoutEffectiveDate = transaction(None)
+
+      val result = EffectiveDateHelper.getEffectiveDate(userAnswers(transactionWithoutEffectiveDate))
+
+      result.left.value mustBe MissingTransactionAnswerError("effectiveDate")
 
     }
 
-    "must return InvalidDate error when the effective date is invalid " in {
+    "must return InvalidDate error when the effective date of transactions is invalid " in {
+
+      val invalidDate: String = "12-31-20"
+      val transactionWithInvalidEffectiveDate = transaction(Some(invalidDate))
+
+      val result = EffectiveDateHelper.getEffectiveDate(userAnswers(transactionWithInvalidEffectiveDate))
+
+      result.left.value mustBe InvalidDateError(invalidDate)
 
     }
 

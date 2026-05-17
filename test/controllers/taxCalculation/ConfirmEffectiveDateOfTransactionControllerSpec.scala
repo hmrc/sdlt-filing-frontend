@@ -50,6 +50,8 @@ class ConfirmEffectiveDateOfTransactionControllerSpec extends SpecBase with Mock
 
   lazy val noReturnReferenceControllerRoute: String = controllers.routes.NoReturnReferenceController.onPageLoad().url
 
+  lazy val returnTaskListControllerRoute: String = controllers.routes.ReturnTaskListController.onPageLoad().url
+
   private val userAnswersWithEffectiveDate: UserAnswers = emptyUserAnswers.copy(fullReturn = Some(FullReturn(
     stornId = "STORN",
     returnResourceRef = "REF",
@@ -67,7 +69,7 @@ class ConfirmEffectiveDateOfTransactionControllerSpec extends SpecBase with Mock
 
   "ConfirmEffectiveDateOfTransactionController" - {
     "onPageLoad" - {
-      "must return Ok and the correct view when UserAnswers contains  effectiveDateOfTransaction data " in {
+      "must return Ok and the correct view when UserAnswers contains  valid effective date of transaction data " in {
 
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
@@ -82,15 +84,14 @@ class ConfirmEffectiveDateOfTransactionControllerSpec extends SpecBase with Mock
 
           val view = app.injector.instanceOf[ConfirmEffectiveDateOfTransactionYesNoView]
 
-
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form, "20190401")(request, messages(app)).toString
+          contentAsString(result) mustEqual view(form, "1 April 2019")(request, messages(app)).toString
 
         }
 
       }
 
-      "must redirect to NoReturnReferenceController when BuildRequestError(effectiveDateOfTransaction) is missing from UserAnswers " in {
+      "must redirect to NoReturnReferenceController when full return data is missing " in {
 
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
@@ -102,7 +103,6 @@ class ConfirmEffectiveDateOfTransactionControllerSpec extends SpecBase with Mock
 
           val request = FakeRequest(GET, onPageLoadRoute)
           val result = route(app, request).value
-
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual noReturnReferenceControllerRoute
@@ -127,7 +127,7 @@ class ConfirmEffectiveDateOfTransactionControllerSpec extends SpecBase with Mock
           val view = app.injector.instanceOf[ConfirmEffectiveDateOfTransactionYesNoView]
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form.fill(true), "20190401")(request, messages(app)).toString
+          contentAsString(result) mustEqual view(form.fill(true), "1 April 2019")(request, messages(app)).toString
         }
       }
     }
@@ -155,47 +155,79 @@ class ConfirmEffectiveDateOfTransactionControllerSpec extends SpecBase with Mock
 
       "must redirect to TransactionEffectiveDateController when user selects `NO`" in {
 
-          when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
-          val app = applicationBuilder(Some(userAnswersWithEffectiveDate))
-            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-            .build()
+        val app = applicationBuilder(Some(userAnswersWithEffectiveDate))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
 
-          running(app) {
+        running(app) {
 
-            val request = FakeRequest(POST, onSubmitRoute)
-              .withFormUrlEncodedBody(("value" , "false"))
-            val result = route(app, request).value
+          val request = FakeRequest(POST, onSubmitRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+          val result = route(app, request).value
 
-            status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode).url
-          }
-
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode).url
         }
+
+      }
 
       "must return BAD_REQUEST when there is error in the form " in {
 
-          when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
-          val app = applicationBuilder(Some(userAnswersWithEffectiveDate))
-            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-            .build()
+        val app = applicationBuilder(Some(userAnswersWithEffectiveDate))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
 
-          running(app) {
+        running(app) {
 
-            val request = FakeRequest(POST, onSubmitRoute)
-              .withFormUrlEncodedBody("value" -> "yes")
-            val result = route(app, request).value
+          val request = FakeRequest(POST, onSubmitRoute)
+            .withFormUrlEncodedBody("value" -> "yes")
+          val result = route(app, request).value
 
-            val formWithErrors = form.bind(Map("value" -> "invalid-value"))
+          val formWithErrors = form.bind(Map("value" -> "invalid-value"))
 
-            val view = app.injector.instanceOf[ConfirmEffectiveDateOfTransactionYesNoView]
+          val view = app.injector.instanceOf[ConfirmEffectiveDateOfTransactionYesNoView]
 
-            status(result) mustEqual BAD_REQUEST
-            contentAsString(result) mustEqual view(formWithErrors, "20190401")(request, messages(app)).toString
-          }
-
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) mustEqual view(formWithErrors, "1 April 2019")(request, messages(app)).toString
         }
+
+      }
+
+      "must redirect to NoReturnReferenceController when userAnswers does not have effective date of transaction" in {
+
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val userAnswersWithoutEffectiveDate: UserAnswers = emptyUserAnswers.copy(fullReturn = Some(FullReturn(
+          stornId = "STORN",
+          returnResourceRef = "REF",
+          returnInfo = Some(ReturnInfo(mainLandID = Some("L1"))),
+          transaction = Some(Transaction(
+            totalConsideration = Some(BigDecimal(300000)),
+            claimingRelief = Some("no"),
+            transactionDescription = Some("F"),
+            isLinked = Some("no")
+          )),
+          land = Some(Seq(Land(landID = Some("L1"), propertyType = Some("01"), interestCreatedTransferred = Some("FPF"))))
+        )))
+
+        val app = applicationBuilder(Some(userAnswersWithoutEffectiveDate))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(app) {
+
+          val request = FakeRequest(POST, onSubmitRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+          val result = route(app, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual returnTaskListControllerRoute
+        }
+      }
 
     }
   }
