@@ -54,12 +54,15 @@ object PropertyTypeHelper {
 
     hasResidentialLand && effectiveDateOk
   }
-  
-  def isResidentialProperty(answers: UserAnswers): Boolean = {
-    answers.fullReturn
-      .flatMap(_.land)
-      .getOrElse(Seq.empty)
-      .flatMap(_.propertyType)
-      .exists(ResidentialPropertyTypes.contains)
+
+  def mainLandIsResidentialProperty(answers: UserAnswers): Boolean = {
+    answers.fullReturn.exists { fullReturn =>
+      val mainLandId = fullReturn.returnInfo.flatMap(_.mainLandID)
+
+      fullReturn.land
+        .flatMap(_.find(land => land.landID == mainLandId))
+        .flatMap(_.propertyType)
+        .exists(ResidentialPropertyTypes.contains)
+    }
   }
 }

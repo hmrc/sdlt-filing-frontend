@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package utils
-
-import models.taxCalculation.TaxCalculationResult
+package models.taxCalculation
 
 object TaxCalculationResults {
   val preMarch2012Result =
