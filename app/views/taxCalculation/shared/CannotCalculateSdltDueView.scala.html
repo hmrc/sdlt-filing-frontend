@@ -32,6 +32,13 @@
 
     @p(messages("taxCalculation.cannotCalculateSdltDue.p1", messages(cannotCalculateReason)))
 
+    @if(cannotCalculateReason == "taxCalculation.cannotCalculateSdltDue.reason5"){
+        <ul class="govuk-list govuk-list--bullet">
+            <li>@messages("taxCalculation.cannotCalculateSdltDue.reason5.propertyType")</li>
+            <li>@messages("taxCalculation.cannotCalculateSdltDue.reason5.effectiveDate")</li>
+        </ul>
+    }
+
     @govukButton(
         ButtonViewModel(messages("site.continue"))
         .asLink("#")

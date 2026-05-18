@@ -1426,7 +1426,9 @@ taxCalculation.cannotCalculateSdltDue.reason1                                   
 taxCalculation.cannotCalculateSdltDue.reason2                                       = this return includes a claim for partial relief. The tax due on partial relief depends on value judgements that can only be made by the purchaser.
 taxCalculation.cannotCalculateSdltDue.reason3                                       = this return includes a type of interest that falls outside of the SDLT calculation model.
 taxCalculation.cannotCalculateSdltDue.reason4                                       = this return includes a claim for Multiple Dwellings Relief. The tax due on this relief depends on the purchaser declaring the number of dwellings
-taxCalculation.cannotCalculateSdltDue.reason5                                       = the effective date of the transaction is before 23 March 2012. This date predates the modern SDLT calculation model.
+taxCalculation.cannotCalculateSdltDue.reason5                                       = this return predates the modern SDLT calculation model. This is because:
+taxCalculation.cannotCalculateSdltDue.reason5.propertyType                          = the property type is ‘01 - Residential’ or ‘04 - Additional residential property liable to higher rate’
+taxCalculation.cannotCalculateSdltDue.reason5.effectiveDate                         = the effective date of the transaction is before 22 March 2012
 
 taxCalculation.penaltiesAndInterest.button                                          = Save and continue
 
