@@ -469,7 +469,7 @@ class Navigator @Inject()() {
     case LeaseholdSelfAssessedPenaltiesAndInterestPage  => _ => routes.IndexController.onPageLoad()
     case LeaseholdTaxCalculatedPenaltiesAndInterestPage => _ => routes.IndexController.onPageLoad()
 
-    case _ => _ => controllers.routes.ReturnTaskListController.onPageLoad()
+    case ConfirmEffectiveDateOfTransactionPage => _ => controllers.routes.ReturnTaskListController.onPageLoad()
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
