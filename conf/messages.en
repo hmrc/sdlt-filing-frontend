@@ -1789,7 +1789,7 @@ lease.annualStartingRent.heading                                                
 lease.annualStartingRent.subheading                                                 = What is the annual starting rent including VAT?
 lease.annualStartingRent.hint                                                       = Enter the value in whole pounds only, for example £10,000
 lease.annualStartingRent.p1                                                         = This is the annual rent payable on whichever date comes later:
-lease.annualStartingRent.li1                                                        = the effective date of the transaction
+lease.annualStartingRent.li1                                                        = the effective date of transaction
 lease.annualStartingRent.li2                                                        = the start date as specified in the lease
 lease.annualStartingRent.p2                                                         = You must include any VAT the landlord has opted to charge. If the rent is a token or nominal amount, like £1, or no rent is payable, enter ‘0’.
 lease.annualStartingRent.details.summary                                            = About variable or uncertain rent
