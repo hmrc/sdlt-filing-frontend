@@ -34,6 +34,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, StringContextOps, UpstreamErr
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import models.transaction.*
+import models.lease.*
 
 class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
                                           val config: FrontendAppConfig)
@@ -482,6 +483,61 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       }
       .recover {
         case e => throw logResponse(e, "[StampDutyLandTaxConnector][updateTransaction]")
+      }
+  }
+
+
+  def createLease(createLeaseRequest: CreateLeaseRequest)(implicit hc: HeaderCarrier,
+                                                          request: Request[_]): Future[CreateLeaseReturn] = {
+    http.post(url"$activeBase/filing/create/lease")
+      .withBody(Json.toJson(createLeaseRequest))
+      .execute[Either[UpstreamErrorResponse, CreateLeaseReturn]]
+      .flatMap {
+        case Right(resp) =>
+          logger.info(s"[StampDutyLandTaxConnector][createLease] create lease request: $createLeaseRequest, response: $resp")
+          Future.successful(resp)
+        case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][createLease]")
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][createLease]")
+      }
+  }
+
+  def updateLease(updateLeaseRequest: UpdateLeaseRequest)(implicit hc: HeaderCarrier,
+                                                          request: Request[_]): Future[UpdateLeaseReturn] = {
+    http.post(url"$activeBase/filing/update/lease")
+      .withBody(Json.toJson(updateLeaseRequest))
+      .execute[Either[UpstreamErrorResponse, UpdateLeaseReturn]]
+      .flatMap {
+        case Right(resp) =>
+          logger.info(s"[StampDutyLandTaxConnector][updateLease] update lease request: $updateLeaseRequest, response: $resp")
+          Future.successful(resp)
+        case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][updateLease]")
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][updateLease]")
+      }
+  }
+
+  def deleteLease(deleteLeaseRequest: DeleteLeaseRequest)(implicit hc: HeaderCarrier,
+                                                          request: Request[_]): Future[DeleteLeaseReturn] = {
+    http.post(url"$activeBase/filing/delete/lease")
+      .withBody(Json.toJson(deleteLeaseRequest))
+      .execute[Either[UpstreamErrorResponse, DeleteLeaseReturn]]
+      .flatMap {
+        case Right(resp) =>
+          logger.info(s"[StampDutyLandTaxConnector][deleteLease] delete lease request: $deleteLeaseRequest, response: $resp")
+          Future.successful(resp)
+        case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][deleteLease]")
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][deleteLease]")
       }
   }
   

@@ -3744,5 +3744,570 @@ class StampDutyLandTaxConnectorISpec
         )
       }
     }
+
+    "createLease()" - {
+
+      val createLeaseRequestJson = Json.obj(
+        "stornId" -> "STORN12345",
+        "returnResourceRef" -> "RRF-2024-001",
+        "lease" -> Json.obj(
+          "isAnnualRentOver1000" -> "YES",
+          "contractEndDate" -> "2030-12-31",
+          "contractStartDate" -> "2025-01-01",
+          "leaseType" -> "COMMERCIAL",
+          "netPresentValue" -> "50000",
+          "totalPremiumPayable" -> "10000",
+          "rentFreePeriod" -> "NO",
+          "startingRent" -> "12000",
+          "startingRentEndDate" -> "2026-01-01",
+          "laterRentKnown" -> "YES",
+          "vatAmount" -> "2400"
+        )
+      )
+
+      val createLeaseReturnJson = Json.obj("created" -> true)
+
+      "must return CreateLeaseReturn when the stub returns 200 OK" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createLeaseReturnJson.toString())
+            )
+        )
+
+        val request = createLeaseRequestJson.as[lease.CreateLeaseRequest]
+        val result = connector.createLease(request).futureValue
+
+        result.created mustBe true
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/lease"))
+        )
+      }
+
+      "must send correct request body with nested lease fields" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createLeaseReturnJson.toString())
+            )
+        )
+
+        val request = createLeaseRequestJson.as[lease.CreateLeaseRequest]
+        connector.createLease(request).futureValue
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/lease"))
+            .withRequestBody(matchingJsonPath("$.stornId", equalTo("STORN12345")))
+            .withRequestBody(matchingJsonPath("$.returnResourceRef", equalTo("RRF-2024-001")))
+            .withRequestBody(matchingJsonPath("$.lease.isAnnualRentOver1000", equalTo("YES")))
+            .withRequestBody(matchingJsonPath("$.lease.leaseType", equalTo("COMMERCIAL")))
+            .withRequestBody(matchingJsonPath("$.lease.startingRent", equalTo("12000")))
+            .withRequestBody(matchingJsonPath("$.lease.vatAmount", equalTo("2400")))
+        )
+      }
+
+      "must return CreateLeaseReturn for minimal request (empty lease payload)" in {
+        val minimalRequestJson = Json.obj(
+          "stornId" -> "STORN12345",
+          "returnResourceRef" -> "RRF-2024-001",
+          "lease" -> Json.obj()
+        )
+
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createLeaseReturnJson.toString())
+            )
+        )
+
+        val request = minimalRequestJson.as[lease.CreateLeaseRequest]
+        val result = connector.createLease(request).futureValue
+
+        result.created mustBe true
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withBody("Bad Request")
+            )
+        )
+
+        val request = createLeaseRequestJson.as[lease.CreateLeaseRequest]
+        val result = connector.createLease(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 404 Not Found" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withBody("Not Found")
+            )
+        )
+
+        val request = createLeaseRequestJson.as[lease.CreateLeaseRequest]
+        val result = connector.createLease(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 404
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val request = createLeaseRequestJson.as[lease.CreateLeaseRequest]
+        val result = connector.createLease(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createLeaseReturnJson.toString())
+            )
+        )
+
+        val request = createLeaseRequestJson.as[lease.CreateLeaseRequest]
+        connector.createLease(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/lease"))
+        )
+      }
+
+      "must include correct headers in the request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(createLeaseReturnJson.toString())
+            )
+        )
+
+        val request = createLeaseRequestJson.as[lease.CreateLeaseRequest]
+        connector.createLease(request).futureValue
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/lease"))
+            .withHeader("Content-Type", containing("application/json"))
+        )
+      }
+
+      "must handle connection errors when service is unavailable" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/lease"))
+            .willReturn(
+              aResponse()
+                .withFault(com.github.tomakehurst.wiremock.http.Fault.CONNECTION_RESET_BY_PEER)
+            )
+        )
+
+        val request = createLeaseRequestJson.as[lease.CreateLeaseRequest]
+        val result = connector.createLease(request).failed.futureValue
+
+        result mustBe a[Throwable]
+      }
+
+      "must handle malformed JSON response" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/create/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody("{invalid json}")
+            )
+        )
+
+        val request = createLeaseRequestJson.as[lease.CreateLeaseRequest]
+        val result = connector.createLease(request).failed.futureValue
+
+        result mustBe a[Throwable]
+      }
+    }
+
+    "updateLease()" - {
+
+      val updateLeaseRequestJson = Json.obj(
+        "stornId" -> "STORN12345",
+        "returnResourceRef" -> "RRF-2024-001",
+        "lease" -> Json.obj(
+          "isAnnualRentOver1000" -> "YES",
+          "contractEndDate" -> "2030-12-31",
+          "contractStartDate" -> "2025-01-01",
+          "leaseType" -> "COMMERCIAL",
+          "netPresentValue" -> "60000",
+          "totalPremiumPayable" -> "15000",
+          "rentFreePeriod" -> "YES",
+          "startingRent" -> "13000",
+          "startingRentEndDate" -> "2026-01-01",
+          "laterRentKnown" -> "NO",
+          "vatAmount" -> "2600"
+        )
+      )
+
+      val updateLeaseReturnJson = Json.obj("updated" -> true)
+
+      "must return UpdateLeaseReturn when the stub returns 200 OK" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateLeaseReturnJson.toString())
+            )
+        )
+
+        val request = updateLeaseRequestJson.as[lease.UpdateLeaseRequest]
+        val result = connector.updateLease(request).futureValue
+
+        result.updated mustBe true
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/lease"))
+        )
+      }
+
+      "must send correct request body with nested lease fields" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateLeaseReturnJson.toString())
+            )
+        )
+
+        val request = updateLeaseRequestJson.as[lease.UpdateLeaseRequest]
+        connector.updateLease(request).futureValue
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/lease"))
+            .withRequestBody(matchingJsonPath("$.stornId", equalTo("STORN12345")))
+            .withRequestBody(matchingJsonPath("$.returnResourceRef", equalTo("RRF-2024-001")))
+            .withRequestBody(matchingJsonPath("$.lease.isAnnualRentOver1000", equalTo("YES")))
+            .withRequestBody(matchingJsonPath("$.lease.leaseType", equalTo("COMMERCIAL")))
+            .withRequestBody(matchingJsonPath("$.lease.netPresentValue", equalTo("60000")))
+            .withRequestBody(matchingJsonPath("$.lease.rentFreePeriod", equalTo("YES")))
+        )
+      }
+
+      "must return UpdateLeaseReturn for minimal request (empty lease payload)" in {
+        val minimalRequestJson = Json.obj(
+          "stornId" -> "STORN12345",
+          "returnResourceRef" -> "RRF-2024-001",
+          "lease" -> Json.obj()
+        )
+
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateLeaseReturnJson.toString())
+            )
+        )
+
+        val request = minimalRequestJson.as[lease.UpdateLeaseRequest]
+        val result = connector.updateLease(request).futureValue
+
+        result.updated mustBe true
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withBody("Bad Request")
+            )
+        )
+
+        val request = updateLeaseRequestJson.as[lease.UpdateLeaseRequest]
+        val result = connector.updateLease(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 404 Not Found" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withBody("Not Found")
+            )
+        )
+
+        val request = updateLeaseRequestJson.as[lease.UpdateLeaseRequest]
+        val result = connector.updateLease(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 404
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val request = updateLeaseRequestJson.as[lease.UpdateLeaseRequest]
+        val result = connector.updateLease(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(updateLeaseReturnJson.toString())
+            )
+        )
+
+        val request = updateLeaseRequestJson.as[lease.UpdateLeaseRequest]
+        connector.updateLease(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/lease"))
+        )
+      }
+
+      "must handle connection errors when service is unavailable" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/lease"))
+            .willReturn(
+              aResponse()
+                .withFault(com.github.tomakehurst.wiremock.http.Fault.CONNECTION_RESET_BY_PEER)
+            )
+        )
+
+        val request = updateLeaseRequestJson.as[lease.UpdateLeaseRequest]
+        val result = connector.updateLease(request).failed.futureValue
+
+        result mustBe a[Throwable]
+      }
+
+      "must handle malformed JSON response" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/update/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody("{invalid json}")
+            )
+        )
+
+        val request = updateLeaseRequestJson.as[lease.UpdateLeaseRequest]
+        val result = connector.updateLease(request).failed.futureValue
+
+        result mustBe a[Throwable]
+      }
+    }
+
+    "deleteLease()" - {
+
+      val deleteLeaseRequestJson = Json.obj(
+        "storn" -> "STORN12345",
+        "returnResourceRef" -> "RRF-2024-001"
+      )
+
+      val deleteLeaseReturnJson = Json.obj("deleted" -> true)
+
+      "must return DeleteLeaseReturn when the stub returns 200 OK" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(deleteLeaseReturnJson.toString())
+            )
+        )
+
+        val request = deleteLeaseRequestJson.as[lease.DeleteLeaseRequest]
+        val result = connector.deleteLease(request).futureValue
+
+        result.deleted mustBe true
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/lease"))
+        )
+      }
+
+      "must send correct request body with storn and returnResourceRef" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(deleteLeaseReturnJson.toString())
+            )
+        )
+
+        val request = deleteLeaseRequestJson.as[lease.DeleteLeaseRequest]
+        connector.deleteLease(request).futureValue
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/lease"))
+            .withRequestBody(matchingJsonPath("$.storn", equalTo("STORN12345")))
+            .withRequestBody(matchingJsonPath("$.returnResourceRef", equalTo("RRF-2024-001")))
+        )
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withBody("Bad Request")
+            )
+        )
+
+        val request = deleteLeaseRequestJson.as[lease.DeleteLeaseRequest]
+        val result = connector.deleteLease(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 404 Not Found" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withBody("Not Found")
+            )
+        )
+
+        val request = deleteLeaseRequestJson.as[lease.DeleteLeaseRequest]
+        val result = connector.deleteLease(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 404
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val request = deleteLeaseRequestJson.as[lease.DeleteLeaseRequest]
+        val result = connector.deleteLease(request).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(deleteLeaseReturnJson.toString())
+            )
+        )
+
+        val request = deleteLeaseRequestJson.as[lease.DeleteLeaseRequest]
+        connector.deleteLease(request).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/lease"))
+        )
+      }
+
+      "must handle connection errors when service is unavailable" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/lease"))
+            .willReturn(
+              aResponse()
+                .withFault(com.github.tomakehurst.wiremock.http.Fault.CONNECTION_RESET_BY_PEER)
+            )
+        )
+
+        val request = deleteLeaseRequestJson.as[lease.DeleteLeaseRequest]
+        val result = connector.deleteLease(request).failed.futureValue
+
+        result mustBe a[Throwable]
+      }
+
+      "must handle malformed JSON response" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/delete/lease"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody("{invalid json}")
+            )
+        )
+
+        val request = deleteLeaseRequestJson.as[lease.DeleteLeaseRequest]
+        val result = connector.deleteLease(request).failed.futureValue
+
+        result mustBe a[Throwable]
+      }
+    }
   }
 }
