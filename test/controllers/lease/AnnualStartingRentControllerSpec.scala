@@ -18,44 +18,44 @@ package controllers.lease
 
 import base.SpecBase
 import controllers.routes
-import forms.lease.DoesLeaseIncludeRentFreePeriodFormProvider
+import forms.lease.AnnualStartingRentFormProvider
 import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.*
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.lease.DoesLeaseIncludeRentFreePeriodPage
-import repositories.SessionRepository
-import play.api.test.Helpers.*
-import play.api.mvc.Call
+import pages.lease.AnnualStartingRentPage
+import play.api.data.Form
 import play.api.inject.bind
+import play.api.mvc.Call
 import play.api.test.FakeRequest
+import play.api.test.Helpers.*
+import repositories.SessionRepository
+import views.html.lease.AnnualStartingRentView
+
 import scala.concurrent.Future
-import views.html.lease.DoesLeaseIncludeRentFreePeriodView
 
-
-
-class DoesLeaseIncludeRentFreePeriodControllerSpec extends SpecBase with MockitoSugar {
+class AnnualStartingRentControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new DoesLeaseIncludeRentFreePeriodFormProvider()
-  val form = formProvider()
+  val formProvider = new AnnualStartingRentFormProvider()
+  val form: Form[String] = formProvider()
 
-  lazy val doesLeaseIncludeRentFreePeriodRoute = controllers.lease.routes.DoesLeaseIncludeRentFreePeriodController.onPageLoad(NormalMode).url
+  lazy val annualStartingRentRoute: String = controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode).url
 
-  "DoesLeaseIncludeRentFreePeriod Controller" - {
+  "AnnualStartingRent Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, doesLeaseIncludeRentFreePeriodRoute)
+        val request = FakeRequest(GET, annualStartingRentRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[DoesLeaseIncludeRentFreePeriodView]
+        val view = application.injector.instanceOf[AnnualStartingRentView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
@@ -64,23 +64,23 @@ class DoesLeaseIncludeRentFreePeriodControllerSpec extends SpecBase with Mockito
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(DoesLeaseIncludeRentFreePeriodPage, true).success.value
+      val userAnswers = emptyUserAnswers.set(AnnualStartingRentPage, "answer").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, doesLeaseIncludeRentFreePeriodRoute)
+        val request = FakeRequest(GET, annualStartingRentRoute)
 
-        val view = application.injector.instanceOf[DoesLeaseIncludeRentFreePeriodView]
+        val view = application.injector.instanceOf[AnnualStartingRentView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode)(request, messages(application)).toString
       }
     }
 
-    "must redirect to the next page when yes is selected" in {
+    "must redirect to the next page when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -96,8 +96,8 @@ class DoesLeaseIncludeRentFreePeriodControllerSpec extends SpecBase with Mockito
 
       running(application) {
         val request =
-          FakeRequest(POST, doesLeaseIncludeRentFreePeriodRoute)
-            .withFormUrlEncodedBody(("value", "true"))
+          FakeRequest(POST, annualStartingRentRoute)
+            .withFormUrlEncodedBody(("value", "20"))
 
         val result = route(application, request).value
 
@@ -106,43 +106,18 @@ class DoesLeaseIncludeRentFreePeriodControllerSpec extends SpecBase with Mockito
       }
     }
 
-    "must redirect to the next page when no is selected" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, doesLeaseIncludeRentFreePeriodRoute)
-            .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode).url}
-    }
-
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request =
-          FakeRequest(POST, doesLeaseIncludeRentFreePeriodRoute)
+          FakeRequest(POST, annualStartingRentRoute)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[DoesLeaseIncludeRentFreePeriodView]
+        val view = application.injector.instanceOf[AnnualStartingRentView]
 
         val result = route(application, request).value
 
@@ -156,7 +131,7 @@ class DoesLeaseIncludeRentFreePeriodControllerSpec extends SpecBase with Mockito
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, doesLeaseIncludeRentFreePeriodRoute)
+        val request = FakeRequest(GET, annualStartingRentRoute)
 
         val result = route(application, request).value
 
@@ -171,8 +146,8 @@ class DoesLeaseIncludeRentFreePeriodControllerSpec extends SpecBase with Mockito
 
       running(application) {
         val request =
-          FakeRequest(POST, doesLeaseIncludeRentFreePeriodRoute)
-            .withFormUrlEncodedBody(("value", "true"))
+          FakeRequest(POST, annualStartingRentRoute)
+            .withFormUrlEncodedBody(("value", "answer"))
 
         val result = route(application, request).value
 
