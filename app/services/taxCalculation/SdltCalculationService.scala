@@ -58,10 +58,10 @@ class SdltCalculationService @Inject()(
         Future.successful(Right(TaxCalculationResults.preMarch2012Result))
       case Right(request) =>
         logger.info(s"[SdltCalculationService][calculateStampDutyLandTax] sending calculation request")
-            connector.calculateStampDutyLandTax(request).flatMap(_.result.headOption match {
-              case Some(result) => Future.successful(Right(result))
-              case None => Future.failed(new IllegalStateException("Calculation response contained no results"))
-            })
+        connector.calculateStampDutyLandTax(request).flatMap(_.result.headOption match {
+          case Some(result) => Future.successful(Right(result))
+          case None => Future.failed(new IllegalStateException("Calculation response contained no results"))
+        })
       case Left(error: MissingDataError) =>
         logger.error(s"[SdltCalculationService][calculateStampDutyLandTax] missing session data: ${error.message}")
         Future.successful(Left(error))
