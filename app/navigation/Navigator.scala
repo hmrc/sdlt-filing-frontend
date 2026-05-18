@@ -302,17 +302,14 @@ class Navigator @Inject()() {
       _ => controllers.lease.routes.LeaseStartDateController.onPageLoad(NormalMode)
     case LeaseStartDatePage => //TODO - DTR-3509 - SPRINT 16 - update to what is the end date ls-3
       _ => controllers.lease.routes.LeaseStartDateController.onPageLoad(NormalMode)
-    case LeaseEnterRentFreePeriodPage => //TODO: - DTR-3518 - SPRINT 15 - update to What is the annual starting rent including VAT? - ls-5
-      _ => controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(NormalMode)
+    case LeaseEnterRentFreePeriodPage =>
+      _ => controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode)
     case LaterRentPage =>
       _ => controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(NormalMode)
     case LeaseThousandPoundsThresholdPage => // TODO - DTR-3530: update to Is VAT payable on the annual rent? - ls-9
       _ => controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(NormalMode)
     case DoesLeaseIncludeRentFreePeriodPage =>
       _ => controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(NormalMode)
-
-   case LeaseEnterRentFreePeriodPage =>
-      _ => controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode)
     case AnnualStartingRentPage => //TODO - DTR-3521 - SPRINT 15 - end date for starting rent ls-6
       _ => controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()

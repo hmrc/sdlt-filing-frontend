@@ -444,7 +444,7 @@ class NavigatorSpec extends SpecBase {
         }
 
         "go from DoesLeaseIncludeRentFreePeriodPage to ls-5" in {
-          navigator.nextPage(LeaseEnterRentFreePeriodPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(NormalMode)
+          navigator.nextPage(LeaseEnterRentFreePeriodPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode)
         }
       }
       "freehold tax calculated routes" - {
