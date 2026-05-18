@@ -443,7 +443,7 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LeaseThousandPoundsThresholdPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(NormalMode)
         }
 
-        "go from DoesLeaseIncludeRentFreePeriodPage to ls-5" in {
+        "go from DoesLeaseIncludeRentFreePeriodPage to AnnualStartingRentPage" in {
           navigator.nextPage(LeaseEnterRentFreePeriodPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode)
         }
       }
