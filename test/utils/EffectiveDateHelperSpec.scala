@@ -22,9 +22,16 @@ import models.{FullReturn, Land, ReturnInfo, Transaction}
 import org.scalatest.EitherValues.*
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.test.Helpers.stubMessagesApi
+import play.api.test.FakeRequest
 
 
 class EffectiveDateHelperSpec extends AnyFreeSpec with SpecBase with Matchers {
+
+  lazy val messagesApi: MessagesApi = stubMessagesApi()
+
+  implicit lazy val messages: Messages = messagesApi.preferred(FakeRequest())
 
   private def transaction(effectiveDate: Option[String]) = Some(Transaction(
     effectiveDate = effectiveDate,

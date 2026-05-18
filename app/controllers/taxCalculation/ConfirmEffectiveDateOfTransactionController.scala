@@ -76,18 +76,16 @@ class ConfirmEffectiveDateOfTransactionController @Inject()(override val message
                   _ <- sessionRepository.set(updatedUserAnswers)
                 } yield {
                   if (value) {
-                    logger.info(s"[ConfirmEffectiveDateOfTransactionController][onSubmit] User selected YES Redirecting to next page:")
                     Redirect(navigator.nextPage(ConfirmEffectiveDateOfTransactionPage, NormalMode, updatedUserAnswers))
                   }
                   else {
-                    logger.info(s"[ConfirmEffectiveDateOfTransactionController][onSubmit] User selected NO Redirecting to TransactionEffectiveDateController  :")
                     Redirect(controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode))
                   }
                 }
 
             )
         case Left(error) =>
-          logger.warn(s"[ConfirmEffectiveDateOfTransactionController][onPageLoad] failed: ${error.message}")
+          logger.warn(s"[ConfirmEffectiveDateOfTransactionController][onSubmit] failed: ${error.message}")
           Future.successful(Redirect(errorHandler(error)))
       }
   }

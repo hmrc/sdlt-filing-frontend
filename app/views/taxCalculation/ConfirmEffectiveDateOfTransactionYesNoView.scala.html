@@ -24,13 +24,11 @@
         hmrcPageHeading: HmrcPageHeading,
         govukRadios: GovukRadios,
         govukErrorSummary: GovukErrorSummary,
-        h1: h1,
-        p: Paragraph,
         caption: Caption
 )
 @(form: Form[_], effectiveDate:String)(implicit request: Request[_], messages:Messages)
 
-@layout(pageTitle = title(form, messages("taxCalculation.confirmEffectiveDateOfTransaction.title" ))){
+@layout(pageTitle = title(form, messages("taxCalculation.confirmEffectiveDateOfTransaction.title"), section = Some(messages("site.taxCalculation.caption")))){
 
     @formHelper(action = controllers.taxCalculation.routes.ConfirmEffectiveDateOfTransactionController.onSubmit()) {
 
@@ -42,7 +40,7 @@
             text           = messages("taxCalculation.confirmEffectiveDateOfTransaction.heading", effectiveDate),
             headingClasses = Some("govuk-heading-l"),
             captionClasses = Some("govuk-caption-l"),
-            section        = Some(messages("taxCalculation.confirmEffectiveDateOfTransaction.caption"))
+            section        = Some(messages("site.taxCalculation.caption"))
         ))
 
         @govukRadios(

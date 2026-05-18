@@ -17,30 +17,20 @@
 package utils
 
 import models.UserAnswers
-import models.taxCalculation.{BuildRequestError, InvalidDateError, MissingAboutTheTransactionError, MissingFullReturnError, MissingTransactionAnswerError}
-import play.api.i18n.Lang
-import utils.DateTimeFormats.{dateTimeFormat, parseDate}
-
-import java.time.LocalDate
+import models.taxCalculation.*
+import play.api.i18n.Messages
+import utils.DateTimeFormats.{LocalDateFormatting, parseDate}
 
 object EffectiveDateHelper {
 
-   def getEffectiveDate(userAnswers: UserAnswers): Either[BuildRequestError, String] = {
+  def getEffectiveDate(userAnswers: UserAnswers)(implicit messages: Messages): Either[BuildRequestError, String] = {
     for {
       fullReturn <- userAnswers.fullReturn.toRight(MissingFullReturnError)
       transaction <- fullReturn.transaction.toRight(MissingAboutTheTransactionError)
       effectiveDateRaw <- transaction.effectiveDate.toRight(MissingTransactionAnswerError("effectiveDate"))
-      parsedEffectiveDate <- parseDate(effectiveDateRaw).left.map(_ => InvalidDateError(effectiveDateRaw))
-      formattedEffectiveDate = effectiveDateFormatter(parsedEffectiveDate)
+      parsedEffectiveDate <- parseDate(effectiveDateRaw).map(_.toLongDate).left.map(_ => InvalidDateError(effectiveDateRaw))
     } yield
-      formattedEffectiveDate
+      parsedEffectiveDate
   }
-   
-   private def effectiveDateFormatter(effectiveDate:LocalDate):String = {
-      val formatter = dateTimeFormat()(Lang("en"))
-      val formattedDate = effectiveDate.format(formatter)
-      formattedDate
-   }
-
 
 }
