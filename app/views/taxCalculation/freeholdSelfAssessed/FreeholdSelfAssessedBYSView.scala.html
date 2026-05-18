@@ -42,7 +42,7 @@
 
     @govukButton(
         ButtonViewModel(messages("site.continue"))
-        .asLink("#")
+        .asLink(controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad().url)
         .withCssClass("govuk-!-margin-top-2")
     )
 
