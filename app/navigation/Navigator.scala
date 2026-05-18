@@ -348,6 +348,7 @@ class Navigator @Inject()() {
 
   private def beforeTaxCalculationFlowRoutes(page: Page): UserAnswers => Call = page match {
     case ConfirmEffectiveDateOfTransactionPage => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case _                                     => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
   }
 
   private def freeholdTaxCalculatedRoutes(page: Page): UserAnswers => Call = page match {
