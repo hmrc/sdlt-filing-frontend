@@ -26,6 +26,7 @@ import pages.vendor.*
 import pages.vendorAgent.*
 import pages.land.*
 import pages.lease.*
+import pages.taxCalculation.ConfirmEffectiveDateOfTransactionPage
 import pages.taxCalculation.freeholdTaxCalculated.*
 import pages.taxCalculation.freeholdSelfAssessed.*
 import pages.taxCalculation.leaseholdTaxCalculated.*
@@ -71,6 +72,8 @@ class Navigator @Inject()() {
     case residencyPage if isResidencySection(residencyPage) => residencyRoutes(residencyPage)
     case transactionPage if isTransactionSection(transactionPage) => transactionRoutes(transactionPage)
     case leasePage if isLeaseSection(leasePage) => leaseRoutes(leasePage)
+    
+    case taxCalcPage if isTaxCalculationBeforeFlowSection(taxCalcPage) => beforeTaxCalculationFlowRoutes(taxCalcPage)
     case taxCalcPage if isFreeholdTaxCalculatedSection(taxCalcPage) => freeholdTaxCalculatedRoutes(taxCalcPage)
     case taxCalcPage if isFreeholdSelfAssessedSection(taxCalcPage) => freeholdSelfAssessedRoutes(taxCalcPage)
     case taxCalcPage if isLeaseholdTaxCalculatedSection(taxCalcPage) => leaseholdTaxCalculatedRoutes(taxCalcPage)
@@ -318,6 +321,10 @@ class Navigator @Inject()() {
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
+  private def isTaxCalculationBeforeFlowSection(page: Page): Boolean = page match {
+    case ConfirmEffectiveDateOfTransactionPage => true
+    case _ => false
+  }
   private def isFreeholdTaxCalculatedSection(page: Page): Boolean = page match {
     case FreeholdTaxCalculatedSelfAssessedAmountPage |
          FreeholdTaxCalculatedTotalAmountDuePage | FreeholdTaxCalculatedPenaltiesAndInterestPage  => true
@@ -328,6 +335,11 @@ class Navigator @Inject()() {
     case FreeholdSelfAssessedCannotCalculateTaxPage | FreeholdSelfAssessedAmountPage |
          FreeholdSelfAssessedTotalAmountDuePage | FreeholdSelfAssessedPenaltiesAndInterestPage => true
     case _ => false
+  }
+
+  private def beforeTaxCalculationFlowRoutes(page: Page): UserAnswers => Call = page match {
+    case ConfirmEffectiveDateOfTransactionPage => _ => controllers.taxCalculation.routes.TaxCalculationBeforeYouStartController.onPageLoad()
+    case _ => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
   }
 
   private def isLeaseholdTaxCalculatedSection(page: Page): Boolean = page match {
