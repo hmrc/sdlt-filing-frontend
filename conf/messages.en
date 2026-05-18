@@ -1497,6 +1497,23 @@ taxCalculation.taxDueOnNpv.error.length                                         
 taxCalculation.taxDueOnNpv.checkYourAnswersLabel                                    = Tax due on NPV
 taxCalculation.taxDueOnNpv.change.hidden                                            = tax due on NPV
 
+taxCalculation.sdltSelfAssessment.title                                             = SDLT self-assessment
+taxCalculation.sdltSelfAssessment.heading                                           = SDLT self-assessment
+taxCalculation.sdltSelfAssessment.intro                                             = SDLT is a self-assessed tax. The legal responsibility for calculating, reporting and paying the correct amount rests with the purchaser of the land or property.
+taxCalculation.sdltSelfAssessment.warning                                           = HMRC expects each person to take reasonable care when calculating tax, including creating and preserving records, to provide a complete and accurate return.
+taxCalculation.sdltSelfAssessment.calculator                                        = You can <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+taxCalculation.sdltSelfAssessment.calculator.link                                   = https://www.tax.service.gov.uk/calculate-stamp-duty-land-tax/
+taxCalculation.sdltSelfAssessment.calculator.text                                   = use the SDLT calculator to work out the correct amount (opens in a new tab)
+taxCalculation.sdltSelfAssessment.h2                                                = What is the self-assessed amount of SDLT?
+taxCalculation.sdltSelfAssessment.hint                                              = Enter the amount in whole pounds only, for example £10,000. This amount should not include any penalties or interest due.
+taxCalculation.sdltSelfAssessment.checkYourAnswersLabel                             = Self-assessed amount of SDLT
+taxCalculation.sdltSelfAssessment.change.hidden                                     = self-assessed amount of SDLT
+taxCalculation.sdltSelfAssessment.error.required                                    = Enter the self-assessed amount of SDLT, in pounds
+taxCalculation.sdltSelfAssessment.error.invalidNumeric                              = The self-assessed amount of SDLT must only include commas and numbers 0 to 9
+taxCalculation.sdltSelfAssessment.error.invalidWholeNumber                          = Enter the self-assessed amount of SDLT in whole pounds
+taxCalculation.sdltSelfAssessment.error.maximum                                     = The self-assessed amount of SDLT must be equal to or less than £9,999,999,999
+taxCalculation.sdltSelfAssessment.error.length                                      = The self-assessed amount of SDLT must be 16 characters or fewer
+
 taxCalculation.totalAmountDue.h2                                             = What is the total amount you intend to pay with this return?
 taxCalculation.totalAmountDue.hint                                           = Enter the amount in whole pounds only, for example £10,000
 taxCalculation.totalAmountDue.heading                                        = Total amount due
