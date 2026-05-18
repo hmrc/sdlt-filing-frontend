@@ -70,9 +70,8 @@ class DoesLeaseIncludeRentFreePeriodController @Inject()(
           } yield {
             if(value) {
               Redirect(navigator.nextPage(DoesLeaseIncludeRentFreePeriodPage, mode, updatedAnswers))
-            }else {
-              //TO`DO: navigate to the le-6 Annual starting rent page
-              Redirect(controllers.lease.routes.DoesLeaseIncludeRentFreePeriodController.onPageLoad(mode))
+            } else {
+              Redirect(controllers.lease.routes.AnnualStartingRentController.onPageLoad(mode))
             }
           }
       )

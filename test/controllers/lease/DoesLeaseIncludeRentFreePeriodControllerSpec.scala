@@ -105,7 +105,7 @@ class DoesLeaseIncludeRentFreePeriodControllerSpec extends SpecBase with Mockito
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
-    //TODO  redirect to the le-6 Annual starting rent page when no is selected
+
     "must redirect to the next page when no is selected" in {
 
       val mockSessionRepository = mock[SessionRepository]
@@ -128,7 +128,7 @@ class DoesLeaseIncludeRentFreePeriodControllerSpec extends SpecBase with Mockito
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.lease.routes.DoesLeaseIncludeRentFreePeriodController.onPageLoad(NormalMode).url      }
+        redirectLocation(result).value mustEqual controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode).url}
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
