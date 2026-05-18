@@ -21,8 +21,9 @@ import controllers.taxCalculation.PenaltiesAndInterestExtension
 import forms.taxCalculation.PenaltiesAndInterestFormProvider
 import models.taxCalculation.TaxCalculationFlow
 import models.taxCalculation.TaxCalculationFlow.*
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import pages.taxCalculation.TaxCalculationFlowPage
+import pages.taxCalculation.freeholdTaxCalculated.FreeholdTaxCalculatedPenaltiesAndInterestPage
 import play.api.Application
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -32,16 +33,20 @@ class FreeholdTaxCalculatedPenaltiesAndInterestControllerSpec extends SpecBase {
 
   trait Fixture extends PenaltiesAndInterestExtension {
     val form = new PenaltiesAndInterestFormProvider()()
-    val answersFreeHold: UserAnswers = emptyUserAnswers.set(TaxCalculationFlowPage,
+    val preparedForm = form.fill(true)
+    val answersFreeHoldNoUserChoice: UserAnswers = emptyUserAnswers.set(TaxCalculationFlowPage,
       TaxCalculationFlow.FreeholdTaxCalculated).success.value
+    val answersFreeHoldWithUserChoice: UserAnswers = emptyUserAnswers.set(TaxCalculationFlowPage,
+      TaxCalculationFlow.FreeholdTaxCalculated).success.value
+      .set(FreeholdTaxCalculatedPenaltiesAndInterestPage, true).success.value
     val answersLeasehold: UserAnswers = emptyUserAnswers.set(TaxCalculationFlowPage,
       TaxCalculationFlow.LeaseholdSelfAssessed).success.value
   }
 
   "FreeholdTaxCalculatedPenaltiesAndInterestController" - {
 
-    "return OK for GET :: correct flow state" in new Fixture {
-      val application: Application = applicationBuilder(userAnswers = Some(answersFreeHold)).build()
+    "return OK for GET :: NormalMode" in new Fixture {
+      val application: Application = applicationBuilder(userAnswers = Some(answersFreeHoldNoUserChoice)).build()
 
       running(application) {
         val request = FakeRequest(GET,
@@ -54,6 +59,23 @@ class FreeholdTaxCalculatedPenaltiesAndInterestControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, pageTitle = getPageTitle(flow = FreeholdTaxCalculated)(messages(application)),
           postAction(FreeholdTaxCalculated, NormalMode))(request, messages(application)).toString
+      }
+    }
+
+    "return OK for GET :: CheckMode :: load user selected value " in new Fixture {
+      val application: Application = applicationBuilder(userAnswers = Some(answersFreeHoldWithUserChoice)).build()
+
+      running(application) {
+        val request = FakeRequest(GET,
+          controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(CheckMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[AmountWithPenaltiesView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(preparedForm, pageTitle = getPageTitle(flow = FreeholdTaxCalculated)(messages(application)),
+          postAction(FreeholdTaxCalculated, CheckMode))(request, messages(application)).toString
       }
     }
 
@@ -73,13 +95,13 @@ class FreeholdTaxCalculatedPenaltiesAndInterestControllerSpec extends SpecBase {
     }
 
     "return SEE_OTHER for POST : valid formData" in new Fixture {
-      val app: Application = applicationBuilder(userAnswers = Some(answersFreeHold)).build()
+      val app: Application = applicationBuilder(userAnswers = Some(answersFreeHoldNoUserChoice)).build()
 
       running(app) {
         val request = FakeRequest(POST,
           controllers.taxCalculation
             .freeholdTaxCalculated.routes.FreeholdSdltCalculatedPenaltiesAndInterestController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", "yes"))
+          .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(app, request).value
 
@@ -89,7 +111,7 @@ class FreeholdTaxCalculatedPenaltiesAndInterestControllerSpec extends SpecBase {
     }
 
     "return BAD_REQUEST for POST : inValid formData" in new Fixture {
-      val application: Application = applicationBuilder(userAnswers = Some(answersFreeHold)).build()
+      val application: Application = applicationBuilder(userAnswers = Some(answersFreeHoldNoUserChoice)).build()
 
       running(application) {
         val request = FakeRequest(POST,

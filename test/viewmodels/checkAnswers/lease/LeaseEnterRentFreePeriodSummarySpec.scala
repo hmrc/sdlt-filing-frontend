@@ -23,27 +23,26 @@ import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
-
 class LeaseEnterRentFreePeriodSummarySpec extends SpecBase {
 
   "LeaseEnterRentFreePeriodSummarySpec" - {
 
-    "when rent free period is present  " - {
+    "when rent free period is present" - {
 
-      "must return a SummaryListRow rent free period value and change link" in {
+      "must return a SummaryListRow with rent free period value and change link" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers
-            .set(LeaseEnterRentFreePeriodPage, 10).success.value
+            .set(LeaseEnterRentFreePeriodPage, "10").success.value
 
           val row = LeaseEnterRentFreePeriodSummary.row(userAnswers)
 
           val result = row match {
             case Row(r) => r
-            case _ => fail("Expected Row but got Missing")
+            case _      => fail("Expected Row but got Missing")
           }
 
           result.key.content.asHtml.toString() mustEqual msgs("lease.enterRentFreePeriod.checkYourAnswersLabel")
@@ -52,12 +51,13 @@ class LeaseEnterRentFreePeriodSummarySpec extends SpecBase {
           htmlContent mustEqual "10"
 
           result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual
+            controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
           result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("lease.enterRentFreePeriod.change.hidden")
         }
       }
-}
+    }
 
     "when rent free period is not present" - {
 
@@ -81,4 +81,3 @@ class LeaseEnterRentFreePeriodSummarySpec extends SpecBase {
     }
   }
 }
-

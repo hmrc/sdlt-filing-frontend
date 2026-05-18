@@ -17,9 +17,12 @@
 package viewmodels.checkAnswers.taxCalculation
 
 import base.SpecBase
-import models.{CheckMode}
+import models.CheckMode
 import pages.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedPenaltiesAndInterestPage
 import pages.taxCalculation.freeholdTaxCalculated.FreeholdTaxCalculatedPenaltiesAndInterestPage
+import pages.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedPenaltiesAndInterestPage
+import pages.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedPenaltiesAndInterestPage
+
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import viewmodels.checkAnswers.summary.SummaryRowResult.Row
@@ -88,11 +91,63 @@ class AmountWithPenaltiesSummarySpec extends SpecBase {
     }
 
     "LeaseholdTaxCalculatedPenaltiesAndInterestPage :: must return a SummaryListRow with change link" in {
-      // TODO: as a part of https://jira.tools.tax.service.gov.uk/browse/DTR-5066
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+
+        val userAnswers = emptyUserAnswers.set(LeaseholdTaxCalculatedPenaltiesAndInterestPage, true).success.value
+
+        val row = AmountWithPenaltiesSummary.row(LeaseholdTaxCalculatedPenaltiesAndInterestPage)(userAnswers)
+
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
+
+        result.key.content.asHtml.toString() mustEqual msgs("taxCalculation.penaltiesAndInterest.checkYourAnswersLabel")
+
+        val contentString = result.value.content.asHtml.toString()
+
+        contentString mustEqual "true"
+
+        result.actions.get.items.size mustEqual 1
+        result.actions.get.items.head.href mustEqual controllers.taxCalculation
+          .leaseholdTaxCalculated.routes
+          .LeaseholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(CheckMode).url
+
+        result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
+      }
     }
 
     "LeaseholdSelfAssessedPenaltiesAndInterestPage :: must return a SummaryListRow with change link" in {
-      // TODO: as a part of https://jira.tools.tax.service.gov.uk/browse/DTR-5067
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+
+        val userAnswers = emptyUserAnswers.set(LeaseholdSelfAssessedPenaltiesAndInterestPage, true).success.value
+
+        val row = AmountWithPenaltiesSummary.row(LeaseholdSelfAssessedPenaltiesAndInterestPage)(userAnswers)
+
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
+
+        result.key.content.asHtml.toString() mustEqual msgs("taxCalculation.penaltiesAndInterest.checkYourAnswersLabel")
+
+        val contentString = result.value.content.asHtml.toString()
+
+        contentString mustEqual "true"
+
+        result.actions.get.items.size mustEqual 1
+        result.actions.get.items.head.href mustEqual controllers.taxCalculation
+          .leaseholdSelfAssessed.routes
+          .LeaseholdSelfAssessedPenaltiesAndInterestController.onPageLoad(CheckMode).url
+
+        result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
+      }
     }
 
   }

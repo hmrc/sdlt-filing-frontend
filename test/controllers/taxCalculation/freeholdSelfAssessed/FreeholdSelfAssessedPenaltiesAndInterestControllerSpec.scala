@@ -27,38 +27,61 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import views.html.taxCalculation.AmountWithPenaltiesView
 import controllers.taxCalculation.PenaltiesAndInterestExtension
+import pages.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedPenaltiesAndInterestPage
 import play.api.i18n.Messages
 
 class FreeholdSelfAssessedPenaltiesAndInterestControllerSpec extends SpecBase {
 
   trait Fixture extends PenaltiesAndInterestExtension {
     val form = new PenaltiesAndInterestFormProvider()()
-    val answersFreeholdAssessed: UserAnswers = emptyUserAnswers.set(TaxCalculationFlowPage,
+    val preparedForm = form.fill(true)
+    val answersFreeholdAssessedNoUserChoice: UserAnswers = emptyUserAnswers.set(TaxCalculationFlowPage,
       TaxCalculationFlow.FreeholdSelfAssessed).success.value
+    val answersFreeholdAssessedWithUserChoice: UserAnswers = emptyUserAnswers.set(TaxCalculationFlowPage,
+        TaxCalculationFlow.FreeholdSelfAssessed).success.value
+      .set(FreeholdSelfAssessedPenaltiesAndInterestPage, true).success.value
     val answersLeasehold: UserAnswers = emptyUserAnswers.set(TaxCalculationFlowPage,
       TaxCalculationFlow.LeaseholdSelfAssessed).success.value
   }
 
   "FreeholdSelfAssessedPenaltiesAndInterestController" - {
 
-    "return OK for GET :: correct flow state" in new Fixture {
-      Seq(NormalMode, CheckMode).foreach { contextMode =>
-        val application: Application = applicationBuilder(userAnswers = Some(answersFreeholdAssessed)).build()
+    "return OK for GET :: NormalMode" in new Fixture {
+      val application: Application = applicationBuilder(userAnswers = Some(answersFreeholdAssessedNoUserChoice)).build()
 
-        running(application) {
-          implicit val msgs: Messages = messages(application)
-          val request = FakeRequest(GET,
-            controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSelfAssessedPenaltiesAndInterestController.onPageLoad(contextMode).url)
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+        val request = FakeRequest(GET,
+          controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSelfAssessedPenaltiesAndInterestController.onPageLoad(NormalMode).url)
 
-          val result = route(application, request).value
+        val result = route(application, request).value
 
-          val view = application.injector.instanceOf[AmountWithPenaltiesView]
+        val view = application.injector.instanceOf[AmountWithPenaltiesView]
 
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form, pageTitle = getPageTitle(flow = FreeholdSelfAssessed),
-            postAction(FreeholdSelfAssessed, contextMode))(request, messages(application)).toString
-        }
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, pageTitle = getPageTitle(flow = FreeholdSelfAssessed),
+          postAction(FreeholdSelfAssessed, NormalMode))(request, messages(application)).toString
       }
+    }
+
+    "return OK for GET :: CheckMode: load user selected value" in new Fixture {
+
+      val application: Application = applicationBuilder(userAnswers = Some(answersFreeholdAssessedWithUserChoice)).build()
+
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+        val request = FakeRequest(GET,
+          controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSelfAssessedPenaltiesAndInterestController.onPageLoad(CheckMode).url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[AmountWithPenaltiesView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(preparedForm, pageTitle = getPageTitle(flow = FreeholdSelfAssessed),
+          postAction(FreeholdSelfAssessed, CheckMode))(request, messages(application)).toString
+      }
+
     }
 
     "return SEE_OTHER for GET:: incorrect flow state" in new Fixture {
@@ -79,13 +102,13 @@ class FreeholdSelfAssessedPenaltiesAndInterestControllerSpec extends SpecBase {
 
     "return SEE_OTHER for POST : valid formData" in new Fixture {
       Seq(NormalMode, CheckMode).foreach { contextMode =>
-        val app: Application = applicationBuilder(userAnswers = Some(answersFreeholdAssessed)).build()
+        val app: Application = applicationBuilder(userAnswers = Some(answersFreeholdAssessedNoUserChoice)).build()
 
         running(app) {
           val request = FakeRequest(POST,
             controllers.taxCalculation
               .freeholdSelfAssessed.routes.FreeholdSelfAssessedPenaltiesAndInterestController.onSubmit(contextMode).url)
-            .withFormUrlEncodedBody(("value", "yes"))
+            .withFormUrlEncodedBody(("value", "true"))
 
           val result = route(app, request).value
 
@@ -97,7 +120,7 @@ class FreeholdSelfAssessedPenaltiesAndInterestControllerSpec extends SpecBase {
 
     "return BAD_REQUEST for POST : inValid formData" in new Fixture {
       Seq(NormalMode, CheckMode).foreach { contextMode =>
-        val application: Application = applicationBuilder(userAnswers = Some(answersFreeholdAssessed)).build()
+        val application: Application = applicationBuilder(userAnswers = Some(answersFreeholdAssessedNoUserChoice)).build()
 
         running(application) {
           val request = FakeRequest(POST,

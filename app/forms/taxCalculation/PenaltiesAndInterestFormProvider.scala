@@ -20,12 +20,11 @@ import javax.inject.Inject
 
 import forms.mappings.Mappings
 import play.api.data.Form
-import models.PenaltiesAndInterest
 
 class PenaltiesAndInterestFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[PenaltiesAndInterest] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> enumerable[PenaltiesAndInterest]("taxCalculation.penaltiesAndInterest.error.required")
+      "value" -> boolean("taxCalculation.penaltiesAndInterest.error.required")
     )
 }

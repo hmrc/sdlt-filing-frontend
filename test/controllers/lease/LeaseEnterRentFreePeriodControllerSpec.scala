@@ -36,12 +36,15 @@ import scala.concurrent.Future
 
 class LeaseEnterRentFreePeriodControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new LeaseEnterRentFreePeriodFormProvider()
-  val form = formProvider()
+  val form: play.api.data.Form[Int] = formProvider()
 
-  lazy val leaseEnterRentFreePeriodRoute = controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(NormalMode).url
+  val validAnswer: String = "5"
+
+  lazy val leaseEnterRentFreePeriodRoute: String =
+    controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(NormalMode).url
 
   "LeaseEnterRentFreePeriod Controller" - {
 
@@ -63,7 +66,7 @@ class LeaseEnterRentFreePeriodControllerSpec extends SpecBase with MockitoSugar 
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswers.set(LeaseEnterRentFreePeriodPage, 1).success.value
+      val userAnswers = emptyUserAnswers.set(LeaseEnterRentFreePeriodPage, validAnswer).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -75,7 +78,7 @@ class LeaseEnterRentFreePeriodControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(1), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(validAnswer.toInt), NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -96,7 +99,7 @@ class LeaseEnterRentFreePeriodControllerSpec extends SpecBase with MockitoSugar 
       running(application) {
         val request =
           FakeRequest(POST, leaseEnterRentFreePeriodRoute)
-            .withFormUrlEncodedBody(("value", "1"))
+            .withFormUrlEncodedBody(("value", validAnswer.toString))
 
         val result = route(application, request).value
 
@@ -112,9 +115,9 @@ class LeaseEnterRentFreePeriodControllerSpec extends SpecBase with MockitoSugar 
       running(application) {
         val request =
           FakeRequest(POST, leaseEnterRentFreePeriodRoute)
-            .withFormUrlEncodedBody(("value", ""))
+            .withFormUrlEncodedBody(("value", "invalid value"))
 
-        val boundForm = form.bind(Map("value" -> ""))
+        val boundForm = form.bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[LeaseEnterRentFreePeriodView]
 
@@ -146,7 +149,7 @@ class LeaseEnterRentFreePeriodControllerSpec extends SpecBase with MockitoSugar 
       running(application) {
         val request =
           FakeRequest(POST, leaseEnterRentFreePeriodRoute)
-            .withFormUrlEncodedBody(("value", "answer"))
+            .withFormUrlEncodedBody(("value", validAnswer.toString))
 
         val result = route(application, request).value
 

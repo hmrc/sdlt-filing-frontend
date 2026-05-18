@@ -19,9 +19,12 @@ package views.taxCalculation.freeholdSelfAssessed
 import base.SpecBase
 import controllers.taxCalculation.PenaltiesAndInterestExtension
 import forms.taxCalculation.PenaltiesAndInterestFormProvider
-import models.NormalMode
+import models.taxCalculation.TaxCalculationFlow
+import models.{NormalMode, UserAnswers}
 import models.taxCalculation.TaxCalculationFlow.*
 import org.jsoup.Jsoup
+import pages.taxCalculation.TaxCalculationFlowPage
+import pages.taxCalculation.freeholdTaxCalculated.FreeholdTaxCalculatedPenaltiesAndInterestPage
 import play.api.Application
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
@@ -33,13 +36,15 @@ class FreeholdCalculatedAmountWithPenaltiesViewSpec extends SpecBase {
 
   trait Fixture extends PenaltiesAndInterestExtension{
     val form = new PenaltiesAndInterestFormProvider()()
-    val application: Application = applicationBuilder().build()
+    val answersFreeHoldWithUserChoice: UserAnswers = emptyUserAnswers.set(TaxCalculationFlowPage,
+        TaxCalculationFlow.FreeholdTaxCalculated).success.value
+      .set(FreeholdTaxCalculatedPenaltiesAndInterestPage, true).success.value
   }
 
   "Scenario 2 page: Tax calculation – Tax calculation – Freehold not calculated" - {
 
     "must render the page: title | heading | caption" in new Fixture {
-
+      val application: Application = applicationBuilder().build()
       running(application) {
         implicit val msgs: Messages = messages(application)
         implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
@@ -54,7 +59,7 @@ class FreeholdCalculatedAmountWithPenaltiesViewSpec extends SpecBase {
     }
 
     "must render the save and continue button" in new Fixture {
-
+      val application: Application = applicationBuilder().build()
       running(application) {
         implicit val msgs: Messages = messages(application)
         implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
@@ -65,8 +70,8 @@ class FreeholdCalculatedAmountWithPenaltiesViewSpec extends SpecBase {
       }
     }
 
-    "must render Yes / No radio button" in new Fixture {
-
+    "must render Yes / No radio button: with preselected userAnswer" in new Fixture {
+      val application: Application = applicationBuilder(userAnswers = Some(answersFreeHoldWithUserChoice)).build()
       running(application) {
         implicit val msgs: Messages = messages(application)
         implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
@@ -74,12 +79,12 @@ class FreeholdCalculatedAmountWithPenaltiesViewSpec extends SpecBase {
 
         val doc = Jsoup.parse(view(form, pageTitle = getPageTitle(flow = FreeholdSelfAssessed), postAction(FreeholdSelfAssessed, NormalMode)).toString())
 
-        val yesRadio = doc.getElementById("value_0")
-        yesRadio.attr("value") mustBe "yes"
+        val yesRadio = doc.getElementById("value")
+        yesRadio.attr("value") mustBe "true"
         yesRadio.parent().text() must include(msgs("site.yes"))
 
-        val noRadio = doc.getElementById("value_1")
-        noRadio.attr("value") mustBe "no"
+        val noRadio = doc.getElementById("value-2")
+        noRadio.attr("value") mustBe "false"
         noRadio.parent().text() must include(msgs("site.no"))
       }
     }

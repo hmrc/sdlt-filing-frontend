@@ -46,7 +46,16 @@
             RadiosViewModel(
                 field = form("value"),
                 legend = LegendViewModel(messages("taxCalculation.penaltiesAndInterest.freehold-tax-calculated.heading")).asPageHeading(),
-                items = PenaltiesAndInterest.options
+                items = Seq(
+                    RadioItem(
+                        value = Some("true"),
+                        content = Text(messages("site.yes"))
+                    ),
+                    RadioItem(
+                        value = Some("false"),
+                        content = Text(messages("site.no"))
+                    )
+                )
             )
         )
         @govukButton( ButtonViewModel(messages("taxCalculation.penaltiesAndInterest.button")) )

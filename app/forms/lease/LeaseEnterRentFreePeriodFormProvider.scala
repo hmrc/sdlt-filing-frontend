@@ -18,26 +18,37 @@ package forms.lease
 
 import forms.mappings.Mappings
 import play.api.data.Form
+import play.api.data.validation.{Constraint, Invalid, Valid}
 
 import javax.inject.Inject
+import scala.util.Try
 
 class LeaseEnterRentFreePeriodFormProvider @Inject() extends Mappings {
+
+  private val maxValueInt = 99
+  private val minValueInt = 1
+  private val invalidKey  = "lease.enterRentFreePeriod.error.invalid"
+
+  private val numericOnly: Constraint[String] =
+    Constraint { value =>
+      if (value.matches("""^-?\d+$""")) Valid
+      else Invalid(invalidKey)
+    }
   
-  private val maxValue = 99
-  private val minValue = 1
-  private val maxLength = 2
+  private def safeToInt(s: String): Int =
+    Try(s.toInt).getOrElse {
+      if (s.startsWith("-")) Int.MinValue else Int.MaxValue
+    }
 
   def apply(): Form[Int] =
     Form(
-      "value" -> int(
-        "lease.enterRentFreePeriod.error.required",
-        "lease.enterRentFreePeriod.error.invalid",
-        "lease.enterRentFreePeriod.error.invalid"
-      )
+      "value" -> text("lease.enterRentFreePeriod.error.required")
+        .transform[String](_.replace(" ", "").replace(",", ""), identity)
+        .verifying(numericOnly)
+        .transform[Int](safeToInt, _.toString)
         .verifying(firstError(
-          maximumValue(maxValue, "lease.enterRentFreePeriod.error.maxValue"),
-          minimumValue(minValue, "lease.enterRentFreePeriod.error.minValue"),
-          maxLengthInt(maxLength, "lease.enterRentFreePeriod.error.maxLength")
+          maximumValue(maxValueInt, "lease.enterRentFreePeriod.error.maxValue"),
+          minimumValue(minValueInt, "lease.enterRentFreePeriod.error.minValue")
         ))
     )
 }

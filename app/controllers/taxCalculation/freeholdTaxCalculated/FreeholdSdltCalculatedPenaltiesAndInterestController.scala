@@ -22,11 +22,10 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import controllers.routes.ReturnTaskListController
 import controllers.taxCalculation.PenaltiesAndInterestExtension
 import forms.taxCalculation.PenaltiesAndInterestFormProvider
-import models.taxCalculation.TaxCalculationFlow.{FreeholdTaxCalculated}
-import models.{Mode, PenaltiesAndInterest}
+import models.taxCalculation.TaxCalculationFlow.FreeholdTaxCalculated
+import models.Mode
 import navigation.Navigator
 import pages.taxCalculation.freeholdTaxCalculated.FreeholdTaxCalculatedPenaltiesAndInterestPage
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.taxCalculation.SdltCalculationService
@@ -52,13 +51,14 @@ class FreeholdSdltCalculatedPenaltiesAndInterestController @Inject()(
                                                                     )(implicit ec: ExecutionContext) extends FrontendBaseController
   with I18nSupport with PenaltiesAndInterestExtension with LoggingUtil {
 
-  private val form: Form[PenaltiesAndInterest] = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
+      val preparedForm = request.userAnswers.get(FreeholdTaxCalculatedPenaltiesAndInterestPage).fold(form)(form.fill)
       validateFlow(request.userAnswers)(FreeholdTaxCalculated) match {
         case None =>
-          Ok(view(form, getPageTitle(flow = FreeholdTaxCalculated), postAction(FreeholdTaxCalculated, mode)))
+          Ok(view(preparedForm, getPageTitle(flow = FreeholdTaxCalculated), postAction(FreeholdTaxCalculated, mode)))
         case Some(firstErrorFound) =>
           errorLog(s"[FreeholdSdltCalculatedPenaltiesAndInterestController][onPageLoad] invalid flow state: $firstErrorFound")
           Redirect(ReturnTaskListController.onPageLoad())

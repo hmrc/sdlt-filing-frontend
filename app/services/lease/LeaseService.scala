@@ -60,4 +60,5 @@ object LeaseService {
   case object InvalidNonResidentialRule extends Result
 
   case object InvalidMixedRule extends Result
+  
 }

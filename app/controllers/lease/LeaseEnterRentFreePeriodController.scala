@@ -49,7 +49,7 @@ class LeaseEnterRentFreePeriodController @Inject()(
 
       val preparedForm = request.userAnswers.get(LeaseEnterRentFreePeriodPage) match {
         case None => form
-        case Some(value) => form.fill(value)
+        case Some(value) => form.fill(value.toInt)
       }
 
       Ok(view(preparedForm, mode))
@@ -64,7 +64,7 @@ class LeaseEnterRentFreePeriodController @Inject()(
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(LeaseEnterRentFreePeriodPage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(LeaseEnterRentFreePeriodPage, value.toString))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(LeaseEnterRentFreePeriodPage, mode, updatedAnswers))
       )
