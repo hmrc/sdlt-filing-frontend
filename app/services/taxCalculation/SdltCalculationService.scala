@@ -20,7 +20,7 @@ import connectors.SdltCalculationConnector
 import controllers.routes.ReturnTaskListController
 import models.PenaltiesAndInterest.AmountIncludePenaltiesAndInterestYes
 import models.requests.DataRequest
-import models.taxCalculation.{MissingDataError, TaxCalculationFlow, TaxCalculationResult}
+import models.taxCalculation.{MissingDataError, TaxCalculationFlow, TaxCalculationResult, TaxCalculationResults}
 import models.{PenaltiesAndInterest, UserAnswers}
 import pages.taxCalculation.TaxCalculationFlowPage
 import play.api.Logging
@@ -29,7 +29,7 @@ import play.api.mvc.Results.Redirect
 import queries.Settable
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{EffectiveDateHelper, PropertyTypeHelper, TaxCalculationResults}
+import utils.{EffectiveDateHelper, PropertyTypeHelper}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -53,7 +53,8 @@ class SdltCalculationService @Inject()(
   def calculateStampDutyLandTax(userAnswers: UserAnswers)
                                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[MissingDataError, TaxCalculationResult]] =
     TaxCalcRequestValidator.buildRequest(userAnswers) match {
-      case Right(request) if EffectiveDateHelper.isBeforeMinimumEffectiveDate(userAnswers) && PropertyTypeHelper.isResidentialProperty(userAnswers) =>
+      case Right(request)
+        if EffectiveDateHelper.isBeforeMinimumEffectiveDate(userAnswers) && PropertyTypeHelper.mainLandIsResidentialProperty(userAnswers) =>
         logger.info(s"[SdltCalculationService][calculateStampDutyLandTax] effective date is before 22/03/2012")
         Future.successful(Right(TaxCalculationResults.preMarch2012Result))
       case Right(request) =>

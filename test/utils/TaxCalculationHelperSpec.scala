@@ -46,6 +46,10 @@ class TaxCalculationHelperSpec extends SpecBase {
     "must return TaxCalculated when resultHeading is anything other than the exact 'Self-assessed' string" in {
       calculationResponseType(resultWithHeading(Some("calculated"))) mustBe TaxCalculated
     }
+
+    "must return PreMarch2012Date when resultHeading equals effective date string" in {
+      calculationResponseType(resultWithHeading(Some("Effective date is before 2012/03/22"))) mustBe PreMarch2012Date
+    }
   }
 
   "holdingType" - {
@@ -85,12 +89,20 @@ class TaxCalculationHelperSpec extends SpecBase {
       flowFor(answersWith("F"), resultWithHeading(Some("Self-assessed"))) mustBe Some(TaxCalculationFlow.FreeholdSelfAssessed)
     }
 
+    "must return Some(FreeholdSelfAssessed) for freehold and PreMarch2012Date result" in {
+      flowFor(answersWith("F"), resultWithHeading(Some("Effective date is before 2012/03/22"))) mustBe Some(TaxCalculationFlow.FreeholdSelfAssessed)
+    }
+
     "must return Some(LeaseholdTaxCalculated) for leasehold and a tax-calculated result" in {
       flowFor(answersWith("L"), resultWithHeading(None)) mustBe Some(TaxCalculationFlow.LeaseholdTaxCalculated)
     }
 
     "must return Some(LeaseholdSelfAssessed) for leasehold and a Self-assessed result" in {
       flowFor(answersWith("L"), resultWithHeading(Some("Self-assessed"))) mustBe Some(TaxCalculationFlow.LeaseholdSelfAssessed)
+    }
+
+    "must return Some(LeaseholdSelfAssessed) for leasehold and PreMarch2012Date result" in {
+      flowFor(answersWith("L"), resultWithHeading(Some("Effective date is before 2012/03/22"))) mustBe Some(TaxCalculationFlow.LeaseholdSelfAssessed)
     }
 
     "must return None when no FullReturn is present" in {

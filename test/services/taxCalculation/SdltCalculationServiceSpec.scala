@@ -89,7 +89,17 @@ class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeA
 
   "calculateStampDutyLandTax" - {
 
-    "must call the connector and return the result" in {
+    "must return the result without calling the connector user answers ha a residential property type && effective date is before the minumum" in {
+      val beforeMinimumDateAnswers = validUserAnswers.copy(fullReturn = validUserAnswers.fullReturn.map(fr =>
+        fr.copy(transaction = fr.transaction.map(_.copy(effectiveDate = Some("2012-01-01"), isLinked = Some("yes"))))
+      ))
+      val result = service.calculateStampDutyLandTax(beforeMinimumDateAnswers).futureValue
+
+      result mustBe Right(TaxCalculationResults.preMarch2012Result)
+      verify(mockConnector, never()).calculateStampDutyLandTax(any())(any())
+    }
+
+    "must call the connector for any other request and return the result" in {
       when(mockConnector.calculateStampDutyLandTax(any())(any()))
         .thenReturn(Future.successful(CalculationResponse(Seq(expectedResult))))
 
