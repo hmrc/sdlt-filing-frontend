@@ -347,7 +347,7 @@ class Navigator @Inject()() {
   }
 
   private def beforeTaxCalculationFlowRoutes(page: Page): UserAnswers => Call = page match {
-    case _ => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case ConfirmEffectiveDateOfTransactionPage => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
   }
 
   private def freeholdTaxCalculatedRoutes(page: Page): UserAnswers => Call = page match {
@@ -469,7 +469,7 @@ class Navigator @Inject()() {
     case LeaseholdSelfAssessedPenaltiesAndInterestPage  => _ => routes.IndexController.onPageLoad()
     case LeaseholdTaxCalculatedPenaltiesAndInterestPage => _ => routes.IndexController.onPageLoad()
 
-    case ConfirmEffectiveDateOfTransactionPage => _ => controllers.routes.ReturnTaskListController.onPageLoad()
+    case _ => _ => controllers.routes.ReturnTaskListController.onPageLoad()
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
