@@ -444,7 +444,7 @@ class NavigatorSpec extends SpecBase {
         }
 
         "go from LeaseIsVatPayablePage to ls-9a" in { // TODO DTR-3533: Update to What is the total amount of VAT payable on the annual rent? - ls-9a
-          navigator.nextPage(LeaseThousandPoundsThresholdPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(NormalMode)
+          navigator.nextPage(LeaseIsVatPayablePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(NormalMode)
         }
 
         "go from DoesLeaseIncludeRentFreePeriodPage to AnnualStartingRentPage" in {

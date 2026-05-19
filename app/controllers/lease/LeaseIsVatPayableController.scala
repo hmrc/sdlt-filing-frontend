@@ -26,6 +26,7 @@ import pages.lease.LeaseIsVatPayablePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.lease.LeaseService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.lease.LeaseIsVatPayableView
 
@@ -40,6 +41,7 @@ class LeaseIsVatPayableController @Inject()(
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          formProvider: LeaseIsVatPayableFormProvider,
+                                         leaseService: LeaseService,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: LeaseIsVatPayableView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -70,9 +72,7 @@ class LeaseIsVatPayableController @Inject()(
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
 
-            val transactionType: Option[TransactionType] = TransactionType.parse(
-              request.userAnswers.fullReturn.flatMap(_.transaction).flatMap(_.transactionDescription)
-            )
+            val transactionType: Option[TransactionType] = leaseService.transactionType(request.userAnswers)
 
             (value, transactionType) match {
               case (true, _) => Redirect(navigator.nextPage(LeaseIsVatPayablePage, mode, updatedAnswers))

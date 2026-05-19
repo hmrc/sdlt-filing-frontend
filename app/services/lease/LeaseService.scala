@@ -18,7 +18,8 @@ package services.lease
 
 import models.lease.TypeOfLease
 import models.UserAnswers
-import services.lease.LeaseService._
+import models.prelimQuestions.TransactionType
+import services.lease.LeaseService.*
 
 class LeaseService {
 
@@ -46,6 +47,12 @@ class LeaseService {
         case (TypeOfLease.N, _) => InvalidNonResidentialRule
       }
     }
+  }
+  
+  def transactionType(userAnswers: UserAnswers): Option[TransactionType] = {
+    TransactionType.parse(
+      userAnswers.fullReturn.flatMap(_.transaction).flatMap(_.transactionDescription)
+    )
   }
 }
 
