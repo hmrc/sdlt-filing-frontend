@@ -71,16 +71,11 @@ class LeaseStartDateController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(LeaseStartDatePage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
-
-            val result = leaseDatesService.leaseDatesValidation(updatedAnswers)
-
-            Redirect(navigator.nextPage(LeaseStartDatePage, mode, updatedAnswers))
-
-            result match {
-
-              case LeaseDatesService.LeaseDateValid  => Redirect(navigator.nextPage(LeaseStartDatePage, mode, updatedAnswers))
-              case LeaseDatesService.LeaseStartBeforeRentEndDate => BadRequest(view(form.fill(value).withError("value", "lease.leaseStartDate.error.leaseBeforeRentEndDate"), mode))
+            leaseDatesService.leaseDatesValidation(updatedAnswers) match {
+              case LeaseDatesService.LeaseDateValid               => Redirect(navigator.nextPage(LeaseStartDatePage, mode, updatedAnswers))
+              case LeaseDatesService.LeaseStartBeforeRentEndDate  => BadRequest(view(form.fill(value).withError("value", "lease.leaseStartDate.error.leaseBeforeRentEndDate"), mode))
               case LeaseDatesService.LeaseStartBeforeLeaseEndDate => BadRequest(view(form.fill(value).withError("value", "lease.leaseStartDate.error.leaseStartBeforeLeaseEndDate"), mode))
+              case LeaseDatesService.RentEndDateAfterLeaseEndDate => Redirect(navigator.nextPage(LeaseStartDatePage, mode, updatedAnswers))
             }
           }
       )

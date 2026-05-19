@@ -24,7 +24,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.lease.LeaseStartDatePage
+import pages.lease.{LeaseStartDatePage, LeaseStartingRentEndDatePage}
 import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Call}
@@ -167,9 +167,11 @@ class LeaseStartDateControllerSpec extends SpecBase with MockitoSugar {
         lease = Some(Lease(contractStartDate = Some("1/2/2028")))
       )
 
-      val leaseWithLeaseStartDate = Lease(contractEndDate = Some("1 02 2027"), startingRentEndDate = Some("1 10 2030"))
+      val leaseWithLeaseStartDate = Lease(contractEndDate = Some("1 02 2027"))
       val fullReturnWithLeaseValidDates = fullReturn.copy(lease = Some(leaseWithLeaseStartDate))
-      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithLeaseValidDates)).set(LeaseStartDatePage, LocalDate.of(2028, 10, 26)).success.value
+      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithLeaseValidDates))
+        .set(LeaseStartDatePage, LocalDate.of(2028, 10, 26)).success.value
+        .set(LeaseStartingRentEndDatePage, LocalDate.of(2027, 6, 1)).success.value
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -197,9 +199,11 @@ class LeaseStartDateControllerSpec extends SpecBase with MockitoSugar {
          lease = Some(Lease(contractStartDate = Some("1/2/2008")))
       )
 
-      val leaseWithLeaseStartDate = Lease(contractEndDate = Some("1 02 2028"), startingRentEndDate = Some("1 10 2007"))
+      val leaseWithLeaseStartDate = Lease(contractEndDate = Some("1 02 2028"))
       val fullReturnWithLeaseValidDates = fullReturn.copy(lease = Some(leaseWithLeaseStartDate))
-      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithLeaseValidDates)).set(LeaseStartDatePage, LocalDate.of(2008, 10, 26)).success.value
+      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithLeaseValidDates))
+        .set(LeaseStartDatePage, LocalDate.of(2008, 10, 26)).success.value
+        .set(LeaseStartingRentEndDatePage, LocalDate.of(2007, 10, 1)).success.value
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers)).build()

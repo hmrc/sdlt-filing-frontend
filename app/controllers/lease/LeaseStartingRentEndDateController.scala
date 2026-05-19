@@ -24,6 +24,7 @@ import pages.lease.LeaseStartingRentEndDatePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.lease.LeaseDatesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.lease.LeaseStartingRentEndDateView
 
@@ -39,6 +40,7 @@ class LeaseStartingRentEndDateController @Inject()(
                                         requireData: DataRequiredAction,
                                         formProvider: LeaseStartingRentEndDateFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
+                                        leaseDatesService: LeaseDatesService,
                                         view: LeaseStartingRentEndDateView
                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
@@ -68,7 +70,18 @@ class LeaseStartingRentEndDateController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(LeaseStartingRentEndDatePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(LeaseStartingRentEndDatePage, mode, updatedAnswers))
+          } yield {
+            leaseDatesService.leaseDatesValidation(updatedAnswers) match {
+              case LeaseDatesService.LeaseDateValid =>
+                Redirect(navigator.nextPage(LeaseStartingRentEndDatePage, mode, updatedAnswers))
+              case LeaseDatesService.LeaseStartBeforeRentEndDate =>
+                BadRequest(view(form.fill(value).withError("value", "lease.leaseStartingRentEndDate.error.afterLeaseStartDate"), mode))
+              case LeaseDatesService.RentEndDateAfterLeaseEndDate =>
+                BadRequest(view(form.fill(value).withError("value", "lease.leaseStartingRentEndDate.error.beforeLeaseEndDate"), mode))
+              case LeaseDatesService.LeaseStartBeforeLeaseEndDate =>
+                Redirect(navigator.nextPage(LeaseStartingRentEndDatePage, mode, updatedAnswers))
+            }
+          }
       )
   }
 }

@@ -1826,6 +1826,8 @@ lease.leaseStartingRentEndDate.error.required.two                               
 lease.leaseStartingRentEndDate.error.required                                        = The end date for starting rent must include a {0}
 lease.leaseStartingRentEndDate.error.invalid                                         = The end date for starting rent must be a real date
 lease.leaseStartingRentEndDate.error.date.range.min                                  = The end date for starting rent must be the same as or after 1 January 1900
+lease.leaseStartingRentEndDate.error.afterLeaseStartDate                             = The end date for starting rent must be after the start date as specified in the lease
+lease.leaseStartingRentEndDate.error.beforeLeaseEndDate                              = The end date for starting rent must be before the end date as specified in the lease
 lease.leaseStartingRentEndDate.change.hidden                                         = end date for starting rent
 
 lease.doesLeaseIncludeRentFreePeriod.title                                          = Rent-free periods
