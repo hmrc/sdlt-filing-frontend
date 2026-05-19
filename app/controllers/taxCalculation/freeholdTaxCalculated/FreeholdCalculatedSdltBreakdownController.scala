@@ -18,6 +18,7 @@ package controllers.taxCalculation.freeholdTaxCalculated
 
 import controllers.actions.*
 import controllers.taxCalculation.TaxCalculationErrorRecovery
+import models.taxCalculation.CalculationOutcome.{Calculated, PreMarch2012, SelfAssessed}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -45,13 +46,16 @@ class FreeholdCalculatedSdltBreakdownController @Inject()(
       sdltCalculationService
         .calculateStampDutyLandTax(request.userAnswers)
         .map {
-          case Right(result) =>
+          case Right(Calculated(result)) =>
             CalculationResultViewModel.toViewModel(result, request.userAnswers) match {
               case Right(vm) => Ok(view(vm))
               case Left(err) =>
                 logger.warn(s"[FreeholdCalculatedSdltBreakdownController] Failed to construct view model: ${err.message}")
                 Redirect(errorHandler(err))
             }
+          case Right(SelfAssessed | PreMarch2012) =>
+            logger.warn(s"[FreeholdCalculatedSdltBreakdownController] sdltc returned non-calculated outcome on a calculated flow; routing to cannot-calculate")
+            Redirect(controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad())
           case Left(err) =>
             logger.warn(s"[FreeholdCalculatedSdltBreakdownController] sdltc reported missing data: ${err.message}")
             Redirect(errorHandler(err))
