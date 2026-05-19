@@ -293,7 +293,8 @@ class Navigator @Inject()() {
   }
 
   private def isLeaseSection(page: Page): Boolean = page match {
-    case TypeOfLeasePage | LeaseEnterRentFreePeriodPage | LaterRentPage | LeaseThousandPoundsThresholdPage | LeaseStartDatePage  | DoesLeaseIncludeRentFreePeriodPage | AnnualStartingRentPage => true
+    case TypeOfLeasePage | LeaseEnterRentFreePeriodPage | LaterRentPage | LeaseThousandPoundsThresholdPage | LeaseStartDatePage
+         | DoesLeaseIncludeRentFreePeriodPage | AnnualStartingRentPage | LeaseIsVatPayablePage => true
     case _ => false
   }
   
@@ -306,12 +307,14 @@ class Navigator @Inject()() {
       _ => controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode)
     case LaterRentPage =>
       _ => controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(NormalMode)
-    case LeaseThousandPoundsThresholdPage => // TODO - DTR-3530: update to Is VAT payable on the annual rent? - ls-9
-      _ => controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(NormalMode)
+    case LeaseThousandPoundsThresholdPage =>
+      _ => controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(NormalMode)
     case DoesLeaseIncludeRentFreePeriodPage =>
       _ => controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(NormalMode)
     case AnnualStartingRentPage => //TODO - DTR-3521 - SPRINT 15 - end date for starting rent ls-6
       _ => controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode)
+    case LeaseIsVatPayablePage => // TODO DTR-3533: Update to What is the total amount of VAT payable on the annual rent? - ls-9a
+      _ => controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
