@@ -331,7 +331,7 @@ class Navigator @Inject()() {
   }
 
   private def isLeaseholdTaxCalculatedSection(page: Page): Boolean = page match {
-    case LeaseholdTaxCalculatedSdltPage | LeaseholdTaxCalculatedSelfAssessedAmountPage |
+    case LeaseholdTaxCalculatedSelfAssessedAmountPage |
          LeaseholdTaxCalculatedTotalAmountDuePage | LeaseholdTaxCalculatedPenaltiesAndInterestPage => true
     case _ => false
   }
@@ -360,7 +360,6 @@ class Navigator @Inject()() {
   }
 
   private def leaseholdTaxCalculatedRoutes(page: Page): UserAnswers => Call = page match {
-    case LeaseholdTaxCalculatedSdltPage                 => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
     case LeaseholdTaxCalculatedSelfAssessedAmountPage   =>
       _ => controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdTaxCalculatedTotalAmountDueController.onPageLoad(NormalMode)
     case LeaseholdTaxCalculatedTotalAmountDuePage       => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED

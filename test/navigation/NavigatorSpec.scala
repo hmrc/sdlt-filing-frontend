@@ -489,10 +489,6 @@ class NavigatorSpec extends SpecBase {
 
       "leasehold tax calculated routes" - {
 
-        "go from LeaseholdTaxCalculatedSdltPage to Index page" in {
-          navigator.nextPage(LeaseholdTaxCalculatedSdltPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
-        }
-
         "go from LeaseholdTaxCalculatedSelfAssessedAmountPage to LeaseholdTaxCalculatedTotalAmountDueController" in {
           navigator.nextPage(LeaseholdTaxCalculatedSelfAssessedAmountPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
             controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdTaxCalculatedTotalAmountDueController.onPageLoad(NormalMode)
