@@ -21,9 +21,9 @@
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         govukButton: GovukButton,
-        hmrcPageHeading: HmrcPageHeading,
         govukRadios: GovukRadios,
-        govukErrorSummary: GovukErrorSummary
+        govukErrorSummary: GovukErrorSummary,
+        caption: Caption
 )
 @(form: Form[_], effectiveDate:String)(implicit request: Request[_], messages:Messages)
 
@@ -35,17 +35,11 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @hmrcPageHeading(PageHeading(
-            text           = messages("taxCalculation.confirmEffectiveDateOfTransaction.heading", effectiveDate),
-            headingClasses = Some("govuk-heading-l"),
-            captionClasses = Some("govuk-caption-l"),
-            section        = Some(messages("site.taxCalculation.caption"))
-        ))
-
+        @caption(messages("site.taxCalculation.caption"))
         @govukRadios(
             RadiosViewModel(
                 field = form("value"),
-                legend = Legend(),
+                legend = LegendViewModel(messages("taxCalculation.confirmEffectiveDateOfTransaction.heading", effectiveDate)).asPageHeading(),
                 items = Seq(
                     RadioItem(
                         value = Some("true"),
