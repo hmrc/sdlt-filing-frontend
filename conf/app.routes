@@ -543,14 +543,18 @@ POST       /about-the-transaction/restrictions-covenants-and-conditions/change  
 GET        /tax-calculation/before-you-start                                    controllers.taxCalculation.TaxCalculationBeforeYouStartController.onPageLoad()
 #GET       /tax-calculation/leasehold-calculated/breakdown                      controllers.LeaseholdSdltCalculatedBreakdownController.onPageLoad()
 
+# ---- Tax calculation  -------------------------------------
+GET        /tax-calculation/confirm-effective-date-of-transaction               controllers.taxCalculation.TaxCalculationConfirmEffectiveDateOfTransactionController.onPageLoad()
+
 # ---- Tax calculation: Flow A (Freehold - Service has performed calculation) -------------------------------------
 
 GET         /tax-calculation/freehold-calculated/before-you-start               controllers.taxCalculation.freeholdTaxCalculated.FreeholdTaxCalculatedBYSController.onPageLoad()
-#GET        /tax-calculation/freehold-calculated/sdlt                           controllers.FreeholdSdltCalculatedController.onPageLoad()
-#POST       /tax-calculation/freehold-calculated/sdlt                           controllers.FreeholdSdltCalculatedController.onSubmit()
+GET        /tax-calculation/freehold-calculated/calculated-SDLT-due                                  controllers.taxCalculation.freeholdTaxCalculated.FreeholdCalculatedSdltDueController.onPageLoad()
 GET         /tax-calculation/freehold-calculated/SDLT-breakdown                 controllers.taxCalculation.freeholdTaxCalculated.FreeholdCalculatedSdltBreakdownController.onPageLoad()
-#GET        /tax-calculation/freehold-calculated/self-assessment                controllers.FreeholdSdltCalculatedSelfAssessmentController.onPageLoad()
-#POST       /tax-calculation/freehold-calculated/self-assessment                controllers.FreeholdSdltCalculatedSelfAssessmentController.onSubmit()
+GET         /tax-calculation/freehold-calculated/SDLT-self-assessment           controllers.taxCalculation.freeholdTaxCalculated.FreeholdTaxCalculatedSdltSelfAssessmentController.onPageLoad(mode: Mode = NormalMode)
+POST        /tax-calculation/freehold-calculated/SDLT-self-assessment           controllers.taxCalculation.freeholdTaxCalculated.FreeholdTaxCalculatedSdltSelfAssessmentController.onSubmit(mode: Mode = NormalMode)
+GET         /tax-calculation/freehold-calculated/SDLT-self-assessment/change    controllers.taxCalculation.freeholdTaxCalculated.FreeholdTaxCalculatedSdltSelfAssessmentController.onPageLoad(mode: Mode = CheckMode)
+POST        /tax-calculation/freehold-calculated/SDLT-self-assessment/change    controllers.taxCalculation.freeholdTaxCalculated.FreeholdTaxCalculatedSdltSelfAssessmentController.onSubmit(mode: Mode = CheckMode)
 GET        /tax-calculation/freehold-calculated/total-amount-due                           controllers.taxCalculation.freeholdTaxCalculated.FreeholdTaxCalculatedTotalAmountDueController.onPageLoad(mode: Mode = NormalMode)
 POST       /tax-calculation/freehold-calculated/total-amount-due                           controllers.taxCalculation.freeholdTaxCalculated.FreeholdTaxCalculatedTotalAmountDueController.onSubmit(mode: Mode = NormalMode)
 GET        /tax-calculation/freehold-calculated/total-amount-due/change                    controllers.taxCalculation.freeholdTaxCalculated.FreeholdTaxCalculatedTotalAmountDueController.onPageLoad(mode: Mode = CheckMode)
