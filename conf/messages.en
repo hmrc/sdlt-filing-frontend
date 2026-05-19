@@ -1833,3 +1833,13 @@ lease.annualStartingRent.error.invalidWholeNumber                               
 lease.annualStartingRent.error.maximum                                              = The annual starting rent including VAT must be equal to or less than £99,999,999
 lease.annualStartingRent.error.maxLength                                            = The annual starting rent including VAT must be 13 characters or fewer
 lease.annualStartingRent.change.hidden                                              = Annual starting rent
+
+lease.leaseIsVatPayable.title                                                       = Annual rent VAT
+lease.leaseIsVatPayable.heading                                                     = Annual rent VAT
+lease.leaseIsVatPayable.p                                                           = VAT is payable on commercial property rent when the landlord has made an "option to tax" election with HMRC. If VAT is payable, enter the total amount of VAT on both:
+lease.leaseIsVatPayable.li1                                                         = the annual starting rent
+lease.leaseIsVatPayable.li2                                                         = the total premium payable
+lease.leaseIsVatPayable.subheading                                                  = Is VAT payable on the annual rent?
+lease.leaseIsVatPayable.checkYourAnswersLabel                                       = Is VAT payable on the annual rent?
+lease.leaseIsVatPayable.error.required                                              = Select yes if there is VAT payable on the annual rent
+lease.leaseIsVatPayable.change.hidden                                               = Is VAT payable on the annual rent?
