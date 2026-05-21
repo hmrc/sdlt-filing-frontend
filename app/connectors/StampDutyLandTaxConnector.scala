@@ -58,7 +58,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, FullReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[getFullReturn] \n $resp")
+          logger.info(s"[getFullReturn] \n ${Json.prettyPrint(Json.toJson(resp))}")
           Future.successful(
             resp)
         case Left(error) =>
