@@ -21,7 +21,7 @@ import utils.SelfAssessedHelper.isResidentialBeforeMarch2012Date
 
 object CannotCalculateHelper {
   
-  def cannotCalculateReason(answers: UserAnswers): Option[String] = {
+  def getCannotCalculateReason(answers: UserAnswers): Option[String] = {
     val isLinked = answers.fullReturn.flatMap(_.transaction.flatMap(_.isLinked))
     val partialRelief = answers.fullReturn.flatMap(_.transaction.flatMap(_.reliefAmount))
     val interestTransferred =

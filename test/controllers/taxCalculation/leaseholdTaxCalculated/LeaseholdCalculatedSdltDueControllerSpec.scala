@@ -35,6 +35,7 @@ import scala.concurrent.Future
 class LeaseholdCalculatedSdltDueControllerSpec extends SpecBase with MockitoSugar {
   
   private val sdltcResult = TaxCalculationResult(totalTax = 43750, None, None, None, taxCalcs = Seq.empty)
+  private val selfAssessedResult = TaxCalculationResult(totalTax = 0, Some("Self-assessed"), None, None, taxCalcs = Seq.empty)
   private val sdltDue = "£43,750"
 
   private val leaseholdAnswers: UserAnswers =
@@ -65,7 +66,7 @@ class LeaseholdCalculatedSdltDueControllerSpec extends SpecBase with MockitoSuga
       .build()
   }
 
-  "LeaseholdCalculatedSdltDueController Controller" - {
+  "LeaseholdCalculatedSdltDue Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -80,6 +81,36 @@ class LeaseholdCalculatedSdltDueControllerSpec extends SpecBase with MockitoSuga
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(sdltDue)(request, messages(app)).toString
+      }
+    }
+
+    "must redirect to the cannot calculate page when sdltc returns self assessed result" in {
+
+      val app = appWith(leaseholdAnswers, Future.successful(CalculationResponse(Seq(selfAssessedResult))))
+
+      running(app) {
+        val request = FakeRequest(GET, controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdCalculatedSdltDueController.onPageLoad().url)
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
+      }
+    }
+
+    "must redirect to the cannot calculate page when sdltc returns pre march 2012 result" in {
+
+      val selfAssessedAnswers = leaseholdAnswers.copy(fullReturn = leaseholdAnswers.fullReturn.map(fr =>
+        fr.copy(transaction = fr.transaction.map(_.copy(effectiveDate = Some("2011-01-01"))))
+      ))
+
+      val app = applicationBuilder(userAnswers = Some(selfAssessedAnswers)).build()
+
+      running(app) {
+        val request = FakeRequest(GET, controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdCalculatedSdltDueController.onPageLoad().url)
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
       }
     }
 

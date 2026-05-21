@@ -24,15 +24,15 @@
         caption: Caption
 )
 
-@(cannotCalculateReason: String)(implicit request: Request[_], messages: Messages)
+@(cannotCalculateReason: Option[String])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("taxCalculation.cannotCalculateSdltDue.title"), section = Some(messages("site.taxCalculation.freeholdSelfAssessed.section")))) {
     @caption(messages("site.taxCalculation.caption"))
     @h1(messages("taxCalculation.cannotCalculateSdltDue.heading"))
 
-    @p(messages("taxCalculation.cannotCalculateSdltDue.p1", messages(cannotCalculateReason)))
+    @cannotCalculateReason.map(reason => p(messages("taxCalculation.cannotCalculateSdltDue.p1", messages(reason))))
 
-    @if(cannotCalculateReason == "taxCalculation.cannotCalculateSdltDue.reason5"){
+    @if(cannotCalculateReason.contains("taxCalculation.cannotCalculateSdltDue.reason5")){
         <ul class="govuk-list govuk-list--bullet">
             <li>@messages("taxCalculation.cannotCalculateSdltDue.reason5.propertyType")</li>
             <li>@messages("taxCalculation.cannotCalculateSdltDue.reason5.effectiveDate")</li>

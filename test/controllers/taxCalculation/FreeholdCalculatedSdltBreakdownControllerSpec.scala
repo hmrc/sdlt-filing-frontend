@@ -19,7 +19,7 @@ package controllers.taxCalculation
 import base.SpecBase
 import models.taxCalculation.*
 import models.{FullReturn, Land, ReturnInfo, Transaction, UserAnswers}
-import models.taxCalculation.CalculationOutcome.Calculated
+import models.taxCalculation.CalculationOutcome.{Calculated, PreMarch2012, SelfAssessed}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -78,6 +78,35 @@ class FreeholdCalculatedSdltBreakdownControllerSpec extends SpecBase with Mockit
 
         status(result)        mustEqual OK
         contentAsString(result) mustEqual view(expected)(request, messages(app)).toString
+      }
+    }
+
+    "must redirect to the cannot calculate page when sdltc returns SelfAssessed" in {
+
+      val app = appWith(freeholdAnswers, Future.successful(Right(SelfAssessed)))
+
+      running(app) {
+        val request = FakeRequest(GET, controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdCalculatedSdltBreakdownController.onPageLoad().url)
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad().url
+      }
+    }
+
+
+    "must redirect to the cannot calculate page when sdltc returns PreMarch2012" in {
+
+      val app = appWith(freeholdAnswers, Future.successful(Right(PreMarch2012)))
+
+      running(app) {
+        val request = FakeRequest(GET, controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdCalculatedSdltBreakdownController.onPageLoad().url)
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad().url
       }
     }
 

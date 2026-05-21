@@ -38,6 +38,7 @@ class FreeholdTaxCalculatedTotalAmountDueControllerSpec extends SpecBase with Mo
 
   private val today       = LocalDate.of(2026, 5, 1)
   private val sdltcResult = TaxCalculationResult(totalTax = 43750, None, None, None, taxCalcs = Seq.empty)
+  private val selfAssessedResult = TaxCalculationResult(totalTax = 0, Some("Self-assessed"), None, None, taxCalcs = Seq.empty)
 
   private val freeholdAnswers: UserAnswers =
     emptyUserAnswers
@@ -102,6 +103,38 @@ class FreeholdTaxCalculatedTotalAmountDueControllerSpec extends SpecBase with Mo
 
         status(result) mustEqual OK
         contentAsString(result) must include("""value="12345"""")
+      }
+    }
+
+    "must redirect to the cannot calculate page for a GET when sdltc returns self assessed result" in {
+
+      val app = appWith(freeholdAnswers, Future.successful(CalculationResponse(Seq(selfAssessedResult))))
+
+      running(app) {
+        val request = FakeRequest(GET, routes.FreeholdTaxCalculatedTotalAmountDueController.onPageLoad(NormalMode).url)
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad().url
+      }
+    }
+
+    "must redirect to the cannot calculate page for a GET when sdltc returns pre march 2012 result" in {
+
+      val selfAssessedAnswers = freeholdAnswers.copy(fullReturn = freeholdAnswers.fullReturn.map(fr =>
+        fr.copy(transaction = fr.transaction.map(_.copy(effectiveDate = Some("2011-01-01"))))
+      ))
+
+      val app = applicationBuilder(userAnswers = Some(selfAssessedAnswers)).build()
+
+      running(app) {
+        val request = FakeRequest(GET, routes.FreeholdTaxCalculatedTotalAmountDueController.onPageLoad(NormalMode).url)
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad().url
       }
     }
 

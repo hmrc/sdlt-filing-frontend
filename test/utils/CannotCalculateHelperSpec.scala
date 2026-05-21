@@ -19,7 +19,7 @@ package utils
 import base.SpecBase
 import models.{FullReturn, Land, Residency, ReturnInfo, Transaction, UserAnswers}
 import org.scalatest.matchers.must.Matchers
-import utils.CannotCalculateHelper.cannotCalculateReason
+import utils.CannotCalculateHelper.getCannotCalculateReason
 
 class CannotCalculateHelperSpec extends SpecBase with Matchers {
 
@@ -47,7 +47,7 @@ class CannotCalculateHelperSpec extends SpecBase with Matchers {
         fr.copy(transaction = fr.transaction.map(_.copy(isLinked = Some("yes"))))
       ))
 
-      cannotCalculateReason(isLinked) mustEqual Some("taxCalculation.cannotCalculateSdltDue.reason1")
+      getCannotCalculateReason(isLinked) mustEqual Some("taxCalculation.cannotCalculateSdltDue.reason1")
     }
 
     "must return reason 2 when the return includes partial relief" in {
@@ -55,7 +55,7 @@ class CannotCalculateHelperSpec extends SpecBase with Matchers {
         fr.copy(transaction = fr.transaction.map(_.copy(reliefAmount = Some(BigDecimal(5000)))))
       ))
 
-      cannotCalculateReason(partialRelief) mustEqual Some("taxCalculation.cannotCalculateSdltDue.reason2")
+      getCannotCalculateReason(partialRelief) mustEqual Some("taxCalculation.cannotCalculateSdltDue.reason2")
     }
 
     "must return reason 3 when the return is OT" in {
@@ -63,7 +63,7 @@ class CannotCalculateHelperSpec extends SpecBase with Matchers {
         fr.copy(land = fr.land.map(_.map(_.copy(interestCreatedTransferred = Some("OT")))))
       ))
 
-      cannotCalculateReason(isOT) mustEqual Some("taxCalculation.cannotCalculateSdltDue.reason3")
+      getCannotCalculateReason(isOT) mustEqual Some("taxCalculation.cannotCalculateSdltDue.reason3")
     }
 
     "must return reason 4 when the return is has Multiple Dwellings Relief" in {
@@ -71,7 +71,7 @@ class CannotCalculateHelperSpec extends SpecBase with Matchers {
         fr.copy(transaction = fr.transaction.map(_.copy(reliefReason = Some("33"))))
       ))
 
-      cannotCalculateReason(multipleDwellingsRelief) mustEqual Some("taxCalculation.cannotCalculateSdltDue.reason4")
+      getCannotCalculateReason(multipleDwellingsRelief) mustEqual Some("taxCalculation.cannotCalculateSdltDue.reason4")
     }
 
     "must return reason 5 when the effectiveDate is before the minimum" in {
@@ -79,11 +79,11 @@ class CannotCalculateHelperSpec extends SpecBase with Matchers {
         fr.copy(transaction = fr.transaction.map(_.copy(effectiveDate = Some("2008-01-01"))))
       ))
 
-      cannotCalculateReason(beforeMinumumDate) mustEqual Some("taxCalculation.cannotCalculateSdltDue.reason5")
+      getCannotCalculateReason(beforeMinumumDate) mustEqual Some("taxCalculation.cannotCalculateSdltDue.reason5")
     }
 
     "must return None when no reasons apply" in {
-      cannotCalculateReason(freeholdAnswers) mustEqual None
+      getCannotCalculateReason(freeholdAnswers) mustEqual None
     }
   }
 

@@ -26,8 +26,7 @@ import views.html.taxCalculation.freeholdSelfAssessed.FreeholdCannotCalculateSdl
 
 class FreeholdCannotCalculateSdltDueControllerSpec extends SpecBase {
 
-  private val value: String = "taxCalculation.cannotCalculateSdltDue.reason1"
-  private val emptyString = ""
+  private val value: Option[String] = Some("taxCalculation.cannotCalculateSdltDue.reason1")
 
   private val freeholdAnswers: UserAnswers =
     emptyUserAnswers
@@ -78,7 +77,7 @@ class FreeholdCannotCalculateSdltDueControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[FreeholdCannotCalculateSdltDueView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(emptyString)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(None)(request, messages(application)).toString
       }
     }
 
