@@ -21,6 +21,7 @@ import connectors.SdltCalculationConnector
 import models.*
 import models.requests.DataRequest
 import models.taxCalculation.*
+import models.taxCalculation.CalculationOutcome.{Calculated, PreMarch2012, SelfAssessed}
 import pages.taxCalculation.TaxCalculationFlowPage
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
@@ -94,28 +95,28 @@ class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeA
       ))
       val result = service.calculateStampDutyLandTax(beforeMinimumDateAnswers).futureValue
 
-      result mustBe Right(CalculationOutcome.PreMarch2012)
+      result mustBe Right(PreMarch2012)
       verify(mockConnector, never()).calculateStampDutyLandTax(any())(any())
     }
 
-    "must call the connector for any other request and return Calculated when sdltc returns a normal result" in {
+    "must wrap sdltc's result in Calculated for any other request" in {
       when(mockConnector.calculateStampDutyLandTax(any())(any()))
         .thenReturn(Future.successful(CalculationResponse(Seq(expectedResult))))
 
       val result = service.calculateStampDutyLandTax(validUserAnswers).futureValue
 
-      result mustBe Right(CalculationOutcome.Calculated(expectedResult))
+      result mustBe Right(Calculated(expectedResult))
       verify(mockConnector, times(1)).calculateStampDutyLandTax(any())(any())
     }
 
-    "must return SelfAssessed when sdltc result heading contains 'Self-assessed'" in {
+    "must return SelfAssessed when sdltc's resultHeading is 'Self-assessed'" in {
       val selfAssessedResult = expectedResult.copy(resultHeading = Some("Self-assessed"))
       when(mockConnector.calculateStampDutyLandTax(any())(any()))
         .thenReturn(Future.successful(CalculationResponse(Seq(selfAssessedResult))))
 
       val result = service.calculateStampDutyLandTax(validUserAnswers).futureValue
 
-      result mustBe Right(CalculationOutcome.SelfAssessed)
+      result mustBe Right(SelfAssessed)
       verify(mockConnector, times(1)).calculateStampDutyLandTax(any())(any())
     }
 
