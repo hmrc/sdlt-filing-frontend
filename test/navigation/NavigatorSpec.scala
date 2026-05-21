@@ -432,8 +432,12 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LeaseEnterRentFreePeriodPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode)
         }
 
-        "go from AnnualStartingRentPage to EndOfAnnualStartingRentPage page" in { //TODO - DTR-3521 - SPRINT 15 - end date for starting rent ls-6
-          navigator.nextPage(AnnualStartingRentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode)
+        "go from AnnualStartingRentPage to EndOfAnnualStartingRentPage page" in {
+          navigator.nextPage(AnnualStartingRentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseStartingRentEndDateController.onPageLoad(NormalMode)
+        }
+
+        "go from LeaseStartingRentEndDatePage to LaterRent page" in {
+          navigator.nextPage(LeaseStartingRentEndDatePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LaterRentController.onPageLoad(NormalMode)
         }
 
         "go from LaterRentPage to LeaseThousandPoundsThresholdPage" in {

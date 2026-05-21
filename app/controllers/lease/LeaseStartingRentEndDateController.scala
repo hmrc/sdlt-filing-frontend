@@ -17,31 +17,31 @@
 package controllers.lease
 
 import controllers.actions.*
-import forms.lease.LeaseStartDateFormProvider
+import forms.lease.LeaseStartingRentEndDateFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.lease.LeaseStartDatePage
+import pages.lease.LeaseStartingRentEndDatePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.lease.LeaseDatesService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.lease.LeaseStartDateView
+import views.html.lease.LeaseStartingRentEndDateView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class LeaseStartDateController @Inject()(
+class LeaseStartingRentEndDateController @Inject()(
                                         override val messagesApi: MessagesApi,
                                         sessionRepository: SessionRepository,
                                         navigator: Navigator,
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
-                                        formProvider: LeaseStartDateFormProvider,
+                                        formProvider: LeaseStartingRentEndDateFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         leaseDatesService: LeaseDatesService,
-                                        view: LeaseStartDateView
+                                        view: LeaseStartingRentEndDateView
                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
@@ -49,8 +49,8 @@ class LeaseStartDateController @Inject()(
 
       val form = formProvider()
 
-      val preparedForm = request.userAnswers.get(LeaseStartDatePage) match {
-        case None => form
+      val preparedForm = request.userAnswers.get(LeaseStartingRentEndDatePage) match {
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
@@ -68,14 +68,18 @@ class LeaseStartDateController @Inject()(
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(LeaseStartDatePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(LeaseStartingRentEndDatePage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
             leaseDatesService.leaseDatesValidation(updatedAnswers) match {
-              case LeaseDatesService.LeaseDateValid               => Redirect(navigator.nextPage(LeaseStartDatePage, mode, updatedAnswers))
-              case LeaseDatesService.LeaseStartBeforeRentEndDate  => BadRequest(view(form.fill(value).withError("value", "lease.leaseStartDate.error.leaseBeforeRentEndDate"), mode))
-              case LeaseDatesService.LeaseStartBeforeLeaseEndDate => BadRequest(view(form.fill(value).withError("value", "lease.leaseStartDate.error.leaseStartBeforeLeaseEndDate"), mode))
-              case LeaseDatesService.RentEndDateAfterLeaseEndDate => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+              case LeaseDatesService.LeaseDateValid =>
+                Redirect(navigator.nextPage(LeaseStartingRentEndDatePage, mode, updatedAnswers))
+              case LeaseDatesService.LeaseStartBeforeRentEndDate =>
+                BadRequest(view(form.fill(value).withError("value", "lease.leaseStartingRentEndDate.error.afterLeaseStartDate"), mode))
+              case LeaseDatesService.RentEndDateAfterLeaseEndDate =>
+                BadRequest(view(form.fill(value).withError("value", "lease.leaseStartingRentEndDate.error.beforeLeaseEndDate"), mode))
+              case LeaseDatesService.LeaseStartBeforeLeaseEndDate =>
+                Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
             }
           }
       )
