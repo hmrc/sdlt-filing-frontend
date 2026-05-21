@@ -28,7 +28,7 @@ import pages.taxCalculation.freeholdTaxCalculated.{FreeholdTaxCalculatedSelfAsse
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import repositories.SessionRepository
 import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -100,8 +100,8 @@ class FreeholdTaxCalculatedTotalAmountDueController @Inject()(
       }
   }
 
-  private def withCalculatedResult(answers: UserAnswers)(onCalculated: TaxCalculationResult => play.api.mvc.Result)
-                                  (implicit hc: HeaderCarrier): Future[play.api.mvc.Result] =
+  private def withCalculatedResult(answers: UserAnswers)(onCalculated: TaxCalculationResult => Result)
+                                  (implicit hc: HeaderCarrier): Future[Result] =
     sdltCalculationService.calculateStampDutyLandTax(answers).map {
       case Right(Calculated(result)) => onCalculated(result)
       case Right(response) =>
