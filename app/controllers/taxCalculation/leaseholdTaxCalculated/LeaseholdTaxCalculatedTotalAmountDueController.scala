@@ -21,7 +21,7 @@ import controllers.taxCalculation.TaxCalculationErrorRecovery
 import forms.taxCalculation.TotalAmountDueFormProvider
 import models.{Mode, UserAnswers}
 import models.taxCalculation.{BuildRequestError, TaxCalculationResult}
-import models.taxCalculation.CalculationOutcome.{Calculated, PreMarch2012, SelfAssessed}
+import models.taxCalculation.CalculationOutcome.Calculated
 import models.taxCalculation.TaxCalculationFlow.LeaseholdTaxCalculated
 import navigation.Navigator
 import pages.taxCalculation.leaseholdTaxCalculated.{LeaseholdTaxCalculatedSelfAssessedAmountPage, LeaseholdTaxCalculatedTotalAmountDuePage}
@@ -104,10 +104,9 @@ class LeaseholdTaxCalculatedTotalAmountDueController @Inject()(
                                   (implicit hc: HeaderCarrier): Future[play.api.mvc.Result] =
     sdltCalculationService.calculateStampDutyLandTax(answers).map {
       case Right(Calculated(result)) => onCalculated(result)
-      case Right(SelfAssessed | PreMarch2012) =>
-        logger.warn(s"[LeaseholdTaxCalculatedTotalAmountDueController] sdltc returned non-calculated outcome on a calculated flow; routing to cannot-calculate")
-        // TODO: Update to Leasehold cannot calculate tax when page is built
-        Redirect(controllers.routes.IndexController.onPageLoad())
+      case Right(response) =>
+        logger.warn(s"[LeaseholdTaxCalculatedTotalAmountDueController] Failed to get a tax calculation result: $response")
+        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       case Left(err) =>
         logger.warn(s"[LeaseholdTaxCalculatedTotalAmountDueController] sdltc reported missing data: ${err.message}")
         Redirect(errorHandler(err))

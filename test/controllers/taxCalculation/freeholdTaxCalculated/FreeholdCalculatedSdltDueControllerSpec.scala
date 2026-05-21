@@ -94,7 +94,7 @@ class FreeholdCalculatedSdltDueControllerSpec extends SpecBase with MockitoSugar
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual
-          controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad().url
+          controllers.routes.ReturnTaskListController.onPageLoad().url
       }
     }
 
@@ -112,7 +112,7 @@ class FreeholdCalculatedSdltDueControllerSpec extends SpecBase with MockitoSugar
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual
-          controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad().url
+          controllers.routes.ReturnTaskListController.onPageLoad().url
       }
     }
 

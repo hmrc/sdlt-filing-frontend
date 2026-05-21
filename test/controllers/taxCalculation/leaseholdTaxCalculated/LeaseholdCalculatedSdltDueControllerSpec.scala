@@ -93,7 +93,7 @@ class LeaseholdCalculatedSdltDueControllerSpec extends SpecBase with MockitoSuga
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
       }
     }
 
@@ -110,7 +110,7 @@ class LeaseholdCalculatedSdltDueControllerSpec extends SpecBase with MockitoSuga
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
       }
     }
 

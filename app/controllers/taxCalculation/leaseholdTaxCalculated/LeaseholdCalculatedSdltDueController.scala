@@ -19,7 +19,7 @@ package controllers.taxCalculation.leaseholdTaxCalculated
 import config.CurrencyFormatter.IntToCurrency
 import controllers.actions.*
 import controllers.taxCalculation.TaxCalculationErrorRecovery
-import models.taxCalculation.CalculationOutcome.{Calculated, PreMarch2012, SelfAssessed}
+import models.taxCalculation.CalculationOutcome.Calculated
 import models.taxCalculation.TaxCalculationFlow.LeaseholdTaxCalculated
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -50,10 +50,9 @@ class LeaseholdCalculatedSdltDueController @Inject()(
             case Right(Calculated(result)) =>
               val formattedSdltDue = result.totalTax.toCurrency
               Ok(view(formattedSdltDue))
-            case Right(SelfAssessed | PreMarch2012) =>
-              logger.warn(s"[LeaseholdCalculatedSdltDueController] sdltc returned non-calculated outcome on a calculated flow; routing to cannot-calculate")
-              // TODO: Re-route to leasehold cannot calculate once page is built
-              Redirect(controllers.routes.IndexController.onPageLoad())
+            case Right(response) =>
+              logger.warn(s"[LeaseholdCalculatedSdltDueController] Failed to get a tax calculation result: $response")
+              Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
             case Left(err) =>
               logger.warn(s"[LeaseholdCalculatedSdltDueController] sdltc reported missing data: ${err.message}")
               Redirect(errorHandler(err))

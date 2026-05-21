@@ -113,7 +113,7 @@ class LeaseholdTaxCalculatedTotalAmountDueControllerSpec extends SpecBase with M
     }
 
 
-    "must redirect to the cannot calculate page for a GET when sdltc returns self assessed result" in {
+    "must redirect to the index page for a GET when sdltc returns self assessed result" in {
 
       val app = appWith(leaseholdAnswers, Future.successful(CalculationResponse(Seq(selfAssessedResult))))
 
@@ -122,12 +122,11 @@ class LeaseholdTaxCalculatedTotalAmountDueControllerSpec extends SpecBase with M
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual
-          controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
       }
     }
 
-    "must redirect to the cannot calculate page for a GET when sdltc returns pre march 2012 result" in {
+    "must redirect to the index page for a GET when sdltc returns pre march 2012 result" in {
 
       val selfAssessedAnswers = leaseholdAnswers.copy(fullReturn = leaseholdAnswers.fullReturn.map(fr =>
         fr.copy(transaction = fr.transaction.map(_.copy(effectiveDate = Some("2011-01-01"))))
@@ -140,8 +139,7 @@ class LeaseholdTaxCalculatedTotalAmountDueControllerSpec extends SpecBase with M
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual
-          controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
       }
     }
 

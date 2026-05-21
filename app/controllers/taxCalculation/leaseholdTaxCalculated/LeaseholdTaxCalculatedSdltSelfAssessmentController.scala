@@ -20,7 +20,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import controllers.taxCalculation.TaxCalculationErrorRecovery
 import forms.taxCalculation.SdltSelfAssessmentFormProvider
 import models.Mode
-import models.taxCalculation.CalculationOutcome.{Calculated, PreMarch2012, SelfAssessed}
+import models.taxCalculation.CalculationOutcome.Calculated
 import models.taxCalculation.TaxCalculationFlow.LeaseholdTaxCalculated
 import navigation.Navigator
 import pages.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedSelfAssessedAmountPage
@@ -70,10 +70,9 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentController @Inject()(
                 form.fill
               )
             Ok(view(prepared, postAction(mode), sectionKey))
-          case Right(SelfAssessed | PreMarch2012) =>
-            logger.warn(s"[LeaseholdTaxCalculatedSdltSelfAssessmentController] sdltc returned non-calculated outcome on a calculated flow; routing to cannot-calculate")
-            // TODO: Re-route to leasehold cannot calculate once page is built
-            Redirect(controllers.routes.IndexController.onPageLoad())
+          case Right(response) =>
+            logger.warn(s"[LeaseholdTaxCalculatedSdltSelfAssessmentController] Failed to get a tax calculation result: $response")
+            Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
           case Left(err) =>
             logger.warn(s"[LeaseholdTaxCalculatedSdltSelfAssessmentController][onPageLoad] sdltc failed: ${err.message}")
             Redirect(errorHandler(err))

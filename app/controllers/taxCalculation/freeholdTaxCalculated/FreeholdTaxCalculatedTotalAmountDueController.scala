@@ -21,7 +21,7 @@ import controllers.taxCalculation.TaxCalculationErrorRecovery
 import forms.taxCalculation.TotalAmountDueFormProvider
 import models.{Mode, UserAnswers}
 import models.taxCalculation.{BuildRequestError, TaxCalculationResult}
-import models.taxCalculation.CalculationOutcome.{Calculated, PreMarch2012, SelfAssessed}
+import models.taxCalculation.CalculationOutcome.Calculated
 import models.taxCalculation.TaxCalculationFlow.FreeholdTaxCalculated
 import navigation.Navigator
 import pages.taxCalculation.freeholdTaxCalculated.{FreeholdTaxCalculatedSelfAssessedAmountPage, FreeholdTaxCalculatedTotalAmountDuePage}
@@ -104,9 +104,9 @@ class FreeholdTaxCalculatedTotalAmountDueController @Inject()(
                                   (implicit hc: HeaderCarrier): Future[play.api.mvc.Result] =
     sdltCalculationService.calculateStampDutyLandTax(answers).map {
       case Right(Calculated(result)) => onCalculated(result)
-      case Right(SelfAssessed | PreMarch2012) =>
-        logger.warn(s"[FreeholdTaxCalculatedTotalAmountDueController] sdltc returned non-calculated outcome on a calculated flow; routing to cannot-calculate")
-        Redirect(controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad())
+      case Right(response) =>
+        logger.warn(s"[FreeholdTaxCalculatedTotalAmountDueController] Failed to get a tax calculation result: $response")
+        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       case Left(err) =>
         logger.warn(s"[FreeholdTaxCalculatedTotalAmountDueController] sdltc reported missing data: ${err.message}")
         Redirect(errorHandler(err))

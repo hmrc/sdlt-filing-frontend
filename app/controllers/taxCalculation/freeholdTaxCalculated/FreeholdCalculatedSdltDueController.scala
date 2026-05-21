@@ -20,7 +20,7 @@ import config.CurrencyFormatter.IntToCurrency
 import controllers.actions.*
 import controllers.taxCalculation.TaxCalculationErrorRecovery
 import play.api.Logging
-import models.taxCalculation.CalculationOutcome.{Calculated, PreMarch2012, SelfAssessed}
+import models.taxCalculation.CalculationOutcome.Calculated
 import models.taxCalculation.TaxCalculationFlow.FreeholdTaxCalculated
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -50,9 +50,9 @@ class FreeholdCalculatedSdltDueController @Inject()(
             case Right(Calculated(result)) =>
               val formattedSdltDue = result.totalTax.toCurrency
               Ok(view(formattedSdltDue))
-            case Right(SelfAssessed | PreMarch2012) =>
-              logger.warn(s"[FreeholdCalculatedSdltDueController] sdltc returned non-calculated outcome on a calculated flow; routing to cannot-calculate")
-              Redirect(controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad())
+            case Right(response) =>
+              logger.warn(s"[FreeholdCalculatedSdltDueController] Failed to get a tax calculation result: $response")
+              Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
             case Left(err) =>
               logger.warn(s"[FreeholdCalculatedSdltDueController] sdltc reported missing data: ${err.message}")
               Redirect(errorHandler(err))

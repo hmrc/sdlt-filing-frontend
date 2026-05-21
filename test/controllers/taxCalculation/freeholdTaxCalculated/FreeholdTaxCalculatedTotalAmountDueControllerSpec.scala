@@ -116,7 +116,7 @@ class FreeholdTaxCalculatedTotalAmountDueControllerSpec extends SpecBase with Mo
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual
-          controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad().url
+          controllers.routes.ReturnTaskListController.onPageLoad().url
       }
     }
 
@@ -134,7 +134,7 @@ class FreeholdTaxCalculatedTotalAmountDueControllerSpec extends SpecBase with Mo
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual
-          controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad().url
+          controllers.routes.ReturnTaskListController.onPageLoad().url
       }
     }
 
