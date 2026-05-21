@@ -27,7 +27,7 @@ import pages.taxCalculation.leaseholdTaxCalculated.{LeaseholdTaxCalculatedSelfAs
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import repositories.SessionRepository
 import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -92,7 +92,7 @@ class LeaseholdTaxCalculatedTotalAmountDueController @Inject()(
   }
 
   private def constructViewModel(answers: UserAnswers)
-                                (implicit hc: HeaderCarrier, messages: Messages): Future[Either[play.api.mvc.Result, TotalAmountDueViewModel]] =
+                                (implicit hc: HeaderCarrier, messages: Messages): Future[Either[Result, TotalAmountDueViewModel]] =
     sdltCalculationService.calculateStampDutyLandTax(answers).map {
       case Right(Calculated(result)) =>
         TotalAmountDueViewModel.toViewModel(result, answers, timeMachine, LeaseholdTaxCalculatedSelfAssessedAmountPage).left.map { err =>
@@ -100,8 +100,8 @@ class LeaseholdTaxCalculatedTotalAmountDueController @Inject()(
           Redirect(errorHandler(err))
         }
       case Right(SelfAssessed | PreMarch2012) =>
-        logger.warn(s"[LeaseholdTaxCalculatedTotalAmountDueController] sdltc returned non-calculated outcome on a calculated flow; routing to cannot-calculate")
-        Left(Redirect(controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad()))
+        logger.warn(s"[LeaseholdTaxCalculatedTotalAmountDueController] sdltc returned non-calculated outcome, redirecting to Return Task List")
+        Left(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       case Left(err) =>
         logger.warn(s"[LeaseholdTaxCalculatedTotalAmountDueController] sdltc reported missing data: ${err.message}")
         Left(Redirect(errorHandler(err)))
