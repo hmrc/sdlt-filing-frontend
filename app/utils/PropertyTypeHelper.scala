@@ -17,7 +17,6 @@
 package utils
 
 import models.FullReturn
-
 import java.time.format.DateTimeFormatter
 import java.time.LocalDate
 import scala.util.Try
@@ -54,5 +53,4 @@ object PropertyTypeHelper {
 
     hasResidentialLand && effectiveDateOk
   }
-  
 }

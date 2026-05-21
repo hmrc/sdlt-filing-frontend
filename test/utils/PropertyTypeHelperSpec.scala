@@ -17,7 +17,7 @@
 package utils
 
 import base.SpecBase
-import models.{FullReturn, Land, ReturnInfo, Transaction}
+import models.{FullReturn, Land, Transaction}
 import utils.PropertyTypeHelper.isResidentialProperty
 
 class PropertyTypeHelperSpec extends SpecBase {
@@ -188,5 +188,4 @@ class PropertyTypeHelperSpec extends SpecBase {
       }
     }
   }
-
 }

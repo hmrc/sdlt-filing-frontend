@@ -40,7 +40,7 @@ class CannotCalculateHelperSpec extends SpecBase with Matchers {
         land = Some(Seq(Land(landID = Some("L1"), propertyType = Some("01"), interestCreatedTransferred = Some("LG")))),
       )))
 
-  ".cannotCalculateReason" - {
+  ".getCannotCalculateReason" - {
 
     "must return reason 1 when the return isLinked" in {
       val isLinked = freeholdAnswers.copy(fullReturn = freeholdAnswers.fullReturn.map(fr =>
