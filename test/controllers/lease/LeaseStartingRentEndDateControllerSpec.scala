@@ -19,12 +19,12 @@ package controllers.lease
 import base.SpecBase
 import controllers.routes
 import forms.lease.LeaseStartingRentEndDateFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{FullReturn, Lease, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.lease.LeaseStartingRentEndDatePage
+import pages.lease.{LeaseStartDatePage, LeaseStartingRentEndDatePage}
 import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -162,6 +162,66 @@ class LeaseStartingRentEndDateControllerSpec extends SpecBase with MockitoSugar 
 
       running(application) {
         val result = route(application, postRequest()).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must return BadRequest when rent end date is before the lease start date for a POST" in {
+
+      val fullReturn = FullReturn(stornId = "1", returnResourceRef = "ref",
+        lease = Some(Lease(contractEndDate = Some("1 01 2028"))))
+      val userAnswers = testUserAnswers.copy(fullReturn = Some(fullReturn))
+        .set(LeaseStartDatePage, LocalDate.of(2023, 6, 1)).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(POST, leaseStartingRentEndDateRoute)
+          .withFormUrlEncodedBody("value.day" -> "1", "value.month" -> "1", "value.year" -> "2023")
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("The end date for starting rent must be after the start date as specified in the lease")
+      }
+    }
+
+    "must return BadRequest when rent end date is after the lease end date for a POST" in {
+
+      val fullReturn = FullReturn(stornId = "1", returnResourceRef = "ref",
+        lease = Some(Lease(contractEndDate = Some("1 06 2023"))))
+      val userAnswers = testUserAnswers.copy(fullReturn = Some(fullReturn))
+        .set(LeaseStartDatePage, LocalDate.of(2023, 1, 1)).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(POST, leaseStartingRentEndDateRoute)
+          .withFormUrlEncodedBody("value.day" -> "1", "value.month" -> "1", "value.year" -> "2024")
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("The end date for starting rent must be before the end date as specified in the lease")
+      }
+    }
+
+    "must redirect to Journey Recovery when lease end date is before lease start date (inconsistent backend data) for a POST" in {
+
+      val fullReturn = FullReturn(stornId = "1", returnResourceRef = "ref",
+        lease = Some(Lease(contractEndDate = Some("1 01 2020"))))
+      val userAnswers = testUserAnswers.copy(fullReturn = Some(fullReturn))
+        .set(LeaseStartDatePage, LocalDate.of(2023, 6, 1)).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(POST, leaseStartingRentEndDateRoute)
+          .withFormUrlEncodedBody("value.day" -> "1", "value.month" -> "1", "value.year" -> "2022")
+
+        val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url

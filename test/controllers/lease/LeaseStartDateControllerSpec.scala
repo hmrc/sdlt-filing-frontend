@@ -222,5 +222,34 @@ class LeaseStartDateControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result) must include("The start date as specified in the lease must be before the end date for starting rent")
       }
     }
+
+    "must redirect to Journey Recovery when rent end date is after lease end date for a POST" in {
+
+      val fullReturn = FullReturn(
+        stornId = "1",
+        returnResourceRef = "ref",
+        lease = Some(Lease(contractStartDate = Some("1/2/2020")))
+      )
+
+      val leaseWithDates = Lease(contractEndDate = Some("1 02 2027"))
+      val fullReturnWithDates = fullReturn.copy(lease = Some(leaseWithDates))
+      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithDates))
+        .set(LeaseStartingRentEndDatePage, LocalDate.of(2028, 1, 1)).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, leaseStartDateRoute)
+            .withFormUrlEncodedBody(
+              "value.day"   -> validAnswer.getDayOfMonth.toString,
+              "value.month" -> validAnswer.getMonthValue.toString,
+              "value.year"  -> validAnswer.getYear.toString)
+
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
   }
 }

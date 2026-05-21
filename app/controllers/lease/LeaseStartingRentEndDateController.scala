@@ -79,7 +79,7 @@ class LeaseStartingRentEndDateController @Inject()(
               case LeaseDatesService.RentEndDateAfterLeaseEndDate =>
                 BadRequest(view(form.fill(value).withError("value", "lease.leaseStartingRentEndDate.error.beforeLeaseEndDate"), mode))
               case LeaseDatesService.LeaseStartBeforeLeaseEndDate =>
-                Redirect(navigator.nextPage(LeaseStartingRentEndDatePage, mode, updatedAnswers))
+                Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
             }
           }
       )

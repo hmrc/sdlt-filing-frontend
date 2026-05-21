@@ -38,7 +38,7 @@ class LeaseDatesService {
 
     (leaseStartDate, leaseEndDate, startingRentEndDate) match {
 
-      case (None, _, _) | (_, None, _) | (_, _, None) =>
+      case (None, None, None) =>
         LeaseDateValid
 
       case (Some(leaseStart), Some(leaseEnd), _) if formatDate(leaseEnd).isBefore(leaseStart) =>

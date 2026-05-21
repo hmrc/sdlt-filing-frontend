@@ -314,8 +314,8 @@ class Navigator @Inject()() {
       _ => controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(NormalMode)
     case DoesLeaseIncludeRentFreePeriodPage =>
       _ => controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(NormalMode)
-    case AnnualStartingRentPage => //TODO - DTR-3521 - SPRINT 15 - end date for starting rent ls-6
-      _ => controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode)
+    case AnnualStartingRentPage =>
+      _ => controllers.lease.routes.LeaseStartingRentEndDateController.onPageLoad(NormalMode)
     case LeaseIsVatPayablePage => // TODO DTR-3533: Update to What is the total amount of VAT payable on the annual rent? - ls-9a
       _ => controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(NormalMode)
     case LeaseStartingRentEndDatePage =>
