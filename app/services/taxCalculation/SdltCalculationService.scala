@@ -35,18 +35,28 @@ import scala.concurrent.{ExecutionContext, Future}
 class SdltCalculationService @Inject()(
                                         connector: SdltCalculationConnector,
                                         sessionRepository: SessionRepository,
-                                      )(implicit ec: ExecutionContext) extends Logging  {
+                                      )(implicit ec: ExecutionContext) extends Logging {
 
   // TODO: DTR-2815: Must Implement Self-Assessed response for Residential before 2012-03-22
-  def whenInFlow(expected: TaxCalculationFlow)(onAllowed: => Result)(implicit request: DataRequest[?]): Result =
-    if (request.userAnswers.get(TaxCalculationFlowPage).contains(expected)) onAllowed
-    else Redirect(ReturnTaskListController.onPageLoad())
+  def whenInFlow(expected: TaxCalculationFlow)
+                (onAllowed: => Result)(implicit request: DataRequest[?]): Result =
+    if (request.userAnswers.get(TaxCalculationFlowPage).contains(expected)) {
+      onAllowed
+    } else {
+      logger.error(s"[SaltCalculationService][whenInFlow] not in the flow: ${expected}")
+      Redirect(ReturnTaskListController.onPageLoad())
+    }
 
   def whenInFlowAsync(expected: TaxCalculationFlow)
                      (onAllowed: => Future[Result])
                      (implicit request: DataRequest[?]): Future[Result] =
-    if (request.userAnswers.get(TaxCalculationFlowPage).contains(expected)) onAllowed
-    else Future.successful(Redirect(ReturnTaskListController.onPageLoad()))
+    if (request.userAnswers.get(TaxCalculationFlowPage).contains(expected)) {
+      onAllowed
+    } else {
+      logger.error(s"[SaltCalculationService][whenInFlowAsync] not in the flow: ${expected}")
+      Future.successful(Redirect(ReturnTaskListController.onPageLoad()))
+    }
+
 
   def calculateStampDutyLandTax(userAnswers: UserAnswers)
                                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[MissingDataError, TaxCalculationResult]] =
