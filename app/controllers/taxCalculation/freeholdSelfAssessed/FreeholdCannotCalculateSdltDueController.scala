@@ -41,9 +41,7 @@ class FreeholdCannotCalculateSdltDueController @Inject()(
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       sdltCalculationService.whenInFlow(FreeholdSelfAssessed) {
-
         val maybeReason: Option[String] = getCannotCalculateReason(request.userAnswers)
-
         Ok(view(maybeReason))
       }
   }

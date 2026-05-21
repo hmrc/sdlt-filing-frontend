@@ -106,7 +106,8 @@ class LeaseholdTaxCalculatedTotalAmountDueController @Inject()(
       case Right(Calculated(result)) => onCalculated(result)
       case Right(SelfAssessed | PreMarch2012) =>
         logger.warn(s"[LeaseholdTaxCalculatedTotalAmountDueController] sdltc returned non-calculated outcome on a calculated flow; routing to cannot-calculate")
-        Redirect(controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad())
+        // TODO: Update to Leasehold cannot calculate tax when page is built
+        Redirect(controllers.routes.IndexController.onPageLoad())
       case Left(err) =>
         logger.warn(s"[LeaseholdTaxCalculatedTotalAmountDueController] sdltc reported missing data: ${err.message}")
         Redirect(errorHandler(err))
