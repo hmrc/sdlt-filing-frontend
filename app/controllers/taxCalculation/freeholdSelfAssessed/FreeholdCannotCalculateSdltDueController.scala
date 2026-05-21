@@ -24,7 +24,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.CannotCalculateHelper.cannotCalculateReason
-import views.html.taxCalculation.shared.CannotCalculateSdltDueView
+import views.html.taxCalculation.freeholdSelfAssessed.FreeholdCannotCalculateSdltDueView
 
 import javax.inject.Inject
 
@@ -35,17 +35,17 @@ class FreeholdCannotCalculateSdltDueController @Inject()(
                                                    requireData: DataRequiredAction,
                                                    sdltCalculationService: SdltCalculationService,
                                                    val controllerComponents: MessagesControllerComponents,
-                                                   view: CannotCalculateSdltDueView
+                                                   view: FreeholdCannotCalculateSdltDueView
                                                  ) extends FrontendBaseController with I18nSupport {
-
-  private val sectionKey = "site.taxCalculation.freeholdSelfAssessed.section"
+  
+  private val emptyString = ""
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       sdltCalculationService.whenInFlow(FreeholdSelfAssessed) {
         cannotCalculateReason(request.userAnswers) match {
-          case Some(value) => Ok(view(sectionKey, value))
-          case None        => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+          case Some(value) => Ok(view(value))
+          case None        => Ok(view(emptyString))
         }
       }
   }

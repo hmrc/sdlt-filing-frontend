@@ -24,9 +24,9 @@
         caption: Caption
 )
 
-@(sectionKey: String, cannotCalculateReason: String)(implicit request: Request[_], messages: Messages)
+@(cannotCalculateReason: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("taxCalculation.cannotCalculateSdltDue.title"), section = Some(messages(sectionKey)))) {
+@layout(pageTitle = titleNoForm(messages("taxCalculation.cannotCalculateSdltDue.title"), section = Some(messages("site.taxCalculation.freeholdSelfAssessed.section")))) {
     @caption(messages("site.taxCalculation.caption"))
     @h1(messages("taxCalculation.cannotCalculateSdltDue.heading"))
 

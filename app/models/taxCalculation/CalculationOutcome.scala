@@ -16,13 +16,10 @@
 
 package models.taxCalculation
 
-object TaxCalculationResults {
-  val preMarch2012Result =
-    TaxCalculationResult(
-      totalTax = 0,
-      resultHeading = Some("Effective date is before 2012/03/22"),
-      resultHint = None,
-      npv = None,
-      taxCalcs = Seq.empty
-    )
+sealed trait CalculationOutcome
+
+object CalculationOutcome {
+  case class Calculated(result: TaxCalculationResult) extends CalculationOutcome
+  case object SelfAssessed extends CalculationOutcome
+  case object PreMarch2012 extends CalculationOutcome
 }

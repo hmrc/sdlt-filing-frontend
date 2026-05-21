@@ -17,8 +17,8 @@
 package utils
 
 import base.SpecBase
-import models.{FullReturn, Land, ReturnInfo, Transaction, UserAnswers}
-import utils.PropertyTypeHelper.{isResidentialProperty, mainLandIsResidentialProperty}
+import models.{FullReturn, Land, ReturnInfo, Transaction}
+import utils.PropertyTypeHelper.isResidentialProperty
 
 class PropertyTypeHelperSpec extends SpecBase {
 
@@ -35,26 +35,6 @@ class PropertyTypeHelperSpec extends SpecBase {
 
   private def withTransaction(date: String): Option[Transaction] =
     Some(Transaction(effectiveDate = Some(date)))
-
-  private def landWithIdAndType(id: String, propertyType: String): Land =
-    Land(
-      landID = Some(id),
-      propertyType = Some(propertyType)
-    )
-
-  private def fullReturn(
-                          mainLandId: String,
-                          lands: Seq[Land]
-                        ): FullReturn =
-    FullReturn(
-      stornId = "TEST",
-      returnResourceRef = "REF",
-      returnInfo = Some(ReturnInfo(mainLandID = Some(mainLandId))),
-      land = Some(lands)
-    )
-
-  private def answers(fr: FullReturn): UserAnswers =
-    emptyUserAnswers.copy(fullReturn = Some(fr))
 
   "PropertyTypeHelper.isResidentialProperty" - {
 
@@ -209,115 +189,4 @@ class PropertyTypeHelperSpec extends SpecBase {
     }
   }
 
-  "PropertyTypeHelper.isResidentialOrResidentialAdditionalProperty" - {
-
-    "must return true when main land entry is residential ('01')" in {
-      val fr = fullReturn(
-        mainLandId = "L1",
-        lands = Seq(
-          landWithIdAndType("L1", "01")
-        )
-      )
-
-      mainLandIsResidentialProperty(answers(fr)) mustBe true
-    }
-
-    "must return true when main land entry is additional residential ('04')" in {
-      val fr = fullReturn(
-        mainLandId = "L1",
-        lands = Seq(
-          landWithIdAndType("L1", "04")
-        )
-      )
-
-      mainLandIsResidentialProperty(answers(fr)) mustBe true
-    }
-
-    "must return false when main land entry is non-residential ('02')" in {
-      val fr = fullReturn(
-        mainLandId = "L1",
-        lands = Seq(
-          landWithIdAndType("L1", "02")
-        )
-      )
-
-      mainLandIsResidentialProperty(answers(fr)) mustBe false
-    }
-
-    "must return false when main land entry is mixed ('03')" in {
-      val fr = fullReturn(
-        mainLandId = "L1",
-        lands = Seq(
-          landWithIdAndType("L1", "02")
-        )
-      )
-
-      mainLandIsResidentialProperty(answers(fr)) mustBe false
-    }
-
-    "must return false when only secondary land entry is residential ('01')" in {
-      val fr = fullReturn(
-        mainLandId = "L1",
-        lands = Seq(
-          landWithIdAndType("L1", "02"),
-          landWithIdAndType("L2", "01")
-        )
-      )
-
-      mainLandIsResidentialProperty(answers(fr)) mustBe false
-    }
-
-    "must return false when the land sequence is empty" in {
-      val fr = fullReturn(
-        mainLandId = "L1",
-        lands = Seq.empty
-      )
-
-      mainLandIsResidentialProperty(answers(fr)) mustBe false
-    }
-
-    "must return false when mainLandId is None" in {
-      val fr = FullReturn(
-        stornId = "TEST",
-        returnResourceRef = "REF",
-        returnInfo = Some(ReturnInfo(mainLandID = None)),
-        land = Some(Seq(landWithIdAndType("L1", "01")))
-      )
-
-      mainLandIsResidentialProperty(answers(fr)) mustBe false
-    }
-
-    "must return false when land is None" in {
-      val fr = FullReturn(
-        stornId = "TEST",
-        returnResourceRef = "REF",
-        returnInfo = Some(ReturnInfo(mainLandID = Some("L1"))),
-        land = None
-      )
-
-      mainLandIsResidentialProperty(answers(fr)) mustBe false
-    }
-
-    "must return false when a land entry has no property type" in {
-      val fr = fullReturn(
-        mainLandId = "L1",
-        lands = Seq(
-          Land(landID = Some("L1"), propertyType = None)
-        )
-      )
-
-      mainLandIsResidentialProperty(answers(fr)) mustBe false
-    }
-
-    "must ignore unrecognised property type codes" in {
-      val fr = fullReturn(
-        mainLandId = "L1",
-        lands = Seq(
-          landWithIdAndType("L1", "99")
-        )
-      )
-
-      mainLandIsResidentialProperty(answers(fr)) mustBe false
-    }
-  }
 }

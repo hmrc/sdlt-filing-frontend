@@ -94,17 +94,28 @@ class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeA
       ))
       val result = service.calculateStampDutyLandTax(beforeMinimumDateAnswers).futureValue
 
-      result mustBe Right(TaxCalculationResults.preMarch2012Result)
+      result mustBe Right(CalculationOutcome.PreMarch2012)
       verify(mockConnector, never()).calculateStampDutyLandTax(any())(any())
     }
 
-    "must call the connector for any other request and return the result" in {
+    "must call the connector for any other request and return Calculated when sdltc returns a normal result" in {
       when(mockConnector.calculateStampDutyLandTax(any())(any()))
         .thenReturn(Future.successful(CalculationResponse(Seq(expectedResult))))
 
       val result = service.calculateStampDutyLandTax(validUserAnswers).futureValue
 
-      result mustBe Right(expectedResult)
+      result mustBe Right(CalculationOutcome.Calculated(expectedResult))
+      verify(mockConnector, times(1)).calculateStampDutyLandTax(any())(any())
+    }
+
+    "must return SelfAssessed when sdltc result heading contains 'Self-assessed'" in {
+      val selfAssessedResult = expectedResult.copy(resultHeading = Some("Self-assessed"))
+      when(mockConnector.calculateStampDutyLandTax(any())(any()))
+        .thenReturn(Future.successful(CalculationResponse(Seq(selfAssessedResult))))
+
+      val result = service.calculateStampDutyLandTax(validUserAnswers).futureValue
+
+      result mustBe Right(CalculationOutcome.SelfAssessed)
       verify(mockConnector, times(1)).calculateStampDutyLandTax(any())(any())
     }
 

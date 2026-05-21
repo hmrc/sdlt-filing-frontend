@@ -16,7 +16,7 @@
 
 package utils
 
-import models.{FullReturn, UserAnswers}
+import models.FullReturn
 
 import java.time.format.DateTimeFormatter
 import java.time.LocalDate
@@ -34,7 +34,7 @@ object PropertyTypeHelper {
     DateTimeFormatter.ofPattern("yyyy/MM/dd")
   )
 
-  private def parseEffectiveDate(str: String): Option[LocalDate] =
+  def parseEffectiveDate(str: String): Option[LocalDate] =
     DateFormatters.iterator
       .map(fmt => Try(LocalDate.parse(str.trim, fmt)).toOption)
       .collectFirst { case Some(date) => date }
@@ -54,15 +54,5 @@ object PropertyTypeHelper {
 
     hasResidentialLand && effectiveDateOk
   }
-
-  def mainLandIsResidentialProperty(answers: UserAnswers): Boolean = {
-    answers.fullReturn.exists { fullReturn =>
-      val mainLandId = fullReturn.returnInfo.flatMap(_.mainLandID)
-
-      fullReturn.land
-        .flatMap(_.find(land => land.landID == mainLandId))
-        .flatMap(_.propertyType)
-        .exists(ResidentialPropertyTypes.contains)
-    }
-  }
+  
 }

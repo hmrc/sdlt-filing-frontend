@@ -17,7 +17,7 @@
 package utils
 
 import models.UserAnswers
-import utils.EffectiveDateHelper.isBeforeMinimumEffectiveDate
+import utils.SelfAssessedHelper.isResidentialBeforeMarch2012Date
 
 object CannotCalculateHelper {
   
@@ -37,7 +37,7 @@ object CannotCalculateHelper {
         Some("taxCalculation.cannotCalculateSdltDue.reason3")
       case (_, _, _, Some("33")) =>
         Some("taxCalculation.cannotCalculateSdltDue.reason4")
-      case (_, _, _, _) if isBeforeMinimumEffectiveDate(answers) =>
+      case (_, _, _, _) if isResidentialBeforeMarch2012Date(answers) =>
         Some("taxCalculation.cannotCalculateSdltDue.reason5")
       case (_, _, _, _) =>
         None

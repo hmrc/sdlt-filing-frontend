@@ -20,7 +20,8 @@ import connectors.SdltCalculationConnector
 import controllers.routes.ReturnTaskListController
 import models.requests.DataRequest
 import models.UserAnswers
-import models.taxCalculation.{MissingDataError, TaxCalculationFlow, TaxCalculationResult, TaxCalculationResults}
+import models.taxCalculation.{CalculationOutcome, MissingDataError, TaxCalculationFlow}
+import models.taxCalculation.CalculationOutcome.{Calculated, PreMarch2012, SelfAssessed}
 import pages.taxCalculation.TaxCalculationFlowPage
 import play.api.Logging
 import play.api.mvc.Result
@@ -28,7 +29,7 @@ import play.api.mvc.Results.Redirect
 import queries.Settable
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{EffectiveDateHelper, PropertyTypeHelper}
+import utils.SelfAssessedHelper
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,7 +39,8 @@ class SdltCalculationService @Inject()(
                                         sessionRepository: SessionRepository,
                                       )(implicit ec: ExecutionContext) extends Logging  {
 
-  // TODO: DTR-2815: Must Implement Self-Assessed response for Residential before 2012-03-22
+  private val selfAssessedHeading: String = "Self-assessed"
+  
   def whenInFlow(expected: TaxCalculationFlow)(onAllowed: => Result)(implicit request: DataRequest[?]): Result =
     if (request.userAnswers.get(TaxCalculationFlowPage).contains(expected)) onAllowed
     else Redirect(ReturnTaskListController.onPageLoad())
@@ -50,17 +52,20 @@ class SdltCalculationService @Inject()(
     else Future.successful(Redirect(ReturnTaskListController.onPageLoad()))
 
   def calculateStampDutyLandTax(userAnswers: UserAnswers)
-                               (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[MissingDataError, TaxCalculationResult]] =
+                               (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[MissingDataError, CalculationOutcome]] =
     TaxCalcRequestValidator.buildRequest(userAnswers) match {
-      case Right(request)
-        if EffectiveDateHelper.isBeforeMinimumEffectiveDate(userAnswers) && PropertyTypeHelper.mainLandIsResidentialProperty(userAnswers) =>
+      case Right(_) if SelfAssessedHelper.isResidentialBeforeMarch2012Date(userAnswers) =>
         logger.info(s"[SdltCalculationService][calculateStampDutyLandTax] effective date is before 22/03/2012")
-        Future.successful(Right(TaxCalculationResults.preMarch2012Result))
+        Future.successful(Right(PreMarch2012))
       case Right(request) =>
         logger.info(s"[SdltCalculationService][calculateStampDutyLandTax] sending calculation request")
         connector.calculateStampDutyLandTax(request).flatMap(_.result.headOption match {
-          case Some(result) => Future.successful(Right(result))
-          case None => Future.failed(new IllegalStateException("Calculation response contained no results"))
+          case Some(result) if result.resultHeading.contains(selfAssessedHeading) =>
+            Future.successful(Right(SelfAssessed))
+          case Some(result) =>
+            Future.successful(Right(Calculated(result)))
+          case None =>
+            Future.failed(new IllegalStateException("Calculation response contained no results"))
         })
       case Left(error: MissingDataError) =>
         logger.error(s"[SdltCalculationService][calculateStampDutyLandTax] missing session data: ${error.message}")

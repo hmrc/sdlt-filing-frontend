@@ -20,6 +20,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import controllers.taxCalculation.TaxCalculationErrorRecovery
 import forms.taxCalculation.SdltSelfAssessmentFormProvider
 import models.Mode
+import models.taxCalculation.CalculationOutcome.{Calculated, PreMarch2012, SelfAssessed}
 import models.taxCalculation.TaxCalculationFlow.FreeholdTaxCalculated
 import navigation.Navigator
 import pages.taxCalculation.freeholdTaxCalculated.FreeholdTaxCalculatedSelfAssessedAmountPage
@@ -61,7 +62,7 @@ class FreeholdTaxCalculatedSdltSelfAssessmentController @Inject()(
     implicit request =>
       sdltCalculationService.whenInFlowAsync(FreeholdTaxCalculated) {
         sdltCalculationService.calculateStampDutyLandTax(request.userAnswers).map {
-          case Right(result) =>
+          case Right(Calculated(result)) =>
             val prepared = request.userAnswers.get(FreeholdTaxCalculatedSelfAssessedAmountPage)
               .fold(
                 form.fill(result.totalTax.toString)
@@ -69,6 +70,9 @@ class FreeholdTaxCalculatedSdltSelfAssessmentController @Inject()(
                 form.fill
               )
             Ok(view(prepared, postAction(mode), sectionKey))
+          case Right(SelfAssessed | PreMarch2012) =>
+            logger.warn(s"[FreeholdTaxCalculatedSdltSelfAssessmentController][onPageLoad] sdltc returned non-calculated outcome on a calculated flow; routing to cannot-calculate")
+            Redirect(controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad())
           case Left(err) =>
             logger.warn(s"[FreeholdTaxCalculatedSdltSelfAssessmentController][onPageLoad] sdltc failed: ${err.message}")
             Redirect(errorHandler(err))

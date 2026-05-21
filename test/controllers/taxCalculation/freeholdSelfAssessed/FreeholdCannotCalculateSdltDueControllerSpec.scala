@@ -22,12 +22,12 @@ import models.{FullReturn, Land, Residency, ReturnInfo, Transaction, UserAnswers
 import pages.taxCalculation.TaxCalculationFlowPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import views.html.taxCalculation.shared.CannotCalculateSdltDueView
+import views.html.taxCalculation.freeholdSelfAssessed.FreeholdCannotCalculateSdltDueView
 
 class FreeholdCannotCalculateSdltDueControllerSpec extends SpecBase {
-  
-  private val sectionKey = "site.taxCalculation.freeholdSelfAssessed.section"
+
   private val value: String = "taxCalculation.cannotCalculateSdltDue.reason1"
+  private val emptyString = ""
 
   private val freeholdAnswers: UserAnswers =
     emptyUserAnswers
@@ -47,9 +47,9 @@ class FreeholdCannotCalculateSdltDueControllerSpec extends SpecBase {
       )))
       .set(TaxCalculationFlowPage, TaxCalculationFlow.FreeholdSelfAssessed).success.value
 
-  "FreeholdCannotCalculateSdltDueController Controller" - {
+  "FreeholdCannotCalculateSdltDue Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET when valid reason is matched" in {
       val application = applicationBuilder(userAnswers = Some(freeholdAnswers)).build()
 
       running(application) {
@@ -57,10 +57,28 @@ class FreeholdCannotCalculateSdltDueControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[CannotCalculateSdltDueView]
+        val view = application.injector.instanceOf[FreeholdCannotCalculateSdltDueView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(sectionKey, value)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(value)(request, messages(application)).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET when no valid reason is matched" in {
+      val wrongAnswers = freeholdAnswers.copy(fullReturn = freeholdAnswers.fullReturn.map(fr =>
+        fr.copy(transaction = fr.transaction.map(_.copy(isLinked = Some("no"))))
+      ))
+      val application = applicationBuilder(userAnswers = Some(wrongAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[FreeholdCannotCalculateSdltDueView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(emptyString)(request, messages(application)).toString
       }
     }
 
@@ -78,20 +96,5 @@ class FreeholdCannotCalculateSdltDueControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the return task list when the user answers do not match a cannot calculate reason" in {
-      val wrongAnswers = freeholdAnswers.copy(fullReturn = freeholdAnswers.fullReturn.map(fr =>
-        fr.copy(transaction = fr.transaction.map(_.copy(isLinked = Some("no"))))
-      ))
-      val application  = applicationBuilder(userAnswers = Some(wrongAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad().url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
-      }
-    }
   }
 }

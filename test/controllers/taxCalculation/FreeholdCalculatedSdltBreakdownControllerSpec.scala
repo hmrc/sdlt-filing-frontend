@@ -19,6 +19,7 @@ package controllers.taxCalculation
 import base.SpecBase
 import models.taxCalculation.*
 import models.{FullReturn, Land, ReturnInfo, Transaction, UserAnswers}
+import models.taxCalculation.CalculationOutcome.Calculated
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -54,7 +55,7 @@ class FreeholdCalculatedSdltBreakdownControllerSpec extends SpecBase with Mockit
     land = Some(Seq(Land(landID = Some("L1"), propertyType = Some("01"), interestCreatedTransferred = Some("FPF"))))
   )))
 
-  private def appWith(answers: UserAnswers, sdltcStub: Future[Either[MissingDataError, TaxCalculationResult]]) = {
+  private def appWith(answers: UserAnswers, sdltcStub: Future[Either[MissingDataError, CalculationOutcome]]) = {
     val mockService = mock[SdltCalculationService]
     when(mockService.calculateStampDutyLandTax(any())(any(), any())).thenReturn(sdltcStub)
     applicationBuilder(userAnswers = Some(answers))
@@ -66,7 +67,7 @@ class FreeholdCalculatedSdltBreakdownControllerSpec extends SpecBase with Mockit
 
     "must return OK and render the breakdown view when sdltc and the helper both succeed" in {
 
-      val app = appWith(freeholdAnswers, Future.successful(Right(sdltcResult)))
+      val app = appWith(freeholdAnswers, Future.successful(Right(Calculated(sdltcResult))))
 
       running(app) {
         val request = FakeRequest(GET, controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdCalculatedSdltBreakdownController.onPageLoad().url)
@@ -112,7 +113,7 @@ class FreeholdCalculatedSdltBreakdownControllerSpec extends SpecBase with Mockit
         fr.copy(transaction = fr.transaction.map(_.copy(claimingRelief = None)))
       ))
 
-      val app = appWith(brokenAnswers, Future.successful(Right(sdltcResult)))
+      val app = appWith(brokenAnswers, Future.successful(Right(Calculated(sdltcResult))))
 
       running(app) {
         val request = FakeRequest(GET, controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdCalculatedSdltBreakdownController.onPageLoad().url)
