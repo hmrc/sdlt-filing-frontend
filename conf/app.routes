@@ -593,8 +593,7 @@ POST       /tax-calculation/freehold-not-calculated/are-penalties-and-interest-i
 
 # ---- Tax calculation: Flow C (Leasehold - Service has performed calculation) -------------------------------------
 GET         /tax-calculation/leasehold-calculated/before-you-start               controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedBYSController.onPageLoad()
-#GET        /tax-calculation/leasehold-calculated/sdlt                           controllers.LeaseholdSdltCalculatedController.onPageLoad()
-#POST       /tax-calculation/leasehold-calculated/sdlt                           controllers.LeaseholdSdltCalculatedController.onSubmit()
+GET        /tax-calculation/leasehold-calculated/calculated-SDLT-due                                 controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdCalculatedSdltDueController.onPageLoad()
 GET        /tax-calculation/leasehold-calculated/SDLT-self-assessment                       controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedSdltSelfAssessmentController.onPageLoad(mode: Mode = NormalMode)
 POST       /tax-calculation/leasehold-calculated/SDLT-self-assessment                       controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedSdltSelfAssessmentController.onSubmit(mode: Mode = NormalMode)
 GET        /tax-calculation/leasehold-calculated/SDLT-self-assessment/change                controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedSdltSelfAssessmentController.onPageLoad(mode: Mode = CheckMode)

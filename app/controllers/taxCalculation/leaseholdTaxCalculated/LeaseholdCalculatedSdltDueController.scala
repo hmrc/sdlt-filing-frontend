@@ -14,35 +14,35 @@
  * limitations under the License.
  */
 
-package controllers.taxCalculation.freeholdTaxCalculated
+package controllers.taxCalculation.leaseholdTaxCalculated
 
 import config.CurrencyFormatter.IntToCurrency
 import controllers.actions.*
 import controllers.taxCalculation.TaxCalculationErrorRecovery
+import models.taxCalculation.TaxCalculationFlow.LeaseholdTaxCalculated
 import play.api.Logging
-import models.taxCalculation.TaxCalculationFlow.FreeholdTaxCalculated
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.taxCalculation.freeholdTaxCalculated.FreeholdCalculatedSdltDueView
+import views.html.taxCalculation.leaseholdTaxCalculated.LeaseholdCalculatedSdltDueView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class FreeholdCalculatedSdltDueController @Inject()(
+class LeaseholdCalculatedSdltDueController @Inject()(
                                                     override val messagesApi: MessagesApi,
                                                     identify: IdentifierAction,
                                                     getData: DataRetrievalAction,
                                                     requireData: DataRequiredAction,
                                                     sdltCalculationService: SdltCalculationService,
                                                     val controllerComponents: MessagesControllerComponents,
-                                                    view: FreeholdCalculatedSdltDueView
+                                                    view: LeaseholdCalculatedSdltDueView
                                                   )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging with TaxCalculationErrorRecovery {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      sdltCalculationService.whenInFlowAsync(FreeholdTaxCalculated) {
+      sdltCalculationService.whenInFlowAsync(LeaseholdTaxCalculated) {
         sdltCalculationService
           .calculateStampDutyLandTax(request.userAnswers)
           .map {
@@ -50,7 +50,7 @@ class FreeholdCalculatedSdltDueController @Inject()(
               val formattedSdltDue = result.totalTax.toCurrency
               Ok(view(formattedSdltDue))
             case Left(err) =>
-              logger.warn(s"[FreeholdCalculatedSdltDueController] sdltc reported missing data: ${err.message}")
+              logger.warn(s"[LeaseholdCalculatedSdltDueController] sdltc reported missing data: ${err.message}")
               Redirect(errorHandler(err))
           }
       }
