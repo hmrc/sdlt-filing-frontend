@@ -27,7 +27,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import services.taxCalculation.SdltCalculationService
 import viewmodels.taxCalculation.CalculationResultViewModel
-import views.html.taxCalculation.freeholdTaxCalculated.FreeholdCalculatedSdltBreakdownView
+import views.html.taxCalculation.CalculatedSdltBreakdownView
 
 import scala.concurrent.Future
 
@@ -72,11 +72,14 @@ class FreeholdCalculatedSdltBreakdownControllerSpec extends SpecBase with Mockit
         val request = FakeRequest(GET, controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdCalculatedSdltBreakdownController.onPageLoad().url)
         val result  = route(app, request).value
 
-        val view     = app.injector.instanceOf[FreeholdCalculatedSdltBreakdownView]
+        val view     = app.injector.instanceOf[CalculatedSdltBreakdownView]
         val expected = CalculationResultViewModel.toViewModel(sdltcResult, freeholdAnswers)(messages(app)).toOption.value
 
+        val breakdownUrl = controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdCalculatedSdltBreakdownController.onPageLoad().url
+        val titleKey     = "taxCalculation.calculation.freehold.title"
+
         status(result)        mustEqual OK
-        contentAsString(result) mustEqual view(expected)(request, messages(app)).toString
+        contentAsString(result) mustEqual view(expected, breakdownUrl, titleKey)(request, messages(app)).toString
       }
     }
 

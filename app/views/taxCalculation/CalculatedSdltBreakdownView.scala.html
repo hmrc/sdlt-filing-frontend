@@ -28,9 +28,9 @@
         link: link
 )
 
-@(viewModel: CalculationResultViewModel)(implicit request: Request[_], messages: Messages)
+@(viewModel: CalculationResultViewModel, breakdownUrl: String, titleKey: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("taxCalculation.calculation.freehold.title"))) {
+@layout(pageTitle = titleNoForm(messages(titleKey))) {
 
     @caption(messages("site.taxCalculation.caption"))
     @h1(messages("taxCalculation.calculation.heading"))
