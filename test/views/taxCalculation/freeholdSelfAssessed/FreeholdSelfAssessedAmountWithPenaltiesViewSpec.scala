@@ -17,7 +17,6 @@
 package views.taxCalculation.freeholdSelfAssessed
 
 import base.SpecBase
-import controllers.taxCalculation.PenaltiesAndInterestExtension
 import forms.taxCalculation.PenaltiesAndInterestFormProvider
 import models.taxCalculation.TaxCalculationFlow
 import models.{NormalMode, UserAnswers}
@@ -31,14 +30,19 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.running
 import views.html.taxCalculation.AmountWithPenaltiesView
+import play.api.mvc.Call
+import models.Mode
 
-class FreeholdCalculatedAmountWithPenaltiesViewSpec extends SpecBase {
+class FreeholdSelfAssessedAmountWithPenaltiesViewSpec extends SpecBase {
 
-  trait Fixture extends PenaltiesAndInterestExtension{
+  trait Fixture {
     val form = new PenaltiesAndInterestFormProvider()()
     val answersFreeHoldWithUserChoice: UserAnswers = emptyUserAnswers.set(TaxCalculationFlowPage,
         TaxCalculationFlow.FreeholdTaxCalculated).success.value
       .set(FreeholdTaxCalculatedPenaltiesAndInterestPage, true).success.value
+    val postAction: Mode => Call = mode =>
+      controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSelfAssessedPenaltiesAndInterestController.onSubmit(mode)
+
   }
 
   "Scenario 2 page: Tax calculation – Tax calculation – Freehold not calculated" - {
@@ -50,10 +54,11 @@ class FreeholdCalculatedAmountWithPenaltiesViewSpec extends SpecBase {
         implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
         val view = application.injector.instanceOf[AmountWithPenaltiesView]
 
-        val doc = Jsoup.parse(view(form, pageTitle = getPageTitle(flow = FreeholdSelfAssessed), postAction(FreeholdSelfAssessed, NormalMode)).toString())
+        val doc = Jsoup.parse(view(form,
+          sectionKey = "taxCalculation.penaltiesAndInterest.title", postAction(NormalMode)).toString())
 
-        doc.select("title").first().text() must include( msgs("taxCalculation.penaltiesAndInterest.freehold-tax-not-calculated.title") )
-        doc.select("h1").first().text() mustBe msgs("taxCalculation.penaltiesAndInterest.freehold-tax-calculated.heading")
+        doc.select("title").first().text() must include( msgs("taxCalculation.penaltiesAndInterest.title") )
+        doc.select("h1").first().text() mustBe msgs("taxCalculation.penaltiesAndInterest.heading")
         doc.text() must include(msgs("site.taxCalculation.caption"))
       }
     }
@@ -65,7 +70,9 @@ class FreeholdCalculatedAmountWithPenaltiesViewSpec extends SpecBase {
         implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
         val view = application.injector.instanceOf[AmountWithPenaltiesView]
 
-        val button = Jsoup.parse(view(form, pageTitle = getPageTitle(flow = FreeholdSelfAssessed), postAction(FreeholdSelfAssessed, NormalMode)).toString()).select("button.govuk-button").first()
+        val button = Jsoup.parse(view(form,
+          sectionKey = "taxCalculation.penaltiesAndInterest.freehold-tax-not-calculated.title",
+          postAction(NormalMode)).toString()).select("button.govuk-button").first()
         button.text() mustBe msgs("taxCalculation.penaltiesAndInterest.button")
       }
     }
@@ -77,7 +84,9 @@ class FreeholdCalculatedAmountWithPenaltiesViewSpec extends SpecBase {
         implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
         val view = application.injector.instanceOf[AmountWithPenaltiesView]
 
-        val doc = Jsoup.parse(view(form, pageTitle = getPageTitle(flow = FreeholdSelfAssessed), postAction(FreeholdSelfAssessed, NormalMode)).toString())
+        val doc = Jsoup.parse(view(form,
+          sectionKey = "taxCalculation.penaltiesAndInterest.freehold-tax-not-calculated.title",
+          postAction(NormalMode)).toString())
 
         val yesRadio = doc.getElementById("value")
         yesRadio.attr("value") mustBe "true"

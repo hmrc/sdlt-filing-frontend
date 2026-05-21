@@ -26,25 +26,20 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
-import pages.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedPenaltiesAndInterestPage
-import play.api.mvc.{AnyContentAsEmpty, Results}
+import play.api.mvc.{Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ExecutionException, Future}
+import scala.concurrent.{Future}
 
 class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   val mockConnector: SdltCalculationConnector = mock[SdltCalculationConnector]
-  val mockSessionRepository: SessionRepository = mock[SessionRepository]
-  val service = new SdltCalculationService(
-    connector = mockConnector,
-    sessionRepository = mockSessionRepository)
+  val service = new SdltCalculationService(connector = mockConnector)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -217,33 +212,5 @@ class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeA
       result.futureValue.header.headers("Location") mustBe controllers.routes.ReturnTaskListController.onPageLoad().url
     }
   }
-
-  "savePenaltiesAndInterestYesNoAnswer" - {
-
-    implicit val dataRequest: DataRequest[AnyContentAsEmpty.type] = DataRequest(
-      FakeRequest(), "test-id", emptyUserAnswers)
-
-    "call repository to save user PenaltiesAndInterestYesNo choice :: success" in {
-      when(mockSessionRepository.set(any()))
-        .thenReturn(Future.successful(true))
-      val result = service.savePenaltiesAndInterestYesNoAnswer(
-        key = FreeholdSelfAssessedPenaltiesAndInterestPage,
-        value = true).futureValue
-      result mustBe true
-      verify(mockSessionRepository, times(1)).set(any())
-    }
-
-    "call repository to save user PenaltiesAndInterestYesNo choice :: failure" in {
-      when(mockSessionRepository.set(any()))
-        .thenThrow(Error("ConnectionTimeOut"))
-      val result =  service.savePenaltiesAndInterestYesNoAnswer(
-          key = FreeholdSelfAssessedPenaltiesAndInterestPage,
-          value = true).failed.futureValue
-      result mustBe an[ExecutionException]
-      result.getCause.getMessage mustBe "ConnectionTimeOut"
-    }
-
-  }
-
 
 }

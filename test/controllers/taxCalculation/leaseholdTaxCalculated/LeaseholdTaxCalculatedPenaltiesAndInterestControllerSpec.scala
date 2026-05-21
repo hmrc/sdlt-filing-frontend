@@ -20,19 +20,18 @@ import base.SpecBase
 import forms.taxCalculation.PenaltiesAndInterestFormProvider
 import models.taxCalculation.TaxCalculationFlow
 import models.taxCalculation.TaxCalculationFlow.*
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.taxCalculation.TaxCalculationFlowPage
+import pages.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedPenaltiesAndInterestPage
 import play.api.Application
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import views.html.taxCalculation.AmountWithPenaltiesView
-import controllers.taxCalculation.PenaltiesAndInterestExtension
-import pages.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedPenaltiesAndInterestPage
-import play.api.i18n.Messages
 
 class LeaseholdTaxCalculatedPenaltiesAndInterestControllerSpec extends SpecBase {
 
-  trait Fixture extends PenaltiesAndInterestExtension {
+  trait Fixture {
     val form = new PenaltiesAndInterestFormProvider()()
     val preparedForm = form.fill(true)
     val answersLeaseholdTaxCalculatedNoUserChoice: UserAnswers = emptyUserAnswers
@@ -44,6 +43,10 @@ class LeaseholdTaxCalculatedPenaltiesAndInterestControllerSpec extends SpecBase 
 
     val answersLeaseholdSelfAssessed: UserAnswers = emptyUserAnswers.set(TaxCalculationFlowPage,
       TaxCalculationFlow.LeaseholdSelfAssessed).success.value
+
+    val postAction: Mode => Call = mode =>
+      controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdSdltCalculatedPenaltiesAndInterestController.onSubmit(mode)
+
   }
 
   "LeaseholdSdltCalculatedPenaltiesAndInterestController" - {
@@ -52,7 +55,6 @@ class LeaseholdTaxCalculatedPenaltiesAndInterestControllerSpec extends SpecBase 
       val application: Application = applicationBuilder(userAnswers = Some(answersLeaseholdTaxCalculatedNoUserChoice)).build()
 
       running(application) {
-        implicit val msgs: Messages = messages(application)
         val request = FakeRequest(GET,
           controllers.taxCalculation.leaseholdTaxCalculated
             .routes.LeaseholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(NormalMode).url)
@@ -62,8 +64,7 @@ class LeaseholdTaxCalculatedPenaltiesAndInterestControllerSpec extends SpecBase 
         val view = application.injector.instanceOf[AmountWithPenaltiesView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, pageTitle = getPageTitle(flow = LeaseholdTaxCalculated),
-          postAction(LeaseholdTaxCalculated, NormalMode))(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, sectionKey = "taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.title", postAction(NormalMode))(request, messages(application)).toString
       }
     }
 
@@ -71,7 +72,6 @@ class LeaseholdTaxCalculatedPenaltiesAndInterestControllerSpec extends SpecBase 
       val application: Application = applicationBuilder(userAnswers = Some(answersLeaseholdTaxCalculatedWithUserChoice)).build()
 
       running(application) {
-        implicit val msgs: Messages = messages(application)
         val request = FakeRequest(GET,
           controllers.taxCalculation.leaseholdTaxCalculated
             .routes.LeaseholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(NormalMode).url)
@@ -81,8 +81,7 @@ class LeaseholdTaxCalculatedPenaltiesAndInterestControllerSpec extends SpecBase 
         val view = application.injector.instanceOf[AmountWithPenaltiesView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(preparedForm, pageTitle = getPageTitle(flow = LeaseholdTaxCalculated),
-          postAction(LeaseholdTaxCalculated, NormalMode))(request, messages(application)).toString
+        contentAsString(result) mustEqual view(preparedForm, sectionKey = "taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.title", postAction(NormalMode))(request, messages(application)).toString
       }
     }
 

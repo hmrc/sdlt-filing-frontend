@@ -1428,8 +1428,8 @@ taxCalculation.calculatedSdltDue.checkYourAnswersLabel                          
 
 taxCalculation.penaltiesAndInterest.button                                          = Save and continue
 
-taxCalculation.penaltiesAndInterest.freehold-tax-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Freehold calculated
-taxCalculation.penaltiesAndInterest.freehold-tax-calculated.heading                            = Does the amount you intend to pay include penalties and interest charges?
+taxCalculation.penaltiesAndInterest.freehold-tax-calculated.title                   = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Freehold calculated
+taxCalculation.penaltiesAndInterest.heading                                         = Does the amount you intend to pay include penalties and interest charges?
 taxCalculation.penaltiesAndInterest.error.required                                  = Select yes if the amount you intend to pay includes penalties and interest charges
 
 taxCalculation.penaltiesAndInterest.freehold-tax-not-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Freehold not calculated
@@ -1439,7 +1439,7 @@ taxCalculation.penaltiesAndInterest.leasehold-tax-not-calculated.title          
 taxCalculation.penaltiesAndInterest.leasehold-tax-not-calculated.heading                            = Does the amount you intend to pay include penalties and interest charges?
 
 
-taxCalculation.penaltiesAndInterest.checkYourAnswersLabel                           = Not yet implemented / part of the work for CYA page
+taxCalculation.penaltiesAndInterest.checkYourAnswersLabel                           = Does the amount include penalties and interest?
 
 taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Leasehold calculated
 taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.heading                            = Does the amount you intend to pay include penalties and interest charges?

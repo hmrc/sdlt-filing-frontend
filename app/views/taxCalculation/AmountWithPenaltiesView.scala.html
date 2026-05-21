@@ -15,9 +15,6 @@
  *@
 
 @import views.html.components.*
-@import models.CheckMode
-@import models.taxCalculation.TaxCalculationFlow
-@import models.taxCalculation.TaxCalculationFlow.*
 
 @this(
         layout: templates.Layout,
@@ -25,14 +22,12 @@
         govukButton: GovukButton,
         govukRadios: GovukRadios,
         govukErrorSummary: GovukErrorSummary,
-        h1: h1,
-        p: Paragraph,
         caption: Caption
 )
 
-@(form: Form[_], pageTitle: String, postAction: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], sectionKey: String, postAction: Call)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, pageTitle )) {
+@layout(pageTitle = title(form, messages(sectionKey) )) {
 
     @caption(messages("site.taxCalculation.caption"))
 
@@ -45,7 +40,7 @@
         @govukRadios(
             RadiosViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("taxCalculation.penaltiesAndInterest.freehold-tax-calculated.heading")).asPageHeading(),
+                legend = LegendViewModel(messages("taxCalculation.penaltiesAndInterest.heading")).asPageHeading(),
                 items = Seq(
                     RadioItem(
                         value = Some("true"),

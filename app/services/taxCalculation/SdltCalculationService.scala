@@ -24,18 +24,15 @@ import models.UserAnswers
 import play.api.Logging
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import queries.Settable
-import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import pages.taxCalculation.TaxCalculationFlowPage
-import javax.inject.Inject
+
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class SdltCalculationService @Inject()(
-                                        connector: SdltCalculationConnector,
-                                        sessionRepository: SessionRepository,
-                                      )(implicit ec: ExecutionContext) extends Logging {
+@Singleton
+class SdltCalculationService @Inject()(connector: SdltCalculationConnector) extends Logging {
 
   // TODO: DTR-2815: Must Implement Self-Assessed response for Residential before 2012-03-22
   def whenInFlow(expected: TaxCalculationFlow)
@@ -75,16 +72,4 @@ class SdltCalculationService @Inject()(
         Future.failed(new IllegalStateException(error.message))
     }
 
-  def savePenaltiesAndInterestYesNoAnswer(key: Settable[Boolean],
-                                          value: Boolean)
-                                         (implicit request: DataRequest[?]): Future[Boolean] = {
-    for {
-      updatedAnswers <- Future.fromTry {
-        request.userAnswers.set(key, value)
-      }
-      persistenceResult <- sessionRepository.set(updatedAnswers)
-    } yield
-      persistenceResult
-  }
-  
 }
