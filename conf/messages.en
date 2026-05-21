@@ -1499,6 +1499,15 @@ taxCalculation.calculation.propertyType.04                                      
 
 taxCalculation.calculation.returnToTaxCalculation                                   = Return to tax calculation
 
+taxCalculation.sdltSelfAssessment.checkYourAnswersLabel                             = Self-assessed amount of SDLT
+taxCalculation.sdltSelfAssessment.change.hidden                                     = self-assessed amount of SDLT
+
+taxCalculation.sdltSelfAssessment.error.required                                    = Enter the self-assessed amount of SDLT, in pounds
+taxCalculation.sdltSelfAssessment.error.invalidNumeric                              = The self-assessed amount of SDLT must only include commas and numbers 0 to 9
+taxCalculation.sdltSelfAssessment.error.invalidWholeNumber                          = Enter the self-assessed amount of SDLT in whole pounds
+taxCalculation.sdltSelfAssessment.error.maximum                                     = The self-assessed amount of SDLT must be equal to or less than £9,999,999,999
+taxCalculation.sdltSelfAssessment.error.length                                      = The self-assessed amount of SDLT must be 16 characters or fewer
+
 taxCalculation.taxDueOnNpv.title                                                    = What is the tax due on the NPV?
 taxCalculation.taxDueOnNpv.heading                                                  = Tax due on the NPV
 taxCalculation.taxDueOnNpv.p1                                                       = You entered the NPV as: £{0}
@@ -1524,13 +1533,6 @@ taxCalculation.sdltSelfAssessment.calculator.link                               
 taxCalculation.sdltSelfAssessment.calculator.text                                   = use the SDLT calculator to work out the correct amount (opens in a new tab)
 taxCalculation.sdltSelfAssessment.h2                                                = What is the self-assessed amount of SDLT?
 taxCalculation.sdltSelfAssessment.hint                                              = Enter the amount in whole pounds only, for example £10,000. This amount should not include any penalties or interest due.
-taxCalculation.sdltSelfAssessment.checkYourAnswersLabel                             = Self-assessed amount of SDLT
-taxCalculation.sdltSelfAssessment.change.hidden                                     = self-assessed amount of SDLT
-taxCalculation.sdltSelfAssessment.error.required                                    = Enter the self-assessed amount of SDLT, in pounds
-taxCalculation.sdltSelfAssessment.error.invalidNumeric                              = The self-assessed amount of SDLT must only include commas and numbers 0 to 9
-taxCalculation.sdltSelfAssessment.error.invalidWholeNumber                          = Enter the self-assessed amount of SDLT in whole pounds
-taxCalculation.sdltSelfAssessment.error.maximum                                     = The self-assessed amount of SDLT must be equal to or less than £9,999,999,999
-taxCalculation.sdltSelfAssessment.error.length                                      = The self-assessed amount of SDLT must be 16 characters or fewer
 
 taxCalculation.totalAmountDue.h2                                             = What is the total amount you intend to pay with this return?
 taxCalculation.totalAmountDue.hint                                           = Enter the amount in whole pounds only, for example £10,000
@@ -1544,6 +1546,10 @@ taxCalculation.totalAmountDue.error.invalidNumeric                           = T
 taxCalculation.totalAmountDue.error.invalidWholeNumber                       = Enter the amount you intend to pay in whole pounds
 taxCalculation.totalAmountDue.error.maximum                                  = The amount you intend to pay must be equal to or less than £9,999,999,999
 taxCalculation.totalAmountDue.error.length                                   = The amount you intend to pay must be 16 characters or fewer
+
+taxCalculation.confirmEffectiveDateOfTransaction.title                       = Is this the effective date of the transaction?
+taxCalculation.confirmEffectiveDateOfTransaction.heading                     = Is {0} the effective date of the transaction?
+taxCalculation.confirmEffectiveDateOfTransaction.error.required              = Select yes if this is the effective date of the transaction
 
 taxCalculation.genericPenaltiesDue.checkYourAnswersLabel                            = Penalties due
 taxCalculation.totalAmountDue.checkYourAnswersLabel                                 = Amount to be paid
@@ -1817,6 +1823,24 @@ lease.leaseThousandPoundsThreshold.checkYourAnswersLabel                        
 lease.leaseThousandPoundsThreshold.error.required                                   = Select yes if the annual rent is £1,000 or more
 lease.leaseThousandPoundsThreshold.change.hidden                                    = Is the annual rent £1,000 or more?
 
+lease.leaseStartingRentEndDate.title                                                 = End of annual starting rent
+lease.leaseStartingRentEndDate.heading                                               = End of annual starting rent
+lease.leaseStartingRentEndDate.p1                                                    = This date will either be:
+lease.leaseStartingRentEndDate.l1.li1                                                = the day before the first rent review
+lease.leaseStartingRentEndDate.l1.li2                                                = the end of the fifth year of the lease term, if no review happens earlier
+lease.leaseStartingRentEndDate.p2                                                    = If a lease has been surrendered, this date will typically be the effective date of the transaction.
+lease.leaseStartingRentEndDate.subheading                                            = What is the end date for starting rent?
+lease.leaseStartingRentEndDate.hint                                                  = For example, 27 3 2023
+lease.leaseStartingRentEndDate.checkYourAnswersLabel                                 = End date for starting rent
+lease.leaseStartingRentEndDate.error.required.all                                    = Enter the end date for starting rent
+lease.leaseStartingRentEndDate.error.required.two                                    = The end date for starting rent must include a {0} and {1}
+lease.leaseStartingRentEndDate.error.required                                        = The end date for starting rent must include a {0}
+lease.leaseStartingRentEndDate.error.invalid                                         = The end date for starting rent must be a real date
+lease.leaseStartingRentEndDate.error.date.range.min                                  = The end date for starting rent must be the same as or after 1 January 1900
+lease.leaseStartingRentEndDate.error.afterLeaseStartDate                             = The end date for starting rent must be after the start date as specified in the lease
+lease.leaseStartingRentEndDate.error.beforeLeaseEndDate                              = The end date for starting rent must be before the end date as specified in the lease
+lease.leaseStartingRentEndDate.change.hidden                                         = end date for starting rent
+
 lease.doesLeaseIncludeRentFreePeriod.title                                          = Rent-free periods
 lease.doesLeaseIncludeRentFreePeriod.heading                                        = Rent-free periods
 lease.doesLeaseIncludeRentFreePeriod.checkYourAnswersLabel                          = Rent-free periods
@@ -1842,3 +1866,13 @@ lease.annualStartingRent.error.invalidWholeNumber                               
 lease.annualStartingRent.error.maximum                                              = The annual starting rent including VAT must be equal to or less than £99,999,999
 lease.annualStartingRent.error.maxLength                                            = The annual starting rent including VAT must be 13 characters or fewer
 lease.annualStartingRent.change.hidden                                              = Annual starting rent
+
+lease.leaseIsVatPayable.title                                                       = Annual rent VAT
+lease.leaseIsVatPayable.heading                                                     = Annual rent VAT
+lease.leaseIsVatPayable.p                                                           = VAT is payable on commercial property rent when the landlord has made an "option to tax" election with HMRC. If VAT is payable, enter the total amount of VAT on both:
+lease.leaseIsVatPayable.li1                                                         = the annual starting rent
+lease.leaseIsVatPayable.li2                                                         = the total premium payable
+lease.leaseIsVatPayable.subheading                                                  = Is VAT payable on the annual rent?
+lease.leaseIsVatPayable.checkYourAnswersLabel                                       = Is VAT payable on the annual rent?
+lease.leaseIsVatPayable.error.required                                              = Select yes if there is VAT payable on the annual rent
+lease.leaseIsVatPayable.change.hidden                                               = Is VAT payable on the annual rent?

@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package pages.taxCalculation.leaseholdTaxCalculated
+package pages.taxCalculation
 
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object LeaseholdTaxCalculatedSdltPage extends QuestionPage[Boolean] {
+case object ConfirmEffectiveDateOfTransactionPage extends QuestionPage[Boolean] {
 
-  override def path: JsPath = JsPath \ "taxCalculationCurrent" \ toString
+  override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "leaseholdTaxCalculatedSdlt"
+  override def toString: String = "confirmEffectiveDateOfTransaction"
+
 }

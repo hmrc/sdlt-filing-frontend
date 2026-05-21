@@ -17,7 +17,7 @@
 package services.lease
 
 import models.{Lease, UserAnswers}
-import pages.lease.LeaseStartDatePage
+import pages.lease.{LeaseStartDatePage, LeaseStartingRentEndDatePage}
 import services.lease.LeaseDatesService.*
 
 import java.time.LocalDate
@@ -32,29 +32,31 @@ class LeaseDatesService {
       userAnswers.fullReturn
         .flatMap(_.lease)
 
-    val leaseStartDate = userAnswers.get(LeaseStartDatePage)
-    val leaseEndDate = lease.flatMap(_.contractEndDate) // TODO: Post implementation of DTR-3509 End Date will fetch from Page instead of fullreturn
-    val startingRentEndDate = lease.flatMap(_.startingRentEndDate) //TODO: Post implementation of 3521 date will fetch from Page instead of fullreturn
-    
+    val leaseStartDate      = userAnswers.get(LeaseStartDatePage)
+    val leaseEndDate        = lease.flatMap(_.contractEndDate) // TODO: Post implementation of DTR-3509 End Date will fetch from Page instead of fullreturn
+    val startingRentEndDate = userAnswers.get(LeaseStartingRentEndDatePage)
+
     (leaseStartDate, leaseEndDate, startingRentEndDate) match {
 
-      case (None, _, _) | (_, None, _) | (_, _, None) =>
+      case (None, None, None) =>
         LeaseDateValid
 
-      case (Some(leaseStart), _, Some(leaseRentStartEnd)) if leaseStart.isAfter(formatDate(leaseRentStartEnd)) =>
+      case (Some(leaseStart), Some(leaseEnd), _) if formatDate(leaseEnd).isBefore(leaseStart) =>
+        LeaseStartBeforeLeaseEndDate
+
+      case (Some(leaseStart), _, Some(rentEndDate)) if leaseStart.isAfter(rentEndDate) =>
         LeaseStartBeforeRentEndDate
 
-      case (Some(leaseStart), Some(leaseEnd),_) if formatDate(leaseEnd).isBefore(leaseStart) =>
-        LeaseStartBeforeLeaseEndDate
+      case (_, Some(leaseEnd), Some(rentEndDate)) if rentEndDate.isAfter(formatDate(leaseEnd)) =>
+        RentEndDateAfterLeaseEndDate
 
       case _ =>
         LeaseDateValid
     }
   }
 
-  private def formatDate(date: String) = {
+  private def formatDate(date: String): LocalDate =
     LocalDate.parse(date, formatter)
-  }
 
 }
 
@@ -65,6 +67,8 @@ object LeaseDatesService {
   case object LeaseDateValid extends LeaseDatesValidationResult
 
   case object LeaseStartBeforeRentEndDate extends LeaseDatesValidationResult
+
+  case object RentEndDateAfterLeaseEndDate extends LeaseDatesValidationResult
 
   case object LeaseStartBeforeLeaseEndDate extends LeaseDatesValidationResult
 }

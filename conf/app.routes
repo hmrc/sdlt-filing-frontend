@@ -540,6 +540,9 @@ POST       /about-the-transaction/restrictions-covenants-and-conditions         
 GET        /about-the-transaction/restrictions-covenants-and-conditions/change                       controllers.transaction.TransactionRestrictionsCovenantsAndConditionsController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-transaction/restrictions-covenants-and-conditions/change                       controllers.transaction.TransactionRestrictionsCovenantsAndConditionsController.onSubmit(mode: Mode = CheckMode)
 
+GET        /tax-calculation/is-this-the-effective-date-of-transaction                                   controllers.taxCalculation.ConfirmEffectiveDateOfTransactionController.onPageLoad()
+POST       /tax-calculation/is-this-the-effective-date-of-transaction                                    controllers.taxCalculation.ConfirmEffectiveDateOfTransactionController.onSubmit()
+
 GET        /tax-calculation/before-you-start                                    controllers.taxCalculation.TaxCalculationBeforeYouStartController.onPageLoad()
 #GET       /tax-calculation/leasehold-calculated/breakdown                      controllers.LeaseholdSdltCalculatedBreakdownController.onPageLoad()
 
@@ -589,10 +592,11 @@ POST       /tax-calculation/freehold-not-calculated/are-penalties-and-interest-i
 
 # ---- Tax calculation: Flow C (Leasehold - Service has performed calculation) -------------------------------------
 GET         /tax-calculation/leasehold-calculated/before-you-start               controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedBYSController.onPageLoad()
-#GET        /tax-calculation/leasehold-calculated/sdlt                           controllers.LeaseholdSdltCalculatedController.onPageLoad()
-#POST       /tax-calculation/leasehold-calculated/sdlt                           controllers.LeaseholdSdltCalculatedController.onSubmit()
-#GET        /tax-calculation/leasehold-calculated/self-assessment                controllers.LeaseholdSdltCalculatedSelfAssessmentController.onPageLoad()
-#POST       /tax-calculation/leasehold-calculated/self-assessment                controllers.LeaseholdSdltCalculatedSelfAssessmentController.onSubmit()
+GET        /tax-calculation/leasehold-calculated/calculated-SDLT-due                                 controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdCalculatedSdltDueController.onPageLoad()
+GET        /tax-calculation/leasehold-calculated/SDLT-self-assessment                       controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedSdltSelfAssessmentController.onPageLoad(mode: Mode = NormalMode)
+POST       /tax-calculation/leasehold-calculated/SDLT-self-assessment                       controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedSdltSelfAssessmentController.onSubmit(mode: Mode = NormalMode)
+GET        /tax-calculation/leasehold-calculated/SDLT-self-assessment/change                controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedSdltSelfAssessmentController.onPageLoad(mode: Mode = CheckMode)
+POST       /tax-calculation/leasehold-calculated/SDLT-self-assessment/change                controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedSdltSelfAssessmentController.onSubmit(mode: Mode = CheckMode)
 GET        /tax-calculation/leasehold-calculated/are-penalties-and-interest-included        controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(mode: Mode = NormalMode)
 POST       /tax-calculation/leasehold-calculated/are-penalties-and-interest-included        controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdSdltCalculatedPenaltiesAndInterestController.onSubmit(mode: Mode = NormalMode)
 GET        /tax-calculation/leasehold-calculated/are-penalties-and-interest-included/change controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(mode: Mode = CheckMode)
@@ -682,6 +686,11 @@ POST       /about-the-lease/enter-rent-free-period                              
 GET        /about-the-lease/enter-rent-free-period/change                                            controllers.lease.LeaseEnterRentFreePeriodController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-lease/enter-rent-free-period/change                                            controllers.lease.LeaseEnterRentFreePeriodController.onSubmit(mode: Mode = CheckMode)
 
+GET        /about-the-lease/end-of-annual-starting-rent                                               controllers.lease.LeaseStartingRentEndDateController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-lease/end-of-annual-starting-rent                                               controllers.lease.LeaseStartingRentEndDateController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-lease/end-of-annual-starting-rent/change                                        controllers.lease.LeaseStartingRentEndDateController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-lease/end-of-annual-starting-rent/change                                        controllers.lease.LeaseStartingRentEndDateController.onSubmit(mode: Mode = CheckMode)
+
 GET        /about-the-lease/later-rent                                                               controllers.lease.LaterRentController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-lease/later-rent                                                               controllers.lease.LaterRentController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-lease/later-rent/change                                                        controllers.lease.LaterRentController.onPageLoad(mode: Mode = CheckMode)
@@ -702,8 +711,12 @@ POST       /about-the-lease/add-rent-free-period                                
 GET        /about-the-lease/add-rent-free-period/change                                              controllers.lease.DoesLeaseIncludeRentFreePeriodController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-lease/add-rent-free-period/change                                              controllers.lease.DoesLeaseIncludeRentFreePeriodController.onSubmit(mode: Mode = CheckMode)
 
-
 GET        /about-the-lease/annual-starting-rent                                                     controllers.lease.AnnualStartingRentController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-lease/annual-starting-rent                                                     controllers.lease.AnnualStartingRentController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-lease/annual-starting-rent/change                                              controllers.lease.AnnualStartingRentController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-lease/annual-starting-rent/change                                              controllers.lease.AnnualStartingRentController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-lease/add-annual-rent-VAT                                                      controllers.lease.LeaseIsVatPayableController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-lease/add-annual-rent-VAT                                                      controllers.lease.LeaseIsVatPayableController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-lease/add-annual-rent-VAT/change                                               controllers.lease.LeaseIsVatPayableController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-lease/add-annual-rent-VAT/change                                               controllers.lease.LeaseIsVatPayableController.onSubmit(mode: Mode = CheckMode)

@@ -17,8 +17,10 @@
 package services.lease
 
 import base.SpecBase
-import models.{FullReturn, Land, UserAnswers}
+import constants.FullReturnConstants.completeTransaction
+import models.{FullReturn, Land, Transaction, UserAnswers}
 import models.lease.TypeOfLease
+import models.prelimQuestions.TransactionType.GrantOfLease
 import org.scalatest.matchers.must.Matchers
 import services.lease.LeaseService.{InvalidMixedRule, InvalidNonResidentialRule, InvalidResidentialRule, Valid}
 
@@ -32,6 +34,17 @@ class LeaseServiceSpec extends SpecBase with Matchers {
       stornId = "1",
       returnResourceRef = "ref",
       land = Some(lands)
+    )
+
+    emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+  }
+  
+  def userAnswersWithTransactionType(transactionDescription: Option[String]): UserAnswers = {
+    val fullReturn = FullReturn(
+      stornId = "1",
+      returnResourceRef = "ref",
+      transaction = Some(completeTransaction.copy(
+        transactionDescription = transactionDescription))
     )
 
     emptyUserAnswers.copy(fullReturn = Some(fullReturn))
@@ -84,6 +97,24 @@ class LeaseServiceSpec extends SpecBase with Matchers {
       val userAnswers = userAnswersWithPropertyTypes(Seq("01"))
       val result = service.leasePropertyLandPropertyValidation(userAnswers, TypeOfLease.M)
       result mustBe InvalidMixedRule
+    }
+  }
+  
+  "transactionType" - {
+    "when transaction type exists in full return" - {
+      "must return transaction type" in {
+        val userAnswers = userAnswersWithTransactionType(Some("L"))
+        
+        service.transactionType(userAnswers) mustBe Some(GrantOfLease)
+      }
+    }
+    
+    "when transaction type doesn't exist in full return" - {
+      "must return None" in {
+        val userAnswers = userAnswersWithTransactionType(None)
+
+        service.transactionType(userAnswers) mustBe None
+      }
     }
   }
 }

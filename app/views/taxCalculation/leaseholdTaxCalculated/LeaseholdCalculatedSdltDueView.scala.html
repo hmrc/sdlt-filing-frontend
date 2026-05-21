@@ -27,7 +27,7 @@
 
 @(sdltDue: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("taxCalculation.calculatedSdltDue.title"), section = Some(messages("site.taxCalculation.freeholdSdltCalculated.section")))) {
+@layout(pageTitle = titleNoForm(messages("taxCalculation.calculatedSdltDue.title"), section = Some(messages("site.taxCalculation.leaseholdSdltCalculated.section")))) {
     @caption(messages("site.taxCalculation.caption"))
     @h1(messages("taxCalculation.calculatedSdltDue.heading", sdltDue))
 
@@ -35,7 +35,7 @@
 
     <div class="govuk-body govuk-!-margin-bottom-6">
     @link(
-        link = controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdCalculatedSdltBreakdownController.onPageLoad().url,
+        link = controllers.routes.IndexController.onPageLoad().url,
         messageKey = "taxCalculation.calculatedSdltDue.linkText"
     )
     </div>

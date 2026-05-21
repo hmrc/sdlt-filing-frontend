@@ -28,6 +28,7 @@ import pages.purchaserAgent.*
 import pages.taxCalculation.freeholdSelfAssessed.*
 import pages.taxCalculation.freeholdTaxCalculated.*
 import pages.taxCalculation.leaseholdSelfAssessed.*
+import pages.taxCalculation.ConfirmEffectiveDateOfTransactionPage
 import pages.taxCalculation.leaseholdTaxCalculated.*
 import pages.transaction.*
 import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
@@ -431,22 +432,38 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LeaseEnterRentFreePeriodPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode)
         }
 
-        "go from AnnualStartingRentPage to EndOfAnnualStartingRentPage page" in { //TODO - DTR-3521 - SPRINT 15 - end date for starting rent ls-6
-          navigator.nextPage(AnnualStartingRentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode)
+        "go from AnnualStartingRentPage to EndOfAnnualStartingRentPage page" in {
+          navigator.nextPage(AnnualStartingRentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseStartingRentEndDateController.onPageLoad(NormalMode)
+        }
+
+        "go from LeaseStartingRentEndDatePage to LaterRent page" in {
+          navigator.nextPage(LeaseStartingRentEndDatePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LaterRentController.onPageLoad(NormalMode)
         }
 
         "go from LaterRentPage to LeaseThousandPoundsThresholdPage" in {
           navigator.nextPage(LaterRentPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(NormalMode)
         }
 
-        "go from LeaseThousandPoundsThresholdPage to ls-9?" in { // TODO : Update to Is VAT payable on the annual rent? - ls-9
-          navigator.nextPage(LeaseThousandPoundsThresholdPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(NormalMode)
+        "go from LeaseThousandPoundsThresholdPage to LeaseIsVatPayablePage" in {
+          navigator.nextPage(LeaseThousandPoundsThresholdPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(NormalMode)
+        }
+
+        "go from LeaseIsVatPayablePage to ls-9a" in { // TODO DTR-3533: Update to What is the total amount of VAT payable on the annual rent? - ls-9a
+          navigator.nextPage(LeaseIsVatPayablePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(NormalMode)
         }
 
         "go from DoesLeaseIncludeRentFreePeriodPage to AnnualStartingRentPage" in {
           navigator.nextPage(LeaseEnterRentFreePeriodPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode)
         }
       }
+
+      "taxCalculation routes" - {
+        "go from ConfirmEffectiveDateOfTransactionPage to TaxCalculationBeforeYouStartController page" in {
+          navigator.nextPage(ConfirmEffectiveDateOfTransactionPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
+            controllers.taxCalculation.routes.TaxCalculationBeforeYouStartController.onPageLoad()
+        }
+      }
+
       "freehold tax calculated routes" - {
 
         "go from FreeholdTaxCalculatedSelfAssessedAmountPage to FreeholdTaxCalculatedTotalAmountDueController" in {
@@ -481,12 +498,9 @@ class NavigatorSpec extends SpecBase {
 
       "leasehold tax calculated routes" - {
 
-        "go from LeaseholdTaxCalculatedSdltPage to Index page" in {
-          navigator.nextPage(LeaseholdTaxCalculatedSdltPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
-        }
-
-        "go from LeaseholdTaxCalculatedSelfAssessedAmountPage to Index page" in {
-          navigator.nextPage(LeaseholdTaxCalculatedSelfAssessedAmountPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        "go from LeaseholdTaxCalculatedSelfAssessedAmountPage to LeaseholdTaxCalculatedTotalAmountDueController" in {
+          navigator.nextPage(LeaseholdTaxCalculatedSelfAssessedAmountPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
+            controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdTaxCalculatedTotalAmountDueController.onPageLoad(NormalMode)
         }
 
         "go from LeaseholdTaxCalculatedTotalAmountDuePage to Index page" in {

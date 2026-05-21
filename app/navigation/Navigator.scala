@@ -26,6 +26,7 @@ import pages.vendor.*
 import pages.vendorAgent.*
 import pages.land.*
 import pages.lease.*
+import pages.taxCalculation.ConfirmEffectiveDateOfTransactionPage
 import pages.taxCalculation.freeholdTaxCalculated.*
 import pages.taxCalculation.freeholdSelfAssessed.*
 import pages.taxCalculation.leaseholdTaxCalculated.*
@@ -71,6 +72,8 @@ class Navigator @Inject()() {
     case residencyPage if isResidencySection(residencyPage) => residencyRoutes(residencyPage)
     case transactionPage if isTransactionSection(transactionPage) => transactionRoutes(transactionPage)
     case leasePage if isLeaseSection(leasePage) => leaseRoutes(leasePage)
+    
+    case taxCalcPage if isTaxCalculationBeforeFlowSection(taxCalcPage) => beforeTaxCalculationFlowRoutes(taxCalcPage)
     case taxCalcPage if isFreeholdTaxCalculatedSection(taxCalcPage) => freeholdTaxCalculatedRoutes(taxCalcPage)
     case taxCalcPage if isFreeholdSelfAssessedSection(taxCalcPage) => freeholdSelfAssessedRoutes(taxCalcPage)
     case taxCalcPage if isLeaseholdTaxCalculatedSection(taxCalcPage) => leaseholdTaxCalculatedRoutes(taxCalcPage)
@@ -293,7 +296,8 @@ class Navigator @Inject()() {
   }
 
   private def isLeaseSection(page: Page): Boolean = page match {
-    case TypeOfLeasePage | LeaseEnterRentFreePeriodPage | LaterRentPage | LeaseThousandPoundsThresholdPage | LeaseStartDatePage  | DoesLeaseIncludeRentFreePeriodPage | AnnualStartingRentPage => true
+    case TypeOfLeasePage | LeaseEnterRentFreePeriodPage | LaterRentPage | LeaseThousandPoundsThresholdPage | LeaseStartDatePage
+         | DoesLeaseIncludeRentFreePeriodPage | AnnualStartingRentPage | LeaseIsVatPayablePage | LeaseStartingRentEndDatePage => true
     case _ => false
   }
   
@@ -306,15 +310,23 @@ class Navigator @Inject()() {
       _ => controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode)
     case LaterRentPage =>
       _ => controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(NormalMode)
-    case LeaseThousandPoundsThresholdPage => // TODO - DTR-3530: update to Is VAT payable on the annual rent? - ls-9
-      _ => controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(NormalMode)
+    case LeaseThousandPoundsThresholdPage =>
+      _ => controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(NormalMode)
     case DoesLeaseIncludeRentFreePeriodPage =>
       _ => controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(NormalMode)
-    case AnnualStartingRentPage => //TODO - DTR-3521 - SPRINT 15 - end date for starting rent ls-6
-      _ => controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode)
+    case AnnualStartingRentPage =>
+      _ => controllers.lease.routes.LeaseStartingRentEndDateController.onPageLoad(NormalMode)
+    case LeaseIsVatPayablePage => // TODO DTR-3533: Update to What is the total amount of VAT payable on the annual rent? - ls-9a
+      _ => controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(NormalMode)
+    case LeaseStartingRentEndDatePage =>
+      _ => controllers.lease.routes.LaterRentController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
+  private def isTaxCalculationBeforeFlowSection(page: Page): Boolean = page match {
+    case ConfirmEffectiveDateOfTransactionPage => true
+    case _ => false
+  }
   private def isFreeholdTaxCalculatedSection(page: Page): Boolean = page match {
     case FreeholdTaxCalculatedSelfAssessedAmountPage |
          FreeholdTaxCalculatedTotalAmountDuePage | FreeholdTaxCalculatedPenaltiesAndInterestPage  => true
@@ -327,8 +339,13 @@ class Navigator @Inject()() {
     case _ => false
   }
 
+  private def beforeTaxCalculationFlowRoutes(page: Page): UserAnswers => Call = page match {
+    case ConfirmEffectiveDateOfTransactionPage => _ => controllers.taxCalculation.routes.TaxCalculationBeforeYouStartController.onPageLoad()
+    case _ => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+  }
+
   private def isLeaseholdTaxCalculatedSection(page: Page): Boolean = page match {
-    case LeaseholdTaxCalculatedSdltPage | LeaseholdTaxCalculatedSelfAssessedAmountPage |
+    case LeaseholdTaxCalculatedSelfAssessedAmountPage |
          LeaseholdTaxCalculatedTotalAmountDuePage | LeaseholdTaxCalculatedPenaltiesAndInterestPage => true
     case _ => false
   }
@@ -356,8 +373,8 @@ class Navigator @Inject()() {
   }
 
   private def leaseholdTaxCalculatedRoutes(page: Page): UserAnswers => Call = page match {
-    case LeaseholdTaxCalculatedSdltPage                 => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
-    case LeaseholdTaxCalculatedSelfAssessedAmountPage   => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case LeaseholdTaxCalculatedSelfAssessedAmountPage   =>
+      _ => controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdTaxCalculatedTotalAmountDueController.onPageLoad(NormalMode)
     case LeaseholdTaxCalculatedTotalAmountDuePage       => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
     case LeaseholdTaxCalculatedPenaltiesAndInterestPage => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
     case _                                              => _ => routes.IndexController.onPageLoad()

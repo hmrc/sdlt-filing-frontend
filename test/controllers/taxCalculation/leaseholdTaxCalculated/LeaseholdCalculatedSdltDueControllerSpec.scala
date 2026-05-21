@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package controllers.taxCalculation.freeholdTaxCalculated
+package controllers.taxCalculation.leaseholdTaxCalculated
 
 import base.SpecBase
 import connectors.SdltCalculationConnector
 import models.taxCalculation.{CalculationResponse, TaxCalculationFlow, TaxCalculationResult}
-import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.mockito.MockitoSugar.mock
+import models.{FullReturn, Land, Residency, ReturnInfo, Transaction, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.taxCalculation.TaxCalculationFlowPage
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import views.html.taxCalculation.freeholdTaxCalculated.FreeholdCalculatedSdltDueView
-import models.{FullReturn, Land, Residency, ReturnInfo, Transaction, UserAnswers}
+import views.html.taxCalculation.leaseholdTaxCalculated.LeaseholdCalculatedSdltDueView
 
 import scala.concurrent.Future
 
-class FreeholdCalculatedSdltDueControllerSpec extends SpecBase with MockitoSugar {
-
+class LeaseholdCalculatedSdltDueControllerSpec extends SpecBase with MockitoSugar {
+  
   private val sdltcResult = TaxCalculationResult(totalTax = 43750, None, None, None, taxCalcs = Seq.empty)
   private val sdltDue = "£43,750"
 
-  private val freeholdAnswers: UserAnswers =
+  private val leaseholdAnswers: UserAnswers =
     emptyUserAnswers
       .copy(fullReturn = Some(FullReturn(
         stornId = "STORN",
@@ -47,13 +47,13 @@ class FreeholdCalculatedSdltDueControllerSpec extends SpecBase with MockitoSugar
           effectiveDate = Some("2026-05-01"),
           totalConsideration = Some(BigDecimal(300000)),
           claimingRelief = Some("no"),
-          transactionDescription = Some("F"),
+          transactionDescription = Some("L"),
           isLinked = Some("no")
         )),
         residency = Some(Residency(isNonUkResidents = Some("no"))),
         land = Some(Seq(Land(landID = Some("L1"), propertyType = Some("01"), interestCreatedTransferred = Some("FPF"))))
       )))
-      .set(TaxCalculationFlowPage, TaxCalculationFlow.FreeholdTaxCalculated).success.value
+      .set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdTaxCalculated).success.value
 
   private def appWith(answers: UserAnswers, sdltcResponse: Future[CalculationResponse]) = {
     val mockConnector = mock[SdltCalculationConnector]
@@ -65,18 +65,18 @@ class FreeholdCalculatedSdltDueControllerSpec extends SpecBase with MockitoSugar
       .build()
   }
 
-  "FreeholdCalculatedSdltDueController Controller" - {
+  "LeaseholdCalculatedSdltDueController Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val app = appWith(freeholdAnswers, Future.successful(CalculationResponse(Seq(sdltcResult))))
+      val app = appWith(leaseholdAnswers, Future.successful(CalculationResponse(Seq(sdltcResult))))
 
       running(app) {
-        val request = FakeRequest(GET, controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdCalculatedSdltDueController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdCalculatedSdltDueController.onPageLoad().url)
 
         val result = route(app, request).value
 
-        val view = app.injector.instanceOf[FreeholdCalculatedSdltDueView]
+        val view = app.injector.instanceOf[LeaseholdCalculatedSdltDueView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(sdltDue)(request, messages(app)).toString
@@ -88,7 +88,7 @@ class FreeholdCalculatedSdltDueControllerSpec extends SpecBase with MockitoSugar
       val app = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(app) {
-        val request = FakeRequest(GET, controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdCalculatedSdltDueController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdCalculatedSdltDueController.onPageLoad().url)
 
         val result = route(app, request).value
 
@@ -99,14 +99,14 @@ class FreeholdCalculatedSdltDueControllerSpec extends SpecBase with MockitoSugar
 
     "must redirect to the return task list when sdltc cannot calculate (validation rejects the request)" in {
 
-      val brokenAnswers = freeholdAnswers.copy(fullReturn = freeholdAnswers.fullReturn.map(fr =>
+      val brokenAnswers = leaseholdAnswers.copy(fullReturn = leaseholdAnswers.fullReturn.map(fr =>
         fr.copy(transaction = fr.transaction.map(_.copy(transactionDescription = None)))
       ))
 
       val app = appWith(brokenAnswers, Future.successful(CalculationResponse(Seq(sdltcResult))))
 
       running(app) {
-        val request = FakeRequest(GET, controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdCalculatedSdltDueController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdCalculatedSdltDueController.onPageLoad().url)
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
