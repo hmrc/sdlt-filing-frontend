@@ -17,7 +17,7 @@
 package services.lease
 
 import models.{Lease, UserAnswers}
-import pages.lease.{LeaseStartDatePage, LeaseStartingRentEndDatePage}
+import pages.lease.{LeaseEndDatePage, LeaseStartDatePage, LeaseStartingRentEndDatePage}
 import services.lease.LeaseDatesService.*
 
 import java.time.LocalDate
@@ -33,7 +33,7 @@ class LeaseDatesService {
         .flatMap(_.lease)
 
     val leaseStartDate      = userAnswers.get(LeaseStartDatePage)
-    val leaseEndDate        = lease.flatMap(_.contractEndDate) // TODO: Post implementation of DTR-3509 End Date will fetch from Page instead of fullreturn
+    val leaseEndDate        = userAnswers.get(LeaseEndDatePage)
     val startingRentEndDate = userAnswers.get(LeaseStartingRentEndDatePage)
 
     (leaseStartDate, leaseEndDate, startingRentEndDate) match {
@@ -41,13 +41,13 @@ class LeaseDatesService {
       case (None, None, None) =>
         LeaseDateValid
 
-      case (Some(leaseStart), Some(leaseEnd), _) if formatDate(leaseEnd).isBefore(leaseStart) =>
+      case (Some(leaseStart), Some(leaseEnd), _) if leaseEnd.isBefore(leaseStart) =>
         LeaseStartBeforeLeaseEndDate
 
       case (Some(leaseStart), _, Some(rentEndDate)) if leaseStart.isAfter(rentEndDate) =>
         LeaseStartBeforeRentEndDate
 
-      case (_, Some(leaseEnd), Some(rentEndDate)) if rentEndDate.isAfter(formatDate(leaseEnd)) =>
+      case (_, Some(leaseEnd), Some(rentEndDate)) if rentEndDate.isAfter(leaseEnd) =>
         RentEndDateAfterLeaseEndDate
 
       case _ =>
@@ -56,9 +56,30 @@ class LeaseDatesService {
   }
 
   private def formatDate(date: String): LocalDate =
-    LocalDate.parse(date, formatter)
+  def leaseEndDatesValidation(userAnswers: UserAnswers): LeaseEndDateValidationResult = {
+    val lease: Option[Lease] =
+      userAnswers.fullReturn
+        .flatMap(_.lease)
 
-}
+    val leaseStartDate = userAnswers.get(LeaseStartDatePage)
+    val leaseEndDate = userAnswers.get(LeaseEndDatePage)
+    val startingRentEndDate = lease.flatMap(_.startingRentEndDate) //TODO: Post implementation of 3521 date will fetch from Page instead of fullreturn
+
+    (leaseStartDate, leaseEndDate, startingRentEndDate) match {
+
+      case (None, None, _) =>
+        LeaseDatesEmptyInvalid
+
+      case (Some(leaseStart), Some(leaseEnd), _) if leaseEnd.isBefore(leaseStart) =>
+        LeaseEndDateBeforeLeaseStartDate
+
+      case (_, Some(leaseEnd), Some(leaseRentStartEnd)) if leaseEnd.isBefore(formatDate(leaseRentStartEnd)) =>
+        LeaseEndDateBeforeRentEndDate
+
+      case _ =>
+        LeaseEndDateValid
+    }
+  }
 
 object LeaseDatesService {
 
@@ -71,4 +92,15 @@ object LeaseDatesService {
   case object RentEndDateAfterLeaseEndDate extends LeaseDatesValidationResult
 
   case object LeaseStartBeforeLeaseEndDate extends LeaseDatesValidationResult
+
+  sealed trait LeaseEndDateValidationResult
+
+  case object LeaseDatesEmptyInvalid extends LeaseEndDateValidationResult
+
+  case object LeaseEndDateBeforeLeaseStartDate extends LeaseEndDateValidationResult
+
+  case object  LeaseEndDateBeforeRentEndDate extends LeaseEndDateValidationResult
+
+  case object LeaseEndDateValid extends LeaseEndDateValidationResult
+
 }

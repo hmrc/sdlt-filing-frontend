@@ -18,7 +18,7 @@ package services.lease
 
 import base.SpecBase
 import models.{FullReturn, Lease}
-import pages.lease.{LeaseStartDatePage, LeaseStartingRentEndDatePage}
+import pages.lease.{LeaseStartDatePage, LeaseStartingRentEndDatePage, LeaseEndDatePage}
 
 import java.time.LocalDate
 
@@ -35,6 +35,9 @@ class LeaseDatesServiceSpec extends SpecBase with Matchers {
   )
 
   "LeaseStartDatePageValidation" - {
+
+    "leaseDatesValidation method" - {
+
 
     "must return Valid when no lease start date, end date and rent starting end date are present" in {
       val result = service.leaseDatesValidation(emptyUserAnswers)
@@ -99,5 +102,43 @@ class LeaseDatesServiceSpec extends SpecBase with Matchers {
       val result = service.leaseDatesValidation(userAnswers)
       result mustBe LeaseStartBeforeLeaseEndDate
     }
+ }
+
+    "leaseEndDatesValidation method" - {
+
+      "must return Valid when no lease start date, end date and rent starting end date in full return" in {
+        val fullReturnWithLeaseValidDates = fullReturn.copy(lease = Some(leaseWithLeaseStartDate))
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithLeaseValidDates)).set(LeaseStartDatePage, LocalDate.of(2026, 10, 26)).success.value
+          .set(LeaseStartingRentEndDatePage, LocalDate.of("1 02 2008")).success.value
+        val result = service.leaseEndDatesValidation(userAnswers)
+        result mustBe LeaseEndDateValid
+      }
+
+      "must return Invalid when lease start date present and end date are not present in full return" in {
+        val fullReturnWithLeaseValidDates = fullReturn.copy(lease = Some(leaseWithLeaseStartDate))
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithLeaseValidDates)).set(LeaseStartingRentEndDatePage, LocalDate.of("1 10 2007")).success.value
+        val result = service.leaseEndDatesValidation(userAnswers)
+        result mustBe LeaseDatesEmptyInvalid
+      }
+
+      "must return LeaseEndDateBeforeLeaseStartDate when lease end date is before lease start date in full return" in {
+        val fullReturnWithLeaseValidDates = fullReturn.copy(lease = Some(leaseWithLeaseStartDate))
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithLeaseValidDates)).set(LeaseStartDatePage, LocalDate.of(2006, 10, 26)).success.value
+          .set(LeaseEndDatePage, LocalDate.of(2005, 10, 26)).success.value
+          .set(LeaseStartingRentEndDatePage, LocalDate.of("1 10 2007")).success.value
+        val result = service.leaseEndDatesValidation(userAnswers)
+        result mustBe LeaseEndDateBeforeLeaseStartDate
+      }
+
+      "must return LeaseEndDateBeforeRentEndDate when lease end date is before rent starting end date in full return" in {
+        val fullReturnWithLeaseValidDates = fullReturn.copy(lease = Some(leaseWithLeaseStartDate))
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithLeaseValidDates)).set(LeaseStartDatePage, LocalDate.of(2020, 10, 26)).success.value
+          .set(LeaseEndDatePage, LocalDate.of(2025, 10, 26)).success.value
+          .set(LeaseStartingRentEndDatePage, LocalDate.of("1 02 2028")).success.value
+        val result = service.leaseEndDatesValidation(userAnswers)
+        result mustBe LeaseEndDateBeforeRentEndDate
+      }
+    }
+
   }
 }
