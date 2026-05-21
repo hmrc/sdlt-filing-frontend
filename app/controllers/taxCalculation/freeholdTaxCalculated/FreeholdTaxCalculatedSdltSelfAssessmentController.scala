@@ -71,8 +71,8 @@ class FreeholdTaxCalculatedSdltSelfAssessmentController @Inject()(
               )
             Ok(view(prepared, postAction(mode), sectionKey))
           case Right(SelfAssessed | PreMarch2012) =>
-            logger.warn(s"[FreeholdTaxCalculatedSdltSelfAssessmentController][onPageLoad] sdltc returned non-calculated outcome on a calculated flow; routing to cannot-calculate")
-            Redirect(controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad())
+            logger.warn(s"[FreeholdTaxCalculatedSdltSelfAssessmentController] sdltc returned non-calculated outcome, Redirecting to Return Task List")
+            Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
           case Left(err) =>
             logger.warn(s"[FreeholdTaxCalculatedSdltSelfAssessmentController][onPageLoad] sdltc failed: ${err.message}")
             Redirect(errorHandler(err))

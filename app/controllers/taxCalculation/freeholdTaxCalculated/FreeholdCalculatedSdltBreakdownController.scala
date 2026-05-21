@@ -54,8 +54,8 @@ class FreeholdCalculatedSdltBreakdownController @Inject()(
                 Redirect(errorHandler(err))
             }
           case Right(SelfAssessed | PreMarch2012) =>
-            logger.warn(s"[FreeholdCalculatedSdltBreakdownController] sdltc returned non-calculated outcome on a calculated flow; routing to cannot-calculate")
-            Redirect(controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad())
+            logger.warn(s"[FreeholdCalculatedSdltBreakdownController] sdltc returned non-calculated outcome, Redirecting to Return Task List")
+            Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
           case Left(err) =>
             logger.warn(s"[FreeholdCalculatedSdltBreakdownController] sdltc reported missing data: ${err.message}")
             Redirect(errorHandler(err))
