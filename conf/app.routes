@@ -721,3 +721,8 @@ GET        /about-the-lease/add-annual-rent-VAT                                 
 POST       /about-the-lease/add-annual-rent-VAT                                                      controllers.lease.LeaseIsVatPayableController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-lease/add-annual-rent-VAT/change                                               controllers.lease.LeaseIsVatPayableController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-lease/add-annual-rent-VAT/change                                               controllers.lease.LeaseIsVatPayableController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-lease/enter-annual-rent-VAT                                                    controllers.lease.EnterAnnualRentVatController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-lease/enter-annual-rent-VAT                                                    controllers.lease.EnterAnnualRentVatController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-lease/enter-annual-rent-VAT/change                                             controllers.lease.EnterAnnualRentVatController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-lease/enter-annual-rent-VAT/change                                             controllers.lease.EnterAnnualRentVatController.onSubmit(mode: Mode = CheckMode)
