@@ -448,7 +448,7 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LeaseThousandPoundsThresholdPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(NormalMode)
         }
 
-        "go from LeaseIsVatPayablePage to EnterAnnualRentVatPge" in {
+        "go from LeaseIsVatPayablePage to EnterAnnualRentVatPage" in {
           navigator.nextPage(LeaseIsVatPayablePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.EnterAnnualRentVatController.onPageLoad(NormalMode)
         }
 
