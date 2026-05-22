@@ -1440,6 +1440,7 @@ taxCalculation.penaltiesAndInterest.leasehold-tax-not-calculated.heading        
 
 
 taxCalculation.penaltiesAndInterest.checkYourAnswersLabel                           = Does the amount include penalties and interest?
+taxCalculation.penaltiesAndInterest.checkYourAnswersHidden                           = whether penalties and interest are included
 
 taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Leasehold calculated
 taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.heading                            = Does the amount you intend to pay include penalties and interest charges?

@@ -48,7 +48,10 @@ object LeaseholdTaxCalculatedDoesAmountIncludePenaltiesSummary {
         SummaryListRowViewModel(
           key = label,
           value = yesNoValue,
-          actions = Seq(ActionItemViewModel("site.change", changeRoute.url))
+          actions = Seq(
+            ActionItemViewModel("site.change", changeRoute.url)
+              .withVisuallyHiddenText(messages("taxCalculation.penaltiesAndInterest.checkYourAnswersHidden"))
+          )
         )
       )
     }.getOrElse(Missing(changeRoute))

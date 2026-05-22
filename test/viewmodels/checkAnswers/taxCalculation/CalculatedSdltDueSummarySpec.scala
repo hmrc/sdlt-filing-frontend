@@ -47,6 +47,7 @@ class CalculatedSdltDueSummarySpec extends SpecBase {
 
           val valueHtml = result.value.content.asHtml.toString()
           valueHtml mustEqual "£27,500.00"
+          result.actions mustBe None
         }
       }
     }
