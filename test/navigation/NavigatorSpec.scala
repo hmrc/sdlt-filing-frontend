@@ -448,12 +448,16 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LeaseThousandPoundsThresholdPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(NormalMode)
         }
 
-        "go from LeaseIsVatPayablePage to ls-9a" in { // TODO DTR-3533: Update to What is the total amount of VAT payable on the annual rent? - ls-9a
-          navigator.nextPage(LeaseIsVatPayablePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(NormalMode)
+        "go from LeaseIsVatPayablePage to EnterAnnualRentVatPage" in {
+          navigator.nextPage(LeaseIsVatPayablePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.EnterAnnualRentVatController.onPageLoad(NormalMode)
         }
 
-        "go from DoesLeaseIncludeRentFreePeriodPage to AnnualStartingRentPage" in {
-          navigator.nextPage(LeaseEnterRentFreePeriodPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode)
+        "go from DoesLeaseIncludeRentFreePeriodPage to LeaseEnterRentFreePeriodPage" in {
+          navigator.nextPage(DoesLeaseIncludeRentFreePeriodPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(NormalMode)
+        }
+
+        "go from EnterAnnualRentVatPage to ls-10 Total Premium Payable" in { //TODO DTR-3539 ls-10 total premium payable
+          navigator.nextPage(EnterAnnualRentVatPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.EnterAnnualRentVatController.onPageLoad(NormalMode)
         }
       }
 

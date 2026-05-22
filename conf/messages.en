@@ -1691,7 +1691,7 @@ transaction.cisNumber.change.hidden                                             
 transaction.descriptionOfRestrictions.title                                         = What are the restrictions, covenants or conditions affecting the value of the interest transferred or granted? - About the transaction
 transaction.descriptionOfRestrictions.heading                                       = What are the restrictions, covenants or conditions affecting the value of the interest transferred or granted?
 transaction.descriptionOfRestrictions.subHeading                                    = Have you applied for a CAP1 or NSBC in relation to this transaction?
-transaction.descriptionOfRestrictions.hint                                          = Provide a brief description, like a vendor`s right to buy back at less than market value
+transaction.descriptionOfRestrictions.hint                                          = Provide a brief description, like a vendor’s right to buy back at less than market value
 transaction.descriptionOfRestrictions.error.required                                = Enter a brief description of the restrictions, covenants or conditions affecting the value of the interest transferred or granted
 transaction.descriptionOfRestrictions.error.regex                                   = The brief description of the restrictions, covenants or conditions must only include letters a to z, numbers 0 to 9, spaces and full stops
 transaction.descriptionOfRestrictions.error.length                                  = The brief description of the restrictions, covenants or conditions must be 42 characters or fewer
@@ -1865,3 +1865,14 @@ lease.leaseIsVatPayable.subheading                                              
 lease.leaseIsVatPayable.checkYourAnswersLabel                                       = Is VAT payable on the annual rent?
 lease.leaseIsVatPayable.error.required                                              = Select yes if there is VAT payable on the annual rent
 lease.leaseIsVatPayable.change.hidden                                               = Is VAT payable on the annual rent?
+
+lease.enterAnnualRentVat.title                                                      = What is the total amount of VAT payable on the annual rent?
+lease.enterAnnualRentVat.heading                                                    = What is the total amount of VAT payable on the annual rent?
+lease.enterAnnualRentVat.hint                                                       = Enter the value in whole pounds only, for example £10,000
+lease.enterAnnualRentVat.checkYourAnswersLabel                                      = Total VAT payable on the annual rent
+lease.enterAnnualRentVat.error.required                                             = Enter the total amount of VAT payable on the annual rent, in pounds
+lease.enterAnnualRentVat.error.invalidNumeric                                       = The total amount of VAT payable on the annual rent must only include numbers 0 to 9 and commas
+lease.enterAnnualRentVat.error.invalidWholeNumber                                   = Enter the total amount of VAT payable on the annual rent in whole pounds
+lease.enterAnnualRentVat.error.maximum                                              = The total amount of VAT payable on the annual rent must be equal to or less than £999,999,999
+lease.enterAnnualRentVat.error.maxLength                                            = The total amount of VAT payable on the annual rent must be 14 digits or fewer
+lease.enterAnnualRentVat.change.hidden                                              = Total VAT payable on the annual rent

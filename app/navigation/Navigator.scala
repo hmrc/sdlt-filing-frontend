@@ -72,7 +72,7 @@ class Navigator @Inject()() {
     case residencyPage if isResidencySection(residencyPage) => residencyRoutes(residencyPage)
     case transactionPage if isTransactionSection(transactionPage) => transactionRoutes(transactionPage)
     case leasePage if isLeaseSection(leasePage) => leaseRoutes(leasePage)
-    
+
     case taxCalcPage if isTaxCalculationBeforeFlowSection(taxCalcPage) => beforeTaxCalculationFlowRoutes(taxCalcPage)
     case taxCalcPage if isFreeholdTaxCalculatedSection(taxCalcPage) => freeholdTaxCalculatedRoutes(taxCalcPage)
     case taxCalcPage if isFreeholdSelfAssessedSection(taxCalcPage) => freeholdSelfAssessedRoutes(taxCalcPage)
@@ -297,7 +297,7 @@ class Navigator @Inject()() {
 
   private def isLeaseSection(page: Page): Boolean = page match {
     case TypeOfLeasePage | LeaseEnterRentFreePeriodPage | LaterRentPage | LeaseThousandPoundsThresholdPage | LeaseStartDatePage
-         | DoesLeaseIncludeRentFreePeriodPage | AnnualStartingRentPage | LeaseIsVatPayablePage | LeaseStartingRentEndDatePage => true
+         | DoesLeaseIncludeRentFreePeriodPage | AnnualStartingRentPage | LeaseIsVatPayablePage | LeaseStartingRentEndDatePage | EnterAnnualRentVatPage => true
     case _ => false
   }
   
@@ -316,10 +316,12 @@ class Navigator @Inject()() {
       _ => controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(NormalMode)
     case AnnualStartingRentPage =>
       _ => controllers.lease.routes.LeaseStartingRentEndDateController.onPageLoad(NormalMode)
-    case LeaseIsVatPayablePage => // TODO DTR-3533: Update to What is the total amount of VAT payable on the annual rent? - ls-9a
-      _ => controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(NormalMode)
+    case LeaseIsVatPayablePage =>
+      _ => controllers.lease.routes.EnterAnnualRentVatController.onPageLoad(NormalMode)
     case LeaseStartingRentEndDatePage =>
       _ => controllers.lease.routes.LaterRentController.onPageLoad(NormalMode)
+    case EnterAnnualRentVatPage => //TODO - DTR-3539 - SPRINT 15 - total premium payable ls-10
+      _ => controllers.lease.routes.EnterAnnualRentVatController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
