@@ -17,21 +17,21 @@
 package controllers.taxCalculation.freeholdTaxCalculated
 
 import base.SpecBase
-import controllers.taxCalculation.PenaltiesAndInterestExtension
 import forms.taxCalculation.PenaltiesAndInterestFormProvider
 import models.taxCalculation.TaxCalculationFlow
 import models.taxCalculation.TaxCalculationFlow.*
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.taxCalculation.TaxCalculationFlowPage
 import pages.taxCalculation.freeholdTaxCalculated.FreeholdTaxCalculatedPenaltiesAndInterestPage
 import play.api.Application
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import views.html.taxCalculation.AmountWithPenaltiesView
 
 class FreeholdTaxCalculatedPenaltiesAndInterestControllerSpec extends SpecBase {
 
-  trait Fixture extends PenaltiesAndInterestExtension {
+  trait Fixture  {
     val form = new PenaltiesAndInterestFormProvider()()
     val preparedForm = form.fill(true)
     val answersFreeHoldNoUserChoice: UserAnswers = emptyUserAnswers.set(TaxCalculationFlowPage,
@@ -41,6 +41,10 @@ class FreeholdTaxCalculatedPenaltiesAndInterestControllerSpec extends SpecBase {
       .set(FreeholdTaxCalculatedPenaltiesAndInterestPage, true).success.value
     val answersLeasehold: UserAnswers = emptyUserAnswers.set(TaxCalculationFlowPage,
       TaxCalculationFlow.LeaseholdSelfAssessed).success.value
+
+    val postAction: Mode => Call = mode =>
+      controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdSdltCalculatedPenaltiesAndInterestController.onSubmit(mode)
+
   }
 
   "FreeholdTaxCalculatedPenaltiesAndInterestController" - {
@@ -57,8 +61,7 @@ class FreeholdTaxCalculatedPenaltiesAndInterestControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[AmountWithPenaltiesView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, pageTitle = getPageTitle(flow = FreeholdTaxCalculated)(messages(application)),
-          postAction(FreeholdTaxCalculated, NormalMode))(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, sectionKey = "taxCalculation.penaltiesAndInterest.freehold-tax-calculated.title", postAction(NormalMode))(request, messages(application)).toString
       }
     }
 
@@ -74,8 +77,8 @@ class FreeholdTaxCalculatedPenaltiesAndInterestControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[AmountWithPenaltiesView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(preparedForm, pageTitle = getPageTitle(flow = FreeholdTaxCalculated)(messages(application)),
-          postAction(FreeholdTaxCalculated, CheckMode))(request, messages(application)).toString
+        contentAsString(result) mustEqual view(preparedForm,
+          sectionKey = "taxCalculation.penaltiesAndInterest.freehold-tax-calculated.title", postAction(CheckMode))(request, messages(application)).toString
       }
     }
 

@@ -17,23 +17,25 @@
 package views.taxCalculation.leaseholdTaxCalculated
 
 import base.SpecBase
-import controllers.taxCalculation.PenaltiesAndInterestExtension
 import forms.taxCalculation.PenaltiesAndInterestFormProvider
 import models.{CheckMode, NormalMode}
-import models.taxCalculation.TaxCalculationFlow.*
 import org.jsoup.Jsoup
 import play.api.Application
-import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.running
 import views.html.taxCalculation.AmountWithPenaltiesView
+import play.api.mvc.Call
+import models.Mode
+import play.api.i18n.Messages
 
 class LeaseholdTaxCalculatedPenaltiesViewSpec extends SpecBase {
 
-  trait Fixture extends PenaltiesAndInterestExtension {
+  trait Fixture {
     val form = new PenaltiesAndInterestFormProvider()()
     val application: Application = applicationBuilder().build()
+    val postAction: Mode => Call = mode =>
+      controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdSdltCalculatedPenaltiesAndInterestController.onSubmit(mode)
   }
 
   "Scenario 3 page: Tax calculation – LeaseholdTaxCalculated" - {
@@ -44,7 +46,7 @@ class LeaseholdTaxCalculatedPenaltiesViewSpec extends SpecBase {
           implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
           val view = application.injector.instanceOf[AmountWithPenaltiesView]
 
-          val doc = Jsoup.parse(view(form, getPageTitle(flow = LeaseholdTaxCalculated), postAction(LeaseholdTaxCalculated, contextMode)).toString())
+          val doc = Jsoup.parse(view(form, sectionKey = "taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.title", postAction(contextMode)).toString())
 
           doc.select("title").first().text() must include(msgs("taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.title"))
           doc.select("h1").first().text() mustBe msgs("taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.heading")
@@ -60,8 +62,9 @@ class LeaseholdTaxCalculatedPenaltiesViewSpec extends SpecBase {
           implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
           val view = application.injector.instanceOf[AmountWithPenaltiesView]
 
-          val button = Jsoup.parse(view(form, getPageTitle(flow = LeaseholdTaxCalculated),
-            postAction(LeaseholdTaxCalculated, contextMode)).toString()).select("button.govuk-button").first()
+          val button = Jsoup.parse(view(form,
+            sectionKey = "taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.title", postAction(contextMode)).toString()).select("button.govuk-button").first()
+
           button.text() mustBe msgs("taxCalculation.penaltiesAndInterest.button")
         }
       }
@@ -74,8 +77,8 @@ class LeaseholdTaxCalculatedPenaltiesViewSpec extends SpecBase {
           implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
           val view = application.injector.instanceOf[AmountWithPenaltiesView]
 
-          val doc = Jsoup.parse(view(form, getPageTitle(flow = LeaseholdTaxCalculated),
-            postAction(LeaseholdTaxCalculated, contextMode)).toString())
+          val doc = Jsoup.parse(view(form,
+            sectionKey = "taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.title", postAction(contextMode)).toString())
 
           val yesRadio = doc.getElementById("value")
           yesRadio.attr("value") mustBe "true"

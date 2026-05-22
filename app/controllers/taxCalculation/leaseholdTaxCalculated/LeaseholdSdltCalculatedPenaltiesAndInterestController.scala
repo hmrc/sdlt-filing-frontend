@@ -16,78 +16,73 @@
 
 package controllers.taxCalculation.leaseholdTaxCalculated
 
-import com.google.inject.Singleton
-import connectors.errorLog
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.routes.ReturnTaskListController
-import controllers.taxCalculation.PenaltiesAndInterestExtension
 import forms.taxCalculation.PenaltiesAndInterestFormProvider
-import models.taxCalculation.TaxCalculationFlow.LeaseholdTaxCalculated
 import models.Mode
+import models.taxCalculation.TaxCalculationFlow.LeaseholdTaxCalculated
 import navigation.Navigator
 import pages.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedPenaltiesAndInterestPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, Call, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.LoggingUtil
 import views.html.taxCalculation.AmountWithPenaltiesView
-
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.Inject
 
-
-@Singleton
 class LeaseholdSdltCalculatedPenaltiesAndInterestController @Inject()(
-                                                                      override val messagesApi: MessagesApi,
-                                                                      identify: IdentifierAction,
-                                                                      getData: DataRetrievalAction,
-                                                                      requireData: DataRequiredAction,
-                                                                      formProvider: PenaltiesAndInterestFormProvider,
-                                                                      val controllerComponents: MessagesControllerComponents,
-                                                                      sdltCalculationService: SdltCalculationService,
-                                                                      navigator: Navigator,
-                                                                      view: AmountWithPenaltiesView
-                                                                    )(implicit ec: ExecutionContext) extends FrontendBaseController
-  with I18nSupport with PenaltiesAndInterestExtension with LoggingUtil {
+                                                                       override val messagesApi: MessagesApi,
+                                                                       identify: IdentifierAction,
+                                                                       getData: DataRetrievalAction,
+                                                                       requireData: DataRequiredAction,
+                                                                       formProvider: PenaltiesAndInterestFormProvider,
+                                                                       val controllerComponents: MessagesControllerComponents,
+                                                                       sdltCalculationService: SdltCalculationService,
+                                                                       sessionRepository: SessionRepository,
+                                                                       navigator: Navigator,
+                                                                       view: AmountWithPenaltiesView
+                                                                     )(implicit ec: ExecutionContext) extends FrontendBaseController
+  with I18nSupport with LoggingUtil {
 
   private val form = formProvider()
+  private val postAction: Mode => Call = mode =>
+    controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdSdltCalculatedPenaltiesAndInterestController.onSubmit(mode)
+  private val sectionKey: String = "taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.title"
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val preparedForm = request.userAnswers.get(LeaseholdTaxCalculatedPenaltiesAndInterestPage).fold(form)(form.fill)
-      validateFlow(request.userAnswers)(LeaseholdTaxCalculated) match {
-        case None =>
-          Ok(view(preparedForm, getPageTitle(flow = LeaseholdTaxCalculated), postAction(LeaseholdTaxCalculated, mode)))
-        case Some(firstErrorFound) =>
-          errorLog(s"[LeaseholdSdltCalculatedPenaltiesAndInterestController][onPageLoad] invalid flow state: $firstErrorFound")
-          Redirect(ReturnTaskListController.onPageLoad())
+      sdltCalculationService.whenInFlow(LeaseholdTaxCalculated) {
+        val preparedForm = request.userAnswers.get(LeaseholdTaxCalculatedPenaltiesAndInterestPage).fold(form)(form.fill)
+        Ok(view(preparedForm, sectionKey, postAction(mode)))
       }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      validateFlow(request.userAnswers)(LeaseholdTaxCalculated) match {
-        case None =>
-          form
-            .bindFromRequest()
-            .fold(
-              formWithErrors =>
-                Future.successful(BadRequest(view(formWithErrors, getPageTitle(flow = LeaseholdTaxCalculated), postAction(LeaseholdTaxCalculated, mode)))),
-              {
-                yesOrNoSelected =>
-                  sdltCalculationService
-                    .savePenaltiesAndInterestYesNoAnswer(
-                      key = LeaseholdTaxCalculatedPenaltiesAndInterestPage,
-                      value = yesOrNoSelected)
-                    .map { _ =>
-                      infoLog(s"[LeaseholdSdltCalculatedPenaltiesAndInterestController][onSubmit] userAnswer saved :: redirecting")
-                      Redirect(navigator.nextPage(LeaseholdTaxCalculatedPenaltiesAndInterestPage, mode, userAnswers = request.userAnswers))
-                    }
-              }
-            )
-        case Some(firstErrorFound) =>
-          Future.successful(Redirect(ReturnTaskListController.onPageLoad()))
+      sdltCalculationService.whenInFlowAsync(LeaseholdTaxCalculated) {
+        form
+          .bindFromRequest()
+          .fold(
+            formWithErrors =>
+              Future.successful(BadRequest(view(formWithErrors, sectionKey, postAction(mode)))),
+            {
+              yesOrNoSelected =>
+                for {
+                  updatedAnswers <- Future.fromTry {
+                    request.userAnswers.set(
+                      LeaseholdTaxCalculatedPenaltiesAndInterestPage,
+                      yesOrNoSelected
+                    )
+                  }
+                  _ <- sessionRepository.set(updatedAnswers)
+                } yield {
+                  Redirect(navigator.nextPage(LeaseholdTaxCalculatedPenaltiesAndInterestPage, mode, userAnswers = updatedAnswers))
+                }
+
+            }
+          )
       }
   }
 
