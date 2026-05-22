@@ -17,14 +17,15 @@
 package utils
 
 import base.SpecBase
+import models.taxCalculation.CalculationOutcome.{Calculated, PreMarch2012, SelfAssessed}
 import models.taxCalculation.{HoldingTypes, TaxCalculationFlow, TaxCalculationResult}
 import models.{FullReturn, Transaction, UserAnswers}
 import utils.TaxCalculationHelper.*
 
 class TaxCalculationHelperSpec extends SpecBase {
 
-  private def resultWithHeading(heading: Option[String]): TaxCalculationResult =
-    TaxCalculationResult(totalTax = 0, resultHeading = heading, resultHint = None, npv = None, taxCalcs = Seq.empty)
+  private val emptyResult: TaxCalculationResult =
+    TaxCalculationResult(totalTax = 0, resultHeading = None, resultHint = None, npv = None, taxCalcs = Seq.empty)
 
   private def answersWith(transactionDescription: String): UserAnswers =
     emptyUserAnswers.copy(fullReturn = Some(FullReturn(
@@ -32,21 +33,6 @@ class TaxCalculationHelperSpec extends SpecBase {
       returnResourceRef = "REF001",
       transaction       = Some(Transaction(transactionDescription = Some(transactionDescription)))
     )))
-
-  "calculationResponseType" - {
-
-    "must return TaxNotCalculated when resultHeading equals 'Self-assessed'" in {
-      calculationResponseType(resultWithHeading(Some("Self-assessed"))) mustBe TaxNotCalculated
-    }
-
-    "must return TaxCalculated when resultHeading is None" in {
-      calculationResponseType(resultWithHeading(None)) mustBe TaxCalculated
-    }
-
-    "must return TaxCalculated when resultHeading is anything other than the exact 'Self-assessed' string" in {
-      calculationResponseType(resultWithHeading(Some("calculated"))) mustBe TaxCalculated
-    }
-  }
 
   "holdingType" - {
 
@@ -77,24 +63,32 @@ class TaxCalculationHelperSpec extends SpecBase {
 
   "flowFor" - {
 
-    "must return Some(FreeholdTaxCalculated) for freehold and a tax-calculated result" in {
-      flowFor(answersWith("F"), resultWithHeading(None)) mustBe Some(TaxCalculationFlow.FreeholdTaxCalculated)
+    "must return Some(FreeholdTaxCalculated) for freehold and a Calculated outcome" in {
+      flowFor(answersWith("F"), Calculated(emptyResult)) mustBe Some(TaxCalculationFlow.FreeholdTaxCalculated)
     }
 
-    "must return Some(FreeholdSelfAssessed) for freehold and a Self-assessed result" in {
-      flowFor(answersWith("F"), resultWithHeading(Some("Self-assessed"))) mustBe Some(TaxCalculationFlow.FreeholdSelfAssessed)
+    "must return Some(FreeholdSelfAssessed) for freehold and a SelfAssessed outcome" in {
+      flowFor(answersWith("F"), SelfAssessed) mustBe Some(TaxCalculationFlow.FreeholdSelfAssessed)
     }
 
-    "must return Some(LeaseholdTaxCalculated) for leasehold and a tax-calculated result" in {
-      flowFor(answersWith("L"), resultWithHeading(None)) mustBe Some(TaxCalculationFlow.LeaseholdTaxCalculated)
+    "must return Some(FreeholdSelfAssessed) for freehold and a PreMarch2012 outcome" in {
+      flowFor(answersWith("F"), PreMarch2012) mustBe Some(TaxCalculationFlow.FreeholdSelfAssessed)
     }
 
-    "must return Some(LeaseholdSelfAssessed) for leasehold and a Self-assessed result" in {
-      flowFor(answersWith("L"), resultWithHeading(Some("Self-assessed"))) mustBe Some(TaxCalculationFlow.LeaseholdSelfAssessed)
+    "must return Some(LeaseholdTaxCalculated) for leasehold and a Calculated outcome" in {
+      flowFor(answersWith("L"), Calculated(emptyResult)) mustBe Some(TaxCalculationFlow.LeaseholdTaxCalculated)
+    }
+
+    "must return Some(LeaseholdSelfAssessed) for leasehold and a SelfAssessed outcome" in {
+      flowFor(answersWith("L"), SelfAssessed) mustBe Some(TaxCalculationFlow.LeaseholdSelfAssessed)
+    }
+
+    "must return Some(LeaseholdSelfAssessed) for leasehold and a PreMarch2012 outcome" in {
+      flowFor(answersWith("L"), PreMarch2012) mustBe Some(TaxCalculationFlow.LeaseholdSelfAssessed)
     }
 
     "must return None when no FullReturn is present" in {
-      flowFor(emptyUserAnswers, resultWithHeading(None)) mustBe None
+      flowFor(emptyUserAnswers, Calculated(emptyResult)) mustBe None
     }
   }
 }

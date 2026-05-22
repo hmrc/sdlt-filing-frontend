@@ -33,7 +33,7 @@ object PropertyTypeHelper {
     DateTimeFormatter.ofPattern("yyyy/MM/dd")
   )
 
-  private def parseEffectiveDate(str: String): Option[LocalDate] =
+  def parseEffectiveDate(str: String): Option[LocalDate] =
     DateFormatters.iterator
       .map(fmt => Try(LocalDate.parse(str.trim, fmt)).toOption)
       .collectFirst { case Some(date) => date }
