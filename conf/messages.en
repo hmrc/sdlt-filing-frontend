@@ -1883,6 +1883,7 @@ lease.enterTotalPremiumPayable.h2                                               
 lease.enterTotalPremiumPayable.p1                                                   = If this transaction is linked to the grant of any other lease, only enter the premium for this lease. Include any VAT due on this premium.
 lease.enterTotalPremiumPayable.hint                                                 = Enter the value in whole pounds only, for example £10,000
 lease.enterTotalPremiumPayable.checkYourAnswersLabel                                = What is the total premium payable including VAT?
+lease.enterTotalPremiumPayable.change.hidden                                        = Total premium payable including VAT
 lease.enterTotalPremiumPayable.error.required                                       = Enter the total premium payable including VAT
 lease.enterTotalPremiumPayable.error.length                                         = The total premium payable including VAT must be 14 digits or fewer
 lease.enterTotalPremiumPayable.error.invalidNumeric                                 = The total premium payable including VAT must only include numbers 0 to 9 and commas
