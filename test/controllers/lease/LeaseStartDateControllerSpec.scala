@@ -193,17 +193,9 @@ class LeaseStartDateControllerSpec extends SpecBase with MockitoSugar {
 
     "must return BadRequest when lease start date greater than rent staring end date for a POST" in {
 
-      val fullReturn = FullReturn(
-        stornId = "1",
-        returnResourceRef = "ref",
-         lease = Some(Lease(contractStartDate = Some("1/2/2008")))
-      )
-
-      val leaseWithLeaseStartDate = Lease(contractEndDate = Some("1 02 2028"), startingRentEndDate = Some("1 10 2007"))
-      val fullReturnWithLeaseValidDates = fullReturn.copy(lease = Some(leaseWithLeaseStartDate))
-      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithLeaseValidDates)).set(LeaseStartDatePage, LocalDate.of(2008, 10, 26)).success.value
-        .set(LeaseStartingRentEndDatePage, LocalDate.of(2007, 10, 1)).success.value
-        .set(LeaseEndDatePage, LocalDate.of(2008, 10, 26)).success.value
+     val userAnswers = emptyUserAnswers.set(LeaseStartDatePage, LocalDate.of(2008, 10, 26)).success.value
+        .set(LeaseStartingRentEndDatePage, LocalDate.of(2025, 10, 1)).success.value
+        .set(LeaseEndDatePage, LocalDate.of(2030, 10, 26)).success.value
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -225,16 +217,8 @@ class LeaseStartDateControllerSpec extends SpecBase with MockitoSugar {
 
     "must redirect to Journey Recovery when rent end date is after lease end date for a POST" in {
 
-      val fullReturn = FullReturn(
-        stornId = "1",
-        returnResourceRef = "ref",
-        lease = Some(Lease(contractStartDate = Some("1/2/2020")))
-      )
-
-      val leaseWithDates = Lease(contractEndDate = Some("1 02 2027"))
-      val fullReturnWithDates = fullReturn.copy(lease = Some(leaseWithDates))
-      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithDates))
-        .set(LeaseStartingRentEndDatePage, LocalDate.of(2028, 1, 1)).success.value
+      val userAnswers = emptyUserAnswers.set(LeaseStartingRentEndDatePage, LocalDate.of(2028, 1, 1)).success.value
+        .set(LeaseEndDatePage, LocalDate.of(2027, 1, 1)).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 

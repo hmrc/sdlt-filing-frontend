@@ -16,7 +16,7 @@
 
 package services.lease
 
-import models.{Lease, UserAnswers}
+import models.UserAnswers
 import pages.lease.{LeaseEndDatePage, LeaseStartDatePage, LeaseStartingRentEndDatePage}
 import services.lease.LeaseDatesService.*
 
@@ -28,12 +28,9 @@ class LeaseDatesService {
   val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MM yyyy")
 
   def leaseDatesValidation(userAnswers: UserAnswers): LeaseDatesValidationResult = {
-    val lease: Option[Lease] =
-      userAnswers.fullReturn
-        .flatMap(_.lease)
-
-    val leaseStartDate      = userAnswers.get(LeaseStartDatePage)
-    val leaseEndDate        = userAnswers.get(LeaseEndDatePage)
+    
+    val leaseStartDate = userAnswers.get(LeaseStartDatePage)
+    val leaseEndDate = userAnswers.get(LeaseEndDatePage)
     val startingRentEndDate = userAnswers.get(LeaseStartingRentEndDatePage)
 
     (leaseStartDate, leaseEndDate, startingRentEndDate) match {
@@ -55,15 +52,11 @@ class LeaseDatesService {
     }
   }
 
-  private def formatDate(date: String): LocalDate =
   def leaseEndDatesValidation(userAnswers: UserAnswers): LeaseEndDateValidationResult = {
-    val lease: Option[Lease] =
-      userAnswers.fullReturn
-        .flatMap(_.lease)
 
     val leaseStartDate = userAnswers.get(LeaseStartDatePage)
     val leaseEndDate = userAnswers.get(LeaseEndDatePage)
-    val startingRentEndDate = lease.flatMap(_.startingRentEndDate) //TODO: Post implementation of 3521 date will fetch from Page instead of fullreturn
+    val startingRentEndDate = userAnswers.get(LeaseStartingRentEndDatePage)
 
     (leaseStartDate, leaseEndDate, startingRentEndDate) match {
 
@@ -73,13 +66,14 @@ class LeaseDatesService {
       case (Some(leaseStart), Some(leaseEnd), _) if leaseEnd.isBefore(leaseStart) =>
         LeaseEndDateBeforeLeaseStartDate
 
-      case (_, Some(leaseEnd), Some(leaseRentStartEnd)) if leaseEnd.isBefore(formatDate(leaseRentStartEnd)) =>
+      case (_, Some(leaseEnd), Some(leaseRentStartEnd)) if leaseEnd.isBefore(leaseRentStartEnd) =>
         LeaseEndDateBeforeRentEndDate
 
       case _ =>
         LeaseEndDateValid
     }
   }
+}
 
 object LeaseDatesService {
 

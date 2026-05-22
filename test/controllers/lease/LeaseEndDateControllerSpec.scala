@@ -19,12 +19,12 @@ package controllers.lease
 import base.SpecBase
 import controllers.routes
 import forms.lease.LeaseEndDateFormProvider
-import models.{FullReturn, Lease, NormalMode}
+import models.NormalMode
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.lease.{LeaseEndDatePage, LeaseStartDatePage}
+import pages.lease.{LeaseEndDatePage, LeaseStartDatePage, LeaseStartingRentEndDatePage}
 import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Call}
@@ -48,9 +48,7 @@ class LeaseEndDateControllerSpec extends SpecBase with MockitoSugar {
   val validAnswer: LocalDate = LocalDate.now(ZoneOffset.UTC)
 
   lazy val leaseEndDateRoute: String = controllers.lease.routes.LeaseEndDateController.onPageLoad(NormalMode).url
-
-  // override val emptyUserAnswers = UserAnswers(userAnswersId)
-
+  
   def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(GET, leaseEndDateRoute)
 
@@ -162,15 +160,8 @@ class LeaseEndDateControllerSpec extends SpecBase with MockitoSugar {
 
     "must return BadRequest when lease end date after lease end date for a POST" in {
 
-      val fullReturn = FullReturn(
-        stornId = "1",
-        returnResourceRef = "ref",
-        lease = Some(Lease(contractStartDate = Some("1/2/2008")))
-      )
-
-      val leaseWithLeaseStartingRentEndDate = Lease(startingRentEndDate = Some("1 10 2050"))
-      val fullReturnWithLeaseValidDates = fullReturn.copy(lease = Some(leaseWithLeaseStartingRentEndDate))
-      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithLeaseValidDates)).set(LeaseStartDatePage, LocalDate.of(2030, 10, 26)).success.value
+      val userAnswers = emptyUserAnswers.set(LeaseStartDatePage, LocalDate.of(2030, 10, 26)).success.value
+      .set(LeaseStartDatePage, LocalDate.of(2031, 10, 26)).success.value
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -192,16 +183,9 @@ class LeaseEndDateControllerSpec extends SpecBase with MockitoSugar {
 
     "must return BadRequest when lease start rent end date before rent end date for a POST" in {
 
-      val fullReturn = FullReturn(
-        stornId = "1",
-        returnResourceRef = "ref",
-        lease = Some(Lease(contractStartDate = Some("1/2/2008")))
-      )
-
-      val leaseWithLeaseStartDate = Lease(startingRentEndDate = Some("1 10 2030"))
-      val fullReturnWithLeaseValidDates = fullReturn.copy(lease = Some(leaseWithLeaseStartDate))
-      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithLeaseValidDates)).set(LeaseStartDatePage, LocalDate.of(2008, 10, 26)).success.value.
-        set(LeaseEndDatePage, LocalDate.of(2008, 10, 26)).success.value
+      val userAnswers = emptyUserAnswers.set(LeaseStartDatePage, LocalDate.of(2008, 10, 26)).success.value
+        .set(LeaseEndDatePage, LocalDate.of(2008, 10, 26)).success.value
+        .set(LeaseStartingRentEndDatePage, LocalDate.of(2030, 10, 1)).success.value
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers)).build()
