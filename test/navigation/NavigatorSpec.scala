@@ -456,8 +456,8 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(DoesLeaseIncludeRentFreePeriodPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(NormalMode)
         }
 
-        "go from EnterAnnualRentVatPage to ls-10 Total Premium Payable" in { //TODO DTR-3539 ls-10 total premium payable
-          navigator.nextPage(EnterAnnualRentVatPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.EnterAnnualRentVatController.onPageLoad(NormalMode)
+        "go from EnterAnnualRentVatPage to ls-10 Total Premium Payable" in {
+          navigator.nextPage(EnterAnnualRentVatPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseEnterTotalPremiumPayableController.onPageLoad(NormalMode)
         }
         
         "go from LeaseEnterTotalPremiumPayablePage to LeaseNetPresentValuePage" in { // TODO - DTR-3542 - SPRINT 16 - update to net present value - ls-11

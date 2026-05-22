@@ -321,8 +321,8 @@ class Navigator @Inject()() {
       _ => controllers.lease.routes.EnterAnnualRentVatController.onPageLoad(NormalMode)
     case LeaseStartingRentEndDatePage =>
       _ => controllers.lease.routes.LaterRentController.onPageLoad(NormalMode)
-    case EnterAnnualRentVatPage => //TODO - DTR-3539 - SPRINT 15 - total premium payable ls-10
-      _ => controllers.lease.routes.EnterAnnualRentVatController.onPageLoad(NormalMode)
+    case EnterAnnualRentVatPage =>
+      _ => controllers.lease.routes.LeaseEnterTotalPremiumPayableController.onPageLoad(NormalMode)
     case LeaseEnterTotalPremiumPayablePage => // TODO - DTR-3542 - SPRINT 16 - update to net present value - ls-11
       _ => controllers.lease.routes.LeaseEnterTotalPremiumPayableController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
