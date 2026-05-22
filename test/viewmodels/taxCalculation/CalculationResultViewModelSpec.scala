@@ -81,6 +81,7 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
         effectiveDate      = "1 April 2024",
         totalConsideration = "£300,000",
         claimingRelief     = "No",
+        reliefReason       = None,
         premiumTax         = "£9,000",
         npvTax             = None,
         totalSdltDue       = "£9,000"
@@ -101,6 +102,7 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
         effectiveDate      = "1 April 2024",
         totalConsideration = "£300,000",
         claimingRelief     = "No",
+        reliefReason       = None,
         premiumTax         = "£8,000",
         npvTax             = Some("£3,000"),
         totalSdltDue       = "£11,000"

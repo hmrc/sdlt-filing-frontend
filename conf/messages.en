@@ -1469,6 +1469,7 @@ taxCalculation.calculation.taxCalculation.totalConsideration                    
 taxCalculation.calculation.taxCalculation.taxDuePremium                             = Tax due on total premium payable
 taxCalculation.calculation.taxCalculation.taxDueNpv                                 = Tax due on NPV
 taxCalculation.calculation.taxCalculation.reliefClaimed                             = Relief claimed?
+taxCalculation.calculation.taxCalculation.reliefReason                              = Relief reason
 taxCalculation.calculation.taxCalculation.sdltDue                                   = SDLT due
 
 taxCalculation.calculation.rateCard.heading                                         = Rate card

@@ -21,7 +21,6 @@ import models.taxCalculation.*
 import models.{FullReturn, Land, Lease, Purchaser, Residency, ReturnInfo, Transaction, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-//import org.mockito.Mockito.verify
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.test.FakeRequest

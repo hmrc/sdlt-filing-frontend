@@ -48,6 +48,7 @@ object CalculationResultViewModel extends CurrencyFormatter {
       formattedDate          <- parseDate(effectiveDate).map(_.toLongDate).left.map(_ => InvalidDateError(effectiveDate))
       totalConsideration     <- transaction.totalConsideration.toRight(MissingTransactionAnswerError("totalConsideration"))
       claimingRelief         <- transaction.claimingRelief.toRight(MissingTransactionAnswerError("claimingRelief"))
+      reliefReason           <- transaction.reliefReason.toRight(MissingTransactionAnswerError("reliefReason"))
       formattedRelief        <- toYesNo(claimingRelief).left.map(_ => InvalidYesNoAnswerError(claimingRelief))
       transactionDescription <- transaction.transactionDescription.toRight(MissingTransactionAnswerError("transactionDescription"))
       propertyType           <- land.propertyType.toRight(MissingLandAnswerError("propertyType"))
@@ -61,6 +62,7 @@ object CalculationResultViewModel extends CurrencyFormatter {
           effectiveDate      = formattedDate,
           totalConsideration = totalConsideration.toCurrency,
           claimingRelief     = formattedRelief,
+          reliefReason       = Some(reliefReason),
           premiumTax         = premiumCalc.taxDue.toCurrency,
           npvTax             = rentCalc.map(_.taxDue.toCurrency),
           totalSdltDue       = result.totalTax.toCurrency
@@ -81,6 +83,7 @@ object CalculationResultViewModel extends CurrencyFormatter {
                                                effectiveDate:      String,
                                                totalConsideration: String,
                                                claimingRelief:     String,
+                                               reliefReason:       Option[String],
                                                premiumTax:         String,
                                                npvTax:             Option[String],
                                                totalSdltDue:       String
@@ -100,10 +103,17 @@ object CalculationResultViewModel extends CurrencyFormatter {
       )
     }
     
-    val bottomRows = Seq(
-      SummaryListRow(Key(Text(getMessage("taxCalculation.reliefClaimed"))), Value(Text(claimingRelief))),
-      SummaryListRow(Key(Text(getMessage("taxCalculation.sdltDue"))), Value(Text(totalSdltDue)))
-    )
+    val bottomRows = reliefReason match {
+      case Some(rReason) => Seq(
+        SummaryListRow(Key(Text(getMessage("taxCalculation.reliefClaimed"))), Value(Text(claimingRelief))),
+        SummaryListRow(Key(Text(getMessage("taxCalculation.reliefReason"))), Value(Text(rReason))),
+        SummaryListRow(Key(Text(getMessage("taxCalculation.sdltDue"))), Value(Text(totalSdltDue)))
+      )
+      case None => Seq(
+        SummaryListRow(Key(Text(getMessage("taxCalculation.reliefClaimed"))), Value(Text(claimingRelief))),
+        SummaryListRow(Key(Text(getMessage("taxCalculation.sdltDue"))), Value(Text(totalSdltDue)))
+      )
+    }
 
     SummaryList(topRow ++ middleRows ++ bottomRows)
   }
