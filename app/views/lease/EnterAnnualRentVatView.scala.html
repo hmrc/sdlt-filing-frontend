@@ -17,6 +17,7 @@
 @import viewmodels.InputWidth._
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+@import viewmodels.LabelSize.Large
 
 @this(
     layout: templates.Layout,
@@ -42,7 +43,7 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("lease.enterAnnualRentVat.heading")).asPageHeading()
+                label = LabelViewModel(messages("lease.enterAnnualRentVat.heading")).asPageHeading(size = Large)
             )
             .withWidth(Fixed10)
             .withPrefix(PrefixOrSuffix(
