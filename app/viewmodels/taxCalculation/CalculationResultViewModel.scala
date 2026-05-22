@@ -40,59 +40,60 @@ object CalculationResultViewModel extends CurrencyFormatter {
   def toViewModel(result: TaxCalculationResult, answers: UserAnswers)
                  (implicit messages: Messages): Either[BuildRequestError, CalculationResultViewModel] =
     for {
-      fullReturn             <- answers.fullReturn.toRight(MissingFullReturnError)
-      transaction            <- fullReturn.transaction.toRight(MissingAboutTheTransactionError)
-      mainLandId             <- fullReturn.returnInfo.flatMap(_.mainLandID).toRight(MissingMainLandIdError)
-      land                   <- fullReturn.land.flatMap(_.find(_.landID.contains(mainLandId))).toRight(MissingAboutTheLandError)
-      effectiveDate          <- transaction.effectiveDate.toRight(MissingTransactionAnswerError("effectiveDate"))
-      formattedDate          <- parseDate(effectiveDate).map(_.toLongDate).left.map(_ => InvalidDateError(effectiveDate))
-      totalConsideration     <- transaction.totalConsideration.toRight(MissingTransactionAnswerError("totalConsideration"))
-      claimingRelief         <- transaction.claimingRelief.toRight(MissingTransactionAnswerError("claimingRelief"))
-      reliefReason           <- transaction.reliefReason.toRight(MissingTransactionAnswerError("reliefReason"))
-      formattedRelief        <- toYesNo(claimingRelief).left.map(_ => InvalidYesNoAnswerError(claimingRelief))
+      fullReturn <- answers.fullReturn.toRight(MissingFullReturnError)
+      transaction <- fullReturn.transaction.toRight(MissingAboutTheTransactionError)
+      mainLandId <- fullReturn.returnInfo.flatMap(_.mainLandID).toRight(MissingMainLandIdError)
+      land <- fullReturn.land.flatMap(_.find(_.landID.contains(mainLandId))).toRight(MissingAboutTheLandError)
+      effectiveDate <- transaction.effectiveDate.toRight(MissingTransactionAnswerError("effectiveDate"))
+      formattedDate <- parseDate(effectiveDate).map(_.toLongDate).left.map(_ => InvalidDateError(effectiveDate))
+      totalConsideration <- transaction.totalConsideration.toRight(MissingTransactionAnswerError("totalConsideration"))
+      claimingRelief <- transaction.claimingRelief.toRight(MissingTransactionAnswerError("claimingRelief"))
+      reliefReason <- transaction.reliefReason.toRight(MissingTransactionAnswerError("reliefReason"))
+      formattedRelief <- toYesNo(claimingRelief).left.map(_ => InvalidYesNoAnswerError(claimingRelief))
       transactionDescription <- transaction.transactionDescription.toRight(MissingTransactionAnswerError("transactionDescription"))
-      propertyType           <- land.propertyType.toRight(MissingLandAnswerError("propertyType"))
-      isLinked               <- transaction.isLinked.toRight(MissingTransactionAnswerError("isLinked"))
-      formattedLinked        <- toYesNo(isLinked).left.map(_ => InvalidYesNoAnswerError(isLinked))
-      premiumCalc            <- result.taxCalcs.find(_.taxType == premium).toRight(MissingPremiumCalcError)
-      rentCalc                = result.taxCalcs.find(_.taxType == rent)
+      propertyType <- land.propertyType.toRight(MissingLandAnswerError("propertyType"))
+      isLinked <- transaction.isLinked.toRight(MissingTransactionAnswerError("isLinked"))
+      formattedLinked <- toYesNo(isLinked).left.map(_ => InvalidYesNoAnswerError(isLinked))
+      premiumCalc <- result.taxCalcs.find(_.taxType == premium).toRight(MissingPremiumCalcError)
+      rentCalc = result.taxCalcs.find(_.taxType == rent)
     } yield {
       CalculationResultViewModel(
         taxCalculationSummary = getTaxCalculationSummary(
-          effectiveDate      = formattedDate,
+          effectiveDate = formattedDate,
           totalConsideration = totalConsideration.toCurrency,
-          claimingRelief     = formattedRelief,
-          reliefReason       = Some(reliefReason),
-          premiumTax         = premiumCalc.taxDue.toCurrency,
-          npvTax             = rentCalc.map(_.taxDue.toCurrency),
-          totalSdltDue       = result.totalTax.toCurrency
+          claimingRelief = formattedRelief,
+          reliefReason = Some(reliefReason),
+          premiumTax = premiumCalc.taxDue.toCurrency,
+          npvTax = rentCalc.map(_.taxDue.toCurrency),
+          totalSdltDue = result.totalTax.toCurrency
         ),
-        rateCardSummary       = getRateCardSummary(
+        rateCardSummary = getRateCardSummary(
           transactionDescription = transactionDescription,
-          claimingRelief         = formattedRelief,
-          propertyType           = propertyType,
-          isLinked               = formattedLinked
+          claimingRelief = formattedRelief,
+          reliefReason = Some(reliefReason),
+          propertyType = propertyType,
+          isLinked = formattedLinked
         ),
-        premiumRateTable      = getPremiumRateTable(premiumCalc, rentCalc.isDefined),
-        npvRateTable          = getNpvRateTable(rentCalc),
-        totalTax              = getTotalTaxTable(result.totalTax.toCurrency)
+        premiumRateTable = getPremiumRateTable(premiumCalc, rentCalc.isDefined),
+        npvRateTable = getNpvRateTable(rentCalc),
+        totalTax = getTotalTaxTable(result.totalTax.toCurrency)
       )
     }
 
   private[taxCalculation] def getTaxCalculationSummary(
-                                               effectiveDate:      String,
-                                               totalConsideration: String,
-                                               claimingRelief:     String,
-                                               reliefReason:       Option[String],
-                                               premiumTax:         String,
-                                               npvTax:             Option[String],
-                                               totalSdltDue:       String
-                                             )(implicit messages: Messages): SummaryList = {
-    
+                                                        effectiveDate: String,
+                                                        totalConsideration: String,
+                                                        claimingRelief: String,
+                                                        reliefReason: Option[String],
+                                                        premiumTax: String,
+                                                        npvTax: Option[String],
+                                                        totalSdltDue: String
+                                                      )(implicit messages: Messages): SummaryList = {
+
     val topRow = Seq(
       SummaryListRow(Key(Text(getMessage("taxCalculation.effectiveDate"))), Value(Text(effectiveDate)))
     )
-    
+
     val middleRows = npvTax match {
       case Some(npv) => Seq(
         SummaryListRow(Key(Text(getMessage("taxCalculation.taxDuePremium"))), Value(Text(premiumTax))),
@@ -102,7 +103,7 @@ object CalculationResultViewModel extends CurrencyFormatter {
         SummaryListRow(Key(Text(getMessage("taxCalculation.totalConsideration"))), Value(Text(totalConsideration)))
       )
     }
-    
+
     val bottomRows = reliefReason match {
       case Some(rReason) => Seq(
         SummaryListRow(Key(Text(getMessage("taxCalculation.reliefClaimed"))), Value(Text(claimingRelief))),
@@ -119,17 +120,32 @@ object CalculationResultViewModel extends CurrencyFormatter {
   }
 
   private[taxCalculation] def getRateCardSummary(
-                                         transactionDescription: String,
-                                         claimingRelief:         String,
-                                         propertyType:           String,
-                                         isLinked:               String
-                                       )(implicit messages: Messages): SummaryList =
-    SummaryList(Seq(
-      SummaryListRow(Key(Text(getMessage("rateCard.transactionType"))), Value(Text(getMessage(s"transactionType.$transactionDescription")))),
-      SummaryListRow(Key(Text(getMessage("rateCard.claimingRelief"))), Value(Text(claimingRelief))),
-      SummaryListRow(Key(Text(getMessage("rateCard.propertyType"))), Value(Text(getMessage(s"propertyType.$propertyType")))),
-      SummaryListRow(Key(Text(getMessage("rateCard.linked"))), Value(Text(isLinked)))
-    ))
+                                                  transactionDescription: String,
+                                                  claimingRelief: String,
+                                                  reliefReason: Option[String],
+                                                  propertyType: String,
+                                                  isLinked: String
+                                                )(implicit messages: Messages): SummaryList = {
+
+    val filteredRows = reliefReason match {
+      case Some(rReason) => Seq(
+        SummaryListRow(Key(Text(getMessage("rateCard.transactionType"))), Value(Text(getMessage(s"transactionType.$transactionDescription")))),
+        SummaryListRow(Key(Text(getMessage("rateCard.claimingRelief"))), Value(Text(claimingRelief))),
+        SummaryListRow(Key(Text(getMessage("taxCalculation.reliefReason"))), Value(Text(rReason))),
+        SummaryListRow(Key(Text(getMessage("rateCard.propertyType"))), Value(Text(getMessage(s"propertyType.$propertyType")))),
+        SummaryListRow(Key(Text(getMessage("rateCard.linked"))), Value(Text(isLinked)))
+      )
+      case None => Seq(
+        SummaryListRow(Key(Text(getMessage("rateCard.transactionType"))), Value(Text(getMessage(s"transactionType.$transactionDescription")))),
+        SummaryListRow(Key(Text(getMessage("rateCard.claimingRelief"))), Value(Text(claimingRelief))),
+        SummaryListRow(Key(Text(getMessage("rateCard.propertyType"))), Value(Text(getMessage(s"propertyType.$propertyType")))),
+        SummaryListRow(Key(Text(getMessage("rateCard.linked"))), Value(Text(isLinked)))
+      )
+    }
+    SummaryList(filteredRows)
+  }
+
+
 
   private[taxCalculation] def getPremiumRateTable(calc: CalculationDetails, isLeasehold: Boolean)
                                         (implicit messages: Messages): Table =

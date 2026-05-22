@@ -1475,6 +1475,7 @@ taxCalculation.calculation.taxCalculation.sdltDue                               
 taxCalculation.calculation.rateCard.heading                                         = Rate card
 taxCalculation.calculation.rateCard.transactionType                                 = Type of transaction
 taxCalculation.calculation.rateCard.claimingRelief                                  = Are you claiming relief?
+taxCalculation.calculation.rateCard.reliefReason                                    = Relief reason
 taxCalculation.calculation.rateCard.propertyType                                    = Type of property
 taxCalculation.calculation.rateCard.linked                                          = Is this transaction linked to any others?
 
