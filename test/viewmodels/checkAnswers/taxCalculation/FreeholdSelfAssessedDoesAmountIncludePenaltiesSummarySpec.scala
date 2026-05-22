@@ -55,6 +55,7 @@ class FreeholdSelfAssessedDoesAmountIncludePenaltiesSummarySpec extends SpecBase
           .FreeholdSelfAssessedPenaltiesAndInterestController.onPageLoad(CheckMode).url
 
         result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
+        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("taxCalculation.penaltiesAndInterest.checkYourAnswersHidden")
       }
     }
 
