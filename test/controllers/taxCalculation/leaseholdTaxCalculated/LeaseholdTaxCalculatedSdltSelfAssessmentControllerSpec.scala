@@ -41,8 +41,9 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentControllerSpec extends SpecBase wi
   private val sectionKey = "site.taxCalculation.leaseholdSdltCalculated.section"
 
   private val sdltcResult = TaxCalculationResult(totalTax = 43750, None, None, None, taxCalcs = Seq.empty)
+  private val selfAssessedResult = TaxCalculationResult(totalTax = 0, Some("Self-assessed"), None, None, taxCalcs = Seq.empty)
 
-  private val freeholdAnswers: UserAnswers =
+  private val leaseholdAnswers: UserAnswers =
     emptyUserAnswers
       .copy(fullReturn = Some(completeFullReturn))
       .set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdTaxCalculated).success.value
@@ -69,7 +70,7 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentControllerSpec extends SpecBase wi
     "GET" - {
 
       "must pre-populate the form with the sdltc total when no answer has been saved" in {
-        val app = appWith(freeholdAnswers)
+        val app = appWith(leaseholdAnswers)
 
         running(app) {
           val request  = FakeRequest(GET, onPageLoadRoute)
@@ -83,7 +84,7 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentControllerSpec extends SpecBase wi
       }
 
       "must pre-populate the form with the saved answer when one exists, ignoring the sdltc total" in {
-        val withAnswer = freeholdAnswers.set(LeaseholdTaxCalculatedSelfAssessedAmountPage, "9999").success.value
+        val withAnswer = leaseholdAnswers.set(LeaseholdTaxCalculatedSelfAssessedAmountPage, "9999").success.value
         val app        = appWith(withAnswer)
 
         running(app) {
@@ -94,6 +95,36 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentControllerSpec extends SpecBase wi
           val body = contentAsString(result)
           body must include("value=\"9999\"")
           body mustNot include("value=\"43750\"")
+        }
+      }
+
+      "must redirect to the return task list when sdltc returns self assessed result" in {
+
+        val app = appWith(leaseholdAnswers, Future.successful(CalculationResponse(Seq(selfAssessedResult))))
+
+        running(app) {
+          val request = FakeRequest(GET, routes.LeaseholdTaxCalculatedSdltSelfAssessmentController.onSubmit(NormalMode).url)
+          val result = route(app, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        }
+      }
+
+      "must redirect to the return task list when sdltc returns pre march 2012 result" in {
+
+        val selfAssessedAnswers = leaseholdAnswers.copy(fullReturn = leaseholdAnswers.fullReturn.map(fr =>
+          fr.copy(transaction = fr.transaction.map(_.copy(effectiveDate = Some("2011-01-01"))))
+        ))
+
+        val app = applicationBuilder(userAnswers = Some(selfAssessedAnswers)).build()
+
+        running(app) {
+          val request = FakeRequest(GET, routes.LeaseholdTaxCalculatedSdltSelfAssessmentController.onSubmit(NormalMode).url)
+          val result = route(app, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
         }
       }
 
@@ -125,7 +156,7 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentControllerSpec extends SpecBase wi
     "POST" - {
 
       "must save the answer and redirect on a valid submission" in {
-        val app = appWith(freeholdAnswers)
+        val app = appWith(leaseholdAnswers)
 
         running(app) {
           val request = FakeRequest(POST, onSubmitRoute).withFormUrlEncodedBody("value" -> "5000")
@@ -138,7 +169,7 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentControllerSpec extends SpecBase wi
       }
 
       "must return Bad Request and re-render the view when the form is invalid" in {
-        val app = appWith(freeholdAnswers)
+        val app = appWith(leaseholdAnswers)
 
         running(app) {
           val request = FakeRequest(POST, onSubmitRoute).withFormUrlEncodedBody("value" -> "")

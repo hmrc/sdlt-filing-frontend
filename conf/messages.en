@@ -1426,6 +1426,17 @@ taxCalculation.calculatedSdltDue.p1                                             
 taxCalculation.calculatedSdltDue.linkText                                           = Check your SDLT breakdown
 taxCalculation.calculatedSdltDue.checkYourAnswersLabel                              = HMRC calculated SDLT due
 
+taxCalculation.cannotCalculateSdltDue.title                                         = HMRC cannot calculate the SDLT due
+taxCalculation.cannotCalculateSdltDue.heading                                       = HMRC cannot calculate the SDLT due
+taxCalculation.cannotCalculateSdltDue.p1                                            = The amount of SDLT due cannot be calculated {0}
+taxCalculation.cannotCalculateSdltDue.reason1                                       = because this return includes linked transactions. This means that HMRC does not have full visibility of each transaction.
+taxCalculation.cannotCalculateSdltDue.reason2                                       = because this return includes a claim for partial relief. The tax due on partial relief depends on value judgements that can only be made by the purchaser.
+taxCalculation.cannotCalculateSdltDue.reason3                                       = because this return includes a type of interest that falls outside of the SDLT calculation model.
+taxCalculation.cannotCalculateSdltDue.reason4                                       = because this return includes a claim for Multiple Dwellings Relief. The tax due on this relief depends on the purchaser declaring the number of dwellings.
+taxCalculation.cannotCalculateSdltDue.reason5                                       = because this return predates the modern SDLT calculation model. This is because:
+taxCalculation.cannotCalculateSdltDue.reason5.propertyType                          = the property type is ‘01 - Residential’ or ‘04 - Additional residential property liable to higher rate’
+taxCalculation.cannotCalculateSdltDue.reason5.effectiveDate                         = the effective date of the transaction is before 22 March 2012
+
 taxCalculation.penaltiesAndInterest.button                                          = Save and continue
 
 taxCalculation.penaltiesAndInterest.freehold-tax-calculated.title                   = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Freehold calculated

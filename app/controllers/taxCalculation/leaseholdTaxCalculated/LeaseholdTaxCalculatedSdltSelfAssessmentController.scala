@@ -20,6 +20,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import controllers.taxCalculation.TaxCalculationErrorRecovery
 import forms.taxCalculation.SdltSelfAssessmentFormProvider
 import models.Mode
+import models.taxCalculation.CalculationOutcome.Calculated
 import models.taxCalculation.TaxCalculationFlow.LeaseholdTaxCalculated
 import navigation.Navigator
 import pages.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedSelfAssessedAmountPage
@@ -61,7 +62,7 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentController @Inject()(
     implicit request =>
       sdltCalculationService.whenInFlowAsync(LeaseholdTaxCalculated) {
         sdltCalculationService.calculateStampDutyLandTax(request.userAnswers).map {
-          case Right(result) =>
+          case Right(Calculated(result)) =>
             val prepared = request.userAnswers.get(LeaseholdTaxCalculatedSelfAssessedAmountPage)
               .fold(
                 form.fill(result.totalTax.toString)
@@ -69,6 +70,9 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentController @Inject()(
                 form.fill
               )
             Ok(view(prepared, postAction(mode), sectionKey))
+          case Right(response) =>
+            logger.warn(s"[LeaseholdTaxCalculatedSdltSelfAssessmentController] Failed to get a tax calculation result: $response")
+            Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
           case Left(err) =>
             logger.warn(s"[LeaseholdTaxCalculatedSdltSelfAssessmentController][onPageLoad] sdltc failed: ${err.message}")
             Redirect(errorHandler(err))

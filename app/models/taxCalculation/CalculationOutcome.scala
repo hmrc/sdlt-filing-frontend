@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package pages.taxCalculation.freeholdSelfAssessed
+package models.taxCalculation
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+sealed trait CalculationOutcome
 
-case object FreeholdSelfAssessedCannotCalculateTaxPage extends QuestionPage[Boolean] {
-
-  override def path: JsPath = JsPath \ "taxCalculationCurrent" \ toString
-
-  override def toString: String = "freeholdSelfAssessedCannotCalculateTax"
+object CalculationOutcome {
+  case class Calculated(result: TaxCalculationResult) extends CalculationOutcome
+  case object SelfAssessed extends CalculationOutcome
+  case object PreMarch2012 extends CalculationOutcome
 }

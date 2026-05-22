@@ -17,6 +17,7 @@
 package controllers.taxCalculation
 
 import base.SpecBase
+import models.taxCalculation.CalculationOutcome.{Calculated, SelfAssessed}
 import models.taxCalculation.{MissingAboutTheTransactionError, MissingFullReturnError, TaxCalculationFlow, TaxCalculationResult}
 import models.{FullReturn, Transaction, UserAnswers}
 import org.mockito.ArgumentCaptor
@@ -35,7 +36,6 @@ import scala.concurrent.Future
 class TaxCalculationBeforeYouStartControllerSpec extends SpecBase with MockitoSugar {
 
   private val calculatedResult   = TaxCalculationResult(totalTax = 5000, resultHeading = None,                  resultHint = None, npv = None, taxCalcs = Seq.empty)
-  private val selfAssessedResult = TaxCalculationResult(totalTax = 0,    resultHeading = Some("Self-assessed"), resultHint = None, npv = None, taxCalcs = Seq.empty)
 
   private lazy val onPageLoadUrl = controllers.taxCalculation.routes.TaxCalculationBeforeYouStartController.onPageLoad().url
 
@@ -52,7 +52,7 @@ class TaxCalculationBeforeYouStartControllerSpec extends SpecBase with MockitoSu
       val answers = answersWith("F")
 
       val mockService = mock[SdltCalculationService]
-      when(mockService.calculateStampDutyLandTax(any())(any(), any())).thenReturn(Future.successful(Right(calculatedResult)))
+      when(mockService.calculateStampDutyLandTax(any())(any(), any())).thenReturn(Future.successful(Right(Calculated(calculatedResult))))
 
       val repo = mock[SessionRepository]
       when(repo.set(any[UserAnswers]())).thenReturn(Future.successful(true))
@@ -78,7 +78,7 @@ class TaxCalculationBeforeYouStartControllerSpec extends SpecBase with MockitoSu
       val answers = answersWith("F")
 
       val mockService = mock[SdltCalculationService]
-      when(mockService.calculateStampDutyLandTax(any())(any(), any())).thenReturn(Future.successful(Right(selfAssessedResult)))
+      when(mockService.calculateStampDutyLandTax(any())(any(), any())).thenReturn(Future.successful(Right(SelfAssessed)))
 
       val repo = mock[SessionRepository]
       when(repo.set(any[UserAnswers]())).thenReturn(Future.successful(true))
@@ -104,7 +104,7 @@ class TaxCalculationBeforeYouStartControllerSpec extends SpecBase with MockitoSu
       val answers = answersWith("L")
 
       val mockService = mock[SdltCalculationService]
-      when(mockService.calculateStampDutyLandTax(any())(any(), any())).thenReturn(Future.successful(Right(calculatedResult)))
+      when(mockService.calculateStampDutyLandTax(any())(any(), any())).thenReturn(Future.successful(Right(Calculated(calculatedResult))))
 
       val repo = mock[SessionRepository]
       when(repo.set(any[UserAnswers]())).thenReturn(Future.successful(true))
@@ -130,7 +130,7 @@ class TaxCalculationBeforeYouStartControllerSpec extends SpecBase with MockitoSu
       val answers = answersWith("L")
 
       val mockService = mock[SdltCalculationService]
-      when(mockService.calculateStampDutyLandTax(any())(any(), any())).thenReturn(Future.successful(Right(selfAssessedResult)))
+      when(mockService.calculateStampDutyLandTax(any())(any(), any())).thenReturn(Future.successful(Right(SelfAssessed)))
 
       val repo = mock[SessionRepository]
       when(repo.set(any[UserAnswers]())).thenReturn(Future.successful(true))
@@ -156,7 +156,7 @@ class TaxCalculationBeforeYouStartControllerSpec extends SpecBase with MockitoSu
       val staleAnswers = emptyUserAnswers.set(TaxCalculationFlowPage, TaxCalculationFlow.FreeholdTaxCalculated).success.value
 
       val mockService = mock[SdltCalculationService]
-      when(mockService.calculateStampDutyLandTax(any())(any(), any())).thenReturn(Future.successful(Right(calculatedResult)))
+      when(mockService.calculateStampDutyLandTax(any())(any(), any())).thenReturn(Future.successful(Right(Calculated(calculatedResult))))
 
       val repo = mock[SessionRepository]
       when(repo.set(any[UserAnswers]())).thenReturn(Future.successful(true))

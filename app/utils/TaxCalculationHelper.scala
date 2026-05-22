@@ -17,15 +17,10 @@
 package utils
 
 import models.UserAnswers
-import models.taxCalculation.{HoldingTypes, TaxCalculationFlow, TaxCalculationResult}
+import models.taxCalculation.CalculationOutcome.{Calculated, PreMarch2012, SelfAssessed}
+import models.taxCalculation.{CalculationOutcome, HoldingTypes, TaxCalculationFlow}
 
 object TaxCalculationHelper {
-
-  private val selfAssessedHeading: String = "Self-assessed"
-
-  def calculationResponseType(result: TaxCalculationResult): CalculationResultType =
-    if (result.resultHeading.contains(selfAssessedHeading)) TaxNotCalculated
-    else TaxCalculated
 
   def holdingType(answers: UserAnswers): Option[HoldingTypes.Value] =
     for {
@@ -35,16 +30,15 @@ object TaxCalculationHelper {
       holding     <- HoldingTypes.fromCode(transDesc)
     } yield holding
 
-  def flowFor(answers: UserAnswers, result: TaxCalculationResult): Option[TaxCalculationFlow] =
-    (holdingType(answers), calculationResponseType(result)) match {
-      case (Some(HoldingTypes.freehold),  TaxCalculated)    => Some(TaxCalculationFlow.FreeholdTaxCalculated)
-      case (Some(HoldingTypes.freehold),  TaxNotCalculated) => Some(TaxCalculationFlow.FreeholdSelfAssessed)
-      case (Some(HoldingTypes.leasehold), TaxCalculated)    => Some(TaxCalculationFlow.LeaseholdTaxCalculated)
-      case (Some(HoldingTypes.leasehold), TaxNotCalculated) => Some(TaxCalculationFlow.LeaseholdSelfAssessed)
-      case _                                                => None
+  def flowFor(answers: UserAnswers, outcome: CalculationOutcome): Option[TaxCalculationFlow] =
+    (holdingType(answers), outcome) match {
+      case (Some(HoldingTypes.freehold),  Calculated(_))   => Some(TaxCalculationFlow.FreeholdTaxCalculated)
+      case (Some(HoldingTypes.freehold),  SelfAssessed)    => Some(TaxCalculationFlow.FreeholdSelfAssessed)
+      case (Some(HoldingTypes.freehold),  PreMarch2012)    => Some(TaxCalculationFlow.FreeholdSelfAssessed)
+      case (Some(HoldingTypes.leasehold), Calculated(_))   => Some(TaxCalculationFlow.LeaseholdTaxCalculated)
+      case (Some(HoldingTypes.leasehold), SelfAssessed)    => Some(TaxCalculationFlow.LeaseholdSelfAssessed)
+      case (Some(HoldingTypes.leasehold), PreMarch2012)    => Some(TaxCalculationFlow.LeaseholdSelfAssessed)
+      case _                                               => None
     }
 
-  sealed trait CalculationResultType
-  case object TaxCalculated    extends CalculationResultType
-  case object TaxNotCalculated extends CalculationResultType
 }
