@@ -726,3 +726,8 @@ GET        /about-the-lease/enter-annual-rent-VAT                               
 POST       /about-the-lease/enter-annual-rent-VAT                                                    controllers.lease.EnterAnnualRentVatController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-lease/enter-annual-rent-VAT/change                                             controllers.lease.EnterAnnualRentVatController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-lease/enter-annual-rent-VAT/change                                             controllers.lease.EnterAnnualRentVatController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-lease/enter-total-premium-payable                                              controllers.lease.LeaseEnterTotalPremiumPayableController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-lease/enter-total-premium-payable                                              controllers.lease.LeaseEnterTotalPremiumPayableController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-lease/enter-total-premium-payable/change                                       controllers.lease.LeaseEnterTotalPremiumPayableController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-lease/enter-total-premium-payable/change                                       controllers.lease.LeaseEnterTotalPremiumPayableController.onSubmit(mode: Mode = CheckMode)
