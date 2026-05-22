@@ -1885,7 +1885,6 @@ lease.enterTotalPremiumPayable.hint                                             
 lease.enterTotalPremiumPayable.checkYourAnswersLabel                                = What is the total premium payable including VAT?
 lease.enterTotalPremiumPayable.error.required                                       = Enter the total premium payable including VAT
 lease.enterTotalPremiumPayable.error.length                                         = The total premium payable including VAT must be 14 digits or fewer
-lease.enterTotalPremiumPayable.error.required                                       = Enter the amount of relief being claimed on part of the land or property, in pounds
 lease.enterTotalPremiumPayable.error.invalidNumeric                                 = The total premium payable including VAT must only include numbers 0 to 9 and commas
 lease.enterTotalPremiumPayable.error.invalidWholeNumber                             = Enter the total premium payable including VAT in whole pounds
 lease.enterTotalPremiumPayable.error.maximum                                        = The total premium payable including VAT must be equal to or less than £9,999,999,999
