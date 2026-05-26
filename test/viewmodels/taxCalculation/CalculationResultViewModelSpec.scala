@@ -81,6 +81,7 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
         effectiveDate      = "1 April 2024",
         totalConsideration = "£300,000",
         claimingRelief     = "No",
+        reliefReason       = None,
         premiumTax         = "£9,000",
         npvTax             = None,
         totalSdltDue       = "£9,000"
@@ -101,6 +102,7 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
         effectiveDate      = "1 April 2024",
         totalConsideration = "£300,000",
         claimingRelief     = "No",
+        reliefReason       = None,
         premiumTax         = "£8,000",
         npvTax             = Some("£3,000"),
         totalSdltDue       = "£11,000"
@@ -119,7 +121,7 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
   ".getRateCardSummary" - {
 
     "produces the four rate card rows" in {
-      val rows = getRateCardSummary(transactionDescription = "F", claimingRelief = "No", propertyType = "R", isLinked = "No").rows
+      val rows = getRateCardSummary(transactionDescription = "F", claimingRelief = "No", reliefReason = None, propertyType = "R", isLinked = "No").rows
       rows.map(_.key.content) mustEqual Seq(
         Text("taxCalculation.calculation.rateCard.transactionType"),
         Text("taxCalculation.calculation.rateCard.claimingRelief"),
@@ -129,6 +131,20 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
       rows.map(_.value.content) mustEqual Seq(
         Text("taxCalculation.calculation.transactionType.F"), Text("No"),
         Text("taxCalculation.calculation.propertyType.R"),    Text("No")
+      )
+    }
+    "produces the five rate card rows if claiming relief is yes, include relief reason" in {
+      val rows = getRateCardSummary(transactionDescription = "F", claimingRelief = "Yes", reliefReason = Some("22"), propertyType = "R", isLinked = "No").rows
+      rows.map(_.key.content) mustEqual Seq(
+        Text("taxCalculation.calculation.rateCard.transactionType"),
+        Text("taxCalculation.calculation.rateCard.claimingRelief"),
+        Text("taxCalculation.calculation.rateCard.reliefReason"),
+        Text("taxCalculation.calculation.rateCard.propertyType"),
+        Text("taxCalculation.calculation.rateCard.linked")
+      )
+      rows.map(_.value.content) mustEqual Seq(
+        Text("taxCalculation.calculation.transactionType.F"), Text("Yes"), Text("22"),
+        Text("taxCalculation.calculation.propertyType.R"), Text("No")
       )
     }
   }
