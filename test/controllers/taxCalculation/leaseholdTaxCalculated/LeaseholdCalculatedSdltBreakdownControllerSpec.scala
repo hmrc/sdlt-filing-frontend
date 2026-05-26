@@ -18,6 +18,7 @@ package controllers.taxCalculation.leaseholdTaxCalculated
 
 import base.SpecBase
 import models.taxCalculation.*
+import models.taxCalculation.CalculationOutcome.{Calculated, PreMarch2012, SelfAssessed}
 import models.{FullReturn, Land, Lease, Purchaser, Residency, ReturnInfo, Transaction, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -58,7 +59,7 @@ class LeaseholdCalculatedSdltBreakdownControllerSpec extends SpecBase with Mocki
     residency = Some(Residency(residencyID = Some("ResidencyID"), isNonUkResidents = Some("NO")))
   )))
 
-  private def appWith(answers: UserAnswers, sdltcStub: Future[Either[MissingDataError, TaxCalculationResult]]) = {
+  private def appWith(answers: UserAnswers, sdltcStub: Future[Either[MissingDataError, CalculationOutcome]]) = {
     val mockService = mock[SdltCalculationService]
     when(mockService.calculateStampDutyLandTax(any())(any(), any())).thenReturn(sdltcStub)
     applicationBuilder(userAnswers = Some(answers))
@@ -70,7 +71,7 @@ class LeaseholdCalculatedSdltBreakdownControllerSpec extends SpecBase with Mocki
 
     "must return OK and render the breakdown view when valid user answers given" in {
 
-      val app = appWith(leaseholdAnswers, Future.successful(Right(sdltcResult)))
+      val app = appWith(leaseholdAnswers, Future.successful(Right(Calculated(sdltcResult))))
 
       running(app) {
         val request = FakeRequest(GET, controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdCalculatedSdltBreakdownController.onPageLoad().url)
@@ -83,6 +84,33 @@ class LeaseholdCalculatedSdltBreakdownControllerSpec extends SpecBase with Mocki
         contentAsString(result) mustEqual view(expected, breakdownUrl, titleKey)(request, messages(app)).toString
       }
     }
+
+    "must redirect to the return task list when sdltc returns SelfAssessed" in {
+
+      val app = appWith(leaseholdAnswers, Future.successful(Right(SelfAssessed)))
+
+      running(app) {
+        val request = FakeRequest(GET, controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdCalculatedSdltBreakdownController.onPageLoad().url)
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
+    "must redirect to the return task list when sdltc returns PreMarch2012" in {
+
+      val app = appWith(leaseholdAnswers, Future.successful(Right(PreMarch2012)))
+
+      running(app) {
+        val request = FakeRequest(GET, controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdCalculatedSdltBreakdownController.onPageLoad().url)
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
     "must redirect to the no-return-reference page when sdltc reports a missing FullReturn" in {
 
       val app = appWith(leaseholdAnswers, Future.successful(Left(MissingFullReturnError)))
@@ -115,7 +143,7 @@ class LeaseholdCalculatedSdltBreakdownControllerSpec extends SpecBase with Mocki
         fr.copy(transaction = fr.transaction.map(_.copy(claimingRelief = None)))
       ))
 
-      val app = appWith(brokenAnswers, Future.successful(Right(sdltcResult)))
+      val app = appWith(brokenAnswers, Future.successful(Right(Calculated(sdltcResult))))
 
       running(app) {
         val request = FakeRequest(GET, controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdCalculatedSdltBreakdownController.onPageLoad().url)
