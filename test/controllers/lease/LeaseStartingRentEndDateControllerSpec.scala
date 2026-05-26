@@ -24,7 +24,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.lease.{LeaseStartDatePage, LeaseStartingRentEndDatePage}
+import pages.lease.{LeaseEndDatePage, LeaseStartDatePage, LeaseStartingRentEndDatePage}
 import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -190,10 +190,8 @@ class LeaseStartingRentEndDateControllerSpec extends SpecBase with MockitoSugar 
 
     "must return BadRequest when rent end date is after the lease end date for a POST" in {
 
-      val fullReturn = FullReturn(stornId = "1", returnResourceRef = "ref",
-        lease = Some(Lease(contractEndDate = Some("1 06 2023"))))
-      val userAnswers = testUserAnswers.copy(fullReturn = Some(fullReturn))
-        .set(LeaseStartDatePage, LocalDate.of(2023, 1, 1)).success.value
+      val userAnswers = testUserAnswers.set(LeaseStartDatePage, LocalDate.of(2020, 1, 1)).success.value
+        .set(LeaseEndDatePage, LocalDate.of(2022, 6, 1)).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -210,10 +208,8 @@ class LeaseStartingRentEndDateControllerSpec extends SpecBase with MockitoSugar 
 
     "must redirect to Journey Recovery when lease end date is before lease start date (inconsistent backend data) for a POST" in {
 
-      val fullReturn = FullReturn(stornId = "1", returnResourceRef = "ref",
-        lease = Some(Lease(contractEndDate = Some("1 01 2020"))))
-      val userAnswers = testUserAnswers.copy(fullReturn = Some(fullReturn))
-        .set(LeaseStartDatePage, LocalDate.of(2023, 6, 1)).success.value
+      val userAnswers = testUserAnswers.set(LeaseStartDatePage, LocalDate.of(2023, 6, 1)).success.value
+        .set(LeaseEndDatePage, LocalDate.of(2022, 6, 1)).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 

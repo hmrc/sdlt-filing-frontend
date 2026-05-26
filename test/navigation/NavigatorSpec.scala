@@ -424,8 +424,12 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(TypeOfLeasePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseStartDateController.onPageLoad(NormalMode)
         }
 
-        "go from TypeOfLeasePage to lease contract end date page" in { //TODO - DTR-3509 - SPRINT 16 - update to what is the end date ls-3
-          navigator.nextPage(LeaseStartDatePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseStartDateController.onPageLoad(NormalMode)
+        "go from LeaseStartDatePage to lease contract end date page" in {
+          navigator.nextPage(LeaseStartDatePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseEndDateController.onPageLoad(NormalMode)
+        }
+
+        "go from LeaseEndDatePage to does lease include rent free period page" in {
+          navigator.nextPage(LeaseEndDatePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.DoesLeaseIncludeRentFreePeriodController.onPageLoad(NormalMode)
         }
 
         "go from LeaseEnterRentFreePeriodPage to AnnualStartingRent page" in {

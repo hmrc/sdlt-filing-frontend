@@ -1903,3 +1903,20 @@ lease.enterTotalPremiumPayable.error.length                                     
 lease.enterTotalPremiumPayable.error.invalidNumeric                                 = The total premium payable including VAT must only include numbers 0 to 9 and commas
 lease.enterTotalPremiumPayable.error.invalidWholeNumber                             = Enter the total premium payable including VAT in whole pounds
 lease.enterTotalPremiumPayable.error.maximum                                        = The total premium payable including VAT must be equal to or less than £9,999,999,999
+
+lease.leaseEndDate.title                                                            = Lease end date
+lease.leaseEndDate.heading                                                          = Lease end date
+lease.leaseEndDate.heading.h2                                                       = What is the end date as specified in the lease?
+lease.leaseEndDate.hint                                                             = For example, 27 3 2023
+lease.leaseEndDate.p                                                                = This date must be entered exactly as specified in the lease. SDLT assumes that a lease runs its full term, so do not enter the break point or review date.
+lease.leaseEndDate.details.summary                                                  = About long leases and periodic tenancies
+lease.leaseEndDate.details.content                                                  = For a periodic tenancy, enter the date the first period ends, like the end of the first month or year. For long leases, where the lease ends after the year 9999, enter 31 12 9999 as the end date.
+lease.leaseEndDate.checkYourAnswersLabel                                            = Lease end date
+lease.leaseEndDate.error.required.all                                               = Enter the end date as specified in the lease
+lease.leaseEndDate.error.required.two                                               = The end date as specified in the lease must include {0} and {1}
+lease.leaseEndDate.error.required                                                   = The end date as specified in the lease must include a {0}
+lease.leaseEndDate.error.invalid                                                    = The end date as specified in the lease must be a real date
+lease.leaseEndDate.change.hidden                                                    = Lease end date
+lease.leaseEndDate.error.date.range.min                                             = The end date as specified in the lease must be the same as or after 1 December 2003
+lease.leaseEndDate.error.LeaseEndDateBeforeRentEndDate                              = The end date as specified in the lease must be after the end date for starting rent
+lease.leaseEndDate.error.LeaseEndDateBeforeLeaseStartDate                           = The end date as specified in the lease must be after the start date as specified in the lease

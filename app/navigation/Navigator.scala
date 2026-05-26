@@ -298,15 +298,17 @@ class Navigator @Inject()() {
   private def isLeaseSection(page: Page): Boolean = page match {
     case TypeOfLeasePage | LeaseEnterRentFreePeriodPage | LaterRentPage | LeaseThousandPoundsThresholdPage | LeaseStartDatePage
          | DoesLeaseIncludeRentFreePeriodPage | AnnualStartingRentPage | LeaseIsVatPayablePage | LeaseStartingRentEndDatePage
-         | EnterAnnualRentVatPage | LeaseEnterTotalPremiumPayablePage => true
+         | EnterAnnualRentVatPage | LeaseEnterTotalPremiumPayablePage | LeaseEndDatePage => true
     case _ => false
   }
   
   private def leaseRoutes(page: Page): UserAnswers => Call = page match {
     case TypeOfLeasePage =>
       _ => controllers.lease.routes.LeaseStartDateController.onPageLoad(NormalMode)
-    case LeaseStartDatePage => //TODO - DTR-3509 - SPRINT 16 - update to what is the end date ls-3
-      _ => controllers.lease.routes.LeaseStartDateController.onPageLoad(NormalMode)
+    case LeaseStartDatePage =>
+      _ => controllers.lease.routes.LeaseEndDateController.onPageLoad(NormalMode)
+    case LeaseEndDatePage =>
+      _ => controllers.lease.routes.DoesLeaseIncludeRentFreePeriodController.onPageLoad(NormalMode)
     case LeaseEnterRentFreePeriodPage =>
       _ => controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode)
     case LaterRentPage =>
