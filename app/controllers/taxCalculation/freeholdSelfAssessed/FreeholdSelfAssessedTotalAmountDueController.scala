@@ -23,7 +23,8 @@ import models.taxCalculation.{BuildRequestError, MissingSelfAssessedAmountDueErr
 import models.taxCalculation.TaxCalculationFlow.FreeholdSelfAssessed
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.taxCalculation.freeholdSelfAssessed.{FreeholdSelfAssessedAmountPage, FreeholdSelfAssessedTotalAmountDuePage}
+import pages.taxCalculation.freeholdSelfAssessed.{FreeholdSelfAssessedAmountPage, FreeholdSelfAssessedPenaltiesAndInterestPage, FreeholdSelfAssessedTotalAmountDuePage}
+import pages.transaction.TransactionEffectiveDatePage
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -31,9 +32,10 @@ import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.TimeMachine
+import utils.{TaxCalculationPenaltiesHelper, TimeMachine}
 import viewmodels.taxCalculation.selfAssessedViewModels.TotalAmountDueViewModel
 import views.html.taxCalculation.selfAssessed.TotalAmountDueView
+import utils.TaxCalculationPenaltiesHelper.*
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -88,11 +90,18 @@ class FreeholdSelfAssessedTotalAmountDueController @Inject()(
                 logger.warn(s"[FreeholdSelfAssessedTotalAmountDueController][onSubmit] failed: ${err.message}")
                 Future.successful(Redirect(errorHandler(err)))
             },
-          value =>
+          value => {
+
             for {
-              updated <- Future.fromTry(request.userAnswers.set(FreeholdSelfAssessedTotalAmountDuePage, value))
-              _ <- sessionRepository.set(updated)
-            } yield Redirect(navigator.nextPage(FreeholdSelfAssessedTotalAmountDuePage, mode, updated))
+              withAmount       <- Future.fromTry(request.userAnswers.set(FreeholdSelfAssessedTotalAmountDuePage, value))
+              skipPenaltiesPage = request.userAnswers.get(TransactionEffectiveDatePage).exists(isPenaltiesZero(_, timeMachine))
+              updated           <- if (skipPenaltiesPage) Future.fromTry(withAmount.set(FreeholdSelfAssessedPenaltiesAndInterestPage, false))
+                                   else Future.successful(withAmount)
+              _                 <- sessionRepository.set(updated)
+            } yield
+              if (skipPenaltiesPage) Redirect(navigator.nextPage(FreeholdSelfAssessedPenaltiesAndInterestPage, mode, updated))
+              else                   Redirect(navigator.nextPage(FreeholdSelfAssessedTotalAmountDuePage, mode, updated))
+          }
         )
       }
   }

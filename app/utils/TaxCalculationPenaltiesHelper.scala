@@ -38,4 +38,7 @@ object TaxCalculationPenaltiesHelper {
     else if (daysSince >  filingWindow)               OneHundredPounds
     else                                              NoPenalty
   }
+  
+  def isPenaltiesZero(effectiveDate: LocalDate, timeMachine: TimeMachine): Boolean =
+    getPenalties(effectiveDate, timeMachine) == NoPenalty
 }
