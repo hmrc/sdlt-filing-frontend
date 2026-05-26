@@ -28,6 +28,7 @@ import views.html.taxCalculation.CalculatedSdltBreakdownView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
+import models.taxCalculation.CalculationOutcome.Calculated
 
 @Singleton
 class LeaseholdCalculatedSdltBreakdownController @Inject()(
@@ -45,13 +46,16 @@ class LeaseholdCalculatedSdltBreakdownController @Inject()(
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
       sdltCalculationService.calculateStampDutyLandTax(request.userAnswers)
         .map {
-          case Right(result) =>
+          case Right(Calculated(result)) =>
             CalculationResultViewModel.toViewModel(result, request.userAnswers) match {
               case Right(vm) => Ok(view(vm, breakdownUrl, titleKey))
               case Left(err) =>
                 logger.warn(s"[LeaseholdCalculatedSdltBreakdownController] Failed to construct view model: ${err.message}")
                 Redirect(errorHandler(err))
             }
+          case Right(response) =>
+            logger.warn(s"[LeaseholdCalculatedSdltBreakdownController] Failed to get a tax calculation result: $response")
+            Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
           case Left(err) =>
             logger.warn(s"[LeaseholdCalculatedSdltBreakdownController] sdltc reported missing data: ${err.message}")
             Redirect(errorHandler(err))
