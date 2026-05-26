@@ -366,7 +366,8 @@ class Navigator @Inject()() {
   private def freeholdTaxCalculatedRoutes(page: Page): UserAnswers => Call = page match {
     case FreeholdTaxCalculatedSelfAssessedAmountPage   =>
       _ => controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdTaxCalculatedTotalAmountDueController.onPageLoad(NormalMode)
-    case FreeholdTaxCalculatedTotalAmountDuePage       => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case FreeholdTaxCalculatedTotalAmountDuePage       =>
+      _ => controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(NormalMode)
     case FreeholdTaxCalculatedPenaltiesAndInterestPage => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
     case _                                             => _ => routes.IndexController.onPageLoad()
   }
@@ -374,7 +375,8 @@ class Navigator @Inject()() {
   private def freeholdSelfAssessedRoutes(page: Page): UserAnswers => Call = page match {
     case FreeholdSelfAssessedAmountPage               =>
       _ => controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSelfAssessedTotalAmountDueController.onPageLoad(NormalMode)
-    case FreeholdSelfAssessedTotalAmountDuePage       => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case FreeholdSelfAssessedTotalAmountDuePage       =>
+      _ => controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSelfAssessedPenaltiesAndInterestController.onPageLoad(NormalMode)
     case FreeholdSelfAssessedPenaltiesAndInterestPage => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
     case _                                            => _ => routes.IndexController.onPageLoad()
   }
@@ -382,7 +384,8 @@ class Navigator @Inject()() {
   private def leaseholdTaxCalculatedRoutes(page: Page): UserAnswers => Call = page match {
     case LeaseholdTaxCalculatedSelfAssessedAmountPage   =>
       _ => controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdTaxCalculatedTotalAmountDueController.onPageLoad(NormalMode)
-    case LeaseholdTaxCalculatedTotalAmountDuePage       => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case LeaseholdTaxCalculatedTotalAmountDuePage       =>
+      _ => controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(NormalMode)
     case LeaseholdTaxCalculatedPenaltiesAndInterestPage => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
     case _                                              => _ => routes.IndexController.onPageLoad()
   }
@@ -392,7 +395,8 @@ class Navigator @Inject()() {
       _ => controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedTaxDueOnNpvController.onPageLoad(NormalMode)
     case LeaseholdSelfAssessedNpvTaxPage               =>
       _ =>  controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedTotalAmountDueController.onPageLoad(NormalMode)
-    case LeaseholdSelfAssessedTotalAmountDuePage       => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
+    case LeaseholdSelfAssessedTotalAmountDuePage       =>
+      _ => controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedPenaltiesAndInterestController.onPageLoad(NormalMode)
     case LeaseholdSelfAssessedPenaltiesAndInterestPage => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
     case _                                             => _ => routes.IndexController.onPageLoad()
   }

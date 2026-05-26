@@ -43,7 +43,7 @@
 
     @govukButton(
         ButtonViewModel(messages("site.continue"))
-        .asLink("#")
+        .asLink(controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdCannotCalculateSdltDueController.onPageLoad().url)
         .withCssClass("govuk-!-margin-top-2")
     )
 

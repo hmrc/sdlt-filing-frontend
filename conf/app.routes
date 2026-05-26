@@ -611,6 +611,7 @@ POST        /tax-calculation/leasehold-calculated/total-amount-due/change       
 
 # ---- Tax calculation: Flow D (Leasehold - Service cannot perform calculation) -------------------------------------
 GET        /tax-calculation/leasehold-not-calculated/before-you-start                                controllers.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedBYSController.onPageLoad()
+GET        /tax-calculation/leasehold-not-calculated/HMRC-cannot-calculate-SDLT-due                  controllers.taxCalculation.leaseholdSelfAssessed.LeaseholdCannotCalculateSdltDueController.onPageLoad()
 GET        /tax-calculation/leasehold-not-calculated/tax-due-on-total-premium-payable                controllers.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedPremiumPayableTaxController.onPageLoad(mode: Mode = NormalMode)
 POST       /tax-calculation/leasehold-not-calculated/tax-due-on-total-premium-payable                controllers.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedPremiumPayableTaxController.onSubmit(mode: Mode = NormalMode)
 GET        /tax-calculation/leasehold-not-calculated/tax-due-on-total-premium-payable/change         controllers.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedPremiumPayableTaxController.onPageLoad(mode: Mode = CheckMode)
