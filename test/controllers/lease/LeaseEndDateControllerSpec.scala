@@ -158,10 +158,9 @@ class LeaseEndDateControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must return BadRequest when lease end date after lease end date for a POST" in {
+    "must return BadRequest when lease end date is before the lease start date for a POST" in {
 
-      val userAnswers = emptyUserAnswers.set(LeaseStartDatePage, LocalDate.of(2030, 10, 26)).success.value
-      .set(LeaseStartDatePage, LocalDate.of(2031, 10, 26)).success.value
+      val userAnswers = emptyUserAnswers.set(LeaseStartDatePage, LocalDate.of(2031, 10, 26)).success.value
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers)).build()
