@@ -21,8 +21,7 @@ import models.CheckMode
 import pages.transaction.TransactionDeferringPaymentPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class TransactionDeferringPaymentSummarySpec extends SpecBase {
 
@@ -30,7 +29,7 @@ class TransactionDeferringPaymentSummarySpec extends SpecBase {
 
     "when deferring payment is present" - {
 
-      "must return a SummaryListRow with 'yes' text and change link" in {
+      "must return a Row with 'yes' text and change link" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
@@ -41,20 +40,22 @@ class TransactionDeferringPaymentSummarySpec extends SpecBase {
 
           val result = TransactionDeferringPaymentSummary.row(userAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("transaction.deferringPayment.checkYourAnswersLabel")
+          result mustBe a[Row]
+          val row = result.asInstanceOf[Row].row
 
-          val contentString = result.value.content.asHtml.toString()
+          row.key.content.asHtml.toString() mustEqual msgs("transaction.deferringPayment.checkYourAnswersLabel")
 
+          val contentString = row.value.content.asHtml.toString()
           contentString mustEqual msgs("site.yes")
 
-          result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(CheckMode).url
-          result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.deferringPayment.change.hidden")
+          row.actions.get.items.size mustEqual 1
+          row.actions.get.items.head.href mustEqual controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(CheckMode).url
+          row.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
+          row.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.deferringPayment.change.hidden")
         }
       }
 
-      "must return a SummaryListRow with 'no' text and change link" in {
+      "must return a Row with 'no' text and change link" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
@@ -65,38 +66,40 @@ class TransactionDeferringPaymentSummarySpec extends SpecBase {
 
           val result = TransactionDeferringPaymentSummary.row(userAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("transaction.deferringPayment.checkYourAnswersLabel")
+          result mustBe a[Row]
+          val row = result.asInstanceOf[Row].row
 
-          val contentString = result.value.content.asHtml.toString()
+          row.key.content.asHtml.toString() mustEqual msgs("transaction.deferringPayment.checkYourAnswersLabel")
 
+          val contentString = row.value.content.asHtml.toString()
           contentString mustEqual msgs("site.no")
 
-          result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(CheckMode).url
-          result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.deferringPayment.change.hidden")
+          row.actions.get.items.size mustEqual 1
+          row.actions.get.items.head.href mustEqual controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(CheckMode).url
+          row.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
+          row.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.deferringPayment.change.hidden")
         }
       }
     }
 
     "when deferring payment is not present" - {
 
-      "must return a SummaryListRow with a link to if they want to defer payment" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      "must return a Missing and redirect call to missing page" in {
+        val userAnswers = emptyUserAnswers
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = TransactionDeferringPaymentSummary.row(emptyUserAnswers)
+          val result = TransactionDeferringPaymentSummary.row(userAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("transaction.deferringPayment.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.transaction.routes.TransactionDeferringPaymentController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("transaction.deferringPayment.missing"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }

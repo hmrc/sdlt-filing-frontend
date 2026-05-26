@@ -28,11 +28,11 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
   def freeholdReturn(
     propertyType: String = "01",
     effectiveDate: String = "2025-06-15",
-    consideration: BigDecimal = 250000,
+    consideration: String = "250000",
     isLinked: Option[String] = Some("no"),
     claimingRelief: Option[String] = Some("no"),
     reliefReason: Option[String] = None,
-    reliefAmount: Option[BigDecimal] = None,
+    reliefAmount: Option[String] = None,
     isNonUkResident: Option[String] = Some("no")
   ): FullReturn = FullReturn(
     stornId = "STORN", returnResourceRef = "REF",
@@ -50,7 +50,7 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
     startDate: String = "2025-06-15",
     endDate: String = "2030-06-14",
     effectiveDate: String = "2025-06-15",
-    consideration: BigDecimal = 250000,
+    consideration: String = "250000",
     npv: String = "100000",
     annualRentOver1000: Option[String] = Some("yes"),
     startingRent: Option[String] = None
@@ -163,7 +163,7 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
       "must fail when transactionDescription is unrecognised" in {
         val fr = freeholdReturn().copy(transaction = Some(Transaction(
           transactionDescription = Some("X"), effectiveDate = Some("2025-06-15"),
-          totalConsideration = Some(250000)
+          totalConsideration = Some("250000")
         )))
         TaxCalcRequestValidator.buildRequest(userAnswersWith(fr)) mustBe Left(UnknownHoldingTypeError("X"))
       }
@@ -187,7 +187,7 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
       "must map A to freehold" in {
         val fr = freeholdReturn().copy(transaction = Some(Transaction(
           transactionDescription = Some("A"), effectiveDate = Some("2025-06-15"),
-          totalConsideration = Some(250000), isLinked = Some("no"), claimingRelief = Some("no")
+          totalConsideration = Some("250000"), isLinked = Some("no"), claimingRelief = Some("no")
         )))
         TaxCalcRequestValidator.buildRequest(userAnswersWith(fr)).toOption.get.holdingType mustBe HoldingTypes.freehold
       }
@@ -263,7 +263,7 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
 
       "must set isPartialRelief to true when reliefAmount is present" in {
         val relief = TaxCalcRequestValidator.buildRequest(userAnswersWith(
-          freeholdReturn(claimingRelief = Some("yes"), reliefReason = Some("36"), reliefAmount = Some(5000))
+          freeholdReturn(claimingRelief = Some("yes"), reliefReason = Some("36"), reliefAmount = Some("5000"))
         )).toOption.get.taxReliefDetails.get
         relief.taxReliefCode mustBe 36
         relief.isPartialRelief mustBe Some(true)

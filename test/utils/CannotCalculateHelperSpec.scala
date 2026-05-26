@@ -31,7 +31,7 @@ class CannotCalculateHelperSpec extends SpecBase with Matchers {
         returnInfo = Some(ReturnInfo(mainLandID = Some("L1"))),
         transaction = Some(Transaction(
           effectiveDate = Some("2026-01-01"),
-          totalConsideration = Some(BigDecimal(300000)),
+          totalConsideration = Some("a"),
           claimingRelief = Some("no"),
           transactionDescription = Some("F"),
           isLinked = Some("no")
@@ -52,7 +52,7 @@ class CannotCalculateHelperSpec extends SpecBase with Matchers {
 
     "must return reason 2 when the return includes partial relief" in {
       val partialRelief = freeholdAnswers.copy(fullReturn = freeholdAnswers.fullReturn.map(fr =>
-        fr.copy(transaction = fr.transaction.map(_.copy(reliefAmount = Some(BigDecimal(5000)))))
+        fr.copy(transaction = fr.transaction.map(_.copy(reliefAmount = Some("5000"))))
       ))
 
       getCannotCalculateReason(partialRelief) mustEqual Some("taxCalculation.cannotCalculateSdltDue.reason2")

@@ -18,7 +18,7 @@ package viewmodels.checkAnswers.transaction
 
 import base.SpecBase
 import models.CheckMode
-import pages.transaction.TransactionCisNumberPage
+import pages.transaction.{IsPurchaserRegisteredWithCISPage, TransactionCisNumberPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
@@ -30,52 +30,110 @@ class TransactionCisNumberSummarySpec extends SpecBase {
     "when CIS number is present" - {
 
       "must return a SummaryListRow with change link" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
+
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers = emptyUserAnswers.set(TransactionCisNumberPage, "123456").success.value
+          val userAnswers = emptyUserAnswers
+            .set(IsPurchaserRegisteredWithCISPage, true).success.value
+            .set(TransactionCisNumberPage, "123456").success.value
 
-          val row = TransactionCisNumberSummary.row(userAnswers)
+          val row =
+            TransactionCisNumberSummary.row(userAnswers)
 
           val result = row match {
-            case Row(r) => r
-            case _ => fail("Expected Row but got Missing")
+            case Some(Row(r)) => r
+            case _            => fail("Expected Row")
           }
 
-          result.key.content.asHtml.toString() mustEqual msgs("transaction.cisNumber.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual
+            msgs("transaction.cisNumber.checkYourAnswersLabel")
 
-          val contentString = result.value.content.asHtml.toString()
+          result.value.content.asHtml.toString() mustEqual "123456"
 
-          contentString mustEqual "123456"
+          result.actions.value.items.size mustEqual 1
 
-          result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.transaction.routes.TransactionCisNumberController.onPageLoad(CheckMode).url
-          result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.cisNumber.change.hidden")
+          result.actions.value.items.head.href mustEqual
+            controllers.transaction.routes.TransactionCisNumberController
+              .onPageLoad(CheckMode)
+              .url
+
+          result.actions.value.items.head.content.asHtml.toString() must include(
+            msgs("site.change")
+          )
+
+          result.actions.value.items.head.visuallyHiddenText.value mustEqual
+            msgs("transaction.cisNumber.change.hidden")
         }
       }
     }
 
-    "when CIS number is not present" - {
+    "when CIS number is missing and purchaser is registered with CIS" - {
 
-      "must return a Missing and redirect call to missing page" in {
-        val userAnswers = emptyUserAnswers
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      "must return Missing" in {
+
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
+
           implicit val msgs: Messages = messages(application)
 
-          val result = TransactionCisNumberSummary.row(userAnswers)
+          val userAnswers = emptyUserAnswers
+            .set(IsPurchaserRegisteredWithCISPage, true).success.value
+
+          val result =
+            TransactionCisNumberSummary.row(userAnswers)
 
           result match {
-            case Missing(call) =>
-              call mustEqual controllers.transaction.routes.TransactionCisNumberController.onPageLoad(CheckMode)
 
-            case Row(_) =>
-              fail("Expected Missing but got Row")
+            case Some(Missing(call)) =>
+              call mustEqual
+                controllers.transaction.routes.TransactionCisNumberController
+                  .onPageLoad(CheckMode)
+
+            case _ =>
+              fail("Expected Missing")
           }
+        }
+      }
+    }
+
+    "when purchaser is not registered with CIS" - {
+
+      "must return None" in {
+
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers
+            .set(IsPurchaserRegisteredWithCISPage, false).success.value
+
+          TransactionCisNumberSummary.row(userAnswers) mustBe None
+        }
+      }
+    }
+
+    "when CIS registration answer is missing" - {
+
+      "must return None" in {
+
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+
+          implicit val msgs: Messages = messages(application)
+
+          TransactionCisNumberSummary.row(emptyUserAnswers) mustBe None
         }
       }
     }

@@ -35,7 +35,7 @@ class EffectiveDateHelperSpec extends SpecBase with Matchers {
 
   private def transaction(effectiveDate: Option[String]) = Some(Transaction(
     effectiveDate = effectiveDate,
-    totalConsideration = Some(BigDecimal(300000)),
+    totalConsideration = Some("300000"),
     claimingRelief = Some("no"),
     transactionDescription = Some("F"),
     isLinked = Some("no")

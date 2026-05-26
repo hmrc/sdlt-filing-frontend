@@ -90,6 +90,10 @@ object ReasonForRelief extends Enumerable.Implicits {
     SeedingRelief
   )
 
+  def fromString(value: String): ReasonForRelief =
+    values.find(_.toString == value)
+      .get
+  
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {
     case (value, index) =>
 
@@ -102,6 +106,9 @@ object ReasonForRelief extends Enumerable.Implicits {
         hint = if (messages.isDefinedAt(hintKey)) Some(Hint(content = Text(messages(hintKey)))) else None
       )
   }
+
+  def isValid(value: String): Boolean =
+    values.exists(_.toString == value)
 
   implicit val enumerable: Enumerable[ReasonForRelief] =
     Enumerable(values.map(v => v.toString -> v): _*)

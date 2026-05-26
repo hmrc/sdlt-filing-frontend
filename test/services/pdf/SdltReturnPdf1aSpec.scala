@@ -276,13 +276,13 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
       // ---- Page 2 ----
 
       "must write total consideration as plain decimal string" in {
-        val r      = withTransaction(Transaction(totalConsideration = Some(BigDecimal("250000.00"))))
+        val r      = withTransaction(Transaction(totalConsideration = Some("250000.00")))
         val result = fill(r)
         readField(result, "calculation_totalConsideration") mustBe Some("250000.00")
       }
 
       "must split total consideration across four digit-group fields" in {
-        val r      = withTransaction(Transaction(totalConsideration = Some(BigDecimal("250000"))))
+        val r      = withTransaction(Transaction(totalConsideration = Some("250000")))
         val result = fill(r)
         readField(result, "calculation_totalConsideration_1") mustBe Some("000")
         readField(result, "calculation_totalConsideration_2") mustBe Some("000")
@@ -414,7 +414,7 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
             transactionDescription  = Some("Freehold"),
             effectiveDate           = Some("25/12/2024"),
             contractDate            = Some("01/11/2024"),
-            totalConsideration      = Some(BigDecimal("500000")),
+            totalConsideration      = Some("500000"),
             isLinked                = Some("NO"),
             restrictionsAffectInterest = Some("NO"),
             isLandExchanged         = Some("NO"),

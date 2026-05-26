@@ -58,7 +58,7 @@ class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeA
       land = Some(Seq(Land(landID = Some("L1"), propertyType = Some("01"), interestCreatedTransferred = Some("FPF")))),
       transaction = Some(Transaction(
         transactionDescription = Some("F"), effectiveDate = Some("2025-06-15"),
-        totalConsideration = Some(250000), isLinked = Some("no"), claimingRelief = Some("no")
+        totalConsideration = Some("250000"), isLinked = Some("no"), claimingRelief = Some("no")
       )),
       residency = Some(Residency(isNonUkResidents = Some("no")))
     ))
@@ -75,7 +75,7 @@ class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeA
       land = Some(Seq(Land(landID = Some("L1"), propertyType = Some("01"), interestCreatedTransferred = Some("FPF")))),
       transaction = Some(Transaction(
         transactionDescription = Some("F"), effectiveDate = Some("2025-06-15"),
-        totalConsideration = Some(250000), isLinked = Some("no")
+        totalConsideration = Some("250000"), isLinked = Some("no")
       )),
       residency = Some(Residency(isNonUkResidents = Some("no")))
     ))
@@ -142,7 +142,7 @@ class SdltCalculationServiceSpec extends SpecBase with MockitoSugar with BeforeA
           land = Some(Seq(Land(landID = Some("L1"), propertyType = Some("99"), interestCreatedTransferred = Some("FPF")))),
           transaction = Some(Transaction(
             transactionDescription = Some("F"), effectiveDate = Some("2025-06-15"),
-            totalConsideration = Some(250000), isLinked = Some("no"), claimingRelief = Some("no")
+            totalConsideration = Some("250000"), isLinked = Some("no"), claimingRelief = Some("no")
           )),
           residency = Some(Residency(isNonUkResidents = Some("no")))
         ))
