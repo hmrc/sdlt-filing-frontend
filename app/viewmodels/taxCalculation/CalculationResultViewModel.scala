@@ -48,7 +48,7 @@ object CalculationResultViewModel extends CurrencyFormatter {
       formattedDate <- parseDate(effectiveDate).map(_.toLongDate).left.map(_ => InvalidDateError(effectiveDate))
       totalConsideration <- transaction.totalConsideration.toRight(MissingTransactionAnswerError("totalConsideration"))
       claimingRelief <- transaction.claimingRelief.toRight(MissingTransactionAnswerError("claimingRelief"))
-      reliefReason <- transaction.reliefReason.toRight(MissingTransactionAnswerError("reliefReason"))
+      reliefReason <- Right(transaction.reliefReason.getOrElse(""))
       formattedRelief <- toYesNo(claimingRelief).left.map(_ => InvalidYesNoAnswerError(claimingRelief))
       transactionDescription <- transaction.transactionDescription.toRight(MissingTransactionAnswerError("transactionDescription"))
       propertyType <- land.propertyType.toRight(MissingLandAnswerError("propertyType"))
@@ -131,7 +131,7 @@ object CalculationResultViewModel extends CurrencyFormatter {
       case Some(rReason) => Seq(
         SummaryListRow(Key(Text(getMessage("rateCard.transactionType"))), Value(Text(getMessage(s"transactionType.$transactionDescription")))),
         SummaryListRow(Key(Text(getMessage("rateCard.claimingRelief"))), Value(Text(claimingRelief))),
-        SummaryListRow(Key(Text(getMessage("taxCalculation.reliefReason"))), Value(Text(rReason))),
+        SummaryListRow(Key(Text(getMessage("rateCard.reliefReason"))), Value(Text(rReason))),
         SummaryListRow(Key(Text(getMessage("rateCard.propertyType"))), Value(Text(getMessage(s"propertyType.$propertyType")))),
         SummaryListRow(Key(Text(getMessage("rateCard.linked"))), Value(Text(isLinked)))
       )

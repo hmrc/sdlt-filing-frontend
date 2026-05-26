@@ -143,7 +143,7 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
         Text("taxCalculation.calculation.rateCard.linked")
       )
       rows.map(_.value.content) mustEqual Seq(
-        Text("taxCalculation.calculation.transactionType.F"), Text("No"),
+        Text("taxCalculation.calculation.transactionType.F"), Text("Yes"), Text("22"),
         Text("taxCalculation.calculation.propertyType.R"), Text("No")
       )
     }
