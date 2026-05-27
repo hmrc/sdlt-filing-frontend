@@ -48,7 +48,7 @@ object CalculationResultViewModel extends CurrencyFormatter {
       formattedDate <- parseDate(effectiveDate).map(_.toLongDate).left.map(_ => InvalidDateError(effectiveDate))
       totalConsideration <- transaction.totalConsideration.toRight(MissingTransactionAnswerError("totalConsideration"))
       claimingRelief <- transaction.claimingRelief.toRight(MissingTransactionAnswerError("claimingRelief"))
-      reliefReason <- Right(transaction.reliefReason.getOrElse(""))
+      reliefReason <- Right(transaction.reliefReason)
       formattedRelief <- toYesNo(claimingRelief).left.map(_ => InvalidYesNoAnswerError(claimingRelief))
       transactionDescription <- transaction.transactionDescription.toRight(MissingTransactionAnswerError("transactionDescription"))
       propertyType <- land.propertyType.toRight(MissingLandAnswerError("propertyType"))
@@ -62,7 +62,7 @@ object CalculationResultViewModel extends CurrencyFormatter {
           effectiveDate = formattedDate,
           totalConsideration = totalConsideration.toCurrency,
           claimingRelief = formattedRelief,
-          reliefReason = Some(reliefReason),
+          reliefReason = reliefReason,
           premiumTax = premiumCalc.taxDue.toCurrency,
           npvTax = rentCalc.map(_.taxDue.toCurrency),
           totalSdltDue = result.totalTax.toCurrency
@@ -70,7 +70,7 @@ object CalculationResultViewModel extends CurrencyFormatter {
         rateCardSummary = getRateCardSummary(
           transactionDescription = transactionDescription,
           claimingRelief = formattedRelief,
-          reliefReason = Some(reliefReason),
+          reliefReason = reliefReason,
           propertyType = propertyType,
           isLinked = formattedLinked
         ),
