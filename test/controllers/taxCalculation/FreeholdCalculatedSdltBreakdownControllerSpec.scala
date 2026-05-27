@@ -50,7 +50,7 @@ class FreeholdCalculatedSdltBreakdownControllerSpec extends SpecBase with Mockit
     returnInfo = Some(ReturnInfo(mainLandID = Some("L1"))),
     transaction = Some(Transaction(
       effectiveDate          = Some("2024-04-01"),
-      totalConsideration     = Some(BigDecimal(300000)),
+      totalConsideration     = Some("300000"),
       claimingRelief         = Some("no"),
       transactionDescription = Some("F"),
       isLinked               = Some("no")

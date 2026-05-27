@@ -20,92 +20,105 @@ import base.SpecBase
 import models.CheckMode
 import models.transaction.TransactionUseOfLandOrPropertyAnswers
 import pages.transaction.TransactionUseOfLandOrPropertyPage
+import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import play.api.i18n.Messages
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class TransactionUseOfLandOrPropertySummarySpec extends SpecBase {
 
   "TransactionUseOfLandOrPropertySummary" - {
-    "must return a summary list row with a single use of Land or Property" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      running(application) {
-        implicit val msgs: Messages = messages(application)
 
-        val userAnswers = emptyUserAnswers
-          .set(TransactionUseOfLandOrPropertyPage, TransactionUseOfLandOrPropertyAnswers(
-            office = "yes",
-            hotel = "no",
-            shop = "no",
-            warehouse = "no",
-            factory = "no",
-            otherIndustrialUnit = "no",
-            other = "no"
-          )).success.value
+    "when use of land or property is present" - {
 
-        val result = TransactionUseOfLandOrPropertySummary.row(userAnswers)
+      "must return a Row with a single use of land or property" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-        result.key.content.asHtml.toString() mustEqual msgs("transaction.transactionUseOfLandOrProperty.checkYourAnswersLabel")
+        running(application) {
+          implicit val msgs: Messages = messages(application)
 
-        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-        htmlContent mustEqual "Office"
+          val userAnswers = emptyUserAnswers
+            .set(TransactionUseOfLandOrPropertyPage, TransactionUseOfLandOrPropertyAnswers(
+              office = "yes",
+              hotel = "no",
+              shop = "no",
+              warehouse = "no",
+              factory = "no",
+              otherIndustrialUnit = "no",
+              other = "no"
+            )).success.value
 
-        result.actions.get.items.size mustEqual 1
-        result.actions.get.items.head.href mustEqual controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(CheckMode).url
-        result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.transactionUseOfLandOrProperty.change.hidden")
+          val result = TransactionUseOfLandOrPropertySummary.row(userAnswers)
+
+          result mustBe a[Row]
+          val row = result.asInstanceOf[Row].row
+
+          row.key.content.asHtml.toString() mustEqual msgs("transaction.transactionUseOfLandOrProperty.checkYourAnswersLabel")
+
+          val htmlContent = row.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          htmlContent mustEqual "Office"
+
+          row.actions.get.items.size mustEqual 1
+          row.actions.get.items.head.href mustEqual controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(CheckMode).url
+          row.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
+          row.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.transactionUseOfLandOrProperty.change.hidden")
+        }
+      }
+
+      "must return a Row with multiple uses of land or property" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers
+            .set(TransactionUseOfLandOrPropertyPage, TransactionUseOfLandOrPropertyAnswers(
+              office = "yes",
+              hotel = "yes",
+              shop = "yes",
+              warehouse = "no",
+              factory = "no",
+              otherIndustrialUnit = "no",
+              other = "no"
+            )).success.value
+
+          val result = TransactionUseOfLandOrPropertySummary.row(userAnswers)
+
+          result mustBe a[Row]
+          val row = result.asInstanceOf[Row].row
+
+          row.key.content.asHtml.toString() mustEqual msgs("transaction.transactionUseOfLandOrProperty.checkYourAnswersLabel")
+
+          val htmlContent = row.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          htmlContent mustEqual "Office,<br>Hotel,<br>Shop"
+
+          row.actions.get.items.size mustEqual 1
+          row.actions.get.items.head.href mustEqual controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(CheckMode).url
+          row.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
+          row.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.transactionUseOfLandOrProperty.change.hidden")
+        }
       }
     }
 
-    "must return a summary list row with a multiple uses of Land or Property" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      running(application) {
-        implicit val msgs: Messages = messages(application)
+    "when use of land or property is not present" - {
 
+      "must return a Missing and redirect call to missing page" in {
         val userAnswers = emptyUserAnswers
-          .set(TransactionUseOfLandOrPropertyPage, TransactionUseOfLandOrPropertyAnswers(
-            office = "yes",
-            hotel = "yes",
-            shop = "yes",
-            warehouse = "no",
-            factory = "no",
-            otherIndustrialUnit = "no",
-            other = "no"
-          )).success.value
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-        val result = TransactionUseOfLandOrPropertySummary.row(userAnswers)
+        running(application) {
+          implicit val msgs: Messages = messages(application)
 
-        result.key.content.asHtml.toString() mustEqual msgs("transaction.transactionUseOfLandOrProperty.checkYourAnswersLabel")
+          val result = TransactionUseOfLandOrPropertySummary.row(userAnswers)
 
-        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-        htmlContent mustEqual "Office,<br>Hotel,<br>Shop"
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(CheckMode)
 
-        result.actions.get.items.size mustEqual 1
-        result.actions.get.items.head.href mustEqual controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(CheckMode).url
-        result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.transactionUseOfLandOrProperty.change.hidden")
-      }
-    }
-
-    "must return a summary list row with a link to enter use of Land or Property when userAnswers is empty" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        implicit val msgs: Messages = messages(application)
-
-        val userAnswers = emptyUserAnswers
-
-        val result = TransactionUseOfLandOrPropertySummary.row(userAnswers)
-
-        result.key.content.asHtml.toString() mustEqual msgs("transaction.transactionUseOfLandOrProperty.checkYourAnswersLabel")
-
-        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-
-        htmlContent must include("govuk-link")
-        htmlContent must include(controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(CheckMode).url)
-        htmlContent must include(msgs("transaction.transactionUseOfLandOrProperty.missing"))
-        result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
+        }
       }
     }
   }

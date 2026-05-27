@@ -18,8 +18,9 @@ package services.transaction
 
 import base.SpecBase
 import models.{Transaction, UserAnswers}
+import models.address.Address
 import models.prelimQuestions.TransactionType
-import models.transaction.TransactionFormsOfConsiderationAnswers
+import models.transaction.{ReasonForRelief, TransactionFormsOfConsiderationAnswers, TransactionRulingFollowed, TransactionSaleOfBusinessAssetsAnswers, TransactionUseOfLandOrPropertyAnswers}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.transaction.*
 
@@ -39,26 +40,27 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
       "when all fields are populated" - {
         "must correctly populate the session" in {
           val transaction = Transaction(
-            transactionDescription       = Some("F"),
-            effectiveDate                = Some("2024-01-15"),
-            contractDate                 = Some("2024-01-10"),
-            totalConsideration           = Some(BigDecimal(250000)),
-            considerationVAT             = Some(BigDecimal(50000)),
-            considerationCash            = Some(BigDecimal(200000)),
-            considerationDebt            = Some(BigDecimal(0)),
-            considerationBuild           = Some(BigDecimal(0)),
-            considerationEmploy          = Some(BigDecimal(0)),
-            considerationOther           = Some(BigDecimal(0)),
-            considerationSharesQTD       = Some(BigDecimal(0)),
-            considerationSharesUNQTD     = Some(BigDecimal(0)),
-            considerationLand            = Some(BigDecimal(0)),
-            considerationServices        = Some(BigDecimal(0)),
-            considerationContingent      = Some(BigDecimal(0)),
-            isLinked                     = Some("YES"),
-            totalConsiderationLinked     = Some(BigDecimal(500000)),
-            claimingRelief               = Some("YES"),
-            reliefAmount                 = Some(BigDecimal(10000)),
-            reliefSchemeNumber           = Some("CS123456")
+            transactionDescription   = Some("F"),
+            effectiveDate            = Some("2024-01-15"),
+            contractDate             = Some("2024-01-10"),
+            totalConsideration       = Some("250000"),
+            considerationVAT         = Some("50000"),
+            considerationCash        = Some("yes"),
+            considerationDebt        = Some("yes"),
+            considerationBuild       = Some("no"),
+            considerationEmploy      = Some("no"),
+            considerationOther       = Some("no"),
+            considerationSharesQTD   = Some("no"),
+            considerationSharesUNQTD = Some("no"),
+            considerationLand        = Some("no"),
+            considerationServices    = Some("no"),
+            considerationContingent  = Some("no"),
+            isLinked                 = Some("YES"),
+            totalConsiderationLinked = Some("500000"),
+            claimingRelief           = Some("YES"),
+            reliefAmount             = Some("10000"),
+            reliefReason             = Some("charitiesRelief"),
+            reliefSchemeNumber       = Some("CS123456")
           )
 
           val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -67,16 +69,16 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
 
           val updatedAnswers = result.get
 
-          updatedAnswers.get(TypeOfTransactionPage)                    mustBe Some(TransactionType.ConveyanceTransfer)
-          updatedAnswers.get(TransactionEffectiveDatePage)             mustBe Some(LocalDate.of(2024, 1, 15))
-          updatedAnswers.get(TransactionAddDateOfContractPage)         mustBe Some(true)
-          updatedAnswers.get(TransactionDateOfContractPage)            mustBe Some(LocalDate.of(2024, 1, 10))
-          updatedAnswers.get(TotalConsiderationOfTransactionPage)      mustBe Some("250000")
-          updatedAnswers.get(TransactionVatIncludedPage)               mustBe Some(true)
-          updatedAnswers.get(TransactionVatAmountPage)                 mustBe Some("50000")
-          updatedAnswers.get(TransactionFormsOfConsiderationPage)      mustBe Some(TransactionFormsOfConsiderationAnswers(
+          updatedAnswers.get(TypeOfTransactionPage)               mustBe Some(TransactionType.ConveyanceTransfer)
+          updatedAnswers.get(TransactionEffectiveDatePage)        mustBe Some(LocalDate.of(2024, 1, 15))
+          updatedAnswers.get(TransactionAddDateOfContractPage)    mustBe Some(true)
+          updatedAnswers.get(TransactionDateOfContractPage)       mustBe Some(LocalDate.of(2024, 1, 10))
+          updatedAnswers.get(TotalConsiderationOfTransactionPage) mustBe Some("250000")
+          updatedAnswers.get(TransactionVatIncludedPage)          mustBe Some(true)
+          updatedAnswers.get(TransactionVatAmountPage)            mustBe Some("50000")
+          updatedAnswers.get(TransactionFormsOfConsiderationPage) mustBe Some(TransactionFormsOfConsiderationAnswers(
             cash                      = "yes",
-            debt                      = "no",
+            debt                      = "yes",
             buildingWorks             = "no",
             employment                = "no",
             other                     = "no",
@@ -86,13 +88,14 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
             services                  = "no",
             contingent                = "no"
           ))
-          updatedAnswers.get(TransactionLinkedTransactionsPage)             mustBe Some(true)
-          updatedAnswers.get(TotalConsiderationOfLinkedTransactionPage)     mustBe Some("500000")
-          updatedAnswers.get(PurchaserEligibleToClaimReliefPage)            mustBe Some(true)
-          updatedAnswers.get(TransactionPartialReliefPage)                  mustBe Some(true)
-          updatedAnswers.get(ClaimingPartialReliefAmountPage)               mustBe Some("10000")
-          updatedAnswers.get(AddRegisteredCharityNumberPage)                mustBe Some(true)
-          updatedAnswers.get(CharityRegisteredNumberPage)                   mustBe Some("CS123456")
+          updatedAnswers.get(TransactionLinkedTransactionsPage)         mustBe Some(true)
+          updatedAnswers.get(TotalConsiderationOfLinkedTransactionPage) mustBe Some("500000")
+          updatedAnswers.get(PurchaserEligibleToClaimReliefPage)        mustBe Some(true)
+          updatedAnswers.get(ReasonForReliefPage)                       mustBe Some(ReasonForRelief.CharitiesRelief)
+          updatedAnswers.get(AddRegisteredCharityNumberPage)            mustBe Some(true)
+          updatedAnswers.get(CharityRegisteredNumberPage)               mustBe Some("CS123456")
+          updatedAnswers.get(TransactionPartialReliefPage)              mustBe Some(true)
+          updatedAnswers.get(ClaimingPartialReliefAmountPage)           mustBe Some("10000")
         }
       }
 
@@ -117,12 +120,33 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         }
       }
 
+      "when VAT is a positive number" - {
+        "must set vat included to true and populate the vat amount page" in {
+          val transaction = Transaction(
+            transactionDescription = Some("F"),
+            effectiveDate          = Some("2024-01-15"),
+            considerationVAT       = Some("20000"),
+            isLinked               = Some("NO"),
+            claimingRelief         = Some("NO")
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(TransactionVatIncludedPage) mustBe Some(true)
+          updatedAnswers.get(TransactionVatAmountPage)   mustBe Some("20000")
+        }
+      }
+
       "when VAT is zero" - {
         "must set vat included to false and not set the vat amount page" in {
           val transaction = Transaction(
             transactionDescription = Some("F"),
             effectiveDate          = Some("2024-01-15"),
-            considerationVAT       = Some(BigDecimal(0)),
+            considerationVAT       = Some("0"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("NO")
           )
@@ -159,13 +183,34 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         }
       }
 
+      "when transaction is linked" - {
+        "must set linked transactions to true and populate the linked total page" in {
+          val transaction = Transaction(
+            transactionDescription   = Some("F"),
+            effectiveDate            = Some("2024-01-15"),
+            isLinked                 = Some("YES"),
+            totalConsiderationLinked = Some("500000"),
+            claimingRelief           = Some("NO")
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(TransactionLinkedTransactionsPage)         mustBe Some(true)
+          updatedAnswers.get(TotalConsiderationOfLinkedTransactionPage) mustBe Some("500000")
+        }
+      }
+
       "when transaction is not linked" - {
         "must set linked transactions to false and not set the linked total page" in {
           val transaction = Transaction(
             transactionDescription   = Some("F"),
             effectiveDate            = Some("2024-01-15"),
             isLinked                 = Some("NO"),
-            totalConsiderationLinked = Some(BigDecimal(500000)),
+            totalConsiderationLinked = Some("500000"),
             claimingRelief           = Some("NO")
           )
 
@@ -187,9 +232,9 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         val transaction = Transaction(
           transactionDescription   = Some("L"),
           effectiveDate            = Some("2024-06-01"),
-          totalConsideration       = Some(BigDecimal(100000)),
-          considerationVAT         = Some(BigDecimal(20000)),
-          considerationCash        = Some(BigDecimal(100000)),
+          totalConsideration       = Some("100000"),
+          considerationVAT         = Some("20000"),
+          considerationCash        = Some("yes"),
           isLinked                 = Some("NO"),
           claimingRelief           = Some("NO")
         )
@@ -244,6 +289,45 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "forms of consideration" - {
+
+      "must correctly map yes/no values for all consideration types" in {
+        val transaction = Transaction(
+          transactionDescription   = Some("F"),
+          effectiveDate            = Some("2024-01-15"),
+          isLinked                 = Some("NO"),
+          claimingRelief           = Some("NO"),
+          considerationCash        = Some("yes"),
+          considerationDebt        = Some("yes"),
+          considerationBuild       = Some("no"),
+          considerationEmploy      = Some("yes"),
+          considerationOther       = Some("no"),
+          considerationSharesQTD   = Some("yes"),
+          considerationSharesUNQTD = Some("no"),
+          considerationLand        = Some("yes"),
+          considerationServices    = Some("no"),
+          considerationContingent  = Some("yes")
+        )
+
+        val result = service.populateTransactionInSession(transaction, userAnswers)
+
+        result mustBe a[Success[_]]
+
+        result.get.get(TransactionFormsOfConsiderationPage) mustBe Some(TransactionFormsOfConsiderationAnswers(
+          cash                      = "yes",
+          debt                      = "yes",
+          buildingWorks             = "no",
+          employment                = "yes",
+          other                     = "no",
+          sharesInAQuotedCompany    = "yes",
+          sharesInAnUnquotedCompany = "no",
+          otherLand                 = "yes",
+          services                  = "no",
+          contingent                = "yes"
+        ))
+      }
+    }
+
     "when relief is claimed" - {
 
       "when there is a partial relief amount" - {
@@ -253,7 +337,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
             effectiveDate          = Some("2024-01-15"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("YES"),
-            reliefAmount           = Some(BigDecimal(5000)),
+            reliefReason           = Some("charitiesRelief"),
+            reliefAmount           = Some("5000"),
             reliefSchemeNumber     = None
           )
 
@@ -276,6 +361,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
             effectiveDate          = Some("2024-01-15"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("YES"),
+            reliefReason           = Some("charitiesRelief"),
             reliefAmount           = None,
             reliefSchemeNumber     = None
           )
@@ -299,6 +385,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
             effectiveDate          = Some("2024-01-15"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("YES"),
+            reliefReason           = Some("charitiesRelief"),
             reliefAmount           = None,
             reliefSchemeNumber     = Some("CS654321")
           )
@@ -309,18 +396,44 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
 
           val updatedAnswers = result.get
 
+          updatedAnswers.get(ReasonForReliefPage)            mustBe Some(ReasonForRelief.CharitiesRelief)
           updatedAnswers.get(AddRegisteredCharityNumberPage) mustBe Some(true)
           updatedAnswers.get(CharityRegisteredNumberPage)    mustBe Some("CS654321")
         }
       }
 
-      "when there is no charity scheme number" - {
+      "when there is a partExchange scheme number" - {
+        "must set CIS registered to true and populate the CIS number page" in {
+          val transaction = Transaction(
+            transactionDescription = Some("F"),
+            effectiveDate          = Some("2024-01-15"),
+            isLinked               = Some("NO"),
+            claimingRelief         = Some("YES"),
+            reliefReason           = Some("partExchange"),
+            reliefAmount           = None,
+            reliefSchemeNumber     = Some("CIS123456")
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(ReasonForReliefPage)               mustBe Some(ReasonForRelief.PartExchange)
+          updatedAnswers.get(IsPurchaserRegisteredWithCISPage)  mustBe Some(true)
+          updatedAnswers.get(TransactionCisNumberPage)          mustBe Some("CIS123456")
+        }
+      }
+
+      "when there is no scheme number for charitiesRelief" - {
         "must set add charity number to false and not set the number page" in {
           val transaction = Transaction(
             transactionDescription = Some("F"),
             effectiveDate          = Some("2024-01-15"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("YES"),
+            reliefReason           = Some("charitiesRelief"),
             reliefAmount           = None,
             reliefSchemeNumber     = None
           )
@@ -333,6 +446,52 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
 
           updatedAnswers.get(AddRegisteredCharityNumberPage) mustBe Some(false)
           updatedAnswers.get(CharityRegisteredNumberPage)    mustBe None
+        }
+      }
+
+      "when relief reason is invalid" - {
+        "must set eligible to true but not set reason for relief page" in {
+          val transaction = Transaction(
+            transactionDescription = Some("F"),
+            effectiveDate          = Some("2024-01-15"),
+            isLinked               = Some("NO"),
+            claimingRelief         = Some("YES"),
+            reliefReason           = Some("invalidReason"),
+            reliefAmount           = None,
+            reliefSchemeNumber     = None
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(PurchaserEligibleToClaimReliefPage) mustBe Some(true)
+          updatedAnswers.get(ReasonForReliefPage)                mustBe None
+        }
+      }
+
+      "when relief reason is absent" - {
+        "must set eligible to true but not set reason for relief page" in {
+          val transaction = Transaction(
+            transactionDescription = Some("F"),
+            effectiveDate          = Some("2024-01-15"),
+            isLinked               = Some("NO"),
+            claimingRelief         = Some("YES"),
+            reliefReason           = None,
+            reliefAmount           = None,
+            reliefSchemeNumber     = None
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(PurchaserEligibleToClaimReliefPage) mustBe Some(true)
+          updatedAnswers.get(ReasonForReliefPage)                mustBe None
         }
       }
     }
@@ -357,6 +516,475 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         updatedAnswers.get(ClaimingPartialReliefAmountPage)     mustBe None
         updatedAnswers.get(AddRegisteredCharityNumberPage)      mustBe None
         updatedAnswers.get(CharityRegisteredNumberPage)         mustBe None
+      }
+    }
+
+    "consideration deferring pages" - {
+
+      "when isDependantOnFutureEvent and agreedToDeferPayment are YES" - {
+        "must set both to true" in {
+          val transaction = Transaction(
+            transactionDescription   = Some("F"),
+            effectiveDate            = Some("2024-01-15"),
+            isLinked                 = Some("NO"),
+            claimingRelief           = Some("NO"),
+            isDependantOnFutureEvent = Some("YES"),
+            agreedToDeferPayment     = Some("YES")
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(ConsiderationsAffectedUncertainPage) mustBe Some(true)
+          updatedAnswers.get(TransactionDeferringPaymentPage)     mustBe Some(true)
+        }
+      }
+
+      "when isDependantOnFutureEvent is YES and agreedToDeferPayment is NO" - {
+        "must set consideration to true and deferring to false" in {
+          val transaction = Transaction(
+            transactionDescription   = Some("F"),
+            effectiveDate            = Some("2024-01-15"),
+            isLinked                 = Some("NO"),
+            claimingRelief           = Some("NO"),
+            isDependantOnFutureEvent = Some("YES"),
+            agreedToDeferPayment     = Some("NO")
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(ConsiderationsAffectedUncertainPage) mustBe Some(true)
+          updatedAnswers.get(TransactionDeferringPaymentPage)     mustBe Some(false)
+        }
+      }
+
+      "when isDependantOnFutureEvent and agreedToDeferPayment are NO" - {
+        "must set both to false" in {
+          val transaction = Transaction(
+            transactionDescription   = Some("F"),
+            effectiveDate            = Some("2024-01-15"),
+            isLinked                 = Some("NO"),
+            claimingRelief           = Some("NO"),
+            isDependantOnFutureEvent = Some("NO"),
+            agreedToDeferPayment     = Some("NO")
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(ConsiderationsAffectedUncertainPage) mustBe Some(false)
+          updatedAnswers.get(TransactionDeferringPaymentPage)     mustBe Some(false)
+        }
+      }
+
+      "when isDependantOnFutureEvent is absent" - {
+        "must set consideration to false" in {
+          val transaction = Transaction(
+            transactionDescription   = Some("F"),
+            effectiveDate            = Some("2024-01-15"),
+            isLinked                 = Some("NO"),
+            claimingRelief           = Some("NO"),
+            isDependantOnFutureEvent = None,
+            agreedToDeferPayment     = None
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(ConsiderationsAffectedUncertainPage) mustBe Some(false)
+          updatedAnswers.get(TransactionDeferringPaymentPage)     mustBe Some(false)
+        }
+      }
+    }
+
+    "property use pages" - {
+
+      "must correctly map yes/no values for all property use types" in {
+        val transaction = Transaction(
+          transactionDescription = Some("F"),
+          effectiveDate          = Some("2024-01-15"),
+          isLinked               = Some("NO"),
+          claimingRelief         = Some("NO"),
+          usedAsOffice           = Some("yes"),
+          usedAsHotel            = Some("no"),
+          usedAsShop             = Some("yes"),
+          usedAsWarehouse        = Some("no"),
+          usedAsFactory          = Some("yes"),
+          usedAsIndustrial       = Some("no"),
+          usedAsOther            = Some("yes")
+        )
+
+        val result = service.populateTransactionInSession(transaction, userAnswers)
+
+        result mustBe a[Success[_]]
+
+        result.get.get(TransactionUseOfLandOrPropertyPage) mustBe Some(TransactionUseOfLandOrPropertyAnswers(
+          office             = "yes",
+          hotel              = "no",
+          shop               = "yes",
+          warehouse          = "no",
+          factory            = "yes",
+          otherIndustrialUnit = "no",
+          other              = "yes"
+        ))
+      }
+
+      "must default to no when property use values are absent" in {
+        val transaction = Transaction(
+          transactionDescription = Some("F"),
+          effectiveDate          = Some("2024-01-15"),
+          isLinked               = Some("NO"),
+          claimingRelief         = Some("NO")
+        )
+
+        val result = service.populateTransactionInSession(transaction, userAnswers)
+
+        result mustBe a[Success[_]]
+
+        result.get.get(TransactionUseOfLandOrPropertyPage) mustBe Some(TransactionUseOfLandOrPropertyAnswers(
+          office             = "no",
+          hotel              = "no",
+          shop               = "no",
+          warehouse          = "no",
+          factory            = "no",
+          otherIndustrialUnit = "no",
+          other              = "no"
+        ))
+      }
+    }
+
+    "sale of business pages" - {
+
+      "when total consideration for business is present" - {
+        "must set sale of business to true and populate assets and total pages" in {
+          val transaction = Transaction(
+            transactionDescription     = Some("F"),
+            effectiveDate              = Some("2024-01-15"),
+            isLinked                   = Some("NO"),
+            claimingRelief             = Some("NO"),
+            totalConsiderationBusiness = Some("100000"),
+            includesStock              = Some("yes"),
+            includesGoodwill           = Some("no"),
+            includesChattel            = Some("yes"),
+            includesOther              = Some("no")
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(SaleOfBusinessPage) mustBe Some(true)
+          updatedAnswers.get(TransactionSaleOfBusinessAssetsPage) mustBe Some(TransactionSaleOfBusinessAssetsAnswers(
+            stock                = "yes",
+            goodwill             = "no",
+            chattelsAndMoveables = "yes",
+            others               = "no"
+          ))
+          updatedAnswers.get(TotalAssetsConsiderationPage) mustBe Some("100000")
+        }
+      }
+
+      "when total consideration for business is absent" - {
+        "must set sale of business to false" in {
+          val transaction = Transaction(
+            transactionDescription     = Some("F"),
+            effectiveDate              = Some("2024-01-15"),
+            isLinked                   = Some("NO"),
+            claimingRelief             = Some("NO"),
+            totalConsiderationBusiness = None
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(SaleOfBusinessPage)                   mustBe Some(false)
+          updatedAnswers.get(TransactionSaleOfBusinessAssetsPage)  mustBe None
+          updatedAnswers.get(TotalAssetsConsiderationPage)         mustBe None
+        }
+      }
+    }
+
+    "cap1 or nsbc pages" - {
+
+      "when postTransRulingFollowed is YES" - {
+        "must set cap1OrNsbc to true and ruling followed to Yes" in {
+          val transaction = Transaction(
+            transactionDescription  = Some("F"),
+            effectiveDate           = Some("2024-01-15"),
+            isLinked                = Some("NO"),
+            claimingRelief          = Some("NO"),
+            postTransRulingFollowed = Some("yes")
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(Cap1OrNsbcPage)               mustBe Some(true)
+          updatedAnswers.get(TransactionRulingFollowedPage) mustBe Some(TransactionRulingFollowed.Yes)
+        }
+      }
+
+      "when postTransRulingFollowed is NO" - {
+        "must set cap1OrNsbc to true and ruling followed to No" in {
+          val transaction = Transaction(
+            transactionDescription  = Some("F"),
+            effectiveDate           = Some("2024-01-15"),
+            isLinked                = Some("NO"),
+            claimingRelief          = Some("NO"),
+            postTransRulingFollowed = Some("no")
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(Cap1OrNsbcPage)               mustBe Some(true)
+          updatedAnswers.get(TransactionRulingFollowedPage) mustBe Some(TransactionRulingFollowed.No)
+        }
+      }
+
+      "when postTransRulingFollowed is rulingNotReceived" - {
+        "must set cap1OrNsbc to true and ruling followed to RulingNotReceived" in {
+          val transaction = Transaction(
+            transactionDescription  = Some("F"),
+            effectiveDate           = Some("2024-01-15"),
+            isLinked                = Some("NO"),
+            claimingRelief          = Some("NO"),
+            postTransRulingFollowed = Some("rulingNotReceived")
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(Cap1OrNsbcPage)               mustBe Some(true)
+          updatedAnswers.get(TransactionRulingFollowedPage) mustBe Some(TransactionRulingFollowed.RulingNotReceived)
+        }
+      }
+
+      "when postTransRulingFollowed is an unrecognised value" - {
+        "must set cap1OrNsbc to true but not set ruling followed page" in {
+          val transaction = Transaction(
+            transactionDescription  = Some("F"),
+            effectiveDate           = Some("2024-01-15"),
+            isLinked                = Some("NO"),
+            claimingRelief          = Some("NO"),
+            postTransRulingFollowed = Some("unknown")
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(Cap1OrNsbcPage)               mustBe Some(true)
+          updatedAnswers.get(TransactionRulingFollowedPage) mustBe None
+        }
+      }
+
+      "when postTransRulingFollowed is absent" - {
+        "must set cap1OrNsbc to false" in {
+          val transaction = Transaction(
+            transactionDescription  = Some("F"),
+            effectiveDate           = Some("2024-01-15"),
+            isLinked                = Some("NO"),
+            claimingRelief          = Some("NO"),
+            postTransRulingFollowed = None
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(Cap1OrNsbcPage)               mustBe Some(false)
+          updatedAnswers.get(TransactionRulingFollowedPage) mustBe None
+        }
+      }
+    }
+
+    "restriction pages" - {
+
+      "when restriction details are present" - {
+        "must set restrictions to true and populate description page" in {
+          val transaction = Transaction(
+            transactionDescription = Some("F"),
+            effectiveDate          = Some("2024-01-15"),
+            isLinked               = Some("NO"),
+            claimingRelief         = Some("NO"),
+            restrictionDetails     = Some("some restriction details")
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(TransactionRestrictionsCovenantsAndConditionsPage) mustBe Some(true)
+          updatedAnswers.get(DescriptionOfRestrictionsPage)                     mustBe Some("some restriction details")
+        }
+      }
+
+      "when restriction details are absent" - {
+        "must set restrictions to false" in {
+          val transaction = Transaction(
+            transactionDescription = Some("F"),
+            effectiveDate          = Some("2024-01-15"),
+            isLinked               = Some("NO"),
+            claimingRelief         = Some("NO"),
+            restrictionDetails     = None
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(TransactionRestrictionsCovenantsAndConditionsPage) mustBe Some(false)
+          updatedAnswers.get(DescriptionOfRestrictionsPage)                     mustBe None
+        }
+      }
+    }
+
+    "exchange land pages" - {
+
+      "when exchanged land address is present" - {
+        "must set land exchanged to true and populate address page" in {
+          val transaction = Transaction(
+            transactionDescription = Some("F"),
+            effectiveDate          = Some("2024-01-15"),
+            isLinked               = Some("NO"),
+            claimingRelief         = Some("NO"),
+            exchangedLandAddress1  = Some("1 Exchange Street"),
+            exchangedLandAddress2  = Some("Exchange Town"),
+            exchangedLandAddress3  = None,
+            exchangedLandAddress4  = None,
+            exchangedLandPostcode  = Some("EX1 1EX")
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(IsLandOrPropertyExchangedPage) mustBe Some(true)
+          updatedAnswers.get(TransactionAddressPage) mustBe Some(Address(
+            line1    = "1 Exchange Street",
+            line2    = Some("Exchange Town"),
+            line3    = None,
+            line4    = None,
+            line5    = Some("EX1 1EX"),
+            postcode = Some("EX1 1EX")
+          ))
+        }
+      }
+
+      "when exchanged land address is absent" - {
+        "must set land exchanged to false" in {
+          val transaction = Transaction(
+            transactionDescription = Some("F"),
+            effectiveDate          = Some("2024-01-15"),
+            isLinked               = Some("NO"),
+            claimingRelief         = Some("NO"),
+            exchangedLandAddress1  = None
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(IsLandOrPropertyExchangedPage) mustBe Some(false)
+          updatedAnswers.get(TransactionAddressPage)        mustBe None
+        }
+      }
+    }
+
+    "option page" - {
+
+      "when isPursuantToPreviousOption is YES" - {
+        "must set exercising an option to true" in {
+          val transaction = Transaction(
+            transactionDescription     = Some("F"),
+            effectiveDate              = Some("2024-01-15"),
+            isLinked                   = Some("NO"),
+            claimingRelief             = Some("NO"),
+            isPursuantToPreviousOption = Some("YES")
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          result.get.get(TransactionExercisingAnOptionPage) mustBe Some(true)
+        }
+      }
+
+      "when isPursuantToPreviousOption is NO" - {
+        "must set exercising an option to false" in {
+          val transaction = Transaction(
+            transactionDescription     = Some("F"),
+            effectiveDate              = Some("2024-01-15"),
+            isLinked                   = Some("NO"),
+            claimingRelief             = Some("NO"),
+            isPursuantToPreviousOption = Some("NO")
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          result.get.get(TransactionExercisingAnOptionPage) mustBe Some(false)
+        }
+      }
+
+      "when isPursuantToPreviousOption is absent" - {
+        "must set exercising an option to false" in {
+          val transaction = Transaction(
+            transactionDescription     = Some("F"),
+            effectiveDate              = Some("2024-01-15"),
+            isLinked                   = Some("NO"),
+            claimingRelief             = Some("NO"),
+            isPursuantToPreviousOption = None
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          result.get.get(TransactionExercisingAnOptionPage) mustBe Some(false)
+        }
       }
     }
 

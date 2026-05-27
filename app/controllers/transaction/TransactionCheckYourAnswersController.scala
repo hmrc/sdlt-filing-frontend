@@ -16,16 +16,20 @@
 
 package controllers.transaction
 
+import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
-import models.UserAnswers
+import models.{ReturnVersionUpdateRequest, Transaction, UserAnswers}
+import models.land.LandTypeOfProperty
 import models.prelimQuestions.TransactionType
+import models.transaction.{ReasonForRelief, TransactionSessionQuestions, UpdateTransactionRequest}
 import pages.transaction.*
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsObject
+import play.api.libs.json.{JsObject, JsSuccess}
 import play.api.mvc.*
 import repositories.SessionRepository
 import services.checkAnswers.CheckAnswersService
 import services.transaction.PopulateTransactionService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.transaction.*
@@ -42,6 +46,7 @@ class TransactionCheckYourAnswersController @Inject()(
   requireData: DataRequiredAction,
   sessionRepository: SessionRepository,
   checkAnswersService: CheckAnswersService,
+  backendConnector: StampDutyLandTaxConnector,
   populateTransactionService: PopulateTransactionService,
   val controllerComponents: MessagesControllerComponents,
   view: TransactionCheckYourAnswersView
@@ -69,6 +74,38 @@ class TransactionCheckYourAnswersController @Inject()(
       }
   }
 
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+
+    sessionRepository.get(request.userAnswers.id).flatMap {
+      case Some(userAnswers) =>
+        (userAnswers.data \ "transactionCurrent").validate[TransactionSessionQuestions] match {
+          case JsSuccess(sessionData, _) => updateTransaction(userAnswers)
+          case _ =>
+            Future.successful(
+              Redirect(controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad())
+            )
+        }
+      case None =>
+        Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    }
+  }
+
+  private def updateTransaction(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
+    for {
+      transaction <- Transaction.from(userAnswers)
+      updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
+      updateReturnVersionReturn <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
+      updateTransactionRequest <- UpdateTransactionRequest.from(userAnswers, transaction) if updateReturnVersionReturn.newVersion.isDefined
+      updateTransactionReturn <- backendConnector.updateTransaction(updateTransactionRequest) if updateReturnVersionReturn.newVersion.isDefined
+    } yield {
+      if (updateTransactionReturn.updated) {
+        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+      } else {
+        Redirect(controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad())
+      }
+    }
+  }
+
   private def populateFromTransaction(userAnswers: UserAnswers)(implicit request: Request[_]): Future[Result] =
     userAnswers.fullReturn.flatMap(_.transaction) match {
       case None =>
@@ -82,17 +119,9 @@ class TransactionCheckYourAnswersController @Inject()(
         }
     }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request =>
-      sessionRepository.get(request.userAnswers.id).map {
-        case Some(_) => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-        case None    => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-      }
-  }
-
   private def renderOrRedirect(ua: UserAnswers)(implicit request: Request[_]): Result =
     checkAnswersService.redirectOrRender(buildRowResults(ua)) match {
-      case Left(call)         => Redirect(call)
+      case Left(call) => Redirect(call)
       case Right(summaryList) => Ok(view(summaryList))
     }
 
@@ -110,12 +139,55 @@ class TransactionCheckYourAnswersController @Inject()(
       TotalConsiderationOfLinkedTransactionSummary.row(ua),
       Some(PurchaserEligibleToClaimReliefSummary.row(ua)),
       ReasonForReliefSummary.row(ua),
+      Option.when(isPartExchange(ua))(IsPurchaserRegisteredWithCISSummary.row(ua)),
+      if (cisCheck(ua) && isPartExchange(ua)) TransactionCisNumberSummary.row(ua) else None,
       AddRegisteredCharityNumberSummary.row(ua),
       CharityRegisteredNumberSummary.row(ua),
       TransactionPartialReliefSummary.row(ua),
-      ClaimingPartialReliefAmountSummary.row(ua)
+      ClaimingPartialReliefAmountSummary.row(ua),
+      Some(ConsiderationsAffectedUncertainSummary.row(ua)),
+      Some(TransactionDeferringPaymentSummary.row(ua)),
+      if (propertyTypeCheck(ua)) Some(TransactionUseOfLandOrPropertySummary.row(ua)) else None,
+      Some(SaleOfBusinessSummary.row(ua)),
+      if (saleOfBusinessCheck(ua)) Some(TransactionSaleOfBusinessAssetsSummary.row(ua)) else None,
+      if (saleOfBusinessCheck(ua)) Some(TotalAssetsConsiderationSummary.row(ua)) else None,
+      Some(Cap1OrNsbcSummary.row(ua)),
+      if (cap1Check(ua)) Some(TransactionRulingFollowedSummary.row(ua)) else None,
+      Some(TransactionRestrictionsCovenantsAndConditionsSummary.row(ua)),
+      if (restrictionsCheck(ua)) Some(DescriptionOfRestrictionsSummary.row(ua)) else None,
+      Some(IsLandOrPropertyExchangedSummary.row(ua)),
+      if (landExchangedCheck(ua)) Some(TransactionAddressSummary.row(ua)) else None,
+      Some(TransactionExercisingAnOptionSummary.row(ua))
     ).flatten
 
   private def isGrantOfLease(ua: UserAnswers): Boolean =
     ua.get(TypeOfTransactionPage).contains(TransactionType.GrantOfLease)
+
+  private def isPartExchange(ua: UserAnswers): Boolean =
+    ua.get(ReasonForReliefPage).contains(ReasonForRelief.PartExchange)
+
+  private def cisCheck(ua: UserAnswers): Boolean =
+    ua.get(IsPurchaserRegisteredWithCISPage).contains(true)
+
+  private def propertyTypeCheck(ua: UserAnswers): Boolean =
+    val mainLandId = ua.fullReturn.flatMap(_.returnInfo).flatMap(_.mainLandID)
+    val typeOfProperty = ua.fullReturn.flatMap(_.land).flatMap(_.find(l => l.landID == mainLandId)).flatMap(_.propertyType)
+
+    typeOfProperty match {
+      case Some(LandTypeOfProperty.Mixed.toString | LandTypeOfProperty.NonResidential.toString) => true
+      case _ => false
+    }
+
+  private def saleOfBusinessCheck(ua: UserAnswers): Boolean =
+    ua.get(SaleOfBusinessPage).contains(true)
+
+  private def cap1Check(ua: UserAnswers): Boolean =
+    ua.get(Cap1OrNsbcPage).contains(true)
+
+  private def restrictionsCheck(ua: UserAnswers): Boolean =
+    ua.get(TransactionRestrictionsCovenantsAndConditionsPage).contains(true)
+
+  private def landExchangedCheck(ua: UserAnswers): Boolean =
+    ua.get(IsLandOrPropertyExchangedPage).contains(true)
+
 }

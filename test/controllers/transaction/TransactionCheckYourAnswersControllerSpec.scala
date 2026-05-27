@@ -17,15 +17,18 @@
 package controllers.transaction
 
 import base.SpecBase
-import models.{FullReturn, Transaction, UserAnswers}
+import connectors.StampDutyLandTaxConnector
+import constants.FullReturnConstants.incompleteFullReturn
 import models.prelimQuestions.TransactionType
+import models.transaction._
+import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import pages.transaction.*
 import play.api.inject.bind
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
@@ -36,18 +39,24 @@ import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
-class TransactionCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with MockitoSugar with BeforeAndAfterEach {
+class TransactionCheckYourAnswersControllerSpec
+  extends SpecBase
+    with SummaryListFluency
+    with MockitoSugar
+    with BeforeAndAfterEach {
 
-  private val mockSessionRepository         = mock[SessionRepository]
+  private val mockSessionRepository          = mock[SessionRepository]
   private val mockPopulateTransactionService = mock[PopulateTransactionService]
+  private val mockBackendConnector           = mock[StampDutyLandTaxConnector]
 
   implicit val request: FakeRequest[_] = FakeRequest()
-  implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+  implicit val ec: ExecutionContext    = scala.concurrent.ExecutionContext.Implicits.global
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockSessionRepository)
     reset(mockPopulateTransactionService)
+    reset(mockBackendConnector)
   }
 
   private val baseUserAnswers = UserAnswers(
@@ -57,54 +66,106 @@ class TransactionCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
     data = Json.obj("key" -> "value")
   )
 
-  // Fully populated grant of lease userAnswers — all mandatory rows are Row (not Missing)
-  private val completeUserAnswers = UserAnswers(
-    id = "12345",
-    returnId = Some("AB2346"),
-    storn = "TESTSTORN",
-    data = Json.obj()
+  private val transactionCurrentData = Json.obj(
+    "transactionCurrent" -> Json.obj(
+      "typeOfTransaction" -> "GrantOfLease",
+      "transactionEffectiveDate" -> "2024-01-01",
+      "transactionAddDateOfContract" -> false,
+      "transactionLinkedTransactions" -> false,
+      "purchaserEligibleToClaimRelief" -> false,
+      "transactionPartialRelief" -> false,
+      "considerationsAffectedUncertain" -> false,
+      "transactionDeferringPayment" -> false,
+      "saleOfBusiness" -> false,
+      "cap1OrNsbc" -> false,
+      "transactionRestrictionsCovenantsAndConditions" -> false,
+      "isLandOrPropertyExchanged" -> false,
+      "transactionExercisingAnOption" -> false,
+      "transactionAddress" -> Json.obj(
+        "houseNumber" -> "1",
+        "line1" -> "Test Street",
+        "line2" -> "Test Area",
+        "line3" -> "Test City",
+        "line4" -> "Test County",
+        "line5" -> "UK",
+        "postcode" -> "AB1 2CD",
+        "country" -> Json.obj(
+          "code" -> "GB",
+          "name" -> "United Kingdom"
+        ),
+        "addressValidated" -> true
+      )
+    )
   )
-    .set(TypeOfTransactionPage, TransactionType.GrantOfLease).success.value
-    .set(TransactionEffectiveDatePage, LocalDate.of(2024, 1, 1)).success.value
-    .set(TransactionAddDateOfContractPage, false).success.value
-    .set(TransactionLinkedTransactionsPage, false).success.value
-    .set(PurchaserEligibleToClaimReliefPage, false).success.value
-    .set(TransactionPartialReliefPage, false).success.value
+
+  private def buildFullReturn(propertyType: String) = incompleteFullReturn.copy(
+    returnInfo = Some(ReturnInfo(
+      version = Some("1"),
+      mainLandID = Some("LAND001")
+    )),
+    transaction = Some(Transaction()),
+    land = Some(
+      Seq(
+        Land(
+          landID = Some("LAND001"),
+          landResourceRef = Some("LAND-REF-001"),
+          propertyType = Some(propertyType),
+          interestCreatedTransferred = Some("Transfer"),
+          address1 = Some("1 Test Street"),
+          address2 = Some("Test Town"),
+          postcode = Some("AB1 2CD"),
+          localAuthorityNumber = Some("1234")
+        )
+      )
+    )
+  )
+
+  private val completeLandFullReturn = buildFullReturn("NonResidential")
+
+  private def buildCompleteUserAnswers(fullReturn: FullReturn) =
+    UserAnswers(
+      id = "12345",
+      returnId = Some("AB2346"),
+      storn = "TESTSTORN",
+      fullReturn = Some(fullReturn),
+      data = transactionCurrentData
+    )
+      .set(TypeOfTransactionPage, TransactionType.GrantOfLease).success.value
+      .set(TransactionEffectiveDatePage, LocalDate.of(2024, 1, 1)).success.value
+      .set(TransactionAddDateOfContractPage, false).success.value
+      .set(TransactionLinkedTransactionsPage, false).success.value
+      .set(PurchaserEligibleToClaimReliefPage, false).success.value
+      .set(TransactionPartialReliefPage, false).success.value
+      .set(ConsiderationsAffectedUncertainPage, false).success.value
+      .set(TransactionDeferringPaymentPage, false).success.value
+      .set(SaleOfBusinessPage, false).success.value
+      .set(Cap1OrNsbcPage, false).success.value
+      .set(TransactionRestrictionsCovenantsAndConditionsPage, false).success.value
+      .set(IsLandOrPropertyExchangedPage, false).success.value
+      .set(TransactionExercisingAnOptionPage, false).success.value
+
+  private val completeUserAnswers = buildCompleteUserAnswers(completeLandFullReturn)
+
+  private val userAnswersWithValidSession = buildCompleteUserAnswers(completeLandFullReturn)
 
   private val userAnswersWithTransaction = UserAnswers(
     id = "12345",
     returnId = Some("AB2346"),
     storn = "TESTSTORN",
-    fullReturn = Some(FullReturn(
-      stornId = "TESTSTORN",
-      returnResourceRef = "AB2346",
-      transaction = Some(Transaction())
-    ))
+    fullReturn = Some(
+      FullReturn(
+        stornId = "TESTSTORN",
+        returnResourceRef = "AB2346",
+        transaction = Some(Transaction())
+      )
+    )
   )
 
-  "TransactionCheckYourAnswers Controller" - {
+  "TransactionCheckYourAnswersController" - {
 
     "onPageLoad" - {
 
-      "must redirect to ReturnTaskList when the UserAnswers has no returnId" in {
-
-        val userAnswers = emptyUserAnswers.copy(returnId = None)
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result  = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
-        }
-      }
-
-      "must redirect to JourneyRecovery when session data is not found" in {
+      "must redirect to JourneyRecovery when no session exists" in {
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
 
@@ -113,32 +174,36 @@ class TransactionCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           .build()
 
         running(application) {
-          val request = FakeRequest(GET, controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result  = route(application, request).value
+          val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+          redirectLocation(result).value mustEqual
+            controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
 
-      "must redirect to TransactionBeforeYouStart when transactionCurrent data is empty" in {
+      "must redirect to ReturnTaskList when returnId is missing" in {
 
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(baseUserAnswers)))
+        val ua = completeUserAnswers.copy(returnId = None)
 
-        val application = applicationBuilder(userAnswers = Some(baseUserAnswers))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
+
+        val application = applicationBuilder(userAnswers = Some(ua))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
         running(application) {
-          val request = FakeRequest(GET, controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result  = route(application, request).value
+          val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
+          redirectLocation(result).value mustEqual
+            controllers.routes.ReturnTaskListController.onPageLoad().url
         }
       }
 
-      "must return OK and the correct view when UserAnswers contains complete transaction data" in {
+      "must render the page when data is complete" in {
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(completeUserAnswers)))
 
@@ -147,70 +212,44 @@ class TransactionCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           .build()
 
         running(application) {
-          val request = FakeRequest(GET, controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result  = route(application, request).value
+          val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
 
           status(result) mustEqual OK
           contentAsString(result) must include("Check your answers")
         }
       }
 
-      "must redirect to Journey Recovery when no existing data is found" in {
+      "must redirect to first missing page when required answer missing" in {
 
-        val application = applicationBuilder(userAnswers = None).build()
+        val ua = completeUserAnswers.remove(TransactionEffectiveDatePage).success.value
 
-        running(application) {
-          val request = FakeRequest(GET, controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result  = route(application, request).value
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
 
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-        }
-      }
-
-      "must redirect to first missing page when mandatory data is absent" in {
-
-        val userAnswers = completeUserAnswers.remove(TransactionEffectiveDatePage).success.value
-
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
+        val application = applicationBuilder(userAnswers = Some(ua))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
         running(application) {
-          val request = FakeRequest(GET, controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result  = route(application, request).value
+          val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(models.CheckMode).url
+          redirectLocation(result).value mustEqual
+            routes.TransactionEffectiveDateController.onPageLoad(models.CheckMode).url
         }
       }
 
-      "must not show grant of lease rows when transaction type is grant of lease" in {
+      "must populate transaction data when transactionCurrent is empty" in {
 
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(completeUserAnswers)))
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(userAnswersWithTransaction)))
 
-        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
+        when(mockPopulateTransactionService.populateTransactionInSession(any(), any()))
+          .thenReturn(Success(completeUserAnswers))
 
-        running(application) {
-          val request = FakeRequest(GET, controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result  = route(application, request).value
-
-          status(result) mustEqual OK
-          contentAsString(result) must not include "transaction.totalConsiderationOfTransaction.checkYourAnswersLabel"
-          contentAsString(result) must not include "transaction.transactionVatIncluded.checkYourAnswersLabel"
-          contentAsString(result) must not include "transaction.transactionFormsOfConsideration.checkYourAnswersLabel"
-        }
-      }
-
-      "must call populateTransactionInSession and render the page when fullReturn.transaction is present and population succeeds" in {
-
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswersWithTransaction)))
-        when(mockPopulateTransactionService.populateTransactionInSession(any(), any())).thenReturn(Success(completeUserAnswers))
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
 
         val application = applicationBuilder(userAnswers = Some(userAnswersWithTransaction))
           .overrides(
@@ -220,17 +259,20 @@ class TransactionCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           .build()
 
         running(application) {
-          val request = FakeRequest(GET, controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result  = route(application, request).value
+          val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
 
           status(result) mustEqual OK
         }
       }
 
-      "must redirect to TransactionBeforeYouStart when fullReturn.transaction is present but population fails" in {
+      "must redirect to before you start when population fails" in {
 
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswersWithTransaction)))
-        when(mockPopulateTransactionService.populateTransactionInSession(any(), any())).thenReturn(Failure(new RuntimeException("Population failed")))
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(userAnswersWithTransaction)))
+
+        when(mockPopulateTransactionService.populateTransactionInSession(any(), any()))
+          .thenReturn(Failure(new RuntimeException("boom")))
 
         val application = applicationBuilder(userAnswers = Some(userAnswersWithTransaction))
           .overrides(
@@ -240,61 +282,371 @@ class TransactionCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           .build()
 
         running(application) {
-          val request = FakeRequest(GET, controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result  = route(application, request).value
+          val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
+          redirectLocation(result).value mustEqual
+            routes.TransactionBeforeYouStartController.onPageLoad().url
+        }
+      }
+
+      "must render non grant of lease rows" in {
+
+        val ua = completeUserAnswers
+          .set(TypeOfTransactionPage, TransactionType.ConveyanceTransfer).success.value
+          .set(TotalConsiderationOfTransactionPage, "12").success.value
+          .set(TransactionVatIncludedPage, false).success.value
+          .set(TransactionFormsOfConsiderationPage, TransactionFormsOfConsiderationAnswers(
+            cash = "yes", debt = "no", buildingWorks = "no", employment = "no", other = "no",
+            sharesInAQuotedCompany = "no", sharesInAnUnquotedCompany = "no",
+            otherLand = "no", services = "no", contingent = "no"
+          )).success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
+
+        val application = applicationBuilder(userAnswers = Some(ua))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+        }
+      }
+
+      "must render part exchange rows" in {
+
+        val ua = completeUserAnswers
+          .set(PurchaserEligibleToClaimReliefPage, true).success.value
+          .set(ReasonForReliefPage, ReasonForRelief.PartExchange).success.value
+          .set(IsPurchaserRegisteredWithCISPage, true).success.value
+          .set(TransactionCisNumberPage, "1234567890").success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
+
+        val application = applicationBuilder(userAnswers = Some(ua))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+        }
+      }
+
+      "must render sale of business rows" in {
+
+        val ua = completeUserAnswers
+          .set(SaleOfBusinessPage, true).success.value
+          .set(TransactionSaleOfBusinessAssetsPage, TransactionSaleOfBusinessAssetsAnswers(
+            stock = "yes", goodwill = "no", chattelsAndMoveables = "no", others = "no"
+          )).success.value
+          .set(TotalAssetsConsiderationPage, "12").success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
+
+        val application = applicationBuilder(userAnswers = Some(ua))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+        }
+      }
+
+      "must render cap1 rows" in {
+
+        val ua = completeUserAnswers
+          .set(Cap1OrNsbcPage, true).success.value
+          .set(TransactionRulingFollowedPage, TransactionRulingFollowed.Yes).success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
+
+        val application = applicationBuilder(userAnswers = Some(ua))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+        }
+      }
+
+      "must render restrictions rows" in {
+
+        val ua = completeUserAnswers
+          .set(TransactionRestrictionsCovenantsAndConditionsPage, true).success.value
+          .set(DescriptionOfRestrictionsPage, "restriction").success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
+
+        val application = applicationBuilder(userAnswers = Some(ua))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+        }
+      }
+
+      "must render exchanged land rows" in {
+
+        val ua = completeUserAnswers
+          .set(IsLandOrPropertyExchangedPage, true).success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
+
+        val application = applicationBuilder(userAnswers = Some(ua))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+        }
+      }
+
+      "propertyTypeCheck" - {
+
+        "must render use of land row when property type is NonResidential" in {
+
+          val ua = buildCompleteUserAnswers(buildFullReturn("NonResidential"))
+            .set(TransactionUseOfLandOrPropertyPage, TransactionUseOfLandOrPropertyAnswers(
+              office = "yes", hotel = "no", shop = "no", warehouse = "no",
+              factory = "no", otherIndustrialUnit = "no", other = "no"
+            )).success.value
+
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
+
+          val application = applicationBuilder(userAnswers = Some(ua))
+            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+            .build()
+
+          running(application) {
+            val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+            val result = route(application, request).value
+
+            status(result) mustEqual OK
+          }
+        }
+
+        "must render use of land row when property type is Mixed" in {
+
+          val ua = buildCompleteUserAnswers(buildFullReturn("Mixed"))
+            .set(TransactionUseOfLandOrPropertyPage, TransactionUseOfLandOrPropertyAnswers(
+              office = "yes", hotel = "no", shop = "no", warehouse = "no",
+              factory = "no", otherIndustrialUnit = "no", other = "no"
+            )).success.value
+
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
+
+          val application = applicationBuilder(userAnswers = Some(ua))
+            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+            .build()
+
+          running(application) {
+            val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+            val result = route(application, request).value
+
+            status(result) mustEqual OK
+          }
+        }
+
+        "must not render use of land row when property type is Residential" in {
+
+          val ua = buildCompleteUserAnswers(buildFullReturn("Residential"))
+
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
+
+          val application = applicationBuilder(userAnswers = Some(ua))
+            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+            .build()
+
+          running(application) {
+            val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+            val result = route(application, request).value
+
+            status(result) mustEqual OK
+          }
+        }
+
+        "must not render use of land row when property type is absent" in {
+
+          val fullReturnNoPropertyType = incompleteFullReturn.copy(
+            returnInfo = Some(ReturnInfo(
+              version = Some("1"),
+              mainLandID = Some("LAND001")
+            )),
+            transaction = Some(Transaction()),
+            land = Some(
+              Seq(
+                Land(
+                  landID = Some("LAND001"),
+                  landResourceRef = Some("LAND-REF-001"),
+                  propertyType = None,
+                  interestCreatedTransferred = Some("Transfer"),
+                  address1 = Some("1 Test Street"),
+                  address2 = Some("Test Town"),
+                  postcode = Some("AB1 2CD"),
+                  localAuthorityNumber = Some("1234")
+                )
+              )
+            )
+          )
+
+          val ua = buildCompleteUserAnswers(fullReturnNoPropertyType)
+
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
+
+          val application = applicationBuilder(userAnswers = Some(ua))
+            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+            .build()
+
+          running(application) {
+            val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+            val result = route(application, request).value
+
+            status(result) mustEqual OK
+          }
+        }
+
+        "must not render use of land row when land data is absent" in {
+
+          val fullReturnNoLand = incompleteFullReturn.copy(
+            returnInfo = Some(ReturnInfo(
+              version = Some("1"),
+              mainLandID = Some("LAND001")
+            )),
+            transaction = Some(Transaction()),
+            land = None
+          )
+
+          val ua = buildCompleteUserAnswers(fullReturnNoLand)
+
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
+
+          val application = applicationBuilder(userAnswers = Some(ua))
+            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+            .build()
+
+          running(application) {
+            val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+            val result = route(application, request).value
+
+            status(result) mustEqual OK
+          }
         }
       }
     }
 
     "onSubmit" - {
 
-      "must redirect to ReturnTaskList when session data exists" in {
+      "must redirect to task list when update succeeds" in {
 
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(baseUserAnswers)))
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(userAnswersWithValidSession)))
+
+        when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+          .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(2))))
+
+        when(mockBackendConnector.updateTransaction(any[UpdateTransactionRequest])(any(), any()))
+          .thenReturn(Future.successful(UpdateTransactionReturn(updated = true)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswersWithValidSession))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, routes.TransactionCheckYourAnswersController.onSubmit().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual
+            controllers.routes.ReturnTaskListController.onPageLoad().url
+        }
+      }
+
+      "must redirect back to cya when update fails" in {
+
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(completeUserAnswers)))
+
+        when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+          .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(2))))
+
+        when(mockBackendConnector.updateTransaction(any[UpdateTransactionRequest])(any(), any()))
+          .thenReturn(Future.successful(UpdateTransactionReturn(updated = false)))
+
+        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, routes.TransactionCheckYourAnswersController.onSubmit().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual
+            routes.TransactionCheckYourAnswersController.onPageLoad().url
+        }
+      }
+
+      "must redirect to cya when validation fails" in {
+
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(baseUserAnswers)))
 
         val application = applicationBuilder(userAnswers = Some(baseUserAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
         running(application) {
-          val request = FakeRequest(POST, controllers.transaction.routes.TransactionCheckYourAnswersController.onSubmit().url)
-          val result  = route(application, request).value
+          val request = FakeRequest(POST, routes.TransactionCheckYourAnswersController.onSubmit().url)
+          val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+          redirectLocation(result).value mustEqual
+            routes.TransactionCheckYourAnswersController.onPageLoad().url
         }
       }
 
-      "must redirect to JourneyRecovery when session data is not found" in {
+      "must redirect to journey recovery when no session exists on submit" in {
 
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(None))
 
         val application = applicationBuilder(userAnswers = Some(baseUserAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
         running(application) {
-          val request = FakeRequest(POST, controllers.transaction.routes.TransactionCheckYourAnswersController.onSubmit().url)
-          val result  = route(application, request).value
+          val request = FakeRequest(POST, routes.TransactionCheckYourAnswersController.onSubmit().url)
+          val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-        }
-      }
-
-      "must redirect to JourneyRecovery when no existing data is found" in {
-
-        val application = applicationBuilder(userAnswers = None).build()
-
-        running(application) {
-          val request = FakeRequest(POST, controllers.transaction.routes.TransactionCheckYourAnswersController.onSubmit().url)
-          val result  = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+          redirectLocation(result).value mustEqual
+            controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
     }

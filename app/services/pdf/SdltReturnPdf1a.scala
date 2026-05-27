@@ -150,15 +150,15 @@ class SdltReturnPdf1a @Inject()(
     if (claimingRelief) {
       w.text(CALCULATION_CLAIMING_RELIEF_REASON,        t.reliefReason.orNull)
       w.text(CALCULATION_CLAIMING_RELIEF_SCHEME_NUMBER, t.reliefSchemeNumber.orNull)
-      w.bigDecimal(CALCULATION_CLAIMING_RELIEF_AMOUNT,  t.reliefAmount)
+      w.text(CALCULATION_CLAIMING_RELIEF_AMOUNT,  t.reliefAmount.orNull)
     }
 
     // Box 9: Total consideration — also fill the split digit-group fields
-    w.bigDecimal(CALCULATION_TOTAL_CONSIDERATION, t.totalConsideration)
+    w.text(CALCULATION_TOTAL_CONSIDERATION, t.totalConsideration.orNull)
     fillSplitConsideration(w, t.totalConsideration)
 
     // Box 10: VAT in consideration
-    w.bigDecimal(CALCULATION_TOTAL_CONSIDERATION_VAT, t.considerationVAT)
+    w.text(CALCULATION_TOTAL_CONSIDERATION_VAT, t.considerationVAT.orNull)
 
     // Box 12: Linked transactions
     w.yesNo(
@@ -168,7 +168,7 @@ class SdltReturnPdf1a @Inject()(
     )
 
     // Box 13: Total linked consideration
-    w.bigDecimal(CALCULATION_LINKED_TRANSACTION_TOTAL, t.totalConsiderationLinked)
+    w.text(CALCULATION_LINKED_TRANSACTION_TOTAL, t.totalConsiderationLinked.orNull)
 
     // Box 14: Tax due
     w.text(CALCULATION_TAX_DUE, tc.taxDue.orNull)
@@ -332,9 +332,9 @@ class SdltReturnPdf1a @Inject()(
   // Each box holds ~3 digits. Left-pad the full pound amount to 12 chars.
   // ---------------------------------------------------------------------------
 
-  private def fillSplitConsideration(w: FieldWriter, amount: Option[BigDecimal]): Unit =
+  private def fillSplitConsideration(w: FieldWriter, amount: Option[String]): Unit =
     amount.foreach { bd =>
-      val padded = bd.bigDecimal.toString.reverse.padTo(12, '0').reverse
+      val padded = bd.reverse.padTo(12, '0').reverse
       w.text(CALCULATION_TOTAL_CONSIDERATION_1, padded.substring(0, 3))
       w.text(CALCULATION_TOTAL_CONSIDERATION_2, padded.substring(3, 6))
       w.text(CALCULATION_TOTAL_CONSIDERATION_3, padded.substring(6, 9))

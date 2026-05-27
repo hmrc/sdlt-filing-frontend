@@ -18,14 +18,16 @@ package models
 
 import models.purchaser.PurchaserConfirmIdentity.{AnotherFormOfID, CorporationTaxUTR, PartnershipUTR, VatRegistrationNumber}
 import models.land.LandSessionQuestions
+import models.prelimQuestions.TransactionType
 import models.vendor.VendorSessionQuestions
 import models.purchaser.{PurchaserConfirmIdentity, PurchaserSessionQuestions}
+import models.transaction.ReasonForRelief.{CharitiesRelief, PartExchange}
+import models.transaction.TransactionSessionQuestions
 import org.slf4j.Logger
 import pages.purchaser.PurchaserConfirmIdentityPage
 import play.api.libs.json.{Json, OFormat}
+
 import java.time.format.DateTimeFormatter
-
-
 import scala.concurrent.Future
 
 
@@ -327,23 +329,23 @@ case class Transaction(
                         transactionID: Option[String] = None,
                         returnID: Option[String] = None,
                         claimingRelief: Option[String] = None,
-                        reliefAmount: Option[BigDecimal] = None,
+                        reliefAmount: Option[String] = None,
                         reliefReason: Option[String] = None,
                         reliefSchemeNumber: Option[String] = None,
                         isLinked: Option[String] = None,
-                        totalConsiderationLinked: Option[BigDecimal] = None,
-                        totalConsideration: Option[BigDecimal] = None,
-                        considerationBuild: Option[BigDecimal] = None,
-                        considerationCash: Option[BigDecimal] = None,
-                        considerationContingent: Option[BigDecimal] = None,
-                        considerationDebt: Option[BigDecimal] = None,
-                        considerationEmploy: Option[BigDecimal] = None,
-                        considerationOther: Option[BigDecimal] = None,
-                        considerationLand: Option[BigDecimal] = None,
-                        considerationServices: Option[BigDecimal] = None,
-                        considerationSharesQTD: Option[BigDecimal] = None,
-                        considerationSharesUNQTD: Option[BigDecimal] = None,
-                        considerationVAT: Option[BigDecimal] = None,
+                        totalConsiderationLinked: Option[String] = None,
+                        totalConsideration: Option[String] = None,
+                        considerationBuild: Option[String] = None,
+                        considerationCash: Option[String] = None,
+                        considerationContingent: Option[String] = None,
+                        considerationDebt: Option[String] = None,
+                        considerationEmploy: Option[String] = None,
+                        considerationOther: Option[String] = None,
+                        considerationLand: Option[String] = None,
+                        considerationServices: Option[String] = None,
+                        considerationSharesQTD: Option[String] = None,
+                        considerationSharesUNQTD: Option[String] = None,
+                        considerationVAT: Option[String] = None,
                         includesChattel: Option[String] = None,
                         includesGoodwill: Option[String] = None,
                         includesOther: Option[String] = None,
@@ -374,11 +376,87 @@ case class Transaction(
                         restrictionDetails: Option[String] = None,
                         postTransRulingFollowed: Option[String] = None,
                         isPartOfSaleOfBusiness: Option[String] = None,
-                        totalConsiderationBusiness: Option[BigDecimal] = None
+                        totalConsiderationBusiness: Option[String] = None
                       )
 
 object Transaction {
   implicit val format: OFormat[Transaction] = Json.format[Transaction]
+
+  def from(userAnswers: UserAnswers): Future[Transaction] = {
+    val transactionSessionQuestions: TransactionSessionQuestions = (userAnswers.data \ "transactionCurrent").as[TransactionSessionQuestions]
+
+    val existingTransaction = for {
+      fullReturn <- userAnswers.fullReturn
+      transaction <- fullReturn.transaction
+    } yield transaction
+    Future.successful(Transaction(
+      transactionID = existingTransaction.flatMap(_.transactionID),
+      returnID = userAnswers.returnId,
+      claimingRelief = if (transactionSessionQuestions.purchaserEligibleToClaimRelief.getOrElse(false)) Some("yes") else Some("no"),
+      reliefAmount = transactionSessionQuestions.claimingPartialReliefAmount,
+      reliefReason = Some(transactionSessionQuestions.reasonForRelief.toString),
+      reliefSchemeNumber = transactionSessionQuestions.reasonForRelief match {
+        case Some(PartExchange) => transactionSessionQuestions.transactionCisNumber
+        case Some(CharitiesRelief) => transactionSessionQuestions.charityRegisteredNumber
+        case _ => None
+      },
+      isLinked = if (transactionSessionQuestions.isLinked.getOrElse(false)) Some("yes") else Some("no"),
+      totalConsiderationLinked = transactionSessionQuestions.totalConsiderationOfLinkedTransaction,
+      totalConsideration = transactionSessionQuestions.totalConsiderationOfTransaction,
+      considerationBuild = transactionSessionQuestions.transactionFormsOfConsideration.map(_.buildingWorks),
+      considerationCash = transactionSessionQuestions.transactionFormsOfConsideration.map(_.cash),
+      considerationContingent = transactionSessionQuestions.transactionFormsOfConsideration.map(_.contingent),
+      considerationDebt = transactionSessionQuestions.transactionFormsOfConsideration.map(_.debt),
+      considerationEmploy = transactionSessionQuestions.transactionFormsOfConsideration.map(_.employment),
+      considerationOther = transactionSessionQuestions.transactionFormsOfConsideration.map(_.other),
+      considerationLand = transactionSessionQuestions.transactionFormsOfConsideration.map(_.otherLand),
+      considerationServices = transactionSessionQuestions.transactionFormsOfConsideration.map(_.services),
+      considerationSharesQTD = transactionSessionQuestions.transactionFormsOfConsideration.map(_.sharesInAQuotedCompany),
+      considerationSharesUNQTD = transactionSessionQuestions.transactionFormsOfConsideration.map(_.sharesInAnUnquotedCompany),
+      considerationVAT = transactionSessionQuestions.transactionVatAmount,
+      includesChattel = transactionSessionQuestions.transactionSaleOfBusinessAssets.map(_.chattelsAndMoveables),
+      includesGoodwill = transactionSessionQuestions.transactionSaleOfBusinessAssets.map(_.goodwill),
+      includesOther = transactionSessionQuestions.transactionSaleOfBusinessAssets.map(_.others),
+      includesStock = transactionSessionQuestions.transactionSaleOfBusinessAssets.map(_.stock),
+      usedAsFactory = transactionSessionQuestions.transactionUseOfLandOrProperty.map(_.factory),
+      usedAsHotel = transactionSessionQuestions.transactionUseOfLandOrProperty.map(_.hotel),
+      usedAsIndustrial = transactionSessionQuestions.transactionUseOfLandOrProperty.map(_.otherIndustrialUnit),
+      usedAsOffice = transactionSessionQuestions.transactionUseOfLandOrProperty.map(_.office),
+      usedAsOther = transactionSessionQuestions.transactionUseOfLandOrProperty.map(_.other),
+      usedAsShop = transactionSessionQuestions.transactionUseOfLandOrProperty.map(_.shop),
+      usedAsWarehouse = transactionSessionQuestions.transactionUseOfLandOrProperty.map(_.warehouse),
+      contractDate = transactionSessionQuestions.transactionDateOfContract.map(_.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))),
+      isDependantOnFutureEvent = if (transactionSessionQuestions.considerationsAffectedUncertain.getOrElse(false)) Some("yes") else Some("no"),
+      transactionDescription = transactionSessionQuestions.typeOfTransaction.map {
+        case TransactionType.ConveyanceTransfer => "F"
+        case TransactionType.GrantOfLease => "L"
+        case TransactionType.ConveyanceTransferLease => "A"
+        case TransactionType.OtherTransaction => "O"
+      },
+      newTransactionDescription = transactionSessionQuestions.typeOfTransaction.map {
+        case TransactionType.ConveyanceTransfer => "F"
+        case TransactionType.GrantOfLease => "L"
+        case TransactionType.ConveyanceTransferLease => "A"
+        case TransactionType.OtherTransaction => "O"
+      },
+      effectiveDate = transactionSessionQuestions.transactionEffectiveDate.map(_.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))),
+      isLandExchanged = if (transactionSessionQuestions.isLandOrPropertyExchanged.getOrElse(false)) Some("yes") else Some("no"),
+      exchangedLandHouseNumber = transactionSessionQuestions.transactionAddress.houseNumber,
+      exchangedLandAddress1 = Some(transactionSessionQuestions.transactionAddress.line1),
+      exchangedLandAddress2 = transactionSessionQuestions.transactionAddress.line2,
+      exchangedLandAddress3 = transactionSessionQuestions.transactionAddress.line3,
+      exchangedLandAddress4 = transactionSessionQuestions.transactionAddress.line4,
+      exchangedLandPostcode = Some(transactionSessionQuestions.transactionAddress.postcode),
+      agreedToDeferPayment = if (transactionSessionQuestions.transactionDeferringPayment.getOrElse(false)) Some("yes") else Some("no"),
+      postTransRulingApplied = if (transactionSessionQuestions.cap1OrNsbc.getOrElse(false)) Some("yes") else Some("no"),
+      isPursuantToPreviousOption = if (transactionSessionQuestions.transactionExercisingAnOption.getOrElse(false)) Some("yes") else Some("no"),
+      restrictionsAffectInterest = if (transactionSessionQuestions.transactionRestrictionsCovenantsAndConditions.getOrElse(false)) Some("yes") else Some("no"),
+      restrictionDetails = transactionSessionQuestions.descriptionOfRestrictions,
+      postTransRulingFollowed = transactionSessionQuestions.transactionRulingFollowed.map(_.toString),
+      isPartOfSaleOfBusiness = if (transactionSessionQuestions.saleOfBusiness.getOrElse(false)) Some("yes") else Some("no"),
+      totalConsiderationBusiness = transactionSessionQuestions.totalAssetsConsideration
+    ))
+  }
 }
 
 case class ReturnAgent(

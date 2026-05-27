@@ -16,7 +16,10 @@
 
 package models.transaction
 
+import models.{Transaction, UserAnswers}
 import play.api.libs.json.{Json, OFormat}
+
+import scala.concurrent.Future
 
 case class UpdateTransactionRequest(
                                      storn: String,
@@ -26,6 +29,67 @@ case class UpdateTransactionRequest(
 
 object UpdateTransactionRequest {
   implicit val format: OFormat[UpdateTransactionRequest] = Json.format[UpdateTransactionRequest]
+
+  def from(userAnswers: UserAnswers, transaction: Transaction): Future[UpdateTransactionRequest] =
+    userAnswers.fullReturn match {
+      case Some(fullReturn) =>
+            Future.successful(UpdateTransactionRequest(
+              storn = userAnswers.storn,
+              returnResourceRef = fullReturn.returnResourceRef,
+              TransactionPayload(
+                claimingRelief = transaction.claimingRelief,
+                reliefAmount = transaction.reliefAmount,
+                reliefReason = transaction.reliefReason,
+                reliefSchemeNumber = transaction.reliefSchemeNumber,
+                isLinked = transaction.isLinked,
+                totalConsiderLinked = transaction.totalConsiderationLinked,
+                totalConsider = transaction.totalConsideration,
+                considerBuild = transaction.considerationBuild,
+                considerCash = transaction.considerationCash,
+                considerContingent = transaction.considerationContingent,
+                considerDebt = transaction.considerationDebt,
+                considerEmploy = transaction.considerationEmploy,
+                considerOther = transaction.considerationOther,
+                considerLand = transaction.considerationLand,
+                considerServices = transaction.considerationServices,
+                considerSharesQtd = transaction.considerationSharesQTD,
+                considerSharesUnqtd = transaction.considerationSharesUNQTD,
+                considerVat = transaction.considerationVAT,
+                includesChattel = transaction.includesChattel,
+                includesGoodwill = transaction.includesGoodwill,
+                includesOther = transaction.includesOther,
+                includesStock = transaction.includesStock,
+                usedAsFactory = transaction.usedAsFactory,
+                usedAsHotel = transaction.usedAsHotel,
+                usedAsIndustrial = transaction.usedAsIndustrial,
+                usedAsOffice = transaction.usedAsOffice,
+                usedAsOther = transaction.usedAsOther,
+                usedAsShop = transaction.usedAsShop,
+                usedAsWarehouse = transaction.usedAsWarehouse,
+                contractDate = transaction.contractDate,
+                isDependOnFutureEvent = transaction.isDependantOnFutureEvent,
+                transactionDescription = transaction.transactionDescription,
+                newTransactionDescription = transaction.newTransactionDescription,
+                effectiveDate = transaction.effectiveDate,
+                isLandExchanged = transaction.isLandExchanged,
+                exLandHouseNumber = transaction.exchangedLandHouseNumber,
+                exLandAddress1 = transaction.exchangedLandAddress1,
+                exLandAddress2 = transaction.exchangedLandAddress2,
+                exLandAddress3 = transaction.exchangedLandAddress3,
+                exLandAddress4 = transaction.exchangedLandAddress4,
+                exLandPostcode = transaction.exchangedLandPostcode,
+                agreedDeferPay = transaction.agreedToDeferPayment,
+                postTransactionRulingApplied = transaction.postTransRulingApplied,
+                isPursuantToPreviousOption = transaction.isPursuantToPreviousOption,
+                restAffectInt = transaction.restrictionsAffectInterest,
+                restDetails = transaction.restrictionDetails,
+                postTransactionRulingFollowed = transaction.postTransRulingFollowed,
+                isPartOfSaleOfBusiness = transaction.isPartOfSaleOfBusiness,
+                totalConsiderationOfBusiness = transaction.totalConsiderationBusiness
+        )
+            ))
+      case None => Future.failed(new NoSuchElementException("Full return not found"))
+    }
 }
 
 case class UpdateTransactionReturn(

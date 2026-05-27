@@ -36,7 +36,7 @@ class FreeholdCannotCalculateSdltDueControllerSpec extends SpecBase {
         returnInfo        = Some(ReturnInfo(mainLandID = Some("L1"))),
         transaction       = Some(Transaction(
           effectiveDate          = Some("2026-01-01"),
-          totalConsideration     = Some(BigDecimal(300000)),
+          totalConsideration     = Some("300000"),
           claimingRelief         = Some("no"),
           transactionDescription = Some("F"),
           isLinked               = Some("yes")

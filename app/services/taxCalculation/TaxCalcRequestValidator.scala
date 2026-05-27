@@ -57,7 +57,7 @@ object TaxCalcRequestValidator {
       effectiveDateMonth  = parsedDate.getMonthValue,
       effectiveDateYear   = parsedDate.getYear,
       nonUKResident       = handleNonUkResident(fullReturn.residency, parsedDate, propertyType),
-      premium             = premium,
+      premium             = BigDecimal(premium),
       highestRent         = fullReturn.lease.flatMap(_.startingRent).flatMap(v => Try(BigDecimal(v)).toOption).getOrElse(BigDecimal(0)),
       propertyDetails     = buildPropertyDetails(propertyCode),
       leaseDetails        = leaseDetails,

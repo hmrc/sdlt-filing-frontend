@@ -713,7 +713,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
 
   private val validTransactionJson = Json.obj(
     "transactionID" -> "TXN001",
-    "totalConsideration" -> 500000.00,
+    "totalConsideration" -> "500000.00",
     "effectiveDate" -> "2024-10-01"
   )
 
@@ -1188,15 +1188,15 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
 
     ".reads" - {
 
-      "must deserialize valid JSON with BigDecimal" in {
+      "must deserialize valid JSON with string" in {
         val result = Json.fromJson[Transaction](validTransactionJson).asEither.value
 
         result.transactionID mustBe Some("TXN001")
-        result.totalConsideration mustBe Some(BigDecimal("500000.00"))
+        result.totalConsideration mustBe Some("500000.00")
       }
 
-      "must fail when BigDecimal field has wrong type" in {
-        val json = Json.obj("totalConsideration" -> "not-a-number")
+      "must fail when String field has wrong type" in {
+        val json = Json.obj("totalConsideration" -> 123)
         val result = Json.fromJson[Transaction](json).asEither
 
         result.isLeft mustBe true
@@ -1210,7 +1210,7 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
         val json = Json.toJson(transaction)
 
         (json \ "transactionID").as[String] mustBe "TXN001"
-        (json \ "totalConsideration").as[BigDecimal] mustBe BigDecimal("500000.00")
+        (json \ "totalConsideration").as[String] mustBe "500000.00"
       }
     }
 

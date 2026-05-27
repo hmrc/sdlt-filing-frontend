@@ -48,7 +48,7 @@ class LeaseholdTaxCalculatedTotalAmountDueControllerSpec extends SpecBase with M
         returnInfo        = Some(ReturnInfo(mainLandID = Some("L1"))),
         transaction       = Some(Transaction(
           effectiveDate          = Some(today.minusDays(60).toString),
-          totalConsideration     = Some(BigDecimal(300000)),
+          totalConsideration     = Some("300000"),
           claimingRelief         = Some("no"),
           transactionDescription = Some("L"),
           isLinked               = Some("no")
