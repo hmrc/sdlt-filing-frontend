@@ -19,19 +19,19 @@ package controllers.taxCalculation.freeholdSelfAssessed
 import controllers.actions.*
 import controllers.taxCalculation.TaxCalculationErrorRecovery
 import forms.taxCalculation.SdltCalculatedTotalAmountDueFormProvider
-import models.taxCalculation.{BuildRequestError, MissingSelfAssessedAmountDueError}
 import models.taxCalculation.TaxCalculationFlow.FreeholdSelfAssessed
+import models.taxCalculation.{BuildRequestError, MissingSelfAssessedAmountDueError, TotalAmountDueSummaryRowValues}
 import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.taxCalculation.freeholdSelfAssessed.{FreeholdSelfAssessedAmountPage, FreeholdSelfAssessedTotalAmountDuePage}
+import pages.taxCalculation.freeholdSelfAssessed.{FreeholdSelfAssessedAmountPage, FreeholdSelfAssessedPenaltiesAndInterestPage, FreeholdSelfAssessedTotalAmountDuePage}
 import play.api.Logging
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.TimeMachine
+import utils.{TaxCalculationPenaltiesHelper, TimeMachine}
 import viewmodels.taxCalculation.selfAssessedViewModels.TotalAmountDueViewModel
 import views.html.taxCalculation.selfAssessed.TotalAmountDueView
 
@@ -40,18 +40,18 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FreeholdSelfAssessedTotalAmountDueController @Inject()(
-                                                             override val messagesApi: MessagesApi,
-                                                             identify: IdentifierAction,
-                                                             getData: DataRetrievalAction,
-                                                             requireData: DataRequiredAction,
-                                                             sdltCalculationService: SdltCalculationService,
-                                                             sessionRepository: SessionRepository,
-                                                             navigator: Navigator,
-                                                             formProvider: SdltCalculatedTotalAmountDueFormProvider,
-                                                             timeMachine: TimeMachine,
-                                                             val controllerComponents: MessagesControllerComponents,
-                                                             view: TotalAmountDueView,
-                                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging with TaxCalculationErrorRecovery {
+                                                              override val messagesApi: MessagesApi,
+                                                              identify: IdentifierAction,
+                                                              getData: DataRetrievalAction,
+                                                              requireData: DataRequiredAction,
+                                                              sdltCalculationService: SdltCalculationService,
+                                                              sessionRepository: SessionRepository,
+                                                              navigator: Navigator,
+                                                              formProvider: SdltCalculatedTotalAmountDueFormProvider,
+                                                              timeMachine: TimeMachine,
+                                                              val controllerComponents: MessagesControllerComponents,
+                                                              view: TotalAmountDueView,
+                                                            )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging with TaxCalculationErrorRecovery {
 
   private val form: Form[String] = formProvider()
 
@@ -64,9 +64,11 @@ class FreeholdSelfAssessedTotalAmountDueController @Inject()(
     implicit request =>
       sdltCalculationService.whenInFlowAsync(FreeholdSelfAssessed) {
         Future.successful(constructViewModel(request.userAnswers)).map {
-          case Right(viewModel) =>
+          case Right(viewModelRows) =>
+            val viewModel = TotalAmountDueViewModel.toViewModel(viewModelRows)
             val prepared = request.userAnswers.get(FreeholdSelfAssessedTotalAmountDuePage).fold(form)(form.fill)
             Ok(view(prepared, viewModel, postAction(mode), sectionKey))
+
           case Left(err) =>
             logger.warn(s"[FreeholdSelfAssessedTotalAmountDueController][onPageLoad] failed: ${err.message}")
             Redirect(errorHandler(err))
@@ -79,35 +81,45 @@ class FreeholdSelfAssessedTotalAmountDueController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(FreeholdSelfAssessed) {
-        form.bindFromRequest().fold(
-          formWithErrors =>
-            constructViewModel(request.userAnswers) match {
-              case Right(viewModel) =>
-                Future.successful(BadRequest(view(formWithErrors, viewModel, postAction(mode), sectionKey)))
-              case Left(err) =>
-                logger.warn(s"[FreeholdSelfAssessedTotalAmountDueController][onSubmit] failed: ${err.message}")
-                Future.successful(Redirect(errorHandler(err)))
-            },
-          value =>
-            for {
-              updated <- Future.fromTry(request.userAnswers.set(FreeholdSelfAssessedTotalAmountDuePage, value))
-              _ <- sessionRepository.set(updated)
-            } yield Redirect(navigator.nextPage(FreeholdSelfAssessedTotalAmountDuePage, mode, updated))
-        )
+        constructViewModel(request.userAnswers) match {
+          case Right(viewModelRows) =>
+            form.bindFromRequest().fold(
+              formWithErrors =>
+                val viewModel = TotalAmountDueViewModel.toViewModel(viewModelRows)
+                Future.successful(BadRequest(view(formWithErrors, viewModel, postAction(mode), sectionKey))),
+              amount =>
+                val isPenaltyZero = TaxCalculationPenaltiesHelper.isPenaltyZero(viewModelRows.penalty)
+                for {
+                  updatedWithTotalAmount <- Future.fromTry(request.userAnswers.set(FreeholdSelfAssessedTotalAmountDuePage, amount))
+                  updatedWithPenaltiesAndInterest <- 
+                    if(isPenaltyZero) Future.fromTry(updatedWithTotalAmount.set(FreeholdSelfAssessedPenaltiesAndInterestPage, false))
+                    else Future.successful(updatedWithTotalAmount)
+                  _ <- sessionRepository.set(updatedWithPenaltiesAndInterest)
+                } yield {
+                  if (isPenaltyZero) Redirect(controllers.routes.IndexController.onPageLoad()) // TODO UPDATE TO REDIRECT TO CHECK YOUR ANSWERS CONTROLLER
+                  else Redirect(navigator.nextPage(FreeholdSelfAssessedTotalAmountDuePage, mode, updatedWithPenaltiesAndInterest))
+                }
+
+            )
+          case Left(err) =>
+            logger.warn(s"[FreeholdSelfAssessedTotalAmountDueController][onPageSubmit] failed: ${err.message}")
+            Future.successful(Redirect(errorHandler(err)))
+        }
+
       }
   }
 
 
-  private def constructViewModel(answers: UserAnswers)
-                                (implicit messages: Messages): Either[BuildRequestError, TotalAmountDueViewModel] =
+  private def constructViewModel(answers: UserAnswers): Either[BuildRequestError, TotalAmountDueSummaryRowValues] =
 
     for {
       sdltDue <- answers.get(FreeholdSelfAssessedAmountPage)
         .toRight(MissingSelfAssessedAmountDueError("Missing FreeholdSelfAssessedAmountPage"))
         .map(BigDecimal(_))
 
-      viewModel <- TotalAmountDueViewModel.toViewModel(sdltDue, answers, timeMachine)
-    } yield viewModel
+      viewSummaryRow <- TotalAmountDueViewModel.getTotalAmountDueSummaryRow(sdltDue, answers, timeMachine)
+    } yield viewSummaryRow
+
 
 }
 

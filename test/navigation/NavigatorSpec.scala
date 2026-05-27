@@ -21,14 +21,14 @@ import controllers.routes
 import models.*
 import pages.*
 import pages.land.*
-import pages.lease._
+import pages.lease.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 import pages.purchaser.*
 import pages.purchaserAgent.*
+import pages.taxCalculation.ConfirmEffectiveDateOfTransactionPage
 import pages.taxCalculation.freeholdSelfAssessed.*
 import pages.taxCalculation.freeholdTaxCalculated.*
 import pages.taxCalculation.leaseholdSelfAssessed.*
-import pages.taxCalculation.ConfirmEffectiveDateOfTransactionPage
 import pages.taxCalculation.leaseholdTaxCalculated.*
 import pages.transaction.*
 import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
@@ -38,7 +38,7 @@ import pages.vendorAgent.*
 class NavigatorSpec extends SpecBase {
 
   val navigator = new Navigator
-  val userAnswers = UserAnswers("id", storn = "TESTSTORN")
+  val userAnswers: UserAnswers = UserAnswers("id", storn = "TESTSTORN")
 
   case object UnknownPage extends Page
 
@@ -487,9 +487,9 @@ class NavigatorSpec extends SpecBase {
             controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdTaxCalculatedTotalAmountDueController.onPageLoad(NormalMode)
         }
 
-        "go from FreeholdTaxCalculatedTotalAmountDuePage to FreeholdTaxCalculatedPenaltiesAndInterestController" in {
-          navigator.nextPage(FreeholdTaxCalculatedTotalAmountDuePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
-            controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(NormalMode)
+        // TODO: Change INDEX page to CYA page once CYA Page built
+        "go from FreeholdTaxCalculatedTotalAmountDuePage to Index page" in {
+          navigator.nextPage(FreeholdTaxCalculatedTotalAmountDuePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
         }
 
         "go from FreeholdTaxCalculatedPenaltiesAndInterestPage to Index page" in {
@@ -504,7 +504,7 @@ class NavigatorSpec extends SpecBase {
             controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSelfAssessedTotalAmountDueController.onPageLoad(NormalMode)
         }
 
-        "go from FreeholdSelfAssessedTotalAmountDuePage to FreeholdSelfAssessedPenaltiesAndInterestController" in {
+        "go from FreeholdSelfAssessedTotalAmountDuePage to FreeholdSelfAssessedPenaltiesAndInterestPage  if penalty is not zero" in {
           navigator.nextPage(FreeholdSelfAssessedTotalAmountDuePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
             controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSelfAssessedPenaltiesAndInterestController.onPageLoad(NormalMode)
         }
@@ -543,7 +543,7 @@ class NavigatorSpec extends SpecBase {
             controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedTotalAmountDueController.onPageLoad(NormalMode)
         }
 
-        "go from LeaseholdSelfAssessedTotalAmountDuePage to LeaseholdSelfAssessedPenaltiesAndInterestController" in {
+        "go from LeaseholdSelfAssessedTotalAmountDuePage to LeaseHoldTaxCalculatedPenaltiesAndInterestPage if penalty is not zero" in {
           navigator.nextPage(LeaseholdSelfAssessedTotalAmountDuePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
             controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedPenaltiesAndInterestController.onPageLoad(NormalMode)
         }
