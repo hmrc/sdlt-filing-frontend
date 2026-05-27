@@ -116,6 +116,28 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
       )
       rows.map(_.value.content) must contain allOf(Text("£8,000"), Text("£3,000"), Text("£11,000"))
     }
+    "produces six rate card rows if claiming relief is yes, include relief reason" in {
+      val rows = getTaxCalculationSummary(
+        effectiveDate      = "1 April 2024",
+        totalConsideration = "£300,000",
+        claimingRelief     = "Yes",
+        reliefReason       = Some("22"),
+        premiumTax         = "£8,000",
+        npvTax             = Some("£3,000"),
+        totalSdltDue       = "£11,000"
+      ).rows
+      rows.map(_.key.content) mustEqual Seq(
+        Text("taxCalculation.calculation.taxCalculation.effectiveDate"),
+        Text("taxCalculation.calculation.taxCalculation.taxDuePremium"),
+        Text("taxCalculation.calculation.taxCalculation.taxDueNpv"),
+        Text("taxCalculation.calculation.taxCalculation.reliefClaimed"),
+        Text("taxCalculation.calculation.taxCalculation.reliefReason"),
+        Text("taxCalculation.calculation.taxCalculation.sdltDue")
+      )
+      rows.map(_.value.content) must contain allOf(
+        Text("£8,000"), Text("£3,000"), Text("Yes"),
+        Text("22"), Text("£11,000"))
+    }
   }
 
   ".getRateCardSummary" - {
