@@ -1921,3 +1921,19 @@ lease.leaseEndDate.change.hidden                                                
 lease.leaseEndDate.error.date.range.min                                             = The end date as specified in the lease must be the same as or after 1 December 2003
 lease.leaseEndDate.error.LeaseEndDateBeforeRentEndDate                              = The end date as specified in the lease must be after the end date for starting rent
 lease.leaseEndDate.error.LeaseEndDateBeforeLeaseStartDate                           = The end date as specified in the lease must be after the start date as specified in the lease
+
+lease.netPresentValue.title                                                         = Net present value (NPV)
+lease.netPresentValue.heading                                                       = Net present value (NPV)
+lease.netPresentValue.p1                                                            = This is the total value of all rent payments over the term of the lease, calculated at present-day prices. For SDLT purposes, the NPV is treated separately to any premium paid.
+lease.netPresentValue.p2                                                            = Use the <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+lease.netPresentValue.p2.linkText                                                   = HMRC SDLT calculator to work out the exact amount of NPV due (opens in a new window)
+lease.netPresentValue.p2.link                                                       = https://www.gov.uk/guidance/stamp-duty-land-tax-leasehold-purchases#the-npv-of-the-rent-1
+lease.netPresentValue.h2                                                            = What is the net present value upon which tax is calculated?
+lease.netPresentValue.hint                                                          = Enter the value in whole pounds only, for example £10,000
+lease.netPresentValue.checkYourAnswersLabel                                         = Net present value (NPV)
+lease.netPresentValue.error.required                                                = Enter the net present value upon which tax is calculated, in pounds
+lease.netPresentValue.error.length                                                  = The net present value upon which tax is calculated must be 16 digits or fewer
+lease.netPresentValue.error.invalidNumeric                                          = The net present value upon which tax is calculated must only include numbers 0 to 9 and commas
+lease.netPresentValue.error.invalidWholeNumber                                      = Enter the net present value upon which tax is calculated in whole pounds
+lease.netPresentValue.error.maximum                                                 = The net present value upon which tax is calculated must be equal to or less than £9,999,999,999
+lease.netPresentValue.change.hidden                                                 = Net present value (NPV)

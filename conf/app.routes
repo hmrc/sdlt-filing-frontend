@@ -737,3 +737,8 @@ GET        /about-the-lease/enter-total-premium-payable                         
 POST       /about-the-lease/enter-total-premium-payable                                              controllers.lease.LeaseEnterTotalPremiumPayableController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-lease/enter-total-premium-payable/change                                       controllers.lease.LeaseEnterTotalPremiumPayableController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-lease/enter-total-premium-payable/change                                       controllers.lease.LeaseEnterTotalPremiumPayableController.onSubmit(mode: Mode = CheckMode)
+
+GET        /about-the-lease/net-present-value-NPV                                                    controllers.lease.LeaseNetPresentValueController.onPageLoad(mode: Mode = NormalMode)
+POST       /about-the-lease/net-present-value-NPV                                                    controllers.lease.LeaseNetPresentValueController.onSubmit(mode: Mode = NormalMode)
+GET        /about-the-lease/net-present-value-NPV/change                                             controllers.lease.LeaseNetPresentValueController.onPageLoad(mode: Mode = CheckMode)
+POST       /about-the-lease/net-present-value-NPV/change                                             controllers.lease.LeaseNetPresentValueController.onSubmit(mode: Mode = CheckMode)

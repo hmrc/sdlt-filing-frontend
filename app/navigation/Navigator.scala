@@ -298,7 +298,7 @@ class Navigator @Inject()() {
   private def isLeaseSection(page: Page): Boolean = page match {
     case TypeOfLeasePage | LeaseEnterRentFreePeriodPage | LaterRentPage | LeaseThousandPoundsThresholdPage | LeaseStartDatePage
          | DoesLeaseIncludeRentFreePeriodPage | AnnualStartingRentPage | LeaseIsVatPayablePage | LeaseStartingRentEndDatePage
-         | EnterAnnualRentVatPage | LeaseEnterTotalPremiumPayablePage | LeaseEndDatePage => true
+         | EnterAnnualRentVatPage | LeaseEnterTotalPremiumPayablePage | LeaseEndDatePage | LeaseNetPresentValuePage => true
     case _ => false
   }
   
@@ -325,8 +325,10 @@ class Navigator @Inject()() {
       _ => controllers.lease.routes.LaterRentController.onPageLoad(NormalMode)
     case EnterAnnualRentVatPage =>
       _ => controllers.lease.routes.LeaseEnterTotalPremiumPayableController.onPageLoad(NormalMode)
-    case LeaseEnterTotalPremiumPayablePage => // TODO - DTR-3542 - SPRINT 16 - update to net present value - ls-11
-      _ => controllers.lease.routes.LeaseEnterTotalPremiumPayableController.onPageLoad(NormalMode)
+    case LeaseEnterTotalPremiumPayablePage =>
+      _ => controllers.lease.routes.LeaseNetPresentValueController.onPageLoad(NormalMode)
+    case LeaseNetPresentValuePage => // TODO - DTR-3545 - SPRINT 16 - update to check your answers
+      _ => controllers.lease.routes.LeaseNetPresentValueController.onPageLoad(NormalMode)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

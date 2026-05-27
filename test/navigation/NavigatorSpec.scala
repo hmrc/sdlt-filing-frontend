@@ -464,8 +464,12 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(EnterAnnualRentVatPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseEnterTotalPremiumPayableController.onPageLoad(NormalMode)
         }
         
-        "go from LeaseEnterTotalPremiumPayablePage to LeaseNetPresentValuePage" in { // TODO - DTR-3542 - SPRINT 16 - update to net present value - ls-11
-          navigator.nextPage(LeaseEnterTotalPremiumPayablePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseEnterTotalPremiumPayableController.onPageLoad(NormalMode)
+        "go from LeaseEnterTotalPremiumPayablePage to LeaseNetPresentValuePage" in {
+          navigator.nextPage(LeaseEnterTotalPremiumPayablePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseNetPresentValueController.onPageLoad(NormalMode)
+        }
+        
+        "go from LeaseNetPresentValuePage to LeaseCheckYourAnswers page" in { // TODO - DTR-3545 - SPRINT 16 - update to check your answers
+          navigator.nextPage(LeaseNetPresentValuePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseNetPresentValueController.onPageLoad(NormalMode)
         }
       }
 

@@ -121,7 +121,7 @@ class LeaseIsVatPayableControllerSpec extends SpecBase with MockitoSugar {
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
-    // TODO DTR-3539: Redirect to What is the total premium payable including VAT? - ls-10
+    
     "must redirect to ls-10 page when 'No' is submitted and transaction type is L (GrantOfLease)" in {
 
       val mockSessionRepository = mock[SessionRepository]
@@ -144,7 +144,7 @@ class LeaseIsVatPayableControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.lease.routes.LeaseEnterTotalPremiumPayableController.onPageLoad(NormalMode).url
       }
     }
     // TODO DTR-3545: Redirect to CYA
