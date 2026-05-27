@@ -76,7 +76,7 @@ class LeaseIsVatPayableController @Inject()(
 
             (value, transactionType) match {
               case (true, _) => Redirect(navigator.nextPage(LeaseIsVatPayablePage, mode, updatedAnswers))
-              case (false, Some(GrantOfLease)) => Redirect(routes.LeaseIsVatPayableController.onPageLoad(NormalMode)) // TODO DTR-3539: Redirect to What is the total premium payable including VAT? - ls-10
+              case (false, Some(GrantOfLease)) => Redirect(routes.LeaseEnterTotalPremiumPayableController.onPageLoad(NormalMode))
               case (false, Some(ConveyanceTransferLease)) => Redirect(routes.LeaseIsVatPayableController.onPageLoad(NormalMode)) // TODO DTR-3545: Redirect to CYA
               case (false, _) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
             }
