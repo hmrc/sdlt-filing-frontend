@@ -122,7 +122,7 @@ class LeaseIsVatPayableControllerSpec extends SpecBase with MockitoSugar {
       }
     }
     
-    "must redirect to ls-10 page when 'No' is submitted and transaction type is L (GrantOfLease)" in {
+    "must redirect to total premium payable page when 'No' is submitted and transaction type is L (GrantOfLease)" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
