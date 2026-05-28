@@ -17,6 +17,7 @@
 package controllers.taxCalculation.leaseholdSelfAssessed
 
 import base.SpecBase
+import config.CurrencyFormatter.StringToCurrency
 import constants.FullReturnConstants.{completeLease, emptyFullReturn}
 import controllers.routes
 import forms.taxCalculation.TaxDueOnNpvFormProvider
@@ -46,6 +47,7 @@ class LeaseholdSelfAssessedTaxDueOnNpvControllerSpec extends SpecBase with Mocki
   val form: Form[String] = formProvider()
 
   val npv = "95000.00"
+  val formattedNPV = npv.toCurrency.getOrElse("")
 
   private val fullReturnWithLeaseData =
     emptyFullReturn.copy(lease = Some(completeLease))
@@ -71,14 +73,14 @@ class LeaseholdSelfAssessedTaxDueOnNpvControllerSpec extends SpecBase with Mocki
         val view = application.injector.instanceOf[LeaseholdSelfAssessedTaxDueOnNpvView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, npv, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, formattedNPV, NormalMode)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithLeaseData))
-        .set(LeaseholdSelfAssessedNpvTaxPage, "1898").success.value
+        .set(LeaseholdSelfAssessedNpvTaxPage, "1898.00").success.value
         .set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdSelfAssessed).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -91,7 +93,7 @@ class LeaseholdSelfAssessedTaxDueOnNpvControllerSpec extends SpecBase with Mocki
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill("1898"), npv, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill("1898.00"), formattedNPV, NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -116,7 +118,7 @@ class LeaseholdSelfAssessedTaxDueOnNpvControllerSpec extends SpecBase with Mocki
       running(application) {
         val request =
           FakeRequest(POST, taxDueOnNpvRoute)
-            .withFormUrlEncodedBody(("value", "1897"))
+            .withFormUrlEncodedBody(("value", "1897.00"))
 
         val result = route(application, request).value
 
@@ -172,7 +174,7 @@ class LeaseholdSelfAssessedTaxDueOnNpvControllerSpec extends SpecBase with Mocki
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, npv, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, formattedNPV, NormalMode)(request, messages(application)).toString
       }
     }
 

@@ -16,6 +16,8 @@
 
 package config
 
+import scala.util.Try
+
 trait CurrencyFormatter {
   def currencyFormat(amt: BigDecimal): String = f"£$amt%,1.2f".replace(".00","")
 
@@ -25,6 +27,10 @@ trait CurrencyFormatter {
 
   implicit class BigDecimalToCurrency(amt: BigDecimal) {
     def toCurrency: String = currencyFormat(amt)
+  }
+
+  implicit class StringToCurrency(amt: String) {
+    def toCurrency: Option[String] = Try(BigDecimal(amt)).toOption.map(currencyFormat)
   }
 
   implicit class IntToPercentage(amt: Int) {
