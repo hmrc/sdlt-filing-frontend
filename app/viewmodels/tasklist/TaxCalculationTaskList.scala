@@ -36,9 +36,8 @@ object TaxCalculationTaskList {
     )
 
   def buildTaxCalculationRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
-
-    // TODO: pattern match between BYS pages & CYA page
-    val url = controllers.taxCalculation.routes.TaxCalculationBeforeYouStartController.onPageLoad().url
+    
+    val url = controllers.taxCalculation.routes.TaxCalculationConfirmEffectiveDateOfTransactionController.onPageLoad().url
     
     TaskListRowBuilder(
       canEdit = {
@@ -51,7 +50,7 @@ object TaxCalculationTaskList {
       },
       tagId = "taxCalculationQuestionDetailRow",
       checks = scheme => Seq(fullReturn.taxCalculation.exists(_.taxDue.nonEmpty)),
-      prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn)) // TODO: Change this to check for effective date task list once EffectiveDateTaskList built
+      prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
     ).build(fullReturn)
   }
 
