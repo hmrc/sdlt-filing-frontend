@@ -149,7 +149,7 @@ class TaxCalculationTaskListSpec extends SpecBase {
           section.heading mustBe messagesInstance("tasklist.taxCalculationQuestion.heading")
           messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.taxCalculationQuestion.details")
           row.status mustBe TLCompleted
-          row.url mustBe controllers.taxCalculation.routes.TaxCalculationBeforeYouStartController.onPageLoad().url
+          row.url mustBe controllers.taxCalculation.routes.TaxCalculationConfirmEffectiveDateOfTransactionController.onPageLoad().url
         }
       }
 
@@ -166,7 +166,7 @@ class TaxCalculationTaskListSpec extends SpecBase {
           section.heading mustBe messagesInstance("tasklist.taxCalculationQuestion.heading")
           messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.taxCalculationQuestion.details")
           row.status mustBe TLCannotStart
-          row.url mustBe controllers.taxCalculation.routes.TaxCalculationBeforeYouStartController.onPageLoad().url
+          row.url mustBe controllers.taxCalculation.routes.TaxCalculationConfirmEffectiveDateOfTransactionController.onPageLoad().url
         }
       }
     }
