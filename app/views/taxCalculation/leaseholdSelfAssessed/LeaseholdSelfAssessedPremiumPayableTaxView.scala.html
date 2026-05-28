@@ -44,7 +44,7 @@
                 field = form("value"),
                 label = Label(
                     classes = "govuk-!-margin-bottom-4",
-                    content = messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.description", premiumPayable)),
+                    content = messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.description", premiumPayable.toDouble.toInt)),
 
             )
             .asNumeric()
