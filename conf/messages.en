@@ -16,6 +16,7 @@ site.startAgain                                                                 
 site.signIn                                                                         = Sign in
 site.govuk                                                                          = GOV.UK
 site.save.continue                                                                  = Save and continue
+site.confirm.continue                                                               = Confirm and continue
 site.success                                                                        = Success
 site.section.prefix                                                                 = This section is
 site.fullStop                                                                       = .
@@ -1558,6 +1559,10 @@ taxCalculation.confirmEffectiveDateOfTransaction.error.required              = S
 taxCalculation.genericPenaltiesDue.checkYourAnswersLabel                            = Penalties due
 taxCalculation.totalAmountDue.checkYourAnswersLabel                                 = Amount to be paid
 taxCalculation.totalAmountDue.change.hidden                                         = amount to be paid
+
+taxCalculation.checkYourAnswers.title                                               = Check your answers
+taxCalculation.checkYourAnswers.declaration.heading                                 = Declaration
+taxCalculation.checkYourAnswers.declaration.p1                                       = By continuing, I confirm that all details provided in this return are accurate. I understand that any errors can affect the amount of SDLT due and may result in penalties and interest charges.
 
 taxCalculation.leaseholdSelfAssessed.premiumPayable.title = What is the tax due on the total premium payable?
 taxCalculation.leaseholdSelfAssessed.premiumPayable.heading = What is the tax due on the total premium payable?

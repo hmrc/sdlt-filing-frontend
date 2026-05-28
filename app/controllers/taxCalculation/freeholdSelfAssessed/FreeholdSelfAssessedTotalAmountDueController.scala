@@ -19,7 +19,7 @@ package controllers.taxCalculation.freeholdSelfAssessed
 import controllers.actions.*
 import controllers.taxCalculation.TaxCalculationErrorRecovery
 import forms.taxCalculation.SdltCalculatedTotalAmountDueFormProvider
-import models.taxCalculation.{BuildRequestError, MissingSelfAssessedAmountDueError}
+import models.taxCalculation.{BuildRequestError, MissingSelfAssessedAmountDueError, TaxCalculationFlow}
 import models.taxCalculation.TaxCalculationFlow.FreeholdSelfAssessed
 import models.{Mode, UserAnswers}
 import navigation.Navigator
