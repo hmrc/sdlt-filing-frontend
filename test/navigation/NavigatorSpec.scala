@@ -487,9 +487,9 @@ class NavigatorSpec extends SpecBase {
             controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdTaxCalculatedTotalAmountDueController.onPageLoad(NormalMode)
         }
 
-        // TODO: Change INDEX page to CYA page once CYA Page built
-        "go from FreeholdTaxCalculatedTotalAmountDuePage to Index page" in {
-          navigator.nextPage(FreeholdTaxCalculatedTotalAmountDuePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        "go from FreeholdTaxCalculatedTotalAmountDuePage to FreeholdSdltCalculatedPenaltiesAndInterestController " in {
+          navigator.nextPage(FreeholdTaxCalculatedTotalAmountDuePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
+            controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(NormalMode)
         }
 
         "go from FreeholdTaxCalculatedPenaltiesAndInterestPage to Index page" in {

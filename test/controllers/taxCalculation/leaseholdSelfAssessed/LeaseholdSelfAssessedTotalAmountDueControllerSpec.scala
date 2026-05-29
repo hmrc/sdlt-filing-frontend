@@ -151,7 +151,7 @@ class LeaseholdSelfAssessedTotalAmountDueControllerSpec extends SpecBase with Mo
       val app = appWith(leaseholdAnswers)
 
       running(app) {
-        val request = FakeRequest(POST, routes.LeaseholdSelfAssessedTotalAmountDueController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(POST, routes.LeaseholdSelfAssessedTotalAmountDueController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> "1000")
         val result = route(app, request).value
 
@@ -164,7 +164,7 @@ class LeaseholdSelfAssessedTotalAmountDueControllerSpec extends SpecBase with Mo
       val app = appWith(leaseholdAnswers)
 
       running(app) {
-        val request = FakeRequest(POST, routes.LeaseholdSelfAssessedTotalAmountDueController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(POST, routes.LeaseholdSelfAssessedTotalAmountDueController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> "not-a-number")
         val result = route(app, request).value
 
@@ -196,7 +196,7 @@ class LeaseholdSelfAssessedTotalAmountDueControllerSpec extends SpecBase with Mo
         .build()
 
       running(app) {
-        val request = FakeRequest(POST, totalAmountDueRoute)
+        val request = FakeRequest(POST, routes.LeaseholdSelfAssessedTotalAmountDueController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> "25000")
 
         val result = route(app, request).value
@@ -227,7 +227,7 @@ class LeaseholdSelfAssessedTotalAmountDueControllerSpec extends SpecBase with Mo
         .build()
 
       running(app) {
-        val request = FakeRequest(POST, totalAmountDueRoute)
+        val request = FakeRequest(POST, routes.LeaseholdSelfAssessedTotalAmountDueController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> "12500")
 
         val result = route(app, request).value
@@ -235,6 +235,37 @@ class LeaseholdSelfAssessedTotalAmountDueControllerSpec extends SpecBase with Mo
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual
           controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedPenaltiesAndInterestController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect when constructViewModel fails due to broken userAnswers" in {
+      val app = appWith(emptyUserAnswers)
+
+      running(app) {
+        val request = FakeRequest(POST, routes.LeaseholdSelfAssessedTotalAmountDueController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "12500")
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual
+          controllers.routes.ReturnTaskListController.onPageLoad().url
+
+      }
+    }
+
+    "must redirect to the return task list when an answer in the current flow is missing for onSubmit" in {
+      val brokenAnswers = leaseholdAnswers.remove(LeaseholdSelfAssessedPremiumPayableTaxPage).success.value
+
+      val app = appWith(brokenAnswers)
+
+      running(app) {
+        val request = FakeRequest(GET, routes.LeaseholdSelfAssessedTotalAmountDueController.onSubmit(NormalMode).url)
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
       }
     }
   }

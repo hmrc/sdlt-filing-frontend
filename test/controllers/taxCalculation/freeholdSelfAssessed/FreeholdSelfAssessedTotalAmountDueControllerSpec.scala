@@ -256,5 +256,22 @@ class FreeholdSelfAssessedTotalAmountDueControllerSpec extends SpecBase with Moc
 
       }
     }
+
+    "must redirect when constructViewModel fails due to broken userAnswers" in {
+      val app = appWith(emptyUserAnswers)
+
+      running(app) {
+        val request = FakeRequest(POST, routes.FreeholdSelfAssessedTotalAmountDueController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "12500")
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual
+          controllers.routes.ReturnTaskListController.onPageLoad().url
+
+      }
+    }
   }
 }
