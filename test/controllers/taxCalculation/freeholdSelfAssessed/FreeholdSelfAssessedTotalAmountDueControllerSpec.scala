@@ -19,11 +19,12 @@ package controllers.taxCalculation.freeholdSelfAssessed
 import base.SpecBase
 import models.taxCalculation.*
 import models.{FullReturn, Land, Lease, NormalMode, Residency, ReturnInfo, Transaction, UserAnswers}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.taxCalculation.TaxCalculationFlowPage
-import pages.taxCalculation.freeholdSelfAssessed.{FreeholdSelfAssessedAmountPage, FreeholdSelfAssessedTotalAmountDuePage}
+import pages.taxCalculation.freeholdSelfAssessed.{FreeholdSelfAssessedAmountPage, FreeholdSelfAssessedPenaltiesAndInterestPage, FreeholdSelfAssessedTotalAmountDuePage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -167,7 +168,7 @@ class FreeholdSelfAssessedTotalAmountDueControllerSpec extends SpecBase with Moc
 
       running(app) {
         val request = FakeRequest(POST, routes.FreeholdSelfAssessedTotalAmountDueController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody("value" -> "not-a-number")
+          .withFormUrlEncodedBody("value" -> "not-a-number")
 
         val result = route(app, request).value
 
@@ -189,6 +190,87 @@ class FreeholdSelfAssessedTotalAmountDueControllerSpec extends SpecBase with Moc
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
+      }
+    }
+
+    // TODO To be updated to redirect to CheckYourAnswersController
+    "must redirect to IndexController, set FreeholdSelfAssessedPenaltiesAndInterestPage to false when penalty is zero" in {
+      val mockSessionRepository = mock[SessionRepository]
+      val mockTimeMachine = mock[TimeMachine]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockTimeMachine.today).thenReturn(today)
+
+      val freeHoldAnswersWithZeroPenalty =
+        freeholdAnswers.copy(fullReturn = freeholdAnswers
+          .fullReturn
+          .map(_.copy(transaction = Some(Transaction(effectiveDate = Some(today.toString))))))
+
+      val app = applicationBuilder(userAnswers = Some(freeHoldAnswersWithZeroPenalty))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[TimeMachine].toInstance(mockTimeMachine)
+        )
+        .build()
+
+      running(app) {
+        val request = FakeRequest(POST, routes.FreeholdSelfAssessedTotalAmountDueController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "25000")
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
+        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(uaCaptor.capture())
+        uaCaptor.getValue.get(FreeholdSelfAssessedPenaltiesAndInterestPage).value mustBe false
+
+      }
+
+    }
+
+    "must redirect to FreeholdSelfAssessedPenaltiesAndInterestController when penalty is not zero " in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      val mockTimeMachine = mock[TimeMachine]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockTimeMachine.today).thenReturn(today)
+
+      val app = applicationBuilder(userAnswers = Some(freeholdAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[TimeMachine].toInstance(mockTimeMachine)
+        )
+        .build()
+
+      running(app) {
+        val request = FakeRequest(POST, routes.FreeholdSelfAssessedTotalAmountDueController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "12500")
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual
+          controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSelfAssessedPenaltiesAndInterestController.onPageLoad(NormalMode).url
+
+      }
+    }
+
+    "must redirect when constructViewModel fails due to broken userAnswers" in {
+      val app = appWith(emptyUserAnswers)
+
+      running(app) {
+        val request = FakeRequest(POST, routes.FreeholdSelfAssessedTotalAmountDueController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "12500")
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual
+          controllers.routes.ReturnTaskListController.onPageLoad().url
+
       }
     }
   }

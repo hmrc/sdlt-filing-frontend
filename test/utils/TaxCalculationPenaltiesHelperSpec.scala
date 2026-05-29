@@ -20,7 +20,7 @@ import org.mockito.Mockito.when
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
-import utils.TaxCalculationPenaltiesHelper.getPenalties
+import utils.TaxCalculationPenaltiesHelper.{getPenalties, isPenaltyZero}
 
 import java.time.LocalDate
 
@@ -95,6 +95,16 @@ class TaxCalculationPenaltiesHelperSpec extends AnyFreeSpec with Matchers with M
     "uses the 14-day window for a transaction on the cut-over date" in {
       val cutover = LocalDate.of(2019, 3, 1)
       getPenalties(cutover, timeMachineFor(cutover.plusDays(20))) mustBe BigDecimal(100)
+    }
+  }
+
+  ".isPenaltyZero" - {
+    "must return true when penalty is zero" in {
+      isPenaltyZero(0) mustBe true
+    }
+
+    "must return false when penalty is not zero" in {
+      isPenaltyZero(100) mustBe false
     }
   }
 }

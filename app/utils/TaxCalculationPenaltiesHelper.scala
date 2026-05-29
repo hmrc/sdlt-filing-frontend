@@ -16,17 +16,18 @@
 
 package utils
 
+
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-object TaxCalculationPenaltiesHelper {
+object TaxCalculationPenaltiesHelper{
 
   private val FOURTEEN_DAY_RULE_FROM     = LocalDate.of(2019, 3, 1)
   private val NEW_FILING_WINDOW_DAYS     = 14L
   private val OLD_FILING_WINDOW_DAYS     = 30L
   private val MAX_PENALTY_THRESHOLD_DAYS = 123L
 
-  private val NoPenalty:        BigDecimal = BigDecimal(0)
+  private val NoPenalty: BigDecimal = BigDecimal(0)
   private val OneHundredPounds: BigDecimal = BigDecimal(100)
   private val TwoHundredPounds: BigDecimal = BigDecimal(200)
 
@@ -34,8 +35,20 @@ object TaxCalculationPenaltiesHelper {
     val daysSince    = ChronoUnit.DAYS.between(effectiveDate, timeMachine.today)
     val filingWindow = if (effectiveDate.isBefore(FOURTEEN_DAY_RULE_FROM)) OLD_FILING_WINDOW_DAYS else NEW_FILING_WINDOW_DAYS
 
-    if      (daysSince >= MAX_PENALTY_THRESHOLD_DAYS) TwoHundredPounds
-    else if (daysSince >  filingWindow)               OneHundredPounds
-    else                                              NoPenalty
+    if (daysSince >= MAX_PENALTY_THRESHOLD_DAYS) {
+      TwoHundredPounds
+    }
+    else if (daysSince > filingWindow) {
+      OneHundredPounds
+    }
+    else {
+      NoPenalty
+    }
   }
+
+  def isPenaltyZero(penalty:BigDecimal):Boolean = {
+    penalty == NoPenalty
+  }
+    
+
 }

@@ -17,19 +17,23 @@
 package controllers.taxCalculation.leaseholdSelfAssessed
 
 import base.SpecBase
+import controllers.taxCalculation.leaseholdSelfAssessed
 import models.taxCalculation.*
 import models.{FullReturn, Land, NormalMode, Residency, ReturnInfo, Transaction, UserAnswers}
-import org.mockito.Mockito.when
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.taxCalculation.TaxCalculationFlowPage
-import pages.taxCalculation.leaseholdSelfAssessed.{LeaseholdSelfAssessedNpvTaxPage, LeaseholdSelfAssessedPremiumPayableTaxPage, LeaseholdSelfAssessedTotalAmountDuePage}
+import pages.taxCalculation.leaseholdSelfAssessed.{LeaseholdSelfAssessedNpvTaxPage, LeaseholdSelfAssessedPenaltiesAndInterestPage, LeaseholdSelfAssessedPremiumPayableTaxPage, LeaseholdSelfAssessedTotalAmountDuePage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import repositories.SessionRepository
 import utils.TimeMachine
-import controllers.taxCalculation.leaseholdSelfAssessed
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
 class LeaseholdSelfAssessedTotalAmountDueControllerSpec extends SpecBase with MockitoSugar {
 
@@ -147,7 +151,7 @@ class LeaseholdSelfAssessedTotalAmountDueControllerSpec extends SpecBase with Mo
       val app = appWith(leaseholdAnswers)
 
       running(app) {
-        val request = FakeRequest(POST, routes.LeaseholdSelfAssessedTotalAmountDueController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(POST, routes.LeaseholdSelfAssessedTotalAmountDueController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> "1000")
         val result = route(app, request).value
 
@@ -160,12 +164,108 @@ class LeaseholdSelfAssessedTotalAmountDueControllerSpec extends SpecBase with Mo
       val app = appWith(leaseholdAnswers)
 
       running(app) {
-        val request = FakeRequest(POST, routes.LeaseholdSelfAssessedTotalAmountDueController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(POST, routes.LeaseholdSelfAssessedTotalAmountDueController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> "not-a-number")
         val result = route(app, request).value
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) must include("£25,100")
+      }
+    }
+
+    // TODO To be updated to redirect to CheckYourAnswersController
+    "must redirect to IndexController, set LeaseHoldAssessedPenaltiesAndInterestPage to false when penalty is zero" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      val mockTimeMachine = mock[TimeMachine]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockTimeMachine.today).thenReturn(today)
+
+      val leaseHoldAnswersWithZeroPenalty =
+        leaseholdAnswers
+          .copy(fullReturn = leaseholdAnswers
+            .fullReturn
+            .map(_.copy(transaction = Some(Transaction(effectiveDate = Some(today.toString))))))
+
+      val app = applicationBuilder(userAnswers = Some(leaseHoldAnswersWithZeroPenalty))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[TimeMachine].toInstance(mockTimeMachine)
+        )
+        .build()
+
+      running(app) {
+        val request = FakeRequest(POST, routes.LeaseholdSelfAssessedTotalAmountDueController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "25000")
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
+        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(uaCaptor.capture())
+        uaCaptor.getValue.get(LeaseholdSelfAssessedPenaltiesAndInterestPage).value mustBe false
+
+      }
+
+    }
+
+    "must redirect to LeaseHoldSelfAssessedPenaltiesAndInterestController when penalty is not zero " in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      val mockTimeMachine = mock[TimeMachine]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockTimeMachine.today).thenReturn(today)
+
+      val app = applicationBuilder(userAnswers = Some(leaseholdAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[TimeMachine].toInstance(mockTimeMachine)
+        )
+        .build()
+
+      running(app) {
+        val request = FakeRequest(POST, routes.LeaseholdSelfAssessedTotalAmountDueController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "12500")
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedPenaltiesAndInterestController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect when constructViewModel fails due to broken userAnswers" in {
+      val app = appWith(emptyUserAnswers)
+
+      running(app) {
+        val request = FakeRequest(POST, routes.LeaseholdSelfAssessedTotalAmountDueController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "12500")
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual
+          controllers.routes.ReturnTaskListController.onPageLoad().url
+
+      }
+    }
+
+    "must redirect to the return task list when an answer in the current flow is missing for onSubmit" in {
+      val brokenAnswers = leaseholdAnswers.remove(LeaseholdSelfAssessedPremiumPayableTaxPage).success.value
+
+      val app = appWith(brokenAnswers)
+
+      running(app) {
+        val request = FakeRequest(GET, routes.LeaseholdSelfAssessedTotalAmountDueController.onSubmit(NormalMode).url)
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
       }
     }
   }
