@@ -380,11 +380,14 @@ vendor.company.title                                                            
 vendor.company.heading                                                              = What is the company’s name?
 vendor.company.checkYourAnswersLabel                                                = Company name
 vendor.company.change.hidden                                                        = Company name
+vendor.company.name.error.required                                                  = Enter the company’s name
+vendor.company.name.error.length                                                    = The company’s name must be 56 characters or fewer
+vendor.company.name.regex.error                                                     = The company’s name must only include letters a to z, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, numbers 0-9, question marks and spaces
 
 vendor.confirmVendorAddress.title                                                   = Confirm {0}’s address - About the vendor
 vendor.confirmVendorAddress.heading                                                 = Confirm {0}’s address
 vendor.confirmVendorAddress.isAddress                                               = Is this {0}’s address?
-vendor.confirmVendorAddress.error.required                                          = Please select an option
+vendor.confirmVendorAddress.error.required                                          = Select yes if the vendor’s address is correct
 
 vendor.individual.title                                                             = What is the vendor’s full name? - About the vendor
 vendor.individual.heading                                                           = What is the vendor’s full name?
@@ -392,21 +395,22 @@ vendor.individual.firstName                                                     
 vendor.individual.middleName                                                        = Middle name(s)
 vendor.individual.surname                                                           = Surname
 vendor.individual.checkYourAnswersLabel                                             = Vendor name
-vendor.individual.error.length.firstName                                            = Vendor’s first name must be 14 characters or less
-vendor.individual.error.length.middleName                                           = Vendor’s middle name(s) must be 14 characters or less
 vendor.individual.change.hidden                                                     = Vendor name
-
-vendor.name.form.regex.error                                                        = Invalid Error
-vendor.name.error.required                                                          = Nothing has been provided
-vendor.name.error.length                                                            = Vendor’s name must be 56 characters or less
+vendor.individual.firstName.regex.error                                             = The vendor’s first name must only include letters a to z, apostrophes, hyphens and spaces
+vendor.individual.firstName.error.length                                            = The vendor’s first name must be 14 characters or fewer
+vendor.individual.middleName.regex.error                                            = The vendor’s middle name must only include letters a to z, apostrophes, hyphens and spaces
+vendor.individual.middleName.error.length                                           = The vendor’s middle name must be 14 characters or fewer
+vendor.individual.name.error.required                                               = Enter the vendor’s last name
+vendor.individual.name.error.length                                                 = The vendor’s last name must be 56 characters or less
+vendor.individual.name.regex.error                                                  = The vendor’s last name must only include letters a to z, apostrophes, hyphens and spaces
 
 vendor.remove.title                                                                 = Are you sure you want to remove the vendor?
 vendor.remove.heading                                                               = Are you sure you want to remove {0}?
-vendor.remove.error.required                                                        = Select Yes if you want to remove the vendor
+vendor.remove.error.required                                                        = Select yes if you want to remove {0}
 
 vendor.vendorOverview.title                                                         = Vendor Overview - About the vendor
 vendor.vendorOverview.heading                                                       = Vendor Overview
-vendor.vendorOverview.limitReached                                                  = To add a new vendor, you must remove a purchaser or vendor
+vendor.vendorOverview.limitReached                                                  = You have reached the limit of 99 vendors and purchasers. To add another vendor, you must delete a vendor or purchaser.
 vendor.vendorOverview.no-vendors                                                    = You do not have any vendors added.
 vendor.vendorOverview.vendor-list                                                   = You do not have any vendors added.
 vendor.vendorOverview.noVendor.subHeadingWithVendors                                = Do you need to add another vendor?
@@ -415,7 +419,7 @@ vendor.vendorOverview.noVendor.headingNoVendors                                 
 vendor.vendorOverview.summaryInfo.text                                              = Showing <b>{0}</b> to <b>{1}</b> of <b>{2}</b> records
 vendor.vendorOverview.noVendor.p1                                                   = You have no vendors listed. You must add a vendor to complete this return
 vendor.vendorOverview.noVendor.button                                               = Add a vendor
-vendor.vendorOverview.error.required                                                = Please select an option
+vendor.vendorOverview.error.required                                                = Select yes if you need to add another vendor
 
 vendor.whoIsTheVendor.title                                                         = Who is the vendor? - About the vendor
 vendor.whoIsTheVendor.heading                                                       = Who is the vendor?
@@ -425,7 +429,7 @@ vendor.whoIsTheVendor.checkYourAnswersLabel                                     
 vendor.whoIsTheVendor.change.hidden                                                 = Who is the vendor?
 vendor.whoIsTheVendor.Company.hintText                                              = This means any form of organisation, such as a company, council or charity
 vendor.whoIsTheVendor.Individual.hintText                                           = This means any person liable to pay Stamp Duty Land Tax (SDLT)
-vendor.whoIsTheVendor.error.required                                                = Please select an option
+vendor.whoIsTheVendor.error.required                                                = Select the type of vendor
 
 # Agent Messages
 

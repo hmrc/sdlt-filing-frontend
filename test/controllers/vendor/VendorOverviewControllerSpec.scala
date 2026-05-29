@@ -172,7 +172,7 @@ class VendorOverviewControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          contentAsString(result) must include("To add a new vendor, you must remove a purchaser or vendor")
+          contentAsString(result) must include("You have reached the limit of 99 vendors and purchasers. To add another vendor, you must delete a vendor or purchaser")
         }
       }
 

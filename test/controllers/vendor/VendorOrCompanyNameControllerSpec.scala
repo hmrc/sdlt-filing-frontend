@@ -40,7 +40,6 @@ class VendorOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new VendorOrCompanyNameFormProvider()
-  val form = formProvider()
 
   lazy val vendorOrCompanyNameRoute = controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(NormalMode).url
 
@@ -58,6 +57,8 @@ class VendorOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
         val application = applicationBuilder(userAnswers = Some(individualVendor)).build()
 
         running(application) {
+          val form = formProvider("individual")
+
           val request = FakeRequest(GET, vendorOrCompanyNameRoute)
 
           val result = route(application, request).value
@@ -76,6 +77,8 @@ class VendorOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
         running(application) {
+          val form = formProvider("individual")
+
           val request = FakeRequest(GET, vendorOrCompanyNameRoute)
 
           val view = application.injector.instanceOf[VendorOrCompanyNameView]
@@ -118,6 +121,8 @@ class VendorOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
         val application = applicationBuilder(userAnswers = Some(individualVendor)).build()
 
         running(application) {
+          val form = formProvider("individual")
+
           val request =
             FakeRequest(POST, vendorOrCompanyNameRoute)
               .withFormUrlEncodedBody(("name", ""))
@@ -143,10 +148,11 @@ class VendorOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
       val vendorName = VendorName(forename1 = None, forename2 = None, name = "Company name")
 
       "must return OK and the correct view for a GET" in {
-
         val application = applicationBuilder(userAnswers = Some(companyVendor)).build()
 
         running(application) {
+          val form = formProvider("company")
+
           val request = FakeRequest(GET, vendorOrCompanyNameRoute)
 
           val result = route(application, request).value
@@ -165,6 +171,8 @@ class VendorOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
         
         running(application) {
+          val form = formProvider("company")
+
           val request = FakeRequest(GET, vendorOrCompanyNameRoute)
 
           val view = application.injector.instanceOf[VendorOrCompanyNameView]
@@ -230,9 +238,11 @@ class VendorOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
 
       "must return a Bad Request and errors when invalid data is submitted" in {
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+        val application = applicationBuilder(userAnswers = Some(companyVendor)).build()
 
         running(application) {
+          val form = formProvider("company")
+
           val request =
             FakeRequest(POST, vendorOrCompanyNameRoute)
               .withFormUrlEncodedBody(("name", ""))
@@ -254,6 +264,8 @@ class VendorOrCompanyNameControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
+        val form = formProvider("")
+
         val request = FakeRequest(GET, vendorOrCompanyNameRoute)
         val result = route(application, request).value
 

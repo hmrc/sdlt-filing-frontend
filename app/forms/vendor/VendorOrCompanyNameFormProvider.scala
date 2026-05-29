@@ -27,18 +27,18 @@ class VendorOrCompanyNameFormProvider @Inject() extends Mappings {
 
   private val formRegex = "[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"
 
-  def apply(): Form[VendorName] =
+  def apply(vendorOrCompany:String): Form[VendorName] =
     Form(
       mapping(
         "forename1" -> optionalText()
-          .verifying(optionalMaxLength(14, "vendor.individual.error.length.firstName"))
-          .verifying(optionalRegexp(formRegex, "vendor.name.form.regex.error")),
+          .verifying(optionalMaxLength(14, s"vendor.individual.firstName.error.length"))
+          .verifying(optionalRegexp(formRegex, s"vendor.individual.firstName.regex.error")),
         "forename2" -> optionalText()
-          .verifying(optionalMaxLength(14, "vendor.individual.error.length.middleName"))
-          .verifying(optionalRegexp(formRegex, "vendor.name.form.regex.error")),
-        "name" -> text("vendor.name.error.required")
-          .verifying(maxLength(56, "vendor.name.error.length"))
-          .verifying(regexp(formRegex, "vendor.name.form.regex.error"))
+          .verifying(optionalMaxLength(14, s"vendor.individual.middleName.error.length"))
+          .verifying(optionalRegexp(formRegex, s"vendor.individual.middleName.regex.error")),
+        "name" -> text(s"vendor.$vendorOrCompany.name.error.required")
+          .verifying(maxLength(56, s"vendor.$vendorOrCompany.name.error.length"))
+          .verifying(regexp(formRegex, s"vendor.$vendorOrCompany.name.regex.error"))
       )(VendorName.apply)(o => Some(Tuple.fromProductTyped(o)))
     )
 }

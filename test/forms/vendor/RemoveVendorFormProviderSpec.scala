@@ -18,13 +18,18 @@ package forms.vendor
 
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class RemoveVendorFormProviderSpec extends BooleanFieldBehaviours {
+
+  private implicit val messages: Messages = stubMessages()
 
   val requiredKey = "vendor.remove.error.required"
   val invalidKey = "error.boolean"
 
-  val form = new RemoveVendorFormProvider()()
+  val formProvider = new RemoveVendorFormProvider()
+  val form = formProvider(Some("Name"))
 
   ".value" - {
 
