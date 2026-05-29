@@ -58,8 +58,7 @@ class LeaseholdSelfAssessedBYSViewSpec extends SpecBase {
           msgs("taxCalculation.beforeStart.bullet1"),
           msgs("taxCalculation.beforeStart.bullet2"),
           msgs("taxCalculation.beforeStart.bullet3"),
-          msgs("taxCalculation.beforeStart.bullet4"),
-          msgs("taxCalculation.beforeStart.bullet5")
+          msgs("taxCalculation.beforeStart.bullet4")
         )
       }
     }
