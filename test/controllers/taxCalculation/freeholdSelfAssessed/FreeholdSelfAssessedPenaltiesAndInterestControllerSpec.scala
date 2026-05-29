@@ -116,7 +116,7 @@ class FreeholdSelfAssessedPenaltiesAndInterestControllerSpec extends SpecBase {
           val result = route(app, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad().url
         }
       }
     }
