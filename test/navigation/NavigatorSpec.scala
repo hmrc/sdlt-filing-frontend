@@ -492,8 +492,9 @@ class NavigatorSpec extends SpecBase {
             controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(NormalMode)
         }
 
-        "go from FreeholdTaxCalculatedPenaltiesAndInterestPage to Index page" in {
-          navigator.nextPage(FreeholdTaxCalculatedPenaltiesAndInterestPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        "go from FreeholdTaxCalculatedPenaltiesAndInterestPage to TaxCalculationCheckYourAnswers" in {
+          navigator.nextPage(FreeholdTaxCalculatedPenaltiesAndInterestPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
+            controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
         }
       }
 
@@ -509,8 +510,9 @@ class NavigatorSpec extends SpecBase {
             controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSelfAssessedPenaltiesAndInterestController.onPageLoad(NormalMode)
         }
 
-        "go from FreeholdSelfAssessedPenaltiesAndInterestPage to Index page" in {
-          navigator.nextPage(FreeholdSelfAssessedPenaltiesAndInterestPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        "go from FreeholdSelfAssessedPenaltiesAndInterestPage to TaxCalculationCheckYourAnswers" in {
+          navigator.nextPage(FreeholdSelfAssessedPenaltiesAndInterestPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
+            controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
         }
       }
 
@@ -526,8 +528,9 @@ class NavigatorSpec extends SpecBase {
             controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(NormalMode)
         }
 
-        "go from LeaseholdTaxCalculatedPenaltiesAndInterestPage to Index page" in {
-          navigator.nextPage(LeaseholdTaxCalculatedPenaltiesAndInterestPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        "go from LeaseholdTaxCalculatedPenaltiesAndInterestPage to TaxCalculationCheckYourAnswers" in {
+          navigator.nextPage(LeaseholdTaxCalculatedPenaltiesAndInterestPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
+            controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
         }
       }
 
@@ -548,8 +551,9 @@ class NavigatorSpec extends SpecBase {
             controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedPenaltiesAndInterestController.onPageLoad(NormalMode)
         }
 
-        "go from LeaseholdSelfAssessedPenaltiesAndInterestPage to Index page" in {
-          navigator.nextPage(LeaseholdSelfAssessedPenaltiesAndInterestPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+        "go from LeaseholdSelfAssessedPenaltiesAndInterestPage to TaxCalculationCheckYourAnswers" in {
+          navigator.nextPage(LeaseholdSelfAssessedPenaltiesAndInterestPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
+            controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
         }
       }
     }
@@ -660,20 +664,20 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(TransactionTypePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.preliminary.routes.CheckYourAnswersController.onPageLoad()
       }
 
-      "must go from FreeholdTaxCalculatedPenaltiesAndInterestPage to Index in CheckMode" in {
-        navigator.nextPage(FreeholdTaxCalculatedPenaltiesAndInterestPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
-      }
-
-      "must go from FreeholdSelfAssessedPenaltiesAndInterestPage to Index in CheckMode" in {
-        navigator.nextPage(FreeholdSelfAssessedPenaltiesAndInterestPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
-      }
-
-      "must go from LeaseholdSelfAssessedPenaltiesAndInterestPage to Index in CheckMode" in {
-        navigator.nextPage(LeaseholdSelfAssessedPenaltiesAndInterestPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
-      }
-
-      "must go from LeaseholdTaxCalculatedPenaltiesAndInterestPage to Index in CheckMode" in {
-        navigator.nextPage(LeaseholdTaxCalculatedPenaltiesAndInterestPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe routes.IndexController.onPageLoad()
+      "must go from tax calculation pages to TaxCalculationCheckYourAnswers in CheckMode" in {
+        navigator.nextPage(FreeholdTaxCalculatedSelfAssessedAmountPage,    CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(FreeholdTaxCalculatedTotalAmountDuePage,        CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(FreeholdTaxCalculatedPenaltiesAndInterestPage,  CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(FreeholdSelfAssessedAmountPage,                 CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(FreeholdSelfAssessedTotalAmountDuePage,         CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(FreeholdSelfAssessedPenaltiesAndInterestPage,   CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(LeaseholdSelfAssessedPremiumPayableTaxPage,     CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(LeaseholdSelfAssessedNpvTaxPage,                CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(LeaseholdSelfAssessedTotalAmountDuePage,        CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(LeaseholdSelfAssessedPenaltiesAndInterestPage,  CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(LeaseholdTaxCalculatedSelfAssessedAmountPage,   CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(LeaseholdTaxCalculatedTotalAmountDuePage,       CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(LeaseholdTaxCalculatedPenaltiesAndInterestPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
       }
     }
 

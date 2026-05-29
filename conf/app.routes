@@ -566,8 +566,6 @@ GET        /tax-calculation/freehold-calculated/are-penalties-and-interest-inclu
 POST       /tax-calculation/freehold-calculated/are-penalties-and-interest-included        controllers.taxCalculation.freeholdTaxCalculated.FreeholdSdltCalculatedPenaltiesAndInterestController.onSubmit(mode: Mode = NormalMode)
 GET        /tax-calculation/freehold-calculated/are-penalties-and-interest-included/change controllers.taxCalculation.freeholdTaxCalculated.FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(mode: Mode = CheckMode)
 POST       /tax-calculation/freehold-calculated/are-penalties-and-interest-included/change controllers.taxCalculation.freeholdTaxCalculated.FreeholdSdltCalculatedPenaltiesAndInterestController.onSubmit(mode: Mode = CheckMode)
-#GET        /tax-calculation/freehold-calculated/check-your-answers                  controllers.taxCalculation.freeholdTaxCalculated.FreeholdSdltCalculatedCheckYourAnswersController.onPageLoad()
-#POST       /tax-calculation/freehold-calculated/check-your-answers             controllers.FreeholdSdltCalculatedCheckYourAnswersController.onSubmit()
 
 # ---- Tax calculation: Flow B (Freehold - Service cannot perform calculation) -------------------------------------
 GET         /tax-calculation/freehold-not-calculated/before-you-start               controllers.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedBYSController.onPageLoad()
@@ -586,9 +584,9 @@ GET        /tax-calculation/freehold-not-calculated/are-penalties-and-interest-i
 POST       /tax-calculation/freehold-not-calculated/are-penalties-and-interest-included        controllers.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedPenaltiesAndInterestController.onSubmit(mode: Mode = NormalMode)
 GET        /tax-calculation/freehold-not-calculated/are-penalties-and-interest-included/change controllers.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedPenaltiesAndInterestController.onPageLoad(mode: Mode = CheckMode)
 POST       /tax-calculation/freehold-not-calculated/are-penalties-and-interest-included/change controllers.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedPenaltiesAndInterestController.onSubmit(mode: Mode = CheckMode)
-#GET        /tax-calculation/freehold-not-calculated/check-your-answers                         controllers.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedCheckYourAnswersController.onPageLoad()
-#GET        /tax-calculation/freehold-not-calculated/check-your-answers             controllers.FreeholdSdltNotCalculatedCheckYourAnswersController.onPageLoad()
-#POST       /tax-calculation/freehold-not-calculated/check-your-answers             controllers.FreeholdSdltNotCalculatedCheckYourAnswersController.onSubmit()
+# ---- Tax calculation: Check your answers (shared across all flows) ------------------------------------------------
+GET         /tax-calculation/check-your-answers                                                 controllers.taxCalculation.TaxCalculationCheckYourAnswersController.onPageLoad()
+POST        /tax-calculation/check-your-answers                                                 controllers.taxCalculation.TaxCalculationCheckYourAnswersController.onSubmit()
 
 # ---- Tax calculation: Flow C (Leasehold - Service has performed calculation) -------------------------------------
 GET         /tax-calculation/leasehold-calculated/before-you-start                           controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedBYSController.onPageLoad()
@@ -606,8 +604,6 @@ GET         /tax-calculation/leasehold-calculated/total-amount-due              
 POST        /tax-calculation/leasehold-calculated/total-amount-due                           controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedTotalAmountDueController.onSubmit(mode: Mode = NormalMode)
 GET         /tax-calculation/leasehold-calculated/total-amount-due/change                    controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedTotalAmountDueController.onPageLoad(mode: Mode = CheckMode)
 POST        /tax-calculation/leasehold-calculated/total-amount-due/change                    controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedTotalAmountDueController.onSubmit(mode: Mode = CheckMode)
-#GET        /tax-calculation/leasehold-calculated/check-your-answers                         controllers.LeaseholdSdltCalculatedCheckYourAnswersController.onPageLoad()
-#POST       /tax-calculation/leasehold-calculated/check-your-answers                         controllers.LeaseholdSdltCalculatedCheckYourAnswersController.onSubmit()
 
 # ---- Tax calculation: Flow D (Leasehold - Service cannot perform calculation) -------------------------------------
 GET        /tax-calculation/leasehold-not-calculated/before-you-start                                controllers.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedBYSController.onPageLoad()
@@ -628,8 +624,6 @@ GET        /tax-calculation/leasehold-not-calculated/are-penalties-and-interest-
 POST       /tax-calculation/leasehold-not-calculated/are-penalties-and-interest-included             controllers.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedPenaltiesAndInterestController.onSubmit(mode: Mode = NormalMode)
 GET        /tax-calculation/leasehold-not-calculated/are-penalties-and-interest-included/change      controllers.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedPenaltiesAndInterestController.onPageLoad(mode: Mode = CheckMode)
 POST       /tax-calculation/leasehold-not-calculated/are-penalties-and-interest-included/change      controllers.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedPenaltiesAndInterestController.onSubmit(mode: Mode = CheckMode)
-#GET       /tax-calculation/leasehold-not-calculated/check-your-answers                              controllers.LeaseholdSdltNotCalculatedCheckYourAnswersController.onPageLoad()
-#POST      /tax-calculation/leasehold-not-calculated/check-your-answers                              controllers.LeaseholdSdltNotCalculatedCheckYourAnswersController.onSubmit()
 
 GET        /about-the-transaction/considerations-affected-by-uncertain-future-events                 controllers.transaction.ConsiderationsAffectedUncertainController.onPageLoad(mode: Mode = NormalMode)
 POST       /about-the-transaction/considerations-affected-by-uncertain-future-events                 controllers.transaction.ConsiderationsAffectedUncertainController.onSubmit(mode: Mode = NormalMode)
