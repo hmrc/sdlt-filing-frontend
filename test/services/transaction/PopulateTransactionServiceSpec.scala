@@ -59,7 +59,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
             totalConsiderationLinked = Some("500000"),
             claimingRelief           = Some("YES"),
             reliefAmount             = Some("10000"),
-            reliefReason             = Some("charitiesRelief"),
+            reliefReason             = Some("20"),
             reliefSchemeNumber       = Some("CS123456")
           )
 
@@ -291,7 +291,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
 
     "forms of consideration" - {
 
-      "must correctly map yes/no values for all consideration types" in {
+      "must correctly map yes/no values when at least one is yes" in {
         val transaction = Transaction(
           transactionDescription   = Some("F"),
           effectiveDate            = Some("2024-01-15"),
@@ -326,6 +326,46 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           contingent                = "yes"
         ))
       }
+
+      "must not set forms of consideration page when all values are no" in {
+        val transaction = Transaction(
+          transactionDescription   = Some("F"),
+          effectiveDate            = Some("2024-01-15"),
+          isLinked                 = Some("NO"),
+          claimingRelief           = Some("NO"),
+          considerationCash        = Some("no"),
+          considerationDebt        = Some("no"),
+          considerationBuild       = Some("no"),
+          considerationEmploy      = Some("no"),
+          considerationOther       = Some("no"),
+          considerationSharesQTD   = Some("no"),
+          considerationSharesUNQTD = Some("no"),
+          considerationLand        = Some("no"),
+          considerationServices    = Some("no"),
+          considerationContingent  = Some("no")
+        )
+
+        val result = service.populateTransactionInSession(transaction, userAnswers)
+
+        result mustBe a[Success[_]]
+
+        result.get.get(TransactionFormsOfConsiderationPage) mustBe None
+      }
+
+      "must not set forms of consideration page when all values are absent" in {
+        val transaction = Transaction(
+          transactionDescription = Some("F"),
+          effectiveDate          = Some("2024-01-15"),
+          isLinked               = Some("NO"),
+          claimingRelief         = Some("NO")
+        )
+
+        val result = service.populateTransactionInSession(transaction, userAnswers)
+
+        result mustBe a[Success[_]]
+
+        result.get.get(TransactionFormsOfConsiderationPage) mustBe None
+      }
     }
 
     "when relief is claimed" - {
@@ -337,7 +377,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
             effectiveDate          = Some("2024-01-15"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("YES"),
-            reliefReason           = Some("charitiesRelief"),
+            reliefReason           = Some("20"),
             reliefAmount           = Some("5000"),
             reliefSchemeNumber     = None
           )
@@ -361,7 +401,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
             effectiveDate          = Some("2024-01-15"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("YES"),
-            reliefReason           = Some("charitiesRelief"),
+            reliefReason           = Some("20"),
             reliefAmount           = None,
             reliefSchemeNumber     = None
           )
@@ -385,7 +425,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
             effectiveDate          = Some("2024-01-15"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("YES"),
-            reliefReason           = Some("charitiesRelief"),
+            reliefReason           = Some("20"),
             reliefAmount           = None,
             reliefSchemeNumber     = Some("CS654321")
           )
@@ -409,7 +449,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
             effectiveDate          = Some("2024-01-15"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("YES"),
-            reliefReason           = Some("partExchange"),
+            reliefReason           = Some("08"),
             reliefAmount           = None,
             reliefSchemeNumber     = Some("CIS123456")
           )
@@ -420,9 +460,9 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
 
           val updatedAnswers = result.get
 
-          updatedAnswers.get(ReasonForReliefPage)               mustBe Some(ReasonForRelief.PartExchange)
-          updatedAnswers.get(IsPurchaserRegisteredWithCISPage)  mustBe Some(true)
-          updatedAnswers.get(TransactionCisNumberPage)          mustBe Some("CIS123456")
+          updatedAnswers.get(ReasonForReliefPage)              mustBe Some(ReasonForRelief.PartExchange)
+          updatedAnswers.get(IsPurchaserRegisteredWithCISPage) mustBe Some(true)
+          updatedAnswers.get(TransactionCisNumberPage)         mustBe Some("CIS123456")
         }
       }
 
@@ -433,7 +473,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
             effectiveDate          = Some("2024-01-15"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("YES"),
-            reliefReason           = Some("charitiesRelief"),
+            reliefReason           = Some("20"),
             reliefAmount           = None,
             reliefSchemeNumber     = None
           )
@@ -446,6 +486,29 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
 
           updatedAnswers.get(AddRegisteredCharityNumberPage) mustBe Some(false)
           updatedAnswers.get(CharityRegisteredNumberPage)    mustBe None
+        }
+      }
+
+      "when there is no scheme number for partExchange" - {
+        "must set CIS registered to false and not set the CIS number page" in {
+          val transaction = Transaction(
+            transactionDescription = Some("F"),
+            effectiveDate          = Some("2024-01-15"),
+            isLinked               = Some("NO"),
+            claimingRelief         = Some("YES"),
+            reliefReason           = Some("08"),
+            reliefAmount           = None,
+            reliefSchemeNumber     = None
+          )
+
+          val result = service.populateTransactionInSession(transaction, userAnswers)
+
+          result mustBe a[Success[_]]
+
+          val updatedAnswers = result.get
+
+          updatedAnswers.get(IsPurchaserRegisteredWithCISPage) mustBe Some(false)
+          updatedAnswers.get(TransactionCisNumberPage)         mustBe None
         }
       }
 
@@ -612,7 +675,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
 
     "property use pages" - {
 
-      "must correctly map yes/no values for all property use types" in {
+      "must correctly map yes/no values when at least one is yes" in {
         val transaction = Transaction(
           transactionDescription = Some("F"),
           effectiveDate          = Some("2024-01-15"),
@@ -632,17 +695,39 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         result mustBe a[Success[_]]
 
         result.get.get(TransactionUseOfLandOrPropertyPage) mustBe Some(TransactionUseOfLandOrPropertyAnswers(
-          office             = "yes",
-          hotel              = "no",
-          shop               = "yes",
-          warehouse          = "no",
-          factory            = "yes",
+          office              = "yes",
+          hotel               = "no",
+          shop                = "yes",
+          warehouse           = "no",
+          factory             = "yes",
           otherIndustrialUnit = "no",
-          other              = "yes"
+          other               = "yes"
         ))
       }
 
-      "must default to no when property use values are absent" in {
+      "must not set property use page when all values are no" in {
+        val transaction = Transaction(
+          transactionDescription = Some("F"),
+          effectiveDate          = Some("2024-01-15"),
+          isLinked               = Some("NO"),
+          claimingRelief         = Some("NO"),
+          usedAsOffice           = Some("no"),
+          usedAsHotel            = Some("no"),
+          usedAsShop             = Some("no"),
+          usedAsWarehouse        = Some("no"),
+          usedAsFactory          = Some("no"),
+          usedAsIndustrial       = Some("no"),
+          usedAsOther            = Some("no")
+        )
+
+        val result = service.populateTransactionInSession(transaction, userAnswers)
+
+        result mustBe a[Success[_]]
+
+        result.get.get(TransactionUseOfLandOrPropertyPage) mustBe None
+      }
+
+      "must not set property use page when all values are absent" in {
         val transaction = Transaction(
           transactionDescription = Some("F"),
           effectiveDate          = Some("2024-01-15"),
@@ -654,15 +739,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
 
         result mustBe a[Success[_]]
 
-        result.get.get(TransactionUseOfLandOrPropertyPage) mustBe Some(TransactionUseOfLandOrPropertyAnswers(
-          office             = "no",
-          hotel              = "no",
-          shop               = "no",
-          warehouse          = "no",
-          factory            = "no",
-          otherIndustrialUnit = "no",
-          other              = "no"
-        ))
+        result.get.get(TransactionUseOfLandOrPropertyPage) mustBe None
       }
     }
 
@@ -715,9 +792,9 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
 
           val updatedAnswers = result.get
 
-          updatedAnswers.get(SaleOfBusinessPage)                   mustBe Some(false)
-          updatedAnswers.get(TransactionSaleOfBusinessAssetsPage)  mustBe None
-          updatedAnswers.get(TotalAssetsConsiderationPage)         mustBe None
+          updatedAnswers.get(SaleOfBusinessPage)                  mustBe Some(false)
+          updatedAnswers.get(TransactionSaleOfBusinessAssetsPage) mustBe None
+          updatedAnswers.get(TotalAssetsConsiderationPage)        mustBe None
         }
       }
     }
@@ -740,7 +817,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
 
           val updatedAnswers = result.get
 
-          updatedAnswers.get(Cap1OrNsbcPage)               mustBe Some(true)
+          updatedAnswers.get(Cap1OrNsbcPage)                mustBe Some(true)
           updatedAnswers.get(TransactionRulingFollowedPage) mustBe Some(TransactionRulingFollowed.Yes)
         }
       }
@@ -761,7 +838,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
 
           val updatedAnswers = result.get
 
-          updatedAnswers.get(Cap1OrNsbcPage)               mustBe Some(true)
+          updatedAnswers.get(Cap1OrNsbcPage)                mustBe Some(true)
           updatedAnswers.get(TransactionRulingFollowedPage) mustBe Some(TransactionRulingFollowed.No)
         }
       }
@@ -782,7 +859,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
 
           val updatedAnswers = result.get
 
-          updatedAnswers.get(Cap1OrNsbcPage)               mustBe Some(true)
+          updatedAnswers.get(Cap1OrNsbcPage)                mustBe Some(true)
           updatedAnswers.get(TransactionRulingFollowedPage) mustBe Some(TransactionRulingFollowed.RulingNotReceived)
         }
       }
@@ -803,7 +880,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
 
           val updatedAnswers = result.get
 
-          updatedAnswers.get(Cap1OrNsbcPage)               mustBe Some(true)
+          updatedAnswers.get(Cap1OrNsbcPage)                mustBe Some(true)
           updatedAnswers.get(TransactionRulingFollowedPage) mustBe None
         }
       }
@@ -824,7 +901,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
 
           val updatedAnswers = result.get
 
-          updatedAnswers.get(Cap1OrNsbcPage)               mustBe Some(false)
+          updatedAnswers.get(Cap1OrNsbcPage)                mustBe Some(false)
           updatedAnswers.get(TransactionRulingFollowedPage) mustBe None
         }
       }

@@ -97,19 +97,38 @@ class PopulateTransactionService {
     }
 
   private def formsOfConsiderationPage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
-    val answers = TransactionFormsOfConsiderationAnswers(
-      cash = if (transaction.considerationCash.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      debt = if (transaction.considerationDebt.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      buildingWorks = if (transaction.considerationBuild.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      employment = if (transaction.considerationEmploy.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      other = if (transaction.considerationOther.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      sharesInAQuotedCompany = if (transaction.considerationSharesQTD.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      sharesInAnUnquotedCompany = if (transaction.considerationSharesUNQTD.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      otherLand = if (transaction.considerationLand.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      services = if (transaction.considerationServices.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      contingent = if (transaction.considerationContingent.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no"
+    val fields = Seq(
+      transaction.considerationCash,
+      transaction.considerationDebt,
+      transaction.considerationBuild,
+      transaction.considerationEmploy,
+      transaction.considerationOther,
+      transaction.considerationSharesQTD,
+      transaction.considerationSharesUNQTD,
+      transaction.considerationLand,
+      transaction.considerationServices,
+      transaction.considerationContingent
     )
-    userAnswers.set(TransactionFormsOfConsiderationPage, answers)
+
+    val hasAnyYes = fields.exists(_.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes")))
+
+    if (hasAnyYes) {
+      val answers = TransactionFormsOfConsiderationAnswers(
+        cash = if (transaction.considerationCash.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        debt = if (transaction.considerationDebt.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        buildingWorks = if (transaction.considerationBuild.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        employment = if (transaction.considerationEmploy.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        other = if (transaction.considerationOther.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        sharesInAQuotedCompany = if (transaction.considerationSharesQTD.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        sharesInAnUnquotedCompany = if (transaction.considerationSharesUNQTD.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        otherLand = if (transaction.considerationLand.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        services = if (transaction.considerationServices.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        contingent = if (transaction.considerationContingent.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no"
+      )
+      userAnswers.set(TransactionFormsOfConsiderationPage, answers)
+    } else {
+      Success(userAnswers)
+    }
   }
 
   private def linkedTransactionPages(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
@@ -164,19 +183,19 @@ class PopulateTransactionService {
 
   private def reliefSchemePages(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
     (transaction.reliefSchemeNumber, transaction.reliefReason) match {
-      case (Some(schemeNumber), Some(reliefReason)) if reliefReason.contains("charitiesRelief") =>
+      case (Some(schemeNumber), Some(reliefReason)) if reliefReason.contains("20") =>
         for {
           withAddCharity <- userAnswers.set(AddRegisteredCharityNumberPage, true)
           finalAnswers <- withAddCharity.set(CharityRegisteredNumberPage, schemeNumber)
         } yield finalAnswers
-      case (None, Some(reliefReason)) if reliefReason.contains("charitiesRelief") =>
+      case (None, Some(reliefReason)) if reliefReason.contains("20") =>
         userAnswers.set(AddRegisteredCharityNumberPage, false)
-      case (Some(schemeNumber), Some(reliefReason)) if reliefReason.contains("partExchange") =>
+      case (Some(schemeNumber), Some(reliefReason)) if reliefReason.contains("08") =>
         for {
           withCIS <- userAnswers.set(IsPurchaserRegisteredWithCISPage, true)
           finalAnswers <- withCIS.set(TransactionCisNumberPage, schemeNumber)
         } yield finalAnswers
-      case (None, Some(reliefReason)) if reliefReason.contains("partExchange") =>
+      case (None, Some(reliefReason)) if reliefReason.contains("08") =>
         userAnswers.set(IsPurchaserRegisteredWithCISPage, false)
       case _ =>
         Try(userAnswers)
@@ -195,17 +214,33 @@ class PopulateTransactionService {
   }
 
   private def propertyUsePage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
+  val fields = Seq(
+    transaction.usedAsOffice,
+    transaction.usedAsHotel,
+    transaction.usedAsShop,
+    transaction.usedAsWarehouse,
+    transaction.usedAsFactory,
+    transaction.usedAsIndustrial,
+    transaction.usedAsOther
+  )
+
+  val hasAnyYes = fields.exists(_.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes")))
+
+  if (hasAnyYes) {
     val answers = TransactionUseOfLandOrPropertyAnswers(
-      office = if (transaction.usedAsOffice.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      hotel = if (transaction.usedAsHotel.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      shop = if (transaction.usedAsShop.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      warehouse = if (transaction.usedAsWarehouse.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      factory = if (transaction.usedAsFactory.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+      office             = if (transaction.usedAsOffice.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+      hotel              = if (transaction.usedAsHotel.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+      shop               = if (transaction.usedAsShop.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+      warehouse          = if (transaction.usedAsWarehouse.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+      factory            = if (transaction.usedAsFactory.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
       otherIndustrialUnit = if (transaction.usedAsIndustrial.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      other = if (transaction.usedAsOther.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+      other              = if (transaction.usedAsOther.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no"
     )
     userAnswers.set(TransactionUseOfLandOrPropertyPage, answers)
+  } else {
+    Success(userAnswers)
   }
+}
 
   private def includedSaleBusinessPage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
     val answers = TransactionSaleOfBusinessAssetsAnswers(
