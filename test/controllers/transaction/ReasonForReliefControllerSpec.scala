@@ -89,7 +89,7 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, reasonForReliefRoute)
-            .withFormUrlEncodedBody(("value", "partExchange"))
+            .withFormUrlEncodedBody(("value", "08"))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -110,7 +110,7 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, reasonForReliefRoute)
-            .withFormUrlEncodedBody(("value", "charitiesRelief"))
+            .withFormUrlEncodedBody(("value", "20"))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -134,7 +134,7 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, reasonForReliefRoute)
-            .withFormUrlEncodedBody(("value", "relocationOfEmployment"))
+            .withFormUrlEncodedBody(("value", "09"))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -155,7 +155,7 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, reasonForReliefRouteCheckMode)
-            .withFormUrlEncodedBody(("value", "partExchange"))
+            .withFormUrlEncodedBody(("value", "08"))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -176,7 +176,7 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, reasonForReliefRouteCheckMode)
-            .withFormUrlEncodedBody(("value", "charitiesRelief"))
+            .withFormUrlEncodedBody(("value", "20"))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -197,7 +197,7 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, reasonForReliefRouteCheckMode)
-            .withFormUrlEncodedBody(("value", "relocationOfEmployment"))
+            .withFormUrlEncodedBody(("value", "09"))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -222,7 +222,7 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, reasonForReliefRouteCheckMode)
-            .withFormUrlEncodedBody(("value", "partExchange"))
+            .withFormUrlEncodedBody(("value", "08"))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER

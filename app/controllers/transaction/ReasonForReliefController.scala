@@ -86,9 +86,9 @@ class ReasonForReliefController @Inject()(
             }
             _              <- sessionRepository.set(finalAnswers)
           } yield {
-            if (value.toString == "partExchange" && mode == NormalMode) {
+            if (value.toString == "08" && mode == NormalMode) {
               Redirect(controllers.transaction.routes.IsPurchaserRegisteredWithCISController.onPageLoad(mode))
-            } else if (value.toString == "charitiesRelief" && mode == NormalMode) {
+            } else if (value.toString == "20" && mode == NormalMode) {
               Redirect(controllers.transaction.routes.AddRegisteredCharityNumberController.onPageLoad(mode))
             } else {
               Redirect(navigator.nextPage(ReasonForReliefPage, mode, finalAnswers))

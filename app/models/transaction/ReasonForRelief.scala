@@ -26,36 +26,36 @@ sealed trait ReasonForRelief
 
 object ReasonForRelief extends Enumerable.Implicits {
 
-  case object PartExchange extends WithName("partExchange") with ReasonForRelief
-  case object RelocationOfEmployment extends WithName("relocationOfEmployment") with ReasonForRelief
-  case object CompulsoryDevelopment extends WithName("compulsoryDevelopment") with ReasonForRelief
-  case object CompliancePlanning extends WithName("compliancePlanning") with ReasonForRelief
-  case object GroupRelief extends WithName("groupRelief") with ReasonForRelief
-  case object ReconstructionRelief extends WithName("reconstructionRelief") with ReasonForRelief
-  case object AcquisitionReliefTax extends WithName("acquisitionReliefTax") with ReasonForRelief
-  case object DemutualisationInsurance extends WithName("demutualisationInsurance") with ReasonForRelief
-  case object DemutualisationBuildingSociety extends WithName("demutualisationBuildingSociety") with ReasonForRelief
-  case object IncorporationLimitedLiability extends WithName("incorporationLimitedLiability") with ReasonForRelief
-  case object TransfersPublic extends WithName("transfersPublic") with ReasonForRelief
-  case object TransfersReorganisation extends WithName("transfersReorganisation") with ReasonForRelief
-  case object CharitiesRelief extends WithName("charitiesRelief") with ReasonForRelief
-  case object AcquisitionByBodies extends WithName("acquisitionByBodies") with ReasonForRelief
-  case object RightToBuy extends WithName("rightToBuy") with ReasonForRelief
-  case object RegisteredSocial extends WithName("registeredSocial") with ReasonForRelief
-  case object AlternativePropertyFinance extends WithName("alternativePropertyFinance") with ReasonForRelief
-  case object CollectiveEnfranchisement extends WithName("collectiveEnfranchisement") with ReasonForRelief
-  case object CroftingRightToBuy extends WithName("croftingRightToBuy") with ReasonForRelief
-  case object DiplomaticPrivileges extends WithName("diplomaticPrivileges") with ReasonForRelief
-  case object OtherRelief extends WithName("otherRelief") with ReasonForRelief
-  case object CombinationOfReliefs extends WithName("combinationOfReliefs") with ReasonForRelief
-  case object AlternativeFinanceInvestment extends WithName("alternativeFinanceInvestment") with ReasonForRelief
-  case object FirstTimeBuyer extends WithName("firstTimeBuyer") with ReasonForRelief
-  case object MultipleDwellings extends WithName("multipleDwellings") with ReasonForRelief
-  case object PreCompletion extends WithName("preCompletion") with ReasonForRelief
-  case object ReliefFromRate extends WithName("reliefFromRate") with ReasonForRelief
-  case object ReliefForFreeport extends WithName("reliefForFreeport") with ReasonForRelief
-  case object ReliefInvestmentZone extends WithName("reliefInvestmentZone") with ReasonForRelief
-  case object SeedingRelief extends WithName("seedingRelief") with ReasonForRelief
+  case object PartExchange extends WithName("08") with ReasonForRelief
+  case object RelocationOfEmployment extends WithName("09") with ReasonForRelief
+  case object CompulsoryDevelopment extends WithName("10") with ReasonForRelief
+  case object CompliancePlanning extends WithName("11") with ReasonForRelief
+  case object GroupRelief extends WithName("12") with ReasonForRelief
+  case object ReconstructionRelief extends WithName("13") with ReasonForRelief
+  case object AcquisitionReliefTax extends WithName("14") with ReasonForRelief
+  case object DemutualisationInsurance extends WithName("15") with ReasonForRelief
+  case object DemutualisationBuildingSociety extends WithName("16") with ReasonForRelief
+  case object IncorporationLimitedLiability extends WithName("17") with ReasonForRelief
+  case object TransfersPublic extends WithName("18") with ReasonForRelief
+  case object TransfersReorganisation extends WithName("19") with ReasonForRelief
+  case object CharitiesRelief extends WithName("20") with ReasonForRelief
+  case object AcquisitionByBodies extends WithName("21") with ReasonForRelief
+  case object RightToBuy extends WithName("22") with ReasonForRelief
+  case object RegisteredSocial extends WithName("23") with ReasonForRelief
+  case object AlternativePropertyFinance extends WithName("24") with ReasonForRelief
+  case object CollectiveEnfranchisement extends WithName("25") with ReasonForRelief
+  case object CroftingRightToBuy extends WithName("26") with ReasonForRelief
+  case object DiplomaticPrivileges extends WithName("27") with ReasonForRelief
+  case object OtherRelief extends WithName("28") with ReasonForRelief
+  case object CombinationOfReliefs extends WithName("29") with ReasonForRelief
+  case object AlternativeFinanceInvestment extends WithName("31") with ReasonForRelief
+  case object FirstTimeBuyer extends WithName("32") with ReasonForRelief
+  case object MultipleDwellings extends WithName("33") with ReasonForRelief
+  case object PreCompletion extends WithName("34") with ReasonForRelief
+  case object ReliefFromRate extends WithName("35") with ReasonForRelief
+  case object ReliefForFreeport extends WithName("36") with ReasonForRelief
+  case object ReliefInvestmentZone extends WithName("37") with ReasonForRelief
+  case object SeedingRelief extends WithName("38") with ReasonForRelief
 
   val values: Seq[ReasonForRelief] = Seq(
     PartExchange,
