@@ -55,12 +55,12 @@ class LeaseholdTaxCalculatedBYSViewSpec extends SpecBase {
         val bullets = Jsoup.parse(view().toString()).select("ul.govuk-list--bullet li").eachText()
 
         bullets must contain inOrderOnly (
+          msgs("taxCalculation.beforeStart.bullet1"),
           msgs("taxCalculation.beforeStart.selfAssessed.bullet"),
           msgs("taxCalculation.beforeStart.bullet3"),
           msgs("taxCalculation.beforeStart.bullet4")
         )
 
-        bullets must not contain msgs("taxCalculation.beforeStart.bullet1")
         bullets must not contain msgs("taxCalculation.beforeStart.bullet2")
       }
     }
