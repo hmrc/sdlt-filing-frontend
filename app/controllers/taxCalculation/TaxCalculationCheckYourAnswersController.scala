@@ -59,14 +59,15 @@ class TaxCalculationCheckYourAnswersController @Inject()(
           Future.successful(
             renderOrRedirect(buildRowResults(TaxCalculationResult(0, None, None, None, Nil)))
           )
-        case _ =>
+        case None =>
+          logger.warn("[TaxCalculationCheckYourAnswersController] no tax calculation flow set")
           Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       }
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     _ => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-    // TODO: submit to BE
+    // TODO: submit the tax calculation to the backend
   }
 
   private def renderOrRedirect(rows: Seq[SummaryRowResult]): Result =
@@ -100,6 +101,7 @@ class TaxCalculationCheckYourAnswersController @Inject()(
         FreeholdTaxCalculatedTotalAmountDueSummary.row(Some(ua)),
         FreeholdTaxCalculatedDoesAmountIncludePenaltiesSummary.row(Some(ua))
       )
+      // TODO: add the FreeholdSelfAssessed, LeaseholdTaxCalculated and LeaseholdSelfAssessed row sets (mirror the FreeholdTaxCalculated arm above)
       case _ => Nil
     }
   }

@@ -19,7 +19,7 @@ package controllers.taxCalculation
 import base.SpecBase
 import connectors.SdltCalculationConnector
 import models.taxCalculation.{CalculationResponse, TaxCalculationFlow, TaxCalculationResult}
-import models.{FullReturn, Land, Residency, ReturnInfo, Transaction, UserAnswers}
+import models.{CheckMode, FullReturn, Land, Residency, ReturnInfo, Transaction, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -40,8 +40,7 @@ class TaxCalculationCheckYourAnswersControllerSpec extends SpecBase with Mockito
   private val calculatedResult = TaxCalculationResult(totalTax = 43750, None, None, None, taxCalcs = Seq.empty)
   private val noCalcResult     = TaxCalculationResult(totalTax = 0, Some("Self-assessed"), None, None, taxCalcs = Seq.empty)
 
-  // A complete return so the calculation request can be built for a calculated flow.
-  private val calculatedAnswers: UserAnswers =
+  private val freeholdTaxCalculatedAnswers: UserAnswers =
     emptyUserAnswers
       .copy(fullReturn = Some(FullReturn(
         stornId = "STORN",
@@ -86,9 +85,20 @@ class TaxCalculationCheckYourAnswersControllerSpec extends SpecBase with Mockito
     "onPageLoad" - {
 
       "returns OK for a calculated flow when the calculation succeeds" in {
-        val app = appWith(calculatedAnswers, Future.successful(CalculationResponse(Seq(calculatedResult))))
+        val app = appWith(freeholdTaxCalculatedAnswers, Future.successful(CalculationResponse(Seq(calculatedResult))))
         running(app) {
           status(onPageLoad(app)) mustEqual OK
+        }
+      }
+
+      "redirects to the change page of the first incomplete row in a calculated flow" in {
+        val incomplete = freeholdTaxCalculatedAnswers.remove(FreeholdTaxCalculatedSelfAssessedAmountPage).success.value
+        val app        = appWith(incomplete, Future.successful(CalculationResponse(Seq(calculatedResult))))
+        running(app) {
+          val result = onPageLoad(app)
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual
+            controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdTaxCalculatedSdltSelfAssessmentController.onPageLoad(CheckMode).url
         }
       }
 
@@ -100,7 +110,7 @@ class TaxCalculationCheckYourAnswersControllerSpec extends SpecBase with Mockito
       }
 
       "redirects to the task list when the calculation does not return a calculated result" in {
-        val app = appWith(calculatedAnswers, Future.successful(CalculationResponse(Seq(noCalcResult))))
+        val app = appWith(freeholdTaxCalculatedAnswers, Future.successful(CalculationResponse(Seq(noCalcResult))))
         running(app) {
           val result = onPageLoad(app)
           status(result) mustEqual SEE_OTHER
