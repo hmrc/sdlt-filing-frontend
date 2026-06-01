@@ -43,7 +43,7 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) exte
     if (request.userAnswers.get(TaxCalculationFlowPage).contains(expected)) {
       onAllowed
     } else {
-      logger.error(s"[SaltCalculationService][whenInFlow] not in the flow: ${expected}")
+      logger.error(s"[SdltCalculationService][whenInFlow] not in the flow: ${expected}")
       Redirect(ReturnTaskListController.onPageLoad())
     }
 
@@ -53,7 +53,7 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) exte
     if (request.userAnswers.get(TaxCalculationFlowPage).contains(expected)) {
       onAllowed
     } else {
-      logger.error(s"[SaltCalculationService][whenInFlowAsync] not in the flow: ${expected}")
+      logger.error(s"[SdltCalculationService][whenInFlowAsync] not in the flow: ${expected}")
       Future.successful(Redirect(ReturnTaskListController.onPageLoad()))
     }
 

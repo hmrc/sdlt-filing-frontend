@@ -17,6 +17,7 @@
 package controllers.taxCalculation.leaseholdSelfAssessed
 
 import base.SpecBase
+import config.CurrencyFormatter.StringToCurrency
 import constants.FullReturnConstants.{completeLease, emptyFullReturn}
 import forms.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedPremiumPayableTaxFormProvider
 import org.scalatest.freespec.AnyFreeSpec
@@ -44,6 +45,8 @@ class LeaseholdSelfAssessedPremiumPayableTaxControllerSpec extends AnyFreeSpec w
   private val fullReturnWithLeaseData = emptyFullReturn.copy(lease = Some(completeLease))
   val form = new LeaseholdSelfAssessedPremiumPayableTaxFormProvider()()
   val premiumPayable = "50000.00"
+  val formattedPremiumPayable = premiumPayable.toCurrency.getOrElse("")
+
   lazy val premiumPayableRoute = controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedPremiumPayableTaxController.onPageLoad(NormalMode).url
 
   "LeaseholdSelfAssessedPremiumPayableTax Controller" - {
@@ -60,13 +63,13 @@ class LeaseholdSelfAssessedPremiumPayableTaxControllerSpec extends AnyFreeSpec w
         val view = application.injector.instanceOf[LeaseholdSelfAssessedPremiumPayableTaxView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, premiumPayable, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, formattedPremiumPayable, NormalMode)(request, messages(application)).toString
       }
     }
     "must populate correct view on a GET when previously answered" in {
 
       val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithLeaseData))
-        .set(LeaseholdSelfAssessedPremiumPayableTaxPage, "5000").success.value
+        .set(LeaseholdSelfAssessedPremiumPayableTaxPage, "5000.00").success.value
         .set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdSelfAssessed).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -79,7 +82,7 @@ class LeaseholdSelfAssessedPremiumPayableTaxControllerSpec extends AnyFreeSpec w
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill("5000"), premiumPayable, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill("5000.00"), formattedPremiumPayable, NormalMode)(request, messages(application)).toString
       }
     }
     "must redirect to next page when valid data is submitted in NormalMode" in {
@@ -103,7 +106,7 @@ class LeaseholdSelfAssessedPremiumPayableTaxControllerSpec extends AnyFreeSpec w
       running(application) {
         val request =
           FakeRequest(POST, premiumPayableRoute)
-            .withFormUrlEncodedBody(("value", "5000"))
+            .withFormUrlEncodedBody(("value", "5000.00"))
 
         val result = route(application, request).value
 
@@ -188,7 +191,7 @@ class LeaseholdSelfAssessedPremiumPayableTaxControllerSpec extends AnyFreeSpec w
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(filledForm, premiumPayable, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(filledForm, formattedPremiumPayable, NormalMode)(request, messages(application)).toString
       }
     }
   }
