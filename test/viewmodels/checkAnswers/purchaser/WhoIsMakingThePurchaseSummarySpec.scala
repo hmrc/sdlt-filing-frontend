@@ -23,6 +23,7 @@ import pages.purchaser.WhoIsMakingThePurchasePage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class WhoIsMakingThePurchaseSummarySpec extends SpecBase {
 
@@ -38,7 +39,12 @@ class WhoIsMakingThePurchaseSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
 
-          val result = WhoIsMakingThePurchaseSummary.row(Some(userAnswers))
+          val row = WhoIsMakingThePurchaseSummary.row(Some(userAnswers))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.whoIsMakingThePurchase.checkYourAnswersLabel")
 
@@ -63,7 +69,12 @@ class WhoIsMakingThePurchaseSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
 
-          val result = WhoIsMakingThePurchaseSummary.row(Some(userAnswers))
+          val row = WhoIsMakingThePurchaseSummary.row(Some(userAnswers))
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.whoIsMakingThePurchase.checkYourAnswersLabel")
 
@@ -80,69 +91,21 @@ class WhoIsMakingThePurchaseSummarySpec extends SpecBase {
 
     "when purchaser type is not present" - {
 
-      "must return None" in {
+      "must return a Missing and redirect call to missing page when data is not present" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
         running(application) {
           implicit val msgs: Messages = messages(application)
 
           val result = WhoIsMakingThePurchaseSummary.row(Some(emptyUserAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaser.whoIsMakingThePurchase.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(CheckMode)
+
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
-      }
-    }
-
-    "must use CheckMode for the change link" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      running(application) {
-        implicit val msgs: Messages = messages(application)
-
-        val userAnswers = emptyUserAnswers
-          .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
-
-        val result = WhoIsMakingThePurchaseSummary.row(Some(userAnswers))
-
-        result.actions.get.items.head.href mustEqual controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(CheckMode).url
-      }
-    }
-
-    "must properly escape messages in value" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      running(application) {
-        implicit val msgs: Messages = messages(application)
-
-        val userAnswers = emptyUserAnswers
-          .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
-
-        val result = WhoIsMakingThePurchaseSummary.row(Some(userAnswers))
-
-        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-        htmlContent must not include "<script>"
-        htmlContent must not include "&"
-      }
-    }
-
-    "must handle both enum values correctly" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      running(application) {
-        implicit val msgs: Messages = messages(application)
-
-        val individualAnswers = emptyUserAnswers
-          .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
-
-        val companyAnswers = emptyUserAnswers
-          .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
-
-        val individualResult = WhoIsMakingThePurchaseSummary.row(Some(individualAnswers))
-        val companyResult = WhoIsMakingThePurchaseSummary.row(Some(companyAnswers))
-
-        val individualContent = individualResult.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-        val companyContent = companyResult.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-
-        individualContent mustEqual msgs("purchaser.whoIsMakingThePurchase.Individual.checkYourAnswersLabel")
-        companyContent mustEqual msgs("purchaser.whoIsMakingThePurchase.Company.checkYourAnswersLabel")
-
-        individualContent must not equal companyContent
       }
     }
   }

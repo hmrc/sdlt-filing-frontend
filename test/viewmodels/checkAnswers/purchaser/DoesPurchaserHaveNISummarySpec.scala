@@ -22,7 +22,7 @@ import models.purchaser.NameOfPurchaser
 import pages.purchaser.{DoesPurchaserHaveNIPage, NameOfPurchaserPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class DoesPurchaserHaveNISummarySpec extends SpecBase {
 
@@ -43,7 +43,11 @@ class DoesPurchaserHaveNISummarySpec extends SpecBase {
             .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = Some("Test"), forename2 = Some("Test2"), name = "Test")).success.value
 
 
-          val result = DoesPurchaserHaveNISummary.row(Some(userAnswers))
+          val row = DoesPurchaserHaveNISummary.row(Some(userAnswers))
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.doesPurchaserHaveNI.checkYourAnswersLabel", userAnswers.get(NameOfPurchaserPage).map(_.fullName).getOrElse(""))
 
@@ -57,7 +61,7 @@ class DoesPurchaserHaveNISummarySpec extends SpecBase {
       }
     }
 
-    "must return a summary list row with a link to enter name when userAnswers is empty" in {
+    "must return a Missing and redirect call to missing page when data is not present" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -69,14 +73,13 @@ class DoesPurchaserHaveNISummarySpec extends SpecBase {
 
         val result = DoesPurchaserHaveNISummary.row(Some(userAnswers))
 
-        result.key.content.asHtml.toString() mustEqual msgs("purchaser.doesPurchaserHaveNI.checkYourAnswersLabel", userAnswers.get(NameOfPurchaserPage).map(_.fullName).getOrElse(""))
+        result match {
+          case Missing(call) =>
+            call mustEqual controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(CheckMode)
 
-        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-
-        htmlContent must include("govuk-link")
-        htmlContent must include(controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(CheckMode).url)
-        htmlContent must include(msgs("purchaser.checkYourAnswers.doesPurchaserHaveNI.missing"))
-        result.actions mustBe None
+          case Row(_) =>
+            fail("Expected Missing but got Row")
+        }
       }
     }
   }

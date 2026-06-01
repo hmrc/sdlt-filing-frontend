@@ -19,38 +19,30 @@ package viewmodels.checkAnswers.purchaser
 import models.{CheckMode, UserAnswers}
 import pages.purchaser.{AddPurchaserPhoneNumberPage, NameOfPurchaserPage}
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object AddPurchaserPhoneNumberSummary {
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
-
-      answers.flatMap(_.get(AddPurchaserPhoneNumberPage)).map {
-      answer =>
-
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
+      val changeRoute = controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(CheckMode)
+      answers.flatMap(_.get(AddPurchaserPhoneNumberPage)).map { answer =>
         val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRowViewModel(
-          key = messages("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel",answers.flatMap(_.get(NameOfPurchaserPage)).map(_.fullName).getOrElse("")),
-          value = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaser.addPurchaserPhoneNumber.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key = messages("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel",answers.flatMap(_.get(NameOfPurchaserPage)).map(_.fullName).getOrElse("")),
+            value = ValueViewModel(value),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("purchaser.addPurchaserPhoneNumber.change.hidden"))
+            )
           )
         )
     }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="${controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.addPurchaserPhoneNumber.missing")}</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = messages("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel", answers.flatMap(_.get(NameOfPurchaserPage)).map(_.fullName).getOrElse("")),
-        value = value
-      )
+        Missing(changeRoute)
     }
+  }
 }

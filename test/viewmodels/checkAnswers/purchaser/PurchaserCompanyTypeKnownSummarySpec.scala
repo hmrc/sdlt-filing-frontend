@@ -23,7 +23,7 @@ import pages.purchaser.{NameOfPurchaserPage, PurchaserCompanyTypeKnownPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class PurchaserCompanyTypeKnownSummarySpec extends SpecBase {
 
@@ -39,7 +39,11 @@ class PurchaserCompanyTypeKnownSummarySpec extends SpecBase {
           .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = None, forename2 = None, name = "Test")).success.value
 
 
-        val result = PurchaserCompanyTypeKnownSummary.row(Some(userAnswers))
+        val row = PurchaserCompanyTypeKnownSummary.row(Some(userAnswers))
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
 
         result.key.content.asHtml.toString() mustEqual msgs("purchaser.purchaserCompanyTypeKnown.checkYourAnswersLabel", userAnswers.get(NameOfPurchaserPage).map(_.fullName).getOrElse(""))
 
@@ -64,7 +68,11 @@ class PurchaserCompanyTypeKnownSummarySpec extends SpecBase {
           .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = None, forename2 = None, name = "Test")).success.value
 
 
-        val result = PurchaserCompanyTypeKnownSummary.row(Some(userAnswers))
+        val row = PurchaserCompanyTypeKnownSummary.row(Some(userAnswers))
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
 
         result.key.content.asHtml.toString() mustEqual msgs("purchaser.purchaserCompanyTypeKnown.checkYourAnswersLabel", userAnswers.get(NameOfPurchaserPage).map(_.fullName).getOrElse(""))
 
@@ -82,7 +90,7 @@ class PurchaserCompanyTypeKnownSummarySpec extends SpecBase {
 
     "when userAnswers is None" - {
 
-      "must return a summary list row with missing link" in {
+      "must return a Missing and redirect call to missing page when data is not present" in {
 
         val userAnswers = emptyUserAnswers.set(PurchaserCompanyTypeKnownPage, false).success.value
           .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = None, forename2 = None, name = "Test")).success.value
@@ -93,12 +101,13 @@ class PurchaserCompanyTypeKnownSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val result = PurchaserCompanyTypeKnownSummary.row(None)
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.purchaser.routes.PurchaserCompanyTypeKnownController.onPageLoad(CheckMode)
 
-          result.key.content.asHtml.toString() contains msgs("purchaser.purchaserCompanyTypeKnown.checkYourAnswersLabel")
-
-          val valueHtml = result.value.content.asHtml.toString()
-          valueHtml must include(controllers.purchaser.routes.PurchaserCompanyTypeKnownController.onPageLoad(CheckMode).url)
-          valueHtml contains (msgs("purchaser.purchaserCompanyTypeKnown.checkYourAnswersLabel"))
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }

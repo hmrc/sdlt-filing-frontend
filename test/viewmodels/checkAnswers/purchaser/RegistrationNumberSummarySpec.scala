@@ -22,6 +22,7 @@ import models.purchaser.NameOfPurchaser
 import pages.purchaser.RegistrationNumberPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class RegistrationNumberSummarySpec extends SpecBase {
 
@@ -29,9 +30,10 @@ class RegistrationNumberSummarySpec extends SpecBase {
 
   "RegistrationNumberSummarySpec" - {
 
-    "when purchaser name is present" - {
+    "when registration number is present" - {
 
-      "must return a summary list row with surname only"  in {
+      "must return a summary list row with registration number" in {
+
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
         running(application) {
           implicit val msgs: Messages = messages(application)
@@ -39,9 +41,13 @@ class RegistrationNumberSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(RegistrationNumberPage, "123456789").success.value
 
-          val result = RegistrationNumberSummary.row(Some(userAnswers))
+          val row = RegistrationNumberSummary.row(Some(userAnswers))
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
-           result.key.content.asHtml.toString() mustEqual msgs("purchaser.registrationNumber.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("purchaser.registrationNumber.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asHtml.toString()
           htmlContent mustEqual "123456789"
@@ -52,8 +58,28 @@ class RegistrationNumberSummarySpec extends SpecBase {
           result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.registrationNumber.change.hidden")
         }
       }
+    }
 
+    "when registration number is not present" - {
 
+      "must return a Missing and redirect call to missing page when data is not present" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val result = RegistrationNumberSummary.row(Some(emptyUserAnswers))
+
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.purchaser.routes.RegistrationNumberController.onPageLoad(CheckMode)
+
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
+        }
+      }
     }
   }
 }

@@ -21,6 +21,7 @@ import models.purchaser.NameOfPurchaser
 import pages.purchaser.{NameOfPurchaserPage, PurchaserAndVendorConnectedPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 
 class PurchaserAndVendorConnectedSummarySpec extends SpecBase {
@@ -39,7 +40,11 @@ class PurchaserAndVendorConnectedSummarySpec extends SpecBase {
             .set(PurchaserAndVendorConnectedPage, true).success.value
             .set(NameOfPurchaserPage,NameOfPurchaser(forename1 = Some("Test"),forename2 = Some("Test2"), name= "Test")).success.value
          
-          val result = PurchaserAndVendorConnectedSummary.row(Some(userAnswers))
+          val row = PurchaserAndVendorConnectedSummary.row(Some(userAnswers))
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.purchaserAndVendorConnected.checkYourAnswersLabel",userAnswers.get(NameOfPurchaserPage).map(_.fullName).getOrElse(""))
 
@@ -52,7 +57,27 @@ class PurchaserAndVendorConnectedSummarySpec extends SpecBase {
         }
       }
 
+      "must return a Missing and redirect call to missing page when data is not present" in {
 
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers
+            .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = Some("Test"), forename2 = Some("Test2"), name = "Test")).success.value
+
+          val result = PurchaserAndVendorConnectedSummary.row(Some(userAnswers))
+
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.purchaser.routes.PurchaserAndVendorConnectedController.onPageLoad(CheckMode)
+
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
+        }
+      }
     }
   }
 }

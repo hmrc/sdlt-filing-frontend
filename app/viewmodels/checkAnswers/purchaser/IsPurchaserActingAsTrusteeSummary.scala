@@ -19,14 +19,15 @@ package viewmodels.checkAnswers.purchaser
 import models.{CheckMode, UserAnswers}
 import pages.purchaser.{IsPurchaserActingAsTrusteePage, NameOfPurchaserPage}
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object IsPurchaserActingAsTrusteeSummary  {
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(CheckMode)
     answers.flatMap(_.get(IsPurchaserActingAsTrusteePage)).map {
       answer =>
 
@@ -34,24 +35,18 @@ object IsPurchaserActingAsTrusteeSummary  {
           if (answer) "site.yes" else "site.no"
         )
 
-        SummaryListRowViewModel(
-          key     = messages("purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel",answers.flatMap(_.get(NameOfPurchaserPage)).map(_.fullName).getOrElse("")),
-          value   = value,
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaser.isPurchaserActingAsTrustee.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key     = messages("purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel",answers.flatMap(_.get(NameOfPurchaserPage)).map(_.fullName).getOrElse("")),
+            value   = value,
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("purchaser.isPurchaserActingAsTrustee.change.hidden"))
+            )
           )
         )
     }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="${controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.iSPurchaserActingAsTrustee.missing")}</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = messages("purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel",answers.flatMap(_.get(NameOfPurchaserPage)).map(_.fullName).getOrElse("")),
-        value = value
-      )
+      Missing(changeRoute)
     }
+  }
 }

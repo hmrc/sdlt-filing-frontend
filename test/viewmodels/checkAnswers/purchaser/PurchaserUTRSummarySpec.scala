@@ -21,8 +21,10 @@ import models.CheckMode
 import pages.purchaser.PurchaserUTRPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
-class PurchaserUTRSummarySpec extends SpecBase{
+class PurchaserUTRSummarySpec extends SpecBase {
+
   "when valid Corporation Tax UTR present" - {
 
     "must return summary list row with Corporation Tax UTR only" in {
@@ -35,7 +37,11 @@ class PurchaserUTRSummarySpec extends SpecBase{
         val userAnswers = emptyUserAnswers
           .set(PurchaserUTRPage, "1234567494").success.value
 
-        val result = PurchaserUTRSummary.row(Some(userAnswers))
+        val row = PurchaserUTRSummary.row(Some(userAnswers))
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
 
         result.key.content.asHtml.toString() mustEqual msgs("purchaser.corporationTaxUTR.checkYourAnswersLabel")
 
@@ -49,18 +55,22 @@ class PurchaserUTRSummarySpec extends SpecBase{
       }
     }
 
-    "must use check mode to change link" in {
+    "must return a Missing and redirect call to missing page when data is not present" in {
+
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         implicit val msgs: Messages = messages(application)
 
-        val userAnswers = emptyUserAnswers
-          .set(PurchaserUTRPage, "1234567494").success.value
+        val result = PurchaserUTRSummary.row(Some(emptyUserAnswers))
 
-        val result = PurchaserUTRSummary.row(Some(userAnswers))
+        result match {
+          case Missing(call) =>
+            call mustEqual controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(CheckMode)
 
-        result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(CheckMode).url
+          case Row(_) =>
+            fail("Expected Missing but got Row")
+        }
       }
     }
   }

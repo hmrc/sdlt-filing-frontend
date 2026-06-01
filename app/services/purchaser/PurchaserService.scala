@@ -22,8 +22,8 @@ import pages.purchaser.*
 import play.api.i18n.Messages
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.checkAnswers.purchaser.*
+import viewmodels.checkAnswers.summary.SummaryRowResult
 
 import scala.util.Try
 
@@ -194,8 +194,7 @@ class PurchaserService {
     val confirmNameOfThePurchaser = userAnswers.get(ConfirmNameOfThePurchaserPage)
     (confirmNameOfThePurchaser, mainPurchaserID, mode) match {
       case (_, _, _) if mode == CheckMode => continueRoute
-      case (Some(true), _, _) => continueRoute
-      case (Some(false), _, _) => journeyJumpRoute
+      case (Some(_), mainPurchaserID, _) => continueRoute
       case (None, None, _) => continueRoute
       case (None, Some(_), _) => journeyJumpRoute
     }
@@ -279,7 +278,7 @@ class PurchaserService {
         name <- createPurchaserName(purchaser)
       } yield name
 
-  def companyConditionalSummaryRows(userAnswers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
+  def companyConditionalSummaryRows(userAnswers: UserAnswers)(implicit messages: Messages): Seq[SummaryRowResult] = {
     userAnswers.get(WhoIsMakingThePurchasePage) match {
       case Some(WhoIsMakingThePurchase.Company) =>
         val typeOfCompany = if (userAnswers.get(PurchaserCompanyTypeKnownPage).contains(true)) {
@@ -323,7 +322,7 @@ class PurchaserService {
     }
   }
 
-  def individualConditionalSummaryRows(userAnswers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = {
+  def individualConditionalSummaryRows(userAnswers: UserAnswers)(implicit messages: Messages): Seq[SummaryRowResult] = {
     userAnswers.get(WhoIsMakingThePurchasePage) match {
       case Some(WhoIsMakingThePurchase.Individual) =>
         val nIQuestion = DoesPurchaserHaveNISummary.row(Some(userAnswers))
@@ -351,29 +350,29 @@ class PurchaserService {
 
   }
 
-  def initialSummaryRows(userAnswers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] = Seq(
+  def initialSummaryRows(userAnswers: UserAnswers)(implicit messages: Messages): Seq[SummaryRowResult] = Seq(
     WhoIsMakingThePurchaseSummary.row(Some(userAnswers)),
     NameOfPurchaserSummary.row(Some(userAnswers)),
     PurchaserAddressSummary.row(Some(userAnswers))
   )
 
   def purchaserSessionOptionalQuestionsValidation(sessionData: PurchaserSessionQuestions, userAnswers: UserAnswers): Boolean = {
-      val isPurchaserMain: Boolean =
-        sessionData.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID) == userAnswers.fullReturn.flatMap(_.returnInfo.flatMap(_.mainPurchaserID))
-      val isPurchaserFirstMain = sessionData.purchaserCurrent.ConfirmNameOfThePurchaser.contains(true)
+    val isPurchaserMain: Boolean =
+      sessionData.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID) == userAnswers.fullReturn.flatMap(_.returnInfo.flatMap(_.mainPurchaserID))
+    val isPurchaserFirstMain = sessionData.purchaserCurrent.ConfirmNameOfThePurchaser.contains(true)
 
-      if(isPurchaserMain || isPurchaserFirstMain) {
-        sessionData.purchaserCurrent.whoIsMakingThePurchase match {
-          case WhoIsMakingThePurchase.Individual.toString =>
-            individualMainPurchaser(sessionData)
-          case WhoIsMakingThePurchase.Company.toString =>
-            companyMainPurchaser(sessionData)
-          case _ => true
-        }
-      } else {
-        true
+    if(isPurchaserMain || isPurchaserFirstMain) {
+      sessionData.purchaserCurrent.whoIsMakingThePurchase match {
+        case WhoIsMakingThePurchase.Individual.toString =>
+          individualMainPurchaser(sessionData)
+        case WhoIsMakingThePurchase.Company.toString =>
+          companyMainPurchaser(sessionData)
+        case _ => true
       }
+    } else {
+      true
     }
+  }
 
   private def individualMainPurchaser(sessionData: PurchaserSessionQuestions): Boolean = {
     val isPhoneNumberYes = sessionData.purchaserCurrent.addPurchaserPhoneNumber.contains(true)

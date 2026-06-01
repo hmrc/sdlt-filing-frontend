@@ -23,6 +23,7 @@ import pages.purchaser.{AddPurchaserPhoneNumberPage, NameOfPurchaserPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class AddPurchaserPhoneNumberSummarySpec extends SpecBase {
 
@@ -38,7 +39,11 @@ class AddPurchaserPhoneNumberSummarySpec extends SpecBase {
           .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = Some("Test"), forename2 = Some("Test2"), name = "Test")).success.value
 
 
-        val result = AddPurchaserPhoneNumberSummary.row(Some(userAnswers))
+        val row = AddPurchaserPhoneNumberSummary.row(Some(userAnswers))
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
 
         result.key.content.asHtml.toString() mustEqual msgs("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel",userAnswers.get(NameOfPurchaserPage).map(_.fullName).getOrElse(""))
 
@@ -63,7 +68,11 @@ class AddPurchaserPhoneNumberSummarySpec extends SpecBase {
           .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = Some("Test"), forename2 = Some("Test2"), name = "Test")).success.value
 
 
-        val result = AddPurchaserPhoneNumberSummary.row(Some(userAnswers))
+        val row = AddPurchaserPhoneNumberSummary.row(Some(userAnswers))
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
 
         result.key.content.asHtml.toString() mustEqual msgs("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel",userAnswers.get(NameOfPurchaserPage).map(_.fullName).getOrElse(""))
 
@@ -81,7 +90,7 @@ class AddPurchaserPhoneNumberSummarySpec extends SpecBase {
 
     "when userAnswers is None" - {
 
-      "must return a summary list row with missing link" in {
+      "must return a Missing and redirect call to missing page when data is not present" in {
 
         val userAnswers = emptyUserAnswers.set(AddPurchaserPhoneNumberPage, false).success.value
           .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = Some("Test"), forename2 = Some("Test2"), name = "Test")).success.value
@@ -93,11 +102,13 @@ class AddPurchaserPhoneNumberSummarySpec extends SpecBase {
 
           val result = AddPurchaserPhoneNumberSummary.row(None)
 
-          result.key.content.asHtml.toString() contains  msgs("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(CheckMode)
 
-          val valueHtml = result.value.content.asHtml.toString()
-          valueHtml must include(controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(CheckMode).url)
-          valueHtml  contains(msgs("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel"))
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }

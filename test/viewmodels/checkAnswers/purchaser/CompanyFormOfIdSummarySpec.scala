@@ -22,6 +22,7 @@ import models.purchaser.CompanyFormOfId
 import pages.purchaser.CompanyFormOfIdPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class CompanyFormOfIdSummarySpec extends SpecBase {
 
@@ -39,7 +40,11 @@ class CompanyFormOfIdSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(CompanyFormOfIdPage, CompanyFormOfId("123456", "Germany")).success.value
 
-          val result = CompanyFormOfIdSummary.row(Some(userAnswers))
+          val row = CompanyFormOfIdSummary.row(Some(userAnswers))
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.companyFormOfId.checkYourAnswersLabel")
 
@@ -53,20 +58,26 @@ class CompanyFormOfIdSummarySpec extends SpecBase {
           result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.companyFormOfId.change.hidden")
         }
       }
+    }
 
-      "must use CheckMode for the change link" in {
+    "when ID number and country issued are not present" - {
+
+      "must return a Missing and redirect call to missing page when data is not present" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers = emptyUserAnswers
-            .set(CompanyFormOfIdPage, CompanyFormOfId("123456", "Germany")).success.value
+          val result = CompanyFormOfIdSummary.row(Some(emptyUserAnswers))
 
-          val result = CompanyFormOfIdSummary.row(Some(userAnswers))
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.purchaser.routes.CompanyFormOfIdController.onPageLoad(CheckMode)
 
-          result.actions.get.items.head.href mustEqual controllers.purchaser.routes.CompanyFormOfIdController.onPageLoad(CheckMode).url
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }

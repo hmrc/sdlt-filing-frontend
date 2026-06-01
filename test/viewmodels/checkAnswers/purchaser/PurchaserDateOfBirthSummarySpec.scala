@@ -21,14 +21,17 @@ import models.CheckMode
 import pages.purchaser.PurchaserDateOfBirthPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 
 import java.time.LocalDate
 
 class PurchaserDateOfBirthSummarySpec extends SpecBase {
 
   "PurchaserDateOfBirthSummary" - {
+
     "must return a summary list row with the date of birth" in {
+
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
@@ -37,7 +40,11 @@ class PurchaserDateOfBirthSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(PurchaserDateOfBirthPage, LocalDate.of(2000, 10, 26)).success.value
 
-        val result = PurchaserDateOfBirthSummary.row(Some(userAnswers))
+        val row = PurchaserDateOfBirthSummary.row(Some(userAnswers))
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
 
         result.key.content.asHtml.toString() mustEqual msgs("purchaser.dateOfBirth.checkYourAnswersLabel")
 
@@ -51,7 +58,7 @@ class PurchaserDateOfBirthSummarySpec extends SpecBase {
       }
     }
 
-    "must return a summary list row with a link to enter date of birth when userAnswers is empty" in {
+    "must return a Missing and redirect call to missing page when data is not present" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -62,14 +69,13 @@ class PurchaserDateOfBirthSummarySpec extends SpecBase {
 
         val result = PurchaserDateOfBirthSummary.row(Some(userAnswers))
 
-        result.key.content.asHtml.toString() mustEqual msgs("purchaser.dateOfBirth.checkYourAnswersLabel")
+        result match {
+          case Missing(call) =>
+            call mustEqual controllers.purchaser.routes.PurchaserDateOfBirthController.onPageLoad(CheckMode)
 
-        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-
-        htmlContent must include("govuk-link")
-        htmlContent must include(controllers.purchaser.routes.PurchaserDateOfBirthController.onPageLoad(CheckMode).url)
-        htmlContent must include(msgs("purchaser.checkYourAnswers.purchaserDateOfBirth.missing"))
-        result.actions mustBe None
+          case Row(_) =>
+            fail("Expected Missing but got Row")
+        }
       }
     }
 

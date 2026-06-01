@@ -22,6 +22,7 @@ import models.purchaser.PurchaserFormOfIdIndividual
 import pages.purchaser.PurchaserFormOfIdIndividualPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class PurchaserFormOfIdIndividualSummarySpec extends SpecBase {
 
@@ -39,7 +40,11 @@ class PurchaserFormOfIdIndividualSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(PurchaserFormOfIdIndividualPage, PurchaserFormOfIdIndividual("123456", "Germany")).success.value
 
-          val result = PurchaserFormOfIdIndividualSummary.row(Some(userAnswers))
+          val row = PurchaserFormOfIdIndividualSummary.row(Some(userAnswers))
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.formOfIdIndividual.checkYourAnswersLabel")
 
@@ -53,20 +58,26 @@ class PurchaserFormOfIdIndividualSummarySpec extends SpecBase {
           result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.formOfIdIndividual.change.hidden")
         }
       }
+    }
+    
+    "when ID number and country issued are not present" - {
 
-      "must use CheckMode for the change link" in {
+      "must return a Missing and redirect call to missing page when data is not present" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers = emptyUserAnswers
-            .set(PurchaserFormOfIdIndividualPage, PurchaserFormOfIdIndividual("123456", "Germany")).success.value
+          val result = PurchaserFormOfIdIndividualSummary.row(Some(emptyUserAnswers))
 
-          val result = PurchaserFormOfIdIndividualSummary.row(Some(userAnswers))
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.purchaser.routes.PurchaserFormOfIdIndividualController.onPageLoad(CheckMode)
 
-          result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserFormOfIdIndividualController.onPageLoad(CheckMode).url
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }

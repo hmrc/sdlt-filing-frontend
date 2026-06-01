@@ -20,35 +20,30 @@ import models.{CheckMode, UserAnswers}
 import pages.purchaser.PurchaserUTRPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object PurchaserUTRSummary  {
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(CheckMode)
     answers.flatMap(_.get(PurchaserUTRPage)).map {
       answer =>
 
-        SummaryListRowViewModel(
-          key     = "purchaser.corporationTaxUTR.checkYourAnswersLabel",
-          value   = ValueViewModel(HtmlFormat.escape(answer).toString),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaser.corporationTaxUTR.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key     = "purchaser.corporationTaxUTR.checkYourAnswersLabel",
+            value   = ValueViewModel(HtmlFormat.escape(answer).toString),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("purchaser.corporationTaxUTR.change.hidden"))
+            )
           )
         )
     }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="${controllers.purchaser.routes.PurchaserCorporationTaxUTRController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.purchaserCorporationTaxUTR.missing")}</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = "purchaser.corporationTaxUTR.checkYourAnswersLabel",
-        value = value
-      )
+      Missing(changeRoute)
     }
+  }
 }

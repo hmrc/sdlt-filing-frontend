@@ -22,11 +22,14 @@ import models.purchaser.NameOfPurchaser
 import pages.purchaser.{IsPurchaserActingAsTrusteePage, NameOfPurchaserPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class IsPurchaserActingAsTrusteeSummarySpec extends SpecBase {
 
   "IsPurchaserActingAsTrusteeSummary" - {
+
     "when purchaser name is present" - {
+
       "must return a summary list row with full name" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
         running(application) {
@@ -36,7 +39,11 @@ class IsPurchaserActingAsTrusteeSummarySpec extends SpecBase {
             .set(IsPurchaserActingAsTrusteePage, true).success.value
             .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = Some("Test"), forename2 = Some("Test2"), name = "Test")).success.value
 
-          val result = IsPurchaserActingAsTrusteeSummary.row(Some(userAnswers))
+          val row = IsPurchaserActingAsTrusteeSummary.row(Some(userAnswers))
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel", userAnswers.get(NameOfPurchaserPage).map(_.fullName).getOrElse(""))
 
@@ -46,6 +53,28 @@ class IsPurchaserActingAsTrusteeSummarySpec extends SpecBase {
           result.actions.get.items.head.href mustEqual controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
           result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.isPurchaserActingAsTrustee.change.hidden")
+        }
+      }
+
+      "must return a Missing and redirect call to missing page when data is not present" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers
+            .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = Some("Test"), forename2 = Some("Test2"), name = "Test")).success.value
+
+          val result = IsPurchaserActingAsTrusteeSummary.row(Some(userAnswers))
+
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(CheckMode)
+
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }

@@ -21,36 +21,32 @@ import pages.purchaser.CompanyFormOfIdPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object CompanyFormOfIdSummary  {
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.purchaser.routes.CompanyFormOfIdController.onPageLoad(CheckMode)
     answers.flatMap(_.get(CompanyFormOfIdPage)).map {
       answer =>
 
       val value = HtmlFormat.escape(answer.referenceId).toString + "<br/>" + HtmlFormat.escape(answer.countryIssued).toString
 
-        SummaryListRowViewModel(
-          key     = "purchaser.companyFormOfId.checkYourAnswersLabel",
-          value   = ValueViewModel(HtmlContent(value)),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.purchaser.routes.CompanyFormOfIdController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaser.companyFormOfId.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key     = "purchaser.companyFormOfId.checkYourAnswersLabel",
+            value   = ValueViewModel(HtmlContent(value)),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("purchaser.companyFormOfId.change.hidden"))
+            )
           )
         )
     }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="${controllers.purchaser.routes.CompanyFormOfIdController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.companyFormOfId.missing")}</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = "purchaser.companyFormOfId.checkYourAnswersLabel",
-        value = value
-      )
+      Missing(changeRoute)
     }
+  }
 }

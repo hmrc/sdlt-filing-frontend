@@ -23,12 +23,16 @@ import pages.purchaser.{NameOfPurchaserPage, PurchaserConfirmIdentityPage, Purch
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class PurchaserConfirmIdentitySummarySpec extends SpecBase{
 
 "PurchaserConfirmIdentitySummary" - {
+  
   "when purchaser name is present" - {
+    
     "must return a summary list row with surname only" in {
+      
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         implicit val msgs: Messages = messages(application)
@@ -37,7 +41,11 @@ class PurchaserConfirmIdentitySummarySpec extends SpecBase{
           .set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.VatRegistrationNumber).success.value
           .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = Some("Test"), forename2 = Some("Test2"), name = "Test")).success.value
 
-        val result = PurchaserConfirmIdentitySummary.row(Some(userAnswers))
+        val row = PurchaserConfirmIdentitySummary.row(Some(userAnswers))
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
 
         result.key.content.asHtml.toString() mustEqual msgs("purchaser.confirmIdentity.checkYourAnswersLabel", userAnswers.get(NameOfPurchaserPage).map(_.name).getOrElse(""))
 
@@ -52,6 +60,7 @@ class PurchaserConfirmIdentitySummarySpec extends SpecBase{
     }
 
     "must return a summary list row with UTR when the values comes from the overview page" in {
+      
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         implicit val msgs: Messages = messages(application)
@@ -60,7 +69,11 @@ class PurchaserConfirmIdentitySummarySpec extends SpecBase{
           .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = Some("Test"), forename2 = Some("Test2"), name = "Test")).success.value
           .set(PurchaserUTRPage, "11111111").success.value
 
-        val result = PurchaserConfirmIdentitySummary.row(Some(userAnswers))
+        val row = PurchaserConfirmIdentitySummary.row(Some(userAnswers))
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
 
         result.key.content.asHtml.toString() mustEqual msgs("purchaser.confirmIdentity.checkYourAnswersLabel", userAnswers.get(NameOfPurchaserPage).map(_.name).getOrElse(""))
 
@@ -74,7 +87,7 @@ class PurchaserConfirmIdentitySummarySpec extends SpecBase{
       }
     }
 
-    "must return a summary list row with a link to enter identity when userAnswers is empty" in {
+    "must return a Missing and redirect call to missing page when data is not present" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -85,14 +98,13 @@ class PurchaserConfirmIdentitySummarySpec extends SpecBase{
 
         val result = PurchaserConfirmIdentitySummary.row(Some(userAnswers))
 
-        result.key.content.asHtml.toString() mustEqual msgs("purchaser.confirmIdentity.checkYourAnswersLabel", userAnswers.get(NameOfPurchaserPage).map(_.name).getOrElse(""))
+        result match {
+          case Missing(call) =>
+            call mustEqual controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(CheckMode)
 
-        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-
-        htmlContent must include("govuk-link")
-        htmlContent must include(controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(CheckMode).url)
-        htmlContent must include(msgs("purchaser.checkYourAnswers.confirmIdentity.missing"))
-        result.actions mustBe None
+          case Row(_) =>
+            fail("Expected Missing but got Row")
+        }
       }
     }
   }

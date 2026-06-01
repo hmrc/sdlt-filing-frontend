@@ -23,6 +23,7 @@ import pages.purchaser.PurchaserTypeOfCompanyPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class PurchaserTypeOfCompanySummarySpec extends SpecBase {
 
@@ -52,7 +53,11 @@ class PurchaserTypeOfCompanySummarySpec extends SpecBase {
               unincorporatedBuilder = "no",
               unincorporatedSoleTrader = "no")).success.value
 
-          val result = PurchaserTypeOfCompanySummary.row(Some(userAnswers))
+          val row = PurchaserTypeOfCompanySummary.row(Some(userAnswers))
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.purchaserTypeOfCompany.checkYourAnswersLabel")
 
@@ -66,7 +71,7 @@ class PurchaserTypeOfCompanySummarySpec extends SpecBase {
         }
       }
 
-      "must return a summary list row with a link to enter type of company when userAnswers is empty" in {
+      "must return a Missing and redirect call to missing page when data is not present" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -76,18 +81,16 @@ class PurchaserTypeOfCompanySummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
 
           val result = PurchaserTypeOfCompanySummary.row(Some(userAnswers))
+          
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(CheckMode)
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaser.purchaserTypeOfCompany.checkYourAnswersLabel")
-
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("purchaser.checkYourAnswers.purchaserTypeOfCompany.missing"))
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
-
     }
   }
 }
