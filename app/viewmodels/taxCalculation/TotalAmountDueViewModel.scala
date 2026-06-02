@@ -32,11 +32,11 @@ object TotalAmountDueViewModel extends CurrencyFormatter {
 
   private val rightAligned = "govuk-!-text-align-right"
 
-  def toViewModel(result: TaxCalculationResult,
+  def getTotalAmountDueSummaryRow(result: TaxCalculationResult,
                   answers: UserAnswers,
                   timeMachine: TimeMachine,
                   selfAssessedAmountPage: QuestionPage[String])
-                 (implicit messages: Messages): Either[BuildRequestError, TotalAmountDueViewModel] =
+                 (implicit messages: Messages): Either[BuildRequestError, TotalAmountDueSummaryRowValues] =
     for {
       fullReturn       <- answers.fullReturn.toRight(MissingFullReturnError)
       transaction      <- fullReturn.transaction.toRight(MissingAboutTheTransactionError)
@@ -44,21 +44,31 @@ object TotalAmountDueViewModel extends CurrencyFormatter {
       effectiveDate    <- parseDate(effectiveDateRaw).left.map(_ => InvalidDateError(effectiveDateRaw))
       sdltDue           = answers.get(selfAssessedAmountPage).map(BigDecimal(_)).getOrElse(BigDecimal(result.totalTax))
       penalties         = TaxCalculationPenaltiesHelper.getPenalties(effectiveDate, timeMachine)
-      total             = (sdltDue + penalties).toCurrency
-    } yield TotalAmountDueViewModel(
+      total             = sdltDue + penalties
+    } yield TotalAmountDueSummaryRowValues(
+      sdltDue = sdltDue,
+      penalty = penalties,
+      total = total
+    )
+
+
+  def toViewModel(totalAmountDueSummaryRowValues: TotalAmountDueSummaryRowValues)(implicit messages: Messages): TotalAmountDueViewModel =
+    TotalAmountDueViewModel(
       SummaryList(Seq(
         SummaryListRow(
           Key(Text(messages("taxCalculation.totalAmountDue.sdltDue"))),
-          Value(Text(sdltDue.toCurrency), classes = rightAligned)
+          Value(Text(totalAmountDueSummaryRowValues.sdltDue.toCurrency), classes = rightAligned)
         ),
         SummaryListRow(
           Key(Text(messages("taxCalculation.totalAmountDue.penalties"))),
-          Value(Text(penalties.toCurrency), classes = rightAligned)
+          Value(Text(totalAmountDueSummaryRowValues.penalty.toCurrency), classes = rightAligned)
         ),
         SummaryListRow(
           Key(Text(messages("taxCalculation.totalAmountDue.total"))),
-          Value(Text(total), classes = rightAligned)
+          Value(Text(totalAmountDueSummaryRowValues.total.toCurrency), classes = rightAligned)
         )
       ))
     )
+
 }
+

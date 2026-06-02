@@ -173,8 +173,7 @@ class LeaseholdSelfAssessedTotalAmountDueControllerSpec extends SpecBase with Mo
       }
     }
 
-    // TODO To be updated to redirect to CheckYourAnswersController
-    "must redirect to IndexController, set LeaseHoldAssessedPenaltiesAndInterestPage to false when penalty is zero" in {
+    "must redirect to TaxCalculationCheckYourAnswersController, set LeaseHoldAssessedPenaltiesAndInterestPage to false when penalty is zero" in {
 
       val mockSessionRepository = mock[SessionRepository]
       val mockTimeMachine = mock[TimeMachine]
@@ -202,7 +201,7 @@ class LeaseholdSelfAssessedTotalAmountDueControllerSpec extends SpecBase with Mo
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad().url
         val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
         verify(mockSessionRepository).set(uaCaptor.capture())
         uaCaptor.getValue.get(LeaseholdSelfAssessedPenaltiesAndInterestPage).value mustBe false

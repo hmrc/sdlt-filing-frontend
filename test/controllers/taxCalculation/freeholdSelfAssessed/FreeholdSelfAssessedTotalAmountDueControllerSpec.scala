@@ -192,9 +192,8 @@ class FreeholdSelfAssessedTotalAmountDueControllerSpec extends SpecBase with Moc
         status(result) mustEqual SEE_OTHER
       }
     }
-
-    // TODO To be updated to redirect to CheckYourAnswersController
-    "must redirect to IndexController, set FreeholdSelfAssessedPenaltiesAndInterestPage to false when penalty is zero" in {
+    
+    "must redirect to TaxCalculationCheckYourAnswersController, set FreeholdSelfAssessedPenaltiesAndInterestPage to false when penalty is zero" in {
       val mockSessionRepository = mock[SessionRepository]
       val mockTimeMachine = mock[TimeMachine]
 
@@ -219,7 +218,7 @@ class FreeholdSelfAssessedTotalAmountDueControllerSpec extends SpecBase with Moc
         val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad().url
         val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
         verify(mockSessionRepository).set(uaCaptor.capture())
         uaCaptor.getValue.get(FreeholdSelfAssessedPenaltiesAndInterestPage).value mustBe false

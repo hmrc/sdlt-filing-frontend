@@ -49,6 +49,6 @@ object TaxCalculationPenaltiesHelper{
   def isPenaltyZero(penalty:BigDecimal):Boolean = {
     penalty == NoPenalty
   }
-    
+
 
 }
