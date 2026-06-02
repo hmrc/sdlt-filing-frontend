@@ -18,7 +18,6 @@ package forms.land
 
 import forms.mappings.Mappings
 import play.api.data.Form
-
 import javax.inject.Inject
 
 class LandTitleNumberFormProvider @Inject() extends Mappings {
@@ -26,10 +25,16 @@ class LandTitleNumberFormProvider @Inject() extends Mappings {
   private val characterRegex =
     """^[A-Za-z0-9 ~!@%&'()*+,\-./:=?\[\]^_{};\\]*$"""
 
+  private val formatRegex = """[A-Za-z]{1,3}[0-9].*"""
+
   def apply(): Form[String] =
     Form(
       "value" -> text("land.titleNumber.error.required")
-        .verifying(regexp(characterRegex, "land.titleNumber.error.invalid"))
-        .verifying(maxLength(14, "land.titleNumber.error.length"))
+        .verifying(firstError(
+          regexp(characterRegex, "land.titleNumber.error.invalid"),
+          minLength(2, "land.titleNumber.error.minLength"),
+          regexp(formatRegex, "land.titleNumber.error.invalidFormat"),
+          maxLength(14, "land.titleNumber.error.length")
+        ))
     )
 }

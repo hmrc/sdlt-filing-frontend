@@ -22,21 +22,23 @@ import org.scalacheck.Gen
 
 class LandTitleNumberFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "land.titleNumber.error.required"
-  val lengthKey = "land.titleNumber.error.length"
-  val invalidKey = "land.titleNumber.error.invalid"
+  val requiredKey       = "land.titleNumber.error.required"
+  val lengthKey         = "land.titleNumber.error.length"
+  val minLengthKey      = "land.titleNumber.error.minLength"
+  val invalidKey        = "land.titleNumber.error.invalid"
+  val invalidFormatKey  = "land.titleNumber.error.invalidFormat"
 
   val maxLength = 14
 
   val form = new LandTitleNumberFormProvider()()
 
-  private val allowedChars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ~!@%&'()*+,-./:=?[]^_{};\\"
-
   private val validStrings: Gen[String] =
-    Gen.choose(1, maxLength).flatMap { size =>
-      Gen.listOfN(size, Gen.oneOf(allowedChars)).map(_.mkString)
-    }
+    for {
+      prefixLen <- Gen.choose(1, 3)
+      prefix    <- Gen.listOfN(prefixLen, Gen.alphaChar).map(_.mkString)
+      digitLen  <- Gen.choose(1, maxLength - prefixLen)
+      digits    <- Gen.listOfN(digitLen, Gen.numChar).map(_.mkString)
+    } yield prefix + digits
 
   ".value" - {
 
@@ -49,7 +51,7 @@ class LandTitleNumberFormProviderSpec extends StringFieldBehaviours {
     )
 
     "not bind strings longer than maxLength" in {
-      val longValue = List.fill(maxLength + 1)('A').mkString
+      val longValue = "AB" + List.fill(maxLength - 1)('1').mkString
 
       val result = form.bind(Map(fieldName -> longValue))
       result.errors must contain(
@@ -63,6 +65,27 @@ class LandTitleNumberFormProviderSpec extends StringFieldBehaviours {
       val result = form.bind(Map(fieldName -> invalidValue))
 
       result.errors.map(_.message) must contain(invalidKey)
+    }
+
+    "not bind a single character" in {
+      val result = form.bind(Map(fieldName -> "A"))
+      result.errors must contain(FormError(fieldName, minLengthKey, Seq(2)))
+    }
+
+    "not bind a value that does not start with 1 to 3 letters followed by digits" in {
+      val invalidFormats = Seq("123456", "ABCD1234", "1AB234")
+      invalidFormats.foreach { v =>
+        val result = form.bind(Map(fieldName -> v))
+        result.errors.map(_.message) must contain(invalidFormatKey)
+      }
+    }
+
+    "bind valid title number formats" in {
+      val validFormats = Seq("AB123456", "TGL312172", "A1", "ABC1234567890")
+      validFormats.foreach { v =>
+        val result = form.bind(Map(fieldName -> v))
+        result.errors.map(_.message) must not contain invalidFormatKey
+      }
     }
 
     behave like mandatoryField(

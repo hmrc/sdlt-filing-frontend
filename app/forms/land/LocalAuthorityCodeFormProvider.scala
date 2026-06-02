@@ -18,7 +18,6 @@ package forms.land
 
 import forms.mappings.Mappings
 import play.api.data.Form
-import play.api.data.validation.Constraint
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -29,12 +28,17 @@ class LocalAuthorityCodeFormProvider @Inject()  extends Mappings {
     Form(
       "value" -> text("land.localAuthorityCode.error.required")
         .verifying(firstError(
+          minLength(4, "land.localAuthorityCode.error.length"),
           maxLength(4, "land.localAuthorityCode.error.length"),
           localAuthorityCodeConstraints(
             effectiveTransactionDate,
             contractEffDate,
             postcode,
-            "land.localAuthorityCode.constraint.invalid"
+            invalidCharsKey        = "land.localAuthorityCode.error.invalidChars",
+            invalidFormatKey       = "land.localAuthorityCode.error.invalidFormat",
+            invalidAreaKey         = "land.localAuthorityCode.error.invalidArea",
+            invalidAreaPostcodeKey = "land.localAuthorityCode.error.invalidAreaPostcode",
+            welshKey               = "land.localAuthorityCode.error.welsh"
           )
         ))
     )

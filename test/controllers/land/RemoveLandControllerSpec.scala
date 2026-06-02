@@ -27,7 +27,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.land.{LandOverviewRemovePage, RemoveLandPage}
-import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.{Call, Request}
 import play.api.test.FakeRequest
@@ -42,7 +41,6 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new RemoveLandFormProvider()
-  val form: Form[Boolean] = formProvider()
 
   lazy val removeLandRoute: String = controllers.land.routes.RemoveLandController.onPageLoad().url
 
@@ -87,6 +85,8 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
 
           val request = FakeRequest(GET, removeLandRoute)
 
+          implicit val msgs = messages(application)
+          val form = formProvider(Some("Test"))
           val result = route(application, request).value
 
           val view = application.injector.instanceOf[RemoveLandView]
@@ -106,6 +106,8 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
         running(application) {
           val request = FakeRequest(GET, removeLandRoute)
 
+          implicit val msgs = messages(application)
+          val form = formProvider(Some("Test"))
           val view = application.injector.instanceOf[RemoveLandView]
 
           val result = route(application, request).value
@@ -229,6 +231,8 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
             FakeRequest(POST, removeLandRoute)
               .withFormUrlEncodedBody(("value", ""))
 
+          implicit val msgs = messages(application)
+          val form = formProvider(Some("Test"))
           val boundForm = form.bind(Map("value" -> ""))
 
           val view = application.injector.instanceOf[RemoveLandView]

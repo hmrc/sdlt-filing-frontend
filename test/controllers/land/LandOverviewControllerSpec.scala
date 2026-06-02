@@ -181,7 +181,7 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          contentAsString(result) must include("To add a new land, you must remove one.")
+          contentAsString(result) must include("You have reached the limit of 99 areas of land or property. To add a new area of land or property, you must delete one.")
         }
       }
 

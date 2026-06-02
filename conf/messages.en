@@ -54,6 +54,7 @@ site.taxCalculation.freeholdSelfAssessed.section                                
 site.vendor.theVendor                                                               = the vendor
 site.purchaser.thePurchaser                                                         = the purchaser
 site.agent.theAgent                                                                 = the agent
+site.land.theLand                                                                   = the land or property
 
 site.vendor.aVendor                                                                 = a vendor
 site.purchaser.aPurchaser                                                           = a purchaser
@@ -935,7 +936,8 @@ land.landTypeOfProperty.03.hintText                                             
 land.landTypeOfProperty.04                                                          = 04 - Additional residential property liable to higher rate
 land.landTypeOfProperty.04.hintText                                                 = Where the purchaser owns more than one residential property at any one time
 land.landTypeOfProperty.checkYourAnswersLabel                                       = Type of property
-land.landTypeOfProperty.error.required                                              = Please select an option
+land.landTypeOfProperty.error.required                                              = Select the type of property
+land.landTypeOfProperty.error.crossflow                                             = Areas of land or property with lease involvement must share the same property type – if there are multiple property types, select '02 - Mixed' for all areas of land or property added
 land.landTypeOfProperty.change.hidden                                               = Type of property
 land.checkYourAnswers.landTypeOfProperty.missing                                    = Select type of property
 
@@ -955,13 +957,13 @@ land.landInterestTransferredOrCreated.LPT.hintText                              
 land.landInterestTransferredOrCreated.LT                                            = LT - Leasehold subject to leases to an occupier
 land.landInterestTransferredOrCreated.OT                                            = OT - All other interests
 land.landInterestTransferredOrCreated.checkYourAnswersLabel                         = Interest transferred or created
-land.landInterestTransferredOrCreated.error.required                                = Select an option
+land.landInterestTransferredOrCreated.error.required                                = Select the option which best describes the transaction
 land.landInterestTransferredOrCreated.change.hidden                                 = Interest transferred or created
 land.landInterestTransferredOrCreated.missing                                       = Select interest transferred or created
 
 land.landRegisteredHmRegistry.heading                                               = Is the land or property registered with HM Land Registry?
 land.landRegisteredHmRegistry.checkYourAnswersLabel                                 = Is the land or property registered with HM Land Registry?
-land.landRegisteredHmRegistry.error.required                                        = Please select an option
+land.landRegisteredHmRegistry.error.required                                        = Select yes if the land or property is registered with HM Land Registry
 land.landRegisteredHmRegistry.change.hidden                                         = Is the land or property registered with HM Land Registry?
 land.landRegisteredHmRegistry.missing                                               = Select if the land or property is registered with HM Land Registry
 
@@ -979,9 +981,11 @@ land.titleNumber.p1                                                             
 land.titleNumber.p2                                                                 = For Northern Ireland enter the folio number. This can be a series of numbers or a combination of letters and numbers. You can find it through the ‘Find property information’ (FPI) online service or visit the Land & Property Services (LPS).
 land.titleNumber.subheading                                                         = What is the title or folio number?
 land.titleNumber.checkYourAnswersLabel                                              = Title number
-land.titleNumber.error.required                                                     = Enter title or folio number
-land.titleNumber.error.invalid                                                      = The title or folio number must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, question marks and spaces
-land.titleNumber.error.length                                                       = Title or folio number must be 14 characters or less
+land.titleNumber.error.required                                                     = Enter the title or folio number
+land.titleNumber.error.invalid                                                      = The title or folio number must only include letters a to z, numbers 0 to 9, brackets, dashes, hyphens, plus signs and spaces
+land.titleNumber.error.length                                                       = The title or folio number must be 14 characters or fewer
+land.titleNumber.error.minLength                                                    = The title or folio number must be longer than 1 character
+land.titleNumber.error.invalidFormat                                                = Enter the title or folio number in the correct format
 land.titleNumber.change.hidden                                                      = Title or folio number
 land.titleNumber.missing                                                            = Select title or folio number
 
@@ -990,7 +994,7 @@ land.confirmLandOrPropertyAddress.heading                                       
 land.confirmLandOrPropertyAddress.confirmAddress                                    = Confirm address
 land.confirmLandOrPropertyAddress.isThisTheLand                                     = Is this the address of the land or property?
 land.confirmLandOrPropertyAddress.checkYourAnswersLabel                             = Confirm the address of the land or property
-land.confirmLandOrPropertyAddress.error.required                                    = Select Yes or No
+land.confirmLandOrPropertyAddress.error.required                                    = Select yes if this is the address of the land or property
 land.confirmLandOrPropertyAddress.change.hidden                                     = ConfirmLandOrPropertyAddress
 land.confirmLandOrPropertyAddress.missing                                           = Enter land or property address
 
@@ -998,32 +1002,38 @@ land.confirmLandOrPropertyAddress.missing                                       
 land.localAuthorityCode.title                                                       = What is the local authority code? - About the land
 land.localAuthorityCode.heading                                                     = What is the local authority code?
 land.localAuthorityCode.checkYourAnswersLabel                                       = Local authority code
-land.localAuthorityCode.error.required                                              = Enter local authority code
-land.localAuthorityCode.error.length                                                = Local authority code must be 4 characters or less
+land.localAuthorityCode.error.required                                              = Enter the local authority code
+land.localAuthorityCode.error.length                                                = The local authority code must be 4 characters
+land.localAuthorityCode.error.invalidChars                                          = The local authority code must only include numbers 0 to 9
+land.localAuthorityCode.error.invalidFormat                                         = Enter a valid local authority code, like 0114 or 3935
+land.localAuthorityCode.error.invalidArea                                           = Enter a valid local authority code for England or Northern Ireland
+land.localAuthorityCode.error.invalidAreaPostcode                                   = Enter a valid local authority code that matches your postcode in England or Northern Ireland
+land.localAuthorityCode.error.welsh                                                 = Welsh local authority codes are no longer recognised by SDLT when the effective date of the transaction is the same as or after 1 April 2018
 land.localAuthorityCode.change.hidden                                               = Local authority code
 land.checkYourAnswers.localAuthorityCode.missing                                    = Provide local authority code
 land.localAuthorityCode.hint.prefix                                                 = Search the {0}
 land.localAuthorityCode.hint.suffix                                                 = list of local authority codes (opens in a new window).
 land.localAuthorityCode.hint.link                                                   = https://www.gov.uk/hmrc-internal-manuals/stamp-duty-land-tax-manual/sdltm62320
 land.localAuthorityCode.regexExp                                                    = Invalid local authority code
-land.localAuthorityCode.constraint.invalid                                          = Provide valid local authority code
+land.localAuthorityCode.constraint.invalid                                          = Enter a valid local authority code for England or Northern Ireland
 
 land.nlpgUprn.title                                                                 = What is the NLPG UPRN for the land or property? - About the land
 land.nlpgUprn.heading                                                               = What is the NLPG UPRN for the land or property?
 land.nlpgUprn.hint                                                                  = This number can be up to 12 digits, like 100023336956. You can find it using the FindMyAddress website (England) or the Pointer database (Northern Ireland).
 land.nlpgUprn.checkYourAnswersLabel                                                 = NLPG UPRN
-land.nlpgUprn.error.required                                                        = Enter Land NLPG UPRN
-land.nlpgUprn.error.length                                                          = The NLPG UPRN must be 14 characters or less
+land.nlpgUprn.error.required                                                        = Enter the NLPG UPRN for the land or property
+land.nlpgUprn.error.length                                                          = The NLPG UPRN must be 14 characters or fewer
 land.nlpgUprn.change.hidden                                                         = Land NLPG UPRN
 land.nlpgUprn.missing                                                               = Enter Land NLPG UPRN
-land.nlpgUprn.error.format                                                          = The NLPG UPRN must only contain the prefix NI or numerical characters
+land.nlpgUprn.error.format                                                          = The NLPG UPRN must only include numbers 0 to 9
+land.nlpgUprn.error.invalidFormat                                                   = Enter the NLPG UPRN in the correct format
 
 land.landMineralsOrMineralRights.title                                              = Minerals or mineral rights
 land.landMineralsOrMineralRights.heading                                            = Minerals or mineral rights
 land.landMineralsOrMineralRights.subheading                                         = Are there any minerals or mineral rights reserved or excluded for the land or property?
 land.landMineralsOrMineralRights.p                                                  = Mineral rights are the legal entitlement to exploit, mine or produce minerals and other natural resources beneath the land or property. When mineral rights are reserved or excluded, the owner of the land or property has no claim to any minerals or other natural resources beneath the land.
 land.landMineralsOrMineralRights.checkYourAnswersLabel                              = Minerals or mineral rights reserved or excluded?
-land.landMineralsOrMineralRights.error.required                                     = Select Yes or No
+land.landMineralsOrMineralRights.error.required                                     = Select yes if there are minerals or mineral rights reserved or excluded for the land or property
 land.landMineralsOrMineralRights.change.hidden                                      = Minerals or mineral rights
 land.landMineralsOrMineralRights.missing                                            = Select an answer
 
@@ -1031,7 +1041,7 @@ land.landSelectMeasurementUnit.title                                            
 land.landSelectMeasurementUnit.heading                                              = Select one unit of measurement for the area of land
 land.landSelectMeasurementUnit.Hectares                                             = Hectares
 land.landSelectMeasurementUnit.SquareMetres                                         = Square metres
-land.landSelectMeasurementUnit.error.required                                       = Please select a unit of measurement
+land.landSelectMeasurementUnit.error.required                                       = Select one unit of measurement for the area of land
 
 ukResidency.BeforeYouStart.p1                                                       = In this section, you need to tell us about the purchaser’s residency status.
 ukResidency.BeforeYouStart.p2                                                       = We will ask for:
@@ -1043,9 +1053,12 @@ ukResidency.BeforeYouStart.bullet3                                              
 land.areaOfLand.title                                                               = What is the area of land?
 land.areaOfLand.heading                                                             = What is the area of the land in {0}?
 land.areaOfLand.checkYourAnswersLabel                                               = Area of land
-land.areaOfLand.error.required                                                      = Enter the area of land
-land.areaOfLand.error.length                                                        = Area of land must be 14 characters or less
-land.areaOfLand.error.invalid                                                       = Invalid error
+land.areaOfLand.error.required.Hectares                                             = Enter the area of land, in hectares
+land.areaOfLand.error.required.SquareMetres                                         = Enter the area of land, in square metres
+land.areaOfLand.error.length                                                        = The area of land must be 14 characters or fewer
+land.areaOfLand.error.invalidChars                                                  = The area of land must only include numbers 0 to 9
+land.areaOfLand.error.invalidFormat.Hectares                                        = Enter the area of land to 3 decimal places
+land.areaOfLand.error.invalidFormat.SquareMetres                                    = Enter the area of land in whole numbers
 land.areaOfLand.change.hidden                                                       = Area of land
 land.areaOfLand.hint.SquareMetres                                                   = Enter the measurement in whole numbers
 land.areaOfLand.hint.Hectares                                                       = Enter the measurement to 3 decimal places
@@ -1059,7 +1072,7 @@ land.landSendingPlanByPost.title                                                
 land.landSendingPlanByPost.heading                                                  = Sending a plan by post
 land.landSendingPlanByPost.subheading                                               = Will you be sending a plan by post?
 land.landSendingPlanByPost.checkYourAnswersLabel                                    = Sending a plan by post
-land.landSendingPlanByPost.error.required                                           = Select land sending plan by post
+land.landSendingPlanByPost.error.required                                           = Select yes if you will be sending a plan by post
 land.landSendingPlanByPost.change.hidden                                            = Sending a plan by post
 land.landSendingPlanByPost.details.summary                                          = Sending your plan by post
 land.landSendingPlanByPost.details.content1                                         = The plan should indicate the scale used or be endorsed as ‘Not to Scale’. It must also show the return’s reference number, a description of the land and the local authority code.
@@ -1081,13 +1094,13 @@ land.doYouKnowTheAreaOfLand.title                                               
 land.doYouKnowTheAreaOfLand.heading                                                 = Do you know the area of the land?
 land.doYouKnowTheAreaOfLand.hint                                                    = This is the accurate measurement of the area of the land or property in hectares or square metres
 land.doYouKnowTheAreaOfLand.checkYourAnswersLabel                                   = Do you know the area of the land?
-land.doYouKnowTheAreaOfLand.error.required                                          = Select doYouKnowTheAreaOfLand
+land.doYouKnowTheAreaOfLand.error.required                                          = Select yes if you know the area of the land
 land.doYouKnowTheAreaOfLand.change.hidden                                           = DoYouKnowTheAreaOfLand
 land.doYouKnowTheAreaOfLand.missing                                                 = Select yes or no
 
 land.landOverview.title                                                             = Land or property overview - About the land
 land.landOverview.heading                                                           = Land or property overview
-land.landOverview.limitReached                                                      = To add a new land, you must remove one.
+land.landOverview.limitReached                                                      = You have reached the limit of 99 areas of land or property. To add a new area of land or property, you must delete one.
 land.landOverview.no-lands                                                          = You do not have any vendors added.
 land.landOverview.land-list                                                         = You do not have any vendors added.
 land.landOverview.noLand.subHeadingWithLands                                        = Do you want to add another area of land or property?
@@ -1095,7 +1108,7 @@ land.landOverview.noLand.subHeadingNoLands                                      
 land.landOverview.summaryInfo.text                                                  = Showing <b>{0}</b> to <b>{1}</b> of <b>{2}</b> records
 land.landOverview.noLand.p1                                                         = You have no land or properties listed. You must add the land or property to complete this return.
 land.landOverview.noLand.button                                                     = Add the land or property
-land.landOverview.error.required                                                    = Please select an option
+land.landOverview.error.required                                                    = Select yes if you need to add another area of land or property
 
 ukResidency.nonUkResidentPurchaser.title                                            = Residency status
 ukResidency.nonUkResidentPurchaser.heading                                          = Residency status
@@ -1127,7 +1140,7 @@ ukResidency.closeCompany.change.hidden                                          
 
 land.removeLand.title                                                               = Are you sure you want to remove the land or property?
 land.removeLand.heading                                                             = Are you sure you want to remove {0}?
-land.removeLand.error.required                                                      = Select yes if remove Land
+land.removeLand.error.required                                                      = Select yes if you want to remove {0}
 land.removeLand.change.hidden                                                       = Are you sure you want to remove the land or property?
 
 land.address.checkYourAnswersLabel                                                  = Property Address
