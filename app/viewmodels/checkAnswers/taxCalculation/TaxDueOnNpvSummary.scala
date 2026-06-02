@@ -17,6 +17,8 @@
 package viewmodels.checkAnswers.taxCalculation
 
 import config.CurrencyFormatter
+import models.taxCalculation.BuildRequestError
+import models.taxCalculation.MissingNPVCalcError
 import models.{CheckMode, UserAnswers}
 import pages.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedNpvTaxPage
 import play.api.i18n.Messages
@@ -25,6 +27,7 @@ import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
+import viewmodels.taxCalculation.CalculationResultViewModel
 
 object TaxDueOnNpvSummary extends CurrencyFormatter {
 
@@ -48,5 +51,20 @@ object TaxDueOnNpvSummary extends CurrencyFormatter {
     }.getOrElse {
       Missing(changeRoute)
     }
+  }
+
+  def getNPV(vm: CalculationResultViewModel)(implicit messages: Messages): SummaryRowResult = {
+    val label = messages("taxCalculation.taxDueOnNpv.checkYourAnswersLabel")
+
+    val npv: Either[BuildRequestError, String] = vm.totalNPVTax.toRight(MissingNPVCalcError)
+
+    val value = ValueViewModel(HtmlContent(s"${npv.toOption.get}"))
+
+    Row(
+      SummaryListRowViewModel(
+        key = label,
+        value = value
+      )
+    )
   }
 }

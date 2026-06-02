@@ -63,6 +63,10 @@ case object MissingPremiumCalcError extends MissingDataError {
   val message = "TaxCalculationResult missing premium CalculationDetails"
 }
 
+case object MissingNPVCalcError extends MissingDataError {
+  val message = "TaxCalculationResult missing npv CalculationDetails"
+}
+
 case class InvalidDateError(value: String) extends BuildRequestError {
   val message = s"Invalid date: $value"
 }

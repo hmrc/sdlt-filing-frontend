@@ -39,6 +39,7 @@ import utils.DateTimeFormats.parseDate
 import utils.{TaxCalculationHelper, TaxCalculationPenaltiesHelper, TimeMachine}
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.taxCalculation.*
+import viewmodels.taxCalculation.CalculationResultViewModel
 import views.html.taxCalculation.shared.CheckYourAnswersView
 
 import javax.inject.{Inject, Singleton}
@@ -136,7 +137,7 @@ class TaxCalculationCheckYourAnswersController @Inject()(
           }
       }
   }
-  
+
   private def renderForFlow(userAnswers: UserAnswers, flow: TaxCalculationFlow)(implicit request: DataRequest[?]): Future[Result] =
     flow match {
       case FreeholdTaxCalculated | LeaseholdTaxCalculated =>
@@ -228,6 +229,15 @@ class TaxCalculationCheckYourAnswersController @Inject()(
           FreeholdSelfAssessedTotalAmountDueSummary.row(Some(ua)),
           FreeholdSelfAssessedDoesAmountIncludePenaltiesSummary.row(Some(ua))
         )
+      case Some(LeaseholdTaxCalculated) => Seq(
+        PremiumPayableTaxSummary.getPremium(CalculationResultViewModel.toViewModel(result, ua).toOption.get),
+        TaxDueOnNpvSummary.getNPV(CalculationResultViewModel.toViewModel(result, ua).toOption.get),
+        CalculatedSdltDueSummary.row(result.totalTax.toString),
+        LeaseholdTaxCalculatedSelfAssessedAmountSummary.row(Some(ua)),
+        PenaltiesDueSummary.row(Some(ua), timeMachine),
+        LeaseholdTaxCalculatedTotalAmountDueSummary.row(Some(ua)),
+        LeaseholdTaxCalculatedDoesAmountIncludePenaltiesSummary.row(Some(ua))
+      )
       case _ => Nil
     }
   }
