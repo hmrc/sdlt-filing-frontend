@@ -17,13 +17,14 @@
 package controllers.taxCalculation
 
 import base.SpecBase
-import connectors.SdltCalculationConnector
-import models.taxCalculation.{CalculationResponse, TaxCalculationFlow, TaxCalculationResult}
-import models.{CheckMode, FullReturn, Land, Residency, ReturnInfo, Transaction, UserAnswers}
+import connectors.{SdltCalculationConnector, StampDutyLandTaxConnector}
+import models.taxCalculation.{CalculationResponse, TaxCalculationFlow, TaxCalculationResult, UpdateTaxCalculationReturn}
+import models.{CheckMode, FullReturn, Land, Residency, ReturnInfo, ReturnVersionUpdateReturn, Transaction, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.taxCalculation.TaxCalculationFlowPage
+import pages.taxCalculation.freeholdSelfAssessed.{FreeholdSelfAssessedAmountPage, FreeholdSelfAssessedPenaltiesAndInterestPage, FreeholdSelfAssessedTotalAmountDuePage}
 import pages.taxCalculation.freeholdTaxCalculated.{FreeholdTaxCalculatedPenaltiesAndInterestPage, FreeholdTaxCalculatedSelfAssessedAmountPage, FreeholdTaxCalculatedTotalAmountDuePage}
 import play.api.Application
 import play.api.inject.bind
@@ -45,7 +46,7 @@ class TaxCalculationCheckYourAnswersControllerSpec extends SpecBase with Mockito
       .copy(fullReturn = Some(FullReturn(
         stornId = "STORN",
         returnResourceRef = "REF",
-        returnInfo = Some(ReturnInfo(mainLandID = Some("L1"))),
+        returnInfo = Some(ReturnInfo(version = Some("1"), mainLandID = Some("L1"))),
         transaction = Some(Transaction(
           effectiveDate = Some(today.minusDays(60).toString),
           totalConsideration = Some("300000"),
@@ -62,17 +63,34 @@ class TaxCalculationCheckYourAnswersControllerSpec extends SpecBase with Mockito
       .set(FreeholdTaxCalculatedPenaltiesAndInterestPage, true).success.value
 
   private val selfAssessedAnswers: UserAnswers =
-    emptyUserAnswers.set(TaxCalculationFlowPage, TaxCalculationFlow.FreeholdSelfAssessed).success.value
+    emptyUserAnswers
+      .copy(fullReturn = Some(FullReturn(
+        stornId = "STORN",
+        returnResourceRef = "REF",
+        returnInfo = Some(ReturnInfo(version = Some("1"))),
+        transaction = Some(Transaction(effectiveDate = Some(today.minusDays(60).toString)))
+      )))
+      .set(TaxCalculationFlowPage, TaxCalculationFlow.FreeholdSelfAssessed).success.value
+      .set(FreeholdSelfAssessedAmountPage, "43750").success.value
+      .set(FreeholdSelfAssessedTotalAmountDuePage, "43850").success.value
+      .set(FreeholdSelfAssessedPenaltiesAndInterestPage, true).success.value
 
-  private def appWith(answers: UserAnswers, calcResponse: Future[CalculationResponse] = Future.successful(CalculationResponse(Seq.empty))): Application = {
+  private def appWith(answers: UserAnswers,
+                      calcResponse: Future[CalculationResponse] = Future.successful(CalculationResponse(Seq.empty)),
+                      versionReturn: ReturnVersionUpdateReturn = ReturnVersionUpdateReturn(newVersion = Some(2)),
+                      taxCalcReturn: UpdateTaxCalculationReturn = UpdateTaxCalculationReturn(updated = true)): Application = {
     val connector = mock[SdltCalculationConnector]
     val session   = mock[SessionRepository]
+    val backend   = mock[StampDutyLandTaxConnector]
     when(connector.calculateStampDutyLandTax(any())(any())).thenReturn(calcResponse)
     when(session.set(any())).thenReturn(Future.successful(true))
+    when(backend.updateReturnVersion(any())(any(), any())).thenReturn(Future.successful(versionReturn))
+    when(backend.updateTaxCalculationInfo(any())(any(), any())).thenReturn(Future.successful(taxCalcReturn))
     applicationBuilder(userAnswers = Some(answers))
       .overrides(
         bind[SdltCalculationConnector].toInstance(connector),
-        bind[SessionRepository].toInstance(session)
+        bind[SessionRepository].toInstance(session),
+        bind[StampDutyLandTaxConnector].toInstance(backend)
       )
       .build()
   }
@@ -130,7 +148,29 @@ class TaxCalculationCheckYourAnswersControllerSpec extends SpecBase with Mockito
 
     "onSubmit" - {
 
-      "redirects to the task list" in {
+      "submits the tax calculation and redirects to the task list when the backend confirms the update" in {
+        val app = appWith(freeholdTaxCalculatedAnswers, Future.successful(CalculationResponse(Seq(calculatedResult))))
+        running(app) {
+          val result = route(app, FakeRequest(POST, routes.TaxCalculationCheckYourAnswersController.onSubmit().url)).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        }
+      }
+
+      "redirects back to check your answers when the backend does not confirm the update" in {
+        val app = appWith(
+          freeholdTaxCalculatedAnswers,
+          Future.successful(CalculationResponse(Seq(calculatedResult))),
+          taxCalcReturn = UpdateTaxCalculationReturn(updated = false)
+        )
+        running(app) {
+          val result = route(app, FakeRequest(POST, routes.TaxCalculationCheckYourAnswersController.onSubmit().url)).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.TaxCalculationCheckYourAnswersController.onPageLoad().url
+        }
+      }
+
+      "submits a self-assessed flow and redirects to the task list when the backend confirms the update" in {
         val app = appWith(selfAssessedAnswers)
         running(app) {
           val result = route(app, FakeRequest(POST, routes.TaxCalculationCheckYourAnswersController.onSubmit().url)).value
