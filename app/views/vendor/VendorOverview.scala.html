@@ -46,15 +46,10 @@
 
 @layout(pageTitle = titleNoForm(messages("vendor.vendorOverview.title")), showBackLink = false) {
 
-    @request.flash.get("vendorLimitReached").map { _ =>
-        @govukErrorSummary(
-            ErrorSummary(
-                title = Text(messages("error.summary.title")),
-                errorList = Seq(
-                    ErrorLink(
-                        content = Text(messages("vendor.vendorOverview.limitReached"))
-                    )
-                )
+    @if(errorCalc) {
+        @govukNotificationBanner(
+            NotificationBanner(
+                content = Text(messages("vendor.vendorOverview.limitReached"))
             )
         )
     }
@@ -135,8 +130,6 @@
                     @govukButton(
                         ButtonViewModel(messages("site.continue"))
                     )
-                } else {
-                    @p(messages("vendor.vendorOverview.limitReached"))
                 }
             }
             case None => {

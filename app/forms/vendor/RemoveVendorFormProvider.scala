@@ -18,13 +18,14 @@ package forms.vendor
 
 import forms.mappings.Mappings
 import play.api.data.Form
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
 class RemoveVendorFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(vendorName: Option[String])(implicit messages: Messages): Form[Boolean] =
     Form(
-      "value" -> boolean("vendor.remove.error.required")
+      "value" -> boolean(messages("vendor.remove.error.required", vendorName.getOrElse(messages("site.vendor.theVendor"))))
     )
 }

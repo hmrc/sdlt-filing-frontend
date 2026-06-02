@@ -21,72 +21,92 @@ import play.api.data.FormError
 
 class VendorOrCompanyNameFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "vendor.name.error.required"
-  val nameLengthKey = "vendor.name.error.length"
-  val firstNameLengthKey = "vendor.individual.error.length.firstName"
-  val middleNameLengthKey = "vendor.individual.error.length.middleName"
-  val invalidKey = "vendor.name.form.regex.error"
+  val firstNameLengthKeyIndividual = "vendor.individual.firstName.error.length"
+  val middleNameLengthKeyIndividual = "vendor.individual.middleName.error.length"
+  val nameLengthKeyIndividual = "vendor.individual.name.error.length"
+  val firstNameInvalidKeyIndividual = "vendor.individual.firstName.regex.error"
+  val middleNameInvalidKeyIndividual = "vendor.individual.middleName.regex.error"
+  val nameInvalidKeyIndividual = "vendor.individual.name.regex.error"
+  val nameRequiredKeyIndividual = "vendor.individual.name.error.required"
+
+  val nameLengthKeyCompany = "vendor.company.name.error.length"
+  val nameInvalidKeyCompany = "vendor.company.name.regex.error"
+  val nameRequiredKeyCompany = "vendor.company.name.error.required"
+
   val maxLength = 56
   val firstNameMaxLength = 14
   val middleNameMaxLength = 14
 
-  val form = new VendorOrCompanyNameFormProvider()()
+  val formProvider = new VendorOrCompanyNameFormProvider()
 
   ".vendorOrCompanyName" - {
 
     val mandatoryFieldName = "name"
     val optionalFirstName = "forename1"
     val optionalMiddleName = "forename2"
-
+    
     ".name" - {
-      "must bind valid form data" in {
-        val validNames = Seq(
-          "Mr test",
-          "Company test name",
-          "Company are us",
-          "Company@company.com",
-          "(555) 123-4567"
-        )
-
-        validNames.foreach { validName =>
-          val result = form.bind(Map(mandatoryFieldName -> validName))
-          result.errors must be(empty)
-        }
-      }
-
-      "must not bind strings longer than 56 characters" in {
-        val longName = "a" * 57
-        val result = form.bind(Map(mandatoryFieldName -> longName))
-        result.errors must contain(FormError(mandatoryFieldName, nameLengthKey, Seq(maxLength)))
-      }
-
-      behave like mandatoryField(
-        form,
-        mandatoryFieldName,
-        requiredError = FormError(mandatoryFieldName, requiredKey)
+      val nameCases = Table(
+        ("vendorType", "requiredKey", "lengthKey", "invalidKey"),
+        ("individual", nameRequiredKeyIndividual, nameLengthKeyIndividual, nameInvalidKeyIndividual),
+        ("company", nameRequiredKeyCompany, nameLengthKeyCompany, nameInvalidKeyCompany)
       )
 
-      "must reject invalid name formats" in {
-        val invalidNames = Seq(
-          "Hello #world",
-          "Price: $50",
-          "A < B",
-          "File \\ path",
-          "José",
-          "\"Line1\\nLine2\""
-        )
+      forAll(nameCases) { (vendorType, requiredKey, lengthKey, invalidKey) =>
+        val form = formProvider(vendorType)
 
-        invalidNames.foreach { invalidName =>
-          val result = form.bind(Map(mandatoryFieldName -> invalidName))
-          result.errors must contain(
-            FormError(mandatoryFieldName, invalidKey, Seq("[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"))
+        s"when vendor type is $vendorType" - {
+          "must bind valid form data" in {
+            val validNames = Seq(
+              "Mr test",
+              "Company test name",
+              "Company are us",
+              "Company@company.com",
+              "(555) 123-4567"
+            )
+
+            validNames.foreach { validName =>
+              val result = form.bind(Map(mandatoryFieldName -> validName))
+              result.errors must be(empty)
+            }
+          }
+
+          "must not bind strings longer than 56 characters" in {
+            val longName = "a" * 57
+            val result = form.bind(Map(mandatoryFieldName -> longName))
+            result.errors must contain(FormError(mandatoryFieldName, lengthKey, Seq(maxLength)))
+          }
+
+          behave like mandatoryField(
+            form,
+            mandatoryFieldName,
+            requiredError = FormError(mandatoryFieldName, requiredKey)
           )
+
+          "must reject invalid name formats" in {
+            val invalidNames = Seq(
+              "Hello #world",
+              "Price: $50",
+              "A < B",
+              "File \\ path",
+              "José",
+              "\"Line1\\nLine2\""
+            )
+
+            invalidNames.foreach { invalidName =>
+              val result = form.bind(Map(mandatoryFieldName -> invalidName))
+              result.errors must contain(
+                FormError(mandatoryFieldName, invalidKey, Seq("[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"))
+              )
+            }
+          }
         }
       }
-
     }
 
     ".forename1" - {
+      val form = formProvider("individual")
+
       "must bind valid form data" in {
         val validNames = Seq(
           "Mr test",
@@ -105,7 +125,7 @@ class VendorOrCompanyNameFormProviderSpec extends StringFieldBehaviours {
         val longName = "a" * 15
 
         val result = form.bind(Map(optionalFirstName -> longName, mandatoryFieldName -> "name"))
-        result.errors must contain(FormError(optionalFirstName, firstNameLengthKey, Seq(firstNameMaxLength)))
+        result.errors must contain(FormError(optionalFirstName, firstNameLengthKeyIndividual, Seq(firstNameMaxLength)))
       }
 
       behave like optionalField(
@@ -126,13 +146,15 @@ class VendorOrCompanyNameFormProviderSpec extends StringFieldBehaviours {
         invalidNames.foreach { invalidName =>
           val result = form.bind(Map(optionalFirstName -> invalidName, mandatoryFieldName -> "name"))
           result.errors must contain(
-            FormError(optionalFirstName, invalidKey, Seq("[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"))
+            FormError(optionalFirstName, firstNameInvalidKeyIndividual, Seq("[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"))
           )
         }
       }
     }
 
     ".forename2" - {
+      val form = formProvider("individual")
+
       "must bind valid form data" in {
         val validNames = Seq(
           "Mr test",
@@ -151,7 +173,7 @@ class VendorOrCompanyNameFormProviderSpec extends StringFieldBehaviours {
         val longName = "a" * 15
 
         val result = form.bind(Map(mandatoryFieldName -> "name", optionalMiddleName -> longName))
-        result.errors must contain(FormError(optionalMiddleName, middleNameLengthKey, Seq(firstNameMaxLength)))
+        result.errors must contain(FormError(optionalMiddleName, middleNameLengthKeyIndividual, Seq(firstNameMaxLength)))
       }
 
       behave like optionalField(
@@ -172,7 +194,7 @@ class VendorOrCompanyNameFormProviderSpec extends StringFieldBehaviours {
         invalidNames.foreach { invalidName =>
           val result = form.bind(Map(mandatoryFieldName -> "name", optionalMiddleName -> invalidName))
           result.errors must contain(
-            FormError(optionalMiddleName, invalidKey, Seq("[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"))
+            FormError(optionalMiddleName, middleNameInvalidKeyIndividual, Seq("[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"))
           )
         }
       }

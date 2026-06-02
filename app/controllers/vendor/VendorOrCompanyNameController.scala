@@ -43,9 +43,7 @@ class VendorOrCompanyNameController @Inject()(
                                         val controllerComponents: MessagesControllerComponents,
                                         view: VendorOrCompanyNameView
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
-  val form = formProvider()
-
+  
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       
@@ -53,6 +51,8 @@ class VendorOrCompanyNameController @Inject()(
         case Some(value) => if (value.toString == "Individual") "Individual" else "Company"
         case _ => ""
       }
+      
+      val form = formProvider(vendorOrCompany.toLowerCase())
       
       val preparedForm = request.userAnswers.get(VendorOrCompanyNamePage) match {
         case None => form
@@ -69,7 +69,9 @@ class VendorOrCompanyNameController @Inject()(
         case Some(value) => if (value.toString == "Individual") "Individual" else "Company"
         case _ => ""
       }
-      
+
+      val form = formProvider(vendorOrCompany.toLowerCase())
+
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, vendorOrCompany))),

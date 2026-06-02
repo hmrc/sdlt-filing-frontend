@@ -38,7 +38,6 @@ import scala.concurrent.Future
 class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new RemoveVendorFormProvider()
-  val form = formProvider()
 
   lazy val removeVendorRoute = controllers.vendor.routes.RemoveVendorController.onPageLoad().url
 
@@ -57,6 +56,8 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
+        implicit val msgs = messages(application)
+
         val request = FakeRequest(GET, removeVendorRoute)
 
         val result = route(application, request).value
@@ -64,6 +65,8 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[RemoveVendorView]
 
         val fullName = "John Michael Smith"
+
+        val form = formProvider(Some(fullName))
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, Some(fullName))(request, messages(application)).toString
@@ -82,11 +85,15 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
+        implicit val msgs = messages(application)
+
         val request = FakeRequest(GET, removeVendorRoute)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[RemoveVendorView]
+
+        val form = formProvider(None)
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, None)(request, messages(application)).toString
@@ -328,10 +335,14 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
       ).build()
 
       running(application) {
+        implicit val msgs = messages(application)
+
         val request =
           FakeRequest(POST, removeVendorRoute)
             .withFormUrlEncodedBody(("value", ""))
 
+        val form = formProvider(None)
+        
         val boundForm = form.bind(Map("value" -> ""))
 
         val view = application.injector.instanceOf[RemoveVendorView]

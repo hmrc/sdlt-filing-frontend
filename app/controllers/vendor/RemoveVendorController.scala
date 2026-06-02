@@ -42,9 +42,7 @@ class RemoveVendorController @Inject()(
                                          view: RemoveVendorView,
                                          backendConnector: StampDutyLandTaxConnector
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
-  val form = formProvider()
-
+  
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       request.userAnswers.get(VendorOverviewRemovePage).map { vendorResourceRef =>
@@ -54,6 +52,8 @@ class RemoveVendorController @Inject()(
             FullName.fullName(vendor.forename1, vendor.forename2, name)
         })
 
+        val form = formProvider(vendorFullName)
+          
         Ok(view(form, vendorFullName))
       }.getOrElse(
         Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad())
@@ -68,6 +68,8 @@ class RemoveVendorController @Inject()(
         val vendorFullName: Option[String] = maybeVendor.flatMap(vendor => vendor.name.map { name =>
           FullName.fullName(vendor.forename1, vendor.forename2, name)
         })
+
+        val form = formProvider(vendorFullName)
 
         form.bindFromRequest().fold(
           formWithErrors =>
