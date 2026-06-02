@@ -214,6 +214,13 @@ class TaxCalculationCheckYourAnswersController @Inject()(
         FreeholdTaxCalculatedTotalAmountDueSummary.row(Some(ua)),
         FreeholdTaxCalculatedDoesAmountIncludePenaltiesSummary.row(Some(ua))
       )
+      case Some(LeaseholdSelfAssessed) => Seq(
+        PremiumPayableTaxSummary.row(Some(ua)),
+        TaxDueOnNpvSummary.row(ua),
+        PenaltiesDueSummary.row(Some(ua), timeMachine),
+        LeaseholdSelfAssessedTotalAmountDueSummary.row(Some(ua)),
+        LeaseholdSelfAssessedDoesAmountIncludePenaltiesSummary.row(Some(ua))
+      )
       case Some(FreeholdSelfAssessed) =>
         Seq(
           FreeholdSelfAssessedAmountSummary.row(Some(ua)),
@@ -221,9 +228,7 @@ class TaxCalculationCheckYourAnswersController @Inject()(
           FreeholdSelfAssessedTotalAmountDueSummary.row(Some(ua)),
           FreeholdSelfAssessedDoesAmountIncludePenaltiesSummary.row(Some(ua))
         )
-
       case _ => Nil
     }
-
   }
 }
