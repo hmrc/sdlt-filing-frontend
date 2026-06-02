@@ -20,7 +20,7 @@ import controllers.actions.*
 import forms.ukResidency.NonUkResidentPurchaserFormProvider
 import models.Mode
 import navigation.Navigator
-import pages.ukResidency.{NonUkResidentPurchaserPage, CrownEmploymentReliefPage}
+import pages.ukResidency.{CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -29,9 +29,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ukResidency.NonUkResidentPurchaserView
 import utils.PropertyTypeHelper.isResidentialProperty
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class NonUkResidentPurchaserController @Inject()(
                                                   override val messagesApi: MessagesApi,
                                                   sessionRepository: SessionRepository,

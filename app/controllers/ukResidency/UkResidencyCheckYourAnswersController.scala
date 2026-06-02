@@ -31,11 +31,11 @@ import viewmodels.govuk.summarylist.*
 import views.html.ukResidency.UkResidencyCheckYourAnswersView
 import utils.PropertyTypeHelper.isResidentialProperty
 
-
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
+@Singleton
 class UkResidencyCheckYourAnswersController @Inject()(
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,

@@ -29,9 +29,10 @@ import utils.{LeaseHelper, PropertyTypeHelper}
 import viewmodels.tasklist.*
 import views.html.ReturnTaskListView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class ReturnTaskListController @Inject()(
                                           override val messagesApi: MessagesApi,
                                           identify: IdentifierAction,

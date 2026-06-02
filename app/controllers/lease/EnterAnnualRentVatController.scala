@@ -31,9 +31,10 @@ import services.lease.LeaseService
 import models.prelimQuestions.TransactionType
 import models.prelimQuestions.TransactionType.{ConveyanceTransferLease, GrantOfLease}
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class EnterAnnualRentVatController @Inject()(
                                         override val messagesApi: MessagesApi,
                                         sessionRepository: SessionRepository,

@@ -16,7 +16,7 @@
 
 package controllers.preliminary
 
-import com.google.inject.Inject
+import com.google.inject.{Inject, Singleton}
 import connectors.StampDutyLandTaxConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.UserAnswers
@@ -26,13 +26,14 @@ import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.preliminary._
+import viewmodels.checkAnswers.preliminary.*
 import views.html.preliminary.CheckYourAnswersView
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import services.checkAnswers.CheckAnswersService
 
 import scala.concurrent.*
 
+@Singleton
 class CheckYourAnswersController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             identify: IdentifierAction,

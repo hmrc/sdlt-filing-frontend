@@ -22,6 +22,9 @@ import play.api.i18n.Lang
 import play.api.mvc.*
 import uk.gov.hmrc.play.language.{LanguageController, LanguageUtils}
 
+import javax.inject.Singleton
+
+@Singleton
 class LanguageSwitchController @Inject()(
                                           appConfig: FrontendAppConfig,
                                           languageUtils: LanguageUtils,

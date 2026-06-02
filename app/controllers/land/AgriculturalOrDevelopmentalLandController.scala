@@ -28,10 +28,11 @@ import services.land.LandService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.land.AgriculturalOrDevelopmentalLandView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Success
 
+@Singleton
 class AgriculturalOrDevelopmentalLandController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          sessionRepository: SessionRepository,

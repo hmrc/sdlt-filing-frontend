@@ -29,9 +29,10 @@ import views.html.purchaser.PurchaserDateOfBirthView
 import services.purchaser.PurchaserService
 import models.purchaser.WhoIsMakingThePurchase
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class PurchaserDateOfBirthController @Inject()(
                                         override val messagesApi: MessagesApi,
                                         sessionRepository: SessionRepository,

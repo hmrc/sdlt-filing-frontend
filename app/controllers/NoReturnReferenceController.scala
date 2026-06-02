@@ -19,7 +19,7 @@ package controllers
 import controllers.actions.*
 import forms.NoReturnReferenceFormProvider
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import models.NoReturnReference
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,6 +30,7 @@ import play.api.data.Form
 
 import scala.concurrent.Future
 
+@Singleton
 class NoReturnReferenceController @Inject()(
                                              override val messagesApi: MessagesApi,
                                              identify: IdentifierAction,

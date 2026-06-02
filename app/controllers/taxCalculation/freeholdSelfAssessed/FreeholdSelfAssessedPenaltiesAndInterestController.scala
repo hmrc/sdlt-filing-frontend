@@ -23,17 +23,17 @@ import models.taxCalculation.TaxCalculationFlow.FreeholdSelfAssessed
 import navigation.Navigator
 import pages.taxCalculation.freeholdSelfAssessed.*
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Call, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.LoggingUtil
 import views.html.taxCalculation.AmountWithPenaltiesView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-
+@Singleton
 class FreeholdSelfAssessedPenaltiesAndInterestController @Inject()(
                                                                     override val messagesApi: MessagesApi,
                                                                     identify: IdentifierAction,

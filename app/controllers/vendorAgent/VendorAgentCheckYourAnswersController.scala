@@ -33,9 +33,10 @@ import viewmodels.checkAnswers.vendorAgent.*
 import viewmodels.govuk.all.SummaryListViewModel
 import views.html.vendorAgent.VendorAgentCheckYourAnswersView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class VendorAgentCheckYourAnswersController @Inject()(
                                                        override val messagesApi: MessagesApi,
                                                        identify: IdentifierAction,

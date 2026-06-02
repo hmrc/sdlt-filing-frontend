@@ -32,8 +32,10 @@ import viewmodels.checkAnswers.vendor.{IndividualOrCompanyNameSummary, VendorAdd
 import viewmodels.govuk.summarylist.*
 import views.html.vendor.VendorCheckYourAnswersView
 
+import javax.inject.Singleton
 import scala.concurrent.*
 
+@Singleton
 class VendorCheckYourAnswersController @Inject()(
                                                   override val messagesApi: MessagesApi,
                                                   identify: IdentifierAction,

@@ -25,8 +25,9 @@ import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedBYSView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
+@Singleton
 class FreeholdSelfAssessedBYSController @Inject()(
                                                    override val messagesApi: MessagesApi,
                                                    identify: IdentifierAction,

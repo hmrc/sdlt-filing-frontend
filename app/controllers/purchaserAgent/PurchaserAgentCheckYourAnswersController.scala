@@ -34,9 +34,10 @@ import uk.gov.hmrc.http.HeaderCarrier
 import services.checkAnswers.CheckAnswersService
 import viewmodels.checkAnswers.summary.SummaryRowResult
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class PurchaserAgentCheckYourAnswersController @Inject()(
                                                           override val messagesApi: MessagesApi,
                                                           identify: IdentifierAction,

@@ -25,8 +25,9 @@ import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedBYSView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
+@Singleton
 class LeaseholdSelfAssessedBYSController @Inject()(
                                                     override val messagesApi: MessagesApi,
                                                     identify: IdentifierAction,
