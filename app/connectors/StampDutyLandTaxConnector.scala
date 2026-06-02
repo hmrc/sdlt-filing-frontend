@@ -35,6 +35,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import models.transaction.*
 import models.lease.*
+import models.taxCalculation.*
 
 class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
                                           val config: FrontendAppConfig)
@@ -483,6 +484,24 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       }
       .recover {
         case e => throw logResponse(e, "[StampDutyLandTaxConnector][updateTransaction]")
+      }
+  }
+
+  def updateTaxCalculationInfo(updateTaxCalculationRequest: UpdateTaxCalculationRequest)(implicit hc: HeaderCarrier,
+                                                                                         request: Request[_]): Future[UpdateTaxCalculationReturn] = {
+    http.post(url"$activeBase/filing/update/tax-calculation")
+      .withBody(Json.toJson(updateTaxCalculationRequest))
+      .execute[Either[UpstreamErrorResponse, UpdateTaxCalculationReturn]]
+      .flatMap {
+        case Right(resp) =>
+          logger.info(s"[StampDutyLandTaxConnector][updateTaxCalculationInfo] update tax calculation request: $updateTaxCalculationRequest, response: $resp")
+          Future.successful(resp)
+        case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][updateTaxCalculationInfo]")
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][updateTaxCalculationInfo]")
       }
   }
 
