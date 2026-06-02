@@ -396,12 +396,12 @@ vendor.individual.middleName                                                    
 vendor.individual.surname                                                           = Surname
 vendor.individual.checkYourAnswersLabel                                             = Vendor name
 vendor.individual.change.hidden                                                     = Vendor name
-vendor.individual.firstName.regex.error                                             = The vendor’s first name must only include letters a to z, apostrophes, hyphens and spaces
+vendor.individual.firstName.regex.error                                             = The vendor’s first name must only include letters a to z and spaces
 vendor.individual.firstName.error.length                                            = The vendor’s first name must be 14 characters or fewer
-vendor.individual.middleName.regex.error                                            = The vendor’s middle name must only include letters a to z, apostrophes, hyphens and spaces
+vendor.individual.middleName.regex.error                                            = The vendor’s middle name must only include letters a to z and spaces
 vendor.individual.middleName.error.length                                           = The vendor’s middle name must be 14 characters or fewer
 vendor.individual.name.error.required                                               = Enter the vendor’s last name
-vendor.individual.name.error.length                                                 = The vendor’s last name must be 56 characters or less
+vendor.individual.name.error.length                                                 = The vendor’s last name must be 56 characters or fewer
 vendor.individual.name.regex.error                                                  = The vendor’s last name must only include letters a to z, apostrophes, hyphens and spaces
 
 vendor.remove.title                                                                 = Are you sure you want to remove the vendor?
@@ -410,7 +410,7 @@ vendor.remove.error.required                                                    
 
 vendor.vendorOverview.title                                                         = Vendor Overview - About the vendor
 vendor.vendorOverview.heading                                                       = Vendor Overview
-vendor.vendorOverview.limitReached                                                  = You have reached the limit of 99 vendors and purchasers. To add another vendor, you must delete a vendor or purchaser.
+vendor.vendorOverview.limitReached                                                  = You have reached the limit of 99 vendors and purchasers. To add another, you must delete a vendor or purchaser.
 vendor.vendorOverview.no-vendors                                                    = You do not have any vendors added.
 vendor.vendorOverview.vendor-list                                                   = You do not have any vendors added.
 vendor.vendorOverview.noVendor.subHeadingWithVendors                                = Do you need to add another vendor?
