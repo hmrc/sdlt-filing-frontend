@@ -72,9 +72,10 @@ trait Mappings extends Formatters with Constraints {
 
   protected def areaOfLand(unitType: String,
                            requiredKey: String = "land.areaOfLand.error.required",
+                           invalidCharsKey: String = "land.areaOfLand.error.invalidChars",
                            invalidKey: String = "land.areaOfLand.error.invalid",
                            lengthKey: String = "land.areaOfLand.error.length",
                            args: Seq[String] = Seq.empty): FieldMapping[String] =
-    of(areaOfLandFormatter(unitType, requiredKey, invalidKey, lengthKey, args))
+    of(areaOfLandFormatter(unitType, requiredKey, invalidCharsKey, invalidKey, lengthKey, args))
 
 }

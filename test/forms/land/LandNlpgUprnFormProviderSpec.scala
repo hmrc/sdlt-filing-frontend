@@ -22,10 +22,11 @@ import org.scalacheck.Gen
 
 class LandNlpgUprnFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "land.nlpgUprn.error.required"
-  val lengthKey = "land.nlpgUprn.error.length"
-  val formatKey = "land.nlpgUprn.error.format"
-  val maxLength = 14
+  val requiredKey     = "land.nlpgUprn.error.required"
+  val lengthKey       = "land.nlpgUprn.error.length"
+  val formatKey       = "land.nlpgUprn.error.format"
+  val invalidFormatKey = "land.nlpgUprn.error.invalidFormat"
+  val maxLength       = 14
 
   val form = new LandNlpgUprnFormProvider()()
 
@@ -58,21 +59,17 @@ class LandNlpgUprnFormProviderSpec extends StringFieldBehaviours {
       requiredError = FormError(fieldName, requiredKey)
     )
 
-    "must not bind strings that do not match the NLPG UPRN format" in {
-      val invalidValues = Seq(
-        "ABC123",
-        "NI",
-        "ni",
-        "NI123ABC",
-        "123 456",
-        "NI-123"
-      )
-
-      invalidValues.foreach { value =>
+    "must not bind strings with invalid characters" in {
+      Seq("ABC123", "NI123ABC", "123 456", "NI-123").foreach { value =>
         val result = form.bind(Map(fieldName -> value))
-        result.errors must contain(
-          FormError(fieldName, formatKey, Seq("(NI|ni)?[0-9]+"))
-        )
+        result.errors.map(_.message) must contain(formatKey)
+      }
+    }
+
+    "must not bind strings with valid characters but invalid format" in {
+      Seq("NI", "ni").foreach { value =>
+        val result = form.bind(Map(fieldName -> value))
+        result.errors.map(_.message) must contain(invalidFormatKey)
       }
     }
   }

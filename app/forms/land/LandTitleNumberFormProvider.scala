@@ -33,8 +33,8 @@ class LandTitleNumberFormProvider @Inject() extends Mappings {
         .verifying(firstError(
           regexp(characterRegex, "land.titleNumber.error.invalid"),
           minLength(2, "land.titleNumber.error.minLength"),
-          regexp(formatRegex, "land.titleNumber.error.invalidFormat"),
-          maxLength(14, "land.titleNumber.error.length")
+          maxLength(14, "land.titleNumber.error.length"),
+          regexp(formatRegex, "land.titleNumber.error.invalidFormat")
         ))
     )
 }

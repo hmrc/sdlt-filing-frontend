@@ -26,9 +26,9 @@ class AreaOfLandFormProvider @Inject() extends Mappings {
   def apply(unitType: String): Form[String] =
     Form(
       "value" -> areaOfLand(
-        unitType    = unitType,
-        requiredKey = s"land.areaOfLand.error.required.$unitType",
-        invalidKey  = s"land.areaOfLand.error.invalidFormat.$unitType"
+        unitType        = unitType,
+        requiredKey     = s"land.areaOfLand.error.required.$unitType",
+        invalidKey      = s"land.areaOfLand.error.invalidFormat.$unitType"
       )
     )
 }

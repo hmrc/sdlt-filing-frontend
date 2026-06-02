@@ -166,7 +166,7 @@ class FormatterSpec extends AnyFreeSpec with Matchers with Formatters {
 
       "when unit type is square metres" - {
 
-        val areaOfLandFmt = areaOfLandFormatter("SquareMetres", "required", "invalid", "invalidLength")
+        val areaOfLandFmt = areaOfLandFormatter("SquareMetres", "required", "invalidChars", "invalid", "invalidLength")
 
         "must bind valid numeric string with trailing zeros" in {
           areaOfLandFmt.bind("key", Map("key" -> "123.00")) mustEqual Right("123.000")
@@ -176,8 +176,8 @@ class FormatterSpec extends AnyFreeSpec with Matchers with Formatters {
           areaOfLandFmt.bind("key", Map("key" -> "123")) mustEqual Right("123.000")
         }
 
-        "must return error for malformed string" in {
-          areaOfLandFmt.bind("key", Map("key" -> "abc")) mustEqual Left(Seq(FormError("key", "invalid", Seq.empty)))
+        "must return error for invalid characters" in {
+          areaOfLandFmt.bind("key", Map("key" -> "abc")) mustEqual Left(Seq(FormError("key", "invalidChars", Seq.empty)))
         }
 
         "must return error for numeric string with non zero decimal places" in {
@@ -191,7 +191,7 @@ class FormatterSpec extends AnyFreeSpec with Matchers with Formatters {
 
       "when unit type is hectares" - {
 
-        val areaOfLandFmt = areaOfLandFormatter("Hectares", "required", "invalid", "invalidLength")
+        val areaOfLandFmt = areaOfLandFormatter("Hectares", "required", "invalidChars", "invalid", "invalidLength")
 
         "must bind valid numeric string with 3 decimal places" in {
           val result = areaOfLandFmt.bind("key", Map("key" -> "123.456"))
@@ -208,8 +208,8 @@ class FormatterSpec extends AnyFreeSpec with Matchers with Formatters {
           result mustEqual Right("123.000")
         }
 
-        "must return error for malformed string" in {
-          areaOfLandFmt.bind("key", Map("key" -> "abc")) mustEqual Left(Seq(FormError("key", "invalid", Seq.empty)))
+        "must return error for invalid characters" in {
+          areaOfLandFmt.bind("key", Map("key" -> "abc")) mustEqual Left(Seq(FormError("key", "invalidChars", Seq.empty)))
         }
 
         "must return error for numeric string with more than 3 decimal places" in {

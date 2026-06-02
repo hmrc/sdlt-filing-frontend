@@ -23,15 +23,14 @@ import javax.inject.Inject
 
 class LandNlpgUprnFormProvider @Inject() extends Mappings {
 
-  private val nlpgUprnRegex = "(NI|ni)?[0-9]+"
-
   def apply(): Form[String] =
     Form(
       "value" -> text("land.nlpgUprn.error.required")
         .verifying(
           firstError(
             maxLength(14, "land.nlpgUprn.error.length"),
-            regexp(nlpgUprnRegex, "land.nlpgUprn.error.format")
+            regexp("^[0-9NIni]*$", "land.nlpgUprn.error.format"),
+            regexp("(NI|ni)?[0-9]+", "land.nlpgUprn.error.invalidFormat")
           )
         )
     )
