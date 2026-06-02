@@ -487,7 +487,7 @@ class NavigatorSpec extends SpecBase {
             controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdTaxCalculatedTotalAmountDueController.onPageLoad(NormalMode)
         }
 
-        "go from FreeholdTaxCalculatedTotalAmountDuePage to FreeholdSdltCalculatedPenaltiesAndInterestController " in {
+        "go from FreeholdTaxCalculatedTotalAmountDuePage to FreeholdTaxCalculatedPenaltiesAndInterestController when penalty is not zero" in {
           navigator.nextPage(FreeholdTaxCalculatedTotalAmountDuePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
             controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(NormalMode)
         }
@@ -523,7 +523,7 @@ class NavigatorSpec extends SpecBase {
             controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdTaxCalculatedTotalAmountDueController.onPageLoad(NormalMode)
         }
 
-        "go from LeaseholdTaxCalculatedTotalAmountDuePage to LeaseholdTaxCalculatedPenaltiesAndInterestController" in {
+        "go from LeaseholdTaxCalculatedTotalAmountDuePage to LeaseholdTaxCalculatedPenaltiesAndInterestController when penalty is not zero" in {
           navigator.nextPage(LeaseholdTaxCalculatedTotalAmountDuePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
             controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(NormalMode)
         }

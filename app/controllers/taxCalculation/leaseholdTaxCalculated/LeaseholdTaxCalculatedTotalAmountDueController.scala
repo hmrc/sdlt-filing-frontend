@@ -21,20 +21,20 @@ import controllers.taxCalculation.TaxCalculationErrorRecovery
 import forms.taxCalculation.TotalAmountDueFormProvider
 import models.Mode
 import models.requests.DataRequest
-import models.taxCalculation.{BuildRequestError, TaxCalculationResult}
 import models.taxCalculation.CalculationOutcome.Calculated
 import models.taxCalculation.TaxCalculationFlow.LeaseholdTaxCalculated
+import models.taxCalculation.{BuildRequestError, TaxCalculationResult, TotalAmountDueSummaryRowValues}
 import navigation.Navigator
-import pages.taxCalculation.leaseholdTaxCalculated.{LeaseholdTaxCalculatedSelfAssessedAmountPage, LeaseholdTaxCalculatedTotalAmountDuePage}
+import pages.taxCalculation.leaseholdTaxCalculated.{LeaseholdTaxCalculatedSelfAssessedAmountPage, LeaseholdTaxCalculatedTotalAmountDuePage, LeaseholdTaxCalculatedPenaltiesAndInterestPage}
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc.*
 import repositories.SessionRepository
 import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.TimeMachine
+import utils.{TaxCalculationPenaltiesHelper, TimeMachine}
 import viewmodels.taxCalculation.TotalAmountDueViewModel
 import views.html.taxCalculation.shared.TotalAmountDueView
 
@@ -68,12 +68,13 @@ class LeaseholdTaxCalculatedTotalAmountDueController @Inject()(
       sdltCalculationService.whenInFlowAsync(LeaseholdTaxCalculated) {
         withCalculatedResult { result =>
           buildViewModel(result) match {
-            case Right(viewModel) =>
+            case Right(viewModelSummaryRowValues) =>
+              val viewModel = TotalAmountDueViewModel.toViewModel(viewModelSummaryRowValues)
               val prepared = request.userAnswers.get(LeaseholdTaxCalculatedTotalAmountDuePage).fold(form)(form.fill)
-              Ok(view(prepared, viewModel, postAction(mode), sectionKey))
+              Future.successful(Ok(view(prepared, viewModel, postAction(mode), sectionKey)))
             case Left(err) =>
               logger.warn(s"[LeaseholdTaxCalculatedTotalAmountDueController][onPageLoad] failed: ${err.message}")
-              Redirect(errorHandler(err))
+              Future.successful(Redirect(errorHandler(err)))
           }
         }
       }
@@ -82,38 +83,48 @@ class LeaseholdTaxCalculatedTotalAmountDueController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(LeaseholdTaxCalculated) {
-        form.bindFromRequest().fold(
-          formWithErrors =>
-            withCalculatedResult { result =>
-              buildViewModel(result) match {
-                case Right(viewModel) => BadRequest(view(formWithErrors, viewModel, postAction(mode), sectionKey))
-                case Left(err) =>
-                  logger.warn(s"[LeaseholdTaxCalculatedTotalAmountDueController][onSubmit] failed: ${err.message}")
-                  Redirect(errorHandler(err))
-              }
-            },
-          value =>
-            for {
-              updated <- Future.fromTry(request.userAnswers.set(LeaseholdTaxCalculatedTotalAmountDuePage, value))
-              _       <- sessionRepository.set(updated)
-            } yield Redirect(navigator.nextPage(LeaseholdTaxCalculatedTotalAmountDuePage, mode, updated))
-        )
+        withCalculatedResult { result =>
+          buildViewModel(result) match {
+            case Right(viewModelSummaryRowValues) =>
+              form.bindFromRequest().fold(
+                formWithErrors =>
+                  val viewModel = TotalAmountDueViewModel.toViewModel(viewModelSummaryRowValues)
+                  Future.successful(BadRequest(view(formWithErrors, viewModel, postAction(mode), sectionKey))),
+                amount =>
+                  val isPenaltyZero = TaxCalculationPenaltiesHelper.isPenaltyZero(viewModelSummaryRowValues.penalty)
+                  for {
+                    updatedWithTotalAmountDue <- Future.fromTry(request.userAnswers.set(LeaseholdTaxCalculatedTotalAmountDuePage, amount))
+                    updated <- if(isPenaltyZero) Future.fromTry(updatedWithTotalAmountDue.set(LeaseholdTaxCalculatedPenaltiesAndInterestPage, false))
+                    else Future.successful(updatedWithTotalAmountDue)
+                    _       <- sessionRepository.set(updated)
+                  } yield {
+                    if(isPenaltyZero)
+                      Redirect(controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad())
+                    else Redirect(navigator.nextPage(LeaseholdTaxCalculatedTotalAmountDuePage, mode, updated))
+
+                  }
+              )
+            case Left(err) =>
+              logger.warn(s"[LeaseholdTaxCalculatedTotalAmountDueController][onSubmit] failed: ${err.message}")
+              Future.successful(Redirect(errorHandler(err)))
+          }
+        }
       }
   }
 
-  private def withCalculatedResult(onCalculated: TaxCalculationResult => Result)
+  private def withCalculatedResult(onCalculated: TaxCalculationResult => Future[Result])
                                   (implicit hc: HeaderCarrier, request: DataRequest[?]): Future[Result] =
-    sdltCalculationService.calculateStampDutyLandTax(request.userAnswers).map {
+    sdltCalculationService.calculateStampDutyLandTax(request.userAnswers).flatMap {
       case Right(Calculated(result)) => onCalculated(result)
       case Right(response) =>
         logger.warn(s"[LeaseholdTaxCalculatedTotalAmountDueController] Failed to get a tax calculation result: $response")
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+        Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       case Left(err) =>
         logger.warn(s"[LeaseholdTaxCalculatedTotalAmountDueController] sdltc reported missing data: ${err.message}")
-        Redirect(errorHandler(err))
+       Future.successful(Redirect(errorHandler(err)))
     }
 
   private def buildViewModel(result: TaxCalculationResult)
-                            (implicit messages: Messages, request: DataRequest[?]): Either[BuildRequestError, TotalAmountDueViewModel] =
-    TotalAmountDueViewModel.toViewModel(result, request.userAnswers, timeMachine, LeaseholdTaxCalculatedSelfAssessedAmountPage)
+                            (implicit messages: Messages, request: DataRequest[?]): Either[BuildRequestError, TotalAmountDueSummaryRowValues] =
+    TotalAmountDueViewModel.getTotalAmountDueSummaryRow(result, request.userAnswers, timeMachine, LeaseholdTaxCalculatedSelfAssessedAmountPage)
 }

@@ -96,7 +96,7 @@ class FreeholdSelfAssessedTotalAmountDueController @Inject()(
                     else Future.successful(updatedWithTotalAmount)
                   _ <- sessionRepository.set(updatedWithPenaltiesAndInterest)
                 } yield {
-                  if (isPenaltyZero) Redirect(controllers.routes.IndexController.onPageLoad()) // TODO UPDATE TO REDIRECT TO CHECK YOUR ANSWERS CONTROLLER
+                  if (isPenaltyZero) Redirect(controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad())
                   else Redirect(navigator.nextPage(FreeholdSelfAssessedTotalAmountDuePage, mode, updatedWithPenaltiesAndInterest))
                 }
 

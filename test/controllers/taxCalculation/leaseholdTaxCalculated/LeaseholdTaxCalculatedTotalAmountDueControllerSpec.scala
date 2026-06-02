@@ -21,10 +21,11 @@ import connectors.SdltCalculationConnector
 import models.taxCalculation.*
 import models.{FullReturn, Land, Lease, NormalMode, Residency, ReturnInfo, Transaction, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.ArgumentCaptor
+import org.mockito.Mockito.{when, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.taxCalculation.TaxCalculationFlowPage
-import pages.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedTotalAmountDuePage
+import pages.taxCalculation.leaseholdTaxCalculated.{LeaseholdTaxCalculatedPenaltiesAndInterestPage, LeaseholdTaxCalculatedTotalAmountDuePage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -198,6 +199,96 @@ class LeaseholdTaxCalculatedTotalAmountDueControllerSpec extends SpecBase with M
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) must include("£43,750")
+      }
+    }
+
+    "must redirect to TaxCalculationCheckYourAnswersController, set FreeholdTaxCalculatedPenaltiesAndInterestPage to false when penalty is zero" in {
+      val mockSessionRepository = mock[SessionRepository]
+      val mockTimeMachine = mock[TimeMachine]
+      val mockConnector = mock[SdltCalculationConnector]
+
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      when(mockTimeMachine.today).thenReturn(today)
+      when(mockConnector.calculateStampDutyLandTax(any())(any()))
+        .thenReturn(Future.successful(CalculationResponse(Seq(sdltcResult))))
+
+      val leaseHoldTaxCalculatedAnswersWithZeroPenalty = leaseholdAnswers.copy(fullReturn = leaseholdAnswers.fullReturn.map(fr =>
+        fr.copy(transaction = fr.transaction.map(_.copy(
+          effectiveDate = Some(today.toString)
+        )))
+      )
+      )
+
+      val app = applicationBuilder(userAnswers = Some(leaseHoldTaxCalculatedAnswersWithZeroPenalty))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[TimeMachine].toInstance(mockTimeMachine),
+          bind[SdltCalculationConnector].toInstance(mockConnector)
+        )
+        .build()
+
+      running(app) {
+        val request = FakeRequest(POST, routes.LeaseholdTaxCalculatedTotalAmountDueController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "25000")
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad().url
+        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(uaCaptor.capture())
+        uaCaptor.getValue.get(LeaseholdTaxCalculatedPenaltiesAndInterestPage).value mustBe false
+
+      }
+
+    }
+
+    "must redirect to LeaseholdSdltCalculatedPenaltiesAndInterestController when penalty is not zero " in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      val mockTimeMachine = mock[TimeMachine]
+      val mockConnector = mock[SdltCalculationConnector]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockTimeMachine.today).thenReturn(today)
+      when(mockConnector.calculateStampDutyLandTax(any())(any())).thenReturn(Future.successful(CalculationResponse(Seq(sdltcResult))))
+
+      val app = applicationBuilder(userAnswers = Some(leaseholdAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[TimeMachine].toInstance(mockTimeMachine),
+          bind[SdltCalculationConnector].toInstance(mockConnector)
+
+        )
+        .build()
+
+      running(app) {
+        val request = FakeRequest(POST, routes.LeaseholdTaxCalculatedTotalAmountDueController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "12500")
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual
+          controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdSdltCalculatedPenaltiesAndInterestController.onPageLoad(NormalMode).url
+
+      }
+    }
+
+    "must redirect when constructViewModel fails due to broken userAnswers" in {
+      val app = appWith(emptyUserAnswers, Future.successful(CalculationResponse(Seq(sdltcResult))))
+
+      running(app) {
+        val request = FakeRequest(POST, routes.LeaseholdTaxCalculatedTotalAmountDueController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "12500")
+
+        val result = route(app, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual
+          controllers.routes.ReturnTaskListController.onPageLoad().url
+
       }
     }
   }
