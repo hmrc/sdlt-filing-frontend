@@ -22,14 +22,17 @@ import models.ReturnVersionUpdateRequest
 import models.UserAnswers
 import models.requests.DataRequest
 import models.taxCalculation.CalculationOutcome.Calculated
+import models.taxCalculation.TaxCalculationFlow
 import models.taxCalculation.TaxCalculationFlow.{FreeholdSelfAssessed, FreeholdTaxCalculated, LeaseholdSelfAssessed, LeaseholdTaxCalculated}
 import models.taxCalculation.{TaxCalculationResult, UpdateTaxCalculationRequest}
 import pages.taxCalculation.TaxCalculationFlowPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsObject
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import repositories.SessionRepository
 import services.checkAnswers.CheckAnswersService
-import services.taxCalculation.SdltCalculationService
+import services.taxCalculation.{PopulateTaxCalculationService, SdltCalculationService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.DateTimeFormats.parseDate
@@ -40,6 +43,7 @@ import views.html.taxCalculation.shared.CheckYourAnswersView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 @Singleton
 class TaxCalculationCheckYourAnswersController @Inject()(
@@ -50,6 +54,8 @@ class TaxCalculationCheckYourAnswersController @Inject()(
                                                          sdltCalculationService: SdltCalculationService,
                                                          checkAnswersService: CheckAnswersService,
                                                          backendConnector: StampDutyLandTaxConnector,
+                                                         populateTaxCalculationService: PopulateTaxCalculationService,
+                                                         sessionRepository: SessionRepository,
                                                          timeMachine: TimeMachine,
                                                          view: CheckYourAnswersView,
                                                          val controllerComponents: MessagesControllerComponents
@@ -59,16 +65,32 @@ class TaxCalculationCheckYourAnswersController @Inject()(
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       request.userAnswers.get(TaxCalculationFlowPage) match {
-        case Some(FreeholdTaxCalculated) | Some(LeaseholdTaxCalculated) =>
-          withCalculatedResult(result => Future.successful(renderOrRedirect(buildRowResults(result))))
-        case Some(FreeholdSelfAssessed) | Some(LeaseholdSelfAssessed) =>
-          Future.successful(
-            renderOrRedirect(buildRowResults(TaxCalculationResult(0, None, None, None, Nil)))
-          )
+        case Some(flow @ (FreeholdTaxCalculated | LeaseholdTaxCalculated)) =>
+          hydrateFromFullReturn(request.userAnswers, flow).flatMap { userAnswers =>
+            withCalculatedResult(result => Future.successful(renderOrRedirect(buildRowResults(result, userAnswers))))
+          }
+        case Some(flow @ (FreeholdSelfAssessed | LeaseholdSelfAssessed)) =>
+          hydrateFromFullReturn(request.userAnswers, flow).map { userAnswers =>
+            renderOrRedirect(buildRowResults(TaxCalculationResult(0, None, None, None, Nil), userAnswers))
+          }
         case None =>
           logger.warn("[TaxCalculationCheckYourAnswersController][onPageLoad] no tax calculation flow set in session, nothing to show; returning to the task list")
           Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       }
+  }
+
+  private def hydrateFromFullReturn(userAnswers: UserAnswers, flow: TaxCalculationFlow): Future[UserAnswers] = {
+    val sectionEmpty = (userAnswers.data \ "taxCalculationCurrent").asOpt[JsObject].forall(_.values.isEmpty)
+    userAnswers.fullReturn.flatMap(_.taxCalculation) match {
+      case Some(taxCalculation) if sectionEmpty =>
+        populateTaxCalculationService.populateTaxCalculationInSession(taxCalculation, flow, userAnswers) match {
+          case Success(populated) => sessionRepository.set(populated).map(_ => populated)
+          case Failure(e) =>
+            logger.warn(s"[TaxCalculationCheckYourAnswersController][hydrateFromFullReturn] could not populate tax calculation from the full return for ${returnContext(userAnswers)}: ${e.getMessage}")
+            Future.successful(userAnswers)
+        }
+      case _ => Future.successful(userAnswers)
+    }
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -153,9 +175,8 @@ class TaxCalculationCheckYourAnswersController @Inject()(
         Future.successful(Redirect(errorHandler(err)))
     }
 
-  private def buildRowResults(result: TaxCalculationResult)(implicit request: DataRequest[?]): Seq[SummaryRowResult] = {
+  private def buildRowResults(result: TaxCalculationResult, ua: UserAnswers)(implicit request: DataRequest[?]): Seq[SummaryRowResult] = {
 
-    val ua   = request.userAnswers
     val flow = ua.get(TaxCalculationFlowPage)
 
     flow match {

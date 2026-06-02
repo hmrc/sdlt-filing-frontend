@@ -19,7 +19,7 @@ package controllers.taxCalculation
 import base.SpecBase
 import connectors.{SdltCalculationConnector, StampDutyLandTaxConnector}
 import models.taxCalculation.{CalculationResponse, TaxCalculationFlow, TaxCalculationResult, UpdateTaxCalculationReturn}
-import models.{CheckMode, FullReturn, Land, Residency, ReturnInfo, ReturnVersionUpdateReturn, Transaction, UserAnswers}
+import models.{CheckMode, FullReturn, Land, Residency, ReturnInfo, ReturnVersionUpdateReturn, TaxCalculation, Transaction, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -74,6 +74,25 @@ class TaxCalculationCheckYourAnswersControllerSpec extends SpecBase with Mockito
       .set(FreeholdSelfAssessedAmountPage, "43750").success.value
       .set(FreeholdSelfAssessedTotalAmountDuePage, "43850").success.value
       .set(FreeholdSelfAssessedPenaltiesAndInterestPage, true).success.value
+
+  private val hydratableAnswers: UserAnswers =
+    emptyUserAnswers
+      .copy(fullReturn = Some(FullReturn(
+        stornId = "STORN",
+        returnResourceRef = "REF",
+        returnInfo = Some(ReturnInfo(version = Some("1"), mainLandID = Some("L1"))),
+        transaction = Some(Transaction(
+          effectiveDate = Some(today.minusDays(60).toString),
+          totalConsideration = Some("300000"),
+          claimingRelief = Some("no"),
+          transactionDescription = Some("F"),
+          isLinked = Some("no")
+        )),
+        residency = Some(Residency(isNonUkResidents = Some("no"))),
+        land = Some(Seq(Land(landID = Some("L1"), propertyType = Some("01"), interestCreatedTransferred = Some("FPF")))),
+        taxCalculation = Some(TaxCalculation(amountPaid = Some("43850"), includesPenalty = Some("yes"), taxDue = Some("43750")))
+      )))
+      .set(TaxCalculationFlowPage, TaxCalculationFlow.FreeholdTaxCalculated).success.value
 
   private def appWith(answers: UserAnswers,
                       calcResponse: Future[CalculationResponse] = Future.successful(CalculationResponse(Seq.empty)),
@@ -133,6 +152,13 @@ class TaxCalculationCheckYourAnswersControllerSpec extends SpecBase with Mockito
           val result = onPageLoad(app)
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        }
+      }
+
+      "hydrates the working copy from the full return when the section is empty, then returns OK" in {
+        val app = appWith(hydratableAnswers, Future.successful(CalculationResponse(Seq(calculatedResult))))
+        running(app) {
+          status(onPageLoad(app)) mustEqual OK
         }
       }
 
