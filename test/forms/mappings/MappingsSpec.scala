@@ -330,7 +330,7 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
 
       "must not bind values with non-numeric characters" in {
         val result = testForm.bind(Map("value" -> "abc"))
-        result.errors must contain only FormError("value", "land.areaOfLand.error.invalid")
+        result.errors must contain only FormError("value", "land.areaOfLand.error.invalidChars")
       }
 
       "must not bind an empty value" in {
@@ -345,7 +345,7 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
 
       "must not bind negative numbers" in {
         val result = testForm.bind(Map("value" -> "-1"))
-        result.errors must contain only FormError("value", "land.areaOfLand.error.invalid")
+        result.errors must contain only FormError("value", "land.areaOfLand.error.invalidChars")
       }
 
       "must not bind numbers over 14 characters" in {
@@ -380,7 +380,7 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
 
       "must not bind values with non-numeric characters" in {
         val result = testForm.bind(Map("value" -> "abc"))
-        result.errors must contain only FormError("value", "land.areaOfLand.error.invalid")
+        result.errors must contain only FormError("value", "land.areaOfLand.error.invalidChars")
       }
 
       "must not bind an empty value" in {
@@ -395,7 +395,7 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
 
       "must not bind negative numbers" in {
         val result = testForm.bind(Map("value" -> "-1.123"))
-        result.errors must contain only FormError("value", "land.areaOfLand.error.invalid")
+        result.errors must contain only FormError("value", "land.areaOfLand.error.invalidChars")
       }
 
       "must not bind numbers to more than 3 decimal places" in {
