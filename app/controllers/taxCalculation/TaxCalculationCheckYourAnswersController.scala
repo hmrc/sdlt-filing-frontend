@@ -33,9 +33,10 @@ import utils.TimeMachine
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.taxCalculation.*
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class TaxCalculationCheckYourAnswersController @Inject()(
                                                          override val messagesApi: MessagesApi,
                                                          identify: IdentifierAction,

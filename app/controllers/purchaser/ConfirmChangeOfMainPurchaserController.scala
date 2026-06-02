@@ -25,9 +25,10 @@ import services.purchaser.{PurchaserService, PurchaserUpdateMainPurchaserService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaser.ConfirmChangeOfMainPurchaserView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class ConfirmChangeOfMainPurchaserController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          identify: IdentifierAction,

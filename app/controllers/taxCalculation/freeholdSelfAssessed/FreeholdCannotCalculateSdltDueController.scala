@@ -26,8 +26,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.CannotCalculateHelper.getCannotCalculateReason
 import views.html.taxCalculation.freeholdSelfAssessed.FreeholdCannotCalculateSdltDueView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
+@Singleton
 class FreeholdCannotCalculateSdltDueController @Inject()(
                                                    override val messagesApi: MessagesApi,
                                                    identify: IdentifierAction,

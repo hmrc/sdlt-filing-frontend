@@ -26,9 +26,10 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.purchaser.PurchaserRemoveService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class PurchaserRemoveController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        identify: IdentifierAction,

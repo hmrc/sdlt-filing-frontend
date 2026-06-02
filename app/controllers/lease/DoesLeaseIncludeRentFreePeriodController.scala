@@ -26,11 +26,12 @@ import navigation.Navigator
 import pages.lease.DoesLeaseIncludeRentFreePeriodPage
 import repositories.SessionRepository
 import views.html.lease.DoesLeaseIncludeRentFreePeriodView
-import javax.inject.Inject
+
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 
-
+@Singleton
 class DoesLeaseIncludeRentFreePeriodController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          sessionRepository: SessionRepository,

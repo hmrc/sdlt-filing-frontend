@@ -23,9 +23,10 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
+@Singleton
 class IndexController @Inject() (
                                   val controllerComponents: MessagesControllerComponents,
                                   identify: IdentifierAction,

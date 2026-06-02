@@ -28,9 +28,10 @@ import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.taxCalculation.freeholdTaxCalculated.FreeholdCalculatedSdltDueView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
+@Singleton
 class FreeholdCalculatedSdltDueController @Inject()(
                                                     override val messagesApi: MessagesApi,
                                                     identify: IdentifierAction,

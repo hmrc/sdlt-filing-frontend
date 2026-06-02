@@ -22,8 +22,9 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaser.PurchaserBeforeYouStartView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
+@Singleton
 class PurchaserBeforeYouStartController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        identify: IdentifierAction,

@@ -28,9 +28,10 @@ import repositories.SessionRepository
 import services.AddressLookupService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class PurchaserAddressController @Inject()(
                                             val controllerComponents: MessagesControllerComponents,
                                             identify: IdentifierAction,

@@ -34,9 +34,10 @@ import viewmodels.checkAnswers.purchaser.*
 import viewmodels.govuk.summarylist.*
 import views.html.purchaser.PurchaserCheckYourAnswersView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class PurchaserCheckYourAnswersController @Inject()(
                                                      override val messagesApi: MessagesApi,
                                                      identify: IdentifierAction,

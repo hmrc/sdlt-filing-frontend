@@ -31,9 +31,10 @@ import viewmodels.checkAnswers.land.*
 import viewmodels.govuk.all.SummaryListViewModel
 import views.html.land.LandCheckYourAnswersView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class LandCheckYourAnswersController @Inject()(
                                                 override val messagesApi: MessagesApi,
                                                 identify: IdentifierAction,

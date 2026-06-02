@@ -23,15 +23,17 @@ import models.taxCalculation.TaxCalculationFlow.LeaseholdTaxCalculated
 import navigation.Navigator
 import pages.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedPenaltiesAndInterestPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, Call, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.LoggingUtil
 import views.html.taxCalculation.AmountWithPenaltiesView
-import scala.concurrent.{ExecutionContext, Future}
-import javax.inject.Inject
 
+import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.{Inject, Singleton}
+
+@Singleton
 class LeaseholdSdltCalculatedPenaltiesAndInterestController @Inject()(
                                                                        override val messagesApi: MessagesApi,
                                                                        identify: IdentifierAction,

@@ -29,9 +29,10 @@ import services.purchaserAgent.PurchaserAgentService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaserAgent.SelectPurchaserAgentView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
+@Singleton
 class SelectPurchaserAgentController @Inject()(
                                                 override val messagesApi: MessagesApi,
                                                 identify: IdentifierAction,

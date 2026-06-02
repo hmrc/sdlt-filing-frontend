@@ -35,10 +35,11 @@ import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.transaction.*
 import views.html.transaction.TransactionCheckYourAnswersView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
+@Singleton
 class TransactionCheckYourAnswersController @Inject()(
   override val messagesApi: MessagesApi,
   identify: IdentifierAction,

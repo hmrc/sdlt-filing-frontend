@@ -30,9 +30,10 @@ import views.html.purchaser.PurchaserNationalInsuranceView
 import services.purchaser.PurchaserService
 import models.purchaser.WhoIsMakingThePurchase
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class PurchaserNationalInsuranceController @Inject()(
                                         override val messagesApi: MessagesApi,
                                         sessionRepository: SessionRepository,

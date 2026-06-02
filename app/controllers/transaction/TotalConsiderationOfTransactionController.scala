@@ -21,7 +21,7 @@ import forms.transaction.TotalConsiderationOfTransactionFormProvider
 import models.{Mode, UserAnswers}
 import models.prelimQuestions.TransactionType
 import navigation.Navigator
-import pages.transaction.{TotalConsiderationOfTransactionPage, TransactionVatAmountPage, TotalConsiderationOfLinkedTransactionPage, TypeOfTransactionPage}
+import pages.transaction.{TotalConsiderationOfLinkedTransactionPage, TotalConsiderationOfTransactionPage, TransactionVatAmountPage, TypeOfTransactionPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -29,9 +29,10 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.transaction.TotalConsiderationOfTransactionView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class TotalConsiderationOfTransactionController @Inject()(
                                         override val messagesApi: MessagesApi,
                                         sessionRepository: SessionRepository,
