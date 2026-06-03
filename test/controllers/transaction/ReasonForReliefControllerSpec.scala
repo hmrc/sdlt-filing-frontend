@@ -274,5 +274,146 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
+
+    "cross-flow handling" - {
+
+      import services.crossflow.{CrossFlowFailure, CrossFlowTarget, Pages, PageId, ReturnSection}
+      import services.crossflow.fields.CrossFlowValidationService
+      import models.UserAnswers
+
+      def stubCrossFlow(failuresForPageResult: Seq[CrossFlowFailure]): CrossFlowValidationService =
+        new CrossFlowValidationService(Set.empty) {
+          override def failuresForPage(page: PageId, ua: UserAnswers): Seq[CrossFlowFailure] = failuresForPageResult
+        }
+
+      def failureOnReliefPage(messageKey: String = "crossflow.relief.freeport.outsideWindow"): CrossFlowFailure =
+        CrossFlowFailure(
+          ruleId     = "F23-TEST",
+          affects    = ReturnSection.Transaction,
+          messageKey = messageKey,
+          targets    = Seq(CrossFlowTarget(Pages.ReliefReason, "value"))
+        )
+
+      "must render the page with a cross-flow error attached on GET when failures exist for the relief reason page" in {
+
+        val service = stubCrossFlow(Seq(failureOnReliefPage()))
+
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswers))
+            .overrides(bind[CrossFlowValidationService].toInstance(service))
+            .build()
+
+        running(application) {
+          val request = FakeRequest(GET, reasonForReliefRoute)
+          val result  = route(application, request).value
+
+          val expectedMessage = messages(application)("crossflow.relief.freeport.outsideWindow")
+
+          status(result) mustEqual OK
+          contentAsString(result) must include(expectedMessage)
+        }
+      }
+
+      "must render the page without errors on GET when no cross-flow failures exist" in {
+
+        val service = stubCrossFlow(Nil)
+
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswers))
+            .overrides(bind[CrossFlowValidationService].toInstance(service))
+            .build()
+
+        running(application) {
+          val request = FakeRequest(GET, reasonForReliefRoute)
+          val result  = route(application, request).value
+
+          val freeportMessage = messages(application)("crossflow.relief.freeport.outsideWindow")
+
+          status(result) mustEqual OK
+          contentAsString(result) must not include freeportMessage
+        }
+      }
+
+      "must reject a valid submission with BadRequest when cross-flow failures exist on the candidate answers" in {
+
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val service = stubCrossFlow(Seq(failureOnReliefPage()))
+
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswers))
+            .overrides(
+              bind[SessionRepository].toInstance(mockSessionRepository),
+              bind[CrossFlowValidationService].toInstance(service)
+            )
+            .build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, reasonForReliefRoute)
+              .withFormUrlEncodedBody(("value", "36"))
+          val result = route(application, request).value
+
+          val expectedMessage = messages(application)("crossflow.relief.freeport.outsideWindow")
+
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) must include(expectedMessage)
+        }
+      }
+
+      "must persist and redirect normally on submission when no cross-flow failures exist" in {
+
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val service = stubCrossFlow(Nil)
+
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswers))
+            .overrides(
+              bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+              bind[SessionRepository].toInstance(mockSessionRepository),
+              bind[CrossFlowValidationService].toInstance(service)
+            )
+            .build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, reasonForReliefRoute)
+              .withFormUrlEncodedBody(("value", "09"))
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual onwardRoute.url
+        }
+      }
+
+      "must not persist the answer when a submission is rejected by cross-flow" in {
+
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val service = stubCrossFlow(Seq(failureOnReliefPage()))
+
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswers))
+            .overrides(
+              bind[SessionRepository].toInstance(mockSessionRepository),
+              bind[CrossFlowValidationService].toInstance(service)
+            )
+            .build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, reasonForReliefRoute)
+              .withFormUrlEncodedBody(("value", "36"))
+          val result = route(application, request).value
+
+          status(result) mustEqual BAD_REQUEST
+          org.mockito.Mockito.verify(mockSessionRepository, org.mockito.Mockito.never()).set(any())
+        }
+      }
+    }
   }
 }

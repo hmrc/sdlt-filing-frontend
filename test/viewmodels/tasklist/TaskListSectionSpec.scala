@@ -304,6 +304,20 @@ class TaskListSectionSpec extends SpecBase {
 
   "TaskListState" - {
 
+    "TLInvalid" - {
+
+      "must be a TaskListState" in {
+        TLInvalid mustBe a[TaskListState]
+      }
+
+      "must be a singleton" in {
+        val ref1 = TLInvalid
+        val ref2 = TLInvalid
+
+        ref1 must be theSameInstanceAs ref2
+      }
+    }
+
     "TLCannotStart" - {
 
       "must be a TaskListState" in {
@@ -391,17 +405,19 @@ class TaskListSectionSpec extends SpecBase {
     "all states" - {
 
       "must be distinct" in {
-        val states = Seq(TLCannotStart, TLNotStarted, TLInProgress, TLCompleted, TLFailed)
+        val states = Seq(TLCannotStart, TLNotStarted, TLInProgress, TLOptional, TLCompleted, TLFailed, TLInvalid)
 
-        states.distinct.size mustBe 5
+        states.distinct.size mustBe 7
       }
 
       "must not be equal to each other" in {
         TLCannotStart must not equal TLNotStarted
         TLNotStarted must not equal TLInProgress
-        TLInProgress must not equal TLCompleted
+        TLInProgress must not equal TLOptional
+        TLOptional must not equal TLCompleted
         TLCompleted must not equal TLFailed
-        TLFailed must not equal TLCannotStart
+        TLFailed must not equal TLInvalid
+        TLInvalid must not equal TLCannotStart
       }
     }
   }

@@ -27,6 +27,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.FullReturnService
+import services.crossflow.fields.CrossFlowValidationService
+import services.crossflow.*
 
 import scala.concurrent.Future
 
@@ -912,6 +914,83 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual OK
           val content = contentAsString(result)
           content must include("Tax Calculation Questions")
+        }
+      }
+
+      "must render Transaction row as invalid when cross-flow service reports failures" in {
+
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        val stubCrossFlow = new CrossFlowValidationService(Set.empty) {
+          override def sectionStatuses(ua: UserAnswers): Map[ReturnSection, SectionStatus] =
+            Map(ReturnSection.Transaction -> SectionStatus(
+              section = ReturnSection.Transaction,
+              hasFailures = true,
+              ruleIds = Seq("F23-TEST"),
+              messageKeys = Seq("test.message"),
+              targets = Seq(CrossFlowTarget(Pages.ReliefReason, "value"))
+            ))
+        }
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(completeFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(stubCrossFlow)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+
+          content must include("Transaction Questions")
+          content must include(messages(application)("tasklist.invalid"))
+        }
+      }
+
+      "must render Transaction row normally when cross-flow service reports no failures" in {
+
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        val stubCrossFlow = new CrossFlowValidationService(Set.empty) {
+          override def sectionStatuses(ua: UserAnswers): Map[ReturnSection, SectionStatus] = Map.empty
+        }
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(completeFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(stubCrossFlow)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+
+          content must include("Transaction Questions")
+          content must not include messages(application)("tasklist.invalid")
         }
       }
     }

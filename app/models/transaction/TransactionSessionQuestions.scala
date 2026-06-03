@@ -40,7 +40,7 @@ case class TransactionSessionQuestions(
                                         typeOfTransaction: Option[TransactionType] = None,
                                         transactionEffectiveDate: Option[LocalDate] = None,
                                         isLandOrPropertyExchanged: Option[Boolean] = None,
-                                        transactionAddress: TransactionSessionAddress,
+                                        transactionAddress: Option[TransactionSessionAddress] = None,
                                         transactionDeferringPayment: Option[Boolean] = None,
                                         cap1OrNsbc: Option[Boolean] = None,
                                         transactionExercisingAnOption: Option[Boolean] = None,

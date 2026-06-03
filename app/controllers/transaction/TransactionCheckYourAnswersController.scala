@@ -34,6 +34,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.transaction.*
 import views.html.transaction.TransactionCheckYourAnswersView
+import services.crossflow.fields.CrossFlowValidationService
+import services.crossflow.*
+import models.CheckMode
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -49,6 +52,7 @@ class TransactionCheckYourAnswersController @Inject()(
   checkAnswersService: CheckAnswersService,
   backendConnector: StampDutyLandTaxConnector,
   populateTransactionService: PopulateTransactionService,
+  crossFlow: CrossFlowValidationService,
   val controllerComponents: MessagesControllerComponents,
   view: TransactionCheckYourAnswersView
 )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -126,8 +130,22 @@ class TransactionCheckYourAnswersController @Inject()(
       case Right(summaryList) => Ok(view(summaryList))
     }
 
-  private def buildRowResults(ua: UserAnswers)(implicit request: Request[_]): Seq[SummaryRowResult] =
-    Seq(
+  // In TransactionCheckYourAnswersController, or pulled out into a small CrossFlowRouting object
+  private def callForFailure(failure: CrossFlowFailure): Call =
+    failure.targets.headOption.map(_.page) match {
+      case Some(Pages.EffectiveDate) => controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode)
+      case Some(Pages.ContractDate) => controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(CheckMode)
+      case Some(Pages.ReliefReason) => controllers.transaction.routes.ReasonForReliefController.onPageLoad(CheckMode)
+      case _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+    }
+
+  private def buildRowResults(ua: UserAnswers)(implicit request: Request[_]): Seq[SummaryRowResult] = {
+    val failures = crossFlow.failuresAffecting(ReturnSection.Transaction, ua)
+
+    val crossFlowMissing: Seq[SummaryRowResult] =
+      failures.map(f => SummaryRowResult.Missing(callForFailure(f)))
+
+    crossFlowMissing ++ Seq(
       Some(TypeOfTransactionSummary.row(ua)),
       Some(TransactionEffectiveDateSummary.row(ua)),
       Some(TransactionAddDateOfContractSummary.row(ua)),
@@ -160,6 +178,7 @@ class TransactionCheckYourAnswersController @Inject()(
       if (landExchangedCheck(ua)) Some(TransactionAddressSummary.row(ua)) else None,
       Some(TransactionExercisingAnOptionSummary.row(ua))
     ).flatten
+  }
 
   private def isGrantOfLease(ua: UserAnswers): Boolean =
     ua.get(TypeOfTransactionPage).contains(TransactionType.GrantOfLease)

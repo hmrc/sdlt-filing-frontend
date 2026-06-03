@@ -17,47 +17,53 @@
 package viewmodels.tasklist
 
 import config.FrontendAppConfig
-import models.FullReturn
+import models.{CheckMode, FullReturn}
 import play.api.i18n.Messages
+import services.crossflow.{PageId, Pages, ReturnSection, SectionStatus}
 
 import javax.inject.Singleton
 
 @Singleton
 object TransactionTaskList {
+  
+  private val noFailures: SectionStatus =
+    SectionStatus(ReturnSection.Transaction, hasFailures = false, ruleIds = Nil, messageKeys = Nil, targets = Nil)
 
-  def build(fullReturn: FullReturn)
-           (implicit messages: Messages,
-            appConfig: FrontendAppConfig): TaskListSection =
+  def build(fullReturn: FullReturn, status: SectionStatus = noFailures)
+           (implicit messages: Messages, appConfig: FrontendAppConfig): TaskListSection =
     TaskListSection(
       heading = messages("tasklist.transactionQuestion.heading"),
-      rows = Seq(
-        buildTransactionRow(fullReturn)
-      )
+      rows    = Seq(buildTransactionRow(fullReturn, status))
     )
 
-  def buildTransactionRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+  def buildTransactionRow(fullReturn: FullReturn, status: SectionStatus)
+                         (implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
 
     val transactionComplete = fullReturn.transaction.exists(_.effectiveDate.isDefined)
 
-    val url = if (transactionComplete) {
-      controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
-    } else {
-      controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
+    val cyaUrl   = controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
+    val startUrl = controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
+    
+    def urlFor(page: PageId): String = page match {
+      case Pages.ReliefReason  => controllers.transaction.routes.ReasonForReliefController.onPageLoad(CheckMode).url
+      case Pages.EffectiveDate => controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode).url
+      case _                   => cyaUrl
     }
+    
+    val url =
+      if (status.hasFailures && status.targets.size == 1) urlFor(status.targets.head.page)
+      else if (status.hasFailures)                        cyaUrl
+      else if (transactionComplete)                       cyaUrl
+      else                                                startUrl
 
     TaskListRowBuilder(
-      canEdit = {
-        case TLCompleted => true
-        case _ => true
-      },
-      messageKey = _ => "tasklist.transactionQuestion.details",
-      url = _ => _ => {
-        url
-      },
-      tagId = "transactionQuestionDetailRow",
-      checks = scheme => Seq(transactionComplete),
+      canEdit       = _ => true,
+      messageKey    = _ => "tasklist.transactionQuestion.details",
+      url           = _ => _ => url,
+      tagId         = "transactionQuestionDetailRow",
+      checks        = _ => Seq(transactionComplete),
+      invalid       = _ => status.hasFailures,
       prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
     ).build(fullReturn)
   }
-
 }

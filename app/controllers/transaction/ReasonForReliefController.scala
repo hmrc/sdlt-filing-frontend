@@ -25,6 +25,8 @@ import pages.transaction.{AddRegisteredCharityNumberPage, CharityRegisteredNumbe
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.crossflow.Pages
+import services.crossflow.fields.{CrossFlowFormSupport, CrossFlowValidationService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.transaction.ReasonForReliefView
 
@@ -33,16 +35,17 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ReasonForReliefController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       sessionRepository: SessionRepository,
-                                       navigator: Navigator,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       formProvider: ReasonForReliefFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: ReasonForReliefView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                           override val messagesApi: MessagesApi,
+                                           sessionRepository: SessionRepository,
+                                           navigator: Navigator,
+                                           identify: IdentifierAction,
+                                           getData: DataRetrievalAction,
+                                           requireData: DataRequiredAction,
+                                           formProvider: ReasonForReliefFormProvider,
+                                           crossFlow: CrossFlowValidationService,
+                                           val controllerComponents: MessagesControllerComponents,
+                                           view: ReasonForReliefView
+                                         )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
@@ -50,30 +53,35 @@ class ReasonForReliefController @Inject()(
     implicit request =>
 
       val preparedForm = request.userAnswers.get(ReasonForReliefPage) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode))
+      val failures = crossFlow.failuresForPage(Pages.ReliefReason, request.userAnswers)
+      val withCrossFlow = CrossFlowFormSupport.withCrossFlowErrors(preparedForm, failures, Pages.ReliefReason)
+
+      Ok(view(withCrossFlow, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+      CrossFlowFormSupport.bindFromRequestWithCrossFlow(form, Pages.ReliefReason, crossFlow) { value =>
+        request.userAnswers.set(ReasonForReliefPage, value).get
+      } match {
 
-        value =>
+        case Left(formWithErrors) =>
+          Future.successful(BadRequest(view(formWithErrors, mode)))
+
+        case Right((value, updatedAnswers)) =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ReasonForReliefPage, value))
-            finalAnswers   <- Future.fromTry {
+            finalAnswers <- Future.fromTry {
               value match {
-                case value if value == ReasonForRelief.PartExchange =>
+                case ReasonForRelief.PartExchange =>
                   updatedAnswers
                     .remove(CharityRegisteredNumberPage)
                     .flatMap(_.remove(AddRegisteredCharityNumberPage))
-                case value if value == ReasonForRelief.CharitiesRelief =>
+                case ReasonForRelief.CharitiesRelief =>
                   updatedAnswers
                     .remove(IsPurchaserRegisteredWithCISPage)
                     .flatMap(_.remove(TransactionCisNumberPage))
@@ -85,7 +93,7 @@ class ReasonForReliefController @Inject()(
                     .flatMap(_.remove(AddRegisteredCharityNumberPage))
               }
             }
-            _              <- sessionRepository.set(finalAnswers)
+            _ <- sessionRepository.set(finalAnswers)
           } yield {
             if (value.toString == "08" && mode == NormalMode) {
               Redirect(controllers.transaction.routes.IsPurchaserRegisteredWithCISController.onPageLoad(mode))
@@ -95,6 +103,6 @@ class ReasonForReliefController @Inject()(
               Redirect(navigator.nextPage(ReasonForReliefPage, mode, finalAnswers))
             }
           }
-      )
+      }
   }
 }

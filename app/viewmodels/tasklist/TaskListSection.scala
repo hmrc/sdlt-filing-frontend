@@ -68,4 +68,6 @@ case object TLCompleted extends TaskListState
 
 case object TLFailed extends TaskListState
 
+case object TLInvalid extends TaskListState
+
 case object TLOptional extends TaskListState
