@@ -95,6 +95,14 @@
         )
     }
 
+    @if(errorCalc) {
+        @govukNotificationBanner(
+            NotificationBanner(
+                content = Text(messages("land.landOverview.limitReached"))
+            )
+        )
+    }
+
     @formHelper(action = controllers.land.routes.LandOverviewController.onSubmit(), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
@@ -124,8 +132,6 @@
                     @govukButton(
                         ButtonViewModel(messages("site.continue"))
                     )
-                } else {
-                    @p(messages("land.landOverview.limitReached"))
                 }
             }
             case None => {

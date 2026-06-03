@@ -18,12 +18,16 @@ package forms.land
 
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class RemoveLandFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "land.removeLand.error.required"
 
-  val form = new RemoveLandFormProvider()()
+  private implicit val messages: Messages = stubMessages()
+  val formProvider = new RemoveLandFormProvider()
+  val form = formProvider(Some("Test"))
 
   ".value" - {
 

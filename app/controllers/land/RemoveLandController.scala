@@ -22,7 +22,6 @@ import forms.land.RemoveLandFormProvider
 import models.land.DeleteLandRequest
 import models.{Land, ReturnVersionUpdateRequest}
 import pages.land.{LandOverviewRemovePage, RemoveLandPage}
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -43,8 +42,6 @@ class RemoveLandController @Inject()(
                                          view: RemoveLandView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form: Form[Boolean] = formProvider()
-
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
@@ -52,13 +49,15 @@ class RemoveLandController @Inject()(
 
         val maybeReturnLandToRemove = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.landID.contains(removeLandId))))
 
-        val addressLine1 = maybeReturnLandToRemove.flatMap(_.address1).getOrElse("")
+        val maybeAddress = maybeReturnLandToRemove.flatMap(_.address1)
+        val addressLine1 = maybeAddress.getOrElse("")
 
         maybeReturnLandToRemove match {
           case None =>
             Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
 
           case Some(land) =>
+            val form = formProvider(maybeAddress)
             val preparedForm = request.userAnswers.get(RemoveLandPage) match {
               case None => form
               case Some(value) => form.fill(value)
@@ -87,6 +86,7 @@ class RemoveLandController @Inject()(
 
           case Some(maybeLandToDelete) =>
             val addressLine1 = maybeLandToDelete.address1.getOrElse("")
+            val form = formProvider(maybeLandToDelete.address1)
             form.bindFromRequest().fold(
               formWithErrors =>
                 Future.successful(BadRequest(view(formWithErrors, addressLine1))),

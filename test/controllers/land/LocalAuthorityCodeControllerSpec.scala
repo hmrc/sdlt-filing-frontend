@@ -591,7 +591,7 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
             val result = route(application, request).value
             status(result) mustEqual BAD_REQUEST
             val htmlData = contentAsString(result)
-            htmlData must include("Provide valid local authority code")
+            htmlData must include("Enter a valid local authority code for England or Northern Ireland")
           }
         }
 
@@ -634,7 +634,7 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
             status(result) mustEqual BAD_REQUEST
 
             val htmlData = contentAsString(result)
-            htmlData must include("Provide valid local authority code")
+            htmlData must include("Enter a valid local authority code for England or Northern Ireland")
           }
         }
 
@@ -678,7 +678,7 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
             status(result) mustEqual BAD_REQUEST
 
             val htmlData = contentAsString(result)
-            htmlData must include("Provide valid local authority code")
+            htmlData must include("Enter a valid local authority code that matches your postcode in England or Northern Ireland")
           }
         }
 
@@ -722,7 +722,7 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
             status(result) mustEqual BAD_REQUEST
 
             val htmlData = contentAsString(result)
-            htmlData must include("Provide valid local authority code")
+            htmlData must include("Enter a valid local authority code that matches your postcode in England or Northern Ireland")
           }
         }
 
@@ -766,7 +766,7 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
             status(result) mustEqual BAD_REQUEST
 
             val htmlData = contentAsString(result)
-            htmlData must include("Provide valid local authority code")
+            htmlData must include("Enter a valid local authority code that matches your postcode in England or Northern Ireland")
           }
         }
 
@@ -810,7 +810,7 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
             status(result) mustEqual BAD_REQUEST
 
             val htmlData = contentAsString(result)
-            htmlData must include("Provide valid local authority code")
+            htmlData must include("Enter a valid local authority code that matches your postcode in England or Northern Ireland")
           }
         }
 
@@ -854,7 +854,7 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
             status(result) mustEqual BAD_REQUEST
 
             val htmlData = contentAsString(result)
-            htmlData must include("Provide valid local authority code")
+            htmlData must include("Welsh local authority codes are no longer recognised by SDLT when the effective date of the transaction is the same as or after 1 April 2018")
           }
         }
 
@@ -898,7 +898,7 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
             status(result) mustEqual BAD_REQUEST
 
             val htmlData = contentAsString(result)
-            htmlData must include("Provide valid local authority code")
+            htmlData must include("Enter a valid local authority code for England or Northern Ireland")
           }
         }
       }

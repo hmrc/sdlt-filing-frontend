@@ -400,7 +400,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
           contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
           ukPostcode,
-          errorKeyMessage).apply("0220")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("0220")
         result mustBe Valid
       }
 
@@ -409,7 +413,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
           contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
           ukPostcode,
-          errorKeyMessage).apply("9053")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("9053")
         result mustBe Invalid(errorKeyMessage)
       }
 
@@ -418,7 +426,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = Some(LocalDate.parse(welshEffectiveTransactionDateAfterWelshActDt)),
           contractEffDate = Some(LocalDate.parse(welshEffectiveContractDateAfterWelshActDt)),
           ukPostcode,
-          errorKeyMessage).apply("6805")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("6805")
         result mustBe Invalid(errorKeyMessage)
       }
 
@@ -428,7 +440,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
             effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
             contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
             scotlandPostcode,
-            errorKeyMessage).apply(code)
+            invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply(code)
           result mustBe Invalid(errorKeyMessage)
         }
       }
@@ -441,7 +457,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = None,
           contractEffDate = None,
           ukPostcode,
-          errorKeyMessage).apply("0220")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("0220")
         result mustBe Valid
       }
 
@@ -450,7 +470,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = None,
           contractEffDate = None,
           ukPostcode,
-          errorKeyMessage).apply("9053")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("9053")
         result mustBe Invalid(errorKeyMessage)
       }
 
@@ -459,7 +483,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = None,
           contractEffDate = None,
           ukPostcode,
-          errorKeyMessage).apply("6805")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("6805")
         result mustBe Valid
       }
 
@@ -469,7 +497,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
             effectiveTransactionDate = None,
             contractEffDate = None,
             scotlandPostcode,
-            errorKeyMessage).apply(code)
+            invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply(code)
           result mustBe Invalid(errorKeyMessage)
         }
       }
@@ -480,7 +512,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
             effectiveTransactionDate = None,
             contractEffDate = None,
             ukPostcode,
-            errorKeyMessage
+            invalidCharsKey        = errorKeyMessage,
+            invalidFormatKey       = errorKeyMessage,
+            invalidAreaKey         = errorKeyMessage,
+            invalidAreaPostcodeKey = errorKeyMessage,
+            welshKey               = errorKeyMessage
           ).apply(code)
 
           result mustBe Valid
@@ -495,7 +531,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
           contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
           scotlandPostcode,
-          errorKeyMessage).apply("0220")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("0220")
         result mustBe Invalid(errorKeyMessage)
       }
 
@@ -504,7 +544,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
           contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
           scotlandPostcode,
-          errorKeyMessage).apply("9053")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("9053")
         result mustBe Invalid(errorKeyMessage)
       }
 
@@ -513,7 +557,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = Some(LocalDate.parse(welshEffectiveTransactionDateAfterWelshActDt)),
           contractEffDate = Some(LocalDate.parse(welshEffectiveContractDateAfterWelshActDt)),
           scotlandPostcode,
-          errorKeyMessage).apply("6805")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("6805")
         result mustBe Invalid(errorKeyMessage)
       }
     }
@@ -525,7 +573,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateBeforeCR223tDt)),
           contractEffDate = Some(LocalDate.parse(effectiveContractDateBeforeCR223tDt)),
           scotlandPostcode,
-          errorKeyMessage).apply("0220")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("0220")
         result mustBe Invalid(errorKeyMessage)
       }
 
@@ -534,7 +586,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateBeforeCR223tDt)),
           contractEffDate = Some(LocalDate.parse(effectiveContractDateBeforeCR223tDt)),
           scotlandPostcode,
-          errorKeyMessage).apply("9053")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("9053")
         result mustBe Invalid(errorKeyMessage)
       }
 
@@ -544,7 +600,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
             effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateBeforeCR223tDt)),
             contractEffDate = Some(LocalDate.parse(effectiveContractDateBeforeCR223tDt)),
             scotlandPostcode,
-            errorKeyMessage
+            invalidCharsKey        = errorKeyMessage,
+            invalidFormatKey       = errorKeyMessage,
+            invalidAreaKey         = errorKeyMessage,
+            invalidAreaPostcodeKey = errorKeyMessage,
+            welshKey               = errorKeyMessage
           ).apply(code)
           result mustBe Invalid(errorKeyMessage)
         }
@@ -555,7 +615,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = Some(LocalDate.parse(welshEffectiveTransactionDateBeforeWelshActDt)),
           contractEffDate = Some(LocalDate.parse(welshEffectiveContractDateBeforeWelshActDt)),
           scotlandPostcode,
-          errorKeyMessage).apply("6805")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("6805")
         result mustBe Invalid(errorKeyMessage)
       }
     }
@@ -567,7 +631,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = Some(LocalDate.parse(welshEffectiveTransactionDateAfterWelshActDt)),
           contractEffDate = None,
           ukPostcode,
-          errorKeyMessage).apply("6805")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("6805")
         result mustBe Invalid(errorKeyMessage)
       }
 
@@ -578,7 +646,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
             effectiveTransactionDate = Some(LocalDate.parse(welshEffectiveTransactionDateAfterWelshActDt)),
             contractEffDate = None,
             ukPostcode,
-            errorKeyMessage
+            invalidCharsKey        = errorKeyMessage,
+            invalidFormatKey       = errorKeyMessage,
+            invalidAreaKey         = errorKeyMessage,
+            invalidAreaPostcodeKey = errorKeyMessage,
+            welshKey               = errorKeyMessage
           ).apply(code)
 
           result mustBe Valid
@@ -589,7 +661,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
             effectiveTransactionDate = Some(LocalDate.parse(welshEffectiveTransactionDateAfterWelshActDt)),
             contractEffDate = Some(LocalDate.parse(welshEffectiveContractDateAfterWelshActDt)),
             ukPostcode,
-            errorKeyMessage
+            invalidCharsKey        = errorKeyMessage,
+            invalidFormatKey       = errorKeyMessage,
+            invalidAreaKey         = errorKeyMessage,
+            invalidAreaPostcodeKey = errorKeyMessage,
+            welshKey               = errorKeyMessage
           ).apply(code)
 
           result mustBe Valid
@@ -604,7 +680,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = Some(LocalDate.parse(welshEffectiveTransactionDateBeforeWelshActDt)),
           contractEffDate = None,
           scotlandPostcode,
-          errorKeyMessage).apply("6805")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("6805")
         result mustBe Invalid(errorKeyMessage)
       }
 
@@ -615,7 +695,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
             effectiveTransactionDate = Some(LocalDate.parse(welshEffectiveTransactionDateBeforeWelshActDt)),
             contractEffDate = None,
             scotlandPostcode,
-            errorKeyMessage
+            invalidCharsKey        = errorKeyMessage,
+            invalidFormatKey       = errorKeyMessage,
+            invalidAreaKey         = errorKeyMessage,
+            invalidAreaPostcodeKey = errorKeyMessage,
+            welshKey               = errorKeyMessage
           ).apply(code)
 
           result mustBe Invalid(errorKeyMessage)
@@ -626,7 +710,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
             effectiveTransactionDate = Some(LocalDate.parse(welshEffectiveTransactionDateBeforeWelshActDt)),
             contractEffDate = Some(LocalDate.parse(welshEffectiveContractDateAfterWelshActDt)),
             scotlandPostcode,
-            errorKeyMessage
+            invalidCharsKey        = errorKeyMessage,
+            invalidFormatKey       = errorKeyMessage,
+            invalidAreaKey         = errorKeyMessage,
+            invalidAreaPostcodeKey = errorKeyMessage,
+            welshKey               = errorKeyMessage
           ).apply(code)
 
           result mustBe Invalid(errorKeyMessage)
@@ -642,7 +730,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
             effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
             contractEffDate = Some(LocalDate.parse(effectiveContractDateBeforeScotlandActDt)),
             scotlandPostcode,
-            errorKeyMessage
+            invalidCharsKey        = errorKeyMessage,
+            invalidFormatKey       = errorKeyMessage,
+            invalidAreaKey         = errorKeyMessage,
+            invalidAreaPostcodeKey = errorKeyMessage,
+            welshKey               = errorKeyMessage
           ).apply(code)
 
           result mustBe Valid
@@ -657,7 +749,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
           contractEffDate = Some(LocalDate.parse(effectiveContractBetweenScotActDtAndCR223Dt)),
           ukPostcode,
-          errorKeyMessage).apply("8998")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("8998")
         result mustBe Valid
       }
 
@@ -666,7 +762,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
           contractEffDate = Some(LocalDate.parse(effectiveContractBetweenScotActDtAndCR223Dt)),
           ukPostcode,
-          errorKeyMessage).apply("8999")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("8999")
         result mustBe Invalid(errorKeyMessage)
       }
     }
@@ -678,7 +778,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
           contractEffDate = None,
           ukPostcode,
-          errorKeyMessage).apply("0220")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("0220")
         result mustBe Valid
       }
 
@@ -687,7 +791,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
           contractEffDate = None,
           ukPostcode,
-          errorKeyMessage).apply("9053")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("9053")
         result mustBe Invalid(errorKeyMessage)
       }
 
@@ -696,7 +804,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
           contractEffDate = None,
           ukPostcode,
-          errorKeyMessage).apply("6805")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("6805")
         result mustBe Invalid(errorKeyMessage)
       }
 
@@ -706,7 +818,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
             effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
             contractEffDate = None,
             ukPostcode,
-            errorKeyMessage
+            invalidCharsKey        = errorKeyMessage,
+            invalidFormatKey       = errorKeyMessage,
+            invalidAreaKey         = errorKeyMessage,
+            invalidAreaPostcodeKey = errorKeyMessage,
+            welshKey               = errorKeyMessage
           ).apply(code)
 
           result mustBe Invalid(errorKeyMessage)
@@ -719,7 +835,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
             effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
             contractEffDate = None,
             ukPostcode,
-            errorKeyMessage
+            invalidCharsKey        = errorKeyMessage,
+            invalidFormatKey       = errorKeyMessage,
+            invalidAreaKey         = errorKeyMessage,
+            invalidAreaPostcodeKey = errorKeyMessage,
+            welshKey               = errorKeyMessage
           ).apply(code)
 
           result mustBe Valid
@@ -732,7 +852,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
             effectiveTransactionDate = Some(LocalDate.parse(effectiveTransactionDateAfterCR223Dt)),
             contractEffDate = None,
             ukPostcode,
-            errorKeyMessage
+            invalidCharsKey        = errorKeyMessage,
+            invalidFormatKey       = errorKeyMessage,
+            invalidAreaKey         = errorKeyMessage,
+            invalidAreaPostcodeKey = errorKeyMessage,
+            welshKey               = errorKeyMessage
           ).apply(code)
 
           result mustBe Invalid(errorKeyMessage)
@@ -747,7 +871,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = None,
           contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
           ukPostcode,
-          errorKeyMessage).apply("0220")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("0220")
         result mustBe Valid
       }
 
@@ -756,7 +884,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = None,
           contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
           ukPostcode,
-          errorKeyMessage).apply("9053")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("9053")
         result mustBe Invalid(errorKeyMessage)
       }
 
@@ -765,7 +897,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
           effectiveTransactionDate = None,
           contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
           ukPostcode,
-          errorKeyMessage).apply("6805")
+          invalidCharsKey        = errorKeyMessage,
+          invalidFormatKey       = errorKeyMessage,
+          invalidAreaKey         = errorKeyMessage,
+          invalidAreaPostcodeKey = errorKeyMessage,
+          welshKey               = errorKeyMessage).apply("6805")
         result mustBe Valid
       }
 
@@ -775,7 +911,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
             effectiveTransactionDate = None,
             contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
             ukPostcode,
-            errorKeyMessage
+            invalidCharsKey        = errorKeyMessage,
+            invalidFormatKey       = errorKeyMessage,
+            invalidAreaKey         = errorKeyMessage,
+            invalidAreaPostcodeKey = errorKeyMessage,
+            welshKey               = errorKeyMessage
           ).apply(code)
 
           result mustBe Invalid(errorKeyMessage)
@@ -788,7 +928,11 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
             effectiveTransactionDate = None,
             contractEffDate = Some(LocalDate.parse(effectiveContractDateAfterCR223tDt)),
             ukPostcode,
-            errorKeyMessage
+            invalidCharsKey        = errorKeyMessage,
+            invalidFormatKey       = errorKeyMessage,
+            invalidAreaKey         = errorKeyMessage,
+            invalidAreaPostcodeKey = errorKeyMessage,
+            welshKey               = errorKeyMessage
           ).apply(code)
 
           result mustBe Valid

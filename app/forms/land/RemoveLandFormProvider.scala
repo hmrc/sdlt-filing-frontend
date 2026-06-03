@@ -18,13 +18,14 @@ package forms.land
 
 import forms.mappings.Mappings
 import play.api.data.Form
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
 class RemoveLandFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(landName: Option[String])(implicit messages: Messages): Form[Boolean] =
     Form(
-      "value" -> boolean("land.removeLand.error.required")
+      "value" -> boolean(messages("land.removeLand.error.required", landName.getOrElse(messages("site.land.theLand"))))
     )
 }

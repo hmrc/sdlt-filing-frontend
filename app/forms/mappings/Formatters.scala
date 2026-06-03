@@ -183,6 +183,7 @@ trait Formatters {
   private[mappings] def areaOfLandFormatter(
                                              unitType: String,
                                              requiredKey: String,
+                                             invalidCharsKey: String,
                                              invalidKey: String,
                                              lengthKey: String,
                                              args: Seq[String] = Seq.empty
@@ -191,7 +192,8 @@ trait Formatters {
 
       val squareMetresRegexp = """^[0-9]+(?:\.0+)?$"""
       val hectaresRegexp = """^[0-9]+(?:\.[0-9]{0,3})?$"""
-      
+      val charsRegexp = """^[0-9.]*$"""
+
       val maxStringLength = 14
       val validRegex: String = if (unitType.equalsIgnoreCase("Hectares")) hectaresRegexp else squareMetresRegexp
 
@@ -204,6 +206,8 @@ trait Formatters {
           .flatMap {
             case s if s.length > maxStringLength =>
               Left(Seq(FormError(key, lengthKey, args)))
+            case s if !s.matches(charsRegexp) =>
+              Left(Seq(FormError(key, invalidCharsKey, args)))
             case s if !s.matches(validRegex) =>
               Left(Seq(FormError(key, invalidKey, args)))
             case s =>

@@ -23,12 +23,12 @@ import javax.inject.Inject
 
 class AreaOfLandFormProvider @Inject() extends Mappings {
 
-  val regex = "[0-9]+.[0-9]{3}"
-
-  def apply(unitType: String): Form[String] = {
+  def apply(unitType: String): Form[String] =
     Form(
-        "value" -> areaOfLand(unitType = unitType)
-          .verifying(regexp(regex, "land.areaOfLand.error.invalid"))
+      "value" -> areaOfLand(
+        unitType        = unitType,
+        requiredKey     = s"land.areaOfLand.error.required.$unitType",
+        invalidKey      = s"land.areaOfLand.error.invalidFormat.$unitType"
+      )
     )
-  }
 }

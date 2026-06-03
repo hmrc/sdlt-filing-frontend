@@ -21,13 +21,17 @@ import play.api.data.FormError
 
 class AreaOfLandFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "land.areaOfLand.error.required"
-  val lengthKey = "land.areaOfLand.error.length"
-  val invalidKey = "land.areaOfLand.error.invalid"
-  val maxLength = 14
+  val lengthKey           = "land.areaOfLand.error.length"
+  val maxLength           = 14
 
-  val squareMetresUnit = "SquareMetres"
-  val hectaresUnit = "Hectares"
+  val squareMetresUnit    = "SquareMetres"
+  val hectaresUnit        = "Hectares"
+
+  val squareMetresRequired = s"land.areaOfLand.error.required.$squareMetresUnit"
+  val hectaresRequired     = s"land.areaOfLand.error.required.$hectaresUnit"
+  val squareMetresInvalid  = s"land.areaOfLand.error.invalidFormat.$squareMetresUnit"
+  val hectaresInvalid      = s"land.areaOfLand.error.invalidFormat.$hectaresUnit"
+  val invalidCharsKey      = "land.areaOfLand.error.invalidChars"
 
   ".value" - {
 
@@ -53,14 +57,20 @@ class AreaOfLandFormProviderSpec extends StringFieldBehaviours {
       behave like mandatoryField(
         form,
         fieldName,
-        requiredError = FormError(fieldName, requiredKey)
+        requiredError = FormError(fieldName, squareMetresRequired)
       )
 
-      "fail with invalid error with invalid values" in {
-        val invalidSquareMetresValues = Seq("-1", "300.1", "1.001")
-        invalidSquareMetresValues.foreach { v =>
+      "fail with invalid chars error for non-numeric input" in {
+        Seq("-1", "1£2", "abc").foreach { v =>
           val result = form.bind(Map(fieldName -> v))
-          result.errors must contain only FormError(fieldName, invalidKey, Seq.empty)
+          result.errors must contain only FormError(fieldName, invalidCharsKey, Seq.empty)
+        }
+      }
+
+      "fail with invalid format error for numbers in wrong format" in {
+        Seq("300.1", "1.001").foreach { v =>
+          val result = form.bind(Map(fieldName -> v))
+          result.errors must contain only FormError(fieldName, squareMetresInvalid, Seq.empty)
         }
       }
 
@@ -92,15 +102,19 @@ class AreaOfLandFormProviderSpec extends StringFieldBehaviours {
       behave like mandatoryField(
         form,
         fieldName,
-        requiredError = FormError(fieldName, requiredKey)
+        requiredError = FormError(fieldName, hectaresRequired)
       )
 
-      "fail with invalid error with invalid values" in {
-        val invalidValues = Seq("-1", "1.1234", "test")
-        invalidValues.foreach { v =>
+      "fail with invalid chars error for non-numeric input" in {
+        Seq("-1", "test", "1£2").foreach { v =>
           val result = form.bind(Map(fieldName -> v))
-          result.errors must contain only FormError(fieldName, invalidKey, Seq.empty)
+          result.errors must contain only FormError(fieldName, invalidCharsKey, Seq.empty)
         }
+      }
+
+      "fail with invalid format error for numbers with too many decimal places" in {
+        val result = form.bind(Map(fieldName -> "1.1234"))
+        result.errors must contain only FormError(fieldName, hectaresInvalid, Seq.empty)
       }
 
       "must convert whole numbers to 3 decimal places" in {
