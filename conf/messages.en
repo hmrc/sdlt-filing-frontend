@@ -1403,6 +1403,11 @@ transaction.ReasonForRelief.checkYourAnswersLabel                               
 transaction.ReasonForRelief.change.hidden                                             = reason for claiming relief
 transaction.ReasonForRelief.missing                                                   = Enter the reason for claiming relief
 
+taxCalculation.checkYourAnswers.title                                               = Check your answers - Tax calculation
+taxCalculation.checkYourAnswers.continue                                            = Confirm and continue
+taxCalculation.checkYourAnswers.declaration                                         = Declaration
+taxCalculation.checkYourAnswers.declaration.text                                    = By continuing, I confirm that all details provided in this return are accurate. I understand that any errors can affect the amount of SDLT due and may result in penalties and interest charges.
+
 taxCalculation.beforeStart.title.freehold.taxCalculated                             = Before you start - Tax calculation - Freehold calculated
 taxCalculation.beforeStart.title.freehold.taxNotCalculated                          = Before you start - Tax calculation - Freehold not calculated
 taxCalculation.beforeStart.title.leasehold.taxCalculated                            = Before you start - Tax calculation - Leasehold calculated

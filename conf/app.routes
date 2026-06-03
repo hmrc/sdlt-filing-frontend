@@ -585,8 +585,8 @@ POST       /tax-calculation/freehold-not-calculated/are-penalties-and-interest-i
 GET        /tax-calculation/freehold-not-calculated/are-penalties-and-interest-included/change controllers.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedPenaltiesAndInterestController.onPageLoad(mode: Mode = CheckMode)
 POST       /tax-calculation/freehold-not-calculated/are-penalties-and-interest-included/change controllers.taxCalculation.freeholdSelfAssessed.FreeholdSelfAssessedPenaltiesAndInterestController.onSubmit(mode: Mode = CheckMode)
 # ---- Tax calculation: Check your answers (shared across all flows) ------------------------------------------------
-GET         /tax-calculation/check-your-answers                                                 controllers.taxCalculation.TaxCalculationCheckYourAnswersController.onPageLoad()
-POST        /tax-calculation/check-your-answers                                                 controllers.taxCalculation.TaxCalculationCheckYourAnswersController.onSubmit()
+GET         /tax-calculation/check-answers                                                 controllers.taxCalculation.TaxCalculationCheckYourAnswersController.onPageLoad()
+POST        /tax-calculation/check-answers                                                 controllers.taxCalculation.TaxCalculationCheckYourAnswersController.onSubmit()
 
 # ---- Tax calculation: Flow C (Leasehold - Service has performed calculation) -------------------------------------
 GET         /tax-calculation/leasehold-calculated/before-you-start                           controllers.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedBYSController.onPageLoad()

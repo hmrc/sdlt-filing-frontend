@@ -32,6 +32,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.TimeMachine
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.taxCalculation.*
+import views.html.taxCalculation.shared.CheckYourAnswersView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,6 +46,7 @@ class TaxCalculationCheckYourAnswersController @Inject()(
                                                          sdltCalculationService: SdltCalculationService,
                                                          checkAnswersService: CheckAnswersService,
                                                          timeMachine: TimeMachine,
+                                                         view: CheckYourAnswersView,
                                                          val controllerComponents: MessagesControllerComponents
                                                        )(implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport with Logging with TaxCalculationErrorRecovery {
@@ -71,10 +73,12 @@ class TaxCalculationCheckYourAnswersController @Inject()(
     // TODO: submit the tax calculation to the backend
   }
 
-  private def renderOrRedirect(rows: Seq[SummaryRowResult]): Result =
+  private def renderOrRedirect(rows: Seq[SummaryRowResult])
+                              (implicit request: DataRequest[?]): Result =
     checkAnswersService.redirectOrRender(rows) match {
       case Left(call) => Redirect(call)
-      case Right(_)   => Ok // TODO: render the shared Check Your Answers view once built
+      case Right(summaryList) =>
+        Ok(view(summaryList))
     }
 
   private def withCalculatedResult(onCalculated: TaxCalculationResult => Result)
