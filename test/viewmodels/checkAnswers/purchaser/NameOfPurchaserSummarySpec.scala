@@ -23,6 +23,7 @@ import pages.purchaser.NameOfPurchaserPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class NameOfPurchaserSummarySpec extends SpecBase {
 
@@ -44,7 +45,11 @@ class NameOfPurchaserSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(NameOfPurchaserPage, nameOfPurchaser).success.value
 
-          val result = NameOfPurchaserSummary.row(Some(userAnswers))
+          val row = NameOfPurchaserSummary.row(Some(userAnswers))
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.nameOfThePurchaser.checkYourAnswersLabel")
 
@@ -75,7 +80,11 @@ class NameOfPurchaserSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(NameOfPurchaserPage, nameOfPurchaser).success.value
 
-          val result = NameOfPurchaserSummary.row(Some(userAnswers))
+          val row = NameOfPurchaserSummary.row(Some(userAnswers))
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.nameOfThePurchaser.checkYourAnswersLabel")
 
@@ -106,7 +115,11 @@ class NameOfPurchaserSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(NameOfPurchaserPage, nameOfPurchaser).success.value
 
-          val result = NameOfPurchaserSummary.row(Some(userAnswers))
+          val row = NameOfPurchaserSummary.row(Some(userAnswers))
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.nameOfThePurchaser.checkYourAnswersLabel")
 
@@ -123,14 +136,20 @@ class NameOfPurchaserSummarySpec extends SpecBase {
 
     "when name of purchaser is not present" - {
 
-      "must return None" in {
+      "must return a Missing and redirect call to missing page when data is not present" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
         running(application) {
           implicit val msgs: Messages = messages(application)
 
           val result = NameOfPurchaserSummary.row(Some(emptyUserAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaser.nameOfThePurchaser.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(CheckMode)
+
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }
@@ -149,33 +168,17 @@ class NameOfPurchaserSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(NameOfPurchaserPage, nameOfPurchaser).success.value
 
-        val result = NameOfPurchaserSummary.row(Some(userAnswers))
+        val row = NameOfPurchaserSummary.row(Some(userAnswers))
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
 
         val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
         htmlContent must include("O&#x27;Brien")
         htmlContent must include("&amp;")
         htmlContent must include("&lt;")
         htmlContent must include("&gt;")
-      }
-    }
-
-    "must use CheckMode for the change link" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-      running(application) {
-        implicit val msgs: Messages = messages(application)
-
-        val nameOfPurchaser = NameOfPurchaser(
-          forename1 = Some("John"),
-          forename2 = None,
-          name = "Doe"
-        )
-
-        val userAnswers = emptyUserAnswers
-          .set(NameOfPurchaserPage, nameOfPurchaser).success.value
-
-        val result = NameOfPurchaserSummary.row(Some(userAnswers))
-
-        result.actions.get.items.head.href mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(CheckMode).url
       }
     }
 
@@ -193,7 +196,11 @@ class NameOfPurchaserSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(NameOfPurchaserPage, nameOfPurchaser).success.value
 
-        val result = NameOfPurchaserSummary.row(Some(userAnswers))
+        val row = NameOfPurchaserSummary.row(Some(userAnswers))
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
 
         val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
         htmlContent mustEqual "test"

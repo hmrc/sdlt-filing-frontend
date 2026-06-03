@@ -26,12 +26,11 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.*
 import play.api.mvc.*
 import repositories.SessionRepository
+import services.checkAnswers.CheckAnswersService
 import services.purchaser.*
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.*
 import viewmodels.checkAnswers.purchaser.*
-import viewmodels.govuk.summarylist.*
 import views.html.purchaser.PurchaserCheckYourAnswersView
 
 import javax.inject.{Inject, Singleton}
@@ -48,19 +47,19 @@ class PurchaserCheckYourAnswersController @Inject()(
                                                      purchaserService: PurchaserService,
                                                      purchaserCreateOrUpdateService: PurchaserCreateOrUpdateService,
                                                      val controllerComponents: MessagesControllerComponents,
-                                                     view: PurchaserCheckYourAnswersView
+                                                     view: PurchaserCheckYourAnswersView,
+                                                     checkAnswersService: CheckAnswersService
                                                    )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
   
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       sessionRepository.get(request.userAnswers.id).map {
-
         case Some(userAnswers) if userAnswers.returnId.isEmpty =>
           Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-
         case Some(userAnswers) if userAnswers.data.value.isEmpty =>
           Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
-
+        case Some(userAnswers) if (userAnswers.data \ "purchaserCurrent").asOpt[JsObject].forall(_.values.isEmpty) =>
+          Redirect(controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad())
         case Some(userAnswers) =>
           val connectedRows = Seq(
             IsPurchaserActingAsTrusteeSummary.row(Some(userAnswers)),
@@ -78,14 +77,16 @@ class PurchaserCheckYourAnswersController @Inject()(
 
           def initialRows = purchaserService.initialSummaryRows(userAnswers) ++ connectedRows
 
-          val rows = (confirmName, mainPurchaserID) match {
-            case (Some(true), _) => fullRows
-            case (Some(false), _) => initialRows
+          val rowResults = (confirmName, mainPurchaserID) match {
+            case (Some(_), Some(_)) => fullRows
             case (None, id) if id == purchaserAndCompanyId => fullRows
             case _ => initialRows
           }
 
-          Ok(view(SummaryListViewModel(rows = rows)))
+          checkAnswersService.redirectOrRender(rowResults) match {
+            case Left(call) => Redirect(call)
+            case Right(summaryList) => Ok(view(summaryList))
+          }
 
         case None =>
           Redirect(controllers.routes.ReturnTaskListController.onPageLoad())

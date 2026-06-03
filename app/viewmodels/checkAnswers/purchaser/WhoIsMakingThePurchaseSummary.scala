@@ -21,13 +21,15 @@ import pages.purchaser.WhoIsMakingThePurchasePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object WhoIsMakingThePurchaseSummary  {
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(CheckMode)
     answers.flatMap(_.get(WhoIsMakingThePurchasePage)).map {
       answer =>
 
@@ -37,24 +39,18 @@ object WhoIsMakingThePurchaseSummary  {
           )
         )
 
-        SummaryListRowViewModel(
-          key     = "purchaser.whoIsMakingThePurchase.checkYourAnswersLabel",
-          value   = value,
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaser.whoIsMakingThePurchase.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key     = "purchaser.whoIsMakingThePurchase.checkYourAnswersLabel",
+            value   = value,
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("purchaser.whoIsMakingThePurchase.change.hidden"))
+            )
           )
         )
     }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="${controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.whoIsMakingThePurchaser.Missing")}</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = "purchaser.whoIsMakingThePurchase.checkYourAnswersLabel",
-        value = value
-      )
+      Missing(changeRoute)
     }
+  }
 }

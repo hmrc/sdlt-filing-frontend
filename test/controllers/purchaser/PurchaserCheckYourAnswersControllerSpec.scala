@@ -17,17 +17,17 @@
 package controllers.purchaser
 
 import base.SpecBase
-import constants.FullReturnConstants.incompleteFullReturn
-import models.{FullReturn, Purchaser, ReturnInfo, UserAnswers}
+import models.address.Address
+import models.prelimQuestions.CompanyOrIndividualRequest
+import models.purchaser.{NameOfPurchaser, PurchaserAndCompanyId, PurchaserConfirmIdentity, PurchaserTypeOfCompanyAnswers, WhoIsMakingThePurchase}
+import models.{CheckMode, FullReturn, Purchaser, ReturnInfo, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
-import org.scalatest.prop.TableDrivenPropertyChecks
-import org.scalatest.prop.TableDrivenPropertyChecks.*
 import org.scalatestplus.mockito.MockitoSugar
-import pages.purchaser.ConfirmNameOfThePurchaserPage
+import pages.preliminary.PurchaserIsIndividualPage
+import pages.purchaser.*
 import play.api.inject.bind
-import play.api.libs.json.{JsNull, Json}
 import play.api.mvc.Results.Redirect
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -36,7 +36,7 @@ import services.purchaser.PurchaserCreateOrUpdateService
 import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.govuk.SummaryListFluency
 
-import java.time.Instant
+import java.time.{Instant, LocalDate}
 import scala.concurrent.{ExecutionContext, Future}
 
 class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with MockitoSugar with BeforeAndAfterEach {
@@ -48,69 +48,80 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
   implicit val request: FakeRequest[_] = FakeRequest()
   implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
-  def purchaserCurrentData(purchaserId: Option[String] = None, companyDetailsId: Option[String] = None) = {
-    Json.obj(
-      "purchaserCurrent" -> Json.obj(
-        (purchaserId, companyDetailsId) match {
-          case (Some(pId), Some(cId)) => "purchaserAndCompanyId" -> Json.obj(
-            "purchaserID" -> Json.toJson(pId),
-            "companyDetailsID" -> Json.toJson(cId)
-          )
-          case _ => "purchaserAndCompanyId" -> JsNull
-        },
-        "ConfirmNameOfThePurchaser" -> false,
-        "whoIsMakingThePurchase" -> "Company",
-        "nameOfPurchaser" -> Json.obj(
-          "forename1" -> JsNull,
-          "forename2" -> JsNull,
-          "name" -> "Company"
-        ),
-        "purchaserAddress" -> Json.obj(
-          "houseNumber" -> JsNull,
-          "line1" -> "Street 1",
-          "line2" -> "Street 2",
-          "line3" -> "Street 3",
-          "line4" -> "Street 4",
-          "line5" -> "Street 5",
-          "postcode" -> "CR7 8LU",
-          "country" -> Json.obj(
-            "code" -> "GB",
-            "name" -> "UK"
-          ),
-          "addressValidated" -> true
-        ),
-        "addPurchaserPhoneNumber" -> true,
-        "enterPurchaserPhoneNumber" -> "+447874363636",
-        "doesPurchaserHaveNI" -> JsNull,
-        "nationalInsuranceNumber" -> JsNull,
-        "purchaserFormOfIdIndividual" -> JsNull,
-        "purchaserDateOfBirth" -> JsNull,
-        "purchaserConfirmIdentity" -> JsNull,
-        "registrationNumber" -> "VAT123",
-        "purchaserUTRPage" -> "UTR1234",
-        "purchaserFormOfIdCompany" -> JsNull,
-        "purchaserTypeOfCompany" -> Json.obj(
-          "bank" -> "YES",
-          "buildingSociety" -> "NO",
-          "centralGovernment" -> "NO",
-          "individualOther" -> "NO",
-          "insuranceAssurance" -> "NO",
-          "localAuthority" -> "NO",
-          "partnership" -> "NO",
-          "propertyCompany" -> "NO",
-          "publicCorporation" -> "NO",
-          "otherCompany" -> "NO",
-          "otherFinancialInstitute" -> "NO",
-          "otherIncludingCharity" -> "NO",
-          "superannuationOrPensionFund" -> "NO",
-          "unincorporatedBuilder" -> "NO",
-          "unincorporatedSoleTrader" -> "NO"
-        ),
-        "isPurchaserActingAsTrustee" -> true,
-        "purchaserAndVendorConnected" -> true
-      )
+  def getFullReturn(mainPurchaserID: Option[String] = None): FullReturn = {
+    FullReturn(
+      stornId = "STORN123456",
+      returnResourceRef = "RRF-2024-001",
+      returnInfo = Some(ReturnInfo(
+        returnID = Some("RET123456789"),
+        storn = Some("STORN123456"),
+        mainPurchaserID = mainPurchaserID
+      ))
     )
   }
+
+  val typeOfCompany = PurchaserTypeOfCompanyAnswers(
+    bank = "yes",
+    buildingSociety = "no",
+    centralGovernment = "no",
+    individualOther = "no",
+    insuranceAssurance = "no",
+    localAuthority = "no",
+    partnership = "no",
+    propertyCompany = "no",
+    publicCorporation = "no",
+    otherCompany = "no",
+    otherFinancialInstitute = "no",
+    otherIncludingCharity = "no",
+    superannuationOrPensionFund = "no",
+    unincorporatedBuilder = "no",
+    unincorporatedSoleTrader = "no"
+  )
+
+  val minimalIndividualUserAnswers: UserAnswers = emptyUserAnswers.copy(returnId = Some("RE12345"))
+    .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
+    .set(NameOfPurchaserPage, NameOfPurchaser(Some("John"), None, "Doe")).success.value
+    .set(PurchaserAddressPage, Address(
+      line1 = "Test Street",
+      line2 = None,
+      line3 = None,
+      line4 = None,
+      line5 = None,
+      postcode = None,
+      country = None
+    )).success.value
+    .set(IsPurchaserActingAsTrusteePage, true).success.value
+    .set(PurchaserAndVendorConnectedPage, true).success.value
+
+  val fullIndividualUserAnswers: UserAnswers = minimalIndividualUserAnswers
+    .set(DoesPurchaserHaveNIPage, true).success.value
+    .set(PurchaserNationalInsurancePage, "AA0000000A").success.value
+    .set(PurchaserDateOfBirthPage, LocalDate.of(1985, 3, 15)).success.value
+    .set(AddPurchaserPhoneNumberPage, true).success.value
+    .set(EnterPurchaserPhoneNumberPage, "07477777777").success.value
+
+  val minimalCompanyUserAnswers: UserAnswers = emptyUserAnswers.copy(returnId = Some("RE12345"))
+    .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
+    .set(NameOfPurchaserPage, NameOfPurchaser(None, None, "Company ltd")).success.value
+    .set(PurchaserAddressPage, Address(
+      line1 = "Test Street",
+      line2 = None,
+      line3 = None,
+      line4 = None,
+      line5 = None,
+      postcode = None,
+      country = None
+    )).success.value
+    .set(IsPurchaserActingAsTrusteePage, true).success.value
+    .set(PurchaserAndVendorConnectedPage, true).success.value
+
+  val fullCompanyUserAnswers: UserAnswers = minimalCompanyUserAnswers
+    .set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.VatRegistrationNumber).success.value
+    .set(RegistrationNumberPage, "1234567").success.value
+    .set(PurchaserCompanyTypeKnownPage, true).success.value
+    .set(PurchaserTypeOfCompanyPage, typeOfCompany).success.value
+    .set(AddPurchaserPhoneNumberPage, true).success.value
+    .set(EnterPurchaserPhoneNumberPage, "07477777777").success.value
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -122,7 +133,7 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
 
     "onPageLoad" - {
 
-      "must redirect to ReturnTaskList when the UserAnswers data is empty" in {
+      "must redirect to ReturnTaskList when the return ID is empty" in {
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
@@ -140,30 +151,15 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
         }
       }
 
-      "must redirect to ReturnTaskList when data is available but session is not" in {
-        val userAnswers = UserAnswers(
-          id = "12345",
-          returnId = None,
-          storn = "TESTSTORN",
-          data = Json.obj(
-            "whoIsThePurchaser" -> "Individual",
-            "purchaserOrCompanyName" -> "John Doe",
-            "purchaserAddress" -> Json.obj(
-              "houseNumber" -> JsNull,
-              "line1" -> "Test Street",
-              "line2" -> JsNull,
-              "line3" -> JsNull,
-              "line4" -> JsNull,
-              "line5" -> JsNull,
-              "postcode" -> JsNull,
-              "country" -> JsNull,
-              "addressValidated" -> false
-            ),
-          ),
-          lastUpdated = Instant.now
-        )
+      "must redirect to prelim before you start page when the UserAnswers data is empty" in {
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        val userAnswers = emptyUserAnswers.copy(returnId = Some("RE12345"))
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
 
         running(application) {
           val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
@@ -171,58 +167,202 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.preliminary.routes.BeforeStartReturnController.onPageLoad().url
         }
       }
 
-      "must return OK and the correct view when UserAnswers contains valid data" in {
+      "must redirect to purchaser before you start page when the purchaser current UserAnswers data is empty" in {
 
+        val userAnswers = emptyUserAnswers.copy(returnId = Some("RE12345"))
+          .set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option1).success.value
 
-        val purchaserCases = Table(
-          ("whoIsThePurchaser", "purchaserOrCompanyName"),
-          ("Individual", "John Doe"),
-          ("Business", "ACME Ltd")
-        )
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
-        forAll(purchaserCases) { (purchaser, name) => {
-          val baseData = Json.obj(
-            "whoIsTheVendor" -> purchaser,
-            "purchaserOrCompanyName" -> name,
-            "purchaserAddress" -> Json.obj(
-              "houseNumber" -> JsNull,
-              "line1" -> "Test Street",
-              "line2" -> JsNull,
-              "line3" -> JsNull,
-              "line4" -> JsNull,
-              "line5" -> JsNull,
-              "postcode" -> JsNull,
-              "country" -> JsNull,
-              "addressValidated" -> false
-            )
-          )
-          val userAnswers = UserAnswers(
-            id = "12345",
-            returnId = Some("AB2346"),
-            storn = "TESTSTORN",
-            data = baseData,
-            lastUpdated = Instant.now
-          )
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
 
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        running(application) {
+          val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
 
-          val application = applicationBuilder(userAnswers = Some(userAnswers))
-            .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-            .build()
+          val result = route(application, request).value
 
-          running(application) {
-            val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
-
-            val result = route(application, request).value
-
-            status(result) mustEqual OK
-            contentAsString(result) must include("Check your answers")
-          }
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
         }
+      }
+
+      "must return OK and the correct view when UserAnswers contains complete individual answers for non main purchaser" in {
+        val userAnswers = minimalIndividualUserAnswers.copy(fullReturn = Some(getFullReturn(Some("OTHERPUR001"))))
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+          status(result) mustEqual OK
+          contentAsString(result) must include("Check your answers")
+        }
+      }
+
+      "must return OK and the correct view without mainPurchaserID for Individual" in {
+        val userAnswers = fullIndividualUserAnswers.copy(fullReturn = Some(getFullReturn()))
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+          status(result) mustEqual OK
+          contentAsString(result) must include("Check your answers")
+        }
+      }
+
+      "must return OK and the correct view when purchaserId matches mainPurchaserID for Individual" in {
+        val userAnswers = fullIndividualUserAnswers.copy(fullReturn = Some(getFullReturn(Some("PUR001"))))
+          .set(PurchaserAndCompanyIdPage, PurchaserAndCompanyId("PUR001", None)).success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+          status(result) mustEqual OK
+          contentAsString(result) must include("Check your answers")
+        }
+      }
+
+      "must return OK and the correct view when UserAnswers contains complete company answers for non main purchaser" in {
+
+        val userAnswers = minimalCompanyUserAnswers.copy(fullReturn = Some(getFullReturn(Some("OTHERPUR001"))))
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          contentAsString(result) must include("Check your answers")
+        }
+      }
+
+      "must return OK and the correct view without mainPurchaserID for company" in {
+        val userAnswers = fullCompanyUserAnswers.copy(fullReturn = Some(getFullReturn()))
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+          status(result) mustEqual OK
+          contentAsString(result) must include("Check your answers")
+        }
+      }
+
+      "must return OK and the correct view when purchaserId matches mainPurchaserID for company" in {
+        val userAnswers = fullCompanyUserAnswers.copy(fullReturn = Some(getFullReturn(Some("PUR001"))))
+          .set(PurchaserAndCompanyIdPage, PurchaserAndCompanyId("PUR001", None)).success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+          status(result) mustEqual OK
+          contentAsString(result) must include("Check your answers")
+        }
+      }
+
+      "must redirect to the appropriate page when UserAnswers is incomplete" in {
+
+        val userAnswers = minimalCompanyUserAnswers.remove(NameOfPurchaserPage).success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(CheckMode).url
+        }
+      }
+
+      "must return OK and the correct view when UserAnswers contains complete individual answers when confirmNameOfPurchaser and mainPurchaserID are set" in {
+
+        val userAnswers = fullIndividualUserAnswers.copy(fullReturn = Some(getFullReturn(Some("PUR001"))))
+          .set(ConfirmNameOfThePurchaserPage, true).success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          contentAsString(result) must include("Check your answers")
+        }
+      }
+
+      "must return OK and the correct view when UserAnswers contains complete company answers when confirmNameOfPurchaser and mainPurchaserID are set" in {
+
+        val userAnswers = fullCompanyUserAnswers.copy(fullReturn = Some(getFullReturn(Some("PUR001"))))
+          .set(ConfirmNameOfThePurchaserPage, false).success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          contentAsString(result) must include("Check your answers")
         }
       }
 
@@ -239,373 +379,14 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
           redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
-
-      "must return OK and the correct view when UserAnswers without mainPurchaserID for Individual" in {
-
-        val testReturnId = "123456"
-        val returnInfo = ReturnInfo(
-          returnID = Some("RET123456789"),
-          storn = Some("STORN123456"),
-        )
-        val fullReturn = FullReturn(
-          stornId = "STORN123456",
-          returnResourceRef = "RRF-2024-001",
-          returnInfo = Some(returnInfo),
-        )
-        val userAnswers = {
-          UserAnswers("id", storn = "TESTSTORN",
-            Some(testReturnId), Some(fullReturn),
-            data = Json.obj(
-              "whoIsThePurchaser" -> "Individual",
-              "purchaserOrCompanyName" -> "John Doe",
-              "purchaserAddress" -> Json.obj(
-                "houseNumber" -> JsNull,
-                "line1" -> "Test Street",
-                "line2" -> JsNull,
-                "line3" -> JsNull,
-                "line4" -> JsNull,
-                "line5" -> JsNull,
-                "postcode" -> JsNull,
-                "country" -> JsNull,
-                "addressValidated" -> false
-              ),
-            ),
-          )
-        }
-
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
-          status(result) mustEqual OK
-          contentAsString(result) must include("Select answer")
-        }
-      }
-
-      "must return OK and the correct view when UserAnswers with mainPurchaserID and ConfirmNameOfThePurchaser for Individual" in {
-
-        val testReturnId = "123456"
-        val returnInfo = ReturnInfo(
-          returnID = Some("RET123456789"),
-          storn = Some("STORN123456"),
-          mainPurchaserID = Some("PUR001"),
-        )
-        val fullReturn = FullReturn(
-          stornId = "STORN123456",
-          returnResourceRef = "RRF-2024-001",
-          returnInfo = Some(returnInfo),
-        )
-        val userAnswers = {
-          UserAnswers("id", storn = "TESTSTORN",
-            Some(testReturnId), Some(fullReturn),
-            data = Json.obj(
-              "whoIsThePurchaser" -> "Individual",
-              "purchaserOrCompanyName" -> "John Doe",
-              "nameOfPurchaser" -> Json.obj("name" -> "test"),
-              "addPurchaserPhoneNumber" -> true,
-              "enterPurchaserPhoneNumber" -> "+447466648072",
-              "purchaserAddress" -> Json.obj(
-                "houseNumber" -> JsNull,
-                "line1" -> "Test Street",
-                "line2" -> JsNull,
-                "line3" -> JsNull,
-                "line4" -> JsNull,
-                "line5" -> JsNull,
-                "postcode" -> JsNull,
-                "country" -> JsNull,
-                "addressValidated" -> false,
-                "ConfirmNameOfThePurchaser" -> "ConfirmNameOfThePurchaser.Yes",
-              ),
-            ),
-          )
-        }
-
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
-          status(result) mustEqual OK
-          contentAsString(result) must not include ("Select ActingAsTrustee")
-        }
-      }
-
-      "must return OK and the correct view when UserAnswers has the mainPurchaserID for Company" in {
-
-        val testReturnId = "123456"
-        val returnInfo = ReturnInfo(
-          returnID = Some("RET123456789"),
-          storn = Some("STORN123456"),
-          mainPurchaserID = Some("PUR001"),
-        )
-        val fullReturn = FullReturn(
-          stornId = "STORN123456",
-          returnResourceRef = "RRF-2024-001",
-          returnInfo = Some(returnInfo),
-        )
-        val userAnswers = {
-          UserAnswers("id", storn = "TESTSTORN",
-            Some(testReturnId), Some(fullReturn),
-            data = Json.obj(
-              "whoIsThePurchaser" -> "Company",
-              "purchaserOrCompanyName" -> "UK Ltd",
-              "purchaserAddress" -> Json.obj(
-                "houseNumber" -> JsNull,
-                "line1" -> "Test Street",
-                "line2" -> JsNull,
-                "line3" -> JsNull,
-                "line4" -> JsNull,
-                "line5" -> JsNull,
-                "postcode" -> JsNull,
-                "country" -> JsNull,
-                "addressValidated" -> false
-              ),
-            ),
-          )
-        }
-
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
-          status(result) mustEqual OK
-          contentAsString(result) must not include ("Select ActingAsTrustee")
-        }
-      }
-
-      "must return OK and the correct view when UserAnswers without mainPurchaserID for Company" in {
-
-        val testReturnId = "123456"
-        val returnInfo = ReturnInfo(
-          returnID = Some("RET123456789"),
-          storn = Some("STORN123456"),
-        )
-        val fullReturn = FullReturn(
-          stornId = "STORN123456",
-          returnResourceRef = "RRF-2024-001",
-          returnInfo = Some(returnInfo),
-        )
-        val userAnswers = {
-          UserAnswers("id", storn = "TESTSTORN",
-            Some(testReturnId), Some(fullReturn),
-            data = Json.obj(
-              "whoIsThePurchaser" -> "Company",
-              "purchaserOrCompanyName" -> "John Doe",
-              "purchaserAddress" -> Json.obj(
-                "houseNumber" -> JsNull,
-                "line1" -> "Test Street",
-                "line2" -> JsNull,
-                "line3" -> JsNull,
-                "line4" -> JsNull,
-                "line5" -> JsNull,
-                "postcode" -> JsNull,
-                "country" -> JsNull,
-                "addressValidated" -> false
-              ),
-            ),
-          )
-        }
-
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
-          status(result) mustEqual OK
-          contentAsString(result) must include("Select answer")
-        }
-      }
-
-      "must return OK and the correct view when UserAnswers with mainPurchaserID and ConfirmNameOfThePurchaser for Company" in {
-
-        val testReturnId = "123456"
-        val returnInfo = ReturnInfo(
-          returnID = Some("RET123456789"),
-          storn = Some("STORN123456"),
-          mainPurchaserID = Some("PUR001"),
-        )
-        val fullReturn = FullReturn(
-          stornId = "STORN123456",
-          returnResourceRef = "RRF-2024-001",
-          returnInfo = Some(returnInfo),
-        )
-        val userAnswers = {
-          UserAnswers("id", storn = "TESTSTORN",
-            Some(testReturnId), Some(fullReturn),
-            data = Json.obj(
-              "whoIsThePurchaser" -> "Company",
-              "purchaserOrCompanyName" -> "John Doe",
-              "nameOfPurchaser" -> Json.obj("name" -> "test"),
-              "addPurchaserPhoneNumber" -> true,
-              "enterPurchaserPhoneNumber" -> "+447466648072",
-              "purchaserAddress" -> Json.obj(
-                "houseNumber" -> JsNull,
-                "line1" -> "Test Street",
-                "line2" -> JsNull,
-                "line3" -> JsNull,
-                "line4" -> JsNull,
-                "line5" -> JsNull,
-                "postcode" -> JsNull,
-                "country" -> JsNull,
-                "addressValidated" -> true,
-              ),
-              "ConfirmNameOfThePurchaser" -> "ConfirmNameOfThePurchaser.Yes",
-            ),
-          )
-        }
-
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
-          status(result) mustEqual OK
-          contentAsString(result) must not include ("Select ActingAsTrustee")
-
-        }
-      }
-
-      "must return OK and the correct view when UserAnswers with mainPurchaserID and ConfirmNameOfThePurchaser for Company and ConfirmationName as Yes" in {
-
-        val testReturnId = "123456"
-        val returnInfo = ReturnInfo(
-          returnID = Some("RET123456789"),
-          storn = Some("STORN123456"),
-          mainPurchaserID = Some("PUR001"),
-        )
-        val fullReturn = FullReturn(
-          stornId = "STORN123456",
-          returnResourceRef = "RRF-2024-001",
-          returnInfo = Some(returnInfo),
-        )
-        val userAnswers = {
-          UserAnswers("id", storn = "TESTSTORN",
-            Some(testReturnId), Some(fullReturn),
-            data = Json.obj(
-              "whoIsThePurchaser" -> "Company",
-              "purchaserOrCompanyName" -> "John Doe",
-              "nameOfPurchaser" -> Json.obj("name" -> "test"),
-              "addPurchaserPhoneNumber" -> true,
-              "enterPurchaserPhoneNumber" -> "+447466648072",
-              "purchaserAddress" -> Json.obj(
-                "houseNumber" -> JsNull,
-                "line1" -> "Test Street",
-                "line2" -> JsNull,
-                "line3" -> JsNull,
-                "line4" -> JsNull,
-                "line5" -> JsNull,
-                "postcode" -> JsNull,
-                "country" -> JsNull,
-                "addressValidated" -> true
-              ),
-              "ConfirmNameOfThePurchaser" -> "ConfirmNameOfThePurchaser.Yes"
-            ),
-          )
-        }
-
-        val testuserAnswers = userAnswers.set(ConfirmNameOfThePurchaserPage, true).success.value
-
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(testuserAnswers)))
-
-        val application = applicationBuilder(userAnswers = Some(testuserAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
-          status(result) mustEqual OK
-          contentAsString(result) must include("Check your answers")
-        }
-      }
-
-      "must return OK and the correct view when UserAnswers with mainPurchaserID and ConfirmNameOfThePurchaser for Company and ConfirmationName as NO" in {
-
-        val testReturnId = "123456"
-        val returnInfo = ReturnInfo(
-          returnID = Some("RET123456789"),
-          storn = Some("STORN123456"),
-          mainPurchaserID = Some("PUR001"),
-        )
-        val fullRetur = FullReturn(
-          stornId = "STORN123456",
-          returnResourceRef = "RRF-2024-001",
-          returnInfo = Some(returnInfo),
-        )
-        val userAnswers = {
-          UserAnswers("id", storn = "TESTSTORN",
-            Some(testReturnId), Some(fullRetur),
-            data = Json.obj(
-              "whoIsThePurchaser" -> "Company",
-              "purchaserOrCompanyName" -> "John Doe",
-              "nameOfPurchaser" -> Json.obj("name" -> "test"),
-              "addPurchaserPhoneNumber" -> true,
-              "enterPurchaserPhoneNumber" -> "+447466648072",
-              "purchaserAddress" -> Json.obj(
-                "houseNumber" -> JsNull,
-                "line1" -> "Test Street",
-                "line2" -> JsNull,
-                "line3" -> JsNull,
-                "line4" -> JsNull,
-                "line5" -> JsNull,
-                "postcode" -> JsNull,
-                "country" -> JsNull,
-                "addressValidated" -> true
-              ),
-            ),
-          )
-        }
-
-        val testuserAnswers = userAnswers.set(ConfirmNameOfThePurchaserPage, false).success.value
-
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(testuserAnswers)))
-
-        val application = applicationBuilder(userAnswers = Some(testuserAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
-          status(result) mustEqual OK
-          contentAsString(result) must include("Check your answers")
-        }
-      }
     }
 
     "onSubmit" - {
 
       "must update purchaser and redirect to PurchaserOverview when all required data is present and valid and purchaser ID present" in {
 
-        val userAnswers = UserAnswers(
-          id = "test-session-id",
-          storn = "test-storn",
-          returnId = Some("12345"),
-          fullReturn = None,
-          data = purchaserCurrentData(Some("PUR001"), Some("COMPDET001"))
-        )
+        val userAnswers = fullCompanyUserAnswers
+          .set(PurchaserAndCompanyIdPage, PurchaserAndCompanyId("PUR001", Some("COMPDET001"))).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -633,13 +414,7 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
 
       "must create purchaser and redirect to PurchaserOverview when all required data is present and valid and no purchaser ID present" in {
 
-        val userAnswers = UserAnswers(
-          id = "test-session-id",
-          storn = "test-storn",
-          returnId = Some("12345"),
-          fullReturn = None,
-          data = purchaserCurrentData()
-        )
+        val userAnswers = minimalCompanyUserAnswers.copy(fullReturn = Some(getFullReturn(Some("OTHERPUR001"))))
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -669,15 +444,11 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
         val vendors = (1 to 50).map(i => mock[models.Vendor])
         val purchasers = (1 to 49).map(i => mock[models.Purchaser])
 
-        val userAnswers = UserAnswers(
-          id = "test-session-id",
-          storn = "test-storn",
-          returnId = Some("12345"),
-          fullReturn = Some(incompleteFullReturn.copy(
+        val userAnswers = minimalCompanyUserAnswers.copy(
+          fullReturn = Some(getFullReturn(Some("OTHERPUR001")).copy(
             vendor = Some(vendors),
             purchaser = Some(purchasers)
-          )),
-          data = purchaserCurrentData()
+          ))
         )
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -697,17 +468,9 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
       }
 
 
-      "must redirect back to JourneyRecoveryController when required data is missing or invalid" in {
+      "must redirect to ReturnTaskList when return ID is missing" in {
 
-        val incompleteData = Json.obj(
-          "whoIsThePurchaser" -> "Individual"
-        )
-
-        val userAnswers = UserAnswers(
-          id = userAnswersId,
-          storn = "TESTSTORN",
-          data = incompleteData
-        )
+        val userAnswers = emptyUserAnswers
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -727,16 +490,7 @@ class PurchaserCheckYourAnswersControllerSpec extends SpecBase with SummaryListF
 
       "must redirect back to PurchaserCheckYourAnswersController on JSError" in {
 
-        val incompleteData = Json.obj(
-          "whoIsThePurchaser" -> "Individual"
-        )
-
-        val userAnswers = UserAnswers(
-          id = userAnswersId,
-          storn = "TESTSTORN",
-          returnId = Some("12313"),
-          data = incompleteData
-        )
+        val userAnswers = minimalIndividualUserAnswers.remove(NameOfPurchaserPage).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 

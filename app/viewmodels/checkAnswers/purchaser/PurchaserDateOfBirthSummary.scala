@@ -19,38 +19,33 @@ package viewmodels.checkAnswers.purchaser
 import models.{CheckMode, UserAnswers}
 import pages.purchaser.PurchaserDateOfBirthPage
 import play.api.i18n.{Lang, Messages}
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import utils.DateTimeFormats.dateTimeFormat
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object PurchaserDateOfBirthSummary  {
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.purchaser.routes.PurchaserDateOfBirthController.onPageLoad(CheckMode)
     answers.flatMap(_.get(PurchaserDateOfBirthPage)).map {
       answer =>
 
         implicit val lang: Lang = messages.lang
 
-        SummaryListRowViewModel(
-          key     = "purchaser.dateOfBirth.checkYourAnswersLabel",
-          value   = ValueViewModel(answer.format(dateTimeFormat())),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserDateOfBirthController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaser.dateOfBirth.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key     = "purchaser.dateOfBirth.checkYourAnswersLabel",
+            value   = ValueViewModel(answer.format(dateTimeFormat())),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("purchaser.dateOfBirth.change.hidden"))
+            )
           )
         )
     }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="${controllers.purchaser.routes.PurchaserDateOfBirthController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.purchaserDateOfBirth.missing")}</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = "purchaser.dateOfBirth.checkYourAnswersLabel",
-        value = value
-      )
+      Missing(changeRoute)
     }
+  }
 }

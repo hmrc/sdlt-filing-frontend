@@ -19,41 +19,34 @@ package viewmodels.checkAnswers.purchaser
 import models.{CheckMode, UserAnswers}
 import pages.purchaser.{NameOfPurchaserPage, PurchaserCompanyTypeKnownPage}
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object PurchaserCompanyTypeKnownSummary  {
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult =
 
-    val changeRoute = controllers.purchaser.routes.PurchaserCompanyTypeKnownController.onPageLoad(CheckMode).url
+    val changeRoute = controllers.purchaser.routes.PurchaserCompanyTypeKnownController.onPageLoad(CheckMode)
     val checkYourAnswersLabelMsg = messages("purchaser.purchaserCompanyTypeKnown.checkYourAnswersLabel", answers.flatMap(_.get(NameOfPurchaserPage)).map(_.fullName).getOrElse(""))
-    val displayMissingMsgContent = messages("purchaser.purchaserCompanyTypeKnown.missing")
 
     answers.flatMap(_.get(PurchaserCompanyTypeKnownPage)).map {
       answer =>
 
         val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRowViewModel(
-          key     = checkYourAnswersLabelMsg,
-          value   = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserCompanyTypeKnownController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaser.purchaserCompanyTypeKnown.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key     = checkYourAnswersLabelMsg,
+            value   = ValueViewModel(value),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("purchaser.purchaserCompanyTypeKnown.change.hidden"))
+            )
           )
         )
     }.getOrElse {
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">$displayMissingMsgContent</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = checkYourAnswersLabelMsg,
-        value = value
-      )
+      Missing(changeRoute)
     }
 }

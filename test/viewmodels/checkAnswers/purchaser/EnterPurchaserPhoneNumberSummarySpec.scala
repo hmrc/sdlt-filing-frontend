@@ -23,11 +23,14 @@ import pages.purchaser.{EnterPurchaserPhoneNumberPage, NameOfPurchaserPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class EnterPurchaserPhoneNumberSummarySpec extends SpecBase {
 
   "EnterPurchaserPhoneNumberSummary" - {
+    
     "when purchaser name is present" - {
+      
       "must return a summary list row with surname only" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
         running(application) {
@@ -37,7 +40,11 @@ class EnterPurchaserPhoneNumberSummarySpec extends SpecBase {
             .set(EnterPurchaserPhoneNumberPage, "1234567").success.value
             .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = Some("Test"), forename2 = Some("Test2"), name = "Test")).success.value
 
-          val result = EnterPurchaserPhoneNumberSummary.row(Some(userAnswers))
+          val row = EnterPurchaserPhoneNumberSummary.row(Some(userAnswers))
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.enterPhoneNumber.checkYourAnswersLabel", userAnswers.get(NameOfPurchaserPage).map(_.name).getOrElse(""))
 
@@ -51,7 +58,7 @@ class EnterPurchaserPhoneNumberSummarySpec extends SpecBase {
         }
       }
 
-      "must return a summary list row with a link to enter phone number when userAnswers is empty" in {
+      "must return a Missing and redirect call to missing page when data is not present" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -62,14 +69,13 @@ class EnterPurchaserPhoneNumberSummarySpec extends SpecBase {
 
           val result = EnterPurchaserPhoneNumberSummary.row(Some(userAnswers))
 
-          result.key.content.asHtml.toString() mustEqual msgs("purchaser.enterPhoneNumber.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.purchaser.routes.EnterPurchaserPhoneNumberController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.purchaser.routes.EnterPurchaserPhoneNumberController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("purchaser.checkYourAnswers.enterPurchaserPhoneNumber.missing"))
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }

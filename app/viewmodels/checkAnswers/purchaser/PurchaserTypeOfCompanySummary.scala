@@ -22,13 +22,15 @@ import pages.purchaser.PurchaserTypeOfCompanyPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object PurchaserTypeOfCompanySummary {
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(CheckMode)
     answers.flatMap(_.get(PurchaserTypeOfCompanyPage)).map {
       answersObject =>
 
@@ -44,25 +46,18 @@ object PurchaserTypeOfCompanySummary {
           )
         )
 
-        SummaryListRowViewModel(
-          key = "purchaser.purchaserTypeOfCompany.checkYourAnswersLabel",
-          value = value,
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaser.purchaserTypeOfCompany.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key = "purchaser.purchaserTypeOfCompany.checkYourAnswersLabel",
+            value = value,
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("purchaser.purchaserTypeOfCompany.change.hidden"))
+            )
           )
         )
     }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="${controllers.purchaser.routes.PurchaserTypeOfCompanyController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.purchaserTypeOfCompany.missing")}</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = "purchaser.purchaserTypeOfCompany.checkYourAnswersLabel",
-        value = value
-      )
+      Missing(changeRoute)
     }
+  }
 }
-

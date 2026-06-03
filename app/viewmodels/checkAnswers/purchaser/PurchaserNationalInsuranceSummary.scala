@@ -21,34 +21,30 @@ import pages.purchaser.PurchaserNationalInsurancePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object PurchaserNationalInsuranceSummary  {
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(CheckMode)
     answers.flatMap(_.get(PurchaserNationalInsurancePage)).map {
       answer =>
 
-        SummaryListRowViewModel(
-          key     = "purchaser.nationalInsurance.checkYourAnswersLabel",
-          value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("purchaser.nationalInsurance.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key     = "purchaser.nationalInsurance.checkYourAnswersLabel",
+            value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("purchaser.nationalInsurance.change.hidden"))
+            )
           )
         )
     }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="${controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.purchaserNationalInsurance.missing")}</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = "purchaser.nationalInsurance.checkYourAnswersLabel",
-        value = value
-      )
+      Missing(changeRoute)
     }
+  }
 }

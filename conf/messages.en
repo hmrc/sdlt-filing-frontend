@@ -508,7 +508,6 @@ purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel                         
 purchaser.addPurchaserPhoneNumber.change.hidden                                     = Purchaser phone number yes or no
 
 purchaser.checkYourAnswers.purchaserAddress.label                                   = Address
-purchaser.checkYourAnswers.purchaserAddress.addressMissing                          = Enter purchaser address
 purchaser.checkYourAnswers.purchaserAddress.hidden                                  = Purchaser address
 purchaser.address.checkYourAnswersLabel                                             = Property address
 purchaser.address.change.hidden                                                     = Property address
@@ -659,7 +658,6 @@ purchaser.whoIsMakingThePurchase.Individual.checkYourAnswersLabel               
 
 purchaser.whoIsMakingThePurchase.Individual.hintText                                = This means any person liable to pay Stamp Duty Land Tax (SDLT)
 purchaser.whoIsMakingThePurchase.checkYourAnswersLabel                              = Type of purchaser
-purchaser.checkYourAnswers.whoIsMakingThePurchaser.Missing                          = Enter type of purchaser
 purchaser.whoIsMakingThePurchase.error.required                                     = Select an answer
 purchaser.whoIsMakingThePurchase.change.hidden                                      = Type of purchaser
 
@@ -788,23 +786,6 @@ purchaserAgent.BeforeYouStart.p2                                                
 purchaserAgent.BeforeYouStart.b4                                                    = the agent’s reference number
 purchaserAgent.BeforeYouStart.b5                                                    = the agent’s authorisation to handle correspondence
 purchaserAgent.BeforeYouStart.subheading                                            = Do you want to add an agent for the purchaser?
-
-purchaser.checkYourAnswers.iSPurchaserActingAsTrustee.missing                       = Select answer
-purchaser.checkYourAnswers.companyFormOfId.missing                                  = Enter another form of ID
-purchaser.checkYourAnswers.IndividualFormOfId.missing                               = Enter another form of ID
-purchaser.checkYourAnswers.confirmNameOfThePurchaser.Missing                        = confirmNameOfThePurchaser
-purchaser.checkYourAnswers.doesPurchaserHaveNI.missing                              = Select answer
-purchaser.checkYourAnswers.nameOfPurchaser.missing                                  = Enter name
-purchaser.checkYourAnswers.purchaserAndVendorConnected.missing                      = Select answer
-purchaser.checkYourAnswers.purchaserDateOfBirth.missing                             = Enter date of birth
-purchaser.checkYourAnswers.purchaserNationalInsurance.missing                       = Enter National Insurance number
-purchaser.checkYourAnswers.purchaserTypeOfCompany.missing                           = Select type of company
-purchaser.checkYourAnswers.registrationNumber.missing                               = Enter registration number
-purchaser.checkYourAnswers.addPurchaserPhoneNumber.missing                          = Select answer
-purchaser.checkYourAnswers.confirmIdentity.missing                                  = Select answer
-purchaser.checkYourAnswers.enterPurchaserPhoneNumber.missing                        = Enter contact number
-purchaser.checkYourAnswers.purchaserCorporationTaxUTR.missing                       = Enter UTR
-
 
 site.error.noReturnReference.title                                                  = You cannot reach this page
 site.error.noReturnReference.heading                                                = You cannot reach this page
@@ -1152,8 +1133,6 @@ purchaser.purchaserCompanyTypeKnown.heading                                     
 purchaser.purchaserCompanyTypeKnown.checkYourAnswersLabel                           = Do you know what type of company {0} is?
 purchaser.purchaserCompanyTypeKnown.error.required                                  = Select yes if you know what type of company {0} is
 purchaser.purchaserCompanyTypeKnown.change.hidden                                   = Do you know what type of company the purchaser is?
-purchaser.purchaserCompanyTypeKnown.missing                                         = Select yes or no
-
 
 transaction.beforeStart.title                                                       = Before you start - About the transaction
 transaction.beforeStart.p1                                                          = In this section, you need to tell us about the transaction.

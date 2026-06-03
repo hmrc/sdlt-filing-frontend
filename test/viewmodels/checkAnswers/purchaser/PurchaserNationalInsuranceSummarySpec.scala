@@ -22,6 +22,7 @@ import pages.purchaser.PurchaserNationalInsurancePage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class PurchaserNationalInsuranceSummarySpec extends SpecBase {
 
@@ -39,7 +40,11 @@ class PurchaserNationalInsuranceSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(PurchaserNationalInsurancePage, "AA123456A").success.value
 
-          val result = PurchaserNationalInsuranceSummary.row(Some(userAnswers))
+          val row = PurchaserNationalInsuranceSummary.row(Some(userAnswers))
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("purchaser.nationalInsurance.checkYourAnswersLabel")
 
@@ -52,25 +57,9 @@ class PurchaserNationalInsuranceSummarySpec extends SpecBase {
           result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.nationalInsurance.change.hidden")
         }
       }
-
-      "must use check mode to change link" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-        running(application) {
-          implicit val msgs: Messages = messages(application)
-
-          val userAnswers = emptyUserAnswers
-            .set(PurchaserNationalInsurancePage, "AA123465A").success.value
-
-          val result = PurchaserNationalInsuranceSummary.row(Some(userAnswers))
-
-          result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(CheckMode).url
-        }
-      }
-
     }
 
-    "must return a summary list row with a link to enter national insurance number when userAnswers is empty" in {
+    "must return a Missing and redirect call to missing page when data is not present" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -81,14 +70,13 @@ class PurchaserNationalInsuranceSummarySpec extends SpecBase {
 
         val result = PurchaserNationalInsuranceSummary.row(Some(userAnswers))
 
-        result.key.content.asHtml.toString() mustEqual msgs("purchaser.nationalInsurance.checkYourAnswersLabel")
+        result match {
+          case Missing(call) =>
+            call mustEqual controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(CheckMode)
 
-        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-
-        htmlContent must include("govuk-link")
-        htmlContent must include(controllers.purchaser.routes.PurchaserNationalInsuranceController.onPageLoad(CheckMode).url)
-        htmlContent must include(msgs("purchaser.checkYourAnswers.purchaserNationalInsurance.missing"))
-        result.actions mustBe None
+          case Row(_) =>
+            fail("Expected Missing but got Row")
+        }
       }
     }
   }

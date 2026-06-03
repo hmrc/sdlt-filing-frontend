@@ -21,36 +21,32 @@ import pages.purchaser.PurchaserFormOfIdIndividualPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object PurchaserFormOfIdIndividualSummary  {
 
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.purchaser.routes.PurchaserFormOfIdIndividualController.onPageLoad(CheckMode)
     answers.flatMap(_.get(PurchaserFormOfIdIndividualPage)).map {
       answer =>
 
       val value = HtmlFormat.escape(answer.idNumberOrReference).toString + "<br/>" + HtmlFormat.escape(answer.countryIssued).toString
 
+      Row(
         SummaryListRowViewModel(
           key     = "purchaser.formOfIdIndividual.checkYourAnswersLabel",
           value   = ValueViewModel(HtmlContent(value)),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.purchaser.routes.PurchaserFormOfIdIndividualController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", changeRoute.url)
               .withVisuallyHiddenText(messages("purchaser.formOfIdIndividual.change.hidden"))
           )
         )
+      )
     }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="${controllers.purchaser.routes.PurchaserFormOfIdIndividualController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("purchaser.checkYourAnswers.IndividualFormOfId.missing")}</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = "purchaser.formOfIdIndividual.checkYourAnswersLabel",
-        value = value
-      )
+      Missing(changeRoute)
     }
+  }
 }

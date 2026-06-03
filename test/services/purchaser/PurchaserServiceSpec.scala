@@ -19,9 +19,10 @@ package services.purchaser
 import base.SpecBase
 import constants.FullReturnConstants
 import models.*
+import models.address.{Address, Country}
 import models.purchaser.*
 import org.scalatest.prop.TableDrivenPropertyChecks.*
-import pages.purchaser._
+import pages.purchaser.*
 import play.api.mvc.Result
 import play.api.mvc.Results.Ok
 import play.api.test.Helpers.*
@@ -30,7 +31,8 @@ import scala.concurrent.Future
 import scala.util.Success
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 import java.time.LocalDate
 
@@ -1160,11 +1162,16 @@ class PurchaserServiceSpec extends SpecBase {
           .set(ConfirmNameOfThePurchaserPage, false).success.value
           .set(PurchaserTypeOfCompanyPage, purchaserTypeOfCompanyAnswers).success.value
           .set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.VatRegistrationNumber).success.value
+          .set(RegistrationNumberPage, "123456789").success.value
           .set(AddPurchaserPhoneNumberPage, true).success.value
           .set(EnterPurchaserPhoneNumberPage, "07477777777").success.value
           .set(PurchaserCompanyTypeKnownPage, true).success.value
 
-        val rows: Seq[SummaryListRow] = service.companyConditionalSummaryRows(userAnswers)
+        val rowResults: Seq[SummaryRowResult] = service.companyConditionalSummaryRows(userAnswers)
+        val rows = rowResults.map {
+          case Row(row) => row
+          case Missing(call) => fail(s"Expected Row but got Missing with redirect to $call")
+        }
 
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.confirmIdentity.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.registrationNumber.checkYourAnswersLabel")
@@ -1181,17 +1188,22 @@ class PurchaserServiceSpec extends SpecBase {
           .set(ConfirmNameOfThePurchaserPage, false).success.value
           .set(PurchaserTypeOfCompanyPage, purchaserTypeOfCompanyAnswers).success.value
           .set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.CorporationTaxUTR).success.value
+          .set(PurchaserUTRPage, "1234567890").success.value
           .set(AddPurchaserPhoneNumberPage, false).success.value
           .set(PurchaserCompanyTypeKnownPage, true).success.value
 
-        val rows: Seq[SummaryListRow] = service.companyConditionalSummaryRows(userAnswers)
+        val rowResults: Seq[SummaryRowResult] = service.companyConditionalSummaryRows(userAnswers)
+        val rows = rowResults.map {
+          case Row(row) => row
+          case Missing(call) => fail(s"Expected Row but got Missing with redirect to $call")
+        }
 
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.confirmIdentity.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.corporationTaxUTR.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.purchaserTypeOfCompany.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.purchaserCompanyTypeKnown.checkYourAnswersLabel")
-        rows.map(_.key.content.asHtml.toString) must not contain ("purchaser.enterPhoneNumber.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must contain("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel")
 
       }
 
@@ -1202,15 +1214,21 @@ class PurchaserServiceSpec extends SpecBase {
           .set(ConfirmNameOfThePurchaserPage, false).success.value
           .set(PurchaserTypeOfCompanyPage, purchaserTypeOfCompanyAnswers).success.value
           .set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.PartnershipUTR).success.value
+          .set(PurchaserUTRPage, "1234567890").success.value
+          .set(AddPurchaserPhoneNumberPage, false).success.value
           .set(PurchaserCompanyTypeKnownPage, true).success.value
 
-        val rows: Seq[SummaryListRow] = service.companyConditionalSummaryRows(userAnswers)
+        val rowResults: Seq[SummaryRowResult] = service.companyConditionalSummaryRows(userAnswers)
+        val rows = rowResults.map {
+          case Row(row) => row
+          case Missing(call) => fail(s"Expected Row but got Missing with redirect to $call")
+        }
 
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.confirmIdentity.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.corporationTaxUTR.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.purchaserTypeOfCompany.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.purchaserCompanyTypeKnown.checkYourAnswersLabel")
-
+        rows.map(_.key.content.asHtml.toString) must contain("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel")
       }
 
       "must return summary rows when PurchaserConfirmIdentity is AnotherFormOfID" in {
@@ -1220,14 +1238,21 @@ class PurchaserServiceSpec extends SpecBase {
           .set(ConfirmNameOfThePurchaserPage, false).success.value
           .set(PurchaserTypeOfCompanyPage, purchaserTypeOfCompanyAnswers).success.value
           .set(PurchaserConfirmIdentityPage, PurchaserConfirmIdentity.AnotherFormOfID).success.value
+          .set(CompanyFormOfIdPage, CompanyFormOfId("1234", "Germany")).success.value
+          .set(AddPurchaserPhoneNumberPage, false).success.value
           .set(PurchaserCompanyTypeKnownPage, true).success.value
 
-        val rows: Seq[SummaryListRow] = service.companyConditionalSummaryRows(userAnswers)
+        val rowResults: Seq[SummaryRowResult] = service.companyConditionalSummaryRows(userAnswers)
+        val rows = rowResults.map {
+          case Row(row) => row
+          case Missing(call) => fail(s"Expected Row but got Missing with redirect to $call")
+        }
 
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.confirmIdentity.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.companyFormOfId.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.purchaserCompanyTypeKnown.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.purchaserTypeOfCompany.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must contain("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel")
 
       }
 
@@ -1238,15 +1263,21 @@ class PurchaserServiceSpec extends SpecBase {
           .set(ConfirmNameOfThePurchaserPage, false).success.value
           .set(PurchaserTypeOfCompanyPage, purchaserTypeOfCompanyAnswers).success.value
           .set(PurchaserUTRPage, "11111111").success.value
+          .set(AddPurchaserPhoneNumberPage, false).success.value
           .set(PurchaserCompanyTypeKnownPage, true).success.value
 
-        val rows: Seq[SummaryListRow] = service.companyConditionalSummaryRows(userAnswers)
+        val rowResults: Seq[SummaryRowResult] = service.companyConditionalSummaryRows(userAnswers)
+        val rows = rowResults.map {
+          case Row(row) => row
+          case Missing(call) => fail(s"Expected Row but got Missing with redirect to $call")
+        }
 
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.confirmIdentity.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.corporationTaxUTR.checkYourAnswersLabel")
         rows.map(_.value.content.asHtml.toString) must contain("11111111")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.purchaserCompanyTypeKnown.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.purchaserTypeOfCompany.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must contain("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel")
       }
     }
 
@@ -1261,7 +1292,12 @@ class PurchaserServiceSpec extends SpecBase {
           .set(AddPurchaserPhoneNumberPage, true).success.value
           .set(EnterPurchaserPhoneNumberPage, "07477777777").success.value
 
-        val rows: Seq[SummaryListRow] = service.individualConditionalSummaryRows(userAnswers)
+
+        val rowResults: Seq[SummaryRowResult] = service.individualConditionalSummaryRows(userAnswers)
+        val rows = rowResults.map {
+          case Row(row) => row
+          case Missing(call) => fail(s"Expected Row but got Missing with redirect to $call")
+        }
 
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.doesPurchaserHaveNI.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.nationalInsurance.checkYourAnswersLabel")
@@ -1276,41 +1312,80 @@ class PurchaserServiceSpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
           .set(DoesPurchaserHaveNIPage, false).success.value
+          .set(PurchaserFormOfIdIndividualPage, PurchaserFormOfIdIndividual("1234", "Germany")).success.value
           .set(PurchaserNationalInsurancePage, "FFFFFFF").success.value
           .set(PurchaserDateOfBirthPage, java.time.LocalDate.now()).success.value
           .set(AddPurchaserPhoneNumberPage, false).success.value
 
-        val rows: Seq[SummaryListRow] = service.individualConditionalSummaryRows(userAnswers)
+        val rowResults: Seq[SummaryRowResult] = service.individualConditionalSummaryRows(userAnswers)
+        val rows = rowResults.map {
+          case Row(row) => row
+          case Missing(call) => fail(s"Expected Row but got Missing with redirect to $call")
+        }
+
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.doesPurchaserHaveNI.checkYourAnswersLabel")
-        rows.map(_.key.content.asHtml.toString) must not contain ("purchaser.nationalInsurance.checkYourAnswersLabel")
-        rows.map(_.key.content.asHtml.toString) must not contain ("purchaser.dateOfBirth.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must contain("purchaser.formOfIdIndividual.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must not contain("purchaser.nationalInsurance.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must not contain("purchaser.dateOfBirth.checkYourAnswersLabel")
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel")
-        rows.map(_.key.content.asHtml.toString) must not contain ("purchaser.enterPhoneNumber.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must not contain("purchaser.enterPhoneNumber.checkYourAnswersLabel")
 
       }
     }
 
     "initialSummaryRows" - {
-      "must return summary rows with add contact no as YES" in {
+      "must return summary rows with purchaser type as individual" in {
         implicit val messages: Messages = stubMessages()
         val userAnswers = emptyUserAnswers
           .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
           .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = Some("Test"), forename2 = Some("Test"), name = "Test")).success.value
+          .set(PurchaserAddressPage, Address(
+            line1 = "123 Test Street",
+            line2 = Some("Test Area"),
+            line3 = Some("Test Town"),
+            line4 = Some("Test County"),
+            line5 = None,
+            postcode = Some("AA1 1AA"),
+            country = Some(Country(Some("GB"), Some("United Kingdom")))
+          )).success.value
 
-        val rows: Seq[SummaryListRow] = service.initialSummaryRows(userAnswers)
+        val rowResults: Seq[SummaryRowResult] = service.initialSummaryRows(userAnswers)
+        val rows = rowResults.map {
+          case Row(row) => row
+          case Missing(call) => fail(s"Expected Row but got Missing with redirect to $call")
+        }
 
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.nameOfThePurchaser.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must contain("purchaser.whoIsMakingThePurchase.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must contain("purchaser.checkYourAnswers.purchaserAddress.label")
+        rows.map(_.value.content.asHtml.toString) must contain("purchaser.whoIsMakingThePurchase.Individual.checkYourAnswersLabel")
       }
 
-      "must return summary rows with with add contact no as NO" in {
+      "must return summary rows with purchaser type company" in {
         implicit val messages: Messages = stubMessages()
         val userAnswers = emptyUserAnswers
-          .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Individual).success.value
-          .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = Some("Test"), forename2 = Some("Test"), name = "Test")).success.value
+          .set(WhoIsMakingThePurchasePage, WhoIsMakingThePurchase.Company).success.value
+          .set(NameOfPurchaserPage, NameOfPurchaser(forename1 = None, forename2 = None, name = "Test")).success.value
+          .set(PurchaserAddressPage, Address(
+            line1 = "123 Test Street",
+            line2 = Some("Test Area"),
+            line3 = Some("Test Town"),
+            line4 = Some("Test County"),
+            line5 = None,
+            postcode = Some("AA1 1AA"),
+            country = Some(Country(Some("GB"), Some("United Kingdom")))
+          )).success.value
 
-        val rows: Seq[SummaryListRow] = service.initialSummaryRows(userAnswers)
+        val rowResults: Seq[SummaryRowResult] = service.initialSummaryRows(userAnswers)
+        val rows = rowResults.map {
+          case Row(row) => row
+          case Missing(call) => fail(s"Expected Row but got Missing with redirect to $call")
+        }
 
         rows.map(_.key.content.asHtml.toString) must contain("purchaser.nameOfThePurchaser.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must contain("purchaser.whoIsMakingThePurchase.checkYourAnswersLabel")
+        rows.map(_.key.content.asHtml.toString) must contain("purchaser.checkYourAnswers.purchaserAddress.label")
+        rows.map(_.value.content.asHtml.toString) must contain("purchaser.whoIsMakingThePurchase.Company.checkYourAnswersLabel")
       }
     }
 
