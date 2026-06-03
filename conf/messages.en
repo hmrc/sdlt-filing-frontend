@@ -1503,8 +1503,8 @@ taxCalculation.calculation.propertyType.04                                      
 
 taxCalculation.calculation.returnToTaxCalculation                                   = Return to tax calculation
 
-taxCalculation.sdltSelfAssessment.checkYourAnswersLabel                             = Self-assessed amount of SDLT
-taxCalculation.sdltSelfAssessment.change.hidden                                     = self-assessed amount of SDLT
+taxCalculation.sdltSelfAssessment.checkYourAnswersLabel                             = Self-assessed SDLT due
+taxCalculation.sdltSelfAssessment.change.hidden                                     = self-assessed SDLT due
 
 taxCalculation.sdltSelfAssessment.error.required                                    = Enter the self-assessed amount of SDLT, in pounds
 taxCalculation.sdltSelfAssessment.error.invalidNumeric                              = The self-assessed amount of SDLT must only include commas and numbers 0 to 9
