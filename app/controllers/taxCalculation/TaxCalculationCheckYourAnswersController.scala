@@ -93,7 +93,7 @@ class TaxCalculationCheckYourAnswersController @Inject()(
         Redirect(errorHandler(err))
     }
 
-  private def buildRowResults(result: TaxCalculationResult)(implicit request: DataRequest[?]): Seq[SummaryRowResult] = {
+  private[taxCalculation] def buildRowResults(result: TaxCalculationResult)(implicit request: DataRequest[?]): Seq[SummaryRowResult] = {
 
     val ua   = request.userAnswers
     val flow = ua.get(TaxCalculationFlowPage)
@@ -106,8 +106,16 @@ class TaxCalculationCheckYourAnswersController @Inject()(
         FreeholdTaxCalculatedTotalAmountDueSummary.row(Some(ua)),
         FreeholdTaxCalculatedDoesAmountIncludePenaltiesSummary.row(Some(ua))
       )
-      // TODO: add the FreeholdSelfAssessed, LeaseholdTaxCalculated and LeaseholdSelfAssessed row sets (mirror the FreeholdTaxCalculated arm above)
+      case Some(FreeholdSelfAssessed) =>
+        Seq(
+          FreeholdSelfAssessedAmountSummary.row(Some(ua)),
+          PenaltiesDueSummary.row(Some(ua), timeMachine),
+          FreeholdSelfAssessedTotalAmountDueSummary.row(Some(ua)),
+          FreeholdSelfAssessedDoesAmountIncludePenaltiesSummary.row(Some(ua))
+        )
+
       case _ => Nil
     }
+
   }
 }

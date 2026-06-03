@@ -24,7 +24,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.taxCalculation.freeholdSelfAssessed.{FreeholdSelfAssessedPenaltiesAndInterestPage, FreeholdSelfAssessedTotalAmountDuePage}
+import pages.taxCalculation.freeholdSelfAssessed.*
 import pages.taxCalculation.freeholdTaxCalculated.{FreeholdTaxCalculatedPenaltiesAndInterestPage, FreeholdTaxCalculatedSelfAssessedAmountPage, FreeholdTaxCalculatedTotalAmountDuePage}
 import pages.taxCalculation.leaseholdSelfAssessed.{LeaseholdSelfAssessedNpvTaxPage, LeaseholdSelfAssessedPenaltiesAndInterestPage, LeaseholdSelfAssessedPremiumPayableTaxPage, LeaseholdSelfAssessedTotalAmountDuePage}
 import pages.taxCalculation.leaseholdTaxCalculated.{LeaseholdTaxCalculatedPenaltiesAndInterestPage, LeaseholdTaxCalculatedSelfAssessedAmountPage, LeaseholdTaxCalculatedTotalAmountDuePage}
@@ -70,15 +70,15 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
       .set(FreeholdTaxCalculatedPenaltiesAndInterestPage, true).success.value
 
     val freeholdSelfAssessedUserAnswers: UserAnswers = emptyUserAnswers
-      .set(FreeholdTaxCalculatedSelfAssessedAmountPage, freeholdSelfAssessedCalculatedSelfAssessedAmount)
-      .success.value
       .copy(fullReturn = Some(FullReturn(
         stornId = "STORN",
         returnResourceRef = "REF",
         transaction = Some(Transaction(effectiveDate = Some(today.toString)))
       )))
-      .set(FreeholdSelfAssessedTotalAmountDuePage, "43957").success.value
+      .set(FreeholdSelfAssessedAmountPage, "43957").success.value
       .set(FreeholdSelfAssessedPenaltiesAndInterestPage, true).success.value
+      .set(FreeholdSelfAssessedTotalAmountDuePage, "12358").success.value
+
 
     val leaseholdSelfAssessedUserAnswer: UserAnswers = emptyUserAnswers
       .set(LeaseholdSelfAssessedPremiumPayableTaxPage, leaseholdSelfAssessedPremiumPayableTaxPageAmount)
@@ -124,7 +124,7 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
           }
         case FreeholdSelfAssessed =>
           Seq(
-            FreeholdTaxCalculatedSelfAssessedAmountSummary.row(Some(freeholdSelfAssessedUserAnswers)),
+            FreeholdSelfAssessedAmountSummary.row(Some(freeholdSelfAssessedUserAnswers)),
             PenaltiesDueSummary.row(Some(freeholdSelfAssessedUserAnswers), stubbedTimeMachine),
             FreeholdSelfAssessedTotalAmountDueSummary.row(Some(freeholdSelfAssessedUserAnswers)),
             FreeholdSelfAssessedDoesAmountIncludePenaltiesSummary.row(Some(freeholdSelfAssessedUserAnswers))
@@ -168,7 +168,7 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
         doc.select("title").first().text() must include(msgs("taxCalculation.checkYourAnswers.title"))
         doc.text() must include(sdltAmountDue)
         doc.text() must include(freeholdTaxCalculatedSelfAssessedAmount)
-        doc.text() must include("SDLT Penalties due £0")
+        doc.text() must include("Penalties due £0")
         doc.text() must include("Amount to be paid £43950")
         doc.text() must include("Change amount to be paid Does the amount include penalties and interest? Yes")
 
@@ -187,9 +187,9 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
 
         doc.select("title").first().text() must include(msgs("taxCalculation.checkYourAnswers.title"))
 
-        doc.text() must include(freeholdSelfAssessedCalculatedSelfAssessedAmount)
-        doc.text() must include("SDLT Penalties due £0")
-        doc.text() must include("Amount to be paid £43957")
+        doc.text() must include("Self-assessed SDLT due £43957")
+        doc.text() must include("Penalties due £0")
+        doc.text() must include("Amount to be paid £12358")
         doc.text() must include("Change amount to be paid Does the amount include penalties and interest? Yes")
 
         doc.select("p").toArray().tail.head.asInstanceOf[Element].text() mustBe msgs("taxCalculation.checkYourAnswers.declaration.text")
@@ -206,10 +206,9 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
         val doc = Jsoup.parse(view(viewModel).toString())
 
         doc.select("title").first().text() must include(msgs("taxCalculation.checkYourAnswers.title"))
-
         doc.text() must include("HMRC calculated SDLT due £7179")
-        doc.text() must include("Self-assessed amount of SDLT £1191")
-        doc.text() must include("self-assessed amount of SDLT Penalties due £0")
+        doc.text() must include("Self-assessed SDLT due £1191")
+        doc.text() must include("Penalties due £0")
         doc.text() must include("Amount to be paid £389")
         doc.text() must include("Change amount to be paid Does the amount include penalties and interest? No")
 
