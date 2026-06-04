@@ -71,7 +71,7 @@ class TaxCalculationTaskListSpec extends SpecBase {
       }
     }
 
-    ".buildTransactionRow" - {
+    ".buildTaxCalculationRow" - {
       "must return TaskListSectionRow" in {
         val application = applicationBuilder().build()
 
@@ -131,6 +131,20 @@ class TaxCalculationTaskListSpec extends SpecBase {
           val result = TaxCalculationTaskList.buildTaxCalculationRow(emptyFullReturn)
 
           result.status mustBe TLCannotStart
+        }
+      }
+
+      "must link to the confirm effective date page whether complete or not" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          TaxCalculationTaskList.buildTaxCalculationRow(fullReturnComplete).url mustBe
+            controllers.taxCalculation.routes.TaxCalculationConfirmEffectiveDateOfTransactionController.onPageLoad().url
+
+          TaxCalculationTaskList.buildTaxCalculationRow(emptyFullReturn).url mustBe
+            controllers.taxCalculation.routes.TaxCalculationConfirmEffectiveDateOfTransactionController.onPageLoad().url
         }
       }
     }

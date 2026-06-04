@@ -349,7 +349,12 @@ class Navigator @Inject()() {
   }
 
   private def beforeTaxCalculationFlowRoutes(page: Page): UserAnswers => Call = page match {
-    case ConfirmEffectiveDateOfTransactionPage => _ => controllers.taxCalculation.routes.TaxCalculationBeforeYouStartController.onPageLoad()
+    case ConfirmEffectiveDateOfTransactionPage => userAnswers =>
+      if (userAnswers.fullReturn.flatMap(_.taxCalculation).exists(_.taxDue.nonEmpty)) {
+        controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
+      } else {
+        controllers.taxCalculation.routes.TaxCalculationBeforeYouStartController.onPageLoad()
+      }
     case _ => _ => routes.IndexController.onPageLoad() // TODO: TO BE UPDATED
   }
 

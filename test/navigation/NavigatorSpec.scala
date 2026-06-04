@@ -474,9 +474,20 @@ class NavigatorSpec extends SpecBase {
       }
 
       "taxCalculation routes" - {
-        "go from ConfirmEffectiveDateOfTransactionPage to TaxCalculationBeforeYouStartController page" in {
+        "go from ConfirmEffectiveDateOfTransactionPage to the Before You Start page when no tax calculation exists yet" in {
           navigator.nextPage(ConfirmEffectiveDateOfTransactionPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
             controllers.taxCalculation.routes.TaxCalculationBeforeYouStartController.onPageLoad()
+        }
+
+        "go from ConfirmEffectiveDateOfTransactionPage to Check Your Answers when a tax calculation already exists" in {
+          val answers = UserAnswers("id", storn = "TESTSTORN", fullReturn = Some(FullReturn(
+            stornId = "TESTSTORN",
+            returnResourceRef = "REF",
+            taxCalculation = Some(TaxCalculation(taxDue = Some("12500")))
+          )))
+
+          navigator.nextPage(ConfirmEffectiveDateOfTransactionPage, NormalMode, answers) mustBe
+            controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
         }
       }
 
