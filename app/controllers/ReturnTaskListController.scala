@@ -24,6 +24,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.pdf.PDFGenerationService
 import services.FullReturnService
+import services.crossflow.{ReturnSection, SectionStatus}
+import services.crossflow.fields.CrossFlowValidationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{LeaseHelper, PropertyTypeHelper}
 import viewmodels.tasklist.*
@@ -41,7 +43,8 @@ class ReturnTaskListController @Inject()(
                                           val controllerComponents: MessagesControllerComponents,
                                           view: ReturnTaskListView,
                                           sessionRepository: SessionRepository,
-                                          pdfGenerationService: PDFGenerationService
+                                          pdfGenerationService: PDFGenerationService,
+                                          crossFlowService: CrossFlowValidationService
                                         )(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig)
   extends FrontendBaseController
     with I18nSupport {
@@ -57,6 +60,11 @@ class ReturnTaskListController @Inject()(
           userAnswers  = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = request.storn)
           _           <- sessionRepository.set(userAnswers)
         } yield {
+          val statuses = crossFlowService.sectionStatuses(userAnswers)
+          val transactionStatus = statuses.getOrElse(ReturnSection.Transaction,
+            SectionStatus(ReturnSection.Transaction, false, Nil, Nil, Nil))
+
+
           val sections = List(
             Some(VendorTaskList.build(fullReturn)),
             Some(VendorAgentTaskList.build(fullReturn)),
@@ -64,7 +72,7 @@ class ReturnTaskListController @Inject()(
             Some(PurchaserAgentTaskList.build(fullReturn)),
             Some(LandTaskList.build(fullReturn)),
             if (PropertyTypeHelper.isResidentialProperty(fullReturn)) Some(UkResidencyTaskList.build(fullReturn)) else None,
-            Some(TransactionTaskList.build(fullReturn)),
+            Some(TransactionTaskList.build(fullReturn, transactionStatus)),
             if (LeaseHelper.isLeaseDefined(fullReturn)) Some(LeaseTaskList.build(fullReturn)) else None,
             Some(TaxCalculationTaskList.build(fullReturn))
           ).flatten

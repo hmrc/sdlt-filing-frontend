@@ -21,10 +21,14 @@ import config.FrontendAppConfig
 import constants.FullReturnConstants.*
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
+import services.crossflow.{CrossFlowTarget, PageId, Pages, ReturnSection, SectionStatus}
+import models.CheckMode
 
 class TransactionTaskListSpec extends SpecBase {
 
   private val fullReturnComplete = completeFullReturn
+  private val noFailures: SectionStatus =
+    SectionStatus(ReturnSection.Transaction, hasFailures = false, ruleIds = Nil, messageKeys = Nil, targets = Nil)
 
   "TransactionTaskList" - {
 
@@ -36,7 +40,7 @@ class TransactionTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.build(fullReturnComplete)
+          val result = TransactionTaskList.build(fullReturnComplete,noFailures)
 
           result mustBe a[TaskListSection]
           result.heading mustBe messagesInstance("tasklist.transactionQuestion.heading")
@@ -50,7 +54,7 @@ class TransactionTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.build(emptyFullReturn)
+          val result = TransactionTaskList.build(emptyFullReturn, noFailures)
 
           result mustBe a[TaskListSection]
           result.heading mustBe messagesInstance("tasklist.transactionQuestion.heading")
@@ -64,7 +68,7 @@ class TransactionTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.build(fullReturnComplete)
+          val result = TransactionTaskList.build(fullReturnComplete, noFailures)
 
           result.rows.size mustBe 1
         }
@@ -78,7 +82,7 @@ class TransactionTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete)
+          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, noFailures)
 
           result mustBe a[TaskListSectionRow]
         }
@@ -90,7 +94,7 @@ class TransactionTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete)
+          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, noFailures)
 
           result.tagId mustBe "transactionQuestionDetailRow"
         }
@@ -103,7 +107,7 @@ class TransactionTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete)
+          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, noFailures)
 
           messagesInstance(result.messageKey) mustBe messagesInstance("tasklist.transactionQuestion.details")
         }
@@ -116,7 +120,7 @@ class TransactionTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete)
+          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, noFailures)
 
           result.status mustBe TLCompleted
         }
@@ -128,7 +132,7 @@ class TransactionTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.buildTransactionRow(emptyFullReturn)
+          val result = TransactionTaskList.buildTransactionRow(emptyFullReturn, noFailures)
 
           result.status mustBe TLCannotStart
         }
@@ -143,7 +147,7 @@ class TransactionTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val section = TransactionTaskList.build(fullReturnComplete)
+          val section = TransactionTaskList.build(fullReturnComplete, noFailures)
           val row = section.rows.head
 
           section.heading mustBe messagesInstance("tasklist.transactionQuestion.heading")
@@ -160,13 +164,124 @@ class TransactionTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val section = TransactionTaskList.build(emptyFullReturn)
+          val section = TransactionTaskList.build(emptyFullReturn, noFailures)
           val row = section.rows.head
 
           section.heading mustBe messagesInstance("tasklist.transactionQuestion.heading")
           messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.transactionQuestion.details")
           row.status mustBe TLCannotStart
           row.url mustBe controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
+        }
+      }
+    }
+    ".buildTransactionRow with cross-flow failures" - {
+
+      def singleFailure(targetPage: PageId): SectionStatus =
+        SectionStatus(
+          section = ReturnSection.Transaction,
+          hasFailures = true,
+          ruleIds = Seq("F23-test"),
+          messageKeys = Seq("test.message"),
+          targets = Seq(CrossFlowTarget(targetPage, "value"))
+        )
+
+      val multipleFailures: SectionStatus =
+        SectionStatus(
+          section = ReturnSection.Transaction,
+          hasFailures = true,
+          ruleIds = Seq("F23-a", "F23-b"),
+          messageKeys = Seq("a.message", "b.message"),
+          targets = Seq(
+            CrossFlowTarget(Pages.ReliefReason, "value"),
+            CrossFlowTarget(Pages.EffectiveDate, "value")
+          )
+        )
+
+      "must mark the row as invalid when there is a single failure" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, singleFailure(Pages.ReliefReason))
+
+          result.status mustBe TLInvalid
+        }
+      }
+
+      "must route to the relief reason page when that is the single target" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, singleFailure(Pages.ReliefReason))
+
+          result.url mustBe controllers.transaction.routes.ReasonForReliefController.onPageLoad(CheckMode).url
+        }
+      }
+
+      "must route to the effective date page when that is the single target" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, singleFailure(Pages.EffectiveDate))
+
+          result.url mustBe controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode).url
+        }
+      }
+
+      "must route to CYA when the single target has no specific route" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, singleFailure(Pages.LandPropertyType))
+
+          result.url mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
+        }
+      }
+
+      "must route to CYA when there are multiple failures" - {
+
+        "to surface the error summary listing every conflict" in {
+          val application = applicationBuilder().build()
+
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+            val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, multipleFailures)
+
+            result.url mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
+          }
+        }
+      }
+
+      "must defer to cannot-start when prerequisites are unmet, even with cross-flow failures" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(emptyFullReturn, singleFailure(Pages.ReliefReason))
+
+          result.status mustBe TLCannotStart
+        }
+      }
+      
+      "must default to no failures when status is omitted" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.build(fullReturnComplete)
+
+          result.rows.head.status mustNot be(TLInvalid)
         }
       }
     }

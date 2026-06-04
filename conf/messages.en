@@ -138,6 +138,7 @@ tasklist.transactionQuestion.details                                            
 tasklist.transactionQuestion.heading                                                = Transaction Questions
 tasklist.taxCalculationQuestion.details                                             = Tax Calculation Questions
 tasklist.taxCalculationQuestion.heading                                             = Tax Calculation Questions
+tasklist.invalid                                                                    = Needs review
 
 # Check Your Answers
 site.checkYourAnswers.heading                                                       = Check your answers
@@ -1940,3 +1941,16 @@ lease.netPresentValue.error.invalidNumeric                                      
 lease.netPresentValue.error.invalidWholeNumber                                      = Enter the net present value upon which tax is calculated in whole pounds
 lease.netPresentValue.error.maximum                                                 = The net present value upon which tax is calculated must be equal to or less than £9,999,999,999
 lease.netPresentValue.change.hidden                                                 = Net present value (NPV)
+
+# Crossflow Errors
+# ---- Cross-flow validation errors ----
+
+crossflow.relief.firstTimeBuyer.notResidential                                      = First Time Buyer relief can only be claimed for residential property. Check the property type or the relief reason.
+crossflow.relief.multipleDwellings.notAllowedPropertyType                           = Multiple Dwellings Relief cannot be claimed for non-residential property. Check the property type or the relief reason.
+crossflow.relief.preCompletion.dateTooEarly                                         = Pre-completion transaction relief is only available for an effective date on or after 6 March 2013. Check the effective date or the relief reason.
+crossflow.relief.fifteenPercentRate.dateTooEarly                                    = Relief from the 15% rate of SDLT is only available for an effective date on or after 6 March 2013. Check the effective date or the relief reason.
+crossflow.relief.freeport.outsideWindow                                             = Relief for Freeport tax site can only be claimed for an effective date between 19 October 2021 and 30 September 2026. Check the effective date or the relief reason.
+crossflow.relief.investmentZone.outsideWindow                                       = Relief for Investment Zone tax site can only be claimed for an effective date between 29 September 2023 and 30 September 2034. Check the effective date or the relief reason.
+crossflow.relief.seeding.dateTooEarly                                               = Seeding relief is only available for an effective date on or after 19 March 2025. Check the effective date or the relief reason.
+crossflow.relief.multipleDwellings.effectiveDateTooLate                             = Multiple Dwellings Relief is only available for an effective date before 1 June 2024. Check the effective date or the relief reason.
+crossflow.relief.multipleDwellings.contractDateTooLate                              = Multiple Dwellings Relief is only available for a contract dated before 7 March 2024. Check the contract date or the relief reason.

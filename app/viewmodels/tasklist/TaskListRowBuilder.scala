@@ -26,6 +26,7 @@ case class TaskListRowBuilder(messageKey: FullReturn => String,
                               checks: FullReturn => Seq[Boolean],
                               prerequisites: FullReturn => Seq[TaskListRowBuilder],
                               error: FullReturn => Boolean = _ => false,
+                              invalid: FullReturn => Boolean = _ => false,
                               canEdit: TaskListState => Boolean = _ => false,
                               isOptional: Boolean = false) {
 
@@ -42,17 +43,18 @@ case class TaskListRowBuilder(messageKey: FullReturn => String,
 
     checkCompleteness(prerequisites(fullReturn))
   }
-  
+
 
   def build(fullReturn: FullReturn): TaskListSectionRow = {
     val preCheck: Boolean = prerequisitesMet(fullReturn)
     val status = preCheck match {
-      case true if(error(fullReturn)) => TLFailed
-      case true if(isComplete(fullReturn)) => TLCompleted
-      case true if(checks(fullReturn).contains(true)) => TLInProgress
-      case true if(isOptional) => TLOptional
-      case true => TLNotStarted
-      case _ => TLCannotStart
+      case true if invalid(fullReturn)          => TLInvalid
+      case true if error(fullReturn)            => TLFailed
+      case true if isComplete(fullReturn)       => TLCompleted
+      case true if checks(fullReturn).contains(true) => TLInProgress
+      case true if isOptional                   => TLOptional
+      case true                                 => TLNotStarted
+      case _                                    => TLCannotStart
     }
 
     TaskListSectionRow(messageKey(fullReturn), url(fullReturn)(status), tagId, status, canEdit(status))

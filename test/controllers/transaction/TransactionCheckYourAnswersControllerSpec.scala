@@ -650,5 +650,152 @@ class TransactionCheckYourAnswersControllerSpec
         }
       }
     }
+
+    "cross-flow handling" - {
+
+      import services.crossflow.{CrossFlowFailure, CrossFlowTarget, Pages, ReturnSection}
+      import services.crossflow.fields.CrossFlowValidationService
+
+      def stubCrossFlow(failures: Seq[CrossFlowFailure]): CrossFlowValidationService =
+        new CrossFlowValidationService(Set.empty) {
+          override def failuresAffecting(section: ReturnSection, ua: UserAnswers): Seq[CrossFlowFailure] = failures
+        }
+
+      def failure(targetPage: services.crossflow.PageId, ruleId: String = "TEST"): CrossFlowFailure =
+        CrossFlowFailure(
+          ruleId = ruleId,
+          affects = ReturnSection.Transaction,
+          messageKey = "test.message",
+          targets = Seq(CrossFlowTarget(targetPage, "value"))
+        )
+
+      "must redirect to the relief reason page when a single cross-flow failure targets it" in {
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(completeUserAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(stubCrossFlow(Seq(failure(Pages.ReliefReason))))
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual
+            routes.ReasonForReliefController.onPageLoad(models.CheckMode).url
+        }
+      }
+
+      "must redirect to the effective date page when a single cross-flow failure targets it" in {
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(completeUserAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(stubCrossFlow(Seq(failure(Pages.EffectiveDate))))
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual
+            routes.TransactionEffectiveDateController.onPageLoad(models.CheckMode).url
+        }
+      }
+
+      "must redirect to the contract date page when a single cross-flow failure targets it" in {
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(completeUserAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(stubCrossFlow(Seq(failure(Pages.ContractDate))))
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual
+            routes.TransactionDateOfContractController.onPageLoad(models.CheckMode).url
+        }
+      }
+
+      "must fall back to CYA when a cross-flow failure has no recognised target page" in {
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(completeUserAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(stubCrossFlow(Seq(failure(Pages.LandPropertyType))))
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual
+            routes.TransactionCheckYourAnswersController.onPageLoad().url
+        }
+      }
+
+      "must redirect on the first failure when there are multiple" in {
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(completeUserAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(stubCrossFlow(Seq(
+              failure(Pages.ReliefReason, "A"),
+              failure(Pages.EffectiveDate, "B")
+            )))
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual
+            routes.ReasonForReliefController.onPageLoad(models.CheckMode).url
+        }
+      }
+
+      "must render the page normally when there are no cross-flow failures" in {
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(completeUserAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(stubCrossFlow(Nil))
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+        }
+      }
+    }
+    
   }
 }
