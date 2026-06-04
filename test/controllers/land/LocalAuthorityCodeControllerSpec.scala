@@ -26,7 +26,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.land.{LandAddressPage, LocalAuthorityCodePage}
+import pages.land.LocalAuthorityCodePage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -69,7 +69,6 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
     postcode = Some("TE1 6XE")
   )
 
-
   val completeLandForScotland: Land = Land(
     landID = Some("LND002"),
     returnID = Some("RET123456788"),
@@ -77,13 +76,14 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
   )
 
   val lands: Option[Seq[Land]] = Some(Seq(completeLandForUK, completeLandForScotland))
-  val transactions : Option[Transaction] = Some(completeTransaction)
+  val transactions: Option[Transaction] = Some(completeTransaction)
 
   private def fullReturnWithReqData: FullReturn = {
     emptyFullReturn.copy(land = lands)
-                   .copy(transaction = transactions)
+      .copy(transaction = transactions)
   }
 
+  // userAnswersData has land with postcodes in fullReturn — postcode check will pass
   val userAnswersData: UserAnswers =
     UserAnswers(userAnswersId, storn = testStorn)
       .copy(fullReturn = Some(fullReturnWithReqData))
@@ -110,12 +110,12 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
     false
   )
 
-
   "LocalAuthorityCode Controller" - {
     "On Load()" - {
       "must return OK and the correct view for a GET" in {
 
-        val userAnswers: UserAnswers = emptyUserAnswers.set(LandAddressPage, testAddress).success.value
+        // Controller derives postcode from fullReturn.land — must have land with a postcode
+        val userAnswers: UserAnswers = userAnswersData
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -135,8 +135,8 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
 
         val form = formProvider(Some(LocalDate.parse("2019-12-31")), Some(LocalDate.parse("2019-12-31")), Some("RG1 7NQ"))
 
-        val userAnswers = emptyUserAnswers
-          .set(LandAddressPage, testAddress).success.value
+        // Must have land with postcode in fullReturn, plus LocalAuthorityCodePage already set
+        val userAnswers = userAnswersData
           .set(LocalAuthorityCodePage, "1234").success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -151,8 +151,9 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must redirect to Confirm Land or Property Address page is not address found in session" in {
+      "must redirect to Confirm Land or Property Address page when no postcode is found in fullReturn land" in {
 
+        // emptyUserAnswers has no fullReturn/land — postcode will be None
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
         running(application) {
           val request = FakeRequest(GET, localAuthorityCodeRoute)
@@ -178,7 +179,6 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
       "must populate the view correctly on a GET when the question has previously been answered via model object" in {
 
         val userAnswers = userAnswersData
-          .set(LandAddressPage, testAddress).success.value
           .set(LocalAuthorityCodePage, "1234").success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -197,8 +197,8 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
     "On Submit()" - {
       "must return a Bad Request and errors when invalid data is submitted" in {
 
-        val userAnswers = emptyUserAnswers
-          .set(LandAddressPage, testAddress).success.value
+        // Must have land with postcode in fullReturn so the form branch is reached
+        val userAnswers = userAnswersData
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -231,6 +231,22 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
+      "must redirect to Confirm Land or Property Address page on POST when no postcode is found in fullReturn land" in {
+
+        // emptyUserAnswers has no fullReturn/land — postcode will be None
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, localAuthorityCodeRoute)
+              .withFormUrlEncodedBody(("value", "0335"))
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.land.routes.ConfirmLandOrPropertyAddressController.onPageLoad(NormalMode).url
+        }
+      }
+
       "Local authority local codes validation response with success " - {
 
         "must redirect to next page when valid dummy authcode send -8999" in {
@@ -253,7 +269,6 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
           val userWithTransaction: UserAnswers =
             UserAnswers(userAnswersId, storn = testStorn)
               .copy(fullReturn = Some(fullReturnWithTransaction))
-              .set(LandAddressPage, testAddress).success.value
 
           val application =
             applicationBuilder(userAnswers = Some(userWithTransaction))
@@ -293,7 +308,6 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
           val userWithTransaction: UserAnswers =
             UserAnswers(userAnswersId, storn = testStorn)
               .copy(fullReturn = Some(fullReturnWithTransaction))
-              .set(LandAddressPage, testAddress).success.value
 
           val application =
             applicationBuilder(userAnswers = Some(userWithTransaction))
@@ -332,7 +346,6 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
           val userWithTransaction: UserAnswers =
             UserAnswers(userAnswersId, storn = testStorn)
               .copy(fullReturn = Some(fullReturnWithTransaction))
-              .set(LandAddressPage, testAddress).success.value
 
           val application =
             applicationBuilder(userAnswers = Some(userWithTransaction))
@@ -373,7 +386,6 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
           val userWithTransaction: UserAnswers =
             UserAnswers(userAnswersId, storn = testStorn)
               .copy(fullReturn = Some(fullReturnWithTransaction))
-              .set(LandAddressPage, testAddress).success.value
 
           val application =
             applicationBuilder(userAnswers = Some(userWithTransaction))
@@ -414,7 +426,6 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
           val userWithTransaction: UserAnswers =
             UserAnswers(userAnswersId, storn = testStorn)
               .copy(fullReturn = Some(fullReturnWithTransaction))
-              .set(LandAddressPage, testAddress).success.value
 
           val application =
             applicationBuilder(userAnswers = Some(userWithTransaction))
@@ -451,7 +462,6 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
           val userWithTransaction: UserAnswers =
             UserAnswers(userAnswersId, storn = testStorn)
               .copy(fullReturn = Some(fullReturnWithTransaction))
-              .set(LandAddressPage, testAddress).success.value
 
           val application =
             applicationBuilder(userAnswers = Some(userWithTransaction))
@@ -488,7 +498,6 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
           val userWithTransaction: UserAnswers =
             UserAnswers(userAnswersId, storn = testStorn)
               .copy(fullReturn = Some(fullReturnWithTransaction))
-              .set(LandAddressPage, testAddress).success.value
 
           val application =
             applicationBuilder(userAnswers = Some(userWithTransaction))
@@ -529,7 +538,6 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
           val userWithTransaction: UserAnswers =
             UserAnswers(userAnswersId, storn = testStorn)
               .copy(fullReturn = Some(fullReturnWithTransaction))
-              .set(LandAddressPage, testAddress).success.value
 
           val application =
             applicationBuilder(userAnswers = Some(userWithTransaction))
@@ -573,7 +581,6 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
           val userWithTransaction: UserAnswers =
             UserAnswers(userAnswersId, storn = testStorn)
               .copy(fullReturn = Some(fullReturnWithTransaction))
-              .set(LandAddressPage, testAddress).success.value
 
           val application =
             applicationBuilder(userAnswers = Some(userWithTransaction))
@@ -610,12 +617,11 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
 
           def fullReturnWithTransaction: FullReturn =
             emptyFullReturn.copy(transaction = Some(completeTransaction),
-              land = Some(Seq(completeLand)))
+              land = Some(Seq(completeLandForScotland)))
 
           val userWithTransaction: UserAnswers =
             UserAnswers(userAnswersId, storn = testStorn)
               .copy(fullReturn = Some(fullReturnWithTransaction))
-              .set(LandAddressPage, testAddressScotland).success.value
 
           val application =
             applicationBuilder(userAnswers = Some(userWithTransaction))
@@ -659,7 +665,6 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
           val userWithTransaction: UserAnswers =
             UserAnswers(userAnswersId, storn = testStorn)
               .copy(fullReturn = Some(fullReturnWithTransaction))
-              .set(LandAddressPage, testAddressScotland).success.value
 
           val application =
             applicationBuilder(userAnswers = Some(userWithTransaction))
@@ -703,7 +708,6 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
           val userWithTransaction: UserAnswers =
             UserAnswers(userAnswersId, storn = testStorn)
               .copy(fullReturn = Some(fullReturnWithTransaction))
-              .set(LandAddressPage, testAddressScotland).success.value
 
           val application =
             applicationBuilder(userAnswers = Some(userWithTransaction))
@@ -747,7 +751,6 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
           val userWithTransaction: UserAnswers =
             UserAnswers(userAnswersId, storn = testStorn)
               .copy(fullReturn = Some(fullReturnWithTransaction))
-              .set(LandAddressPage, testAddressScotland).success.value
 
           val application =
             applicationBuilder(userAnswers = Some(userWithTransaction))
@@ -791,7 +794,6 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
           val userWithTransaction: UserAnswers =
             UserAnswers(userAnswersId, storn = testStorn)
               .copy(fullReturn = Some(fullReturnWithTransaction))
-              .set(LandAddressPage, testAddressScotland).success.value
 
           val application =
             applicationBuilder(userAnswers = Some(userWithTransaction))
@@ -835,7 +837,6 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
           val userWithTransaction: UserAnswers =
             UserAnswers(userAnswersId, storn = testStorn)
               .copy(fullReturn = Some(fullReturnWithTransaction))
-              .set(LandAddressPage, testAddress).success.value
 
           val application =
             applicationBuilder(userAnswers = Some(userWithTransaction))
@@ -879,7 +880,6 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
           val userWithTransaction: UserAnswers =
             UserAnswers(userAnswersId, storn = testStorn)
               .copy(fullReturn = Some(fullReturnWithTransaction))
-              .set(LandAddressPage, testAddress).success.value
 
           val application =
             applicationBuilder(userAnswers = Some(userWithTransaction))

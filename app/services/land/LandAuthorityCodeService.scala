@@ -17,7 +17,6 @@
 package services.land
 
 import models.UserAnswers
-import pages.land.LandAddressPage
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -42,7 +41,7 @@ class LocalAuthorityCodeService @Inject() () {
       transactionDates.flatMap { case (_, conOpt) => conOpt.flatMap(parseDate) }
 
     val postcode: Option[String] =
-      answers.get(LandAddressPage).flatMap(_.postcode)
+      answers.fullReturn.flatMap(_.land.flatMap(_.find(_.postcode.isDefined).flatMap(_.postcode)))
 
     LocalAuthorityFormContext(
       effectiveTransactionDate = effectiveDate,
