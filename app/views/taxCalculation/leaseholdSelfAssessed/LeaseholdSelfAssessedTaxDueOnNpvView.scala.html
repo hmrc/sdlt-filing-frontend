@@ -45,7 +45,7 @@
 
         @caption(messages("site.taxCalculation.caption"))
         @h1(messages("taxCalculation.taxDueOnNpv.heading"))
-        @paragraph(messages("taxCalculation.taxDueOnNpv.p1", npv))
+        @paragraph(messages("taxCalculation.taxDueOnNpv.p1", npv.toDouble.toInt))
         @paragraphWithLink(
             messageKey = "taxCalculation.taxDueOnNpv.p2",
             linkKey    = "taxCalculation.taxDueOnNpv.p2.link",
