@@ -24,7 +24,7 @@ import pages.lease.LeaseStartingRentEndDatePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.lease.LeaseDatesService
+import services.lease.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.lease.LeaseStartingRentEndDateView
 
@@ -42,20 +42,23 @@ class LeaseStartingRentEndDateController @Inject()(
                                         formProvider: LeaseStartingRentEndDateFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         leaseDatesService: LeaseDatesService,
+                                        leaseService: LeaseService,
                                         view: LeaseStartingRentEndDateView
                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val form = formProvider()
-
-      val preparedForm = request.userAnswers.get(LeaseStartingRentEndDatePage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
+      leaseService.leaseFlowValidationCheck(request.userAnswers) match {
+        case Some(redirect) => Redirect(redirect)
+        case None =>
+          val form = formProvider()
+          val preparedForm = request.userAnswers.get(LeaseStartingRentEndDatePage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+          Ok(view(preparedForm, mode))
       }
-
-      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

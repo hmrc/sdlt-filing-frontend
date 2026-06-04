@@ -18,7 +18,7 @@ package viewmodels.checkAnswers.lease
 
 import base.SpecBase
 import models.CheckMode
-import pages.lease.EnterAnnualRentVatPage
+import pages.lease.{EnterAnnualRentVatPage, LeaseIsVatPayablePage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
@@ -39,7 +39,7 @@ class EnterAnnualRentVatSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(EnterAnnualRentVatPage, "200").success.value
 
-          val row = EnterAnnualRentVatSummary.row(userAnswers)
+          val row = EnterAnnualRentVatSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
           val result = row match {
             case Row(r) => r
@@ -49,7 +49,7 @@ class EnterAnnualRentVatSummarySpec extends SpecBase {
           result.key.content.asHtml.toString() mustEqual msgs("lease.enterAnnualRentVat.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asHtml.toString()
-          htmlContent mustEqual "200"
+          htmlContent mustEqual "£200"
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.lease.routes.EnterAnnualRentVatController.onPageLoad(CheckMode).url
@@ -61,13 +61,16 @@ class EnterAnnualRentVatSummarySpec extends SpecBase {
 
     "when annual starting rent is not present" - {
 
-      "must return a Missing and redirect call to missing page when data is missing" in {
+      "must return a Missing and redirect call to missing page when LeaseIsVatPayablePage is true but EnterAnnualRentVatPage is missing" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = EnterAnnualRentVatSummary.row(emptyUserAnswers)
+          val userAnswers = emptyUserAnswers
+            .set(LeaseIsVatPayablePage, true).success.value
+
+          val result = EnterAnnualRentVatSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
           result match {
             case Missing(call) =>
@@ -77,6 +80,21 @@ class EnterAnnualRentVatSummarySpec extends SpecBase {
               fail("Expected Missing but got Row")
           }
         }
+      }
+    }
+
+    "must return None when annualStartingRentPage is not entered and LeaseIsVatPayablePage is false " in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+        
+        val userAnswers =
+          emptyUserAnswers.set(LeaseIsVatPayablePage, false).success.value
+
+        val result = EnterAnnualRentVatSummary.row(userAnswers)
+        
+        result mustBe None
       }
     }
   }

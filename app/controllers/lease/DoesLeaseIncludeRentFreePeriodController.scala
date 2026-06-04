@@ -21,15 +21,17 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import forms.lease.DoesLeaseIncludeRentFreePeriodFormProvider
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import models.Mode
+import models.{CheckMode, Mode}
 import navigation.Navigator
-import pages.lease.DoesLeaseIncludeRentFreePeriodPage
+import pages.lease.*
+import play.api.data.Form
 import repositories.SessionRepository
+import services.lease.LeaseService
 import views.html.lease.DoesLeaseIncludeRentFreePeriodView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-
+import scala.util.Success
 
 @Singleton
 class DoesLeaseIncludeRentFreePeriodController @Inject()(
@@ -40,21 +42,25 @@ class DoesLeaseIncludeRentFreePeriodController @Inject()(
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          formProvider: DoesLeaseIncludeRentFreePeriodFormProvider,
+                                         leaseService: LeaseService,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: DoesLeaseIncludeRentFreePeriodView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(DoesLeaseIncludeRentFreePeriodPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      leaseService.leaseFlowValidationCheck(request.userAnswers) match {
+        case Some(redirect) => Redirect(redirect)
+        case None =>
+          val preparedForm = request.userAnswers.get(DoesLeaseIncludeRentFreePeriodPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+          Ok(view(preparedForm, mode))
       }
-
-      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -67,12 +73,20 @@ class DoesLeaseIncludeRentFreePeriodController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(DoesLeaseIncludeRentFreePeriodPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            finalAnswers   <- Future.fromTry {
+              if !value then updatedAnswers.remove(LeaseEnterRentFreePeriodPage)
+              else Success(updatedAnswers)
+            }
+            _   <- sessionRepository.set(finalAnswers)
           } yield {
             if(value) {
-              Redirect(navigator.nextPage(DoesLeaseIncludeRentFreePeriodPage, mode, updatedAnswers))
+              Redirect(navigator.nextPage(DoesLeaseIncludeRentFreePeriodPage, mode, finalAnswers))
             } else {
-              Redirect(controllers.lease.routes.AnnualStartingRentController.onPageLoad(mode))
+              if(mode == CheckMode) {
+                Redirect(controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad())
+              } else {
+                Redirect(controllers.lease.routes.AnnualStartingRentController.onPageLoad(mode))
+              }
             }
           }
       )

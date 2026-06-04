@@ -36,7 +36,7 @@ object AnnualStartingRentSummary  {
         Row(
           SummaryListRowViewModel(
             key     = "lease.annualStartingRent.checkYourAnswersLabel",
-            value   = ValueViewModel(HtmlFormat.escape(answer).toString),
+            value   = ValueViewModel(HtmlFormat.escape(s"£$answer").toString),
             actions = Seq(
               ActionItemViewModel("site.change", changeRoute.url)
                 .withVisuallyHiddenText(messages("lease.annualStartingRent.change.hidden"))

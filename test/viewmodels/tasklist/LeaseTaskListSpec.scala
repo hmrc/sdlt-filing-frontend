@@ -102,7 +102,6 @@ class LeaseTaskListSpec extends SpecBase {
         }
       }
 
-      // TODO: DTR-3545 - change to LeaseCheckYourAnswersController once implemented
       "must have Lease Check your answers url when lease is complete" in {
         val application = applicationBuilder().build()
 
@@ -111,7 +110,7 @@ class LeaseTaskListSpec extends SpecBase {
 
           val result = LeaseTaskList.buildLeaseRow(fullReturnComplete)
 
-          result.url mustBe controllers.routes.ReturnTaskListController.onPageLoad().url
+          result.url mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad().url
         }
       }
 
@@ -154,7 +153,7 @@ class LeaseTaskListSpec extends SpecBase {
           section.heading mustBe messagesInstance("tasklist.leaseQuestion.heading")
           messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.leaseQuestion.details")
           row.status mustBe TLCompleted
-          row.url mustBe controllers.routes.ReturnTaskListController.onPageLoad().url
+          row.url mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad().url
         }
       }
 

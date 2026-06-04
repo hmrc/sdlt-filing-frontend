@@ -1799,7 +1799,7 @@ lease.laterRent.title                                                           
 lease.laterRent.heading                                                             = Later rent
 lease.laterRent.subheading                                                          = Is the later rent known?
 lease.laterRent.paragraph                                                           = This refers to any rent payable after the starting rent has ended. The later rent is only known if the full amount of all future rent payments is specified in the lease. If the rent is uncertain or no further rent is due, then the later rent is not known.
-lease.laterRent.checkYourAnswersLabel                                               = Is the later rent known?
+lease.laterRent.checkYourAnswersLabel                                               = Later rent known
 lease.laterRent.error.required                                                      = Select yes if the later rent is known
 lease.laterRent.change.hidden                                                       = Later rent
 
@@ -1836,7 +1836,7 @@ lease.leaseStartingRentEndDate.l1.li2                                           
 lease.leaseStartingRentEndDate.p2                                                    = If a lease has been surrendered, this date will typically be the effective date of the transaction.
 lease.leaseStartingRentEndDate.subheading                                            = What is the end date for starting rent?
 lease.leaseStartingRentEndDate.hint                                                  = For example, 27 3 2023
-lease.leaseStartingRentEndDate.checkYourAnswersLabel                                 = End date for starting rent
+lease.leaseStartingRentEndDate.checkYourAnswersLabel                                 = End of annual starting rent
 lease.leaseStartingRentEndDate.error.required.all                                    = Enter the end date for starting rent
 lease.leaseStartingRentEndDate.error.required.two                                    = The end date for starting rent must include a {0} and {1}
 lease.leaseStartingRentEndDate.error.required                                        = The end date for starting rent must include a {0}
@@ -1848,7 +1848,7 @@ lease.leaseStartingRentEndDate.change.hidden                                    
 
 lease.doesLeaseIncludeRentFreePeriod.title                                          = Rent-free periods
 lease.doesLeaseIncludeRentFreePeriod.heading                                        = Rent-free periods
-lease.doesLeaseIncludeRentFreePeriod.checkYourAnswersLabel                          = Rent-free periods
+lease.doesLeaseIncludeRentFreePeriod.checkYourAnswersLabel                          = Does the lease include a rent-free period?
 lease.doesLeaseIncludeRentFreePeriod.paragraph                                      = This is when a tenant pays no rent for an agreed period, usually as an incentive to sign the lease or compensation to cover fit-out costs. Rent-free periods typically start on the effective date of transaction or the start date as specified in the lease, whichever is later.
 lease.doesLeaseIncludeRentFreePeriod.subheading                                     = Does the lease include a rent-free period?
 lease.doesLeaseIncludeRentFreePeriod.error.required                                 = Select yes if the lease includes a rent-free period
@@ -1898,7 +1898,7 @@ lease.enterTotalPremiumPayable.heading                                          
 lease.enterTotalPremiumPayable.h2                                                   = What is the total premium payable including VAT?
 lease.enterTotalPremiumPayable.p1                                                   = If this transaction is linked to the grant of any other lease, only enter the premium for this lease. Include any VAT due on this premium.
 lease.enterTotalPremiumPayable.hint                                                 = Enter the value in whole pounds only, for example £10,000
-lease.enterTotalPremiumPayable.checkYourAnswersLabel                                = What is the total premium payable including VAT?
+lease.enterTotalPremiumPayable.checkYourAnswersLabel                                = Total premium payable including VAT
 lease.enterTotalPremiumPayable.change.hidden                                        = Total premium payable including VAT
 lease.enterTotalPremiumPayable.error.required                                       = Enter the total premium payable including VAT, in pounds
 lease.enterTotalPremiumPayable.error.length                                         = The total premium payable including VAT must be 14 digits or fewer

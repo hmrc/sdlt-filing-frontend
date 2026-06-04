@@ -18,13 +18,15 @@ package controllers.lease
 
 import controllers.routes
 import base.SpecBase
+import constants.FullReturnConstants.{completeFullReturn, completeTransaction}
 import forms.lease.LeaseNetPresentValueFormProvider
-import models.NormalMode
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.lease.LeaseNetPresentValuePage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -39,15 +41,25 @@ class LeaseNetPresentValueControllerSpec extends SpecBase with MockitoSugar {
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new LeaseNetPresentValueFormProvider()
-  val form = formProvider()
+  val form: Form[String] = formProvider()
 
-  lazy val leaseNetPresentValueRoute = controllers.lease.routes.LeaseNetPresentValueController.onPageLoad(NormalMode).url
+  lazy val leaseNetPresentValueRoute: String = controllers.lease.routes.LeaseNetPresentValueController.onPageLoad(NormalMode).url
+
+  val userAnswersGrantOfLease: UserAnswers = emptyUserAnswers.copy(
+    fullReturn = Some(completeFullReturn.copy(
+      transaction = Some(completeTransaction.copy(
+        transactionDescription = Some("L"))))))
+
+  val userAnswersConveyanceTransfer: UserAnswers = emptyUserAnswers.copy(
+    fullReturn = Some(completeFullReturn.copy(
+      transaction = Some(completeTransaction.copy(
+        transactionDescription = Some("F"))))))
 
   "LeaseNetPresentValue Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET when transaction type is L - Grant of Lease" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersGrantOfLease)).build()
 
       running(application) {
         val request = FakeRequest(GET, leaseNetPresentValueRoute)
@@ -61,9 +73,9 @@ class LeaseNetPresentValueControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "must populate the view correctly on a GET when the question has previously been answered and when transaction type is L - Grant of Lease" in {
 
-      val userAnswers = emptyUserAnswers.set(LeaseNetPresentValuePage, "answer").success.value
+      val userAnswers = userAnswersGrantOfLease.set(LeaseNetPresentValuePage, "answer").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -152,6 +164,32 @@ class LeaseNetPresentValueControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect to return task list when transaction type is not 'A' or 'L' and return Id is present" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswersConveyanceTransfer.copy(returnId = Some("123456")))).build()
+
+      running(application) {
+        val request = FakeRequest(GET, leaseNetPresentValueRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
+    "must redirect to Journey recovery when transaction type is not 'A' or 'L' and return Id is not present" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswersConveyanceTransfer)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, leaseNetPresentValueRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }

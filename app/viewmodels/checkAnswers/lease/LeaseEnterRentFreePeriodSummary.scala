@@ -17,32 +17,38 @@
 package viewmodels.checkAnswers.lease
 
 import models.{CheckMode, UserAnswers}
-import pages.lease.LeaseEnterRentFreePeriodPage
+import pages.lease.{DoesLeaseIncludeRentFreePeriodPage, LeaseEnterRentFreePeriodPage}
 import play.api.i18n.Messages
+import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import viewmodels.checkAnswers.summary.SummaryRowResult
-import viewmodels.checkAnswers.summary.SummaryRowResult.{Row, Missing}
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object LeaseEnterRentFreePeriodSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryRowResult] = {
     val changeRoute = controllers.lease.routes.LeaseEnterRentFreePeriodController.onPageLoad(CheckMode)
-    answers.get(LeaseEnterRentFreePeriodPage).map {
-      answer =>
 
-        Row(
-          SummaryListRowViewModel(
-            key     = "lease.enterRentFreePeriod.checkYourAnswersLabel",
-            value   = ValueViewModel(answer.toString),
-            actions = Seq(
-              ActionItemViewModel("site.change", changeRoute.url)
-                .withVisuallyHiddenText(messages("lease.enterRentFreePeriod.change.hidden"))
+    (answers.get(LeaseEnterRentFreePeriodPage), answers.get(DoesLeaseIncludeRentFreePeriodPage)) match {
+      case (Some(rentFreePeriod), _) =>
+        Some(Row(
+            SummaryListRowViewModel(
+              key     = "lease.enterRentFreePeriod.checkYourAnswersLabel",
+              value   = ValueViewModel(HtmlContent(HtmlFormat.escape(rentFreePeriod).toString)),
+              actions = Seq(
+                ActionItemViewModel("site.change", changeRoute.url)
+                  .withVisuallyHiddenText(messages("lease.enterRentFreePeriod.change.hidden"))
+              )
             )
           )
         )
-    }.getOrElse(
-      Missing(changeRoute)
-    )
+
+      case (None, Some(true)) =>
+        Some(Missing(changeRoute))
+
+      case _ => None
+    }
   }
 }

@@ -19,6 +19,8 @@ package services.lease
 import models.lease.TypeOfLease
 import models.UserAnswers
 import models.prelimQuestions.TransactionType
+import models.prelimQuestions.TransactionType.{ConveyanceTransferLease, GrantOfLease}
+import play.api.mvc.Call
 import services.lease.LeaseService.*
 
 class LeaseService {
@@ -54,6 +56,15 @@ class LeaseService {
       userAnswers.fullReturn.flatMap(_.transaction).flatMap(_.transactionDescription)
     )
   }
+
+  def leaseFlowValidationCheck(userAnswers: UserAnswers): Option[Call] =
+    transactionType(userAnswers) match {
+      case Some(GrantOfLease | ConveyanceTransferLease) => None
+      case _ if userAnswers.returnId.isDefined =>
+        Some(controllers.routes.ReturnTaskListController.onPageLoad())
+      case _ =>
+        Some(controllers.routes.JourneyRecoveryController.onPageLoad())
+    }
 }
 
 object LeaseService {

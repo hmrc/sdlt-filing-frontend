@@ -18,6 +18,7 @@ package models
 
 import models.purchaser.PurchaserConfirmIdentity.{AnotherFormOfID, CorporationTaxUTR, PartnershipUTR, VatRegistrationNumber}
 import models.land.LandSessionQuestions
+import models.lease.{LeaseSessionQuestions, TypeOfLease}
 import models.prelimQuestions.TransactionType
 import models.vendor.VendorSessionQuestions
 import models.purchaser.{PurchaserConfirmIdentity, PurchaserSessionQuestions}
@@ -550,6 +551,73 @@ case class Lease(
 
 object Lease {
   implicit val format: OFormat[Lease] = Json.format[Lease]
+
+  def from(userAnswers: UserAnswers): Future[Lease] = {
+    val leaseSessionQuestions: LeaseSessionQuestions = (userAnswers.data \ "leaseCurrent").as[LeaseSessionQuestions]
+
+    val existingLease= for {
+      fullReturn <- userAnswers.fullReturn
+      lease <- fullReturn.lease
+    } yield lease
+    Future.successful(Lease(
+      leaseID = existingLease.flatMap(_.leaseID),
+      returnID = userAnswers.returnId,
+      isAnnualRentOver1000 = leaseSessionQuestions.leaseThousandPoundsThreshold match {
+        case Some(true) => Some("yes")
+        case Some(false) => Some("no")
+        case None => None
+      },
+      breakClauseType = existingLease.flatMap(_.breakClauseType),
+      breakClauseDate = existingLease.flatMap(_.breakClauseDate),
+      leaseContReservedRent = existingLease.flatMap(_.leaseContReservedRent),
+      contractEndDate = leaseSessionQuestions.leaseEndDate.map(_.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))),
+      contractStartDate = leaseSessionQuestions.leaseStartDate.map(_.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))),
+      firstReviewDate = existingLease.flatMap(_.firstReviewDate),
+      leaseType = leaseSessionQuestions.typeOfLease.map {
+        case TypeOfLease.R => "R"
+        case TypeOfLease.M => "M"
+        case TypeOfLease.N => "N"
+      },
+      marketRent = existingLease.flatMap(_.marketRent),
+      netPresentValue = leaseSessionQuestions.leaseNetPresentValue,
+      optionToRenew = existingLease.flatMap(_.optionToRenew),
+      totalPremiumPayable = leaseSessionQuestions.leaseEnterTotalPremiumPayable,
+      rentChargeDate = existingLease.flatMap(_.rentChargeDate),
+      rentFreePeriod = leaseSessionQuestions.leaseEnterRentFreePeriod,
+      reviewClauseType = existingLease.flatMap(_.reviewClauseType),
+      rentReviewFrequency = existingLease.flatMap(_.rentReviewFrequency),
+      serviceCharge = existingLease.flatMap(_.serviceCharge),
+      serviceChargeFrequency = existingLease.flatMap(_.serviceChargeFrequency),
+      startingRent = leaseSessionQuestions.annualStartingRent,
+      startingRentEndDate = leaseSessionQuestions.leaseStartingRentEndDate.map(_.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))),
+      laterRentKnown = leaseSessionQuestions.laterRent match {
+        case Some(true) => Some("yes")
+        case Some(false) => Some("no")
+        case None => None
+      },
+      termsSurrendered = existingLease.flatMap(_.termsSurrendered),
+      considToLndlrdBuild = existingLease.flatMap(_.considToLndlrdBuild),
+      considToLndlrdContin = existingLease.flatMap(_.considToLndlrdContin),
+      considToLndlrdDebt = existingLease.flatMap(_.considToLndlrdDebt),
+      considToLndlrdEmploy = existingLease.flatMap(_.considToLndlrdEmploy),
+      considToLndlrdOther = existingLease.flatMap(_.considToLndlrdOther),
+      considToLndlrdLand = existingLease.flatMap(_.considToLndlrdLand),
+      considToLndlrdServices = existingLease.flatMap(_.considToLndlrdServices),
+      considToLndlrdSharedQTD = existingLease.flatMap(_.considToLndlrdSharedQTD),
+      considToLndlrdSharedUNQTD = existingLease.flatMap(_.considToLndlrdSharedUNQTD),
+      considToTenantBuild = existingLease.flatMap(_.considToTenantBuild),
+      considToTenantContin = existingLease.flatMap(_.considToTenantContin),
+      considToTenantEmploy = existingLease.flatMap(_.considToTenantEmploy),
+      considToTenantOther = existingLease.flatMap(_.considToTenantOther),
+      considToTenantLand = existingLease.flatMap(_.considToTenantLand),
+      considToTenantServices = existingLease.flatMap(_.considToTenantServices),
+      considToTenantSharesQTD = existingLease.flatMap(_.considToTenantSharesQTD),
+      considToTenantSharesUNQTD = existingLease.flatMap(_.considToTenantSharesUNQTD),
+      turnoverRent = existingLease.flatMap(_.turnoverRent),
+      unasertainableRent = existingLease.flatMap(_.unasertainableRent),
+      VATAmount = leaseSessionQuestions.enterAnnualRentVat
+    ))
+  }
 }
 
 case class TaxCalculation(

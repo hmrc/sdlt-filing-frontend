@@ -21,6 +21,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.lease.LeaseBeforeYouStartView
+import services.lease.LeaseService
 
 import javax.inject.{Inject, Singleton}
 
@@ -31,11 +32,16 @@ class LeaseBeforeYouStartController @Inject()(
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        val controllerComponents: MessagesControllerComponents,
+                                       leaseService: LeaseService,
                                        view: LeaseBeforeYouStartView
                                      ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      Ok(view())
+      leaseService.leaseFlowValidationCheck(request.userAnswers) match {
+        case Some(redirect) => Redirect(redirect)
+        case None =>
+          Ok(view())
+      }
   }
 }

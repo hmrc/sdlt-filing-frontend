@@ -736,3 +736,7 @@ GET        /about-the-lease/net-present-value-NPV                               
 POST       /about-the-lease/net-present-value-NPV                                                    controllers.lease.LeaseNetPresentValueController.onSubmit(mode: Mode = NormalMode)
 GET        /about-the-lease/net-present-value-NPV/change                                             controllers.lease.LeaseNetPresentValueController.onPageLoad(mode: Mode = CheckMode)
 POST       /about-the-lease/net-present-value-NPV/change                                             controllers.lease.LeaseNetPresentValueController.onSubmit(mode: Mode = CheckMode)
+
+GET         /about-the-lease/check-answers                                                           controllers.lease.LeaseCheckYourAnswersController.onPageLoad()
+POST        /about-the-lease/check-answers                                                           controllers.lease.LeaseCheckYourAnswersController.onSubmit()
+

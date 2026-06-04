@@ -18,11 +18,12 @@ package controllers.lease
 
 import controllers.actions.*
 import forms.lease.LeaseIsVatPayableFormProvider
-import models.{Mode, NormalMode}
+import models.{CheckMode, Mode, NormalMode}
 import models.prelimQuestions.TransactionType
 import models.prelimQuestions.TransactionType.{ConveyanceTransferLease, GrantOfLease}
 import navigation.Navigator
-import pages.lease.LeaseIsVatPayablePage
+import pages.lease.{EnterAnnualRentVatPage, LeaseIsVatPayablePage}
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -32,6 +33,7 @@ import views.html.lease.LeaseIsVatPayableView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 @Singleton
 class LeaseIsVatPayableController @Inject()(
@@ -47,17 +49,21 @@ class LeaseIsVatPayableController @Inject()(
                                          view: LeaseIsVatPayableView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(LeaseIsVatPayablePage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+      leaseService.leaseFlowValidationCheck(request.userAnswers) match {
+        case Some(redirect) => Redirect(redirect)
+        case None =>
+          val preparedForm = request.userAnswers.get(LeaseIsVatPayablePage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
 
-      Ok(view(preparedForm, mode))
+          Ok(view(preparedForm, mode))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -70,17 +76,24 @@ class LeaseIsVatPayableController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(LeaseIsVatPayablePage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield {
-
-            val transactionType: Option[TransactionType] = leaseService.transactionType(request.userAnswers)
-
-            (value, transactionType) match {
-              case (true, _) => Redirect(navigator.nextPage(LeaseIsVatPayablePage, mode, updatedAnswers))
-              case (false, Some(GrantOfLease)) => Redirect(routes.LeaseEnterTotalPremiumPayableController.onPageLoad(NormalMode))
-              case (false, Some(ConveyanceTransferLease)) => Redirect(routes.LeaseIsVatPayableController.onPageLoad(NormalMode)) // TODO DTR-3545: Redirect to CYA
-              case (false, _) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+            finalAnswers   <- Future.fromTry {
+              if !value then updatedAnswers.remove(EnterAnnualRentVatPage)
+              else Success(updatedAnswers)
             }
+            _ <- sessionRepository.set(finalAnswers)
+          } yield {
+            if(mode == CheckMode) {
+              Redirect(controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad())
+            } else {
+              val transactionType: Option[TransactionType] = leaseService.transactionType(finalAnswers)
+
+              (value, transactionType) match {
+                case (true, _) => Redirect(navigator.nextPage(LeaseIsVatPayablePage, mode, finalAnswers))
+                case (false, Some(GrantOfLease)) => Redirect(routes.LeaseEnterTotalPremiumPayableController.onPageLoad(NormalMode))
+                case (false, Some(ConveyanceTransferLease)) => Redirect(routes.LeaseCheckYourAnswersController.onPageLoad())
+                case (false, _) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+              }
+            } 
           }
       )
   }

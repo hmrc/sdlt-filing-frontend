@@ -50,12 +50,15 @@ class TypeOfLeaseController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(TypeOfLeasePage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      leaseService.leaseFlowValidationCheck(request.userAnswers) match {
+        case Some(redirect) => Redirect(redirect)
+        case None =>
+          val preparedForm = request.userAnswers.get(TypeOfLeasePage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+          Ok(view(preparedForm, mode))
       }
-
-      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

@@ -27,6 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.lease.AnnualStartingRentView
+import services.lease.LeaseService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,6 +41,7 @@ class AnnualStartingRentController @Inject()(
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         formProvider: AnnualStartingRentFormProvider,
+                                        leaseService: LeaseService,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: AnnualStartingRentView
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -48,13 +50,16 @@ class AnnualStartingRentController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-
-      val preparedForm = request.userAnswers.get(AnnualStartingRentPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      
+      leaseService.leaseFlowValidationCheck(request.userAnswers) match {
+        case Some(redirect) => Redirect(redirect)
+        case None =>
+          val preparedForm = request.userAnswers.get(AnnualStartingRentPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
+          Ok(view(preparedForm, mode))
       }
-
-      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

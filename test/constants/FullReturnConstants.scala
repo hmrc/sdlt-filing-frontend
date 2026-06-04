@@ -444,6 +444,11 @@ object FullReturnConstants {
     VATAmount = Some("10000.00")
   )
 
+  val incompleteLease: Lease = Lease(
+    leaseID = Some("LSE001"),
+    returnID = Some("RET123456789"),
+  )
+
   val completeTaxCalculation: TaxCalculation = TaxCalculation(
     taxCalculationID = Some("TC001"),
     returnID = Some("RET123456789"),

@@ -49,7 +49,7 @@ class AnnualStartingRentSummarySpec extends SpecBase {
           result.key.content.asHtml.toString() mustEqual msgs("lease.annualStartingRent.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asHtml.toString()
-          htmlContent mustEqual "200"
+          htmlContent mustEqual "£200"
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.lease.routes.AnnualStartingRentController.onPageLoad(CheckMode).url
