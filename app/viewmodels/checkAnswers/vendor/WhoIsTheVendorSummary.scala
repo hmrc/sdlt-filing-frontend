@@ -16,34 +16,43 @@
 
 package viewmodels.checkAnswers.vendor
 
+
 import models.{CheckMode, UserAnswers}
 import pages.vendor.WhoIsTheVendorPage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Row, Missing}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object WhoIsTheVendorSummary  {
+object WhoIsTheVendorSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(WhoIsTheVendorPage).map {
-      answer =>
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(CheckMode)
+    answers.flatMap(_.get(WhoIsTheVendorPage)).map { answer =>
 
-        val value = ValueViewModel(
-          HtmlContent(
-            HtmlFormat.escape(messages(s"vendor.whoIsTheVendor.$answer"))
-          )
-        )
+      val answerText = answer.toString match {
+        case "Individual" => messages("vendor.checkYourAnswers.whoIsTheVendor.Individual")
+        case _  => messages("vendor.checkYourAnswers.whoIsTheVendor.Company")
+      }
 
+      val value = ValueViewModel(
+        HtmlContent(answerText)
+      )
+
+      Row(
         SummaryListRowViewModel(
-          key     = "vendor.whoIsTheVendor.checkYourAnswersLabel",
-          value   = value,
+          key = "vendor.checkYourAnswers.whoIsTheVendor.label",
+          value = value,
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("vendor.whoIsTheVendor.change.hidden"))
+            ActionItemViewModel("site.change", changeRoute.url)
+              .withVisuallyHiddenText(messages("vendor.checkYourAnswers.whoIsTheVendor.hidden"))
           )
         )
+      )
+    }.getOrElse {
+      Missing(changeRoute)
     }
+  }
 }

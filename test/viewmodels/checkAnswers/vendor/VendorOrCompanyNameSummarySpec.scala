@@ -18,58 +18,185 @@ package viewmodels.checkAnswers.vendor
 
 import base.SpecBase
 import models.CheckMode
-import models.vendor.VendorName
-import pages.vendor.VendorOrCompanyNamePage
+import models.vendor.{VendorName, whoIsTheVendor}
+import pages.vendor.{VendorOrCompanyNamePage, WhoIsTheVendorPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class VendorOrCompanyNameSummarySpec extends SpecBase {
 
-  "VendorOrCompanyNameSummary" - {
+  "IndividualOrCompanyNameSummary" - {
 
-    "when vendor name is present" - {
+    "when name is present" - {
 
-      "must return a summary list row with vendor name label" in {
+      "must return a summary list row with agent name label" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
+          val vendorName = VendorName(None, None, "Doe")
 
-          val userAnswers = emptyUserAnswers.set(VendorOrCompanyNamePage, VendorName(Some("John"), Some("James"), "Smith")).success.value
+          val userAnswers = emptyUserAnswers.set(VendorOrCompanyNamePage, vendorName).success.value
 
-          val result = VendorOrCompanyNameSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val row = VendorOrCompanyNameSummary.row(Some(userAnswers))
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
-          result.key.content.asHtml.toString() mustEqual msgs("vendorOrCompanyName.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("vendor.checkYourAnswers.vendorName.label")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual "Smith"
+          htmlContent mustEqual "Doe"
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendorOrCompanyName.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendor.checkYourAnswers.vendorName.hidden")
         }
       }
 
-      "must properly escape special characters in name" in {
+      "must return a Missing and redirect call to missing page when data is not present" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers = emptyUserAnswers.set(VendorOrCompanyNamePage, VendorName(None, None, "O'Brien & Sons <Ltd>")).success.value
+          val result = VendorOrCompanyNameSummary.row(Some(emptyUserAnswers))
 
-          val result = VendorOrCompanyNameSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("O&#x27;Brien")
-          htmlContent must include("&amp;")
-          htmlContent must include("&lt;")
-          htmlContent must include("&gt;")
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
+      }
+    }
+
+    "must return a summary list when vendor is Individual and display first & last name correctly" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val vendorName = VendorName(Some("John"), None, "Doe")
+      
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+
+        val userAnswers = emptyUserAnswers
+          .set(WhoIsTheVendorPage, whoIsTheVendor.Individual).success.value
+         .set(VendorOrCompanyNamePage, vendorName).success.value
+        
+
+        val row = VendorOrCompanyNameSummary.row(Some(userAnswers))
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
+
+        result.key.content.asHtml.toString() mustEqual msgs("vendor.checkYourAnswers.vendorName.label")
+
+        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+        htmlContent mustEqual "John Doe"
+
+        result.actions.get.items.size mustEqual 1
+        result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(CheckMode).url
+        result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
+        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendor.checkYourAnswers.vendorName.hidden")
+      }
+    }
+
+    "must return a summary list when vendor is Individual and display first, second & last name correctly" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val vendorName = VendorName(Some("John"), Some("Smith"), "Doe")
+
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+
+        val userAnswers = emptyUserAnswers
+          .set(WhoIsTheVendorPage, whoIsTheVendor.Individual).success.value
+          .set(VendorOrCompanyNamePage, vendorName).success.value
+
+
+        val row = VendorOrCompanyNameSummary.row(Some(userAnswers))
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
+
+        result.key.content.asHtml.toString() mustEqual msgs("vendor.checkYourAnswers.vendorName.label")
+
+        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+        htmlContent mustEqual "John Smith Doe"
+
+        result.actions.get.items.size mustEqual 1
+        result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(CheckMode).url
+        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendor.checkYourAnswers.vendorName.hidden")
+      }
+    }
+
+    "must return a summary list when vendor is Individual and display second & last name correctly" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val vendorName = VendorName(None, Some("Smith"), "Doe")
+
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+
+        val userAnswers = emptyUserAnswers
+          .set(WhoIsTheVendorPage, whoIsTheVendor.Individual).success.value
+          .set(VendorOrCompanyNamePage, vendorName).success.value
+
+
+        val row = VendorOrCompanyNameSummary.row(Some(userAnswers))
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
+
+        result.key.content.asHtml.toString() mustEqual msgs("vendor.checkYourAnswers.vendorName.label")
+
+        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+        htmlContent mustEqual "Smith Doe"
+
+        result.actions.get.items.size mustEqual 1
+        result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(CheckMode).url
+        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendor.checkYourAnswers.vendorName.hidden")
+      }
+    }
+
+    "must return a summary list when vendor is Company and display company name correctly" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val vendorName = VendorName(None, None, "Bank plc")
+
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+
+        val userAnswers = emptyUserAnswers
+          .set(WhoIsTheVendorPage, whoIsTheVendor.Company).success.value
+          .set(VendorOrCompanyNamePage, vendorName).success.value
+
+
+        val row = VendorOrCompanyNameSummary.row(Some(userAnswers))
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
+
+        result.key.content.asHtml.toString() mustEqual msgs("vendor.checkYourAnswers.vendorName.label")
+
+        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+        htmlContent mustEqual "Bank plc"
+
+        result.actions.get.items.size mustEqual 1
+        result.actions.get.items.head.href mustEqual controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(CheckMode).url
+        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendor.checkYourAnswers.vendorName.hidden")
       }
     }
   }

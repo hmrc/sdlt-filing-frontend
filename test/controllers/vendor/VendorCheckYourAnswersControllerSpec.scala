@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.StampDutyLandTaxConnector
 import constants.FullReturnConstants.*
 import models.vendor.{CreateVendorReturn, UpdateVendorRequest, UpdateVendorReturn}
-import models.{CreateReturnResult, ReturnVersionUpdateRequest, ReturnVersionUpdateReturn, UserAnswers}
+import models.{CheckMode, CreateReturnResult, ReturnVersionUpdateRequest, ReturnVersionUpdateReturn, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
@@ -72,8 +72,7 @@ class VendorCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlue
           "name" -> "UK"
         ),
         "addressValidated" -> true
-      ),
-      "representedByAnAgent" -> "true"
+      )
     )
   )
 
@@ -140,6 +139,83 @@ class VendorCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlue
 
           status(result) mustEqual OK
           contentAsString(result) must include("Check your answers")
+        }
+      }
+
+      "must redirect to prelim before you start when data is missing" in {
+
+        val userAnswers = UserAnswers(
+          id = "12345",
+          returnId = Some("AB2346"),
+          storn = "TESTSTORN"
+        )
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.preliminary.routes.BeforeStartReturnController.onPageLoad().url
+        }
+      }
+
+      "must redirect to vendor before you start when vendor data is missing" in {
+
+        val userAnswers = UserAnswers(
+          id = "12345",
+          returnId = Some("AB2346"),
+          storn = "TESTSTORN",
+          data = Json.obj("someData" -> "test")
+        )
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorBeforeYouStartController.onPageLoad().url
+        }
+      }
+
+      "must redirect to the appropriate page when UserAnswers is incomplete" in {
+
+        val userAnswers = UserAnswers(
+          id = "12345",
+          returnId = Some("AB2346"),
+          storn = "TESTSTORN",
+          data = Json.obj("vendorCurrent" -> Json.obj(
+            "vendorID" -> Json.toJson("VEN001")
+            )
+          )
+        )
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(CheckMode).url
         }
       }
 
