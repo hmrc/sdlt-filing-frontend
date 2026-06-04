@@ -1793,7 +1793,7 @@ lease.enterRentFreePeriod.error.invalid                                         
 lease.enterRentFreePeriod.error.minValue                                            = The rent-free period must be at least one month
 lease.enterRentFreePeriod.error.maxValue                                            = The rent-free period must be 99 months or fewer
 lease.enterRentFreePeriod.error.maxLength                                           = The rent-free period must be 2 digits or less
-lease.enterRentFreePeriod.change.hidden                                             = the rent-free period
+lease.enterRentFreePeriod.change.hidden                                             = Rent-free period (months)
 
 lease.laterRent.title                                                               = Later rent
 lease.laterRent.heading                                                             = Later rent
@@ -1801,7 +1801,7 @@ lease.laterRent.subheading                                                      
 lease.laterRent.paragraph                                                           = This refers to any rent payable after the starting rent has ended. The later rent is only known if the full amount of all future rent payments is specified in the lease. If the rent is uncertain or no further rent is due, then the later rent is not known.
 lease.laterRent.checkYourAnswersLabel                                               = Later rent known
 lease.laterRent.error.required                                                      = Select yes if the later rent is known
-lease.laterRent.change.hidden                                                       = Later rent
+lease.laterRent.change.hidden                                                       = Later rent known
 
 lease.leaseStartDate.title                                                          = Lease start date
 lease.leaseStartDate.heading                                                        = Lease start date
@@ -1826,7 +1826,7 @@ lease.leaseThousandPoundsThreshold.li2                                          
 lease.leaseThousandPoundsThreshold.subheading                                       = Is the annual rent £1,000 or more?
 lease.leaseThousandPoundsThreshold.checkYourAnswersLabel                            = Annual rent £1,000 or more
 lease.leaseThousandPoundsThreshold.error.required                                   = Select yes if the annual rent is £1,000 or more
-lease.leaseThousandPoundsThreshold.change.hidden                                    = Is the annual rent £1,000 or more?
+lease.leaseThousandPoundsThreshold.change.hidden                                    = Annual rent £1,000 or more
 
 lease.leaseStartingRentEndDate.title                                                 = End of annual starting rent
 lease.leaseStartingRentEndDate.heading                                               = End of annual starting rent
@@ -1844,7 +1844,7 @@ lease.leaseStartingRentEndDate.error.invalid                                    
 lease.leaseStartingRentEndDate.error.date.range.min                                  = The end date for starting rent must be the same as or after 1 January 1900
 lease.leaseStartingRentEndDate.error.afterLeaseStartDate                             = The end date for starting rent must be after the start date as specified in the lease
 lease.leaseStartingRentEndDate.error.beforeLeaseEndDate                              = The end date for starting rent must be before the end date as specified in the lease
-lease.leaseStartingRentEndDate.change.hidden                                         = end date for starting rent
+lease.leaseStartingRentEndDate.change.hidden                                         = End of annual starting rent
 
 lease.doesLeaseIncludeRentFreePeriod.title                                          = Rent-free periods
 lease.doesLeaseIncludeRentFreePeriod.heading                                        = Rent-free periods
@@ -1852,7 +1852,7 @@ lease.doesLeaseIncludeRentFreePeriod.checkYourAnswersLabel                      
 lease.doesLeaseIncludeRentFreePeriod.paragraph                                      = This is when a tenant pays no rent for an agreed period, usually as an incentive to sign the lease or compensation to cover fit-out costs. Rent-free periods typically start on the effective date of transaction or the start date as specified in the lease, whichever is later.
 lease.doesLeaseIncludeRentFreePeriod.subheading                                     = Does the lease include a rent-free period?
 lease.doesLeaseIncludeRentFreePeriod.error.required                                 = Select yes if the lease includes a rent-free period
-lease.doesLeaseIncludeRentFreePeriod.change.hidden                                  = Rent-free periods
+lease.doesLeaseIncludeRentFreePeriod.change.hidden                                  = Does the lease include a rent-free period?
 
 lease.annualStartingRent.title                                                      = Annual starting rent
 lease.annualStartingRent.heading                                                    = Annual starting rent
