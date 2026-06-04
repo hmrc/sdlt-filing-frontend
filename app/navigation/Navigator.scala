@@ -327,8 +327,8 @@ class Navigator @Inject()() {
       _ => controllers.lease.routes.LeaseEnterTotalPremiumPayableController.onPageLoad(NormalMode)
     case LeaseEnterTotalPremiumPayablePage =>
       _ => controllers.lease.routes.LeaseNetPresentValueController.onPageLoad(NormalMode)
-    case LeaseNetPresentValuePage => // TODO - DTR-3545 - SPRINT 16 - update to check your answers
-      _ => controllers.lease.routes.LeaseNetPresentValueController.onPageLoad(NormalMode)
+    case LeaseNetPresentValuePage =>
+      _ => controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
@@ -506,6 +506,21 @@ class Navigator @Inject()() {
     case TransactionAddressPage                                      => _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
     case TransactionExercisingAnOptionPage                           => _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
 
+    case TypeOfLeasePage => _ => controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+    case LeaseStartDatePage => _ => controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+    case LeaseEndDatePage => _ => controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+    case DoesLeaseIncludeRentFreePeriodPage => _ => controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+    case LeaseEnterRentFreePeriodPage => _ => controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+    case AnnualStartingRentPage => _ => controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+    case LeaseStartingRentEndDatePage => _ => controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+    case LaterRentPage => _ => controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+    case LeaseThousandPoundsThresholdPage => _ => controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+    case LeaseIsVatPayablePage => _ => controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+    case EnterAnnualRentVatPage => _ => controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+    case LeaseEnterTotalPremiumPayablePage => _ => controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+    case LeaseNetPresentValuePage => _ => controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+
+    // TODO: To be updated once Tax Calculation CYA pages built
     case FreeholdTaxCalculatedSelfAssessedAmountPage    => _ => controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
     case FreeholdTaxCalculatedTotalAmountDuePage        => _ => controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
     case FreeholdTaxCalculatedPenaltiesAndInterestPage  => _ => controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()

@@ -43,6 +43,13 @@ object TypeOfLease extends Enumerable.Implicits {
       )
   }
 
+  def parse(s: Option[String]): Option[TypeOfLease] = s.flatMap {
+    case "R" => Some(R)
+    case "M" => Some(M)
+    case "N" => Some(N)
+    case _ => None
+  }
+
   implicit val enumerable: Enumerable[TypeOfLease] =
     Enumerable(values.map(v => v.toString -> v): _*)
 }

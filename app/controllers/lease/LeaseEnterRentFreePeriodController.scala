@@ -21,11 +21,13 @@ import forms.lease.LeaseEnterRentFreePeriodFormProvider
 import models.Mode
 import navigation.Navigator
 import pages.lease.LeaseEnterRentFreePeriodPage
+import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.lease.LeaseEnterRentFreePeriodView
+import services.lease.LeaseService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,21 +41,25 @@ class LeaseEnterRentFreePeriodController @Inject()(
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
                                         formProvider: LeaseEnterRentFreePeriodFormProvider,
+                                        leaseService: LeaseService,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: LeaseEnterRentFreePeriodView
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Int] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-
-      val preparedForm = request.userAnswers.get(LeaseEnterRentFreePeriodPage) match {
-        case None => form
-        case Some(value) => form.fill(value.toInt)
+      
+      leaseService.leaseFlowValidationCheck(request.userAnswers) match {
+        case Some(redirect) => Redirect(redirect)
+        case None =>
+          val preparedForm = request.userAnswers.get(LeaseEnterRentFreePeriodPage) match {
+            case None => form
+            case Some(value) => form.fill(value.toInt)
+          }
+          Ok(view(preparedForm, mode))
       }
-
-      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

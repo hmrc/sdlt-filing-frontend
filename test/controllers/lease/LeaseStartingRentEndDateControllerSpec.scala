@@ -17,6 +17,7 @@
 package controllers.lease
 
 import base.SpecBase
+import constants.FullReturnConstants.{completeFullReturn, completeTransaction}
 import controllers.routes
 import forms.lease.LeaseStartingRentEndDateFormProvider
 import models.{FullReturn, Lease, NormalMode, UserAnswers}
@@ -59,6 +60,16 @@ class LeaseStartingRentEndDateControllerSpec extends SpecBase with MockitoSugar 
     lastUpdated = Instant.now
   )
 
+  val userAnswersGrantOfLease: UserAnswers = emptyUserAnswers.copy(
+    fullReturn = Some(completeFullReturn.copy(
+      transaction = Some(completeTransaction.copy(
+        transactionDescription = Some("L"))))))
+
+  val userAnswersConveyanceTransfer: UserAnswers = emptyUserAnswers.copy(
+    fullReturn = Some(completeFullReturn.copy(
+      transaction = Some(completeTransaction.copy(
+        transactionDescription = Some("F"))))))
+  
   def getRequest(): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(GET, leaseStartingRentEndDateRoute)
 
@@ -72,9 +83,9 @@ class LeaseStartingRentEndDateControllerSpec extends SpecBase with MockitoSugar 
 
   "LeaseStartingRentEndDate Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET when transaction type is L - Grant of Lease" in {
 
-      val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersGrantOfLease)).build()
 
       running(application) {
         val result = route(application, getRequest()).value
@@ -86,9 +97,9 @@ class LeaseStartingRentEndDateControllerSpec extends SpecBase with MockitoSugar 
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "must populate the view correctly on a GET when the question has previously been answered and when transaction type is L - Grant of Lease" in {
 
-      val userAnswers = testUserAnswers.set(LeaseStartingRentEndDatePage, validAnswer).success.value
+      val userAnswers = userAnswersGrantOfLease.set(LeaseStartingRentEndDatePage, validAnswer).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -221,6 +232,32 @@ class LeaseStartingRentEndDateControllerSpec extends SpecBase with MockitoSugar 
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect to return task list when transaction type is not 'A' or 'L' and return Id is present" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswersConveyanceTransfer.copy(returnId = Some("123456")))).build()
+
+      running(application) {
+        val request = FakeRequest(GET, leaseStartingRentEndDateRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
+    "must redirect to Journey recovery when transaction type is not 'A' or 'L' and return Id is not present" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswersConveyanceTransfer)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, leaseStartingRentEndDateRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }

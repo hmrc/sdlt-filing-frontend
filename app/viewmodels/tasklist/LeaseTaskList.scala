@@ -37,8 +37,8 @@ object LeaseTaskList {
 
   def buildLeaseRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
     val url = fullReturn.lease match {
-      case Some(lease) if lease.leaseType.isDefined => // TODO: DTR-3545 - change to LeaseCheckYourAnswersController once implemented
-        controllers.routes.ReturnTaskListController.onPageLoad().url
+      case Some(lease) if lease.leaseType.isDefined =>
+        controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad().url
       case _ =>
         controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
     }

@@ -468,8 +468,8 @@ class NavigatorSpec extends SpecBase {
           navigator.nextPage(LeaseEnterTotalPremiumPayablePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseNetPresentValueController.onPageLoad(NormalMode)
         }
         
-        "go from LeaseNetPresentValuePage to LeaseCheckYourAnswers page" in { // TODO - DTR-3545 - SPRINT 16 - update to check your answers
-          navigator.nextPage(LeaseNetPresentValuePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseNetPresentValueController.onPageLoad(NormalMode)
+        "go from LeaseNetPresentValuePage to LeaseCheckYourAnswers page" in {
+          navigator.nextPage(LeaseNetPresentValuePage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
         }
       }
 
@@ -655,6 +655,37 @@ class NavigatorSpec extends SpecBase {
         navigator.nextPage(CharityRegisteredNumberPage,               CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
         navigator.nextPage(TransactionPartialReliefPage,              CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
         navigator.nextPage(ClaimingPartialReliefAmountPage,           CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(IsPurchaserRegisteredWithCISPage,          CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(TransactionCisNumberPage,                  CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(ConsiderationsAffectedUncertainPage,       CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(TransactionDeferringPaymentPage,           CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(TransactionUseOfLandOrPropertyPage,        CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(SaleOfBusinessPage,                        CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(TransactionSaleOfBusinessAssetsPage,       CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(TotalAssetsConsiderationPage,              CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(Cap1OrNsbcPage,                            CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(TransactionRulingFollowedPage,             CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(TransactionRestrictionsCovenantsAndConditionsPage,CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(DescriptionOfRestrictionsPage,             CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(IsLandOrPropertyExchangedPage,             CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(TransactionAddressPage,                    CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(TransactionExercisingAnOptionPage,         CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
+      }
+
+      "must go from any Lease pages to LeaseCheckYourAnswers in CheckMode" in {
+        navigator.nextPage(TypeOfLeasePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(LeaseStartDatePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(LeaseEndDatePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(DoesLeaseIncludeRentFreePeriodPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(LeaseEnterRentFreePeriodPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(AnnualStartingRentPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(LeaseStartingRentEndDatePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(LaterRentPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(LeaseThousandPoundsThresholdPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(LeaseIsVatPayablePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(EnterAnnualRentVatPage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(LeaseEnterTotalPremiumPayablePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
+        navigator.nextPage(LeaseNetPresentValuePage, CheckMode, UserAnswers("id", storn = "TESTSTORN")) mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()
       }
 
       "must go from NonUkResidentPurchaserPage to UkResidencyCheckYourAnswers in CheckMode" in {

@@ -61,9 +61,9 @@ class EnterAnnualRentVatControllerSpec extends SpecBase with MockitoSugar {
 
   "EnterAnnualRentVat Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "ust return OK and the correct view for a GET when transaction type is L - Grant of Lease" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersGrantOfLease)).build()
 
       running(application) {
         val request = FakeRequest(GET, enterAnnualRentVatRoute)
@@ -77,9 +77,9 @@ class EnterAnnualRentVatControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "must populate the view correctly on a GET when the question has previously been answered and when transaction type is L - Grant of Lease" in {
 
-      val userAnswers = emptyUserAnswers.set(EnterAnnualRentVatPage, "answer").success.value
+      val userAnswers = userAnswersGrantOfLease.set(EnterAnnualRentVatPage, "answer").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -121,7 +121,6 @@ class EnterAnnualRentVatControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    //TODO DTR-3545 SPRINT-16 update to lease CYA
     "must redirect to lease check your answers when valid data is submitted and transaction type is 'A'" in {
 
       val mockSessionRepository = mock[SessionRepository]
@@ -144,7 +143,7 @@ class EnterAnnualRentVatControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad().url
       }
     }
 
@@ -216,6 +215,32 @@ class EnterAnnualRentVatControllerSpec extends SpecBase with MockitoSugar {
         val request =
           FakeRequest(POST, enterAnnualRentVatRoute)
             .withFormUrlEncodedBody(("value", "answer"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect to return task list when transaction type is not 'A' or 'L' and return Id is present" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswersTransactionTypeO.copy(returnId = Some("123456")))).build()
+
+      running(application) {
+        val request = FakeRequest(GET, enterAnnualRentVatRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
+    "must redirect to Journey recovery when transaction type is not 'A' or 'L' and return Id is not present" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswersTransactionTypeO)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, enterAnnualRentVatRoute)
 
         val result = route(application, request).value
 

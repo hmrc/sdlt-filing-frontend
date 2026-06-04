@@ -17,34 +17,36 @@
 package viewmodels.checkAnswers.lease
 
 import models.{CheckMode, UserAnswers}
-import pages.lease.EnterAnnualRentVatPage
+import pages.lease.{EnterAnnualRentVatPage, LeaseIsVatPayablePage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 import viewmodels.checkAnswers.summary.SummaryRowResult
-import viewmodels.checkAnswers.summary.SummaryRowResult.{Row, Missing}
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 object EnterAnnualRentVatSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryRowResult] = {
     val changeRoute = controllers.lease.routes.EnterAnnualRentVatController.onPageLoad(CheckMode)
-    
-    answers.get(EnterAnnualRentVatPage).map {
-      answer =>
 
-        Row(
+    (answers.get(EnterAnnualRentVatPage), answers.get(LeaseIsVatPayablePage)) match {
+      case (Some(annualRentVat), _) =>
+        Some(Row(
           SummaryListRowViewModel(
             key     = "lease.enterAnnualRentVat.checkYourAnswersLabel",
-            value   = ValueViewModel(HtmlFormat.escape(answer).toString),
+            value   = ValueViewModel(HtmlFormat.escape(s"£$annualRentVat").toString),
             actions = Seq(
               ActionItemViewModel("site.change", controllers.lease.routes.EnterAnnualRentVatController.onPageLoad(CheckMode).url)
                 .withVisuallyHiddenText(messages("lease.enterAnnualRentVat.change.hidden"))
             )
           )
-        )
-    }.getOrElse(
-      Missing(changeRoute)
-    )
+        ))
+
+      case (None, Some(true)) =>
+        Some(Missing(changeRoute))
+
+      case _ => None
+    }
   }
 }

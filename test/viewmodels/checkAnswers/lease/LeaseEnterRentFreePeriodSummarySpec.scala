@@ -18,7 +18,7 @@ package viewmodels.checkAnswers.lease
 
 import base.SpecBase
 import models.CheckMode
-import pages.lease.LeaseEnterRentFreePeriodPage
+import pages.lease.{DoesLeaseIncludeRentFreePeriodPage, LeaseEnterRentFreePeriodPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
@@ -38,7 +38,7 @@ class LeaseEnterRentFreePeriodSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(LeaseEnterRentFreePeriodPage, "10").success.value
 
-          val row = LeaseEnterRentFreePeriodSummary.row(userAnswers)
+          val row = LeaseEnterRentFreePeriodSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
           val result = row match {
             case Row(r) => r
@@ -61,13 +61,16 @@ class LeaseEnterRentFreePeriodSummarySpec extends SpecBase {
 
     "when rent free period is not present" - {
 
-      "must return a Missing and redirect call to missing page when data is missing" in {
+      "must return a Missing and redirect call to missing page when DoesLeaseIncludeRentFreePeriodPage is true but LeaseEnterRentFreePeriodPage is missing" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = LeaseEnterRentFreePeriodSummary.row(emptyUserAnswers)
+          val userAnswers = emptyUserAnswers
+            .set(DoesLeaseIncludeRentFreePeriodPage, true).success.value
+
+          val result = LeaseEnterRentFreePeriodSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
           result match {
             case Missing(call) =>
@@ -77,6 +80,21 @@ class LeaseEnterRentFreePeriodSummarySpec extends SpecBase {
               fail("Expected Missing but got Row")
           }
         }
+      }
+    }
+
+    "must return None when LeaseEnterRentFreePeriodPage is not entered and DoesLeaseIncludeRentFreePeriodPage is false " in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        implicit val msgs: Messages = messages(application)
+
+        val userAnswers =
+          emptyUserAnswers.set(DoesLeaseIncludeRentFreePeriodPage, false).success.value
+
+        val result = LeaseEnterRentFreePeriodSummary.row(userAnswers)
+
+        result mustBe None
       }
     }
   }
