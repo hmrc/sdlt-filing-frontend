@@ -18,13 +18,14 @@ package forms.vendorAgent
 
 import forms.mappings.Mappings
 import play.api.data.Form
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
 class RemoveVendorAgentFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(agentName: String)(implicit messages: Messages): Form[Boolean] =
     Form(
-      "value" -> boolean("vendorAgent.removeVendorAgent.error.required")
+      "value" -> boolean(messages("vendorAgent.removeVendorAgent.error.required",agentName))
     )
 }

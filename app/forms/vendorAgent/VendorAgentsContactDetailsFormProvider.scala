@@ -20,6 +20,7 @@ import forms.mappings.Mappings
 import models.vendorAgent.VendorAgentsContactDetails
 import play.api.data.Form
 import play.api.data.Forms.mapping
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
@@ -29,23 +30,29 @@ class VendorAgentsContactDetailsFormProvider @Inject() extends Mappings {
   private val agentEmailMaxLength = 36
   
   private val formNumberRegex = "[A-Za-z0-9 \\~\\!\\@\\%\\&\\'\\(\\)\\*\\+,\\-\\.\\/\\:\\=\\?\\[\\]\\^\\_\\{\\}\\;]*"
+  private val phoneNumberFormat = """^(\+44|0)\s?\d{3,4}\s?\d{3}\s?\d{3,4}$"""
   private val formEmailRegex = "^[^@|<>\"'`]+@[^@|<>\"'`]+$"
+  private val emailFormatRegex = """^[A-Za-z0-9 \~\!\@\%\&\'\(\)\*\+,\-\.\/\:\=\?\[\]\^\_\{\}\;]+@[A-Za-z0-9 \~\!\@\%\&\'\(\)\*\+,\-\.\/\:\=\?\[\]\^\_\{\}\;]+\.[A-Za-z]{2,}$"""
 
-
-  def apply(): Form[VendorAgentsContactDetails] = Form(
+  def apply(agentName: String)(implicit messages: Messages): Form[VendorAgentsContactDetails] = Form(
     mapping(
       "phoneNumber" -> optionalText()
-        .verifying(optionalMaxLength(agentNumberMaxLength,"vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.length"))
-        .verifying(optionalRegexp(formNumberRegex, "vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.invalid"))
-      ,
+        .verifying(firstError(
+          optionalRegexp(formNumberRegex, messages("vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.invalid", agentName)),
+          optionalMaxLength(agentNumberMaxLength, messages("vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.length", agentName)),
+          optionalRegexp(phoneNumberFormat, "vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.invalidFormat")
+        )),
       "emailAddress" -> optionalText()
-        .verifying(optionalMaxLength(agentEmailMaxLength, "vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.length"))
-        .verifying(optionalRegexp(formEmailRegex, "vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.invalid"))
+        .verifying(firstError(
+          optionalRegexp(formEmailRegex, messages("vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.invalid", agentName)),
+          optionalMaxLength(agentEmailMaxLength, messages("vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.maxlength", agentName)),
+          optionalRegexp(emailFormatRegex, messages("vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.invalidFormat", agentName))
+        ))
   )(VendorAgentsContactDetails.apply)( x =>
     Some((x.phoneNumber, x.emailAddress))
     )
     .verifying(
-      "vendorAgent.vendorAgentsContactDetails.error.oneRequired",
+      messages("vendorAgent.vendorAgentsContactDetails.error.oneRequired",agentName),
       details =>
         details.phoneNumber.exists(_.trim.nonEmpty) ||
           details.emailAddress.exists(_.trim.nonEmpty)

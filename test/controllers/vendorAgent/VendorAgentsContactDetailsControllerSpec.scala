@@ -27,7 +27,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.vendorAgent.{AddVendorAgentContactDetailsPage, AgentNamePage, VendorAgentsContactDetailsPage}
-import play.api.data.Form
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -42,7 +42,6 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
   def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new VendorAgentsContactDetailsFormProvider()
-  val form: Form[VendorAgentsContactDetails] = formProvider()
 
   lazy val vendorAgentsContactDetailsRoute: String = controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(NormalMode).url
 
@@ -64,7 +63,6 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
     vendor = None,
   )
 
-
   "VendorAgentsContactDetails Controller" - {
 
     "must return OK and the correct view for a GET when agent name exists and is represented by agent is true" in {
@@ -74,11 +72,13 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
+        implicit val msgs: Messages = messages(application)
         val request = FakeRequest(GET, vendorAgentsContactDetailsRoute)
 
         val view = application.injector.instanceOf[VendorAgentsContactDetailsView]
 
         val agentName = userAnswers.get(AgentNamePage).get
+        val form = formProvider(agentName)
 
         val result = route(application, request).value
 
@@ -96,11 +96,13 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
+        implicit val msgs: Messages = messages(application)
         val request = FakeRequest(GET, vendorAgentsContactDetailsRoute)
 
         val view = application.injector.instanceOf[VendorAgentsContactDetailsView]
 
         val agentName = userAnswers.get(AgentNamePage).get
+        val form = formProvider(agentName)
 
         val result = route(application, request).value
 
@@ -128,7 +130,7 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
       running(application) {
         val request =
           FakeRequest(POST, vendorAgentsContactDetailsRoute)
-            .withFormUrlEncodedBody(("phoneNumber", "12345678912345"), ("emailAddress", "example-test@test.com"))
+            .withFormUrlEncodedBody(("phoneNumber", "07777777777"), ("emailAddress", "example-test@test.com"))
 
         val result = route(application, request).value
 
@@ -142,12 +144,14 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
       val application = applicationBuilder(userAnswers = Some(userAnswersWithAgentDetails)).build()
 
       running(application) {
+        implicit val msgs: Messages = messages(application)
         val request =
           FakeRequest(POST, vendorAgentsContactDetailsRoute)
             .withFormUrlEncodedBody(
               ("phoneNumber", "123456789#"),
               ("emailAddress", "example-test@test.com")
             )
+        val form = formProvider(agentName)
 
         val boundForm = form.bind(Map(
           "phoneNumber" -> "123456789#",
@@ -155,7 +159,6 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
         ))
 
         val view = application.injector.instanceOf[VendorAgentsContactDetailsView]
-
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
@@ -252,11 +255,13 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
+        implicit val msgs: Messages = messages(application)
         val request = FakeRequest(GET, vendorAgentsContactDetailsRoute)
 
         val view = application.injector.instanceOf[VendorAgentsContactDetailsView]
 
         val result = route(application, request).value
+        val form = formProvider(agentName)
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode, agentName)(request, messages(application)).toString
@@ -268,12 +273,16 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
       val application = applicationBuilder(userAnswers = Some(userAnswersWithAgentDetails)).build()
 
       running(application) {
+        implicit val msgs = messages(application)
         val request =
           FakeRequest(POST, vendorAgentsContactDetailsRoute)
             .withFormUrlEncodedBody(
               ("phoneNumber", ""),
               ("emailAddress", "notandemail")
             )
+
+        val agentsName = userAnswersWithAgentDetails.get(AgentNamePage).get
+        val form = formProvider(agentsName)
 
         val boundForm = form.bind(Map(
           "phoneNumber" -> "",

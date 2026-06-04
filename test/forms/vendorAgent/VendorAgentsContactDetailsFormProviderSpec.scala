@@ -18,16 +18,26 @@ package forms.vendorAgent
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
+
+import scala.collection.immutable.ArraySeq
 
 class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
 
-  val form = new VendorAgentsContactDetailsFormProvider()()
+  implicit val messages: Messages = stubMessages()
+
+  val formProvider = new VendorAgentsContactDetailsFormProvider()
+
+  val form = formProvider("Name")
 
   ".phoneNumber" - {
 
     val fieldName = "phoneNumber"
     val lengthKey = "vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.length"
     val invalidKey = "vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.invalid"
+    val phoneNumberFormatError = "vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.invalidFormat"
+    val phoneNumberFormatRegex = """^(\+44|0)\s?\d{3,4}\s?\d{3}\s?\d{3,4}$"""
     val maxLength = 14
 
     "must bind valid phone number form data" in {
@@ -53,8 +63,9 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
             "emailAddress" -> "test@example.com"
           )
         )
-        result.errors mustBe empty
-        result.get.phoneNumber mustBe Some(number)
+
+        result.errors must contain(FormError(fieldName, phoneNumberFormatError, ArraySeq(phoneNumberFormatRegex)))
+
       }
     }
 
@@ -142,7 +153,7 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
   ".emailAddress" - {
 
     val fieldName = "emailAddress"
-    val lengthKey = "vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.length"
+    val lengthKey = "vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.maxlength"
     val invalidKey = "vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.invalid"
     val maxLength = 36
 
@@ -156,14 +167,14 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
         "name_with_underscores@domain.org",
         "dots.in.name@domain.io",
         "hyphen-name@domain-name.com",
-        "a@b"
+        "a@b.com"
       )
 
       validEmails.foreach { email =>
         val result = form.bind(
           Map(
             fieldName -> email,
-            "phoneNumber" -> "123456789"
+            "phoneNumber" -> "01234567890"
           )
         )
         result.errors mustBe empty
@@ -175,7 +186,7 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
       val result = form.bind(
         Map(
           fieldName -> "",
-          "phoneNumber" -> "123456789"
+          "phoneNumber" -> "01234567890"
         )
       )
       result.errors mustBe empty
@@ -185,7 +196,7 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
     "must bind when field is missing" in {
       val result = form.bind(
         Map(
-          "phoneNumber" -> "123456789"
+          "phoneNumber" -> "01234567890"
         )
       )
       result.errors mustBe empty
@@ -198,7 +209,7 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
       val result = form.bind(
         Map(
           fieldName -> longEmail,
-          "phoneNumber" -> "123456789"
+          "phoneNumber" -> "01234567890"
         )
       )
 
@@ -244,7 +255,7 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
         val result = form.bind(
           Map(
             fieldName -> space,
-            "phoneNumber" -> "123456789"
+            "phoneNumber" -> "+44 123456789"
           )
         )
         result.errors mustBe empty

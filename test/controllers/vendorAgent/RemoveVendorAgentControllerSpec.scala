@@ -21,11 +21,11 @@ import connectors.StampDutyLandTaxConnector
 import constants.FullReturnConstants.{completeFullReturn, completeReturnAgent}
 import controllers.routes
 import forms.vendorAgent.RemoveVendorAgentFormProvider
-import models.{DeleteReturnAgentReturn, FullReturn, Vendor, ReturnAgent, ReturnInfo, ReturnVersionUpdateReturn, UserAnswers}
+import models.{DeleteReturnAgentReturn, FullReturn, ReturnAgent, ReturnInfo, ReturnVersionUpdateReturn, UserAnswers, Vendor}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.vendorAgent.{RemoveVendorAgentPage, VendorAgentOverviewPage}
+import pages.vendorAgent.{AgentNamePage, RemoveVendorAgentPage, VendorAgentOverviewPage}
 import play.api.data.Form
 import play.api.inject
 import play.api.inject.bind
@@ -43,9 +43,6 @@ class RemoveVendorAgentControllerSpec extends SpecBase with MockitoSugar {
   def onwardRoute = Call("GET", "/foo")
 
   lazy val removeVendorAgentRoute: String = controllers.vendorAgent.routes.RemoveVendorAgentController.onPageLoad().url
-
-  val formProvider = new RemoveVendorAgentFormProvider()
-  val form: Form[Boolean] = formProvider()
 
   val mockConnector: StampDutyLandTaxConnector = mock[StampDutyLandTaxConnector]
 
@@ -66,6 +63,9 @@ class RemoveVendorAgentControllerSpec extends SpecBase with MockitoSugar {
       )
     ))
   )
+  val agentName = "test"
+
+  val formProvider = new RemoveVendorAgentFormProvider()
 
   "RemoveVendorAgent Controller" - {
 
@@ -79,12 +79,20 @@ class RemoveVendorAgentControllerSpec extends SpecBase with MockitoSugar {
         val userAnswers = emptyUserAnswers.set(VendorAgentOverviewPage, agentId)
           .success
           .value
+          .set(AgentNamePage, "Sheldon").success.value
           .copy(storn = testStorn, fullReturn = Some(completeFullReturn))
+
+        val agentsName = userAnswers.get(AgentNamePage).get
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
         running(application) {
+
+          implicit val msgs = messages(application)
+
           val request = FakeRequest(GET, removeVendorAgentRoute)
+
+          val form = formProvider(agentsName)
 
           val result = route(application, request).value
 
@@ -92,6 +100,27 @@ class RemoveVendorAgentControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual view(form, completeReturnAgent.name.get)(request, messages(application)).toString
+        }
+      }
+
+      "must return JourneyRecoveryController when agent name is None for a GET" in {
+
+        val agentId =
+          testFullReturn.returnAgent.value.head.returnAgentID.value
+
+        val userAnswers = emptyUserAnswers.set(VendorAgentOverviewPage, agentId)
+          .success
+          .value
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+
+          val request = FakeRequest(GET, removeVendorAgentRoute)
+
+          val result = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
         }
       }
 
@@ -131,6 +160,20 @@ class RemoveVendorAgentControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+      "must redirect to Vendor AgentOverview page for a GET if no existing data is found" in {
+
+        val application = applicationBuilder(Some(emptyUserAnswers)).build()
+
+        running(application) {
+          val request = FakeRequest(GET, removeVendorAgentRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad().url
         }
       }
 
@@ -176,14 +219,23 @@ class RemoveVendorAgentControllerSpec extends SpecBase with MockitoSugar {
         val userAnswers = emptyUserAnswers.set(VendorAgentOverviewPage, agentId)
           .success
           .value
-          .copy(storn = testStorn, fullReturn = Some(fullReturnWithSingleVendor))
+          .copy(storn = testStorn, fullReturn = Some(fullReturnWithSingleVendor)).set(AgentNamePage, "Sheldon")
+          .success
+          .value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
         running(application) {
+
+          implicit val msgs = messages(application)
+
           val request =
             FakeRequest(POST, removeVendorAgentRoute)
               .withFormUrlEncodedBody(("value", "invalid value"))
+
+          val agentsName = userAnswers.get(AgentNamePage).get
+
+          val form: Form[Boolean] = formProvider(agentsName)
 
           val boundForm = form.bind(Map("value" -> "invalid value"))
 
@@ -210,6 +262,23 @@ class RemoveVendorAgentControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual SEE_OTHER
 
           redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+      "must redirect to vendorAgent overview page for a POST if no existing data is found" in {
+
+        val application = applicationBuilder(Some(emptyUserAnswers)).build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, removeVendorAgentRoute)
+              .withFormUrlEncodedBody(("value", "true"))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+
+          redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad().url
         }
       }
 

@@ -18,13 +18,14 @@ package forms.vendorAgent
 
 import forms.mappings.Mappings
 import play.api.data.Form
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
 class AddVendorAgentContactDetailsFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(agentName: String)(implicit messages: Messages): Form[Boolean] =
     Form(
-      "value" -> boolean("vendorAgent.addVendorAgentContactDetails.error.required")
+      "value" -> boolean(messages("vendorAgent.addVendorAgentContactDetails.error.required",agentName))
     )
 }

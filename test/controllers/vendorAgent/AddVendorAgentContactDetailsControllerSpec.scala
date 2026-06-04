@@ -27,6 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import pages.vendorAgent.AgentNamePage
 import pages.vendorAgent.AddVendorAgentContactDetailsPage
+import play.api.Application
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -34,6 +35,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.vendorAgent.AddVendorAgentContactDetailsView
+import play.api.i18n.{Messages, MessagesApi}
 
 import scala.concurrent.Future
 
@@ -51,7 +53,7 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
   lazy val addVendorAgentContactDetailsRoute: String = controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(NormalMode).url
 
   val formProvider = new AddVendorAgentContactDetailsFormProvider()
-  val form: Form[Boolean] = formProvider()
+  def customMessages(app: Application, request: FakeRequest[_]): Messages = app.injector.instanceOf[MessagesApi].preferred(request)
 
   "AddVendorAgentContactDetails Controller" - {
 
@@ -67,12 +69,18 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
       running(application) {
         val request = FakeRequest(GET, addVendorAgentContactDetailsRoute)
 
+        implicit val messages: Messages =
+          application.injector.instanceOf[MessagesApi].preferred(request)
+
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[AddVendorAgentContactDetailsView]
 
+        val agentsName = userAnswers.get(AgentNamePage).get
+        val form: Form[Boolean] = formProvider(agentsName)
+
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, "Mary Brown")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, "Mary Brown")(request, customMessages(application, request)).toString
       }
     }
 
@@ -87,14 +95,21 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
+        
         val request = FakeRequest(GET, addVendorAgentContactDetailsRoute)
+
+        implicit val messages: Messages =
+          application.injector.instanceOf[MessagesApi].preferred(request)
 
         val view = application.injector.instanceOf[AddVendorAgentContactDetailsView]
 
         val result = route(application, request).value
 
+        val agentsName = userAnswers.get(AgentNamePage).get
+        val form: Form[Boolean] = formProvider(agentsName)
+
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, "Mary Brown")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, "Mary Brown")(request, customMessages(application, request)).toString
       }
     }
 
@@ -190,6 +205,14 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
           FakeRequest(POST, addVendorAgentContactDetailsRoute)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
+        implicit val msgs = messages(application)
+
+        val agentsName = userAnswersWithAgentName.get(AgentNamePage).get
+        
+        val formProvider = new AddVendorAgentContactDetailsFormProvider()
+
+        val form = formProvider(agentsName)()
+
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[AddVendorAgentContactDetailsView]
@@ -197,7 +220,7 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, "Mary Brown")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "Mary Brown")(request, customMessages(application, request)).toString
       }
     }
 

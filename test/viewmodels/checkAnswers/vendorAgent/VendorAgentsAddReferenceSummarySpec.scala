@@ -21,6 +21,7 @@ import models.CheckMode
 import pages.vendorAgent.VendorAgentsAddReferencePage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 
 class VendorAgentsAddReferenceSummarySpec extends SpecBase {
 
@@ -46,6 +47,24 @@ class VendorAgentsAddReferenceSummarySpec extends SpecBase {
           result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.VendorAgentsAddReferenceController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
           result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendorAgent.VendorAgentsAddReference.change.hidden")
+        }
+      }
+
+      "must use CheckMode for the change link" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val result = VendorAgentsAddReferenceSummary.row(emptyUserAnswers)
+
+          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.VendorAgentsAddReference.checkYourAnswersLabel", "the Agent")
+
+          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          htmlContent must include("govuk-link")
+          htmlContent must include(controllers.vendorAgent.routes.VendorAgentsAddReferenceController.onPageLoad(CheckMode).url)
+          htmlContent must include(msgs("returnAgent.checkYourAnswers.addReferenceNumber.missing"))
+
+          result.actions mustBe None
         }
       }
     }

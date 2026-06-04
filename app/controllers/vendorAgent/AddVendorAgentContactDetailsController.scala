@@ -47,8 +47,6 @@ class AddVendorAgentContactDetailsController @Inject()(
                                                         agentChecksService: AgentChecksService
                                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
@@ -57,6 +55,8 @@ class AddVendorAgentContactDetailsController @Inject()(
           Redirect(controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode))
 
         case Some(agentName) =>
+          val form = formProvider(agentName)
+
           val preparedForm = request.userAnswers.get(AddVendorAgentContactDetailsPage) match {
             case None => form
             case Some(value) => form.fill(value)
@@ -76,6 +76,8 @@ class AddVendorAgentContactDetailsController @Inject()(
           Future.successful(Redirect(controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode)))
 
         case Some(agentName) =>
+          val form = formProvider(agentName)
+
           form.bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, mode, agentName))),
