@@ -19,20 +19,19 @@ package services.pdf
 import models.*
 import org.apache.pdfbox.Loader
 import org.apache.pdfbox.pdmodel.PDDocument
-import org.apache.pdfbox.pdmodel.interactive.form.{PDAcroForm, PDCheckBox, PDTextField}
+import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
 import utils.LoggingUtil
 
 import java.io.ByteArrayOutputStream
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import scala.util.{Try, Using}
+import scala.util.Using
+import SdltPdfFields.*
+import PdfFormSupport.*
 
 @Singleton
 class SdltReturnPdf1a @Inject()(
                                  pdfTemplateLoader: PdfTemplateLoader
                                ) extends LoggingUtil {
-
-  import SdltPdfFields.*
 
   private lazy val templateBytes: Array[Byte] = pdfTemplateLoader.load("SDLT1a.pdf")
 
@@ -42,7 +41,7 @@ class SdltReturnPdf1a @Inject()(
     Using.Manager { use =>
       val doc    = use(Loader.loadPDF(templateBytes))
       val form   = getAcroForm(doc)
-      val writer = new FieldWriter(form)
+      val writer = new PdfFieldWriter(form, "SdltReturnPdf1a")
 
       fillPage1(writer, fullReturn)
       fillPage2(writer, fullReturn)
@@ -68,7 +67,7 @@ class SdltReturnPdf1a @Inject()(
   // Field source: fullReturn.transaction
   // ---------------------------------------------------------------------------
 
-  private def fillPage1(w: FieldWriter, r: FullReturn): Unit = {
+  private def fillPage1(w: PdfFieldWriter, r: FullReturn): Unit = {
     val t = r.transaction.getOrElse(Transaction())
 
     // UTRN from submission
@@ -140,7 +139,7 @@ class SdltReturnPdf1a @Inject()(
   // Field sources: fullReturn.transaction, fullReturn.taxCalculation, fullReturn.lease
   // ---------------------------------------------------------------------------
 
-  private def fillPage2(w: FieldWriter, r: FullReturn): Unit = {
+  private def fillPage2(w: PdfFieldWriter, r: FullReturn): Unit = {
     val t  = r.transaction.getOrElse(Transaction())
     val tc = r.taxCalculation.getOrElse(TaxCalculation())
 
@@ -187,7 +186,7 @@ class SdltReturnPdf1a @Inject()(
     r.lease.foreach(fillLeaseFields(w, _))
   }
 
-  private def fillLeaseFields(w: FieldWriter, l: Lease): Unit = {
+  private def fillLeaseFields(w: PdfFieldWriter, l: Lease): Unit = {
     // Box 16: Lease type
     w.text(LEASE_LEASE_TYPE, l.leaseType.orNull)
 
@@ -243,7 +242,7 @@ class SdltReturnPdf1a @Inject()(
   // Field sources: fullReturn.land.head, fullReturn.vendor.head, fullReturn.returnAgent
   // ---------------------------------------------------------------------------
 
-  private def fillPage3(w: FieldWriter, r: FullReturn): Unit = {
+  private def fillPage3(w: PdfFieldWriter, r: FullReturn): Unit = {
     val lands   = r.land.getOrElse(Seq.empty)
     val vendors = r.vendor.getOrElse(Seq.empty)
     val agents  = r.returnAgent.getOrElse(Seq.empty)
@@ -332,7 +331,7 @@ class SdltReturnPdf1a @Inject()(
   // Each box holds ~3 digits. Left-pad the full pound amount to 12 chars.
   // ---------------------------------------------------------------------------
 
-  private def fillSplitConsideration(w: FieldWriter, amount: Option[String]): Unit =
+  private def fillSplitConsideration(w: PdfFieldWriter, amount: Option[String]): Unit =
     amount.foreach { bd =>
       val padded = bd.reverse.padTo(12, '0').reverse
       w.text(CALCULATION_TOTAL_CONSIDERATION_1, padded.substring(0, 3))
@@ -341,101 +340,9 @@ class SdltReturnPdf1a @Inject()(
       w.text(CALCULATION_TOTAL_CONSIDERATION_4, padded.substring(9, 12))
     }
 
-  // ---------------------------------------------------------------------------
-  // Utilities
-  // ---------------------------------------------------------------------------
-
   private def getAcroForm(doc: PDDocument): PDAcroForm =
     Option(doc.getDocumentCatalog.getAcroForm)
       .getOrElse(throw new SdltPdfFillException("PDF template has no AcroForm", null))
-
-  /** Split "SW1A 2AA" → ("SW1A", "2AA"). Single-part postcodes go entirely into field 1. */
-  private def splitPostcode(postcode: String): (String, String) =
-    Option(postcode).map(_.trim).filter(_.nonEmpty) match {
-      case None => ("", "")
-      case Some(pc) =>
-        val parts = pc.split(" ", 2)
-        if (parts.length == 2) (parts(0), parts(1)) else (pc, "")
-    }
-
-  /** Split a long string at a word boundary near maxLen for the two details fields. */
-  private def splitLines(s: String, maxLen: Int): (String, String) =
-    if (s.length <= maxLen) (s, "")
-    else {
-      val cut = s.lastIndexOf(' ', maxLen)
-      if (cut > 0) (s.substring(0, cut), s.substring(cut + 1))
-      else (s.substring(0, maxLen), s.substring(maxLen))
-    }
-
-  // ---------------------------------------------------------------------------
-  // Inner FieldWriter — defensive wrapper around PDAcroForm
-  // ---------------------------------------------------------------------------
-
-  private class FieldWriter(form: PDAcroForm) {
-
-    /** Set a text field. Null/blank values silently clear the field. */
-    def text(fieldName: String, value: String): Unit = {
-      val safe = Option(value).map(_.trim).getOrElse("")
-      Try(form.getField(fieldName)).toOption match {
-        case Some(f: PDTextField) =>
-          Try(f.setValue(safe)).failed.foreach { e =>
-            logger.warn(s"[SdltReturnPdf1a][FieldWriter] Could not set '$fieldName': ${e.getMessage}")
-          }
-        case Some(_) =>
-          logger.warn(s"[SdltReturnPdf1a][FieldWriter] '$fieldName' is not a text field")
-        case None =>
-          logger.debug(s"[SdltReturnPdf1a][FieldWriter] '$fieldName' not found in template — skipping")
-      }
-    }
-
-    /** Set a Yes/No checkbox pair from a boolean. */
-    def yesNo(yesField: String, noField: String, isYes: Boolean): Unit =
-      if (isYes) { check(yesField); uncheck(noField) }
-      else       { uncheck(yesField); check(noField) }
-
-    def check(fieldName: String): Unit   = setCheckbox(fieldName, checked = true)
-    def uncheck(fieldName: String): Unit = setCheckbox(fieldName, checked = false)
-
-    private def setCheckbox(fieldName: String, checked: Boolean): Unit =
-      Try(form.getField(fieldName)).toOption match {
-        case Some(cb: PDCheckBox) =>
-          Try(if (checked) cb.check() else cb.unCheck()).failed.foreach { e =>
-            logger.warn(s"[SdltReturnPdf1a][FieldWriter] Could not set checkbox '$fieldName': ${e.getMessage}")
-          }
-        case Some(_) =>
-          logger.warn(s"[SdltReturnPdf1a][FieldWriter] '$fieldName' is not a checkbox")
-        case None =>
-          logger.debug(s"[SdltReturnPdf1a][FieldWriter] '$fieldName' not found in template — skipping")
-      }
-
-    /**
-     * Set a BigDecimal money field as a plain string.
-     * The PDF template renders the £ symbol and decimal separator as static content.
-     */
-    def bigDecimal(fieldName: String, amount: Option[BigDecimal]): Unit =
-      text(fieldName, amount.map(_.setScale(2, BigDecimal.RoundingMode.DOWN).toString).orNull)
-
-    /**
-     * Parse a stored date string ("dd/MM/yyyy") and split into three fields.
-     * Tolerant of null — leaves fields blank.
-     */
-    def dateStr(dayField: String, monthField: String, yearField: String, stored: String): Unit =
-      Option(stored).map(_.trim).filter(_.nonEmpty) match {
-        case None =>
-          text(dayField, ""); text(monthField, ""); text(yearField, "")
-        case Some(d) =>
-          Try {
-            val fmt  = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")
-            val date = LocalDate.parse(d, fmt)
-            text(dayField,   f"${date.getDayOfMonth}%02d")
-            text(monthField, f"${date.getMonthValue}%02d")
-            text(yearField,   date.getYear.toString)
-          }.failed.foreach { e =>
-            logger.warn(s"[SdltReturnPdf1a][FieldWriter] Could not parse date '$d': ${e.getMessage}")
-            text(dayField, d); text(monthField, ""); text(yearField, "")
-          }
-      }
-  }
 }
 
 class SdltPdfFillException(message: String, cause: Throwable)
