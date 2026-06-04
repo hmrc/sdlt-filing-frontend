@@ -60,23 +60,23 @@ class CurrencyFormatterSpec extends AnyFreeSpec with Matchers {
     }
 
     "strips the .00 suffix from a decimal string" in {
-      "500000.00".toCurrency mustEqual Some("£500,000")
+      "500000.00".toCurrency mustEqual "£500,000"
     }
 
     "formats a whole-number string" in {
-      "500000".toCurrency mustEqual Some("£500,000")
+      "500000".toCurrency mustEqual "£500,000"
     }
 
     "groups thousands with commas" in {
-      "1234567.00".toCurrency mustEqual Some("£1,234,567")
+      "1234567.00".toCurrency mustEqual "£1,234,567"
     }
 
-    "returns None for a non-numeric string" in {
-      "my-name-is-jeff".toCurrency mustEqual None
+    "returns the original string for a non-numeric string" in {
+      "my-name-is-jeff".toCurrency mustEqual "my-name-is-jeff"
     }
 
-    "returns None for an empty string" in {
-      "".toCurrency mustEqual None
+    "returns the original string for an empty string" in {
+      "".toCurrency mustEqual ""
     }
   }
 

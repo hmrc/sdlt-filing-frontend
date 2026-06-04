@@ -51,7 +51,7 @@ class LeaseholdSelfAssessedPremiumPayableTaxController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     sdltCalculationService.whenInFlow(LeaseholdSelfAssessed) {
-      val premiumPayable = request.userAnswers.fullReturn.flatMap(_.lease.flatMap(_.totalPremiumPayable.flatMap(_.toCurrency)))
+      val premiumPayable = request.userAnswers.fullReturn.flatMap(_.lease.flatMap(_.totalPremiumPayable.map(_.toCurrency)))
 
       premiumPayable match {
         case Some(premiumPayable) =>
@@ -69,7 +69,7 @@ class LeaseholdSelfAssessedPremiumPayableTaxController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     sdltCalculationService.whenInFlowAsync(LeaseholdSelfAssessed) {
-      val premiumPayable = request.userAnswers.fullReturn.flatMap(_.lease.flatMap(_.totalPremiumPayable.flatMap(_.toCurrency)))
+      val premiumPayable = request.userAnswers.fullReturn.flatMap(_.lease.flatMap(_.totalPremiumPayable.map(_.toCurrency)))
 
       premiumPayable match {
         case Some(premiumPayable) =>
