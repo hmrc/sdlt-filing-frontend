@@ -22,7 +22,6 @@ import models.{Mode, NormalMode}
 import models.vendorAgent.VendorAgentsContactDetails
 import navigation.Navigator
 import pages.vendorAgent.{AddVendorAgentContactDetailsPage, AgentNamePage, VendorAgentsContactDetailsPage}
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -47,7 +46,7 @@ class VendorAgentsContactDetailsController @Inject()(
                                       view: VendorAgentsContactDetailsView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form: Form[VendorAgentsContactDetails] = formProvider()
+  
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -60,6 +59,7 @@ class VendorAgentsContactDetailsController @Inject()(
           Redirect(controllers.vendorAgent.routes.AgentNameController.onPageLoad(NormalMode))
 
         case Some(agentName) =>
+          val form = formProvider(agentName)
           request.userAnswers.get(AddVendorAgentContactDetailsPage) match {
             case Some(addContactDetails) if addContactDetails =>
               val preparedForm = request.userAnswers.get(VendorAgentsContactDetailsPage) match {
@@ -82,6 +82,7 @@ class VendorAgentsContactDetailsController @Inject()(
           Future.successful(Redirect(controllers.vendorAgent.routes.AgentNameController.onPageLoad(mode)))
 
         case Some(agentName) =>
+          val form = formProvider(agentName)
           form.bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, mode, agentName))),

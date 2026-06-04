@@ -18,10 +18,15 @@ package forms.vendorAgent
 
 import forms.behaviours.OptionFieldBehaviours
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class RemoveVendorAgentFormProviderSpec extends OptionFieldBehaviours {
 
-  val form = new RemoveVendorAgentFormProvider()()
+  private implicit val messages: Messages = stubMessages()
+
+    val formProvider = new RemoveVendorAgentFormProvider()
+  val form = formProvider("Name")
 
   ".value" - {
 

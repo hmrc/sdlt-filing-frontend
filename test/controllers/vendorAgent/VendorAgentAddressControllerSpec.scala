@@ -29,6 +29,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.AddressLookupService
+import controllers.routes
 
 import java.time.Instant
 import scala.concurrent.Future
@@ -200,6 +201,21 @@ class VendorAgentAddressControllerSpec extends SpecBase with MockitoSugar {
             exception mustBe a[RuntimeException]
             exception.getMessage mustBe "Service unavailable"
           }
+        }
+      }
+
+      "must return JourneyRecovery page when agent name is None for a GET" in {
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswersMissingAgentName)).build()
+
+        running(application) {
+
+          val request = FakeRequest(GET, redirectToAddressLookupRoute)
+
+          val result = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
         }
       }
     }

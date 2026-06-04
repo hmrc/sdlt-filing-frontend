@@ -43,7 +43,6 @@ class RemoveVendorAgentController @Inject()(
 
                                               )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -58,6 +57,7 @@ class RemoveVendorAgentController @Inject()(
             Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
 
           case Some(name) =>
+            val form: Form[Boolean] = formProvider(name)
             val preparedForm = request.userAnswers.get(RemoveVendorAgentPage) match {
               case None => form
               case Some(value) => form.fill(value)
@@ -86,8 +86,9 @@ class RemoveVendorAgentController @Inject()(
           case None =>
             Future.successful(Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad()))
 
-          case Some(agent) =>
+          case Some(agent) =>            
             val agentName = agent.name.getOrElse("")
+            val form = formProvider(agentName)
             form.bindFromRequest().fold(
               formWithErrors =>
                 Future.successful(BadRequest(view(formWithErrors, agentName))),

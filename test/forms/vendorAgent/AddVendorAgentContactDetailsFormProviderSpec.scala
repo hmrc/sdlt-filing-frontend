@@ -18,13 +18,19 @@ package forms.vendorAgent
 
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class AddVendorAgentContactDetailsFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "vendorAgent.addVendorAgentContactDetails.error.required"
   val invalidKey = "error.boolean"
-  
-  val form = new AddVendorAgentContactDetailsFormProvider()()
+  val agentName = "Name"
+
+  private implicit val messages: Messages = stubMessages()
+
+  val formProvider = new AddVendorAgentContactDetailsFormProvider()
+  val form = formProvider("Name")
 
   ".value" - {
 
