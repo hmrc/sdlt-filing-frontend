@@ -51,7 +51,7 @@ class PremiumPayableTaxSummarySpec extends SpecBase {
 
           val valueHtml = result.row.value.content.asHtml.toString()
 
-          valueHtml mustEqual "£1000.00"
+          valueHtml mustEqual "£1,000"
           result.row.actions.get.items.size mustEqual 1
           result.row.actions.get.items.head.href mustEqual
             controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedPremiumPayableTaxController.onPageLoad(CheckMode).url

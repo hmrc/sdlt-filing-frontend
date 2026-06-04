@@ -16,6 +16,7 @@
 
 package viewmodels.checkAnswers.taxCalculation
 
+import config.CurrencyFormatter
 import models.{CheckMode, UserAnswers}
 import pages.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedSelfAssessedAmountPage
 import play.api.i18n.Messages
@@ -25,7 +26,7 @@ import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object LeaseholdTaxCalculatedSelfAssessedAmountSummary {
+object LeaseholdTaxCalculatedSelfAssessedAmountSummary extends CurrencyFormatter {
 
   def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
     val changeRoute = controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdTaxCalculatedSdltSelfAssessmentController.onPageLoad(CheckMode)
@@ -35,7 +36,7 @@ object LeaseholdTaxCalculatedSelfAssessedAmountSummary {
       Row(
         SummaryListRowViewModel(
           key   = label,
-          value = ValueViewModel(HtmlContent(s"£$answer")),
+          value = ValueViewModel(HtmlContent(s"${answer.toCurrency}")),
           actions = Seq(
             ActionItemViewModel("site.change", changeRoute.url)
               .withVisuallyHiddenText(messages("taxCalculation.sdltSelfAssessment.change.hidden"))
