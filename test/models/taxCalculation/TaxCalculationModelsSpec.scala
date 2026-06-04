@@ -17,9 +17,65 @@
 package models.taxCalculation
 
 import base.SpecBase
+import models.FullReturn
+import pages.taxCalculation.TaxCalculationFlowPage
+import pages.taxCalculation.freeholdSelfAssessed.{FreeholdSelfAssessedAmountPage, FreeholdSelfAssessedPenaltiesAndInterestPage, FreeholdSelfAssessedTotalAmountDuePage}
+import pages.taxCalculation.freeholdTaxCalculated.{FreeholdTaxCalculatedPenaltiesAndInterestPage, FreeholdTaxCalculatedSelfAssessedAmountPage, FreeholdTaxCalculatedTotalAmountDuePage}
+import pages.taxCalculation.leaseholdSelfAssessed.{LeaseholdSelfAssessedNpvTaxPage, LeaseholdSelfAssessedPenaltiesAndInterestPage, LeaseholdSelfAssessedPremiumPayableTaxPage, LeaseholdSelfAssessedTotalAmountDuePage}
+import pages.taxCalculation.leaseholdTaxCalculated.{LeaseholdTaxCalculatedPenaltiesAndInterestPage, LeaseholdTaxCalculatedSelfAssessedAmountPage, LeaseholdTaxCalculatedTotalAmountDuePage}
 import play.api.libs.json.{JsSuccess, Json}
 
 class TaxCalculationModelsSpec extends SpecBase {
+
+  private val calculatedResult = TaxCalculationResult(
+    totalTax      = 43750,
+    resultHeading = None,
+    resultHint    = None,
+    npv           = None,
+    taxCalcs      = Seq(CalculationDetails(TaxTypes.premium, CalcTypes.slab, 43750, None, None, None, Some(5), None, None))
+  )
+
+  private val leaseholdResult = TaxCalculationResult(
+    totalTax      = 11000,
+    resultHeading = None,
+    resultHint    = None,
+    npv           = Some(100000),
+    taxCalcs      = Seq(
+      CalculationDetails(TaxTypes.premium, CalcTypes.slab,  8000, None, None, None, Some(5), None, None),
+      CalculationDetails(TaxTypes.rent,    CalcTypes.slice, 3000, None, None, None, Some(1), None, None)
+    )
+  )
+
+  private val fullReturn = FullReturn(stornId = "TESTSTORN", returnResourceRef = "REF")
+
+  private val freeholdCalculatedAnswers = emptyUserAnswers
+    .copy(fullReturn = Some(fullReturn))
+    .set(TaxCalculationFlowPage, TaxCalculationFlow.FreeholdTaxCalculated).success.value
+    .set(FreeholdTaxCalculatedSelfAssessedAmountPage, "43750").success.value
+    .set(FreeholdTaxCalculatedTotalAmountDuePage, "43850").success.value
+    .set(FreeholdTaxCalculatedPenaltiesAndInterestPage, true).success.value
+
+  private val freeholdSelfAssessedAnswers = emptyUserAnswers
+    .copy(fullReturn = Some(fullReturn))
+    .set(TaxCalculationFlowPage, TaxCalculationFlow.FreeholdSelfAssessed).success.value
+    .set(FreeholdSelfAssessedAmountPage, "43750").success.value
+    .set(FreeholdSelfAssessedTotalAmountDuePage, "43850").success.value
+    .set(FreeholdSelfAssessedPenaltiesAndInterestPage, false).success.value
+
+  private val leaseholdCalculatedAnswers = emptyUserAnswers
+    .copy(fullReturn = Some(fullReturn))
+    .set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdTaxCalculated).success.value
+    .set(LeaseholdTaxCalculatedSelfAssessedAmountPage, "11000").success.value
+    .set(LeaseholdTaxCalculatedTotalAmountDuePage, "11100").success.value
+    .set(LeaseholdTaxCalculatedPenaltiesAndInterestPage, true).success.value
+
+  private val leaseholdSelfAssessedAnswers = emptyUserAnswers
+    .copy(fullReturn = Some(fullReturn))
+    .set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdSelfAssessed).success.value
+    .set(LeaseholdSelfAssessedPremiumPayableTaxPage, "8000").success.value
+    .set(LeaseholdSelfAssessedNpvTaxPage, "3000").success.value
+    .set(LeaseholdSelfAssessedTotalAmountDuePage, "11100").success.value
+    .set(LeaseholdSelfAssessedPenaltiesAndInterestPage, false).success.value
 
   "UpdateTaxCalculationRequest" - {
 
@@ -149,6 +205,89 @@ class TaxCalculationModelsSpec extends SpecBase {
       val json = Json.obj("stornId" -> "STORN123")
 
       json.validate[UpdateTaxCalculationRequest].isError mustBe true
+    }
+
+    ".from" - {
+
+      "must build the request from a FreeholdTaxCalculated flow" in {
+        val request = UpdateTaxCalculationRequest.from(freeholdCalculatedAnswers, Some(calculatedResult), BigDecimal(100)).futureValue
+
+        request.stornId mustBe "TESTSTORN"
+        request.returnResourceRef mustBe "REF"
+        request.amountPaid mustBe Some("43850")
+        request.includesPenalty mustBe Some("yes")
+        request.taxDue mustBe Some("43750")
+        request.calcTaxDue mustBe Some("43750")
+        request.calcPenaltyDue mustBe Some("100")
+        request.calcTaxRate1 mustBe Some("5%")
+        request.calcTotalTaxPenaltyDue mustBe Some("43850")
+        request.honestyDeclaration mustBe Some("yes")
+        request.calcTaxRate2 mustBe None
+        request.calcTotalNpvTax mustBe None
+        request.calcTotalPremiumTax mustBe None
+      }
+
+      "must fall back to the calculated SDLT due when the self-assessed amount is absent" in {
+        val answers = freeholdCalculatedAnswers.remove(FreeholdTaxCalculatedSelfAssessedAmountPage).success.value
+
+        UpdateTaxCalculationRequest.from(answers, Some(calculatedResult), BigDecimal(0)).futureValue.taxDue mustBe Some("43750")
+      }
+
+      "must build the request from a FreeholdSelfAssessed flow without any calculated fields" in {
+        val request = UpdateTaxCalculationRequest.from(freeholdSelfAssessedAnswers, None, BigDecimal(50)).futureValue
+
+        request.amountPaid mustBe Some("43850")
+        request.includesPenalty mustBe Some("no")
+        request.taxDue mustBe Some("43750")
+        request.calcPenaltyDue mustBe Some("50")
+        request.calcTotalTaxPenaltyDue mustBe Some("50")
+        request.calcTaxDue mustBe None
+        request.calcTaxRate1 mustBe None
+        request.calcTotalPremiumTax mustBe None
+      }
+
+      "must build the request from a LeaseholdTaxCalculated flow with premium and NPV rates and tax" in {
+        val request = UpdateTaxCalculationRequest.from(leaseholdCalculatedAnswers, Some(leaseholdResult), BigDecimal(100)).futureValue
+
+        request.amountPaid mustBe Some("11100")
+        request.taxDue mustBe Some("11000")
+        request.calcTaxDue mustBe Some("11000")
+        request.calcTaxRate1 mustBe Some("5%")
+        request.calcTaxRate2 mustBe Some("1%")
+        request.calcTotalPremiumTax mustBe Some("8000")
+        request.calcTotalNpvTax mustBe Some("3000")
+        request.taxDuePremium mustBe Some("8000")
+        request.taxDueNpv mustBe Some("3000")
+        request.calcTotalTaxPenaltyDue mustBe Some("11100")
+      }
+
+      "must format a fractional rate as a decimal percentage" in {
+        val fractionalResult = leaseholdResult.copy(taxCalcs = Seq(
+          CalculationDetails(TaxTypes.premium, CalcTypes.slab,  8000, None, None, None, Some(4), Some(5), None),
+          CalculationDetails(TaxTypes.rent,    CalcTypes.slice, 3000, None, None, None, Some(1), None,    None)
+        ))
+        val request = UpdateTaxCalculationRequest.from(leaseholdCalculatedAnswers, Some(fractionalResult), BigDecimal(100)).futureValue
+
+        request.calcTaxRate1 mustBe Some("4.5%")
+        request.calcTaxRate2 mustBe Some("1%")
+      }
+
+      "must build the request from a LeaseholdSelfAssessed flow with the premium and NPV answers" in {
+        val request = UpdateTaxCalculationRequest.from(leaseholdSelfAssessedAnswers, None, BigDecimal(0)).futureValue
+
+        request.amountPaid mustBe Some("11100")
+        request.taxDuePremium mustBe Some("8000")
+        request.taxDueNpv mustBe Some("3000")
+        request.taxDue mustBe None
+        request.calcTaxDue mustBe None
+        request.calcTotalPremiumTax mustBe None
+      }
+
+      "must fail when the full return is absent" in {
+        val answers = emptyUserAnswers.set(TaxCalculationFlowPage, TaxCalculationFlow.FreeholdTaxCalculated).success.value
+
+        UpdateTaxCalculationRequest.from(answers, Some(calculatedResult), BigDecimal(0)).failed.futureValue mustBe a[NoSuchElementException]
+      }
     }
   }
 

@@ -19,10 +19,14 @@ package controllers.taxCalculation
 import base.SpecBase
 import forms.taxCalculation.ConfirmEffectiveDateOfTransactionFormProvider
 import models.{CheckMode, FullReturn, Land, ReturnInfo, Transaction, UserAnswers}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.taxCalculation.ConfirmEffectiveDateOfTransactionPage
+import pages.transaction.TransactionEffectiveDatePage
+
+import java.time.LocalDate
 import play.api.inject.bind
 import play.api.test
 import play.api.test.FakeRequest
@@ -153,12 +157,13 @@ class ConfirmEffectiveDateOfTransactionControllerSpec extends SpecBase with Mock
         }
       }
 
-      "must redirect to TransactionEffectiveDateController when user selects `NO`" in {
+      "must populate the transaction section from the full return and redirect to TransactionEffectiveDateController when user selects `NO`" in {
 
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        val session = mock[SessionRepository]
+        when(session.set(any())).thenReturn(Future.successful(true))
 
         val app = applicationBuilder(Some(userAnswersWithEffectiveDate))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[SessionRepository].toInstance(session))
           .build()
 
         running(app) {
@@ -169,6 +174,10 @@ class ConfirmEffectiveDateOfTransactionControllerSpec extends SpecBase with Mock
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode).url
+
+          val captor = ArgumentCaptor.forClass(classOf[UserAnswers])
+          verify(session).set(captor.capture())
+          captor.getValue.get(TransactionEffectiveDatePage).value mustEqual LocalDate.of(2019, 4, 1)
         }
 
       }

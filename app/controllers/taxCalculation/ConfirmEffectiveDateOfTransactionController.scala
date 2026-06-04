@@ -18,7 +18,7 @@ package controllers.taxCalculation
 
 import controllers.actions.*
 import forms.taxCalculation.ConfirmEffectiveDateOfTransactionFormProvider
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, NormalMode, UserAnswers}
 import models.taxCalculation.BuildRequestError
 import navigation.Navigator
 import pages.taxCalculation.ConfirmEffectiveDateOfTransactionPage
@@ -27,6 +27,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.transaction.PopulateTransactionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.EffectiveDateHelper
 import views.html.taxCalculation.ConfirmEffectiveDateOfTransactionYesNoView
@@ -41,6 +42,7 @@ class ConfirmEffectiveDateOfTransactionController @Inject()(override val message
                                                             requireData: DataRequiredAction,
                                                             navigator: Navigator,
                                                             sessionRepository: SessionRepository,
+                                                            populateTransactionService: PopulateTransactionService,
                                                             val controllerComponents: MessagesControllerComponents,
                                                             formProvider: ConfirmEffectiveDateOfTransactionFormProvider,
                                                             view: ConfirmEffectiveDateOfTransactionYesNoView
@@ -73,20 +75,27 @@ class ConfirmEffectiveDateOfTransactionController @Inject()(override val message
               value =>
                 for {
                   updatedUserAnswers <- Future.fromTry(request.userAnswers.set(ConfirmEffectiveDateOfTransactionPage, value))
-                  _ <- sessionRepository.set(updatedUserAnswers)
+                  answersToPersist    = if (value) updatedUserAnswers else populateTransaction(updatedUserAnswers)
+                  _                  <- sessionRepository.set(answersToPersist)
                 } yield {
                   if (value) {
                     Redirect(navigator.nextPage(ConfirmEffectiveDateOfTransactionPage, NormalMode, updatedUserAnswers))
-                  }
-                  else {
+                  } else {
                     Redirect(controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode))
                   }
                 }
-
             )
         case Left(error) =>
           logger.warn(s"[ConfirmEffectiveDateOfTransactionController][onSubmit] failed: ${error.message}")
           Future.successful(Redirect(errorHandler(error)))
       }
   }
+
+  private def populateTransaction(userAnswers: UserAnswers): UserAnswers =
+    userAnswers.fullReturn.flatMap(_.transaction)
+      .flatMap(transaction =>
+        populateTransactionService.populateTransactionInSession(transaction, userAnswers)
+          .toOption
+      )
+      .getOrElse(userAnswers)
 }

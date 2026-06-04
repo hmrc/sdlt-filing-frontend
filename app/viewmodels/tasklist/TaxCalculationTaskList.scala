@@ -36,9 +36,9 @@ object TaxCalculationTaskList {
     )
 
   def buildTaxCalculationRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
-    
+
     val url = controllers.taxCalculation.routes.TaxCalculationConfirmEffectiveDateOfTransactionController.onPageLoad().url
-    
+
     TaskListRowBuilder(
       canEdit = {
         case TLCompleted => true
