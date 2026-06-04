@@ -21,15 +21,14 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import models.UserAnswers
 import models.vendor.VendorSessionQuestions
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.{JsError, JsSuccess}
+import play.api.libs.json.{JsError, JsObject, JsSuccess}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.checkAnswers.CheckAnswersService
 import services.vendor.VendorCreateOrUpdateService
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.vendor.{IndividualOrCompanyNameSummary, VendorAddressSummary, VendorTypeSummary}
-import viewmodels.govuk.summarylist.*
+import viewmodels.checkAnswers.vendor.{VendorOrCompanyNameSummary, VendorAddressSummary, WhoIsTheVendorSummary}
 import views.html.vendor.VendorCheckYourAnswersView
 
 import javax.inject.Singleton
@@ -44,7 +43,8 @@ class VendorCheckYourAnswersController @Inject()(
                                                   sessionRepository: SessionRepository,
                                                   vendorCreateOrUpdateService: VendorCreateOrUpdateService,
                                                   val controllerComponents: MessagesControllerComponents,
-                                                  view: VendorCheckYourAnswersView
+                                                  view: VendorCheckYourAnswersView,
+                                                  checkAnswersService: CheckAnswersService
                                                 )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -56,22 +56,26 @@ class VendorCheckYourAnswersController @Inject()(
 
         val isReturnIdEmpty = result.exists(_.returnId.isEmpty)
         val isDataEmpty = result.exists(_.data.value.isEmpty)
+        val isVendorDataEmpty = result.exists(userAnswers => (userAnswers.data \ "vendorCurrent").asOpt[JsObject].forall(_.values.isEmpty))
 
         if (isReturnIdEmpty) {
           Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
         } else {
-          (isDataEmpty, result) match {
-            case (true, _) => Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
-            case (_, Some(userAnswers)) =>
-              val baseRows = Seq(
-                VendorTypeSummary.row(Some(userAnswers)),
-                IndividualOrCompanyNameSummary.row(Some(userAnswers)),
+          (isDataEmpty, isVendorDataEmpty, result) match {
+            case (true, _, _) => Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
+            case (_, true, _) => Redirect(controllers.vendor.routes.VendorBeforeYouStartController.onPageLoad())
+            case (_, _, Some(userAnswers)) =>
+              val rowResults = Seq(
+                WhoIsTheVendorSummary.row(Some(userAnswers)),
+                VendorOrCompanyNameSummary.row(Some(userAnswers)),
                 VendorAddressSummary.row(Some(userAnswers))
               )
 
-              val summaryList = SummaryListViewModel(rows = baseRows)
-              Ok(view(summaryList))
-            case (false, None) => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+              checkAnswersService.redirectOrRender(rowResults) match {
+                case Left(call) => Redirect(call)
+                case Right(summaryList) => Ok(view(summaryList))
+              }
+            case (false, false, None) => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
           }
         }
       }

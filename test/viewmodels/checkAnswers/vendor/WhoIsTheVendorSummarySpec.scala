@@ -23,14 +23,15 @@ import pages.vendor.WhoIsTheVendorPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class WhoIsTheVendorSummarySpec extends SpecBase {
 
-  "WhoIsTheVendorSummary" - {
+  "whoIsTheVendorSummary" - {
 
-    "when WhoIsTheVendor is present" - {
+    "when Vendor type is present" - {
 
-      "must return a summary list row with WhoIsTheVendor type value and change link" in {
+      "must return a summary list row with Vendor type value and change link" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -40,18 +41,22 @@ class WhoIsTheVendorSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(WhoIsTheVendorPage, whoIsTheVendor.Company).success.value
 
-          val result = WhoIsTheVendorSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val row = WhoIsTheVendorSummary.row(Some(userAnswers))
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
-          result.key.content.asHtml.toString() mustEqual msgs("vendor.whoIsTheVendor.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("vendor.checkYourAnswers.whoIsTheVendor.label")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
 
-          htmlContent mustEqual msgs("vendor.whoIsTheVendor.Company")
+          htmlContent mustEqual msgs("vendor.checkYourAnswers.whoIsTheVendor.Company")
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendor.whoIsTheVendor.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendor.checkYourAnswers.whoIsTheVendor.hidden")
         }
       }
 
@@ -71,28 +76,58 @@ class WhoIsTheVendorSummarySpec extends SpecBase {
             val userAnswers = emptyUserAnswers
               .set(WhoIsTheVendorPage, individualOrCompany).success.value
 
-            val result = WhoIsTheVendorSummary.row(userAnswers)getOrElse(fail("Failed to get summary list row"))
+            val row = WhoIsTheVendorSummary.row(Some(userAnswers))
+            val result = row match {
+              case Row(r) => r
+              case _ => fail("Expected Row but got Missing")
+            }
 
             val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-            htmlContent mustEqual msgs(s"vendor.whoIsTheVendor.$individualOrCompany")
+            htmlContent mustEqual msgs(s"vendor.checkYourAnswers.whoIsTheVendor.$individualOrCompany")
           }
         }
       }
+
     }
 
-    "must use CheckMode for the change link" in {
+    "when Vendor type is not present" - {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      "must return a Missing and redirect call to missing page when data is not present" in {
 
-      running(application) {
-        implicit val msgs: Messages = messages(application)
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-        val userAnswers = emptyUserAnswers
-          .set(WhoIsTheVendorPage, whoIsTheVendor.Company).success.value
+        running(application) {
+          implicit val msgs: Messages = messages(application)
 
-        val result = WhoIsTheVendorSummary.row(userAnswers)getOrElse(fail("Failed to get summary list row"))
+          val result = WhoIsTheVendorSummary.row(Some(emptyUserAnswers))
 
-        result.actions.get.items.head.href mustEqual controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(CheckMode).url
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(CheckMode)
+
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
+        }
+      }
+
+      "must return a Missing and redirect call to missing page when UserAnswers is None" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val result = WhoIsTheVendorSummary.row(None)
+
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(CheckMode)
+
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
+        }
       }
     }
   }

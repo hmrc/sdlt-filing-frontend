@@ -22,12 +22,14 @@ import pages.vendor.VendorAddressPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Row, Missing}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object VendorAddressSummary {
-  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryListRow =
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor(Some("change"))
     answers.flatMap(_.get(VendorAddressPage)).map { answer =>
       
       val listOfAddressDetails = List(
@@ -52,24 +54,18 @@ object VendorAddressSummary {
         HtmlContent(HtmlFormat.escape(prelimAddressString))
       )
 
-      SummaryListRowViewModel(
-        key = "vendor.checkYourAnswers.vendorAddress.label",
-        value = value,
-        actions = Seq(
-          ActionItemViewModel("site.change", controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor(Some("change")).url)
-            .withVisuallyHiddenText(messages("vendor.checkYourAnswers.vendorAddress.hidden"))
+      Row(
+        SummaryListRowViewModel(
+          key = "vendor.checkYourAnswers.vendorAddress.label",
+          value = value,
+          actions = Seq(
+            ActionItemViewModel("site.change", changeRoute.url)
+              .withVisuallyHiddenText(messages("vendor.checkYourAnswers.vendorAddress.hidden"))
+          )
         )
       )
-    }.getOrElse{
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="${controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor(Some("change")).url}" class="govuk-link">${messages("vendor.checkYourAnswers.vendorAddress.addressMissing")}</a>""")
-      )
-      
-      SummaryListRowViewModel(
-        key = "vendor.checkYourAnswers.vendorAddress.label",
-        value = value
-      )
+    }.getOrElse {
+      Missing(changeRoute)
     }
+  }
 }

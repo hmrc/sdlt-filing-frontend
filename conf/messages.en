@@ -366,16 +366,13 @@ vendor.beforeStart.bullet1                                                      
 vendor.beforeStart.bullet2                                                          = the vendor’s name
 vendor.beforeStart.bullet3                                                          = the vendor’s address
 
-vendor.checkYourAnswers.vendorType.label                                            = Vendor type
-vendor.checkYourAnswers.vendorTypeMissing                                           = Enter vendor type
-vendor.checkYourAnswers.hidden                                                      = Individual or Company
-vendor.checkYourAnswers.Individual                                                  = Individual
-vendor.checkYourAnswers.Company                                                     = Company
+vendor.checkYourAnswers.whoIsTheVendor.label                                        = Vendor type
+vendor.checkYourAnswers.whoIsTheVendor.hidden                                       = Vendor type
+vendor.checkYourAnswers.whoIsTheVendor.Individual                                   = Individual
+vendor.checkYourAnswers.whoIsTheVendor.Company                                      = Company
 vendor.checkYourAnswers.vendorName.label                                            = Vendor name
-vendor.checkYourAnswers.vendorName.nameMissing                                      = Enter vendor name
-vendor.checkYourAnswers.vendorName.hidden                                           = Vendor or Company name
+vendor.checkYourAnswers.vendorName.hidden                                           = Vendor name
 vendor.checkYourAnswers.vendorAddress.label                                         = Vendor address
-vendor.checkYourAnswers.vendorAddress.addressMissing                                = Enter vendor address
 vendor.checkYourAnswers.vendorAddress.hidden                                        = Vendor address
 
 vendor.company.title                                                                = What is the company’s name? - About the vendor

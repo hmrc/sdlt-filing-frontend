@@ -17,27 +17,40 @@
 package viewmodels.checkAnswers.vendor
 
 import models.{CheckMode, UserAnswers}
-import pages.vendor.VendorOrCompanyNamePage
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import pages.vendor.{VendorOrCompanyNamePage, WhoIsTheVendorPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Row, Missing}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object VendorOrCompanyNameSummary  {
+object VendorOrCompanyNameSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(VendorOrCompanyNamePage).map {
+  def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(CheckMode)
+
+    val vendorOrBusiness: String = answers.flatMap(_.get(WhoIsTheVendorPage)) match {
+      case Some(value) => if (value.toString == "Individual") "Individual" else "Company"
+      case _ => ""
+    }
+
+    answers.flatMap(_.get(VendorOrCompanyNamePage)).map {
       answer =>
-
-        SummaryListRowViewModel(
-          key     = "vendorOrCompanyName.checkYourAnswersLabel",
-          value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer.name).toString)),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.vendor.routes.VendorOrCompanyNameController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("vendorOrCompanyName.change.hidden"))
+        val name = if vendorOrBusiness == "Individual" then answer.fullName else answer.name
+        Row(
+          SummaryListRowViewModel(
+            key = s"vendor.checkYourAnswers.vendorName.label",
+            value = ValueViewModel(HtmlContent(HtmlFormat.escape(name).toString)),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("vendor.checkYourAnswers.vendorName.hidden"))
+            )
           )
         )
+    }.getOrElse {
+      Missing(changeRoute)
     }
+  }
 }

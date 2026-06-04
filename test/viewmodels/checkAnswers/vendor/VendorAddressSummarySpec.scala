@@ -22,6 +22,7 @@ import pages.vendor.VendorAddressPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 
 class VendorAddressSummarySpec extends SpecBase {
@@ -49,7 +50,11 @@ class VendorAddressSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(VendorAddressPage, address).success.value
 
-          val result = VendorAddressSummary.row(Some(userAnswers))
+          val row = VendorAddressSummary.row(Some(userAnswers))
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("vendor.checkYourAnswers.vendorAddress.label")
 
@@ -87,7 +92,11 @@ class VendorAddressSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(VendorAddressPage, address).success.value
 
-          val result = VendorAddressSummary.row(Some(userAnswers))
+          val row = VendorAddressSummary.row(Some(userAnswers))
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent mustEqual "123 Test Street"
@@ -113,7 +122,11 @@ class VendorAddressSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(VendorAddressPage, address).success.value
 
-          val result = VendorAddressSummary.row(Some(userAnswers))
+          val row = VendorAddressSummary.row(Some(userAnswers))
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent mustEqual "123 Test Street, Test Area, Test County, AA1 1AA"
@@ -139,7 +152,11 @@ class VendorAddressSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(VendorAddressPage, address).success.value
 
-          val result = VendorAddressSummary.row(Some(userAnswers))
+          val row = VendorAddressSummary.row(Some(userAnswers))
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("France")
@@ -166,7 +183,11 @@ class VendorAddressSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(VendorAddressPage, address).success.value
 
-          val result = VendorAddressSummary.row(Some(userAnswers))
+          val row = VendorAddressSummary.row(Some(userAnswers))
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("&amp;")
@@ -174,11 +195,47 @@ class VendorAddressSummarySpec extends SpecBase {
           htmlContent must include("&gt;")
         }
       }
+
+      "must handle all address fields populated" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val address = Address(
+            line1 = "123 Test Street",
+            line2 = Some("Apartment 4B"),
+            line3 = Some("Test Area"),
+            line4 = Some("Test Town"),
+            line5 = Some("Test County"),
+            postcode = Some("AA1 1AA"),
+            country = Some(Country(Some("GB"), Some("United Kingdom")))
+          )
+
+          val userAnswers = emptyUserAnswers.set(VendorAddressPage, address).success.value
+
+          val row = VendorAddressSummary.row(Some(userAnswers))
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
+
+          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
+          htmlContent must include("123 Test Street")
+          htmlContent must include("Apartment 4B")
+          htmlContent must include("Test Area")
+          htmlContent must include("Test Town")
+          htmlContent must include("Test County")
+          htmlContent must include("AA1 1AA")
+          htmlContent must include("United Kingdom")
+        }
+      }
     }
 
     "when address data is not present" - {
 
-      "must return a summary list row with a link to enter address" in {
+      "must return a Missing and redirect call to missing page when data is not present" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -186,19 +243,17 @@ class VendorAddressSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val result = VendorAddressSummary.row(Some(emptyUserAnswers))
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor(Some("change"))
 
-          result.key.content.asHtml.toString() mustEqual msgs("vendor.checkYourAnswers.vendorAddress.label")
-
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor(Some("change")).url)
-          htmlContent must include(msgs("vendor.checkYourAnswers.vendorAddress.addressMissing"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
 
-      "must return a summary list row with a link when UserAnswers is None" in {
+      "must return a Missing and redirect call to missing page when UserAnswers is None" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -206,48 +261,15 @@ class VendorAddressSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val result = VendorAddressSummary.row(None)
+          
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor(Some("change"))
 
-          result.key.content.asHtml.toString() mustEqual msgs("vendor.checkYourAnswers.vendorAddress.label")
-
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.vendor.routes.VendorAddressController.redirectToAddressLookupVendor(Some("change")).url)
-          htmlContent must include(msgs("vendor.checkYourAnswers.vendorAddress.addressMissing"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
-      }
-    }
-
-    "must handle all address fields populated" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        implicit val msgs: Messages = messages(application)
-
-        val address = Address(
-          line1 = "123 Test Street",
-          line2 = Some("Apartment 4B"),
-          line3 = Some("Test Area"),
-          line4 = Some("Test Town"),
-          line5 = Some("Test County"),
-          postcode = Some("AA1 1AA"),
-          country = Some(Country(Some("GB"), Some("United Kingdom")))
-        )
-
-        val userAnswers = emptyUserAnswers.set(VendorAddressPage, address).success.value
-
-        val result = VendorAddressSummary.row(Some(userAnswers))
-
-        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-        htmlContent must include("123 Test Street")
-        htmlContent must include("Apartment 4B")
-        htmlContent must include("Test Area")
-        htmlContent must include("Test Town")
-        htmlContent must include("Test County")
-        htmlContent must include("AA1 1AA")
-        htmlContent must include("United Kingdom")
       }
     }
   }
