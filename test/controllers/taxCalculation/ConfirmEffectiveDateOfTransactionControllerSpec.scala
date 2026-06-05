@@ -61,7 +61,7 @@ class ConfirmEffectiveDateOfTransactionControllerSpec extends SpecBase with Mock
     returnResourceRef = "REF",
     returnInfo = Some(ReturnInfo(mainLandID = Some("L1"))),
     transaction = Some(Transaction(
-      effectiveDate = Some("2019-04-01"),
+      effectiveDate = Some("01/04/2019"),
       totalConsideration = Some("300000"),
       claimingRelief = Some("no"),
       transactionDescription = Some("F"),

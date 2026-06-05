@@ -41,8 +41,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must correctly populate the session" in {
           val transaction = Transaction(
             transactionDescription   = Some("F"),
-            effectiveDate            = Some("2024-01-15"),
-            contractDate             = Some("2024-01-10"),
+            effectiveDate            = Some("15/01/2024"),
+            contractDate             = Some("10/01/2024"),
             totalConsideration       = Some("250000"),
             considerationVAT         = Some("50000"),
             considerationCash        = Some("yes"),
@@ -103,7 +103,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set add date of contract to false and not set the date page" in {
           val transaction = Transaction(
             transactionDescription = Some("F"),
-            effectiveDate          = Some("2024-01-15"),
+            effectiveDate          = Some("15/01/2024"),
             contractDate           = None,
             isLinked               = Some("NO"),
             claimingRelief         = Some("NO")
@@ -124,7 +124,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set vat included to true and populate the vat amount page" in {
           val transaction = Transaction(
             transactionDescription = Some("F"),
-            effectiveDate          = Some("2024-01-15"),
+            effectiveDate          = Some("15/01/2024"),
             considerationVAT       = Some("20000"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("NO")
@@ -145,7 +145,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set vat included to false and not set the vat amount page" in {
           val transaction = Transaction(
             transactionDescription = Some("F"),
-            effectiveDate          = Some("2024-01-15"),
+            effectiveDate          = Some("15/01/2024"),
             considerationVAT       = Some("0"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("NO")
@@ -166,7 +166,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set vat included to false and not set the vat amount page" in {
           val transaction = Transaction(
             transactionDescription = Some("F"),
-            effectiveDate          = Some("2024-01-15"),
+            effectiveDate          = Some("15/01/2024"),
             considerationVAT       = None,
             isLinked               = Some("NO"),
             claimingRelief         = Some("NO")
@@ -187,7 +187,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set linked transactions to true and populate the linked total page" in {
           val transaction = Transaction(
             transactionDescription   = Some("F"),
-            effectiveDate            = Some("2024-01-15"),
+            effectiveDate            = Some("15/01/2024"),
             isLinked                 = Some("YES"),
             totalConsiderationLinked = Some("500000"),
             claimingRelief           = Some("NO")
@@ -208,7 +208,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set linked transactions to false and not set the linked total page" in {
           val transaction = Transaction(
             transactionDescription   = Some("F"),
-            effectiveDate            = Some("2024-01-15"),
+            effectiveDate            = Some("15/01/2024"),
             isLinked                 = Some("NO"),
             totalConsiderationLinked = Some("500000"),
             claimingRelief           = Some("NO")
@@ -231,7 +231,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
       "must skip all consideration pages" in {
         val transaction = Transaction(
           transactionDescription   = Some("L"),
-          effectiveDate            = Some("2024-06-01"),
+          effectiveDate            = Some("01/06/2024"),
           totalConsideration       = Some("100000"),
           considerationVAT         = Some("20000"),
           considerationCash        = Some("yes"),
@@ -258,7 +258,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
       "must correctly set the transaction type" in {
         val transaction = Transaction(
           transactionDescription = Some("A"),
-          effectiveDate          = Some("2024-01-15"),
+          effectiveDate          = Some("15/01/2024"),
           isLinked               = Some("NO"),
           claimingRelief         = Some("NO")
         )
@@ -276,7 +276,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
       "must correctly set the transaction type" in {
         val transaction = Transaction(
           transactionDescription = Some("O"),
-          effectiveDate          = Some("2024-01-15"),
+          effectiveDate          = Some("15/01/2024"),
           isLinked               = Some("NO"),
           claimingRelief         = Some("NO")
         )
@@ -294,7 +294,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
       "must correctly map yes/no values when at least one is yes" in {
         val transaction = Transaction(
           transactionDescription   = Some("F"),
-          effectiveDate            = Some("2024-01-15"),
+          effectiveDate            = Some("15/01/2024"),
           isLinked                 = Some("NO"),
           claimingRelief           = Some("NO"),
           considerationCash        = Some("yes"),
@@ -330,7 +330,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
       "must not set forms of consideration page when all values are no" in {
         val transaction = Transaction(
           transactionDescription   = Some("F"),
-          effectiveDate            = Some("2024-01-15"),
+          effectiveDate            = Some("15/01/2024"),
           isLinked                 = Some("NO"),
           claimingRelief           = Some("NO"),
           considerationCash        = Some("no"),
@@ -355,7 +355,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
       "must not set forms of consideration page when all values are absent" in {
         val transaction = Transaction(
           transactionDescription = Some("F"),
-          effectiveDate          = Some("2024-01-15"),
+          effectiveDate          = Some("15/01/2024"),
           isLinked               = Some("NO"),
           claimingRelief         = Some("NO")
         )
@@ -374,7 +374,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set partial relief to true and populate the amount page" in {
           val transaction = Transaction(
             transactionDescription = Some("F"),
-            effectiveDate          = Some("2024-01-15"),
+            effectiveDate          = Some("15/01/2024"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("YES"),
             reliefReason           = Some("20"),
@@ -398,7 +398,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set partial relief to false and not set the amount page" in {
           val transaction = Transaction(
             transactionDescription = Some("F"),
-            effectiveDate          = Some("2024-01-15"),
+            effectiveDate          = Some("15/01/2024"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("YES"),
             reliefReason           = Some("20"),
@@ -422,7 +422,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set add charity number to true and populate the number page" in {
           val transaction = Transaction(
             transactionDescription = Some("F"),
-            effectiveDate          = Some("2024-01-15"),
+            effectiveDate          = Some("15/01/2024"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("YES"),
             reliefReason           = Some("20"),
@@ -446,7 +446,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set CIS registered to true and populate the CIS number page" in {
           val transaction = Transaction(
             transactionDescription = Some("F"),
-            effectiveDate          = Some("2024-01-15"),
+            effectiveDate          = Some("15/01/2024"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("YES"),
             reliefReason           = Some("08"),
@@ -470,7 +470,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set add charity number to false and not set the number page" in {
           val transaction = Transaction(
             transactionDescription = Some("F"),
-            effectiveDate          = Some("2024-01-15"),
+            effectiveDate          = Some("15/01/2024"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("YES"),
             reliefReason           = Some("20"),
@@ -493,7 +493,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set CIS registered to false and not set the CIS number page" in {
           val transaction = Transaction(
             transactionDescription = Some("F"),
-            effectiveDate          = Some("2024-01-15"),
+            effectiveDate          = Some("15/01/2024"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("YES"),
             reliefReason           = Some("08"),
@@ -516,7 +516,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set eligible to true but not set reason for relief page" in {
           val transaction = Transaction(
             transactionDescription = Some("F"),
-            effectiveDate          = Some("2024-01-15"),
+            effectiveDate          = Some("15/01/2024"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("YES"),
             reliefReason           = Some("invalidReason"),
@@ -539,7 +539,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set eligible to true but not set reason for relief page" in {
           val transaction = Transaction(
             transactionDescription = Some("F"),
-            effectiveDate          = Some("2024-01-15"),
+            effectiveDate          = Some("15/01/2024"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("YES"),
             reliefReason           = None,
@@ -563,7 +563,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
       "must set eligible to false and partial relief to false" in {
         val transaction = Transaction(
           transactionDescription = Some("F"),
-          effectiveDate          = Some("2024-01-15"),
+          effectiveDate          = Some("15/01/2024"),
           isLinked               = Some("NO"),
           claimingRelief         = Some("NO")
         )
@@ -588,7 +588,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set both to true" in {
           val transaction = Transaction(
             transactionDescription   = Some("F"),
-            effectiveDate            = Some("2024-01-15"),
+            effectiveDate            = Some("15/01/2024"),
             isLinked                 = Some("NO"),
             claimingRelief           = Some("NO"),
             isDependantOnFutureEvent = Some("YES"),
@@ -610,7 +610,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set consideration to true and deferring to false" in {
           val transaction = Transaction(
             transactionDescription   = Some("F"),
-            effectiveDate            = Some("2024-01-15"),
+            effectiveDate            = Some("15/01/2024"),
             isLinked                 = Some("NO"),
             claimingRelief           = Some("NO"),
             isDependantOnFutureEvent = Some("YES"),
@@ -632,7 +632,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set both to false" in {
           val transaction = Transaction(
             transactionDescription   = Some("F"),
-            effectiveDate            = Some("2024-01-15"),
+            effectiveDate            = Some("15/01/2024"),
             isLinked                 = Some("NO"),
             claimingRelief           = Some("NO"),
             isDependantOnFutureEvent = Some("NO"),
@@ -654,7 +654,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set consideration to false" in {
           val transaction = Transaction(
             transactionDescription   = Some("F"),
-            effectiveDate            = Some("2024-01-15"),
+            effectiveDate            = Some("15/01/2024"),
             isLinked                 = Some("NO"),
             claimingRelief           = Some("NO"),
             isDependantOnFutureEvent = None,
@@ -678,7 +678,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
       "must correctly map yes/no values when at least one is yes" in {
         val transaction = Transaction(
           transactionDescription = Some("F"),
-          effectiveDate          = Some("2024-01-15"),
+          effectiveDate          = Some("15/01/2024"),
           isLinked               = Some("NO"),
           claimingRelief         = Some("NO"),
           usedAsOffice           = Some("yes"),
@@ -708,7 +708,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
       "must not set property use page when all values are no" in {
         val transaction = Transaction(
           transactionDescription = Some("F"),
-          effectiveDate          = Some("2024-01-15"),
+          effectiveDate          = Some("15/01/2024"),
           isLinked               = Some("NO"),
           claimingRelief         = Some("NO"),
           usedAsOffice           = Some("no"),
@@ -730,7 +730,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
       "must not set property use page when all values are absent" in {
         val transaction = Transaction(
           transactionDescription = Some("F"),
-          effectiveDate          = Some("2024-01-15"),
+          effectiveDate          = Some("15/01/2024"),
           isLinked               = Some("NO"),
           claimingRelief         = Some("NO")
         )
@@ -749,7 +749,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set sale of business to true and populate assets and total pages" in {
           val transaction = Transaction(
             transactionDescription     = Some("F"),
-            effectiveDate              = Some("2024-01-15"),
+            effectiveDate              = Some("15/01/2024"),
             isLinked                   = Some("NO"),
             claimingRelief             = Some("NO"),
             totalConsiderationBusiness = Some("100000"),
@@ -780,7 +780,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set sale of business to false" in {
           val transaction = Transaction(
             transactionDescription     = Some("F"),
-            effectiveDate              = Some("2024-01-15"),
+            effectiveDate              = Some("15/01/2024"),
             isLinked                   = Some("NO"),
             claimingRelief             = Some("NO"),
             totalConsiderationBusiness = None
@@ -805,7 +805,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set cap1OrNsbc to true and ruling followed to Yes" in {
           val transaction = Transaction(
             transactionDescription  = Some("F"),
-            effectiveDate           = Some("2024-01-15"),
+            effectiveDate           = Some("15/01/2024"),
             isLinked                = Some("NO"),
             claimingRelief          = Some("NO"),
             postTransRulingFollowed = Some("yes")
@@ -826,7 +826,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set cap1OrNsbc to true and ruling followed to No" in {
           val transaction = Transaction(
             transactionDescription  = Some("F"),
-            effectiveDate           = Some("2024-01-15"),
+            effectiveDate           = Some("15/01/2024"),
             isLinked                = Some("NO"),
             claimingRelief          = Some("NO"),
             postTransRulingFollowed = Some("no")
@@ -847,7 +847,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set cap1OrNsbc to true and ruling followed to RulingNotReceived" in {
           val transaction = Transaction(
             transactionDescription  = Some("F"),
-            effectiveDate           = Some("2024-01-15"),
+            effectiveDate           = Some("15/01/2024"),
             isLinked                = Some("NO"),
             claimingRelief          = Some("NO"),
             postTransRulingFollowed = Some("rulingNotReceived")
@@ -868,7 +868,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set cap1OrNsbc to true but not set ruling followed page" in {
           val transaction = Transaction(
             transactionDescription  = Some("F"),
-            effectiveDate           = Some("2024-01-15"),
+            effectiveDate           = Some("15/01/2024"),
             isLinked                = Some("NO"),
             claimingRelief          = Some("NO"),
             postTransRulingFollowed = Some("unknown")
@@ -889,7 +889,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set cap1OrNsbc to false" in {
           val transaction = Transaction(
             transactionDescription  = Some("F"),
-            effectiveDate           = Some("2024-01-15"),
+            effectiveDate           = Some("15/01/2024"),
             isLinked                = Some("NO"),
             claimingRelief          = Some("NO"),
             postTransRulingFollowed = None
@@ -913,7 +913,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set restrictions to true and populate description page" in {
           val transaction = Transaction(
             transactionDescription = Some("F"),
-            effectiveDate          = Some("2024-01-15"),
+            effectiveDate          = Some("15/01/2024"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("NO"),
             restrictionDetails     = Some("some restriction details")
@@ -934,7 +934,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set restrictions to false" in {
           val transaction = Transaction(
             transactionDescription = Some("F"),
-            effectiveDate          = Some("2024-01-15"),
+            effectiveDate          = Some("15/01/2024"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("NO"),
             restrictionDetails     = None
@@ -958,7 +958,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set land exchanged to true and populate address page" in {
           val transaction = Transaction(
             transactionDescription = Some("F"),
-            effectiveDate          = Some("2024-01-15"),
+            effectiveDate          = Some("15/01/2024"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("NO"),
             exchangedLandAddress1  = Some("1 Exchange Street"),
@@ -990,7 +990,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set land exchanged to false" in {
           val transaction = Transaction(
             transactionDescription = Some("F"),
-            effectiveDate          = Some("2024-01-15"),
+            effectiveDate          = Some("15/01/2024"),
             isLinked               = Some("NO"),
             claimingRelief         = Some("NO"),
             exchangedLandAddress1  = None
@@ -1014,7 +1014,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set exercising an option to true" in {
           val transaction = Transaction(
             transactionDescription     = Some("F"),
-            effectiveDate              = Some("2024-01-15"),
+            effectiveDate              = Some("15/01/2024"),
             isLinked                   = Some("NO"),
             claimingRelief             = Some("NO"),
             isPursuantToPreviousOption = Some("YES")
@@ -1032,7 +1032,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set exercising an option to false" in {
           val transaction = Transaction(
             transactionDescription     = Some("F"),
-            effectiveDate              = Some("2024-01-15"),
+            effectiveDate              = Some("15/01/2024"),
             isLinked                   = Some("NO"),
             claimingRelief             = Some("NO"),
             isPursuantToPreviousOption = Some("NO")
@@ -1050,7 +1050,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         "must set exercising an option to false" in {
           val transaction = Transaction(
             transactionDescription     = Some("F"),
-            effectiveDate              = Some("2024-01-15"),
+            effectiveDate              = Some("15/01/2024"),
             isLinked                   = Some("NO"),
             claimingRelief             = Some("NO"),
             isPursuantToPreviousOption = None
@@ -1080,7 +1080,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
     "must fail when transactionDescription is missing" in {
       val transaction = Transaction(
         transactionDescription = None,
-        effectiveDate          = Some("2024-01-15")
+        effectiveDate          = Some("15/01/2024")
       )
 
       val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -1092,7 +1092,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
     "must fail when transactionDescription is an unrecognised code" in {
       val transaction = Transaction(
         transactionDescription = Some("INVALID"),
-        effectiveDate          = Some("2024-01-15")
+        effectiveDate          = Some("15/01/2024")
       )
 
       val result = service.populateTransactionInSession(transaction, userAnswers)
