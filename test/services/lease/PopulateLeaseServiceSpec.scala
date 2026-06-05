@@ -34,11 +34,11 @@ class PopulateLeaseServiceSpec extends SpecBase with MockitoSugar {
 
   val leaseComplete = Lease(
     leaseType = Some("R"),
-    contractStartDate = Some("2024-01-01"),
-    contractEndDate = Some("2025-01-01"),
+    contractStartDate = Some("01/01/2024"),
+    contractEndDate = Some("01/01/2025"),
     rentFreePeriod = Some("50"),
     startingRent = Some("50.00"),
-    startingRentEndDate = Some("2024-12-31"),
+    startingRentEndDate = Some("31/12/2024"),
     laterRentKnown = Some("yes"),
     isAnnualRentOver1000 = Some("yes"),
     VATAmount = Some("60.00"),
@@ -48,11 +48,11 @@ class PopulateLeaseServiceSpec extends SpecBase with MockitoSugar {
 
   val leaseCompleteNo = Lease(
     leaseType = Some("R"),
-    contractStartDate = Some("2024-01-01"),
-    contractEndDate = Some("2025-01-01"),
+    contractStartDate = Some("01/01/2024"),
+    contractEndDate = Some("01/01/2025"),
     rentFreePeriod = Some("50"),
     startingRent = Some("50.00"),
-    startingRentEndDate = Some("2024-12-31"),
+    startingRentEndDate = Some("31/12/2024"),
     laterRentKnown = Some("no"),
     isAnnualRentOver1000 = Some("no"),
     VATAmount = Some("60.00"),
