@@ -21,35 +21,30 @@ import pages.land.{AreaOfLandPage, LandSelectMeasurementUnitPage}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object AreaOfLandSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    val changeRoute = controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(CheckMode).url
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult =
+    val changeRoute = controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(CheckMode)
     val label = messages("land.areaOfLand.checkYourAnswersLabel")
+    
     (answers.get(AreaOfLandPage), answers.get(LandSelectMeasurementUnitPage)) match {
       case (Some(areaOfLand), Some(unitType)) =>
-        Some(SummaryListRowViewModel(
+        Row(SummaryListRowViewModel(
           key = label,
           value = ValueViewModel(
             HtmlContent(HtmlFormat.escape(s"$areaOfLand ${messages(s"land.areaOfLand.$unitType.suffix")}").toString)
           ),
           actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
+            ActionItemViewModel("site.change", changeRoute.url)
               .withVisuallyHiddenText(messages("land.areaOfLand.change.hidden"))
           )
         ))
       case _ =>
-        val value = ValueViewModel(
-          HtmlContent(
-            s"""<a href="$changeRoute" class="govuk-link">${messages("land.areaOfLand.missing")}</a>""")
-        )
-        Some(SummaryListRowViewModel(
-          key = label,
-          value = value
-        ))
+        Missing(changeRoute)
     }
 }

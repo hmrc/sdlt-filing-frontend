@@ -18,42 +18,46 @@ package viewmodels.checkAnswers.land
 
 import base.SpecBase
 import models.CheckMode
-import pages.land.LocalAuthorityCodePage
+import pages.land.LandNlpgUprnPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
-class LocalAuthorityCodeSummarySpec extends SpecBase {
+class LandNlpgUprnSummarySpec extends SpecBase {
 
-  "LocalAuthorityCodeSummary" - {
+  "LandNlpgUprnSummary" - {
 
-    "when Local Authority Code is present " - {
+    "when NLPG UPRN is present" - {
 
-      "must return a summary list row with when Local Authority Code is valid" in {
+      "must return a SummaryListRow with the UPRN value and change link" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers = emptyUserAnswers
-            .set(LocalAuthorityCodePage, "1234").success.value
+          val userAnswers = emptyUserAnswers.set(LandNlpgUprnPage, "1234567890").success.value
 
-          val row = LocalAuthorityCodeSummary.row(userAnswers)
+          val row = LandNlpgUprnSummary.row(userAnswers)
 
           val result = row match {
             case Row(r) => r
             case _ => fail("Expected Row but got Missing")
           }
 
-          result.key.content.asHtml.toString() mustEqual msgs("land.localAuthorityCode.checkYourAnswersLabel")
+          result.key.content.asHtml.toString() mustEqual msgs("land.nlpgUprn.checkYourAnswersLabel")
 
-          result.actions.get.items.head.href mustEqual controllers.land.routes.LocalAuthorityCodeController.onPageLoad(CheckMode).url
+          val contentString = result.value.content.asHtml.toString()
+          contentString mustEqual "1234567890"
+
+          result.actions.get.items.size mustEqual 1
+          result.actions.get.items.head.href mustEqual controllers.land.routes.LandNlpgUprnController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("land.localAuthorityCode.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("land.nlpgUprn.change.hidden")
         }
       }
     }
 
-    "when Local Authority Code is not present " - {
+    "when NLPG UPRN is not present" - {
 
       "must return a Missing and redirect call to missing page" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -61,11 +65,11 @@ class LocalAuthorityCodeSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = LocalAuthorityCodeSummary.row(emptyUserAnswers)
+          val result = LandNlpgUprnSummary.row(emptyUserAnswers)
 
           result match {
             case Missing(call) =>
-              call mustEqual controllers.land.routes.LocalAuthorityCodeController.onPageLoad(CheckMode)
+              call mustEqual controllers.land.routes.LandNlpgUprnController.onPageLoad(CheckMode)
 
             case Row(_) =>
               fail("Expected Missing but got Row")

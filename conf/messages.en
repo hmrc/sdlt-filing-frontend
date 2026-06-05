@@ -921,7 +921,6 @@ land.landTypeOfProperty.checkYourAnswersLabel                                   
 land.landTypeOfProperty.error.required                                              = Select the type of property
 land.landTypeOfProperty.error.crossflow                                             = Areas of land or property with lease involvement must share the same property type – if there are multiple property types, select '02 - Mixed' for all areas of land or property added
 land.landTypeOfProperty.change.hidden                                               = Type of property
-land.checkYourAnswers.landTypeOfProperty.missing                                    = Select type of property
 
 land.landInterestTransferredOrCreated.title                                         = Interest transferred or created - About the land
 land.landInterestTransferredOrCreated.heading                                       = Interest transferred or created
@@ -941,13 +940,11 @@ land.landInterestTransferredOrCreated.OT                                        
 land.landInterestTransferredOrCreated.checkYourAnswersLabel                         = Interest transferred or created
 land.landInterestTransferredOrCreated.error.required                                = Select the option which best describes the transaction
 land.landInterestTransferredOrCreated.change.hidden                                 = Interest transferred or created
-land.landInterestTransferredOrCreated.missing                                       = Select interest transferred or created
 
 land.landRegisteredHmRegistry.heading                                               = Is the land or property registered with HM Land Registry?
 land.landRegisteredHmRegistry.checkYourAnswersLabel                                 = Is the land or property registered with HM Land Registry?
 land.landRegisteredHmRegistry.error.required                                        = Select yes if the land or property is registered with HM Land Registry
 land.landRegisteredHmRegistry.change.hidden                                         = Is the land or property registered with HM Land Registry?
-land.landRegisteredHmRegistry.missing                                               = Select if the land or property is registered with HM Land Registry
 
 land.addNlpgUprn.title                                                              = Do you have an NLPG UPRN for the land or property?
 land.addNlpgUprn.heading                                                            = Do you have an NLPG UPRN for the land or property?
@@ -955,7 +952,6 @@ land.addNlpgUprn.checkYourAnswersLabel                                          
 land.addNlpgUprn.error.required                                                     = Select yes if you have an NLPG UPRN for the land or property
 land.addNlpgUprn.change.hidden                                                      = If you have an NLPG UPRN
 land.addNlpgUprn.hint                                                               = A National Land and Property Gazetteer Unique Property Reference Number (NLPG UPRN) is a unique identifier for every addressable location in England, Scotland, Wales and Northern Ireland
-land.addNlpgUprn.missing                                                            = Select if you have an NLPG UPRN
 
 land.titleNumber.title                                                              = Title number for the land or property - About the land
 land.titleNumber.heading                                                            = Title number for the land or property
@@ -969,7 +965,6 @@ land.titleNumber.error.length                                                   
 land.titleNumber.error.minLength                                                    = The title or folio number must be longer than 1 character
 land.titleNumber.error.invalidFormat                                                = Enter the title or folio number in the correct format
 land.titleNumber.change.hidden                                                      = Title or folio number
-land.titleNumber.missing                                                            = Select title or folio number
 
 land.confirmLandOrPropertyAddress.title                                             = Confirm the address of the land or property - About the land
 land.confirmLandOrPropertyAddress.heading                                           = Confirm the address of the land or property
@@ -992,7 +987,6 @@ land.localAuthorityCode.error.invalidArea                                       
 land.localAuthorityCode.error.invalidAreaPostcode                                   = Enter a valid local authority code that matches your postcode in England or Northern Ireland
 land.localAuthorityCode.error.welsh                                                 = Welsh local authority codes are no longer recognised by SDLT when the effective date of the transaction is the same as or after 1 April 2018
 land.localAuthorityCode.change.hidden                                               = Local authority code
-land.checkYourAnswers.localAuthorityCode.missing                                    = Provide local authority code
 land.localAuthorityCode.hint.prefix                                                 = Search the {0}
 land.localAuthorityCode.hint.suffix                                                 = list of local authority codes (opens in a new window).
 land.localAuthorityCode.hint.link                                                   = https://www.gov.uk/hmrc-internal-manuals/stamp-duty-land-tax-manual/sdltm62320
@@ -1006,7 +1000,6 @@ land.nlpgUprn.checkYourAnswersLabel                                             
 land.nlpgUprn.error.required                                                        = Enter the NLPG UPRN for the land or property
 land.nlpgUprn.error.length                                                          = The NLPG UPRN must be 14 characters or fewer
 land.nlpgUprn.change.hidden                                                         = Land NLPG UPRN
-land.nlpgUprn.missing                                                               = Enter Land NLPG UPRN
 land.nlpgUprn.error.format                                                          = The NLPG UPRN must only include numbers 0 to 9
 land.nlpgUprn.error.invalidFormat                                                   = Enter the NLPG UPRN in the correct format
 
@@ -1017,7 +1010,6 @@ land.landMineralsOrMineralRights.p                                              
 land.landMineralsOrMineralRights.checkYourAnswersLabel                              = Minerals or mineral rights reserved or excluded?
 land.landMineralsOrMineralRights.error.required                                     = Select yes if there are minerals or mineral rights reserved or excluded for the land or property
 land.landMineralsOrMineralRights.change.hidden                                      = Minerals or mineral rights
-land.landMineralsOrMineralRights.missing                                            = Select an answer
 
 land.landSelectMeasurementUnit.title                                                = Select one unit of measurement for the area of land
 land.landSelectMeasurementUnit.heading                                              = Select one unit of measurement for the area of land
@@ -1048,7 +1040,6 @@ land.areaOfLand.SquareMetres.suffix                                             
 land.areaOfLand.Hectares.suffix                                                     = ha
 land.areaOfLand.SquareMetres                                                        = square metres
 land.areaOfLand.Hectares                                                            = hectares
-land.areaOfLand.missing                                                             = Enter the area of land
 
 land.landSendingPlanByPost.title                                                    = Sending a plan by post - About the land
 land.landSendingPlanByPost.heading                                                  = Sending a plan by post
@@ -1061,7 +1052,6 @@ land.landSendingPlanByPost.details.content1                                     
 land.landSendingPlanByPost.details.content2                                         = Send the land or property plan to:
 land.landSendingPlanByPost.details.content3                                         = BT Stamp Duty Land Tax<br>HM Revenue and Customs<br>BX9 1LT
 land.landSendingPlanByPost.p                                                        = A plan is required for all transactions involving land that does not have a postal address or where a boundary needs defining.
-land.landSendingPlanByPost.missing                                                   = Select land sending plan by post
 
 land.agriculturalOrDevelopmental.title                                              = Agricultural or developmental land
 land.agriculturalOrDevelopmental.heading                                            = Agricultural or developmental land
@@ -1070,7 +1060,6 @@ land.agriculturalOrDevelopmental.p1                                             
 land.agriculturalOrDevelopmental.checkYourAnswersLabel                              = Does the transaction involve agricultural or developmental land?
 land.agriculturalOrDevelopmental.error.required                                     = Select yes if the transaction involves agricultural or developmental land
 land.agriculturalOrDevelopmental.change.hidden                                      = if the transaction involves agricultural or developmental land
-land.agriculturalOrDevelopmental.missing                                            = Select if the transaction involves agricultural or developmental land
 
 land.doYouKnowTheAreaOfLand.title                                                   = Do you know the area of the land? - About the land
 land.doYouKnowTheAreaOfLand.heading                                                 = Do you know the area of the land?
@@ -1078,7 +1067,6 @@ land.doYouKnowTheAreaOfLand.hint                                                
 land.doYouKnowTheAreaOfLand.checkYourAnswersLabel                                   = Do you know the area of the land?
 land.doYouKnowTheAreaOfLand.error.required                                          = Select yes if you know the area of the land
 land.doYouKnowTheAreaOfLand.change.hidden                                           = DoYouKnowTheAreaOfLand
-land.doYouKnowTheAreaOfLand.missing                                                 = Select yes or no
 
 land.landOverview.title                                                             = Land or property overview - About the land
 land.landOverview.heading                                                           = Land or property overview
@@ -1127,7 +1115,6 @@ land.removeLand.change.hidden                                                   
 
 land.address.checkYourAnswersLabel                                                  = Property Address
 land.address.change.hidden                                                          = Land address
-land.checkYourAnswers.address.missing                                               = Enter land address
 
 purchaser.purchaserCompanyTypeKnown.title                                           = Do you know what type of company the purchaser is? - About the purchaser
 purchaser.purchaserCompanyTypeKnown.heading                                         = Do you know what type of company {0} is?

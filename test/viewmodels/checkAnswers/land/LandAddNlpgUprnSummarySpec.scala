@@ -18,58 +18,90 @@ package viewmodels.checkAnswers.land
 
 import base.SpecBase
 import models.CheckMode
-import pages.land.LandNlpgUprnPage
+import pages.land.LandAddNlpgUprnPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
-class LandNlpgUprnSummarySpec extends SpecBase {
+class LandAddNlpgUprnSummarySpec extends SpecBase {
 
-  "LandNlpgUprnSummary" - {
+  "LandAddNlpgUprnSummary" - {
 
-    "when NLPG UPRN is present" - {
+    "when do you have an NLPG UPRN is present" - {
 
-      "must return a SummaryListRow with the UPRN value and change link" in {
+      "must return a SummaryListRow with 'yes' text and change link" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers = emptyUserAnswers.set(LandNlpgUprnPage, "1234567890").success.value
+          val userAnswers = emptyUserAnswers.set(LandAddNlpgUprnPage, true).success.value
 
-          val result = LandNlpgUprnSummary.row(userAnswers).get
+          val row = LandAddNlpgUprnSummary.row(userAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("land.nlpgUprn.checkYourAnswersLabel")
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
-          val contentString = result.value.content.asHtml.toString()
-          contentString mustEqual "1234567890"
+          result.key.content.asHtml.toString() mustEqual msgs("land.addNlpgUprn.checkYourAnswersLabel")
+
+          val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()
+          contentString mustEqual msgs("site.yes")
 
           result.actions.get.items.size mustEqual 1
-          result.actions.get.items.head.href mustEqual controllers.land.routes.LandNlpgUprnController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.href mustEqual controllers.land.routes.LandAddNlpgUprnController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("land.nlpgUprn.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("land.addNlpgUprn.change.hidden")
+        }
+      }
+
+      "must return a SummaryListRow with 'no' text and change link" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          implicit val msgs: Messages = messages(application)
+
+          val userAnswers = emptyUserAnswers.set(LandAddNlpgUprnPage, false).success.value
+
+          val row = LandAddNlpgUprnSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
+
+          result.key.content.asHtml.toString() mustEqual msgs("land.addNlpgUprn.checkYourAnswersLabel")
+
+          val contentString = result.value.content.asInstanceOf[Text].asHtml.toString()
+          contentString mustEqual msgs("site.no")
+
+          result.actions.get.items.size mustEqual 1
+          result.actions.get.items.head.href mustEqual controllers.land.routes.LandAddNlpgUprnController.onPageLoad(CheckMode).url
+          result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("land.addNlpgUprn.change.hidden")
         }
       }
     }
 
-    "when NLPG UPRN is not present" - {
+    "when do you have an NLPG UPRN is not present" - {
 
-      "must return a SummaryListRow with a missing link" in {
+      "must return a Missing and redirect call to missing page" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = LandNlpgUprnSummary.row(emptyUserAnswers).get
+          val result = LandAddNlpgUprnSummary.row(emptyUserAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("land.nlpgUprn.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.land.routes.LandAddNlpgUprnController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.land.routes.LandNlpgUprnController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("land.nlpgUprn.missing"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }

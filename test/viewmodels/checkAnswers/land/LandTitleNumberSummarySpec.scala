@@ -18,10 +18,10 @@ package viewmodels.checkAnswers.land
 
 import base.SpecBase
 import models.CheckMode
-import pages.land.{LandRegisteredHmRegistryPage, LandTitleNumberPage}
+import pages.land.LandTitleNumberPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class LandTitleNumberSummarySpec extends SpecBase {
 
@@ -39,7 +39,12 @@ class LandTitleNumberSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(LandTitleNumberPage, "AB123456").success.value
 
-          val result = LandTitleNumberSummary.row(userAnswers).value
+          val row = LandTitleNumberSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("land.titleNumber.checkYourAnswersLabel")
 
@@ -62,7 +67,12 @@ class LandTitleNumberSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(LandTitleNumberPage, "<script>alert('xss')</script>").success.value
 
-          val result = LandTitleNumberSummary.row(userAnswers).value
+          val row = LandTitleNumberSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           val valueHtml = result.value.content.asHtml.toString()
           valueHtml must include("&lt;script&gt;")
@@ -80,7 +90,12 @@ class LandTitleNumberSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(LandTitleNumberPage, "AB123456").success.value
 
-          val result = LandTitleNumberSummary.row(userAnswers).value
+          val row = LandTitleNumberSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.actions.get.items.head.href mustEqual controllers.land.routes.LandTitleNumberController.onPageLoad(CheckMode).url
         }
@@ -89,53 +104,24 @@ class LandTitleNumberSummarySpec extends SpecBase {
 
     "when the land title number is not present" - {
 
-      "must return a summary list row with a missing link when land is registered" in {
-
+      "must return a Missing and redirect call to missing page" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers = emptyUserAnswers
-            .set(LandRegisteredHmRegistryPage, true).success.value
+          val result = LandTitleNumberSummary.row(emptyUserAnswers)
 
-          val result = LandTitleNumberSummary.row(userAnswers).value
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.land.routes.LandTitleNumberController.onPageLoad(CheckMode)
 
-          result.key.content.asHtml.toString() mustEqual msgs("land.titleNumber.checkYourAnswersLabel")
-
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.land.routes.LandTitleNumberController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("land.titleNumber.missing"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
 
-      "must return None when land is not registered" in {
-
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-        running(application) {
-          implicit val msgs: Messages = messages(application)
-
-          val userAnswers = emptyUserAnswers
-            .set(LandRegisteredHmRegistryPage, false).success.value
-
-          LandTitleNumberSummary.row(userAnswers) mustBe None
-        }
-      }
-
-      "must return None when neither page is answered" in {
-
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-        running(application) {
-          implicit val msgs: Messages = messages(application)
-
-          LandTitleNumberSummary.row(emptyUserAnswers) mustBe None
-        }
-      }
     }
   }
 }

@@ -19,15 +19,15 @@ package viewmodels.checkAnswers.land
 import models.{CheckMode, UserAnswers}
 import pages.land.LandRegisteredHmRegistryPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object LandRegisteredHmRegistrySummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
-    val changeRoute = controllers.land.routes.LandRegisteredHmRegistryController.onPageLoad(CheckMode).url
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult =
+    val changeRoute = controllers.land.routes.LandRegisteredHmRegistryController.onPageLoad(CheckMode)
     val label = messages("land.landRegisteredHmRegistry.checkYourAnswersLabel")
     
     answers.get(LandRegisteredHmRegistryPage).map {
@@ -35,22 +35,17 @@ object LandRegisteredHmRegistrySummary  {
 
         val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRowViewModel(
-          key     = label,
-          value   = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.land.routes.LandRegisteredHmRegistryController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("land.landRegisteredHmRegistry.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key     = label,
+            value   = ValueViewModel(value),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("land.landRegisteredHmRegistry.change.hidden"))
+            )
           )
         )
     }.getOrElse {
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">${messages("land.landRegisteredHmRegistry.missing")}</a>""")
-      )
-      SummaryListRowViewModel(
-        key = label,
-        value = value
-      )
+      Missing(changeRoute)
     }
 }

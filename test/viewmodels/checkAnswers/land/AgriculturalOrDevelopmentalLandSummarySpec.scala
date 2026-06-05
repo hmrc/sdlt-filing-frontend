@@ -18,12 +18,12 @@ package viewmodels.checkAnswers.land
 
 import base.SpecBase
 import models.CheckMode
-import models.land.LandTypeOfProperty
-import pages.land.{AgriculturalOrDevelopmentalLandPage, LandTypeOfPropertyPage}
+import pages.land.AgriculturalOrDevelopmentalLandPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
+
 
 class AgriculturalOrDevelopmentalLandSummarySpec extends SpecBase {
 
@@ -39,7 +39,12 @@ class AgriculturalOrDevelopmentalLandSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(AgriculturalOrDevelopmentalLandPage, true).success.value
 
-          val result = AgriculturalOrDevelopmentalLandSummary.row(userAnswers).getOrElse(fail("Failed to create SummaryListRow"))
+          val row = AgriculturalOrDevelopmentalLandSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("land.agriculturalOrDevelopmental.checkYourAnswersLabel")
 
@@ -61,7 +66,12 @@ class AgriculturalOrDevelopmentalLandSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(AgriculturalOrDevelopmentalLandPage, false).success.value
 
-          val result = AgriculturalOrDevelopmentalLandSummary.row(userAnswers).getOrElse(fail("Failed to create SummaryListRow"))
+          val row = AgriculturalOrDevelopmentalLandSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("land.agriculturalOrDevelopmental.checkYourAnswersLabel")
 
@@ -78,70 +88,21 @@ class AgriculturalOrDevelopmentalLandSummarySpec extends SpecBase {
 
     "when agricultural or developmental land answer is not present" - {
 
-      "must return a SummaryListRow with a missing link when property type is NonResidential" in {
+      "must return a Missing and redirect call to missing page" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val userAnswers = emptyUserAnswers
-            .set(LandTypeOfPropertyPage, LandTypeOfProperty.NonResidential).success.value
+          val result = AgriculturalOrDevelopmentalLandSummary.row(emptyUserAnswers)
 
-          val result = AgriculturalOrDevelopmentalLandSummary.row(userAnswers).getOrElse(fail("Failed to create SummaryListRow"))
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.land.routes.AgriculturalOrDevelopmentalLandController.onPageLoad(CheckMode)
 
-          result.key.content.asHtml.toString() mustEqual msgs("land.agriculturalOrDevelopmental.checkYourAnswersLabel")
-
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.land.routes.AgriculturalOrDevelopmentalLandController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("land.agriculturalOrDevelopmental.missing"))
-
-          result.actions mustBe None
-        }
-      }
-
-      "must return a SummaryListRow with a missing link when property type is Mixed" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-        running(application) {
-          implicit val msgs: Messages = messages(application)
-
-          val userAnswers = emptyUserAnswers
-            .set(LandTypeOfPropertyPage, LandTypeOfProperty.Mixed).success.value
-
-          val result = AgriculturalOrDevelopmentalLandSummary.row(userAnswers).getOrElse(fail("Failed to create SummaryListRow"))
-
-          result.key.content.asHtml.toString() mustEqual msgs("land.agriculturalOrDevelopmental.checkYourAnswersLabel")
-
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.land.routes.AgriculturalOrDevelopmentalLandController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("land.agriculturalOrDevelopmental.missing"))
-
-          result.actions mustBe None
-        }
-      }
-
-      "must return None when property type is Residential" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-        running(application) {
-          implicit val msgs: Messages = messages(application)
-
-          val userAnswers = emptyUserAnswers
-            .set(LandTypeOfPropertyPage, LandTypeOfProperty.Residential).success.value
-
-          AgriculturalOrDevelopmentalLandSummary.row(userAnswers) mustBe None
-        }
-      }
-
-      "must return None when property type is not set" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-        running(application) {
-          implicit val msgs: Messages = messages(application)
-
-          AgriculturalOrDevelopmentalLandSummary.row(emptyUserAnswers) mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }

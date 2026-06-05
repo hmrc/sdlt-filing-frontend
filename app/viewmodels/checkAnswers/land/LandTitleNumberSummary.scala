@@ -17,40 +17,35 @@
 package viewmodels.checkAnswers.land
 
 import models.{CheckMode, UserAnswers}
-import pages.land.{LandRegisteredHmRegistryPage, LandTitleNumberPage}
+import pages.land.LandTitleNumberPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object LandTitleNumberSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
-    val changeRoute = controllers.land.routes.LandTitleNumberController.onPageLoad(CheckMode).url
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.land.routes.LandTitleNumberController.onPageLoad(CheckMode)
     val label = messages("land.titleNumber.checkYourAnswersLabel")
 
-    (answers.get(LandTitleNumberPage), answers.get(LandRegisteredHmRegistryPage)) match {
-      case (Some(landTitle), _) =>
-
-        Some(SummaryListRowViewModel(
-          key = label,
-          value = ValueViewModel(HtmlContent(HtmlFormat.escape(landTitle).toString)),
-          actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
-              .withVisuallyHiddenText(messages("land.titleNumber.change.hidden"))
+    answers.get(LandTitleNumberPage).map {
+      answer =>
+        Row(
+          SummaryListRowViewModel(
+            key = label,
+            value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("land.titleNumber.change.hidden"))
+            )
           )
-        ))
-      case (None, Some(true)) =>
-        val value = ValueViewModel(
-          HtmlContent(s"""<a href="$changeRoute" class="govuk-link">${messages("land.titleNumber.missing")}</a>""")
         )
-        Some(SummaryListRowViewModel(
-          key = label,
-          value = value
-        ))
-      case _ => None
+    }.getOrElse{
+      Missing(changeRoute)
     }
   }
 }

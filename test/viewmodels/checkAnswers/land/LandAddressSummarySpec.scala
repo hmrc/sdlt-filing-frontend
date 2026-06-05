@@ -22,6 +22,7 @@ import pages.land.LandAddressPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Row, Missing}
 
 class LandAddressSummarySpec extends SpecBase {
 
@@ -46,8 +47,13 @@ class LandAddressSummarySpec extends SpecBase {
           )
 
           val userAnswers = emptyUserAnswers.set(LandAddressPage, address).success.value
+          
+          val row = LandAddressSummary.row(userAnswers)
 
-          val result = LandAddressSummary.row(userAnswers)
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("land.address.checkYourAnswersLabel")
 
@@ -84,7 +90,12 @@ class LandAddressSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(LandAddressPage, address).success.value
 
-          val result = LandAddressSummary.row(userAnswers)
+          val row = LandAddressSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("1 Test Street")
@@ -94,7 +105,7 @@ class LandAddressSummarySpec extends SpecBase {
 
     "when address data is not present" - {
 
-      "must return a summary list row with a missing link" in {
+      "must return a Missing and redirect call to missing page" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
@@ -102,14 +113,13 @@ class LandAddressSummarySpec extends SpecBase {
 
           val result = LandAddressSummary.row(emptyUserAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("land.address.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.land.routes.LandAddressController.redirectToAddressLookupLand(Some("change"))
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.land.routes.LandAddressController.redirectToAddressLookupLand(Some("change")).url)
-          htmlContent must include(msgs("land.checkYourAnswers.address.missing"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }

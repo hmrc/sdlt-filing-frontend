@@ -23,6 +23,7 @@ import pages.land.LandTypeOfPropertyPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Row, Missing}
 
 class LandTypeOfPropertySummarySpec extends SpecBase {
 
@@ -38,7 +39,12 @@ class LandTypeOfPropertySummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(LandTypeOfPropertyPage, LandTypeOfProperty.Residential).success.value
 
-          val result = LandTypeOfPropertySummary.row(userAnswers)
+          val row = LandTypeOfPropertySummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("land.landTypeOfProperty.checkYourAnswersLabel")
 
@@ -63,7 +69,12 @@ class LandTypeOfPropertySummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(LandTypeOfPropertyPage, LandTypeOfProperty.Mixed).success.value
 
-          val result = LandTypeOfPropertySummary.row(userAnswers)
+          val row = LandTypeOfPropertySummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("land.landTypeOfProperty.checkYourAnswersLabel")
 
@@ -88,7 +99,12 @@ class LandTypeOfPropertySummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(LandTypeOfPropertyPage, LandTypeOfProperty.NonResidential).success.value
 
-          val result = LandTypeOfPropertySummary.row(userAnswers)
+          val row = LandTypeOfPropertySummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("land.landTypeOfProperty.checkYourAnswersLabel")
 
@@ -113,7 +129,12 @@ class LandTypeOfPropertySummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(LandTypeOfPropertyPage, LandTypeOfProperty.Additional).success.value
 
-          val result = LandTypeOfPropertySummary.row(userAnswers)
+          val row = LandTypeOfPropertySummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("land.landTypeOfProperty.checkYourAnswersLabel")
 
@@ -130,26 +151,21 @@ class LandTypeOfPropertySummarySpec extends SpecBase {
 
     "when property type is not present" - {
 
-      "must return a summary list row with a link to add the property type" in {
+      "must return a Missing and redirect call to missing page" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
         running(application) {
           implicit val msgs: Messages = messages(application)
 
           val result = LandTypeOfPropertySummary.row(emptyUserAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("land.landTypeOfProperty.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.land.routes.LandTypeOfPropertyController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-
-          htmlContent must include("govuk-link")
-          htmlContent must include(
-            controllers.land.routes.LandTypeOfPropertyController.onPageLoad(CheckMode).url
-          )
-          htmlContent must include(
-            msgs("land.checkYourAnswers.landTypeOfProperty.Missing")
-          )
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }
@@ -162,7 +178,12 @@ class LandTypeOfPropertySummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(LandTypeOfPropertyPage, LandTypeOfProperty.Residential).success.value
 
-        val result = LandTypeOfPropertySummary.row(userAnswers)
+        val row = LandTypeOfPropertySummary.row(userAnswers)
+
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
 
         result.actions.get.items.head.href mustEqual controllers.land.routes.LandTypeOfPropertyController.onPageLoad(CheckMode).url
       }
@@ -176,7 +197,12 @@ class LandTypeOfPropertySummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(LandTypeOfPropertyPage, LandTypeOfProperty.Residential).success.value
 
-        val result = LandTypeOfPropertySummary.row(userAnswers)
+        val row = LandTypeOfPropertySummary.row(userAnswers)
+
+        val result = row match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
 
         val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
         htmlContent must not include "<script>"
@@ -201,10 +227,25 @@ class LandTypeOfPropertySummarySpec extends SpecBase {
         val additionalAnswers = emptyUserAnswers
           .set(LandTypeOfPropertyPage, LandTypeOfProperty.Additional).success.value
 
-        val residentialResult = LandTypeOfPropertySummary.row(residentialAnswers)
-        val mixedResult = LandTypeOfPropertySummary.row(mixedAnswers)
-        val nonResidentialResult = LandTypeOfPropertySummary.row(nonResidentialAnswers)
-        val additionalResult = LandTypeOfPropertySummary.row(additionalAnswers)
+        val residentialResult = LandTypeOfPropertySummary.row(residentialAnswers) match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
+
+        val mixedResult = LandTypeOfPropertySummary.row(mixedAnswers) match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
+
+        val nonResidentialResult = LandTypeOfPropertySummary.row(nonResidentialAnswers) match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
+
+        val additionalResult = LandTypeOfPropertySummary.row(additionalAnswers) match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
 
         val residentialContent = residentialResult.value.content.asInstanceOf[HtmlContent].asHtml.toString()
         val mixedContent = mixedResult.value.content.asInstanceOf[HtmlContent].asHtml.toString()

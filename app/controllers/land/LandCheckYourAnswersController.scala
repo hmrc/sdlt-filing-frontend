@@ -20,15 +20,16 @@ import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
 import models.land.{CreateLandRequest, LandSessionQuestions, LandTypeOfProperty, UpdateLandRequest}
 import models.{Land, ReturnVersionUpdateRequest, UserAnswers}
-import pages.land.{AgriculturalOrDevelopmentalLandPage, AreaOfLandPage, DoYouKnowTheAreaOfLandPage, LandAddNlpgUprnPage, LandNlpgUprnPage, LandOverviewPage, LandRegisteredHmRegistryPage, LandTitleNumberPage, LandTypeOfPropertyPage}
+import pages.land.*
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsSuccess
+import play.api.libs.json.{JsObject, JsSuccess}
 import play.api.mvc.*
 import repositories.SessionRepository
+import services.checkAnswers.CheckAnswersService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.land.*
-import viewmodels.govuk.all.SummaryListViewModel
+import viewmodels.checkAnswers.summary.SummaryRowResult
 import views.html.land.LandCheckYourAnswersView
 
 import javax.inject.{Inject, Singleton}
@@ -42,6 +43,7 @@ class LandCheckYourAnswersController @Inject()(
                                                 requireData: DataRequiredAction,
                                                 sessionRepository: SessionRepository,
                                                 backendConnector: StampDutyLandTaxConnector,
+                                                checkAnswersService: CheckAnswersService,
                                                 val controllerComponents: MessagesControllerComponents,
                                                 view: LandCheckYourAnswersView
                                               )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -54,16 +56,21 @@ class LandCheckYourAnswersController @Inject()(
 
         val isReturnIdEmpty = result.exists(_.returnId.isEmpty)
         val isDataEmpty = result.exists(_.data.value.isEmpty)
-
-        if (isReturnIdEmpty) {
-          Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-        } else {
-          (isDataEmpty, result) match {
-            case (true, _) => Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
-            case (_, Some(userAnswers)) =>
-              Ok(view(buildSummaryList(request.userAnswers)))
-            case (false, None) => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-          }
+        val landDataEmpty = result.exists(ua => (ua.data \ "landCurrent").asOpt[JsObject].forall(_.values.isEmpty))
+        
+        (isReturnIdEmpty, isDataEmpty, result, landDataEmpty) match {
+          case (true, _, _, _) => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+          case (_, true, _, _) => Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
+          case (_, _, Some(_), true) =>
+            Redirect(controllers.land.routes.LandBeforeYouStartController.onPageLoad())
+          case (_, _, Some(_), false) =>
+              val rowResults = buildSummaryList(request.userAnswers)
+              
+              checkAnswersService.redirectOrRender(rowResults) match {
+                case Left(call) => Redirect(call)
+                case Right(summaryList) => Ok(view(summaryList))
+              }
+          case (_, _, None, _) => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
         }
       }
   }
@@ -112,28 +119,26 @@ class LandCheckYourAnswersController @Inject()(
   private def knowsArea(userAnswers: UserAnswers): Boolean =
     propertyTypeCheck(userAnswers) && agriculturalCheck(userAnswers) && knowAreaCheck(userAnswers)
 
-  private def buildSummaryList(userAnswers: UserAnswers)(implicit request: RequestHeader) = {
+  private def buildSummaryList(userAnswers: UserAnswers)(implicit request: RequestHeader): Seq[SummaryRowResult] = {
     val isMixedOrNonResidential = propertyTypeCheck(userAnswers)
     val isAgricultural = propertyTypeCheck(userAnswers) && agriculturalCheck(userAnswers)
     val knowsArea = propertyTypeCheck(userAnswers) && knowAreaCheck(userAnswers) && agriculturalCheck(userAnswers)
 
-    SummaryListViewModel(
-      rows = Seq(
-        Some(LandTypeOfPropertySummary.row(userAnswers)),
-        Some(LandInterestTransferredOrCreatedSummary.row(userAnswers)),
-        Some(LandAddressSummary.row(userAnswers)),
-        Some(LocalAuthorityCodeSummary.row(userAnswers)),
-        Some(LandRegisteredHmRegistrySummary.row(userAnswers)),
-        Option.when(titleCheck(userAnswers))(LandTitleNumberSummary.row(userAnswers)).flatten,
-        Some(LandAddNlpgUprnSummary.row(userAnswers)),
-        Option.when(nlpgCheck(userAnswers))(LandNlpgUprnSummary.row(userAnswers)).flatten,
-        Some(LandSendingPlanByPostSummary.row(userAnswers)),
-        Some(LandMineralsOrMineralRightsSummary.row(userAnswers)),
-        Option.when(isMixedOrNonResidential)(AgriculturalOrDevelopmentalLandSummary.row(userAnswers)).flatten,
-        Option.when(isAgricultural)(DoYouKnowTheAreaOfLandSummary.row(userAnswers)).flatten,
-        Option.when(knowsArea)(AreaOfLandSummary.row(userAnswers)).flatten
-      ).flatten
-    )
+    Seq(
+      Some(LandTypeOfPropertySummary.row(userAnswers)),
+      Some(LandInterestTransferredOrCreatedSummary.row(userAnswers)),
+      Some(LandAddressSummary.row(userAnswers)),
+      Some(LocalAuthorityCodeSummary.row(userAnswers)),
+      Some(LandRegisteredHmRegistrySummary.row(userAnswers)),
+      Option.when(titleCheck(userAnswers))(LandTitleNumberSummary.row(userAnswers)),
+      Some(LandAddNlpgUprnSummary.row(userAnswers)),
+      Option.when(nlpgCheck(userAnswers))(LandNlpgUprnSummary.row(userAnswers)),
+      Some(LandSendingPlanByPostSummary.row(userAnswers)),
+      Some(LandMineralsOrMineralRightsSummary.row(userAnswers)),
+      Option.when(isMixedOrNonResidential)(AgriculturalOrDevelopmentalLandSummary.row(userAnswers)),
+      Option.when(isAgricultural)(DoYouKnowTheAreaOfLandSummary.row(userAnswers)),
+      Option.when(knowsArea)(AreaOfLandSummary.row(userAnswers))
+    ).flatten
   }
 
   private def updateLand(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {

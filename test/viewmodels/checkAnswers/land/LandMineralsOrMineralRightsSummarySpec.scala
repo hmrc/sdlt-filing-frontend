@@ -21,8 +21,8 @@ import models.CheckMode
 import pages.land.LandMineralsOrMineralRightsPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class LandMineralsOrMineralRightsSummarySpec extends SpecBase {
 
@@ -38,7 +38,12 @@ class LandMineralsOrMineralRightsSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(LandMineralsOrMineralRightsPage, true).success.value
 
-          val result = LandMineralsOrMineralRightsSummary.row(userAnswers)
+          val row = LandMineralsOrMineralRightsSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("land.landMineralsOrMineralRights.checkYourAnswersLabel")
 
@@ -61,7 +66,12 @@ class LandMineralsOrMineralRightsSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(LandMineralsOrMineralRightsPage, false).success.value
 
-          val result = LandMineralsOrMineralRightsSummary.row(userAnswers)
+          val row = LandMineralsOrMineralRightsSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("land.landMineralsOrMineralRights.checkYourAnswersLabel")
 
@@ -79,7 +89,7 @@ class LandMineralsOrMineralRightsSummarySpec extends SpecBase {
 
     "when answer is not present" - {
 
-      "must return a SummaryListRow with a link to if they want to select an answer" in {
+      "must return a Missing and redirect call to missing page" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
@@ -87,14 +97,13 @@ class LandMineralsOrMineralRightsSummarySpec extends SpecBase {
 
           val result = LandMineralsOrMineralRightsSummary.row(emptyUserAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("land.landMineralsOrMineralRights.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("land.landMineralsOrMineralRights.missing"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }

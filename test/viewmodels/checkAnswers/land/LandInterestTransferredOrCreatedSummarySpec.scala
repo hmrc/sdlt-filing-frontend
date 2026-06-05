@@ -23,6 +23,7 @@ import pages.land.LandInterestTransferredOrCreatedPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Row, Missing}
 
 class LandInterestTransferredOrCreatedSummarySpec extends SpecBase {
 
@@ -40,7 +41,12 @@ class LandInterestTransferredOrCreatedSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(LandInterestTransferredOrCreatedPage, LandInterestTransferredOrCreated.FGS).success.value
 
-          val result = LandInterestTransferredOrCreatedSummary.row(userAnswers)
+          val row = LandInterestTransferredOrCreatedSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("land.landInterestTransferredOrCreated.checkYourAnswersLabel")
 
@@ -72,7 +78,12 @@ class LandInterestTransferredOrCreatedSummarySpec extends SpecBase {
             val userAnswers = emptyUserAnswers
               .set(LandInterestTransferredOrCreatedPage, value).success.value
 
-            val result = LandInterestTransferredOrCreatedSummary.row(userAnswers)
+            val row = LandInterestTransferredOrCreatedSummary.row(userAnswers)
+
+            val result = row match {
+              case Row(r) => r
+              case _ => fail("Expected Row but got Missing")
+            }
 
             val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
             htmlContent mustEqual msgs(s"land.landInterestTransferredOrCreated.$value")
@@ -90,7 +101,12 @@ class LandInterestTransferredOrCreatedSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(LandInterestTransferredOrCreatedPage, LandInterestTransferredOrCreated.FGS).success.value
 
-          val result = LandInterestTransferredOrCreatedSummary.row(userAnswers)
+          val row = LandInterestTransferredOrCreatedSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent.nonEmpty mustBe true
@@ -101,8 +117,7 @@ class LandInterestTransferredOrCreatedSummarySpec extends SpecBase {
 
     "when interest transferred or created is not present" - {
 
-      "must return a summary list row with a link to select interest transferred or created" in {
-
+      "must return a Missing and redirect call to missing page" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
@@ -110,31 +125,14 @@ class LandInterestTransferredOrCreatedSummarySpec extends SpecBase {
 
           val result = LandInterestTransferredOrCreatedSummary.row(emptyUserAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("land.landInterestTransferredOrCreated.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.land.routes.LandInterestTransferredOrCreatedController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.land.routes.LandInterestTransferredOrCreatedController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("land.landInterestTransferredOrCreated.missing"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
-      }
-    }
-
-    "must use CheckMode for the change link" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        implicit val msgs: Messages = messages(application)
-
-        val userAnswers = emptyUserAnswers
-          .set(LandInterestTransferredOrCreatedPage, LandInterestTransferredOrCreated.FGS).success.value
-
-        val result = LandInterestTransferredOrCreatedSummary.row(userAnswers)
-
-        result.actions.get.items.head.href mustEqual controllers.land.routes.LandInterestTransferredOrCreatedController.onPageLoad(CheckMode).url
       }
     }
   }

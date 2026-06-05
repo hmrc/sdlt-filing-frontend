@@ -19,42 +19,33 @@ package viewmodels.checkAnswers.land
 import models.{CheckMode, UserAnswers}
 import pages.land.LandSendingPlanByPostPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object LandSendingPlanByPostSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
-
-    val changeRoute = controllers.land.routes.LandSendingPlanByPostController.onPageLoad(CheckMode).url
-    val checkYourAnswersLabelMsg = messages("land.landSendingPlanByPost.checkYourAnswersLabel")
-    val displayMissingMsgContent = messages("land.landSendingPlanByPost.missing")
-
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult =
+    val changeRoute = controllers.land.routes.LandSendingPlanByPostController.onPageLoad(CheckMode)
+    val label = messages("land.landSendingPlanByPost.checkYourAnswersLabel")
+    
     answers.get(LandSendingPlanByPostPage).map {
       answer =>
 
         val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRowViewModel(
-          key = "land.landSendingPlanByPost.checkYourAnswersLabel",
-          value = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
-              .withVisuallyHiddenText(messages("land.landSendingPlanByPost.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key = label,
+            value = ValueViewModel(value),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("land.landSendingPlanByPost.change.hidden"))
+            )
           )
         )
     }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">$displayMissingMsgContent</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = checkYourAnswersLabelMsg,
-        value = value
-      )
+      Missing(changeRoute)
     }
 }

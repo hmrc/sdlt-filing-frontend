@@ -19,18 +19,21 @@ package controllers.land
 import base.SpecBase
 import connectors.StampDutyLandTaxConnector
 import constants.FullReturnConstants.{emptyFullReturn, incompleteFullReturn}
-import models.land.{CreateLandReturn, LandTypeOfProperty, UpdateLandRequest, UpdateLandReturn}
-import models.{Land, ReturnInfo, ReturnVersionUpdateRequest, ReturnVersionUpdateReturn, UserAnswers}
+import models.land.*
+import models.prelimQuestions.CompanyOrIndividualRequest
+import models.{CheckMode, Land, ReturnInfo, ReturnVersionUpdateRequest, ReturnVersionUpdateReturn, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import pages.land.*
+import pages.preliminary.PurchaserIsIndividualPage
 import play.api.inject.bind
 import play.api.libs.json.{JsNull, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
+import services.checkAnswers.CheckAnswersService
 import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.govuk.SummaryListFluency
 
@@ -40,6 +43,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
   private val mockSessionRepository = mock[SessionRepository]
   private val mockBackendConnector = mock[StampDutyLandTaxConnector]
+  private val mockCheckAnswersService = mock[CheckAnswersService]
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
   implicit val request: FakeRequest[_] = FakeRequest()
@@ -78,8 +82,8 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
   private def landCurrentData(landId: Option[String] = None) = Json.obj(
     "landCurrent" -> Json.obj(
       "landId"                           -> Json.toJson(landId),
-      "propertyType"                     -> "NonResidential",
-      "landInterestTransferredOrCreated" -> "Transfer",
+      "propertyType"                     -> "03",
+      "landInterestTransferredOrCreated" -> "FGS",
       "landAddress" -> Json.obj(
         "houseNumber"      -> JsNull,
         "line1"            -> "1 Test Street",
@@ -94,7 +98,9 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
         ),
         "addressValidated" -> true
       ),
-      "localAuthorityCode"              -> "1234",
+      "localAuthorityCode"              -> "0220",
+      "landRegisteredHmRegistry"        -> false,
+      "landAddNlpgUprn"                 -> false,
       "landSendingPlanByPost"           -> false,
       "landMineralsOrMineralRights"     -> false,
       "agriculturalOrDevelopmentalLand" -> false
@@ -227,6 +233,27 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
         }
       }
 
+      "must redirect to LandBeforeYouStartController when the land current UserAnswers data is empty" in {
+
+        val userAnswers = emptyUserAnswers.copy(returnId = Some("RE12345"))
+          .set(PurchaserIsIndividualPage, CompanyOrIndividualRequest.Option1).success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
+        }
+      }
+
       "must return OK and show agricultural row when property type is NonResidential and agricultural is true" in {
 
         val userAnswers = UserAnswers(
@@ -236,6 +263,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
           data = landCurrentData()
         ).set(LandTypeOfPropertyPage, LandTypeOfProperty.NonResidential).success.value
           .set(AgriculturalOrDevelopmentalLandPage, true).success.value
+          .set(DoYouKnowTheAreaOfLandPage, false).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -261,6 +289,8 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
         ).set(LandTypeOfPropertyPage, LandTypeOfProperty.NonResidential).success.value
           .set(AgriculturalOrDevelopmentalLandPage, true).success.value
           .set(DoYouKnowTheAreaOfLandPage, true).success.value
+          .set(LandSelectMeasurementUnitPage, LandSelectMeasurementUnit.Sqms).success.value
+          .set(AreaOfLandPage, "100.000").success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -286,6 +316,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
           storn = "TESTSTORN",
           data = landCurrentData()
         ).set(LandRegisteredHmRegistryPage, true).success.value
+          .set(LandTitleNumberPage, "12345").success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -311,6 +342,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
           storn = "TESTSTORN",
           data = landCurrentData()
         ).set(LandAddNlpgUprnPage, true).success.value
+          .set(LandNlpgUprnPage, "10012345678").success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -349,6 +381,43 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
           status(result) mustEqual OK
           contentAsString(result) must include("Does the transaction involve agricultural or developmental land?")
+        }
+      }
+
+      "must return redirect call when page is missing" in {
+
+        val userAnswers = UserAnswers(
+          id = "12345",
+          returnId = Some("AB2346"),
+          storn = "TESTSTORN",
+          data = landCurrentData()
+        ).set(LandTypeOfPropertyPage, LandTypeOfProperty.NonResidential).success.value
+          .set(AgriculturalOrDevelopmentalLandPage, true).success.value
+
+        val redirectCall = controllers.land.routes.DoYouKnowTheAreaOfLandController.onPageLoad(CheckMode)
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        when(mockCheckAnswersService.redirectOrRender(any()))
+          .thenReturn(Left(redirectCall))
+
+        val application = applicationBuilder(Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CheckAnswersService].toInstance(mockCheckAnswersService)
+          )
+          .build()
+
+        running(application) {
+
+          val request = FakeRequest(
+            GET,
+            controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
+          )
+
+          val result = route(application, request).value
+
+          redirectLocation(result).value must include("about-the-land/add-area-of-land/change")
         }
       }
 

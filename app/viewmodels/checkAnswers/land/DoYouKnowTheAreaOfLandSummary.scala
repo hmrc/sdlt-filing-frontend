@@ -19,39 +19,35 @@ package viewmodels.checkAnswers.land
 import models.{CheckMode, UserAnswers}
 import pages.land.DoYouKnowTheAreaOfLandPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object DoYouKnowTheAreaOfLandSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    val changeRoute = controllers.land.routes.DoYouKnowTheAreaOfLandController.onPageLoad(CheckMode).url
-    answers.get(DoYouKnowTheAreaOfLandPage) match {
-      case Some(answer) =>
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult =
+    val changeRoute = controllers.land.routes.DoYouKnowTheAreaOfLandController.onPageLoad(CheckMode)
+    val label = messages("land.doYouKnowTheAreaOfLand.checkYourAnswersLabel")
+      
+    answers.get(DoYouKnowTheAreaOfLandPage).map {
+      answer =>
         val value = ValueViewModel(
           Text(messages(if (answer) "site.yes" else "site.no"))
         )
 
-        Some(SummaryListRowViewModel(
-          key     = "land.doYouKnowTheAreaOfLand.checkYourAnswersLabel",
-          value   = value,
-          actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
-              .withVisuallyHiddenText(messages("land.doYouKnowTheAreaOfLand.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key     = label,
+            value   = value,
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("land.doYouKnowTheAreaOfLand.change.hidden"))
+            )
           )
-        ))
-
-      case _ =>
-        val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">${messages("land.doYouKnowTheAreaOfLand.missing")}</a>""")
-      )
-        Some(SummaryListRowViewModel(
-          key = "land.doYouKnowTheAreaOfLand.checkYourAnswersLabel",
-          value = value
-        ))
+        )
+    }.getOrElse {
+      Missing(changeRoute)
     }
 }

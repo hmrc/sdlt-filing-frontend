@@ -16,42 +16,35 @@
 
 package viewmodels.checkAnswers.land
 
-import models.land.LandTypeOfProperty
 import models.{CheckMode, UserAnswers}
-import pages.land.{AgriculturalOrDevelopmentalLandPage, LandTypeOfPropertyPage}
+import pages.land.AgriculturalOrDevelopmentalLandPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object AgriculturalOrDevelopmentalLandSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    val changeRoute = controllers.land.routes.AgriculturalOrDevelopmentalLandController.onPageLoad(CheckMode).url
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult =
+    val changeRoute = controllers.land.routes.AgriculturalOrDevelopmentalLandController.onPageLoad(CheckMode)
     val label = messages("land.agriculturalOrDevelopmental.checkYourAnswersLabel")
-    (answers.get(AgriculturalOrDevelopmentalLandPage), answers.get(LandTypeOfPropertyPage)) match {
-      case (Some(agriculturalOrDevelopmental), _) =>
+    
+    answers.get(AgriculturalOrDevelopmentalLandPage).map {
+      answer =>
+        val value = if (answer) "site.yes" else "site.no"
 
-        val value = if (agriculturalOrDevelopmental) "site.yes" else "site.no"
-
-        Some(SummaryListRowViewModel(
-          key = label,
-          value = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
-              .withVisuallyHiddenText(messages("land.agriculturalOrDevelopmental.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key = label,
+            value = ValueViewModel(value),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("land.agriculturalOrDevelopmental.change.hidden"))
+            )
           )
-        ))
-      case (None, Some(LandTypeOfProperty.Mixed | LandTypeOfProperty.NonResidential)) =>
-        val value = ValueViewModel(
-          HtmlContent(
-            s"""<a href="$changeRoute" class="govuk-link">${messages("land.agriculturalOrDevelopmental.missing")}</a>""")
         )
-        Some(SummaryListRowViewModel(
-          key = label,
-          value = value
-        ))
-      case _ => None
+    }.getOrElse {
+      Missing(changeRoute)
     }
 }
