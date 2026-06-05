@@ -484,14 +484,12 @@ vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.length            
 vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.maxlength            = {0}’s email address must be 36 characters or fewer
 vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.minlength            = {0}’s email address must be 3 characters or more
 vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.invalid               = {0}’s phone number must only include numbers 0 to 9, brackets, dashes, hyphens, plus signs and spaces
-vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.invalid              = {0}’s email address must only include letters a to z, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, numbers 0-9, question marks and spaces
+vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.invalid              = {0}’s email address must only include letters a to z, ampersands (&), at signs (@), forward slashes, full stops, hyphens, numbers 0-9, question marks and spaces
 vendorAgent.vendorAgentsContactDetails.agentPhoneNumber.change.hidden               = Agent phone number
 vendorAgent.vendorAgentsContactDetails.agentEmailAddress.change.hidden              = Agent email address
 vendorAgent.vendorAgentsContactDetails.error.oneRequired                            = Enter {0}’s phone number or email address
 vendorAgent.vendorAgentsContactDetails.change.hidden                                = Agent contact details
 vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.invalidFormat        = Enter {0}’s email address in the correct format, like name@example.com
-vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.invalidFormat         = Enter a phone number, like 01632 960 001, 07700 900 982 or +44 808 157 0192
-
 vendorAgent.removeVendorAgent.title                                                 = Are you sure you want to remove the vendor’s agent? - About the vendor’s agent
 vendorAgent.removeVendorAgent.heading                                               = Are you sure you want to remove {0}?
 vendorAgent.removeVendorAgent.checkYourAnswersLabel                                 = removeVendorAgent

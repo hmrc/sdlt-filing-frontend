@@ -21,7 +21,6 @@ import play.api.data.FormError
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
 
-import scala.collection.immutable.ArraySeq
 
 class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
 
@@ -36,8 +35,6 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
     val fieldName = "phoneNumber"
     val lengthKey = "vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.length"
     val invalidKey = "vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.invalid"
-    val phoneNumberFormatError = "vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.invalidFormat"
-    val phoneNumberFormatRegex = """^(\+44|0)\s?\d{3,4}\s?\d{3}\s?\d{3,4}$"""
     val maxLength = 14
 
     "must bind valid phone number form data" in {
@@ -64,8 +61,8 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
           )
         )
 
-        result.errors must contain(FormError(fieldName, phoneNumberFormatError, ArraySeq(phoneNumberFormatRegex)))
-
+        result.errors mustBe empty
+        result.get.phoneNumber mustBe Some(number)
       }
     }
 
@@ -216,21 +213,17 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
       result.errors must contain(FormError(fieldName, lengthKey, Seq(maxLength)))
     }
 
-    "must not bind invalid email address values" in {
-      val invalidEmails = Seq(
-        "test@@example.com",
-        "te@st@example.com",
+    "must not bind email address values with invalid characters" in {
+      val invalidCharEmails = Seq(
         "user@domain|com",
         "hello@domain>.com",
         "name@domain<.com",
         "quote\"@domain.com",
         "single'quote@domain.com",
-        "`backtick`@domain.com",
-        "@missinglocal.com",
-        "missingdomain@"
+        "`backtick`@domain.com"
       )
 
-      invalidEmails.foreach { email =>
+      invalidCharEmails.foreach { email =>
         val result = form.bind(
           Map(
             fieldName -> email,
@@ -238,7 +231,30 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
           )
         )
         result.errors must contain(
-          FormError(fieldName, invalidKey, Seq("^[^@|<>\"'`]+@[^@|<>\"'`]+$"))
+          FormError(fieldName, invalidKey, Seq("^[^|<>\"'`]+$"))
+        )
+      }
+    }
+
+    "must not bind email address values with invalid format" in {
+      val invalidFormatEmails = Seq(
+        "test@@example.com",
+        "te@st@example.com",
+        "@missinglocal.com",
+        "missingdomain@"
+      )
+
+      val invalidFormatKey = "vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.invalidFormat"
+
+      invalidFormatEmails.foreach { email =>
+        val result = form.bind(
+          Map(
+            fieldName -> email,
+            "phoneNumber" -> "123456789"
+          )
+        )
+        result.errors must contain(
+          FormError(fieldName, invalidFormatKey, Seq("^[^@|<>\"'`]+@[^@|<>\"'`]+$"))
         )
       }
     }
