@@ -19,11 +19,11 @@ package services.transaction
 import models.address.Address
 import models.{Transaction, UserAnswers}
 import models.prelimQuestions.TransactionType
-import models.transaction.{ReasonForRelief, TransactionFormsOfConsiderationAnswers, TransactionRulingFollowed,
-  TransactionSaleOfBusinessAssetsAnswers, TransactionUseOfLandOrPropertyAnswers}
+import models.transaction.{ReasonForRelief, TransactionFormsOfConsiderationAnswers, TransactionRulingFollowed, TransactionSaleOfBusinessAssetsAnswers, TransactionUseOfLandOrPropertyAnswers}
 import pages.transaction.*
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import scala.util.{Failure, Success, Try}
 
 class PopulateTransactionService {
@@ -52,7 +52,7 @@ class PopulateTransactionService {
 
   private def effectiveDatePage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] =
     transaction.effectiveDate match {
-      case Some(dateStr) => Try(LocalDate.parse(dateStr)).flatMap(userAnswers.set(TransactionEffectiveDatePage, _))
+      case Some(dateStr) => Try(LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"))).flatMap(userAnswers.set(TransactionEffectiveDatePage, _))
       case None          => Failure(new IllegalStateException("Transaction is missing required effective date"))
     }
 
@@ -61,7 +61,7 @@ class PopulateTransactionService {
       case Some(dateStr) =>
         for {
           withAddDateOfContract <- userAnswers.set(TransactionAddDateOfContractPage, true)
-          date                  <- Try(LocalDate.parse(dateStr))
+          date                  <- Try(LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy")))
           finalAnswers          <- withAddDateOfContract.set(TransactionDateOfContractPage, date)
         } yield finalAnswers
       case None =>
