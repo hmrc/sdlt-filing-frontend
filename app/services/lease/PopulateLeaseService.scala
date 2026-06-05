@@ -39,6 +39,7 @@ import models.{Lease, UserAnswers}
 import pages.lease.*
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import scala.util.{Failure, Success, Try}
 
 class PopulateLeaseService {
@@ -65,13 +66,13 @@ class PopulateLeaseService {
 
   private def leaseStartDatePage(lease: Lease, userAnswers: UserAnswers): Try[UserAnswers] =
     lease.contractStartDate match {
-      case Some(dateStr) => Try(LocalDate.parse(dateStr)).flatMap(userAnswers.set(LeaseStartDatePage, _))
+      case Some(dateStr) => Try(LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"))).flatMap(userAnswers.set(LeaseStartDatePage, _))
       case None          => Failure(new IllegalStateException("Lease is missing required contract start date"))
     }
 
   private def leaseEndDatePage(lease: Lease, userAnswers: UserAnswers): Try[UserAnswers] =
     lease.contractEndDate match {
-      case Some(dateStr) => Try(LocalDate.parse(dateStr)).flatMap(userAnswers.set(LeaseEndDatePage, _))
+      case Some(dateStr) => Try(LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"))).flatMap(userAnswers.set(LeaseEndDatePage, _))
       case None          => Failure(new IllegalStateException("Lease is missing required contract end date"))
     }
 
@@ -94,7 +95,7 @@ class PopulateLeaseService {
 
   private def leaseStartingRentEndDatePage(lease: Lease, userAnswers: UserAnswers): Try[UserAnswers] =
     lease.startingRentEndDate match {
-      case Some(dateStr) => Try(LocalDate.parse(dateStr)).flatMap(userAnswers.set(LeaseStartingRentEndDatePage, _))
+      case Some(dateStr) => Try(LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"))).flatMap(userAnswers.set(LeaseStartingRentEndDatePage, _))
       case None          => Failure(new IllegalStateException("Lease is missing required starting rent end date"))
     }
 
