@@ -22,7 +22,7 @@ import models.land.LandSelectMeasurementUnit
 import pages.land.{AreaOfLandPage, LandSelectMeasurementUnitPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class AreaOfLandSummarySpec extends SpecBase {
 
@@ -43,7 +43,12 @@ class AreaOfLandSummarySpec extends SpecBase {
             .set(AreaOfLandPage, area).success.value
             .set(LandSelectMeasurementUnitPage, LandSelectMeasurementUnit.Sqms).success.value
 
-          val result = AreaOfLandSummary.row(userAnswers).getOrElse(fail("Failed to create summaryListRow"))
+          val row = AreaOfLandSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("land.areaOfLand.checkYourAnswersLabel")
 
@@ -70,7 +75,12 @@ class AreaOfLandSummarySpec extends SpecBase {
             .set(AreaOfLandPage, area).success.value
             .set(LandSelectMeasurementUnitPage, LandSelectMeasurementUnit.Hectares).success.value
 
-          val result = AreaOfLandSummary.row(userAnswers).getOrElse(fail("Failed to create summaryListRow"))
+          val row = AreaOfLandSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("land.areaOfLand.checkYourAnswersLabel")
 
@@ -85,46 +95,49 @@ class AreaOfLandSummarySpec extends SpecBase {
       }
     }
 
-    "when the area of land and unit type are not present" - {
+     "when the area of land and unit type are not present" - {
 
-      "must return a summary list row with a missing link" in {
+       "must return a Missing and redirect call to missing page" in {
+         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+         running(application) {
+           implicit val msgs: Messages = messages(application)
 
-        running(application) {
-          implicit val msgs: Messages = messages(application)
+           val result = AreaOfLandSummary.row(emptyUserAnswers)
 
-          val result = AreaOfLandSummary.row(emptyUserAnswers).getOrElse(fail("Failed to create summaryListRow"))
+           result match {
+             case Missing(call) =>
+               call mustEqual controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(CheckMode)
 
-          result.key.content.asHtml.toString() mustEqual msgs("land.areaOfLand.checkYourAnswersLabel")
+             case Row(_) =>
+               fail("Expected Missing but got Row")
+           }
+         }
+       }
+     }
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("land.areaOfLand.missing"))
+      "when only unit type is not present" - {
 
-          result.actions mustBe None
-        }
-      }
-
-      "must return a summary list row with a missing link when only area is present but unit type is missing" in {
-
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-        running(application) {
-          implicit val msgs: Messages = messages(application)
+        "must return a Missing and redirect call to missing page" in {
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
           val userAnswers = emptyUserAnswers
             .set(AreaOfLandPage, "100.000").success.value
 
-          val result = AreaOfLandSummary.row(userAnswers).getOrElse(fail("Failed to create summaryListRow"))
+          running(application) {
+            implicit val msgs: Messages = messages(application)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("land.areaOfLand.missing"))
+            val result = AreaOfLandSummary.row(userAnswers)
+
+            result match {
+              case Missing(call) =>
+                call mustEqual controllers.land.routes.LandSelectMeasurementUnitController.onPageLoad(CheckMode)
+
+              case Row(_) =>
+                fail("Expected Missing but got Row")
+            }
+          }
         }
       }
-    }
   }
 }

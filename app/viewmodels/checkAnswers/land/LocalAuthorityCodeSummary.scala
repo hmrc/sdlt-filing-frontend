@@ -20,35 +20,30 @@ import models.{CheckMode, UserAnswers}
 import pages.land.LocalAuthorityCodePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object LocalAuthorityCodeSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult =
+    val changeRoute = controllers.land.routes.LocalAuthorityCodeController.onPageLoad(CheckMode)
+    val label = messages("land.localAuthorityCode.checkYourAnswersLabel")
+
     answers.get(LocalAuthorityCodePage).map {
-      answer =>
-
-        SummaryListRowViewModel(
-          key = "land.localAuthorityCode.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlFormat.escape(answer).toString),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.land.routes.LocalAuthorityCodeController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("land.localAuthorityCode.change.hidden"))
+        answer =>
+          Row(
+            SummaryListRowViewModel(
+              key = label,
+              value = ValueViewModel(HtmlFormat.escape(answer).toString),
+              actions = Seq(
+                ActionItemViewModel("site.change", changeRoute.url)
+                  .withVisuallyHiddenText(messages("land.localAuthorityCode.change.hidden"))
+              )
+            )
           )
-        )
-    }.getOrElse {
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="${controllers.land.routes.LocalAuthorityCodeController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("land.checkYourAnswers.localAuthorityCode.missing")}</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = "land.localAuthorityCode.checkYourAnswersLabel",
-        value = value
-      )
-
+      }.getOrElse {
+        Missing(changeRoute)
     }
 }

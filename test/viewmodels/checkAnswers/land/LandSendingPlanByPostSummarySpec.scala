@@ -21,8 +21,8 @@ import models.CheckMode
 import pages.land.LandSendingPlanByPostPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class LandSendingPlanByPostSummarySpec extends SpecBase {
 
@@ -37,7 +37,13 @@ class LandSendingPlanByPostSummarySpec extends SpecBase {
           implicit val msgs: Messages = messages(application)
 
           val userAnswers = emptyUserAnswers.set(LandSendingPlanByPostPage, true).success.value
-          val result = LandSendingPlanByPostSummary.row(userAnswers)
+
+          val row = LandSendingPlanByPostSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("land.landSendingPlanByPost.checkYourAnswersLabel")
           
@@ -60,7 +66,12 @@ class LandSendingPlanByPostSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(LandSendingPlanByPostPage, false).success.value
 
-          val result = LandSendingPlanByPostSummary.row(userAnswers)
+          val row = LandSendingPlanByPostSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("land.landSendingPlanByPost.checkYourAnswersLabel")
 
@@ -77,8 +88,7 @@ class LandSendingPlanByPostSummarySpec extends SpecBase {
     }
 
     "when answer is not present" - {
-
-      "must return a SummaryListRow with a link to if they want to select an answer" in {
+      "must return a Missing and redirect call to missing page" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
@@ -86,14 +96,13 @@ class LandSendingPlanByPostSummarySpec extends SpecBase {
 
           val result = LandSendingPlanByPostSummary.row(emptyUserAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("land.landSendingPlanByPost.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.land.routes.LandSendingPlanByPostController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.land.routes.LandSendingPlanByPostController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("land.landSendingPlanByPost.missing"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }

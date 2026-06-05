@@ -21,8 +21,8 @@ import models.CheckMode
 import pages.land.DoYouKnowTheAreaOfLandPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class DoYouKnowTheAreaOfLandSummarySpec extends SpecBase {
 
@@ -38,7 +38,12 @@ class DoYouKnowTheAreaOfLandSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(DoYouKnowTheAreaOfLandPage, true).success.value
 
-          val result = DoYouKnowTheAreaOfLandSummary.row(userAnswers).get
+          val row = DoYouKnowTheAreaOfLandSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("land.doYouKnowTheAreaOfLand.checkYourAnswersLabel")
 
@@ -60,7 +65,12 @@ class DoYouKnowTheAreaOfLandSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(DoYouKnowTheAreaOfLandPage, false).success.value
 
-          val result = DoYouKnowTheAreaOfLandSummary.row(userAnswers).get
+          val row = DoYouKnowTheAreaOfLandSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("land.doYouKnowTheAreaOfLand.checkYourAnswersLabel")
 
@@ -77,22 +87,21 @@ class DoYouKnowTheAreaOfLandSummarySpec extends SpecBase {
 
     "when do you know the area of land is not present" - {
 
-      "must return a SummaryListRow with a missing link" in {
+      "must return a Missing and redirect call to missing page" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = DoYouKnowTheAreaOfLandSummary.row(emptyUserAnswers).get
+          val result = DoYouKnowTheAreaOfLandSummary.row(emptyUserAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("land.doYouKnowTheAreaOfLand.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.land.routes.DoYouKnowTheAreaOfLandController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.land.routes.DoYouKnowTheAreaOfLandController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("land.doYouKnowTheAreaOfLand.missing"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }

@@ -22,35 +22,32 @@ import models.address.Address.toHtml
 import pages.land.LandAddressPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object LandAddressSummary {
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
-    val changeRoute = controllers.land.routes.LandAddressController.redirectToAddressLookupLand(Some("change")).url
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.land.routes.LandAddressController.redirectToAddressLookupLand(Some("change"))
     val label = messages("land.address.checkYourAnswersLabel")
+    
     answers.get(LandAddressPage).map { answer =>
 
-      SummaryListRowViewModel(
-        key = label,
-        value = ValueViewModel(HtmlContent(toHtml(answer))),
-        actions = Seq(
-          ActionItemViewModel(
-            "site.change",
-            changeRoute
-          ).withVisuallyHiddenText(messages("land.address.change.hidden"))
+      Row(
+        SummaryListRowViewModel(
+          key = label,
+          value = ValueViewModel(HtmlContent(toHtml(answer))),
+          actions = Seq(
+            ActionItemViewModel(
+              "site.change",
+              changeRoute.url
+            ).withVisuallyHiddenText(messages("land.address.change.hidden"))
+          )
         )
       )
     }.getOrElse {
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">${messages("land.checkYourAnswers.address.missing")}</a>""")
-      )
-      SummaryListRowViewModel(
-        key = label,
-        value = value
-      )
+      Missing(changeRoute)
     }
   }
 }

@@ -19,15 +19,15 @@ package viewmodels.checkAnswers.land
 import models.{CheckMode, UserAnswers}
 import pages.land.LandMineralsOrMineralRightsPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object LandMineralsOrMineralRightsSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
-    val changeRoute = controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(CheckMode).url
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult =
+    val changeRoute = controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(CheckMode)
     val label = messages("land.landMineralsOrMineralRights.checkYourAnswersLabel")
     
     answers.get(LandMineralsOrMineralRightsPage).map {
@@ -35,24 +35,17 @@ object LandMineralsOrMineralRightsSummary  {
 
         val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRowViewModel(
-          key     = "land.landMineralsOrMineralRights.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.land.routes.LandMineralsOrMineralRightsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("land.landMineralsOrMineralRights.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key     = label,
+            value   = ValueViewModel(value),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("land.landMineralsOrMineralRights.change.hidden"))
+            )
           )
         )
     }.getOrElse {
-      
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">${messages("land.landMineralsOrMineralRights.missing")}</a>""")
-      )
-      
-      SummaryListRowViewModel(
-        key = label,
-        value = value
-      )
+      Missing(changeRoute)
     }
 }

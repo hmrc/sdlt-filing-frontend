@@ -21,8 +21,8 @@ import models.CheckMode
 import pages.land.LandRegisteredHmRegistryPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class LandRegisteredHmRegistrySummarySpec extends SpecBase {
 
@@ -38,7 +38,12 @@ class LandRegisteredHmRegistrySummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(LandRegisteredHmRegistryPage, true).success.value
 
-          val result = LandRegisteredHmRegistrySummary.row(userAnswers)
+          val row = LandRegisteredHmRegistrySummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("land.landRegisteredHmRegistry.checkYourAnswersLabel")
 
@@ -61,7 +66,12 @@ class LandRegisteredHmRegistrySummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(LandRegisteredHmRegistryPage, false).success.value
 
-          val result = LandRegisteredHmRegistrySummary.row(userAnswers)
+          val row = LandRegisteredHmRegistrySummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("land.landRegisteredHmRegistry.checkYourAnswersLabel")
 
@@ -79,7 +89,7 @@ class LandRegisteredHmRegistrySummarySpec extends SpecBase {
 
     "when answer is not present" - {
 
-      "must return a SummaryListRow with a link to if they want to select an answer" in {
+      "must return a Missing and redirect call to missing page" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
@@ -87,14 +97,13 @@ class LandRegisteredHmRegistrySummarySpec extends SpecBase {
 
           val result = LandRegisteredHmRegistrySummary.row(emptyUserAnswers)
 
-          result.key.content.asHtml.toString() mustEqual msgs("land.landRegisteredHmRegistry.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.land.routes.LandRegisteredHmRegistryController.onPageLoad(CheckMode)
 
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.land.routes.LandRegisteredHmRegistryController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("land.landRegisteredHmRegistry.missing"))
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }

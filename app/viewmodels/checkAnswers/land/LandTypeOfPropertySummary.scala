@@ -21,13 +21,17 @@ import pages.land.LandTypeOfPropertyPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object LandTypeOfPropertySummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult =
+    val changeRoute = controllers.land.routes.LandTypeOfPropertyController.onPageLoad(CheckMode)
+    val label = messages("land.landTypeOfProperty.checkYourAnswersLabel")
+    
     answers.get(LandTypeOfPropertyPage).map {
       answer =>
 
@@ -37,24 +41,17 @@ object LandTypeOfPropertySummary  {
           )
         )
 
-        SummaryListRowViewModel(
-          key     = "land.landTypeOfProperty.checkYourAnswersLabel",
-          value   = value,
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.land.routes.LandTypeOfPropertyController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("land.landTypeOfProperty.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key     = label,
+            value   = value,
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("land.landTypeOfProperty.change.hidden"))
+            )
           )
         )
     }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="${controllers.land.routes.LandTypeOfPropertyController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("land.checkYourAnswers.landTypeOfProperty.Missing")}</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = "land.landTypeOfProperty.checkYourAnswersLabel",
-        value = value
-      )
+      Missing(changeRoute)
     }
 }
