@@ -51,7 +51,7 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
     implicit val msgs: Messages = messages(application)
     implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 
-    val sdltAmountDue = "27,500.00"
+    val sdltAmountDue = "27500"
     val freeholdTaxCalculatedSelfAssessedAmount = "12345"
     val freeholdSelfAssessedCalculatedSelfAssessedAmount = "56788"
     val leaseholdSelfAssessedPremiumPayableTaxPageAmount = "7013"
@@ -166,10 +166,10 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
         val doc = Jsoup.parse(view(viewModel).toString())
 
         doc.select("title").first().text() must include(msgs("taxCalculation.checkYourAnswers.title"))
-        doc.text() must include(sdltAmountDue)
-        doc.text() must include(freeholdTaxCalculatedSelfAssessedAmount)
+        doc.text() must include("27,500")
+        doc.text() must include("12,345")
         doc.text() must include("Penalties due £0")
-        doc.text() must include("Amount to be paid £43950")
+        doc.text() must include("Amount to be paid £43,950")
         doc.text() must include("Change amount to be paid Does the amount include penalties and interest? Yes")
 
         doc.select("p").toArray().tail.head.asInstanceOf[Element].text() mustBe msgs("taxCalculation.checkYourAnswers.declaration.text")
@@ -187,9 +187,9 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
 
         doc.select("title").first().text() must include(msgs("taxCalculation.checkYourAnswers.title"))
 
-        doc.text() must include("Self-assessed SDLT due £43957")
+        doc.text() must include("Self-assessed SDLT due £43,957")
         doc.text() must include("Penalties due £0")
-        doc.text() must include("Amount to be paid £12358")
+        doc.text() must include("Amount to be paid £12,358")
         doc.text() must include("Change amount to be paid Does the amount include penalties and interest? Yes")
 
         doc.select("p").toArray().tail.head.asInstanceOf[Element].text() mustBe msgs("taxCalculation.checkYourAnswers.declaration.text")
@@ -206,8 +206,8 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
         val doc = Jsoup.parse(view(viewModel).toString())
 
         doc.select("title").first().text() must include(msgs("taxCalculation.checkYourAnswers.title"))
-        doc.text() must include("HMRC calculated SDLT due £7179")
-        doc.text() must include("Self-assessed SDLT due £1191")
+        doc.text() must include("HMRC calculated SDLT due £7,179")
+        doc.text() must include("Self-assessed SDLT due £1,191")
         doc.text() must include("Penalties due £0")
         doc.text() must include("Amount to be paid £389")
         doc.text() must include("Change amount to be paid Does the amount include penalties and interest? No")
@@ -227,8 +227,8 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
 
         doc.select("title").first().text() must include(msgs("taxCalculation.checkYourAnswers.title"))
 
-        doc.text() must include("Tax due on premium payable £7013")
-        doc.text() must include("tax due on premium payable Tax due on NPV £1891")
+        doc.text() must include("Tax due on premium payable £7,013")
+        doc.text() must include("tax due on premium payable Tax due on NPV £1,891")
         doc.text() must include("tax due on NPV Amount to be paid £999")
         doc.text() must include("Change amount to be paid Does the amount include penalties and interest? No")
 

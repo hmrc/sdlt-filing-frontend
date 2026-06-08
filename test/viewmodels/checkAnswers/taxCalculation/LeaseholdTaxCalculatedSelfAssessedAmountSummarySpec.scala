@@ -44,7 +44,7 @@ class LeaseholdTaxCalculatedSelfAssessedAmountSummarySpec extends SpecBase {
           }
 
           result.key.content.asHtml.toString() mustEqual msgs("taxCalculation.sdltSelfAssessment.checkYourAnswersLabel")
-          result.value.content.asInstanceOf[HtmlContent].asHtml.toString() mustEqual "£12345"
+          result.value.content.asInstanceOf[HtmlContent].asHtml.toString() mustEqual "£12,345"
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual changeRoute.url
           result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("taxCalculation.sdltSelfAssessment.change.hidden")

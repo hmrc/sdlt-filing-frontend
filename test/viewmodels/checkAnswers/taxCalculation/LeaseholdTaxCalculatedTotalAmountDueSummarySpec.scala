@@ -49,7 +49,7 @@ class LeaseholdTaxCalculatedTotalAmountDueSummarySpec extends SpecBase {
           result.key.content.asHtml.toString() mustEqual msgs("taxCalculation.totalAmountDue.checkYourAnswersLabel")
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent mustEqual "£43950"
+          htmlContent mustEqual "£43,950"
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdTaxCalculatedTotalAmountDueController.onPageLoad(CheckMode).url

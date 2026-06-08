@@ -16,14 +16,15 @@
 
 package viewmodels.checkAnswers.taxCalculation
 
+import config.CurrencyFormatter
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.summary.SummaryRowResult.Row
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object CalculatedSdltDueSummary {
+object CalculatedSdltDueSummary extends CurrencyFormatter {
 
   def row(sdltDue: String)(implicit messages: Messages): SummaryRowResult = {
     val label = messages("taxCalculation.calculatedSdltDue.checkYourAnswersLabel")
@@ -31,7 +32,7 @@ object CalculatedSdltDueSummary {
         Row(
           SummaryListRowViewModel(
             key     = label,
-            value   = ValueViewModel(HtmlFormat.escape(s"£$sdltDue").toString)
+            value   = ValueViewModel(HtmlContent(s"${sdltDue.toCurrency}"))
           )
         )
   }

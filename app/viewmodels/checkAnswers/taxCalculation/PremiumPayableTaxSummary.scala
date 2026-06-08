@@ -16,6 +16,7 @@
 
 package viewmodels.checkAnswers.taxCalculation
 
+import config.CurrencyFormatter
 import models.{CheckMode, UserAnswers}
 import pages.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedPremiumPayableTaxPage
 import play.api.i18n.Messages
@@ -25,7 +26,7 @@ import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object PremiumPayableTaxSummary {
+object PremiumPayableTaxSummary extends CurrencyFormatter {
 
   def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
 
@@ -34,7 +35,7 @@ object PremiumPayableTaxSummary {
 
     answers.flatMap(_.get(LeaseholdSelfAssessedPremiumPayableTaxPage)).map {
       answer =>
-        val value = ValueViewModel(HtmlContent(s"£$answer"))
+        val value = ValueViewModel(HtmlContent(s"${answer.toCurrency}"))
 
         Row(
           SummaryListRowViewModel(

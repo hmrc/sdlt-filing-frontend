@@ -25,7 +25,7 @@ class CalculatedSdltDueSummarySpec extends SpecBase {
 
   "CalculatedSdltDueSummary" - {
 
-    val sdltDue = "27,500.00"
+    val sdltDue = "27500"
 
     "when the tax due on NPV is present" - {
 
@@ -46,7 +46,7 @@ class CalculatedSdltDueSummarySpec extends SpecBase {
           result.key.content.asHtml.toString() mustEqual msgs("taxCalculation.calculatedSdltDue.checkYourAnswersLabel")
 
           val valueHtml = result.value.content.asHtml.toString()
-          valueHtml mustEqual "£27,500.00"
+          valueHtml mustEqual "£27,500"
           result.actions mustBe None
         }
       }

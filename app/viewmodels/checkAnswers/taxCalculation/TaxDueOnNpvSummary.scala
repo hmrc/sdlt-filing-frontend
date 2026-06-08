@@ -16,16 +16,17 @@
 
 package viewmodels.checkAnswers.taxCalculation
 
+import config.CurrencyFormatter
 import models.{CheckMode, UserAnswers}
 import pages.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedNpvTaxPage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object TaxDueOnNpvSummary {
+object TaxDueOnNpvSummary extends CurrencyFormatter {
 
   def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
     val changeRoute = controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedTaxDueOnNpvController.onPageLoad(CheckMode)
@@ -37,7 +38,7 @@ object TaxDueOnNpvSummary {
         Row(
           SummaryListRowViewModel(
             key     = label,
-            value   = ValueViewModel(HtmlFormat.escape(s"£$answer").toString),
+            value   = ValueViewModel(HtmlContent(s"${answer.toCurrency}")),
             actions = Seq(
               ActionItemViewModel("site.change", changeRoute.url)
                 .withVisuallyHiddenText(messages("taxCalculation.taxDueOnNpv.change.hidden"))

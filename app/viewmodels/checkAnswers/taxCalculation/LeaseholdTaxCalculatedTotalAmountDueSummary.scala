@@ -16,6 +16,7 @@
 
 package viewmodels.checkAnswers.taxCalculation
 
+import config.CurrencyFormatter
 import models.{CheckMode, UserAnswers}
 import pages.taxCalculation.leaseholdTaxCalculated.LeaseholdTaxCalculatedTotalAmountDuePage
 import play.api.i18n.Messages
@@ -25,7 +26,7 @@ import viewmodels.implicits.*
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
-object LeaseholdTaxCalculatedTotalAmountDueSummary {
+object LeaseholdTaxCalculatedTotalAmountDueSummary extends CurrencyFormatter {
 
   def row(answers: Option[UserAnswers])(implicit messages: Messages): SummaryRowResult = {
     val changeRoute = controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdTaxCalculatedTotalAmountDueController.onPageLoad(CheckMode)
@@ -34,7 +35,7 @@ object LeaseholdTaxCalculatedTotalAmountDueSummary {
     answers.flatMap(_.get(LeaseholdTaxCalculatedTotalAmountDuePage)).map { answer =>
 
       val value = ValueViewModel(
-        HtmlContent(s"£$answer")
+        HtmlContent(s"${answer.toCurrency}")
       )
 
       Row(

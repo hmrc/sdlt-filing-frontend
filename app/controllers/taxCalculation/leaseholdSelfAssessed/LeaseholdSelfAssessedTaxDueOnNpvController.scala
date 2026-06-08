@@ -53,7 +53,7 @@ class LeaseholdSelfAssessedTaxDueOnNpvController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       sdltCalculationService.whenInFlow(LeaseholdSelfAssessed) {
-        val npv = request.userAnswers.fullReturn.flatMap(_.lease.flatMap(_.netPresentValue.flatMap(_.toCurrency)))
+        val npv = request.userAnswers.fullReturn.flatMap(_.lease.flatMap(_.netPresentValue.map(_.toCurrency)))
 
         npv match {
           case Some(npv) =>
@@ -73,7 +73,7 @@ class LeaseholdSelfAssessedTaxDueOnNpvController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(LeaseholdSelfAssessed) {
-        val npv = request.userAnswers.fullReturn.flatMap(_.lease.flatMap(_.netPresentValue.flatMap(_.toCurrency)))
+        val npv = request.userAnswers.fullReturn.flatMap(_.lease.flatMap(_.netPresentValue.map(_.toCurrency)))
   
         npv match {
           case Some(npv) =>

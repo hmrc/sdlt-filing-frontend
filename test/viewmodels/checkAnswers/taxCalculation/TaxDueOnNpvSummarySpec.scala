@@ -49,7 +49,7 @@ class TaxDueOnNpvSummarySpec extends SpecBase {
           result.key.content.asHtml.toString() mustEqual msgs("taxCalculation.taxDueOnNpv.checkYourAnswersLabel")
 
           val valueHtml = result.value.content.asHtml.toString()
-          valueHtml mustEqual "£100.00"
+          valueHtml mustEqual "£100"
 
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual
