@@ -230,8 +230,8 @@ class TaxCalculationCheckYourAnswersController @Inject()(
           FreeholdSelfAssessedDoesAmountIncludePenaltiesSummary.row(Some(ua))
         )
       case Some(LeaseholdTaxCalculated) => Seq(
-        PremiumPayableTaxSummary.row(CalculationResultViewModel.toViewModel(result, ua).toOption.get),
-        TaxDueOnNpvSummary.row(CalculationResultViewModel.toViewModel(result, ua).toOption.get),
+        LeaseholdTaxCalculatedPremiumPayableSummary.row(CalculationResultViewModel.toViewModel(result, ua).toOption.get),
+        LeaseholdTaxCalculatedNPVSummary.row(CalculationResultViewModel.toViewModel(result, ua).toOption.get),
         CalculatedSdltDueSummary.row(result.totalTax.toString),
         LeaseholdTaxCalculatedSelfAssessedAmountSummary.row(Some(ua)),
         PenaltiesDueSummary.row(Some(ua), timeMachine),

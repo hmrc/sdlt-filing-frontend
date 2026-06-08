@@ -51,5 +51,6 @@ object PremiumPayableTaxSummary extends CurrencyFormatter {
       Missing(route)
     }
   }
+
 }
 
