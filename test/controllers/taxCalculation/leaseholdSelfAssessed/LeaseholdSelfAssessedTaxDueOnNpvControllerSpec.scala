@@ -47,7 +47,7 @@ class LeaseholdSelfAssessedTaxDueOnNpvControllerSpec extends SpecBase with Mocki
   val form: Form[String] = formProvider()
 
   val npv = "95000.00"
-  val formattedNPV = npv.toCurrency.getOrElse("")
+  val formattedNPV = npv.toCurrency
 
   private val fullReturnWithLeaseData =
     emptyFullReturn.copy(lease = Some(completeLease))

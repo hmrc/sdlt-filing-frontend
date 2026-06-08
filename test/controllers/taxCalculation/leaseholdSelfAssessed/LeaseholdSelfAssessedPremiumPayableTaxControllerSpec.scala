@@ -45,7 +45,7 @@ class LeaseholdSelfAssessedPremiumPayableTaxControllerSpec extends AnyFreeSpec w
   private val fullReturnWithLeaseData = emptyFullReturn.copy(lease = Some(completeLease))
   val form = new LeaseholdSelfAssessedPremiumPayableTaxFormProvider()()
   val premiumPayable = "50000.00"
-  val formattedPremiumPayable = premiumPayable.toCurrency.getOrElse("")
+  val formattedPremiumPayable = premiumPayable.toCurrency
 
   lazy val premiumPayableRoute = controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedPremiumPayableTaxController.onPageLoad(NormalMode).url
 
