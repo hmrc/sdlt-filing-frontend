@@ -42,9 +42,7 @@ class PurchaserAgentReferenceController @Inject()(
                                         val controllerComponents: MessagesControllerComponents,
                                         view: PurchaserAgentReferenceView
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
-  val form = formProvider()
-
+  
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       request.userAnswers.get(PurchaserAgentNamePage) match {
@@ -53,6 +51,7 @@ class PurchaserAgentReferenceController @Inject()(
         case Some(agentName) =>
           request.userAnswers.get(AddPurchaserAgentReferenceNumberPage) match {
             case Some(addReferenceNumber) if addReferenceNumber =>
+              val form = formProvider(agentName)
               val preparedForm = request.userAnswers.get(PurchaserAgentReferencePage) match {
                 case None => form
                 case Some(value) => form.fill(value)
@@ -73,6 +72,7 @@ class PurchaserAgentReferenceController @Inject()(
             Redirect(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode))
           )
         case Some(agentName) =>
+          val form = formProvider(agentName)
           form.bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, agentName, mode))),

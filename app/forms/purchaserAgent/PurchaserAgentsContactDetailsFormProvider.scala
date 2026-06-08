@@ -20,39 +20,37 @@ import forms.mappings.Mappings
 import models.purchaserAgent.PurchaserAgentsContactDetails
 import play.api.data.Form
 import play.api.data.Forms.*
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
 class PurchaserAgentsContactDetailsFormProvider @Inject() extends Mappings {
 
-  private val agentNumberMaxLength = 14
-  private val agentEmailMaxLength = 36
+  private val phoneNumberMaxLength = 14
+  private val emailMaxLength = 36
 
-  private val formNumberRegex = "[A-Za-z0-9 \\~\\!\\@\\%\\&\\'\\(\\)\\*\\+,\\-\\.\\/\\:\\=\\?\\[\\]\\^\\_\\{\\}\\;]*"
-  private val formEmailRegex = "^[^@|<>\"'`]+@[^@|<>\"'`]+$"
+  private val phoneNumberInvalidCharsRegex = "[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"
+  private val emailFormatRegex = "^[^@|<>\"'`]+@[^@|<>\"'`]+$"
+  private val emailInvalidCharsRegex = "^[^|<>\"'`]+$"
 
-  def apply(): Form[PurchaserAgentsContactDetails] = Form(
+  def apply(agentName: String)(implicit messages: Messages): Form[PurchaserAgentsContactDetails] = Form(
     mapping(
       "phoneNumber" -> optionalText()
-        .verifying(optionalMaxLength(
-          agentNumberMaxLength,
-          "purchaserAgent.contactDetails.error.agentPhoneNumber.length"))
-        .verifying(optionalRegexp(
-          formNumberRegex,
-          "purchaserAgent.contactDetails.error.agentPhoneNumber.invalid")),
-
+        .verifying(firstError(
+          optionalMaxLength(phoneNumberMaxLength, messages("purchaserAgent.contactDetails.error.agentPhoneNumber.length", agentName)),
+          optionalRegexp(phoneNumberInvalidCharsRegex, messages("purchaserAgent.contactDetails.error.agentPhoneNumber.invalid", agentName))
+        )),
       "emailAddress" -> optionalText()
-        .verifying(optionalMaxLength(
-          agentEmailMaxLength,
-          "purchaserAgent.contactDetails.error.agentEmailAddress.length"))
-        .verifying(optionalRegexp(
-          formEmailRegex,
-          "purchaserAgent.contactDetails.error.agentEmailAddress.invalid"))
+        .verifying(firstError(
+          optionalMaxLength(emailMaxLength, messages("purchaserAgent.contactDetails.error.agentEmailAddress.length", agentName)),
+          optionalRegexp(emailInvalidCharsRegex, messages("purchaserAgent.contactDetails.error.agentEmailAddress.invalid", agentName)),
+          optionalRegexp(emailFormatRegex, messages("purchaserAgent.contactDetails.error.agentEmailAddress.invalidFormat", agentName))
+        ))
     )(PurchaserAgentsContactDetails.apply)(x =>
       Some((x.phoneNumber, x.emailAddress))
     )
       .verifying(
-        "purchaserAgent.contactDetails.error.oneRequired",
+        messages("purchaserAgent.contactDetails.error.oneRequired", agentName),
         details =>
           details.phoneNumber.exists(_.trim.nonEmpty) ||
             details.emailAddress.exists(_.trim.nonEmpty)

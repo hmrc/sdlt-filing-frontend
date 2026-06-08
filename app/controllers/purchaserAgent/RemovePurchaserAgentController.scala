@@ -20,7 +20,6 @@ import controllers.actions.*
 import forms.purchaserAgent.RemovePurchaserAgentFormProvider
 import models.{AgentType, DeleteReturnAgentRequest, ReturnAgent, ReturnVersionUpdateRequest}
 import pages.purchaserAgent.{PurchaserAgentOverviewPage, RemovePurchaserAgentPage}
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -43,8 +42,6 @@ class RemovePurchaserAgentController @Inject()(
 
                                               )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form: Form[Boolean] = formProvider()
-
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
@@ -58,6 +55,7 @@ class RemovePurchaserAgentController @Inject()(
             Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
 
           case Some(name) =>
+            val form = formProvider(Some(name))
             val preparedForm = request.userAnswers.get(RemovePurchaserAgentPage) match {
               case None => form
               case Some(value) => form.fill(value)
@@ -87,10 +85,11 @@ class RemovePurchaserAgentController @Inject()(
             Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad()))
 
           case Some(agent) =>
-            val agentName = agent.name.getOrElse("")
+            val agentName = agent.name
+            val form = formProvider(agentName)
             form.bindFromRequest().fold(
               formWithErrors =>
-                Future.successful(BadRequest(view(formWithErrors, agentName))),
+                Future.successful(BadRequest(view(formWithErrors, agentName.getOrElse("")))),
 
               value =>
                 if (value) {

@@ -48,14 +48,14 @@ class PurchaserAgentsContactDetailsControllerSpec extends SpecBase with MockitoS
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new PurchaserAgentsContactDetailsFormProvider()
-  val form = formProvider()
 
   lazy val purchaserAgentsContactDetailsRoute: String = controllers.purchaserAgent.routes.PurchaserAgentsContactDetailsController.onPageLoad(NormalMode).url
 
+  val agentName = "Agent Name"
   val userAnswersNoAgentName: UserAnswers = emptyUserAnswers
 
   val userAnswersWithAgentName: UserAnswers = userAnswersNoAgentName
-    .set(PurchaserAgentNamePage, "Bob the Agent").success.value
+    .set(PurchaserAgentNamePage, agentName).success.value
     .set(AddContactDetailsForPurchaserAgentPage, true).success.value
 
   val userAnswersWithNoAddContactDetails: UserAnswers = userAnswersWithAgentName
@@ -75,9 +75,10 @@ class PurchaserAgentsContactDetailsControllerSpec extends SpecBase with MockitoS
         val view = application.injector.instanceOf[PurchaserAgentsContactDetailsView]
 
         val result = route(application, request).value
+        val form = formProvider(agentName)(messages(application))
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, agentName = "Bob the Agent", NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, agentName = agentName, NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -130,12 +131,13 @@ class PurchaserAgentsContactDetailsControllerSpec extends SpecBase with MockitoS
         val view = application.injector.instanceOf[PurchaserAgentsContactDetailsView]
 
         val result = route(application, request).value
+        val form = formProvider(agentName)(messages(application))
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual
           view(form.fill(
             PurchaserAgentsContactDetails(Some("07564738493"), Some("test@test.com"))),
-            agentName = "Bob the Agent",
+            agentName = agentName,
             NormalMode)
             (request, messages(application)).toString
       }
@@ -203,6 +205,7 @@ class PurchaserAgentsContactDetailsControllerSpec extends SpecBase with MockitoS
         val request =
           FakeRequest(POST, purchaserAgentsContactDetailsRoute)
             .withFormUrlEncodedBody(("value", "invalid value"))
+        val form = formProvider(agentName)(messages(application))
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
@@ -211,7 +214,7 @@ class PurchaserAgentsContactDetailsControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, agentName = "Bob the Agent", NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, agentName = agentName, NormalMode)(request, messages(application)).toString
       }
     }
 

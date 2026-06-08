@@ -769,13 +769,13 @@ purchaserAgent.overview.title                                                   
 purchaserAgent.overview.heading                                                     = Purchaser’s agent overview
 purchaserAgent.overview.noPurchaser.subHeadingNoPurchasers                          = Do you want to add an agent for the purchaser?
 purchaserAgent.overview.aPurchaserAgent                                             = a purchaser’s agent
-purchaserAgent.overview.error.required                                              = Please select an option
+purchaserAgent.overview.error.required                                              = Select yes if you want to add an agent for the purchaser
 purchaserAgent.overview.noPurchaser.p1                                              = There is no agent listed for the purchaser.
 
 purchaserAgent.BeforeYouStart.title                                                 = Before you start - About the purchaser’s agent
 purchaserAgent.BeforeYouStart.heading                                               = Add an agent for the purchaser
 purchaserAgent.BeforeYouStart.checkYourAnswersLabel                                 = Add an agent for the purchaser
-purchaserAgent.BeforeYouStart.error.required                                        = Select yes if need to add a purchaser agent
+purchaserAgent.BeforeYouStart.error.required                                        = Select yes to add an agent for the purchaser
 purchaserAgent.BeforeYouStart.change.hidden                                         = Add an agent for the purchaser
 purchaserAgent.BeforeYouStart.p1                                                    = If the purchaser is represented by an agent, you can link an existing agent to this return. If you add a new agent, we will ask for:
 purchaserAgent.BeforeYouStart.b1                                                    = the agent’s name
@@ -797,7 +797,7 @@ site.error.noReturnReference.change.hidden                                      
 
 purchaserAgent.addContactDetailsForPurchaserAgent.title                             = Do you want to add contact details for the agent?
 purchaserAgent.addContactDetailsForPurchaserAgent.heading                           = Do you want to add contact details for {0}?
-purchaserAgent.addContactDetailsForPurchaserAgent.error.required                    = Please select Yes or No
+purchaserAgent.addContactDetailsForPurchaserAgent.error.required                    = Select yes if you want to add contact details for {0}
 purchaserAgent.addContactDetailsForPurchaserAgent.change.hidden                     = If you want to add contact details for {0}
 purchaserAgent.addContactDetailsForPurchaserAgent.hint.radio                        = We’ll only use these details to contact {0} about this return
 purchaserAgent.addContactDetailsForPurchaserAgent.checkYourAnswersLabel             = Do you want to add contact details for {0}?
@@ -805,8 +805,8 @@ purchaserAgent.addContactDetailsForPurchaserAgent.checkYourAnswersLabel         
 purchaserAgent.name.title                                                           = What is the agent’s name?
 purchaserAgent.name.checkYourAnswersLabel                                           = Agent name
 purchaserAgent.name.error.required                                                  = Enter the agent’s name
-purchaserAgent.name.error.length                                                    = Agent’s name must be 28 characters or less
-purchaserAgent.name.error.invalid                                                   = Invalid error
+purchaserAgent.name.error.length                                                    = The agent’s name must be 28 characters or fewer
+purchaserAgent.name.error.invalid                                                   = The agent’s name must only include letters a to z, apostrophes, hyphens and spaces
 purchaserAgent.name.change.hidden                                                   = Agent name
 purchaserAgent.name.hint                                                            = Include the branch name if there are multiple office locations, for example, Jones & Co. Leeds
 
@@ -816,30 +816,29 @@ purchaserAgent.contactDetails.agentPhoneNumber                                  
 purchaserAgent.contactDetails.agentPhoneNumber.caption                              = For international numbers include the country code, like 0049 for Germany (+49 on mobile)
 purchaserAgent.contactDetails.agentEmailAddress                                     = Agent email address
 purchaserAgent.contactDetails.checkYourAnswersLabel                                 = Agent contact details
-purchaserAgent.contactDetails.error.agentPhoneNumber.required                       = Enter Agent phone number
-purchaserAgent.contactDetails.error.agentEmailAddress.required                      = Enter Agent email address
-purchaserAgent.contactDetails.error.agentPhoneNumber.invalid                        = Invalid phone number
-purchaserAgent.contactDetails.error.agentEmailAddress.invalid                       = Invalid email address
-purchaserAgent.contactDetails.error.agentPhoneNumber.length                         = Agent phone number must be 14 characters or less
-purchaserAgent.contactDetails.error.agentEmailAddress.length                        = Agent email address must be 36 characters or less
+purchaserAgent.contactDetails.error.agentPhoneNumber.invalid                        = {0}’s phone number must only include numbers 0 to 9, brackets, dashes, hyphens, plus signs and spaces
+purchaserAgent.contactDetails.error.agentEmailAddress.invalid                       = {0}’s email address must only include letters a to z, ampersands (&), at signs (@), forward slashes, full stops, hyphens, numbers 0-9, question marks and spaces
+purchaserAgent.contactDetails.error.agentPhoneNumber.length                         = {0}’s phone number must be 14 characters or fewer, not including brackets, dashes, hyphens and spaces
+purchaserAgent.contactDetails.error.agentEmailAddress.length                        = {0}’s email address must be 36 characters or fewer
+purchaserAgent.contactDetails.error.agentEmailAddress.invalidFormat                 = Enter {0}’s email address in the correct format, like name@example.com
 purchaserAgent.contactDetails.agentPhoneNumber.change.hidden                        = Agent phone number
 purchaserAgent.contactDetails.agentEmailAddress.change.hidden                       = Agent email address
 purchaserAgent.contactDetails.change.hidden                                         = Agent contact details
-purchaserAgent.contactDetails.error.oneRequired                                     = At least one option is required
+purchaserAgent.contactDetails.error.oneRequired                                     = Enter {0}’s phone number or email address
 
 purchaserAgent.addAgentReferenceNumber.title                                        = Do you want to add a reference for this return? - About the purchaser’s agent
 purchaserAgent.addAgentReferenceNumber.heading                                      = Do you want to add a reference for this return?
 purchaserAgent.addAgentReferenceNumber.p                                            = This is the unique number or code that {0} will use to locate the return in their records
 purchaserAgent.addAgentReferenceNumber.checkYourAnswersLabel                        = Do you want to add a reference for this return?
-purchaserAgent.addAgentReferenceNumber.error.required                               = Please select yes or no
+purchaserAgent.addAgentReferenceNumber.error.required                               = Select yes to add a reference for this return
 purchaserAgent.addAgentReferenceNumber.change.hidden                                = If you want to add a reference for this return
 
 purchaserAgent.reference.title                                                      = What is the agent’s reference for this return?
 purchaserAgent.reference.heading                                                    = What is {0}’s reference for this return?
 purchaserAgent.reference.checkYourAnswersLabel                                      = Agent reference
-purchaserAgent.reference.error.required                                             = Enter purchaserAgentReference
-purchaserAgent.reference.error.length                                               = PurchaserAgentReference must be 14 characters or less
-purchaserAgent.reference.error.invalid                                              = Invalid error
+purchaserAgent.reference.error.required                                             = Enter {0}’s reference for this return
+purchaserAgent.reference.error.length                                               = {0}’s reference must be 14 characters or fewer
+purchaserAgent.reference.error.invalid                                              = {0}’s reference must only include letters a to z, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, numbers 0-9, question marks and spaces
 purchaserAgent.reference.change.hidden                                              = Agent reference
 purchaserAgent.reference.hint                                                       = We’ll only use this to help reference this return
 
@@ -848,13 +847,13 @@ purchaserAgent.selectPurchaserAgent.heading                                     
 purchaserAgent.selectPurchaserAgent.existingAgent                                   = An existing agent
 purchaserAgent.selectPurchaserAgent.addNewAgent                                     = Add an agent for this return
 purchaserAgent.selectPurchaserAgent.checkYourAnswersLabel                           = selectPurchaserAgent
-purchaserAgent.selectPurchaserAgent.error.required                                  = Please select an option
+purchaserAgent.selectPurchaserAgent.error.required                                  = Select {0}’s agent or add a new agent
 purchaserAgent.selectPurchaserAgent.change.hidden                                   = SelectPurchaserAgent
 
 purchaserAgent.purchaserAgentAuthorised.title                                       = Is the agent authorised to handle correspondence on behalf of the purchaser? - About the purchaser’s agent
 purchaserAgent.purchaserAgentAuthorised.heading                                     = Is {0} authorised to handle correspondence on behalf of the purchaser?
 purchaserAgent.purchaserAgentAuthorised.checkYourAnswersLabel                       = Is {0} authorised for correspondence?
-purchaserAgent.purchaserAgentAuthorised.error.required                              = Select purchaserAgentAuthorised
+purchaserAgent.purchaserAgentAuthorised.error.required                              = Select yes if {0} is authorised to handle correspondence on behalf of the purchaser
 purchaserAgent.purchaserAgentAuthorised.change.hidden                               = If {0} is authorised for correspondence
 
 returnAgent.checkYourAnswers.name.missing                                           = Enter name
@@ -868,7 +867,7 @@ returnAgent.checkYourAnswers.authorised.missing                                 
 purchaserAgent.removePurchaserAgent.title                                           = Are you sure you want to remove the purchaser’s agent? - About the purchaser’s agent
 purchaserAgent.removePurchaserAgent.heading                                         = Are you sure you want to remove {0}?
 purchaserAgent.removePurchaserAgent.checkYourAnswersLabel                           = removePurchaserAgent
-purchaserAgent.removePurchaserAgent.error.required                                  = Please select an option
+purchaserAgent.removePurchaserAgent.error.required                                  = Select yes if you want to remove {0}
 purchaserAgent.removePurchaserAgent.change.hidden                                   = RemovePurchaserAgent
 
 vendorAgent.BeforeYouStart.title                                                    = Before you start - About the vendor’s agent

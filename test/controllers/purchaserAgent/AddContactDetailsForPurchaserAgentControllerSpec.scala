@@ -41,11 +41,11 @@ class AddContactDetailsForPurchaserAgentControllerSpec extends SpecBase with Moc
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new AddContactDetailsForPurchaserAgentFormProvider()
-  val form = formProvider()
 
   lazy val addContactDetailsForPurchaserAgentRoute = controllers.purchaserAgent.routes.AddContactDetailsForPurchaserAgentController.onPageLoad(NormalMode).url
 
-  val userAnswers = emptyUserAnswers.set(PurchaserAgentNamePage, "John Doe Agent").success.value
+  val agentName = "Agent Name"
+  val userAnswers = emptyUserAnswers.set(PurchaserAgentNamePage, agentName).success.value
 
 
   "AddContactDetailsForPurchaserAgent Controller" - {
@@ -61,8 +61,10 @@ class AddContactDetailsForPurchaserAgentControllerSpec extends SpecBase with Moc
 
         val view = application.injector.instanceOf[AddContactDetailsForPurchaserAgentView]
 
+        val form = formProvider(agentName)(messages(application))
+
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, agentName = "John Doe Agent")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, agentName = agentName)(request, messages(application)).toString
       }
     }
 
@@ -76,11 +78,12 @@ class AddContactDetailsForPurchaserAgentControllerSpec extends SpecBase with Moc
         val request = FakeRequest(GET, addContactDetailsForPurchaserAgentRoute)
 
         val view = application.injector.instanceOf[AddContactDetailsForPurchaserAgentView]
+        val form = formProvider(agentName)(messages(application))
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, agentName = "John Doe Agent")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, agentName = agentName)(request, messages(application)).toString
       }
     }
 
@@ -244,15 +247,14 @@ class AddContactDetailsForPurchaserAgentControllerSpec extends SpecBase with Moc
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-
-      val userAnswers = emptyUserAnswers.set(PurchaserAgentNamePage, "John Doe Agent").success.value
+      
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =
           FakeRequest(POST, addContactDetailsForPurchaserAgentRoute)
             .withFormUrlEncodedBody(("value", "invalid value"))
-
+        val form = formProvider(agentName)(messages(application))
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[AddContactDetailsForPurchaserAgentView]
@@ -260,20 +262,19 @@ class AddContactDetailsForPurchaserAgentControllerSpec extends SpecBase with Moc
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, agentName = "John Doe Agent")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, agentName = agentName)(request, messages(application)).toString
       }
     }
 
     "must return a Bad Request and errors when no data is submitted" in {
 
-      val userAnswers = emptyUserAnswers.set(PurchaserAgentNamePage, "John Doe Agent").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =
           FakeRequest(POST, addContactDetailsForPurchaserAgentRoute)
             .withFormUrlEncodedBody(("value", ""))
-
+        val form = formProvider(agentName)(messages(application))
         val boundForm = form.bind(Map("value" -> ""))
 
         val view = application.injector.instanceOf[AddContactDetailsForPurchaserAgentView]
@@ -281,7 +282,7 @@ class AddContactDetailsForPurchaserAgentControllerSpec extends SpecBase with Moc
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, agentName = "John Doe Agent")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, agentName = agentName)(request, messages(application)).toString
       }
     }
 

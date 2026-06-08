@@ -20,6 +20,8 @@ import forms.behaviours.OptionFieldBehaviours
 import models.purchaserAgent.SelectPurchaserAgent
 import models.Agent
 import play.api.data.{Form, FormError}
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class SelectPurchaserAgentFormProviderSpec extends OptionFieldBehaviours {
 
@@ -60,8 +62,11 @@ class SelectPurchaserAgentFormProviderSpec extends OptionFieldBehaviours {
     createAgent(agentId = "AGT002", name = "Jane Jones")
   )
 
+  val purchaserName = "Test Purchaser"
+
+  private implicit val messages: Messages = stubMessages()
   val formProvider = new SelectPurchaserAgentFormProvider()
-  val form: Form[String] = formProvider(agentList)
+  val form: Form[String] = formProvider(agentList, purchaserName)
 
   ".value" - {
 
