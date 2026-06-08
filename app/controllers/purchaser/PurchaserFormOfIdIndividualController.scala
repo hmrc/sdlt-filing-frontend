@@ -45,8 +45,7 @@ class PurchaserFormOfIdIndividualController @Inject()(
                                                        val controllerComponents: MessagesControllerComponents,
                                                        view: PurchaserFormOfIdIndividualView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
-  val form = formProvider()
+  
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -56,6 +55,7 @@ class PurchaserFormOfIdIndividualController @Inject()(
 
       (maybePurchaserName, maybeDoesPurchaserHaveNI) match {
         case (Some(purchaserName), Some(doesPurchaserHaveNI)) if !doesPurchaserHaveNI =>
+          val form = formProvider(purchaserName)
           val preparedForm = request.userAnswers.get(PurchaserFormOfIdIndividualPage) match {
             case None => form
             case Some(value) => form.fill(value)
@@ -81,6 +81,7 @@ class PurchaserFormOfIdIndividualController @Inject()(
 
       maybePurchaserName match {
         case Some(purchaserName) =>
+          val form = formProvider(purchaserName)
           form.bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, mode, purchaserName))),

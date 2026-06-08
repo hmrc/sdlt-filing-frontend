@@ -18,12 +18,13 @@ package forms.purchaser
 
 import forms.mappings.{Constraints, Mappings}
 import play.api.data.Form
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
 class RegistrationNumberFormProvider @Inject() extends Mappings with Constraints{
   
-  def apply(): Form[String] =
+  def apply(purchaserName: String)(implicit messages: Messages): Form[String] =
     Form(
       "registrationNumber" -> text("purchaser.registrationNumber.error.required")
         .verifying(vatCheckF16Validation("purchaser.registrationNumber.error"))

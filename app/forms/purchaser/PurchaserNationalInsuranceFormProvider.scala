@@ -18,6 +18,7 @@ package forms.purchaser
 
 import forms.mappings.Mappings
 import play.api.data.Form
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
@@ -26,10 +27,10 @@ class PurchaserNationalInsuranceFormProvider @Inject() extends Mappings {
   private val nationalInsuranceNumberLength = 9
   private val formNumberRegex = "^(?!FY)?(?!GB)(?!NK)(?!TN)(?!ZZ)[A-CEGHJ-PR-TW-Z][A-CEGHJ-NPR-TW-Z][0-9]{6}[A-D]?"
 
-  def apply(): Form[String] =
+  def apply(purchaserName: String)(implicit messages: Messages): Form[String] =
     Form(
-      "nationalInsuranceNumber" -> text("purchaser.nationalInsurance.error.required")
+      "nationalInsuranceNumber" -> text(messages("purchaser.nationalInsurance.error.required", purchaserName))
         .verifying(maxLength(nationalInsuranceNumberLength, "purchaser.nationalInsurance.error.length"))
-        .verifying(regexp(formNumberRegex, "purchaser.nationalInsurance.error.invalid"))
+        .verifying(regexp(formNumberRegex, messages("purchaser.nationalInsurance.error.invalid", purchaserName)))
     )
 }

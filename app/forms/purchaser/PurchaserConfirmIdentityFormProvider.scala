@@ -19,13 +19,14 @@ package forms.purchaser
 import forms.mappings.Mappings
 import models.purchaser.PurchaserConfirmIdentity
 import play.api.data.Form
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
 class PurchaserConfirmIdentityFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[PurchaserConfirmIdentity] =
+  def apply(purchaserName: String)(implicit messages: Messages): Form[PurchaserConfirmIdentity] =
     Form(
-      "value" -> enumerable[PurchaserConfirmIdentity]("purchaser.confirmIdentity.error.required")
+      "value" -> enumerable[PurchaserConfirmIdentity](messages("purchaser.confirmIdentity.error.required", purchaserName))
     )
 }

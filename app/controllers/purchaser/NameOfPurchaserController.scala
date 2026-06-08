@@ -43,7 +43,7 @@ class NameOfPurchaserController @Inject()(
                                       view: NameOfPurchaserView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
+  
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -52,6 +52,7 @@ class NameOfPurchaserController @Inject()(
         case Some(value) => if(value.toString == "Individual") "Individual" else "Company"
         case _ => ""
       }
+      val form = formProvider(purchaserOrCompany)
       
       val preparedForm = request.userAnswers.get(NameOfPurchaserPage) match {
         case None => form
@@ -72,6 +73,8 @@ class NameOfPurchaserController @Inject()(
         case Some(value) => if(value.toString == "Individual") "Individual" else "Company"
         case _ => ""
       }
+      
+      val form = formProvider(purchaserOrCompany)
 
       form.bindFromRequest().fold(
         formWithErrors =>

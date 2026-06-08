@@ -47,8 +47,6 @@ class AddPurchaserPhoneNumberController @Inject()(
                                                    purchaserService: PurchaserService
                                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
@@ -58,6 +56,7 @@ class AddPurchaserPhoneNumberController @Inject()(
 
         case Some(purchaser) =>
           val purchaserName = purchaser.fullName
+          val form = formProvider(purchaserName)
 
           val preparedForm = request.userAnswers.get(AddPurchaserPhoneNumberPage) match {
             case None => form
@@ -84,6 +83,7 @@ class AddPurchaserPhoneNumberController @Inject()(
 
         case Some(purchaser) =>
           val purchaserName: String = purchaser.fullName
+          val form = formProvider(purchaserName)
 
           form.bindFromRequest().fold(
             formWithErrors =>
@@ -115,7 +115,6 @@ class AddPurchaserPhoneNumberController @Inject()(
                   }
                   else {
                     Redirect(controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(mode))
-
                   }
                   case _ =>
                     Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(mode))

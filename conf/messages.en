@@ -499,7 +499,7 @@ vendorAgent.removeVendorAgent.change.hidden                                     
 
 # Purchaser Messages
 
-purchaser.addPurchaserPhoneNumber.error.required                                    = Please select an option
+purchaser.addPurchaserPhoneNumber.error.required                                    = Select yes to add a phone number for {0}
 purchaser.addPurchaserPhoneNumber.title                                             = Do you want to add a phone number for the purchaser? - About the purchaser
 purchaser.addPurchaserPhoneNumber.heading                                           = Do you want to add a phone number for {0}?
 purchaser.addPurchaserPhoneNumber.hint                                              = We’ll only use this to contact {0} about this return
@@ -533,7 +533,7 @@ purchaser.confirmIdentity.partnershipUniqueTaxpayerReference                    
 purchaser.confirmIdentity.confirmIdentityDivider                                    = or
 purchaser.confirmIdentity.anotherFormOfId                                           = Another form of ID
 purchaser.confirmIdentity.checkYourAnswersLabel                                     = Form of ID
-purchaser.confirmIdentity.error.required                                            = Please select what information can you provide about the purchaser
+purchaser.confirmIdentity.error.required                                            = Select the form of ID you can provide about {0} 
 purchaser.confirmIdentity.change.hidden                                             = Purchaser information
 
 purchaser.confirmNameOfPurchaser.title                                              = Is this the name of the purchaser? - About the purchaser
@@ -557,7 +557,7 @@ purchaser.dateOfBirth.title                                                     
 purchaser.dateOfBirth.heading                                                       = What is {0}’s date of birth?
 purchaser.dateOfBirth.hint                                                          = For example, 27 3 1980
 purchaser.dateOfBirth.checkYourAnswersLabel                                         = Date of birth
-purchaser.dateOfBirth.error.required.all                                            = Enter the date of birth
+purchaser.dateOfBirth.error.required.all                                            = Enter {0}’s date of birth
 purchaser.dateOfBirth.error.required.two                                            = The date must include {0} and {1}
 purchaser.dateOfBirth.error.required                                                = The date must include {0}
 purchaser.dateOfBirth.error.invalid                                                 = Enter a valid date
@@ -568,14 +568,15 @@ purchaser.doesPurchaserHaveNI.title                                             
 purchaser.doesPurchaserHaveNI.heading                                               = Does {0} have a National Insurance number?
 purchaser.doesPurchaserHaveNI.checkYourAnswersLabel                                 = Does {0} have a National Insurance number?
 purchaser.doesPurchaserHaveNI.change.hidden                                         = Purchaser National Insurance number
-purchaser.doesPurchaserHaveNI.error.required                                        = Please select an option
+purchaser.doesPurchaserHaveNI.error.required                                        = Select yes if {0} has a National Insurance number
 
 purchaser.enterPhoneNumber.title                                                    = What is the purchaser’s phone number? - About the purchaser
 purchaser.enterPhoneNumber.heading                                                  = What is {0}’s phone number?
 purchaser.enterPhoneNumber.hint                                                     = For international numbers include the country code, like 0049 for Germany (+49 on mobile)
 purchaser.enterPhoneNumber.checkYourAnswersLabel                                    = Contact number
-purchaser.enterPhoneNumber.error.required                                           = Please enter a value
-purchaser.enterPhoneNumber.error.length                                             = The phone number must be 14 characters or less
+purchaser.enterPhoneNumber.error.required                                           = Enter {0}’s phone number
+purchaser.enterPhoneNumber.error.invalid                                            = {0}’s phone number must only include numbers 0 to 9, brackets, dashes, hyphens, plus signs and spaces
+purchaser.enterPhoneNumber.error.length                                             = {0}’s phone number must be 14 characters or fewer, not including brackets, dashes, hyphens and spaces
 purchaser.enterPhoneNumber.change.hidden                                            = What is the purchaser’s phone number?
 purchaser.enterPhoneNumber.change.hidden                                            = Purchaser contact number
 
@@ -592,12 +593,12 @@ purchaser.formOfIdIndividual.p3                                                 
 purchaser.formOfIdIndividual.idNumberOrReference                                    = ID number or reference
 purchaser.formOfIdIndividual.countryIssued                                          = Country of issue
 purchaser.formOfIdIndividual.checkYourAnswersLabel                                  = ID and country of issue
-purchaser.formOfIdIndividual.error.idNumberOrReference.required                     = Enter ID number or reference
-purchaser.formOfIdIndividual.error.idNumberOrReference.length                       = ID number or reference must be 14 characters or less
-purchaser.formOfIdIndividual.error.idNumberOrReference.invalid                      = ID number or reference is invalid
-purchaser.formOfIdIndividual.error.countryIssued.required                           = Enter country of issue
-purchaser.formOfIdIndividual.error.countryIssued.length                             = Country of issue must be 28 characters or less
-purchaser.formOfIdIndividual.error.countryIssued.invalid                            = Country of issue is invalid
+purchaser.formOfIdIndividual.error.idNumberOrReference.required                     = Enter {0}’s ID number or reference
+purchaser.formOfIdIndividual.error.idNumberOrReference.length                       = {0}’s ID number or reference must be 14 characters or fewer
+purchaser.formOfIdIndividual.error.idNumberOrReference.invalid                      = {0}’s ID number or reference must only include letters a to z, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, numbers 0-9, question marks and spaces
+purchaser.formOfIdIndividual.error.countryIssued.required                           = Enter the country of issue for {0}’s ID
+purchaser.formOfIdIndividual.error.countryIssued.length                             = The country of issue for {0}’s ID must be 28 characters or fewer
+purchaser.formOfIdIndividual.error.countryIssued.invalid                            = The country of issue for {0}’s ID must only include letters a to z, apostrophes, hyphens and spaces
 purchaser.formOfIdIndividual.idNumberOrReference.change.hidden                      = ID number or reference
 purchaser.formOfIdIndividual.countryIssued.change.hidden                            = Country of issue
 
@@ -611,17 +612,25 @@ purchaser.individual.nameOfThePurchaser.surname                                 
 purchaser.nameOfThePurchaser.checkYourAnswersLabel                                  = Name
 purchaser.nameOfThePurchaser.change.hidden                                          = Purchaser name
 
-purchaser.name.form.regex.error                                                     = Invalid Error
+purchaser.individual.error.length.firstName                                         = The purchaser’s first name must be 14 characters or fewer
+purchaser.individual.error.length.middleName                                        = The purchaser’s middle name must be 14 characters or fewer
+purchaser.individual.error.length.lastName                                          = The purchaser’s last name must be 56 characters or fewer
+purchaser.company.error.length.name                                                 = The company’s name must be 56 characters or fewer
+purchaser.name.form.regex.error.firstName                                           = The purchaser’s first name must only include letters a to z, apostrophes, hyphens and spaces
+purchaser.name.form.regex.error.middleName                                          = The purchaser’s middle name must only include letters a to z, apostrophes, hyphens and spaces
+purchaser.name.form.regex.error.lastName                                            = The purchaser’s last name must only include letters a to z, apostrophes, hyphens and spaces
+purchaser.name.form.regex.error.company                                             = The company’s name must only include letters a to z, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, numbers 0-9, question marks and spaces
 purchaser.name.form.no.input.error                                                  = Nothing has been added
-purchaser.name.error.required                                                       = Nothing has been provided
+purchaser.name.error.required                                                       = Enter the purchaser’s last name
+purchaser.company.error.required                                                    = Enter the company’s name
 
 purchaser.nationalInsurance.title                                                   = What is the purchaser’s National Insurance number? - About the purchaser
 purchaser.nationalInsurance.heading                                                 = What is {0}’s National Insurance number?
 purchaser.nationalInsurance.hint                                                    = It’s on their National Insurance card, benefit letter, payslip or P60 - for example, QQ 12 34 56 C
 purchaser.nationalInsurance.checkYourAnswersLabel                                   = National Insurance number
-purchaser.nationalInsurance.error.required                                          = Please enter the National Insurance number
+purchaser.nationalInsurance.error.required                                          = Enter {0}’s National Insurance number
 purchaser.nationalInsurance.error.length                                            = National insurance number must be {0} characters or less
-purchaser.nationalInsurance.error.invalid                                           = Please enter a valid National Insurance number
+purchaser.nationalInsurance.error.invalid                                           = Enter {0}’s National Insurance number in the correct format
 purchaser.nationalInsurance.change.hidden                                           = What is the purchaser’s National Insurance number?
 
 purchaser.partnershipUtr.title                                                      = What is the purchaser’s Partnership Unique Taxpayer Reference (UTR)? - About the purchaser
@@ -657,7 +666,7 @@ purchaser.whoIsMakingThePurchase.Individual.checkYourAnswersLabel               
 
 purchaser.whoIsMakingThePurchase.Individual.hintText                                = This means any person liable to pay Stamp Duty Land Tax (SDLT)
 purchaser.whoIsMakingThePurchase.checkYourAnswersLabel                              = Type of purchaser
-purchaser.whoIsMakingThePurchase.error.required                                     = Select an answer
+purchaser.whoIsMakingThePurchase.error.required                                     = Select who is making the purchase
 purchaser.whoIsMakingThePurchase.change.hidden                                      = Type of purchaser
 
 purchaser.companyFormOfId.title                                                     = Provide a form of ID for the purchaser - About the purchaser
@@ -739,7 +748,7 @@ purchaser.confirmPurchaserAddress.heading                                       
 purchaser.confirmPurchaserAddress.confirmAddress                                    = Confirm address
 purchaser.confirmPurchaserAddress.isThisTheLand                                     = Is this {0}’s address?
 purchaser.confirmPurchaserAddress.checkYourAnswersLabel                             = Confirm the address of the land or property
-purchaser.confirmPurchaserAddress.error.required                                    = Select Yes or No
+purchaser.confirmPurchaserAddress.error.required                                    = Select yes if the purchaser’s address is correct
 purchaser.confirmPurchaserAddress.change.hidden                                     = confirmPurchaserAddress
 purchaser.confirmPurchaserAddress.missing                                           = Enter purchaser's address
 

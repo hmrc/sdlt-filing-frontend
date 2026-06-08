@@ -46,8 +46,6 @@ class RegistrationNumberController @Inject()(
                                         purchaserService: PurchaserService
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       val purchaserFullName: Option[String] = request.userAnswers.get(NameOfPurchaserPage).map(_.fullName)
@@ -59,6 +57,7 @@ class RegistrationNumberController @Inject()(
         continueRoute = {
           purchaserFullName match {
             case Some(purchaserFullName) if isPurchaserVATRegistered.contains(PurchaserConfirmIdentity.VatRegistrationNumber) =>
+              val form = formProvider(purchaserFullName)
               val preparedForm = request.userAnswers.get(RegistrationNumberPage) match {
                 case None => form
                 case Some(value) => form.fill(value)
@@ -78,6 +77,7 @@ class RegistrationNumberController @Inject()(
 
       purchaserFullName match  {
         case Some(purchaserFullName) =>
+          val form = formProvider(purchaserFullName)
           form.bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, mode, purchaserFullName))),
