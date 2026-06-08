@@ -21,15 +21,16 @@ import pages.vendorAgent.{AddVendorAgentContactDetailsPage, VendorAgentsContactD
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object VendorAgentsContactDetailsSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryRowResult] = {
     val label = messages("vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel")
-    val changeRoute = controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url
+    val changeRoute = controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode)
 
     (answers.get(VendorAgentsContactDetailsPage), answers.get(AddVendorAgentContactDetailsPage)) match {
       case (Some(contactDetails), _) =>
@@ -43,24 +44,20 @@ object VendorAgentsContactDetailsSummary {
           case (None, None) => ""
         }
 
-        Some(SummaryListRowViewModel(
-          key = label,
-          value = ValueViewModel(HtmlContent(value)),
-          actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
-              .withVisuallyHiddenText(messages("vendorAgent.vendorAgentsContactDetails.change.hidden"))
+        Some(Row(
+          SummaryListRowViewModel(
+            key = label,
+            value = ValueViewModel(HtmlContent(value)),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("vendorAgent.vendorAgentsContactDetails.change.hidden"))
+            )
           )
         ))
 
       case (None, Some(true)) =>
-        val value = ValueViewModel(
-          HtmlContent(
-            s"""<a href="$changeRoute" class="govuk-link">${messages("returnAgent.checkYourAnswers.contactDetails.missing")}</a>""")
-        )
-        Some(SummaryListRowViewModel(
-          key = label,
-          value = value
-        ))
+        Some(Missing(changeRoute))
+
       case _ => None
     }
   }

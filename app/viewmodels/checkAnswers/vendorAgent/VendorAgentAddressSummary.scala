@@ -21,35 +21,30 @@ import models.address.Address.toHtml
 import pages.vendorAgent.VendorAgentAddressPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object VendorAgentAddressSummary {
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
-    val changeRoute = controllers.vendorAgent.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent(Some("change")).url
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.vendorAgent.routes.VendorAgentAddressController.redirectToAddressLookupVendorAgent(Some("change"))
     val label = messages("agent.checkYourAnswers.agentAddress.label")
     answers.get(VendorAgentAddressPage).map { answer =>
-
-      SummaryListRowViewModel(
-        key = label,
-        value = ValueViewModel(HtmlContent(toHtml(answer))),
-        actions = Seq(
-          ActionItemViewModel(
-            "site.change",
-            changeRoute
-          ).withVisuallyHiddenText(messages("agent.checkYourAnswers.agentAddress.label"))
+      Row(
+        SummaryListRowViewModel(
+          key = label,
+          value = ValueViewModel(HtmlContent(toHtml(answer))),
+          actions = Seq(
+            ActionItemViewModel(
+              "site.change",
+              changeRoute.url
+            ).withVisuallyHiddenText(messages("agent.checkYourAnswers.agentAddress.label"))
+          )
         )
       )
     }.getOrElse {
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">${messages("returnAgent.checkYourAnswers.address.missing")}</a>""")
-      )
-      SummaryListRowViewModel(
-        key = label,
-        value = value
-      )
+      Missing(changeRoute)
     }
   }
 }

@@ -22,6 +22,7 @@ import pages.vendorAgent.AgentNamePage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class AgentNameSummarySpec extends SpecBase {
 
@@ -38,7 +39,10 @@ class AgentNameSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(AgentNamePage, "Smith").success.value
 
-          val result = AgentNameSummary.row(userAnswers)
+          val result = AgentNameSummary.row(userAnswers) match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("agent.checkYourAnswers.agentName.label")
 
@@ -62,7 +66,10 @@ class AgentNameSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(AgentNamePage, "O'Brien & Sons <Ltd>").success.value
 
-          val result = AgentNameSummary.row(userAnswers)
+          val result = AgentNameSummary.row(userAnswers) match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
           htmlContent must include("O&#x27;Brien")
@@ -83,7 +90,10 @@ class AgentNameSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(AgentNamePage, "Smith").success.value
 
-        val result = AgentNameSummary.row(userAnswers)
+        val result = AgentNameSummary.row(userAnswers) match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
 
         result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.AgentNameController.onPageLoad(CheckMode).url
       }
@@ -92,21 +102,18 @@ class AgentNameSummarySpec extends SpecBase {
 
   "when agent name is not present" - {
 
-    "must return a summary list row with link to enter name" in {
+    "must return Missing with the agent name controller route" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         implicit val msgs: Messages = messages(application)
 
-        val userAnswers = emptyUserAnswers
-        val result = AgentNameSummary.row(userAnswers)
-
-        result.key.content.asHtml.toString() mustEqual msgs("agent.checkYourAnswers.agentName.label")
-        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-        htmlContent must include("govuk-link")
-        htmlContent must include(controllers.vendorAgent.routes.AgentNameController.onPageLoad(CheckMode).url)
-        htmlContent must include(msgs("agent.checkYourAnswers.agentName.agentMissing"))
+        AgentNameSummary.row(emptyUserAnswers) match {
+          case Missing(call) =>
+            call.url mustEqual controllers.vendorAgent.routes.AgentNameController.onPageLoad(CheckMode).url
+          case _ => fail("Expected Missing but got Row")
+        }
       }
     }
   }

@@ -23,14 +23,14 @@ import models.vendorAgent.VendorAgentSessionQuestions
 import models.{CreateReturnAgentRequest, ReturnVersionUpdateRequest, UpdateReturnAgentRequest, UserAnswers}
 import pages.vendorAgent.VendorAgentOverviewPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.JsSuccess
+import play.api.libs.json.{JsObject, JsSuccess}
 import play.api.mvc.*
 import repositories.SessionRepository
+import services.checkAnswers.CheckAnswersService
 import services.vendorAgent.VendorAgentService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.vendorAgent.*
-import viewmodels.govuk.all.SummaryListViewModel
 import views.html.vendorAgent.VendorAgentCheckYourAnswersView
 
 import javax.inject.{Inject, Singleton}
@@ -46,7 +46,8 @@ class VendorAgentCheckYourAnswersController @Inject()(
                                                        backendConnector: StampDutyLandTaxConnector,
                                                        val controllerComponents: MessagesControllerComponents,
                                                        view: VendorAgentCheckYourAnswersView,
-                                                       vendorAgentService: VendorAgentService
+                                                       vendorAgentService: VendorAgentService,
+                                                       checkAnswersService: CheckAnswersService
                                                      )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -57,13 +58,15 @@ class VendorAgentCheckYourAnswersController @Inject()(
       } yield {
 
         val isDataEmpty = result.exists(_.data.value.isEmpty)
+        val isVendorAgentDataEmpty = result.exists(ua => (ua.data \ "vendorAgentCurrent").asOpt[JsObject].forall(_.values.isEmpty))
 
-        if (isDataEmpty) {
-          Redirect(controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad())
-            
-        } else {
-          val summaryList = SummaryListViewModel(
-            rows = Seq(
+        (isDataEmpty, isVendorAgentDataEmpty) match {
+          case (true, _) =>
+            Redirect(controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad())
+          case (_, true) =>
+            Redirect(controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad())
+          case _ =>
+            val rowResults = Seq(
               Some(AgentNameSummary.row(request.userAnswers)),
               Some(VendorAgentAddressSummary.row(request.userAnswers)),
               Some(AddVendorAgentContactDetailsSummary.row(request.userAnswers)),
@@ -71,9 +74,11 @@ class VendorAgentCheckYourAnswersController @Inject()(
               Some(VendorAgentsAddReferenceSummary.row(request.userAnswers)),
               VendorAgentsReferenceSummary.row(request.userAnswers)
             ).flatten
-          )
 
-          Ok(view(summaryList))
+            checkAnswersService.redirectOrRender(rowResults) match {
+              case Left(call) => Redirect(call)
+              case Right(summaryList) => Ok(view(summaryList))
+            }
         }
       }
   }

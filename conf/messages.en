@@ -455,14 +455,10 @@ vendorAgent.agentsReference.error.required                                      
 vendorAgent.agentsReference.error.length                                            = {0}’s reference must be 14 characters or fewer
 vendorAgent.agentsReference.change.hidden                                           = Agent’s Reference
 vendorAgent.agentsReference.error.invalid                                           = {0}’s reference must only include letters a to z, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, numbers 0-9, question marks and spaces
-vendorAgent.checkYourAnswers.agentsReference.agentMissing                           = Enter agent reference
 vendorAgent.agentsReference.reference.hint                                          = We’ll only use this to help reference this return
 
 agent.checkYourAnswers.agentName.label                                              = Agent name
-agent.checkYourAnswers.agentName.agentMissing                                       = Enter agent name
 agent.checkYourAnswers.agentAddress.label                                           = Agent address
-agent.checkYourAnswers.agentName.agentAddressMissing                                = Enter agent address
-agent.checkYourAnswers.agentContactDetails.agentDetailsMissing                      = Enter agent details
 
 vendorAgent.VendorAgentsAddReference.title                                          = Do you want to add a reference for this return? - About the vendor’s agent
 vendorAgent.VendorAgentsAddReference.heading                                        = Do you want to add a reference for this return?
@@ -856,13 +852,6 @@ purchaserAgent.purchaserAgentAuthorised.checkYourAnswersLabel                   
 purchaserAgent.purchaserAgentAuthorised.error.required                              = Select yes if {0} is authorised to handle correspondence on behalf of the purchaser
 purchaserAgent.purchaserAgentAuthorised.change.hidden                               = If {0} is authorised for correspondence
 
-returnAgent.checkYourAnswers.name.missing                                           = Enter name
-returnAgent.checkYourAnswers.address.missing                                        = Enter address
-returnAgent.checkYourAnswers.addContactDetails.missing                              = Select if you want to add contact details
-returnAgent.checkYourAnswers.contactDetails.missing                                 = Enter contact details
-returnAgent.checkYourAnswers.referenceNumber.missing                                = Enter reference number
-returnAgent.checkYourAnswers.addReferenceNumber.missing                             = Select if you want to add a reference number
-returnAgent.checkYourAnswers.authorised.missing                                     = Select if the agent is authorised for correspondence
 
 purchaserAgent.removePurchaserAgent.title                                           = Are you sure you want to remove the purchaser’s agent? - About the purchaser’s agent
 purchaserAgent.removePurchaserAgent.heading                                         = Are you sure you want to remove {0}?

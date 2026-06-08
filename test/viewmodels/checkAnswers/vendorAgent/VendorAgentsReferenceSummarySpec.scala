@@ -22,6 +22,7 @@ import pages.vendorAgent.{VendorAgentsAddReferencePage, VendorAgentsReferencePag
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 
 class VendorAgentsReferenceSummarySpec extends SpecBase {
@@ -39,7 +40,10 @@ class VendorAgentsReferenceSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(VendorAgentsReferencePage, "12345678").success.value
 
-          val result = VendorAgentsReferenceSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = VendorAgentsReferenceSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row")) match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.agentsReference.checkYourAnswersLabel")
 
@@ -53,6 +57,7 @@ class VendorAgentsReferenceSummarySpec extends SpecBase {
         }
       }
     }
+
     "must use CheckMode for the change link" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -63,29 +68,27 @@ class VendorAgentsReferenceSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswers
           .set(VendorAgentsReferencePage, "12345678").success.value
 
-        val result = VendorAgentsReferenceSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+        val result = VendorAgentsReferenceSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row")) match {
+          case Row(r) => r
+          case _ => fail("Expected Row but got Missing")
+        }
 
         result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.VendorAgentsReferenceController.onPageLoad(CheckMode).url
       }
     }
 
-    "must return a SummaryListRow with a link to enter reference number when add reference number is true" in {
+    "must return Some(Missing) with the reference controller route when add reference number is true but reference is not filled in" in {
       val userAnswers = emptyUserAnswers.set(VendorAgentsAddReferencePage, true).success.value
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         implicit val msgs: Messages = messages(application)
 
-        val result = VendorAgentsReferenceSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
-
-        result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.agentsReference.checkYourAnswersLabel")
-
-        val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-        htmlContent must include("govuk-link")
-        htmlContent must include(controllers.vendorAgent.routes.VendorAgentsReferenceController.onPageLoad(CheckMode).url)
-        htmlContent must include(msgs("returnAgent.checkYourAnswers.referenceNumber.missing"))
-
-        result.actions mustBe None
+        VendorAgentsReferenceSummary.row(userAnswers) match {
+          case Some(Missing(call)) =>
+            call.url mustEqual controllers.vendorAgent.routes.VendorAgentsReferenceController.onPageLoad(CheckMode).url
+          case _ => fail("Expected Some(Missing) but got something else")
+        }
       }
     }
 

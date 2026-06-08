@@ -19,39 +19,32 @@ package viewmodels.checkAnswers.vendorAgent
 import models.{CheckMode, UserAnswers}
 import pages.vendorAgent.VendorAgentsAddReferencePage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object VendorAgentsAddReferenceSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
-    val changeRoute = controllers.vendorAgent.routes.VendorAgentsAddReferenceController.onPageLoad(CheckMode).url
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.vendorAgent.routes.VendorAgentsAddReferenceController.onPageLoad(CheckMode)
     val label = messages("vendorAgent.VendorAgentsAddReference.checkYourAnswersLabel")
 
     answers.get(VendorAgentsAddReferencePage).map {
       answer =>
-
         val value = if (answer) "site.yes" else "site.no"
-
-        SummaryListRowViewModel(
-          key = label,
-          value = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
-              .withVisuallyHiddenText(messages("vendorAgent.VendorAgentsAddReference.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key = label,
+            value = ValueViewModel(value),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("vendorAgent.VendorAgentsAddReference.change.hidden"))
+            )
           )
         )
     }.getOrElse {
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">${messages("returnAgent.checkYourAnswers.addReferenceNumber.missing")}</a>""")
-      )
-      SummaryListRowViewModel(
-        key = label,
-        value = value
-      )
+      Missing(changeRoute)
     }
   }
 }
