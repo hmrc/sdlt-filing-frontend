@@ -17,7 +17,6 @@
 package viewmodels.checkAnswers.taxCalculation
 
 import config.CurrencyFormatter
-import viewmodels.taxCalculation.CalculationResultViewModel
 import models.{CheckMode, UserAnswers}
 import pages.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedPremiumPayableTaxPage
 import play.api.i18n.Messages
@@ -51,21 +50,6 @@ object PremiumPayableTaxSummary extends CurrencyFormatter {
     }.getOrElse {
       Missing(route)
     }
-  }
-
-  def getPremium(vm: CalculationResultViewModel)(implicit messages: Messages): SummaryRowResult = {
-    val label = messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.checkYourAnswers")
-
-    val premium = vm.totalPremiumPayable
-
-    val value = ValueViewModel(HtmlContent(s"$premium"))
-
-    Row(
-      SummaryListRowViewModel(
-        key = label,
-        value = value
-      )
-    )
   }
 }
 
