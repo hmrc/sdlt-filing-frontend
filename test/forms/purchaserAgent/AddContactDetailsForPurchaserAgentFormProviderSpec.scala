@@ -18,10 +18,14 @@ package forms.purchaserAgent
 
 import forms.behaviours.OptionFieldBehaviours
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class AddContactDetailsForPurchaserAgentFormProviderSpec extends OptionFieldBehaviours {
 
-  val form = new AddContactDetailsForPurchaserAgentFormProvider()()
+  private implicit val messages: Messages = stubMessages()
+  val formProvider = new AddContactDetailsForPurchaserAgentFormProvider()
+  val form = formProvider("Name")
 
   ".value" - {
 

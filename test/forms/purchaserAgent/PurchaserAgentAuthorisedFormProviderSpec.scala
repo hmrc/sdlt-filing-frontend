@@ -18,10 +18,14 @@ package forms.purchaserAgent
 
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class PurchaserAgentAuthorisedFormProviderSpec extends BooleanFieldBehaviours {
 
-  val form = new PurchaserAgentAuthorisedFormProvider()()
+  private implicit val messages: Messages = stubMessages()
+  val formProvider = new PurchaserAgentAuthorisedFormProvider()
+  val form = formProvider("Name")
 
   ".value" - {
 

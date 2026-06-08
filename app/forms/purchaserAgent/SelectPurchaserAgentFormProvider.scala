@@ -20,17 +20,18 @@ import forms.mappings.Mappings
 import models.Agent
 import models.purchaserAgent.SelectPurchaserAgent
 import play.api.data.Form
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
 class SelectPurchaserAgentFormProvider @Inject() extends Mappings {
 
-    def apply(agents: Seq[Agent]): Form[String] = {
+    def apply(agents: Seq[Agent], purchaserName: String)(implicit messages: Messages): Form[String] = {
       val agentValues: Seq[String] =
         agents.flatMap(_.agentId) :+ SelectPurchaserAgent.AddNewAgent.toString
 
       Form(
-        "value" -> text("purchaserAgent.selectPurchaserAgent.error.required")
+        "value" -> text(messages("purchaserAgent.selectPurchaserAgent.error.required", purchaserName))
           .verifying(
             "purchaserAgent.selectPurchaserAgent.error.invalid",
             agentValues.contains

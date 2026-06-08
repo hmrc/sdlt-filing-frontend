@@ -18,6 +18,7 @@ package forms.purchaserAgent
 
 import forms.mappings.Mappings
 import play.api.data.Form
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
@@ -25,10 +26,10 @@ class PurchaserAgentReferenceFormProvider @Inject() extends Mappings {
 
   private val formRegex = "[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{};]*"
 
-  def apply(): Form[String] =
+  def apply(agentName: String)(implicit messages: Messages): Form[String] =
     Form(
-      "value" -> text("purchaserAgent.reference.error.required")
-        .verifying(maxLength(14, "purchaserAgent.reference.error.length"))
-        .verifying(regexp(formRegex, "purchaserAgent.reference.error.invalid"))
+      "value" -> text(messages("purchaserAgent.reference.error.required", agentName))
+        .verifying(maxLength(14, messages("purchaserAgent.reference.error.length", agentName)))
+        .verifying(regexp(formRegex, messages("purchaserAgent.reference.error.invalid", agentName)))
     )
 }

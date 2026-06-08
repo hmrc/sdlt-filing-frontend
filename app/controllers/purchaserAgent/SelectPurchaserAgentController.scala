@@ -65,7 +65,7 @@ class SelectPurchaserAgentController @Inject()(
               agents match {
                 case Nil => Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentNameController.onPageLoad(NormalMode)))
                 case agents =>
-                  val form: Form[String] = formProvider(agents)
+                  val form: Form[String] = formProvider(agents, purchaser)
 
                   val preparedForm = request.userAnswers.get(SelectPurchaserAgentPage) match {
                     case None => form
@@ -93,7 +93,7 @@ class SelectPurchaserAgentController @Inject()(
         case (Some(purchaser), Some(storn)) =>
           maybeAgents match {
             case Some(agentsList) =>
-              val form: Form[String] = formProvider(agentsList)
+              val form: Form[String] = formProvider(agentsList, purchaser)
               form.bindFromRequest().fold(
                 formWithErrors =>
                   Future.successful(BadRequest(view(formWithErrors, mode, purchaser, Some(purchaserAgentService.agentSummaryList(agentsList))))),

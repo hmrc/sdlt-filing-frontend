@@ -18,13 +18,14 @@ package forms.purchaserAgent
 
 import forms.mappings.Mappings
 import play.api.data.Form
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
 class AddContactDetailsForPurchaserAgentFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(agentName: String)(implicit messages: Messages): Form[Boolean] =
     Form(
-      "value" -> boolean("purchaserAgent.addContactDetailsForPurchaserAgent.error.required")
+      "value" -> boolean(messages("purchaserAgent.addContactDetailsForPurchaserAgent.error.required", agentName))
     )
 }

@@ -18,6 +18,8 @@ package forms.purchaserAgent
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class PurchaserAgentReferenceFormProviderSpec extends StringFieldBehaviours {
 
@@ -26,7 +28,9 @@ class PurchaserAgentReferenceFormProviderSpec extends StringFieldBehaviours {
   val invalidKey = "purchaserAgent.reference.error.invalid"
   val maxLength = 14
 
-  val form = new PurchaserAgentReferenceFormProvider()()
+  private implicit val messages: Messages = stubMessages()
+  val formProvider = new PurchaserAgentReferenceFormProvider()
+  val form = formProvider("Name")
 
   ".value" - {
 

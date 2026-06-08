@@ -39,16 +39,17 @@ class PurchaserAgentReferenceControllerSpec extends SpecBase with MockitoSugar {
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new PurchaserAgentReferenceFormProvider()
-  val form = formProvider()
 
   lazy val purchaserAgentReferenceRoute = controllers.purchaserAgent.routes.PurchaserAgentReferenceController.onPageLoad(NormalMode).url
 
+  val agentName = "Agent Name"
+
   val userAnswersWithAgentName: UserAnswers = emptyUserAnswers
-    .set(PurchaserAgentNamePage, "Agent Name").success.value
+    .set(PurchaserAgentNamePage, agentName).success.value
     .set(AddPurchaserAgentReferenceNumberPage, true).success.value
 
   val userAnswersWithNoAddReferenceNumber: UserAnswers = emptyUserAnswers
-    .set(PurchaserAgentNamePage, "Agent Name").success.value
+    .set(PurchaserAgentNamePage, agentName).success.value
     .set(AddPurchaserAgentReferenceNumberPage, false).success.value
 
   "PurchaserAgentReference Controller" - {
@@ -63,9 +64,10 @@ class PurchaserAgentReferenceControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[PurchaserAgentReferenceView]
+        val form = formProvider(agentName)(messages(application))
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, "Agent Name", NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, agentName, NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -109,9 +111,10 @@ class PurchaserAgentReferenceControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[PurchaserAgentReferenceView]
 
         val result = route(application, request).value
+        val form = formProvider(agentName)(messages(application))
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill("answer"), "Agent Name", NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill("answer"), agentName, NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -165,6 +168,7 @@ class PurchaserAgentReferenceControllerSpec extends SpecBase with MockitoSugar {
           FakeRequest(POST, purchaserAgentReferenceRoute)
             .withFormUrlEncodedBody(("value", ""))
 
+        val form = formProvider(agentName)(messages(application))
         val boundForm = form.bind(Map("value" -> ""))
 
         val view = application.injector.instanceOf[PurchaserAgentReferenceView]
@@ -172,7 +176,7 @@ class PurchaserAgentReferenceControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, "Agent Name", NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, agentName, NormalMode)(request, messages(application)).toString
       }
     }
 

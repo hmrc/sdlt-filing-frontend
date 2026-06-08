@@ -27,7 +27,6 @@ import play.api.inject.bind
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaserAgent.{PurchaserAgentOverviewPage, RemovePurchaserAgentPage}
-import play.api.data.Form
 import play.api.inject
 import play.api.mvc.{Call, Request}
 import play.api.test.FakeRequest
@@ -45,7 +44,6 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
   lazy val removePurchaserAgentRoute: String = controllers.purchaserAgent.routes.RemovePurchaserAgentController.onPageLoad().url
 
   val formProvider = new RemovePurchaserAgentFormProvider()
-  val form: Form[Boolean] = formProvider()
 
   val mockConnector: StampDutyLandTaxConnector = mock[StampDutyLandTaxConnector]
 
@@ -89,6 +87,7 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           val view = application.injector.instanceOf[RemovePurchaserAgentView]
+          val form = formProvider(completeReturnAgent.name)(messages(application))
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual view(form, completeReturnAgent.name.get)(request, messages(application)).toString
@@ -183,6 +182,7 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
           val request =
             FakeRequest(POST, removePurchaserAgentRoute)
               .withFormUrlEncodedBody(("value", "invalid value"))
+          val form = formProvider(Some(completeReturnAgent.name.get))(messages(application))
 
           val boundForm = form.bind(Map("value" -> "invalid value"))
 

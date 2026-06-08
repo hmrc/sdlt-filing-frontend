@@ -43,8 +43,6 @@ class PurchaserAgentsContactDetailsController @Inject()(
                                                          view: PurchaserAgentsContactDetailsView
                                                        )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
@@ -55,6 +53,7 @@ class PurchaserAgentsContactDetailsController @Inject()(
         case Some(agentName) =>
           request.userAnswers.get(AddContactDetailsForPurchaserAgentPage) match {
             case Some(addContactDetails) if addContactDetails =>
+              val form = formProvider(agentName)
               val preparedForm = request.userAnswers.get(PurchaserAgentsContactDetailsPage) match {
                 case None => form
                 case Some(value) => form.fill(value)
@@ -77,6 +76,7 @@ class PurchaserAgentsContactDetailsController @Inject()(
           )
 
         case Some(agentName) =>
+          val form = formProvider(agentName)
 
           form.bindFromRequest().fold(
             formWithErrors =>

@@ -25,6 +25,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaserAgent.{PurchaserAgentAuthorisedPage, PurchaserAgentNamePage, PurchaserAgentsContactDetailsPage}
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -41,8 +42,10 @@ class PurchaserAgentAuthorisedControllerSpec extends SpecBase with MockitoSugar 
 
   lazy val purchaserAgentAuthorisedRoute = controllers.purchaserAgent.routes.PurchaserAgentAuthorisedController.onPageLoad(NormalMode).url
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  private implicit val messages: Messages = stubMessages()
   val formProvider = new PurchaserAgentAuthorisedFormProvider()
-  val form = formProvider()
+  val agentName = "The Anent"
+  val form = formProvider(agentName)
 
   val userAnswersWithAgentName: UserAnswers = UserAnswers(
     id = userAnswersId,
@@ -53,7 +56,7 @@ class PurchaserAgentAuthorisedControllerSpec extends SpecBase with MockitoSugar 
         "emailAddress" -> "test@test.com"
       )
     )
-  ).set(PurchaserAgentNamePage, "Secret Agent").success.value
+  ).set(PurchaserAgentNamePage, agentName).success.value
 
   val userAnswersNoAgentName: UserAnswers = UserAnswers(
     id = userAnswersId,
@@ -74,7 +77,7 @@ class PurchaserAgentAuthorisedControllerSpec extends SpecBase with MockitoSugar 
         val view = application.injector.instanceOf[PurchaserAgentAuthorisedView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, agentName = "Secret Agent")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, agentName = agentName)(request, messages(application)).toString
       }
     }
 
@@ -92,7 +95,7 @@ class PurchaserAgentAuthorisedControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, agentName = "Secret Agent")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, agentName = agentName)(request, messages(application)).toString
       }
     }
 
@@ -172,7 +175,7 @@ class PurchaserAgentAuthorisedControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, agentName = "Secret Agent")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, agentName = agentName)(request, messages(application)).toString
       }
     }
 
