@@ -86,8 +86,9 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
     purchaserResourceRef = purchaserRef
   )
 
+  implicit val messages: Messages = stubMessages()
   private val formProvider = new PurchaserRemoveFormProvider()
-  private def form: Form[PurchaserRemove] = formProvider()
+  private def form: Form[PurchaserRemove] = formProvider("Doe")
 
   override def beforeEach(): Unit = {
     super.beforeEach()

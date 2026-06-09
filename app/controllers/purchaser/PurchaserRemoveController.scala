@@ -19,8 +19,7 @@ package controllers.purchaser
 import controllers.actions.*
 import forms.purchaser.PurchaserRemoveFormProvider
 import models.Mode
-import models.purchaser.PurchaserRemove
-import play.api.data.Form
+import pages.purchaser.NameOfPurchaserPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.purchaser.PurchaserRemoveService
@@ -40,26 +39,42 @@ class PurchaserRemoveController @Inject()(
                                        val controllerComponents: MessagesControllerComponents
                                          )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form: Form[PurchaserRemove] = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) { implicit request =>
-      purchaserRemoveService.purchaserRemoveView(form, mode) match {
-        case Right(html) => Ok(html)
-        case Left(result) => result
+      request.userAnswers.get(NameOfPurchaserPage) match {
+        case None =>
+          Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(mode))
+
+        case Some(purchaser) =>
+          val purchaserName = purchaser.fullName
+          val form = formProvider(purchaserName)
+
+          purchaserRemoveService.purchaserRemoveView(form, mode) match {
+            case Right(html) => Ok(html)
+            case Left(result) => result
+          }
       }
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
+      request.userAnswers.get(NameOfPurchaserPage) match {
+        case None =>
           Future.successful(
-            purchaserRemoveService.purchaserRemoveView(formWithErrors, mode).fold(identity, BadRequest(_))
-          ),
-        value =>
-          purchaserRemoveService.handleRemoval(value, userAnswers = request.userAnswers)
-      )
+            Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(mode))
+          )
+
+        case Some(purchaser) =>
+          val purchaserName = purchaser.fullName
+          val form = formProvider(purchaserName)
+          form.bindFromRequest().fold(
+            formWithErrors =>
+              Future.successful(
+                purchaserRemoveService.purchaserRemoveView(formWithErrors, mode).fold(identity, BadRequest(_))
+              ),
+            value =>
+              purchaserRemoveService.handleRemoval(value, userAnswers = request.userAnswers)
+          )
+      }
   }
 }

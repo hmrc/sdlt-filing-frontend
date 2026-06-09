@@ -28,6 +28,7 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaser.{NameOfPurchaserPage, PurchaserAndVendorConnectedPage}
 import play.api.data.Form
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -46,7 +47,8 @@ class PurchaserAndVendorConnectedControllerSpec extends SpecBase with MockitoSug
   lazy val purchaserAndVendorConnectedRoute: String = controllers.purchaser.routes.PurchaserAndVendorConnectedController.onPageLoad(NormalMode).url
 
   val formProvider = new PurchaserAndVendorConnectedFormProvider()
-  val form: Form[Boolean] = formProvider()
+  implicit val messages: Messages = stubMessages()
+  val form: Form[Boolean] = formProvider("Doe")
 
   val testUserAnswers = UserAnswers(
     id = "test-session-id",

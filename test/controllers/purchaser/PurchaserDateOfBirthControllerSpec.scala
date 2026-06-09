@@ -44,7 +44,7 @@ class PurchaserDateOfBirthControllerSpec extends SpecBase with MockitoSugar {
   private val time = TimeMachine()
   private val formProvider = new PurchaserDateOfBirthFormProvider(time)
 
-  private def form = formProvider()
+  private def form = formProvider("Doe")
 
   def onwardRoute = Call("GET", "/foo")
 

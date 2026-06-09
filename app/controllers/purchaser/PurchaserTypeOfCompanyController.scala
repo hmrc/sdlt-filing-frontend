@@ -46,8 +46,6 @@ class PurchaserTypeOfCompanyController @Inject()(
                                                   purchaserService: PurchaserService
                                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       purchaserService.continueIfAddingMainPurchaserWithPurchaserTypeCheck(
@@ -57,6 +55,8 @@ class PurchaserTypeOfCompanyController @Inject()(
           case None =>
             Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode))
           case Some(purchaserName) =>
+            val purchasersName: String = purchaserName.fullName
+            val form = formProvider(purchasersName)
             val preparedForm = request.userAnswers.get(PurchaserTypeOfCompanyPage) match {
               case None => form
               case Some(answersObject) =>
@@ -74,6 +74,8 @@ class PurchaserTypeOfCompanyController @Inject()(
         case None =>
           Future.successful(Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)))
         case Some(purchaserName) =>
+          val purchasersName: String = purchaserName.fullName
+          val form = formProvider(purchasersName)
           form.bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, mode, purchaserName.fullName))),

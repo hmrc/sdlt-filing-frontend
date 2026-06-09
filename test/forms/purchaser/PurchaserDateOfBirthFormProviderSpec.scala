@@ -35,7 +35,7 @@ class PurchaserDateOfBirthFormProviderSpec extends DateBehaviours with MockitoSu
 
   when(mockTimeMachine.today).thenReturn(LocalDate.of(2025, 1, 1))
 
-  private val form = new PurchaserDateOfBirthFormProvider(mockTimeMachine)()
+  private val form = new PurchaserDateOfBirthFormProvider(mockTimeMachine)("Doe")
 
   def minDate = mockTimeMachine.today.minusYears(130)
 

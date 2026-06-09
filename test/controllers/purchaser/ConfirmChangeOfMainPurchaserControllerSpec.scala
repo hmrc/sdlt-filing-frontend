@@ -26,6 +26,7 @@ import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaser.ChangePurchaserOnePage
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.mvc.Results.Redirect
@@ -42,7 +43,8 @@ class ConfirmChangeOfMainPurchaserControllerSpec extends SpecBase with MockitoSu
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new ConfirmChangeOfMainPurchaserFormProvider()
-  val form = formProvider()
+  implicit val messages: Messages = stubMessages()
+  val form = formProvider("John Ralph")
 
   lazy val confirmChangeOfMainPurchaserRoute: String = controllers.purchaser.routes.ConfirmChangeOfMainPurchaserController.onPageLoad().url
   lazy val purchaserCheckYourAnswersRoute: String = controllers.purchaser.routes.PurchaserCheckYourAnswersController.onPageLoad().url

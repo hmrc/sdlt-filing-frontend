@@ -45,8 +45,7 @@ class PurchaserCorporationTaxUTRController @Inject()(
                                         val controllerComponents: MessagesControllerComponents,
                                         view: PurchaserCorporationTaxUTRView
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
-  val form = formProvider()
+  
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -60,6 +59,7 @@ class PurchaserCorporationTaxUTRController @Inject()(
         userAnswers,
         continueRoute = (nameOfPurchaser, purchaserConfirmIdentity) match {
           case (Some(purchaserName), Some(identity)) if identity == PurchaserConfirmIdentity.CorporationTaxUTR =>
+            val form = formProvider(purchaserName)
             val preparedForm = request.userAnswers.get(PurchaserUTRPage) match {
               case None => form
               case Some(formValue) => form.fill(formValue)
@@ -83,6 +83,7 @@ class PurchaserCorporationTaxUTRController @Inject()(
         case None => Future.successful(Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)))
 
         case Some(purchaserName) =>
+          val form = formProvider(purchaserName)
           form.bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, purchaserName, mode))),

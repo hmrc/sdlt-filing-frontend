@@ -44,8 +44,6 @@ class IsPurchaserActingAsTrusteeController @Inject()(
                                                       view: IsPurchaserActingAsTrusteeView
                                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
@@ -54,6 +52,8 @@ class IsPurchaserActingAsTrusteeController @Inject()(
           Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode))
 
         case Some(nameOfPurchaser) =>
+          val purchaserName: String = nameOfPurchaser.fullName
+          val form = formProvider(purchaserName)
           val preparedForm = request.userAnswers.get(IsPurchaserActingAsTrusteePage) match {
             case None => form
             case Some(value) => form.fill(value)
@@ -72,6 +72,8 @@ class IsPurchaserActingAsTrusteeController @Inject()(
           Future.successful(Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)))
 
         case Some(nameOfPurchaser) =>
+          val purchaserName: String = nameOfPurchaser.fullName
+          val form = formProvider(purchaserName)
           form.bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, mode, nameOfPurchaser.fullName))),

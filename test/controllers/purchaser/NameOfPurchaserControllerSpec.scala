@@ -27,6 +27,7 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaser.{NameOfPurchaserPage, WhoIsMakingThePurchasePage}
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -48,7 +49,8 @@ class NameOfPurchaserControllerSpec extends SpecBase with MockitoSugar with Befo
   def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new NameOfPurchaserFormProvider()
-  val form = formProvider()
+  implicit val messages: Messages = stubMessages()
+  val form = formProvider("Doe")
 
   lazy val nameOfPurchaserRoute: String =
     controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode).url
