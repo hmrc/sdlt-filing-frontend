@@ -174,6 +174,24 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
       }
     }
 
+    "comma-grouped amounts" - {
+
+      "must parse the premium from totalConsideration" in {
+        TaxCalcRequestValidator.buildRequest(userAnswersWith(freeholdReturn(consideration = "300,000")))
+          .map(_.premium) mustBe Right(BigDecimal(300000))
+      }
+
+      "must parse the highest rent from startingRent" in {
+        TaxCalcRequestValidator.buildRequest(userAnswersWith(leaseholdReturn(startingRent = Some("9,600"))))
+          .map(_.highestRent) mustBe Right(BigDecimal(9600))
+      }
+
+      "must parse the declared NPV from netPresentValue" in {
+        TaxCalcRequestValidator.buildRequest(userAnswersWith(leaseholdReturn(npv = "1,897")))
+          .map(_.declaredNpv) mustBe Right(Some(BigDecimal(1897)))
+      }
+    }
+
     "holding type" - {
 
       "must map F to freehold" in {
