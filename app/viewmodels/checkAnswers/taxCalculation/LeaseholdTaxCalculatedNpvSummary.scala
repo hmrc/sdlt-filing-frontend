@@ -16,28 +16,25 @@
 
 package viewmodels.checkAnswers.taxCalculation
 
-import models.taxCalculation.{BuildRequestError, MissingNPVCalcError}
+import config.CurrencyFormatter
+import models.taxCalculation.{TaxCalculationResult, TaxTypes}
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.summary.SummaryRowResult.Row
-import viewmodels.taxCalculation.CalculationResultViewModel
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object LeaseholdTaxCalculatedNpvSummary {
+object LeaseholdTaxCalculatedNpvSummary extends CurrencyFormatter {
 
-  def row(vm: CalculationResultViewModel)(implicit messages: Messages): SummaryRowResult = {
-    val label = messages("taxCalculation.taxDueOnNpv.checkYourAnswersLabel")
-
-    val npv: Either[BuildRequestError, String] = vm.totalNPVTax.toRight(MissingNPVCalcError)
-
-    val value = ValueViewModel(HtmlContent(s"${npv.toOption.get}"))
+  def row(result: TaxCalculationResult)(implicit messages: Messages): SummaryRowResult = {
+    val label  = messages("taxCalculation.taxDueOnNpv.checkYourAnswersLabel")
+    val npvTax = result.taxCalcs.find(_.taxType == TaxTypes.rent).map(_.taxDue.toCurrency).getOrElse("")
 
     Row(
       SummaryListRowViewModel(
-        key = label,
-        value = value
+        key   = label,
+        value = ValueViewModel(HtmlContent(npvTax))
       )
     )
   }

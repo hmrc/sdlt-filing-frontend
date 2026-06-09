@@ -32,8 +32,6 @@ case class CalculationResultViewModel(
                                        rateCardSummary:       SummaryList,
                                        premiumRateTable:      Table,
                                        npvRateTable:          Option[Table],
-                                       totalPremiumPayable:   String,
-                                       totalNPVTax:           Option[String] = None,
                                        totalTax:              Table
                                      )
 
@@ -78,9 +76,7 @@ object CalculationResultViewModel extends CurrencyFormatter {
         ),
         premiumRateTable = getPremiumRateTable(premiumCalc, rentCalc.isDefined),
         npvRateTable = getNpvRateTable(rentCalc),
-        totalTax = getTotalTaxTable(result.totalTax.toCurrency),
-        totalPremiumPayable = premiumCalc.taxDue.toCurrency,
-        totalNPVTax = rentCalc.map(_.taxDue.toCurrency),
+        totalTax = getTotalTaxTable(result.totalTax.toCurrency)
       )
     }
 

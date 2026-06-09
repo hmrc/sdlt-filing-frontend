@@ -39,7 +39,6 @@ import utils.DateTimeFormats.parseDate
 import utils.{TaxCalculationHelper, TaxCalculationPenaltiesHelper, TimeMachine}
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.taxCalculation.*
-import viewmodels.taxCalculation.CalculationResultViewModel
 import views.html.taxCalculation.shared.CheckYourAnswersView
 
 import javax.inject.{Inject, Singleton}
@@ -230,17 +229,15 @@ class TaxCalculationCheckYourAnswersController @Inject()(
           FreeholdSelfAssessedDoesAmountIncludePenaltiesSummary.row(Some(ua))
         )
       case Some(LeaseholdTaxCalculated) => Seq(
-        LeaseholdTaxCalculatedPremiumPayableSummary.row(CalculationResultViewModel.toViewModel(result, ua).toOption.get),
-        LeaseholdTaxCalculatedNpvSummary.row(CalculationResultViewModel.toViewModel(result, ua).toOption.get),
+        LeaseholdTaxCalculatedPremiumPayableSummary.row(result),
+        LeaseholdTaxCalculatedNpvSummary.row(result),
         CalculatedSdltDueSummary.row(result.totalTax.toString),
         LeaseholdTaxCalculatedSelfAssessedAmountSummary.row(Some(ua)),
         PenaltiesDueSummary.row(Some(ua), timeMachine),
         LeaseholdTaxCalculatedTotalAmountDueSummary.row(Some(ua)),
         LeaseholdTaxCalculatedDoesAmountIncludePenaltiesSummary.row(Some(ua))
       )
-      case Left(error) =>
-        logger.error(s"[TaxCalculationCheckYourAnswersController][buildRowResults] : ${err.message}")
-        Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      case _ => Nil
     }
   }
 }
