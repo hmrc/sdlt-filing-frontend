@@ -57,8 +57,8 @@ object TaxCalcRequestValidator {
       effectiveDateMonth  = parsedDate.getMonthValue,
       effectiveDateYear   = parsedDate.getYear,
       nonUKResident       = handleNonUkResident(fullReturn.residency, parsedDate, propertyType),
-      premium             = BigDecimal(premium),
-      highestRent         = fullReturn.lease.flatMap(_.startingRent).flatMap(v => Try(BigDecimal(v)).toOption).getOrElse(BigDecimal(0)),
+      premium             = parseAmount(premium),
+      highestRent         = fullReturn.lease.flatMap(_.startingRent).flatMap(v => Try(parseAmount(v)).toOption).getOrElse(BigDecimal(0)),
       propertyDetails     = buildPropertyDetails(propertyCode),
       leaseDetails        = leaseDetails,
       relevantRentDetails = fullReturn.lease.map(buildRelevantRentDetails),
@@ -67,8 +67,11 @@ object TaxCalcRequestValidator {
       interestTransferred = Some(interestCode),
       taxReliefDetails    = taxReliefDetails,
       isMultipleLand      = fullReturn.land.map(_.size > 1),
-      declaredNpv         = fullReturn.lease.flatMap(_.netPresentValue.flatMap(v => Try(BigDecimal(v)).toOption))
+      declaredNpv         = fullReturn.lease.flatMap(_.netPresentValue.flatMap(v => Try(parseAmount(v)).toOption))
     )
+
+  private def parseAmount(value: String): BigDecimal =
+    BigDecimal(value.replace(",", ""))
 
   private def getTaxReliefDetails(transaction: Transaction): Either[BuildRequestError, Option[TaxReliefDetails]] =
     transaction.claimingRelief.map(_.toUpperCase).toRight(MissingTransactionAnswerError("claimingRelief")).flatMap {
