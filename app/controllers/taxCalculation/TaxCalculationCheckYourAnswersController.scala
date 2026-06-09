@@ -231,14 +231,16 @@ class TaxCalculationCheckYourAnswersController @Inject()(
         )
       case Some(LeaseholdTaxCalculated) => Seq(
         LeaseholdTaxCalculatedPremiumPayableSummary.row(CalculationResultViewModel.toViewModel(result, ua).toOption.get),
-        LeaseholdTaxCalculatedNPVSummary.row(CalculationResultViewModel.toViewModel(result, ua).toOption.get),
+        LeaseholdTaxCalculatedNpvSummary.row(CalculationResultViewModel.toViewModel(result, ua).toOption.get),
         CalculatedSdltDueSummary.row(result.totalTax.toString),
         LeaseholdTaxCalculatedSelfAssessedAmountSummary.row(Some(ua)),
         PenaltiesDueSummary.row(Some(ua), timeMachine),
         LeaseholdTaxCalculatedTotalAmountDueSummary.row(Some(ua)),
         LeaseholdTaxCalculatedDoesAmountIncludePenaltiesSummary.row(Some(ua))
       )
-      case _ => Nil
+      case Left(error) =>
+        logger.error(s"[TaxCalculationCheckYourAnswersController][buildRowResults] : ${err.message}")
+        Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
   }
 }

@@ -25,7 +25,7 @@ import viewmodels.taxCalculation.CalculationResultViewModel
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
-object LeaseholdTaxCalculatedNPVSummary {
+object LeaseholdTaxCalculatedNpvSummary {
 
   def row(vm: CalculationResultViewModel)(implicit messages: Messages): SummaryRowResult = {
     val label = messages("taxCalculation.taxDueOnNpv.checkYourAnswersLabel")
