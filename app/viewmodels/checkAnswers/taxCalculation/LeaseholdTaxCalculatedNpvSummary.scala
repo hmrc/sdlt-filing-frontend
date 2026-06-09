@@ -27,15 +27,16 @@ import viewmodels.implicits.*
 
 object LeaseholdTaxCalculatedNpvSummary extends CurrencyFormatter {
 
-  def row(result: TaxCalculationResult)(implicit messages: Messages): SummaryRowResult = {
-    val label  = messages("taxCalculation.taxDueOnNpv.checkYourAnswersLabel")
-    val npvTax = result.taxCalcs.find(_.taxType == TaxTypes.rent).map(_.taxDue.toCurrency).getOrElse("")
+  def row(result: TaxCalculationResult)(implicit messages: Messages): Option[SummaryRowResult] = {
+    val label = messages("taxCalculation.taxDueOnNpv.checkYourAnswersLabel")
 
-    Row(
-      SummaryListRowViewModel(
-        key   = label,
-        value = ValueViewModel(HtmlContent(npvTax))
+    result.taxCalcs.find(_.taxType == TaxTypes.rent).map { calc =>
+      Row(
+        SummaryListRowViewModel(
+          key   = label,
+          value = ValueViewModel(HtmlContent(calc.taxDue.toCurrency))
+        )
       )
-    )
+    }
   }
 }
