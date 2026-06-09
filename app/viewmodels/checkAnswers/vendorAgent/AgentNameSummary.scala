@@ -21,37 +21,30 @@ import pages.vendorAgent.AgentNamePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object AgentNameSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
-    val changeRoute = controllers.vendorAgent.routes.AgentNameController.onPageLoad(CheckMode).url
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.vendorAgent.routes.AgentNameController.onPageLoad(CheckMode)
     val label = messages("agent.checkYourAnswers.agentName.label")
     answers.get(AgentNamePage).map {
       answer =>
-
-        SummaryListRowViewModel(
-          key = label,
-          value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
-          actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
-              .withVisuallyHiddenText(messages("agent.agentName.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key = label,
+            value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("agent.agentName.change.hidden"))
+            )
           )
         )
     }.getOrElse {
-
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">${messages("agent.checkYourAnswers.agentName.agentMissing")}</a>""")
-      )
-
-      SummaryListRowViewModel(
-        key = label,
-        value = value
-      )
+      Missing(changeRoute)
     }
   }
 }

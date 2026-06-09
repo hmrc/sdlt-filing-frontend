@@ -21,38 +21,34 @@ import pages.vendorAgent.{VendorAgentsAddReferencePage, VendorAgentsReferencePag
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object VendorAgentsReferenceSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryRowResult] = {
     val label = messages("vendorAgent.agentsReference.checkYourAnswersLabel")
-    val changeRoute = controllers.vendorAgent.routes.VendorAgentsReferenceController.onPageLoad(CheckMode).url
+    val changeRoute = controllers.vendorAgent.routes.VendorAgentsReferenceController.onPageLoad(CheckMode)
 
     (answers.get(VendorAgentsReferencePage), answers.get(VendorAgentsAddReferencePage)) match {
       case (Some(vaReference), _) =>
-
-        Some(SummaryListRowViewModel(
-          key = label,
-          value = ValueViewModel(HtmlContent(HtmlFormat.escape(vaReference).toString)),
-          actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
-              .withVisuallyHiddenText(messages("vendorAgent.agentsReference.change.hidden"))
+        Some(Row(
+          SummaryListRowViewModel(
+            key = label,
+            value = ValueViewModel(HtmlContent(HtmlFormat.escape(vaReference).toString)),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("vendorAgent.agentsReference.change.hidden"))
+            )
           )
         ))
-      case (None, Some(true)) =>
-        val value = ValueViewModel(
-          HtmlContent(
-            s"""<a href="$changeRoute" class="govuk-link">${messages("returnAgent.checkYourAnswers.referenceNumber.missing")}</a>""")
-        )
-        Some(SummaryListRowViewModel(
-          key = label,
-          value = value
-        ))
-      case _ => None
 
+      case (None, Some(true)) =>
+        Some(Missing(changeRoute))
+
+      case _ => None
     }
   }
 }

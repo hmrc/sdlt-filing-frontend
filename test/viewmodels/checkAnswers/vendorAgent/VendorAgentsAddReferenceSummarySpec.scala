@@ -21,7 +21,7 @@ import models.CheckMode
 import pages.vendorAgent.VendorAgentsAddReferencePage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class VendorAgentsAddReferenceSummarySpec extends SpecBase {
 
@@ -37,7 +37,10 @@ class VendorAgentsAddReferenceSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(VendorAgentsAddReferencePage, true).success.value
 
-          val result = VendorAgentsAddReferenceSummary.row(userAnswers)
+          val result = VendorAgentsAddReferenceSummary.row(userAnswers) match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.VendorAgentsAddReference.checkYourAnswersLabel")
 
@@ -50,21 +53,16 @@ class VendorAgentsAddReferenceSummarySpec extends SpecBase {
         }
       }
 
-      "must use CheckMode for the change link" in {
+      "must return Missing with the add reference controller route when add reference is not answered" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = VendorAgentsAddReferenceSummary.row(emptyUserAnswers)
-
-          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.VendorAgentsAddReference.checkYourAnswersLabel", "the Agent")
-
-          val htmlContent = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          htmlContent must include("govuk-link")
-          htmlContent must include(controllers.vendorAgent.routes.VendorAgentsAddReferenceController.onPageLoad(CheckMode).url)
-          htmlContent must include(msgs("returnAgent.checkYourAnswers.addReferenceNumber.missing"))
-
-          result.actions mustBe None
+          VendorAgentsAddReferenceSummary.row(emptyUserAnswers) match {
+            case Missing(call) =>
+              call.url mustEqual controllers.vendorAgent.routes.VendorAgentsAddReferenceController.onPageLoad(CheckMode).url
+            case _ => fail("Expected Missing but got Row")
+          }
         }
       }
     }

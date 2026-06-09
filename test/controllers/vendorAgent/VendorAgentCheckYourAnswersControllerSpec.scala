@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.StampDutyLandTaxConnector
 import constants.FullReturnConstants.completeFullReturn
 import models.address.{Address, Country}
-import models.{CreateReturnAgentRequest, CreateReturnAgentReturn, ReturnVersionUpdateReturn, UpdateReturnAgentRequest, UpdateReturnAgentReturn}
+import models.{CheckMode, CreateReturnAgentRequest, CreateReturnAgentReturn, ReturnVersionUpdateReturn, UpdateReturnAgentRequest, UpdateReturnAgentReturn}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
@@ -107,7 +107,7 @@ class VendorAgentCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
         }
       }
 
-      "must redirect to Vendor agent before you start when data is missing for a GET" in {
+      "must redirect to prelim before you start when all data is missing for a GET" in {
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
@@ -121,7 +121,58 @@ class VendorAgentCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.preliminary.routes.BeforeStartReturnController.onPageLoad().url
+        }
+      }
+
+      "must redirect to Vendor agent before you start when vendorAgentCurrent data is missing" in {
+
+        val userAnswersWithOtherData = emptyUserAnswers.copy(
+          fullReturn = Some(completeFullReturn),
+          data = Json.obj("someOtherData" -> "value")
+        )
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswersWithOtherData)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswersWithOtherData))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
+        }
+      }
+
+      "must redirect to the appropriate page when UserAnswers is incomplete" in {
+
+        val userAnswersWithVendorAgentDataButNoName = emptyUserAnswers.copy(
+          fullReturn = Some(completeFullReturn),
+          data = Json.obj(
+            "vendorAgentCurrent" -> Json.obj(
+              "someField" -> "someValue"
+            )
+          )
+        )
+
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(userAnswersWithVendorAgentDataButNoName)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswersWithVendorAgentDataButNoName))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.vendorAgent.routes.AgentNameController.onPageLoad(CheckMode).url
         }
       }
 

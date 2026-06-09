@@ -22,7 +22,7 @@ import models.vendorAgent.VendorAgentsContactDetails
 import pages.vendorAgent.{AddVendorAgentContactDetailsPage, VendorAgentsContactDetailsPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class VendorAgentsContactDetailsSummarySpec extends SpecBase {
 
@@ -40,7 +40,10 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(VendorAgentsContactDetailsPage, VendorAgentsContactDetails(Some("123456"), Some("test@example.com"))).success.value
 
-          val result = VendorAgentsContactDetailsSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = VendorAgentsContactDetailsSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row")) match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel")
 
@@ -66,7 +69,10 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(VendorAgentsContactDetailsPage, VendorAgentsContactDetails(Some("123456"), Some("test@example.com"))).success.value
 
-          val result = VendorAgentsContactDetailsSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = VendorAgentsContactDetailsSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row")) match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url
         }
@@ -85,7 +91,10 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(VendorAgentsContactDetailsPage, VendorAgentsContactDetails(Some("123456"), None)).success.value
 
-          val result = VendorAgentsContactDetailsSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = VendorAgentsContactDetailsSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row")) match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel")
 
@@ -112,7 +121,10 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(VendorAgentsContactDetailsPage, VendorAgentsContactDetails(None, Some("test@example.com"))).success.value
 
-          val result = VendorAgentsContactDetailsSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = VendorAgentsContactDetailsSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row")) match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel")
 
@@ -139,7 +151,10 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
           val userAnswers = emptyUserAnswers
             .set(VendorAgentsContactDetailsPage, VendorAgentsContactDetails(None, None)).success.value
 
-          val result = VendorAgentsContactDetailsSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+          val result = VendorAgentsContactDetailsSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row")) match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel")
 
@@ -150,7 +165,7 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
 
     "when contact details page is not answered" - {
 
-      "must return a SummaryListRow with a link to enter contact details when add contact details is true" in {
+      "must return Some(Missing) with the contact details controller route when add contact details is true" in {
         val userAnswers = emptyUserAnswers.set(AddVendorAgentContactDetailsPage, true).success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -158,17 +173,11 @@ class VendorAgentsContactDetailsSummarySpec extends SpecBase {
         running(application) {
           implicit val msgs: Messages = messages(application)
 
-          val result = VendorAgentsContactDetailsSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
-
-          result.key.content.asHtml.toString() mustEqual msgs("vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel")
-
-          val valueHtml = result.value.content.asInstanceOf[HtmlContent].asHtml.toString()
-          valueHtml must include(controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url)
-          valueHtml must include(msgs("returnAgent.checkYourAnswers.contactDetails.missing"))
-          valueHtml must include("govuk-link")
-
-
-          result.actions mustBe None
+          VendorAgentsContactDetailsSummary.row(userAnswers) match {
+            case Some(Missing(call)) =>
+              call.url mustEqual controllers.vendorAgent.routes.VendorAgentsContactDetailsController.onPageLoad(CheckMode).url
+            case _ => fail("Expected Some(Missing) but got something else")
+          }
         }
       }
     }

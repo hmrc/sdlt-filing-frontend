@@ -19,41 +19,33 @@ package viewmodels.checkAnswers.vendorAgent
 import models.{CheckMode, UserAnswers}
 import pages.vendorAgent.{AddVendorAgentContactDetailsPage, AgentNamePage}
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object AddVendorAgentContactDetailsSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow = {
-
-    val changeRoute = controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(CheckMode).url
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryRowResult = {
+    val changeRoute = controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(CheckMode)
     val agentName = answers.get(AgentNamePage).getOrElse("the agent")
     val label = messages("vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel", agentName)
 
     answers.get(AddVendorAgentContactDetailsPage).map {
       answer =>
-
         val value = if (answer) "site.yes" else "site.no"
-
-        SummaryListRowViewModel(
-          key = label,
-          value = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", changeRoute)
-              .withVisuallyHiddenText(messages("vendorAgent.addVendorAgentContactDetails.change.hidden"))
+        Row(
+          SummaryListRowViewModel(
+            key = label,
+            value = ValueViewModel(value),
+            actions = Seq(
+              ActionItemViewModel("site.change", changeRoute.url)
+                .withVisuallyHiddenText(messages("vendorAgent.addVendorAgentContactDetails.change.hidden"))
+            )
           )
         )
     }.getOrElse {
-      val value = ValueViewModel(
-        HtmlContent(
-          s"""<a href="$changeRoute" class="govuk-link">${messages("returnAgent.checkYourAnswers.addContactDetails.missing")}</a>""")
-      )
-      SummaryListRowViewModel(
-        key = label,
-        value = value
-      )
+      Missing(changeRoute)
     }
   }
 }
