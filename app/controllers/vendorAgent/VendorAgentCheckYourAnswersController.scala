@@ -62,7 +62,7 @@ class VendorAgentCheckYourAnswersController @Inject()(
 
         (isDataEmpty, isVendorAgentDataEmpty) match {
           case (true, _) =>
-            Redirect(controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad())
+            Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
           case (_, true) =>
             Redirect(controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad())
           case _ =>

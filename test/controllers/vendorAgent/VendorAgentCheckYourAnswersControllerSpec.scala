@@ -107,7 +107,7 @@ class VendorAgentCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
         }
       }
 
-      "must redirect to Vendor agent before you start when data is missing for a GET" in {
+      "must redirect to prelim before you start when all data is missing for a GET" in {
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
@@ -121,7 +121,7 @@ class VendorAgentCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.preliminary.routes.BeforeStartReturnController.onPageLoad().url
         }
       }
 
