@@ -34,6 +34,7 @@ import views.html.taxCalculation.ConfirmEffectiveDateOfTransactionYesNoView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 @Singleton
 class ConfirmEffectiveDateOfTransactionController @Inject()(override val messagesApi: MessagesApi,
@@ -75,6 +76,7 @@ class ConfirmEffectiveDateOfTransactionController @Inject()(override val message
               value =>
                 for {
                   updatedUserAnswers <- Future.fromTry(request.userAnswers.set(ConfirmEffectiveDateOfTransactionPage, value))
+                  _                   = logger.info(s"[ConfirmEffectiveDateOfTransactionController][onSubmit] returnId=${request.userAnswers.returnId.getOrElse("unknown")}: effective date '$effectiveDate' confirmed=$value (${if (value) "proceeding to tax calculation" else "going to transaction journey to amend the date"})")
                   answersToPersist    = if (value) updatedUserAnswers else populateTransaction(updatedUserAnswers)
                   _                  <- sessionRepository.set(answersToPersist)
                 } yield {
@@ -91,11 +93,21 @@ class ConfirmEffectiveDateOfTransactionController @Inject()(override val message
       }
   }
 
-  private def populateTransaction(userAnswers: UserAnswers): UserAnswers =
-    userAnswers.fullReturn.flatMap(_.transaction)
-      .flatMap(transaction =>
-        populateTransactionService.populateTransactionInSession(transaction, userAnswers)
-          .toOption
-      )
-      .getOrElse(userAnswers)
+  private def populateTransaction(userAnswers: UserAnswers): UserAnswers = {
+    val returnRef = userAnswers.returnId.getOrElse("unknown")
+    userAnswers.fullReturn.flatMap(_.transaction) match {
+      case Some(transaction) =>
+        populateTransactionService.populateTransactionInSession(transaction, userAnswers) match {
+          case Success(populated) =>
+            logger.info(s"[ConfirmEffectiveDateOfTransactionController][populateTransaction] returnId=$returnRef: populated transaction into session ahead of the transaction journey")
+            populated
+          case Failure(e) =>
+            logger.warn(s"[ConfirmEffectiveDateOfTransactionController][populateTransaction] returnId=$returnRef: failed to populate transaction into session, the transaction journey will have no session: ${e.getMessage}")
+            userAnswers
+        }
+      case None =>
+        logger.warn(s"[ConfirmEffectiveDateOfTransactionController][populateTransaction] returnId=$returnRef: no transaction on the full return to populate into session")
+        userAnswers
+    }
+  }
 }

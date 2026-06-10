@@ -72,6 +72,7 @@ class TaxCalculationCheckYourAnswersController @Inject()(
           if (userAnswers.returnId.isEmpty) {
             Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
           } else {
+            logger.info(s"[TaxCalculationCheckYourAnswersController][onPageLoad] returnId=${userAnswers.returnId.getOrElse("unknown")}: rendering CYA, flow in session=${userAnswers.get(TaxCalculationFlowPage)}")
             userAnswers.get(TaxCalculationFlowPage) match {
               case Some(flow) => populateOrRender(userAnswers, flow)
               case None       => deriveFlow(userAnswers)
@@ -85,6 +86,7 @@ class TaxCalculationCheckYourAnswersController @Inject()(
       case Right(calculationResult) =>
         TaxCalculationHelper.flowFor(userAnswers, calculationResult) match {
           case Some(flow) =>
+            logger.info(s"[TaxCalculationCheckYourAnswersController][deriveFlow] returnId=${userAnswers.returnId.getOrElse("unknown")}: derived flow=$flow from calculation outcome=$calculationResult")
             for {
               updated <- Future.fromTry(userAnswers.set(TaxCalculationFlowPage, flow))
               _       <- sessionRepository.set(updated)
@@ -123,6 +125,7 @@ class TaxCalculationCheckYourAnswersController @Inject()(
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
         case Some(userAnswers) =>
+          logger.info(s"[TaxCalculationCheckYourAnswersController][onSubmit] returnId=${userAnswers.returnId.getOrElse("unknown")}: submitting tax calculation, flow=${userAnswers.get(TaxCalculationFlowPage)}")
           userAnswers.get(TaxCalculationFlowPage) match {
             case Some(FreeholdTaxCalculated) | Some(LeaseholdTaxCalculated) =>
               withCalculatedResult(userAnswers, result =>
@@ -161,11 +164,16 @@ class TaxCalculationCheckYourAnswersController @Inject()(
         logger.warn("[TaxCalculationCheckYourAnswersController][updateTaxCalculation] return has no effective date so penalties cannot be determined, returning to the task list")
         Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       case Some(penalty) =>
+        val returnRef = userAnswers.returnId.getOrElse("unknown")
         for {
           versionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
+          _               = logger.info(s"[TaxCalculationCheckYourAnswersController][updateTaxCalculation] returnId=$returnRef: bumping return version, currentVersion=${versionRequest.currentVersion}")
           versionReturn  <- backendConnector.updateReturnVersion(versionRequest)
+          _               = logger.info(s"[TaxCalculationCheckYourAnswersController][updateTaxCalculation] returnId=$returnRef: return version response, newVersion=${versionReturn.newVersion}")
           taxCalcRequest <- UpdateTaxCalculationRequest.from(userAnswers, result, penalty) if versionReturn.newVersion.isDefined
+          _               = logger.info(s"[TaxCalculationCheckYourAnswersController][updateTaxCalculation] returnId=$returnRef: submitting tax calculation to BE: $taxCalcRequest")
           taxCalcReturn  <- backendConnector.updateTaxCalculationInfo(taxCalcRequest) if versionReturn.newVersion.isDefined
+          _               = logger.info(s"[TaxCalculationCheckYourAnswersController][updateTaxCalculation] returnId=$returnRef: tax calculation submit response, updated=${taxCalcReturn.updated}")
         } yield {
           if (taxCalcReturn.updated) {
             Redirect(controllers.routes.ReturnTaskListController.onPageLoad())

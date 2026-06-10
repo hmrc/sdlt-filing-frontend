@@ -18,6 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.taxCalculation.{CalculationResponse, SdltCalculationRequest}
+import play.api.Logging
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps, UpstreamErrorResponse}
@@ -29,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SdltCalculationConnector @Inject()(val http: HttpClientV2,
                                          val config: FrontendAppConfig
-                                       )(implicit ec: ExecutionContext) {
+                                       )(implicit ec: ExecutionContext) extends Logging {
 
   def calculateStampDutyLandTax(request: SdltCalculationRequest)
                                (implicit hc: HeaderCarrier): Future[CalculationResponse] =
@@ -43,7 +44,7 @@ class SdltCalculationConnector @Inject()(val http: HttpClientV2,
       }
       .recoverWith {
         case e: UpstreamErrorResponse =>
-          logger.error(s"[SdltCalculationConnector][calculateStampDutyLandTax] upstream error: ${e.statusCode}", e)
+          logger.error(s"[SdltCalculationConnector][calculateStampDutyLandTax] sdltc returned an error: ${e.message}", e)
           Future.failed(e)
         case e =>
           logger.error("[SdltCalculationConnector][calculateStampDutyLandTax] unexpected error", e)
