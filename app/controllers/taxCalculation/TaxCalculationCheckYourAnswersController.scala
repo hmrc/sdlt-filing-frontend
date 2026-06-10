@@ -136,7 +136,7 @@ class TaxCalculationCheckYourAnswersController @Inject()(
           }
       }
   }
-  
+
   private def renderForFlow(userAnswers: UserAnswers, flow: TaxCalculationFlow)(implicit request: DataRequest[?]): Future[Result] =
     flow match {
       case FreeholdTaxCalculated | LeaseholdTaxCalculated =>
@@ -228,7 +228,19 @@ class TaxCalculationCheckYourAnswersController @Inject()(
           FreeholdSelfAssessedTotalAmountDueSummary.row(Some(ua)),
           FreeholdSelfAssessedDoesAmountIncludePenaltiesSummary.row(Some(ua))
         )
-      case _ => Nil
+      case Some(LeaseholdTaxCalculated) =>
+        Seq(
+          LeaseholdTaxCalculatedPremiumPayableSummary.row(result),
+          LeaseholdTaxCalculatedNpvSummary.row(result),
+          Some(CalculatedSdltDueSummary.row(result.totalTax.toString)),
+          Some(LeaseholdTaxCalculatedSelfAssessedAmountSummary.row(Some(ua))),
+          Some(PenaltiesDueSummary.row(Some(ua), timeMachine)),
+          Some(LeaseholdTaxCalculatedTotalAmountDueSummary.row(Some(ua))),
+          Some(LeaseholdTaxCalculatedDoesAmountIncludePenaltiesSummary.row(Some(ua)))
+        ).flatten
+      case _ =>
+        logger.error(s"[TaxCalculationCheckYourAnswersController][buildRowResults]: Failed to match tax calculation flow.")
+        Nil
     }
   }
 }

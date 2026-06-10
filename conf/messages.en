@@ -1547,6 +1547,9 @@ taxCalculation.leaseholdSelfAssessed.premiumPayable.error.maxValue = The tax due
 taxCalculation.leaseholdSelfAssessed.premiumPayable.error.invalidWholeNumber = Enter the tax due on the total premium payable in whole pounds
 taxCalculation.leaseholdSelfAssessed.premiumPayable.error.invalidNumeric = The tax due on the total premium payable must only include commas and numbers 0 to 9
 
+taxCalculation.leaseholdTaxCalculated.premiumPayable.checkYourAnswers               = Tax due on total premium payable
+taxCalculation.leaseholdTaxCalculated.taxDueOnNpv.checkYourAnswers                  = Tax due on NPV
+
 taxCalculation.confirm.effectiveDateOfTransaction.title                             = Confirm the effective date of the transaction
 taxCalculation.confirm.effectiveDateOfTransaction.heading                           = Confirm the effective date of the transaction
 taxCalculation.confirm.effectiveDateOfTransaction.p1                                = Before completing the tax calculation, you must confirm the effective date of the transaction. Changing this date may affect the amount of SDLT due and require you to update earlier answers in this return.
