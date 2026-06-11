@@ -1840,4 +1840,39 @@ class FullReturnSpec extends AnyFreeSpec with Matchers with EitherValues with Op
       }
     }
   }
+
+  "Transaction" - {
+
+    ".from" - {
+
+      "must map the reason for relief to its relief code" in {
+        val userAnswers = UserAnswers(
+          id = "test-session-id",
+          storn = "test-storn-123",
+          data = Json.obj(
+            "transactionCurrent" -> Json.obj(
+              "purchaserEligibleToClaimRelief" -> true,
+              "reasonForRelief" -> "09"
+            )
+          )
+        )
+
+        Transaction.from(userAnswers).futureValue.reliefReason mustBe Some("09")
+      }
+
+      "must leave the relief reason empty when none was selected" in {
+        val userAnswers = UserAnswers(
+          id = "test-session-id",
+          storn = "test-storn-123",
+          data = Json.obj(
+            "transactionCurrent" -> Json.obj(
+              "purchaserEligibleToClaimRelief" -> false
+            )
+          )
+        )
+
+        Transaction.from(userAnswers).futureValue.reliefReason mustBe None
+      }
+    }
+  }
 }

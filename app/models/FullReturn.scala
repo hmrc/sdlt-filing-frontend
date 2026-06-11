@@ -395,7 +395,7 @@ object Transaction {
       returnID = userAnswers.returnId,
       claimingRelief = if (transactionSessionQuestions.purchaserEligibleToClaimRelief.getOrElse(false)) Some("yes") else Some("no"),
       reliefAmount = transactionSessionQuestions.claimingPartialReliefAmount,
-      reliefReason = Some(transactionSessionQuestions.reasonForRelief.toString),
+      reliefReason = transactionSessionQuestions.reasonForRelief.map(_.toString),
       reliefSchemeNumber = transactionSessionQuestions.reasonForRelief match {
         case Some(PartExchange) => transactionSessionQuestions.transactionCisNumber
         case Some(CharitiesRelief) => transactionSessionQuestions.charityRegisteredNumber
