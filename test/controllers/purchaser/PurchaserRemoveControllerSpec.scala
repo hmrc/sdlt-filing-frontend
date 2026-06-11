@@ -24,6 +24,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaser.PurchaserOverviewRemovePage
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.mvc.Results.Redirect
 import play.api.test.FakeRequest
@@ -36,7 +37,8 @@ import scala.concurrent.Future
 class PurchaserRemoveControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new PurchaserRemoveFormProvider()
-  val form = formProvider()
+  implicit val messages: Messages = stubMessages()
+  val form = formProvider("Doe")
 
   lazy val purchaserRemoveRoute = controllers.purchaser.routes.PurchaserRemoveController.onPageLoad().url
 

@@ -24,6 +24,7 @@ import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaser.*
+import play.api.i18n.Messages
 import play.api.inject.*
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -42,7 +43,8 @@ class PurchaserConfirmIdentityControllerSpec extends SpecBase with MockitoSugar 
   lazy val purchaserConfirmIdentityCheckRoute = controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(CheckMode).url
 
   val formProvider = new PurchaserConfirmIdentityFormProvider()
-  val form = formProvider()
+  implicit val messages: Messages = stubMessages()
+  val form = formProvider("Doe")
 
   lazy val nameOfPurchaserRoute: String =
     controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode).url

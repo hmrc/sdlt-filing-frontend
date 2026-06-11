@@ -18,10 +18,13 @@ package forms.purchaser
 
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class IsPurchaserActingAsTrusteeFormProviderSpec extends BooleanFieldBehaviours {
 
-  val form = new IsPurchaserActingAsTrusteeFormProvider()()
+  implicit val messages: Messages = stubMessages()
+  val form = new IsPurchaserActingAsTrusteeFormProvider()("Doe")
 
   ".value" - {
 

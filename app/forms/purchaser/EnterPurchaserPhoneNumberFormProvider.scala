@@ -18,6 +18,7 @@ package forms.purchaser
 
 import forms.mappings.Mappings
 import play.api.data.Form
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
@@ -25,10 +26,10 @@ class EnterPurchaserPhoneNumberFormProvider @Inject() extends Mappings {
 
   private val formNumberRegex = "[A-Za-z0-9 \\~\\!\\@\\%\\&\\'\\(\\)\\*\\+,\\-\\.\\/\\:\\=\\?\\[\\]\\^\\_\\{\\}\\;]*"
 
-  def apply(): Form[String] =
+  def apply(purchaserName: String)(implicit messages: Messages): Form[String] =
     Form(
-      "value" -> text("purchaser.enterPhoneNumber.error.required")
-        .verifying(maxLength(14, "purchaser.enterPhoneNumber.error.length"))
-        .verifying(regexp(formNumberRegex, "purchaser.enterPhoneNumber.error.invalid"))
+      "value" -> text(messages("purchaser.enterPhoneNumber.error.required", purchaserName))
+        .verifying(maxLength(14, messages("purchaser.enterPhoneNumber.error.length", purchaserName)))
+        .verifying(regexp(formNumberRegex, messages("purchaser.enterPhoneNumber.error.invalid", purchaserName)))
     )
 }

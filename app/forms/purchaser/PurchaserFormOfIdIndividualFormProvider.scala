@@ -20,6 +20,7 @@ import forms.mappings.Mappings
 import models.purchaser.PurchaserFormOfIdIndividual
 import play.api.data.Form
 import play.api.data.Forms.*
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
@@ -31,14 +32,14 @@ class PurchaserFormOfIdIndividualFormProvider @Inject() extends Mappings {
   private val formIdNumberOrReferenceRegex = "[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"
   private val formCountryIssuedRegex = "[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"
 
-   def apply(): Form[PurchaserFormOfIdIndividual] = Form(
+   def apply(purchaserName: String)(implicit messages: Messages): Form[PurchaserFormOfIdIndividual] = Form(
      mapping(
-      "idNumberOrReference" -> text("purchaser.formOfIdIndividual.error.idNumberOrReference.required")
-        .verifying(maxLength(idNumberOrReferenceMaxLength, "purchaser.formOfIdIndividual.error.idNumberOrReference.length"))
-        .verifying(regexp(formIdNumberOrReferenceRegex, "purchaser.formOfIdIndividual.error.idNumberOrReference.invalid")),
+      "idNumberOrReference" -> text(messages("purchaser.formOfIdIndividual.error.idNumberOrReference.required", purchaserName))
+        .verifying(maxLength(idNumberOrReferenceMaxLength, messages("purchaser.formOfIdIndividual.error.idNumberOrReference.length", purchaserName)))
+        .verifying(regexp(formIdNumberOrReferenceRegex, messages("purchaser.formOfIdIndividual.error.idNumberOrReference.invalid", purchaserName))),
 
-       "countryIssued" -> text("purchaser.formOfIdIndividual.error.countryIssued.required")
-         .verifying(maxLength(countryIssuedMaxLength, "purchaser.formOfIdIndividual.error.countryIssued.length"))
-         .verifying(regexp(formCountryIssuedRegex, "purchaser.formOfIdIndividual.error.countryIssued.invalid"))
+       "countryIssued" -> text(messages("purchaser.formOfIdIndividual.error.countryIssued.required", purchaserName))
+         .verifying(maxLength(countryIssuedMaxLength, messages("purchaser.formOfIdIndividual.error.countryIssued.length", purchaserName)))
+         .verifying(regexp(formCountryIssuedRegex, messages("purchaser.formOfIdIndividual.error.countryIssued.invalid", purchaserName)))
     )(PurchaserFormOfIdIndividual.apply)(o => Some(Tuple.fromProductTyped(o))))
  }

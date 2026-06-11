@@ -18,13 +18,16 @@ package forms.purchaser
 
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class ConfirmChangeOfMainPurchaserFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "confirmChangeOfMainPurchaser.error.required"
   val invalidKey = "error.boolean"
 
-  val form = new ConfirmChangeOfMainPurchaserFormProvider()()
+  implicit val messages: Messages = stubMessages()
+  val form = new ConfirmChangeOfMainPurchaserFormProvider()("Doe")
 
   ".value" - {
 

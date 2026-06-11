@@ -26,6 +26,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaser.{PurchaserTypeOfCompanyPage, WhoIsMakingThePurchasePage}
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -80,7 +81,8 @@ class PurchaserTypeOfCompanyControllerSpec extends SpecBase with MockitoSugar {
   )
 
   val formProvider = new PurchaserTypeOfCompanyFormProvider()
-  val form = formProvider()
+  implicit val messages: Messages = stubMessages()
+  val form = formProvider("Doe")
 
   "PurchaserTypeOfCompany Controller" - {
 

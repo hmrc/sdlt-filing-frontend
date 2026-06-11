@@ -34,6 +34,7 @@ import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.purchaser.PurchaserFormOfIdIndividualView
 import models.purchaser.WhoIsMakingThePurchase
+import play.api.i18n.Messages
 
 import scala.concurrent.Future
 
@@ -42,7 +43,8 @@ class PurchaserFormOfIdIndividualControllerSpec extends SpecBase with MockitoSug
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new PurchaserFormOfIdIndividualFormProvider()
-  val form: Form[PurchaserFormOfIdIndividual] = formProvider()
+  implicit val messages: Messages = stubMessages()
+  val form: Form[PurchaserFormOfIdIndividual] = formProvider("Smith")
 
   lazy val purchaserFormOfIdIndividualRoute: String = controllers.purchaser.routes.PurchaserFormOfIdIndividualController.onPageLoad(NormalMode).url
 
@@ -206,7 +208,6 @@ class PurchaserFormOfIdIndividualControllerSpec extends SpecBase with MockitoSug
         contentAsString(result) mustEqual view(boundForm, NormalMode, "John Smith")(request, messages(application)).toString
       }
     }
-
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()

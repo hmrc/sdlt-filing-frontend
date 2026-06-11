@@ -53,9 +53,9 @@ class PurchaserDateOfBirthController @Inject()(
        case None => Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode))
 
        case Some(value) =>
-         val purchaserName:String = value.fullName
+         val purchaserName: String = value.fullName
          
-         val form = formProvider()
+         val form = formProvider(purchaserName)
 
          val preparedForm = request.userAnswers.get(PurchaserDateOfBirthPage) match {
            case None => form
@@ -78,9 +78,9 @@ class PurchaserDateOfBirthController @Inject()(
         case None => Future.successful(Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)))
 
         case Some(value) =>
-          val purchaserName:String = value.fullName
+          val purchaserName: String = value.fullName
 
-          val form = formProvider()
+          val form = formProvider(purchaserName)
 
           form.bindFromRequest().fold(
             formWithErrors =>

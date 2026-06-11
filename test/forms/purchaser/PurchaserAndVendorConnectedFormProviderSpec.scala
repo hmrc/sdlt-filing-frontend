@@ -18,10 +18,13 @@ package forms.purchaser
 
 import forms.behaviours.OptionFieldBehaviours
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class PurchaserAndVendorConnectedFormProviderSpec extends OptionFieldBehaviours {
 
-  val form = new PurchaserAndVendorConnectedFormProvider()()
+  implicit val messages: Messages = stubMessages()
+  val form = new PurchaserAndVendorConnectedFormProvider()("Doe")
 
   ".value" - {
 

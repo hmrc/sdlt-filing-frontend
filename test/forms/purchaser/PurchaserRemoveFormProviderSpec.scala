@@ -19,10 +19,13 @@ package forms.purchaser
 import forms.behaviours.StringFieldBehaviours
 import models.purchaser.PurchaserRemove
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class PurchaserRemoveFormProviderSpec extends StringFieldBehaviours {
 
-  val form = new PurchaserRemoveFormProvider()()
+  implicit val messages: Messages = stubMessages()
+  val form = new PurchaserRemoveFormProvider()("Doe")
 
   ".value" - {
 

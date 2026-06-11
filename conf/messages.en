@@ -495,7 +495,7 @@ vendorAgent.removeVendorAgent.change.hidden                                     
 
 # Purchaser Messages
 
-purchaser.addPurchaserPhoneNumber.error.required                                    = Please select an option
+purchaser.addPurchaserPhoneNumber.error.required                                    = Select yes to add a phone number for {0}
 purchaser.addPurchaserPhoneNumber.title                                             = Do you want to add a phone number for the purchaser? - About the purchaser
 purchaser.addPurchaserPhoneNumber.heading                                           = Do you want to add a phone number for {0}?
 purchaser.addPurchaserPhoneNumber.hint                                              = We’ll only use this to contact {0} about this return
@@ -529,7 +529,7 @@ purchaser.confirmIdentity.partnershipUniqueTaxpayerReference                    
 purchaser.confirmIdentity.confirmIdentityDivider                                    = or
 purchaser.confirmIdentity.anotherFormOfId                                           = Another form of ID
 purchaser.confirmIdentity.checkYourAnswersLabel                                     = Form of ID
-purchaser.confirmIdentity.error.required                                            = Please select what information can you provide about the purchaser
+purchaser.confirmIdentity.error.required                                            = Select the form of ID you can provide about {0} 
 purchaser.confirmIdentity.change.hidden                                             = Purchaser information
 
 purchaser.confirmNameOfPurchaser.title                                              = Is this the name of the purchaser? - About the purchaser
@@ -543,17 +543,17 @@ purchaser.corporationTaxUTR.p                                                   
 purchaser.corporationTaxUTR.h2                                                      = What is {0}’s Corporation Tax UTR?
 purchaser.corporationTaxUTR.hint                                                    = Their UTR should be 10 digits long
 purchaser.corporationTaxUTR.checkYourAnswersLabel                                   = UTR
-purchaser.corporationTaxUTR.error.required                                          = Enter Corporation Tax Unique Taxpayer Reference (UTR)
+purchaser.corporationTaxUTR.error.required                                          = Enter {0}’s Corporation Tax Unique Taxpayer Reference
 purchaser.corporationTaxUTR.error.length                                            = Corporation Tax Unique Taxpayer Reference (UTR) must be 10 characters
-purchaser.corporationTaxUTR.error.regex.invalid                                     = Enter a valid UTR
-purchaser.corporationTaxUTR.error.invalid                                           = Enter a valid UTR
+purchaser.corporationTaxUTR.error.regex.invalid                                     = {0}’s Corporation Tax Unique Taxpayer Reference must only include numbers 0 to 9
+purchaser.corporationTaxUTR.error.invalid                                           = Enter {0}’s Corporation Tax Unique Taxpayer Reference in the correct format
 purchaser.corporationTaxUTR.change.hidden                                           = UTR
 
 purchaser.dateOfBirth.title                                                         = What is the purchaser’s date of birth? - About the purchaser
 purchaser.dateOfBirth.heading                                                       = What is {0}’s date of birth?
 purchaser.dateOfBirth.hint                                                          = For example, 27 3 1980
 purchaser.dateOfBirth.checkYourAnswersLabel                                         = Date of birth
-purchaser.dateOfBirth.error.required.all                                            = Enter the date of birth
+purchaser.dateOfBirth.error.required.all                                            = Enter {0}’s date of birth
 purchaser.dateOfBirth.error.required.two                                            = The date must include {0} and {1}
 purchaser.dateOfBirth.error.required                                                = The date must include {0}
 purchaser.dateOfBirth.error.invalid                                                 = Enter a valid date
@@ -564,14 +564,15 @@ purchaser.doesPurchaserHaveNI.title                                             
 purchaser.doesPurchaserHaveNI.heading                                               = Does {0} have a National Insurance number?
 purchaser.doesPurchaserHaveNI.checkYourAnswersLabel                                 = Does {0} have a National Insurance number?
 purchaser.doesPurchaserHaveNI.change.hidden                                         = Purchaser National Insurance number
-purchaser.doesPurchaserHaveNI.error.required                                        = Please select an option
+purchaser.doesPurchaserHaveNI.error.required                                        = Select yes if {0} has a National Insurance number
 
 purchaser.enterPhoneNumber.title                                                    = What is the purchaser’s phone number? - About the purchaser
 purchaser.enterPhoneNumber.heading                                                  = What is {0}’s phone number?
 purchaser.enterPhoneNumber.hint                                                     = For international numbers include the country code, like 0049 for Germany (+49 on mobile)
 purchaser.enterPhoneNumber.checkYourAnswersLabel                                    = Contact number
-purchaser.enterPhoneNumber.error.required                                           = Please enter a value
-purchaser.enterPhoneNumber.error.length                                             = The phone number must be 14 characters or less
+purchaser.enterPhoneNumber.error.required                                           = Enter {0}’s phone number
+purchaser.enterPhoneNumber.error.invalid                                            = {0}’s phone number must only include numbers 0 to 9, brackets, dashes, hyphens, plus signs and spaces
+purchaser.enterPhoneNumber.error.length                                             = {0}’s phone number must be 14 characters or fewer, not including brackets, dashes, hyphens and spaces
 purchaser.enterPhoneNumber.change.hidden                                            = What is the purchaser’s phone number?
 purchaser.enterPhoneNumber.change.hidden                                            = Purchaser contact number
 
@@ -588,12 +589,12 @@ purchaser.formOfIdIndividual.p3                                                 
 purchaser.formOfIdIndividual.idNumberOrReference                                    = ID number or reference
 purchaser.formOfIdIndividual.countryIssued                                          = Country of issue
 purchaser.formOfIdIndividual.checkYourAnswersLabel                                  = ID and country of issue
-purchaser.formOfIdIndividual.error.idNumberOrReference.required                     = Enter ID number or reference
-purchaser.formOfIdIndividual.error.idNumberOrReference.length                       = ID number or reference must be 14 characters or less
-purchaser.formOfIdIndividual.error.idNumberOrReference.invalid                      = ID number or reference is invalid
-purchaser.formOfIdIndividual.error.countryIssued.required                           = Enter country of issue
-purchaser.formOfIdIndividual.error.countryIssued.length                             = Country of issue must be 28 characters or less
-purchaser.formOfIdIndividual.error.countryIssued.invalid                            = Country of issue is invalid
+purchaser.formOfIdIndividual.error.idNumberOrReference.required                     = Enter {0}’s ID number or reference
+purchaser.formOfIdIndividual.error.idNumberOrReference.length                       = {0}’s ID number or reference must be 14 characters or fewer
+purchaser.formOfIdIndividual.error.idNumberOrReference.invalid                      = {0}’s ID number or reference must only include letters a to z, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, numbers 0-9, question marks and spaces
+purchaser.formOfIdIndividual.error.countryIssued.required                           = Enter the country of issue for {0}’s ID
+purchaser.formOfIdIndividual.error.countryIssued.length                             = The country of issue for {0}’s ID must be 28 characters or fewer
+purchaser.formOfIdIndividual.error.countryIssued.invalid                            = The country of issue for {0}’s ID must only include letters a to z, apostrophes, hyphens and spaces
 purchaser.formOfIdIndividual.idNumberOrReference.change.hidden                      = ID number or reference
 purchaser.formOfIdIndividual.countryIssued.change.hidden                            = Country of issue
 
@@ -607,17 +608,25 @@ purchaser.individual.nameOfThePurchaser.surname                                 
 purchaser.nameOfThePurchaser.checkYourAnswersLabel                                  = Name
 purchaser.nameOfThePurchaser.change.hidden                                          = Purchaser name
 
-purchaser.name.form.regex.error                                                     = Invalid Error
+purchaser.individual.error.length.firstName                                         = The purchaser’s first name must be 14 characters or fewer
+purchaser.individual.error.length.middleName                                        = The purchaser’s middle name must be 14 characters or fewer
+purchaser.individual.error.length.lastName                                          = The purchaser’s last name must be 56 characters or fewer
+purchaser.company.error.length.name                                                 = The company’s name must be 56 characters or fewer
+purchaser.name.form.regex.error.firstName                                           = The purchaser’s first name must only include letters a to z, apostrophes, hyphens and spaces
+purchaser.name.form.regex.error.middleName                                          = The purchaser’s middle name must only include letters a to z, apostrophes, hyphens and spaces
+purchaser.name.form.regex.error.lastName                                            = The purchaser’s last name must only include letters a to z, apostrophes, hyphens and spaces
+purchaser.name.form.regex.error.company                                             = The company’s name must only include letters a to z, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, numbers 0-9, question marks and spaces
 purchaser.name.form.no.input.error                                                  = Nothing has been added
-purchaser.name.error.required                                                       = Nothing has been provided
+purchaser.name.error.required                                                       = Enter the purchaser’s last name
+purchaser.company.error.required                                                    = Enter the company’s name
 
 purchaser.nationalInsurance.title                                                   = What is the purchaser’s National Insurance number? - About the purchaser
 purchaser.nationalInsurance.heading                                                 = What is {0}’s National Insurance number?
 purchaser.nationalInsurance.hint                                                    = It’s on their National Insurance card, benefit letter, payslip or P60 - for example, QQ 12 34 56 C
 purchaser.nationalInsurance.checkYourAnswersLabel                                   = National Insurance number
-purchaser.nationalInsurance.error.required                                          = Please enter the National Insurance number
+purchaser.nationalInsurance.error.required                                          = Enter {0}’s National Insurance number
 purchaser.nationalInsurance.error.length                                            = National insurance number must be {0} characters or less
-purchaser.nationalInsurance.error.invalid                                           = Please enter a valid National Insurance number
+purchaser.nationalInsurance.error.invalid                                           = Enter {0}’s National Insurance number in the correct format
 purchaser.nationalInsurance.change.hidden                                           = What is the purchaser’s National Insurance number?
 
 purchaser.partnershipUtr.title                                                      = What is the purchaser’s Partnership Unique Taxpayer Reference (UTR)? - About the purchaser
@@ -626,21 +635,20 @@ purchaser.partnershipUtr.hint                                                   
 purchaser.partnershipUtr.p1                                                         = You can find it in {0}’s Business Tax Account, the HMRC app or on tax returns and other documents from HMRC. It might be called ‘reference’, ‘UTR’ or ‘official use’.
 purchaser.partnershipUtr.h2                                                         = What is {0}’s Partnership UTR?
 purchaser.partnershipUtr.checkYourAnswersLabel                                      = Purchaser’s partnership UTR
-purchaser.partnershipUtr.error.required                                             = Please enter the purchaser’s partnership UTR
+purchaser.partnershipUtr.error.required                                             = Enter {0}’s Partnership Unique Taxpayer Reference
 purchaser.partnershipUtr.error.length                                               = The purchaser’s partnership UTR should be 10 digits long
-purchaser.partnershipUtr.error.invalid                                              = Please enter a valid UTR
-purchaser.partnershipUtr.error.regex.invalid                                        = The UTR should only contain numbers
+purchaser.partnershipUtr.error.invalid                                              = Enter {0}’s Partnership Unique Taxpayer Reference in the correct format
+purchaser.partnershipUtr.error.regex.invalid                                        = {0}’s Partnership Unique Taxpayer Reference must only include numbers 0 to 9
 purchaser.partnershipUtr.change.hidden                                              = Purchaser’s partnership UTR
 
 purchaser.registrationNumber.title                                                  = What is the purchaser’s VAT registration number? - About the purchaser
 purchaser.registrationNumber.heading                                                = What is {0}’s VAT registration number?
 purchaser.registrationNumber.checkYourAnswersLabel                                  = VAT Registration Number
-purchaser.registrationNumber.error.required                                         = Enter VAT Registration Number
+purchaser.registrationNumber.error.required                                         = Enter {0}’s VAT registration number
 purchaser.registrationNumber.error.length                                           = Registration Number must be 9 digits
 purchaser.registrationNumber.change.hidden                                          = VAT Registration Number
-purchaser.registrationNumber.error.regex.error                                      = Numeric only
-purchaser.registrationNumber.error.regex.invalid                                    = Numeric only
-purchaser.registrationNumber.error.invalid                                          = Registration Number is invalid
+purchaser.registrationNumber.error.regex.invalid                                    = {0}’s VAT registration number must only include numbers 0 to 9
+purchaser.registrationNumber.error.invalid                                          = Enter {0}’s VAT registration number in the correct format
 purchaser.registrationNumber.hint                                                   = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate
 
 purchaser.whoIsMakingThePurchase.title                                              = Who is making the purchase? - About the purchaser
@@ -653,7 +661,7 @@ purchaser.whoIsMakingThePurchase.Individual.checkYourAnswersLabel               
 
 purchaser.whoIsMakingThePurchase.Individual.hintText                                = This means any person liable to pay Stamp Duty Land Tax (SDLT)
 purchaser.whoIsMakingThePurchase.checkYourAnswersLabel                              = Type of purchaser
-purchaser.whoIsMakingThePurchase.error.required                                     = Select an answer
+purchaser.whoIsMakingThePurchase.error.required                                     = Select who is making the purchase
 purchaser.whoIsMakingThePurchase.change.hidden                                      = Type of purchaser
 
 purchaser.companyFormOfId.title                                                     = Provide a form of ID for the purchaser - About the purchaser
@@ -665,12 +673,12 @@ purchaser.companyFormOfId.li3                                                   
 purchaser.companyFormOfId.referenceId                                               = ID number or reference
 purchaser.companyFormOfId.countryIssued                                             = Country of issue
 purchaser.companyFormOfId.checkYourAnswersLabel                                     = ID and country of issue
-purchaser.companyFormOfId.error.referenceId.required                                = Enter ID number or reference
-purchaser.companyFormOfId.error.referenceId.length                                  = ID number or reference must be 14 characters or less
-purchaser.companyFormOfId.error.referenceId.invalid                                 = ID number or reference is invalid
-purchaser.companyFormOfId.error.countryIssued.required                              = Enter country of issue
-purchaser.companyFormOfId.error.countryIssued.length                                = Country of issue must be 28 characters or less
-purchaser.companyFormOfId.error.countryIssued.invalid                               = Country of issue is invalid
+purchaser.companyFormOfId.error.referenceId.required                                = Enter {0}’s ID number or reference
+purchaser.companyFormOfId.error.referenceId.length                                  = {0}’s ID number or reference must be 14 characters or fewer
+purchaser.companyFormOfId.error.referenceId.invalid                                 = {0}’s ID number or reference must only include letters a to z, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, numbers 0-9, question marks and spaces
+purchaser.companyFormOfId.error.countryIssued.required                              = Enter the country of issue for {0}’s ID
+purchaser.companyFormOfId.error.countryIssued.length                                = The country of issue for {0}’s ID must be 28 characters or fewer
+purchaser.companyFormOfId.error.countryIssued.invalid                               = The country of issue for {0}’s ID must only include letters a to z, apostrophes, hyphens and spaces
 purchaser.companyFormOfId.referenceId.change.hidden                                 = ID number or reference
 purchaser.companyFormOfId.countryIssued.change.hidden                               = Country of issue
 
@@ -693,20 +701,20 @@ purchaser.purchaserTypeOfCompany.superannuationOrPensionFund                    
 purchaser.purchaserTypeOfCompany.unincorporatedBuilder                              = 01 - Unincorporated builder
 purchaser.purchaserTypeOfCompany.unincorporatedSoleTrader                           = 02 - Unincorporated sole trader other than a builder
 purchaser.purchaserTypeOfCompany.checkYourAnswersLabel                              = Type of company
-purchaser.purchaserTypeOfCompany.error.required                                     = Select type of company
+purchaser.purchaserTypeOfCompany.error.required                                     = Select up to 4 types of company for {0}
 purchaser.purchaserTypeOfCompany.change.hidden                                      = Type of company
 
 purchaser.purchaserAndVendorConnected.title                                         = Are the purchaser and the vendor connected? - About the purchaser
 purchaser.purchaserAndVendorConnected.heading                                       = Are {0} and the vendor connected?
 purchaser.purchaserAndVendorConnected.checkYourAnswersLabel                         = Are {0} and the vendor connected?
-purchaser.purchaserAndVendorConnected.error.required                                = Please select an option
+purchaser.purchaserAndVendorConnected.error.required                                = Select yes if {0} and the vendor are connected
 purchaser.purchaserAndVendorConnected.change.hidden                                 = Purchaser and vendor connected yes or no
 purchaser.purchaserAndVendorConnected.hint                                          = A purchaser and vendor can be connected in different ways, like a marriage, civil partnership, family link or business interest
 
 purchaser.purchaserRemove.title                                                     = Are you sure you want to remove the purchaser? – About the purchaser
 purchaser.purchaserRemove.headingSingle                                             = Are you sure you want to remove {0}?
 purchaser.purchaserRemove.remove                                                    = Remove 2
-purchaser.purchaserRemove.error.required                                            = Select purchaserRemove
+purchaser.purchaserRemove.error.required                                            = Select yes if you want to remove {0}
 purchaser.purchaserRemove.change.hidden                                             = PurchaserRemove
 purchaser.purchaserRemove.double.heading                                            = Removing {0}
 purchaser.purchaserRemove.double.keep                                               = Keep {0}
@@ -722,12 +730,12 @@ purchaser.purchaserRemove.multi.subheading                                      
 purchaser.isPurchaserActingAsTrustee.title                                          = Is the purchaser acting as a trustee? - About the purchaser
 purchaser.isPurchaserActingAsTrustee.heading                                        = Is {0} acting as a trustee?
 purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel                          = Is {0} acting as a trustee?
-purchaser.isPurchaserActingAsTrustee.error.required                                 = Please select Yes or No
+purchaser.isPurchaserActingAsTrustee.error.required                                 = Select yes if {0} is acting as a trustee
 purchaser.isPurchaserActingAsTrustee.change.hidden                                  = Purchaser acting as trustee yes or no
 
 confirmChangeOfMainPurchaser.title = Are you sure you want to change purchaser 1? - About the purchaser
 confirmChangeOfMainPurchaser.heading = Are you sure you want to select {0} as purchaser 1?
-confirmChangeOfMainPurchaser.error.required = Select Yes or No
+confirmChangeOfMainPurchaser.error.required = Select yes if you want to select {0} as purchaser 1
 confirmChangeOfMainPurchaser.change.hidden = Are you sure you want to change purchaser 1?
 
 purchaser.confirmPurchaserAddress.title                                             = Confirm the purchaser’s address - About the purchaser
@@ -735,7 +743,7 @@ purchaser.confirmPurchaserAddress.heading                                       
 purchaser.confirmPurchaserAddress.confirmAddress                                    = Confirm address
 purchaser.confirmPurchaserAddress.isThisTheLand                                     = Is this {0}’s address?
 purchaser.confirmPurchaserAddress.checkYourAnswersLabel                             = Confirm the address of the land or property
-purchaser.confirmPurchaserAddress.error.required                                    = Select Yes or No
+purchaser.confirmPurchaserAddress.error.required                                    = Select yes if the purchaser’s address is correct
 purchaser.confirmPurchaserAddress.change.hidden                                     = confirmPurchaserAddress
 purchaser.confirmPurchaserAddress.missing                                           = Enter purchaser's address
 
@@ -744,7 +752,7 @@ purchaser.purchaserOverview.title                                               
 purchaser.purchaserOverview.heading                                                 = Purchaser Overview
 purchaser.purchaserOverview.noPurchaser.subHeadingNoPurchasers                      = Do you need to add another purchaser?
 purchaser.purchaserOverview.limitReached                                            = To add a new purchaser, you must remove a purchaser or vendor
-purchaser.purchaserOverview.error.required                                          = Please select an option
+purchaser.purchaserOverview.error.required                                          = Select yes if you need to add another purchaser
 purchaser.purchaserOverview.noPurchaser.button                                      = Add a purchaser
 purchaser.purchaserOverview.summaryInfo.text                                        = Showing <b>{0}</b> to <b>{1}</b> of <b>{2}</b> records
 purchaser.purchaserOverview.noPurchaser.p1                                          = You have no purchasers listed. You must add a purchaser to complete this return.
@@ -758,7 +766,7 @@ purchaser.changePurchaserOne.title                                              
 purchaser.changePurchaserOne.heading                                                = Change purchaser 1
 purchaser.changePurchaserOne.subheading                                             = Who do you want to select as purchaser 1?
 purchaser.changePurchaserOne.paragraph                                              = Purchaser 1 is currently {0}. If you select a new purchaser 1, you will need to update their details.
-purchaser.changePurchaserOne.error.required                                         = Please select a purchaser
+purchaser.changePurchaserOne.error.required                                         = Select who you want to be purchaser 1
 
 # Purchaser Agent
 purchaserAgent.overview.title                                                       = Purchaser’s agent overview - About the purchaser’s agent

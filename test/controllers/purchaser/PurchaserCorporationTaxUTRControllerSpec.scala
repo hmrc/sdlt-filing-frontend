@@ -26,6 +26,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaser.{NameOfPurchaserPage, PurchaserConfirmIdentityPage, PurchaserUTRPage, WhoIsMakingThePurchasePage}
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -40,7 +41,8 @@ class PurchaserCorporationTaxUTRControllerSpec extends SpecBase with MockitoSuga
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new PurchaserCorporationTaxUTRFormProvider()
-  val form = formProvider()
+  implicit val messages: Messages = stubMessages()
+  val form = formProvider("Company Co")
 
   lazy val purchaserCorporationTaxUTRRoute: String = controllers.purchaser.routes.PurchaserCorporationTaxUTRController.onPageLoad(NormalMode).url
 

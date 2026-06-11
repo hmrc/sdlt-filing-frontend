@@ -19,10 +19,13 @@ package forms.purchaser
 import forms.behaviours.OptionFieldBehaviours
 import models.purchaser.PurchaserConfirmIdentity
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class PurchaserConfirmIdentityFormProviderSpec extends OptionFieldBehaviours {
 
-  val form = new PurchaserConfirmIdentityFormProvider()()
+  implicit val messages: Messages = stubMessages()
+  val form = new PurchaserConfirmIdentityFormProvider()("Doe")
 
   ".value" - {
 

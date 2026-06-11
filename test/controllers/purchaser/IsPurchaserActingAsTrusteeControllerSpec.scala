@@ -26,6 +26,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaser.{IsPurchaserActingAsTrusteePage, NameOfPurchaserPage}
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -42,7 +43,8 @@ class IsPurchaserActingAsTrusteeControllerSpec extends SpecBase with MockitoSuga
   lazy val isPurchaserActingAsTrusteeRoute = controllers.purchaser.routes.IsPurchaserActingAsTrusteeController.onPageLoad(NormalMode).url
 
   val formProvider = new IsPurchaserActingAsTrusteeFormProvider()
-  val form = formProvider()
+  implicit val messages: Messages = stubMessages()
+  val form = formProvider("Doe")
 
 
   "IsPurchaserActingAsTrustee Controller" - {

@@ -18,6 +18,8 @@ package forms.purchaser
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class NameOfPurchaserFormProviderSpec extends StringFieldBehaviours {
 
@@ -30,7 +32,8 @@ class NameOfPurchaserFormProviderSpec extends StringFieldBehaviours {
   val firstNameMaxLength = 14
   val middleNameMaxLength = 14
 
-  val form = new NameOfPurchaserFormProvider()()
+  implicit val messages: Messages = stubMessages()
+  val form = new NameOfPurchaserFormProvider()("Doe")
 
   ".nameOfPurchaser" - {
 
