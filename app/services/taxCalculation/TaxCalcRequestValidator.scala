@@ -44,9 +44,9 @@ object TaxCalcRequestValidator {
       propertyType     <- PropertyTypes.fromCode(propertyCode).toRight(UnknownPropertyTypeError(propertyCode))
       effectiveDate    <- transaction.effectiveDate.toRight(MissingTransactionAnswerError("effectiveDate"))
       parsedDate       <- parseDate(effectiveDate).left.map(_ => InvalidDateError(effectiveDate))
-      premium          <- transaction.totalConsideration.toRight(MissingTransactionAnswerError("totalConsideration"))
       transDesc        <- transaction.transactionDescription.toRight(MissingTransactionAnswerError("transactionDescription"))
       holdingType      <- HoldingTypes.fromCode(transDesc).toRight(UnknownHoldingTypeError(transDesc))
+      premium          <- premiumFor(holdingType, transaction, fullReturn.lease)
       isLinkedRaw      <- transaction.isLinked.toRight(MissingTransactionAnswerError("isLinked"))
       leaseDetails     <- fullReturn.lease.fold(Right(None))(buildLeaseDetails(_, transaction, parsedDate))
       taxReliefDetails <- getTaxReliefDetails(transaction)
@@ -72,6 +72,12 @@ object TaxCalcRequestValidator {
 
   private def parseAmount(value: String): BigDecimal =
     BigDecimal(value.replace(",", ""))
+
+  private def premiumFor(holdingType: HoldingTypes.Value, transaction: Transaction, lease: Option[Lease]): Either[BuildRequestError, String] =
+    holdingType match {
+      case HoldingTypes.leasehold => lease.flatMap(_.totalPremiumPayable).toRight(MissingLeaseAnswerError("totalPremiumPayable"))
+      case _                      => transaction.totalConsideration.toRight(MissingTransactionAnswerError("totalConsideration"))
+    }
 
   private def getTaxReliefDetails(transaction: Transaction): Either[BuildRequestError, Option[TaxReliefDetails]] =
     transaction.claimingRelief.map(_.toUpperCase).toRight(MissingTransactionAnswerError("claimingRelief")).flatMap {

@@ -19,7 +19,7 @@ package controllers.taxCalculation.leaseholdTaxCalculated
 import base.SpecBase
 import connectors.SdltCalculationConnector
 import models.taxCalculation.{CalculationResponse, TaxCalculationFlow, TaxCalculationResult}
-import models.{FullReturn, Land, Residency, ReturnInfo, Transaction, UserAnswers}
+import models.{FullReturn, Land, Lease, Residency, ReturnInfo, Transaction, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -52,7 +52,14 @@ class LeaseholdCalculatedSdltDueControllerSpec extends SpecBase with MockitoSuga
           isLinked = Some("no")
         )),
         residency = Some(Residency(isNonUkResidents = Some("no"))),
-        land = Some(Seq(Land(landID = Some("L1"), propertyType = Some("01"), interestCreatedTransferred = Some("FPF"))))
+        land = Some(Seq(Land(landID = Some("L1"), propertyType = Some("01"), interestCreatedTransferred = Some("FPF")))),
+        lease = Some(Lease(
+          contractStartDate    = Some("2026-05-01"),
+          contractEndDate      = Some("2036-05-01"),
+          netPresentValue      = Some("100000"),
+          isAnnualRentOver1000 = Some("yes"),
+          totalPremiumPayable  = Some("300000")
+        ))
       )))
       .set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdTaxCalculated).success.value
 
