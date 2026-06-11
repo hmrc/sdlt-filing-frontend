@@ -60,7 +60,8 @@ class LeaseholdTaxCalculatedTotalAmountDueControllerSpec extends SpecBase with M
           contractStartDate    = Some(today.minusDays(60).toString),
           contractEndDate      = Some(today.plusYears(5).toString),
           netPresentValue      = Some("100000"),
-          isAnnualRentOver1000 = Some("yes")
+          isAnnualRentOver1000 = Some("yes"),
+          totalPremiumPayable  = Some("300000")
         ))
       )))
       .set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdTaxCalculated).success.value

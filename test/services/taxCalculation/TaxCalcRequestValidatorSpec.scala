@@ -53,7 +53,8 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
     consideration: String = "250000",
     npv: String = "100000",
     annualRentOver1000: Option[String] = Some("yes"),
-    startingRent: Option[String] = None
+    startingRent: Option[String] = None,
+    premium: Option[String] = Some("15000")
   ): FullReturn = FullReturn(
     stornId = "STORN", returnResourceRef = "REF",
     returnInfo = Some(ReturnInfo(mainLandID = Some("L1"))),
@@ -67,7 +68,7 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
     lease = Some(Lease(
       contractStartDate = Some(startDate), contractEndDate = Some(endDate),
       isAnnualRentOver1000 = annualRentOver1000, netPresentValue = Some(npv),
-      startingRent = startingRent
+      startingRent = startingRent, totalPremiumPayable = premium
     ))
   )
 
@@ -189,6 +190,24 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
       "must parse the declared NPV from netPresentValue" in {
         TaxCalcRequestValidator.buildRequest(userAnswersWith(leaseholdReturn(npv = "1,897")))
           .map(_.declaredNpv) mustBe Right(Some(BigDecimal(1897)))
+      }
+    }
+
+    "premium source" - {
+
+      "must use the lease premium for a grant of lease" in {
+        TaxCalcRequestValidator.buildRequest(userAnswersWith(leaseholdReturn(premium = Some("15,000"))))
+          .map(_.premium) mustBe Right(BigDecimal(15000))
+      }
+
+      "must fail when a grant of lease has no premium" in {
+        TaxCalcRequestValidator.buildRequest(userAnswersWith(leaseholdReturn(premium = None))) mustBe
+          Left(MissingLeaseAnswerError("totalPremiumPayable"))
+      }
+
+      "must use the transaction total consideration for a freehold" in {
+        TaxCalcRequestValidator.buildRequest(userAnswersWith(freeholdReturn(consideration = "300000")))
+          .map(_.premium) mustBe Right(BigDecimal(300000))
       }
     }
 
@@ -365,12 +384,12 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
       }
 
       "must fail when lease start date is missing" in {
-        val fr = leaseholdReturn().copy(lease = Some(Lease(contractEndDate = Some("2030-06-14"))))
+        val fr = leaseholdReturn().copy(lease = Some(Lease(contractEndDate = Some("2030-06-14"), totalPremiumPayable = Some("15000"))))
         TaxCalcRequestValidator.buildRequest(userAnswersWith(fr)) mustBe Left(MissingLeaseAnswerError("contractStartDate"))
       }
 
       "must fail when lease end date is missing" in {
-        val fr = leaseholdReturn().copy(lease = Some(Lease(contractStartDate = Some("2025-06-15"))))
+        val fr = leaseholdReturn().copy(lease = Some(Lease(contractStartDate = Some("2025-06-15"), totalPremiumPayable = Some("15000"))))
         TaxCalcRequestValidator.buildRequest(userAnswersWith(fr)) mustBe Left(MissingLeaseAnswerError("contractEndDate"))
       }
     }
