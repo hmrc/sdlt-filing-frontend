@@ -60,6 +60,7 @@ class TaxCalculationBeforeYouStartController @Inject()(
           case (None, Left(MissingFullReturnError)) => NoReturnReferenceController.onPageLoad()
           case (_,                               _) => ReturnTaskListController.onPageLoad()
         }
+        _ = logger.info(s"[TaxCalculationBeforeYouStartController][onPageLoad] returnId=${request.userAnswers.returnId.getOrElse("unknown")}: derived flow=$flow, redirecting to ${dest.url}")
         updated <- Future.fromTry {
           flow match {
             case Some(f) => request.userAnswers.set(TaxCalculationFlowPage, f)
