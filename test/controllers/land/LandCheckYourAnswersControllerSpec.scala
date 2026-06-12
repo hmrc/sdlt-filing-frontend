@@ -34,6 +34,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.checkAnswers.CheckAnswersService
+import services.crossflow.*
+import services.crossflow.fields.CrossFlowValidationService
 import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.govuk.SummaryListFluency
 
@@ -107,6 +109,32 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
     )
   )
 
+  private val authorityCodeFailure = CrossFlowFailure(
+    ruleId = "Cf-9a",
+    affects = ReturnSection.Land,
+    messageKey = "crossflow.land.Cf-9.welsh6996_6997.body",
+    inlineErrorKey = "crossflow.land.Cf-9.welsh6996_6997.inline",
+    targets = Seq(CrossFlowTarget(Pages.LandAuthorityCode, "value"))
+  )
+
+  private val postcodeFailure = CrossFlowFailure(
+    ruleId = "Cf-16",
+    affects = ReturnSection.Land,
+    messageKey = "crossflow.land.Cf-16.body",
+    inlineErrorKey = "crossflow.land.Cf-16.inline",
+    targets = Seq(CrossFlowTarget(Pages.LandPostcode, "value"))
+  )
+
+  private def crossFlowWithFailures(forPage: Map[PageId, Seq[CrossFlowFailure]]) =
+    new CrossFlowValidationService(Set.empty, Set.empty) {
+      override def failuresForPage(page: PageId, ua: UserAnswers): Seq[CrossFlowFailure] =
+        forPage.getOrElse(page, Nil)
+    }
+
+  private val crossFlowSilent = new CrossFlowValidationService(Set.empty, Set.empty) {
+    override def failuresForPage(page: PageId, ua: UserAnswers): Seq[CrossFlowFailure] = Nil
+  }
+
   "LandCheckYourAnswers Controller" - {
 
     "onPageLoad" - {
@@ -164,7 +192,10 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(crossFlowSilent)
+          )
           .build()
 
         running(application) {
@@ -268,7 +299,10 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(crossFlowSilent)
+          )
           .build()
 
         running(application) {
@@ -295,7 +329,10 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(crossFlowSilent)
+          )
           .build()
 
         running(application) {
@@ -321,7 +358,10 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(crossFlowSilent)
+          )
           .build()
 
         running(application) {
@@ -347,7 +387,10 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(crossFlowSilent)
+          )
           .build()
 
         running(application) {
@@ -372,7 +415,10 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(crossFlowSilent)
+          )
           .build()
 
         running(application) {
@@ -418,6 +464,95 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
           val result = route(application, request).value
 
           redirectLocation(result).value must include("about-the-land/add-area-of-land/change")
+        }
+      }
+
+      "must redirect to LocalAuthorityCode in CheckMode when cross-flow reports an authority-code failure for the session land" in {
+
+        val userAnswers = UserAnswers(
+          id = "12345",
+          returnId = Some("AB2346"),
+          storn = "TESTSTORN",
+          data = landCurrentData()
+        )
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val crossFlow = crossFlowWithFailures(Map(
+          Pages.LandAuthorityCode -> Seq(authorityCodeFailure)
+        ))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(crossFlow)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.land.routes.LocalAuthorityCodeController.onPageLoad(CheckMode).url
+        }
+      }
+
+      "must redirect to ConfirmLandOrPropertyAddress in CheckMode when cross-flow reports a postcode failure for the session land" in {
+
+        val userAnswers = UserAnswers(
+          id = "12345",
+          returnId = Some("AB2346"),
+          storn = "TESTSTORN",
+          data = landCurrentData()
+        )
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val crossFlow = crossFlowWithFailures(Map(
+          Pages.LandPostcode -> Seq(postcodeFailure)
+        ))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(crossFlow)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.land.routes.ConfirmLandOrPropertyAddressController.onPageLoad(CheckMode).url
+        }
+      }
+
+      "must render the CYA normally when cross-flow reports no failures for the session land" in {
+
+        val userAnswers = UserAnswers(
+          id = "12345",
+          returnId = Some("AB2346"),
+          storn = "TESTSTORN",
+          data = landCurrentData()
+        )
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(crossFlowSilent)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          contentAsString(result) must include("Check your answers")
         }
       }
 

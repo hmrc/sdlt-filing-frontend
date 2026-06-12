@@ -21,8 +21,8 @@ import models.UserAnswers
 
 class CrossFlowSpec extends SpecBase {
 
-  private val reliefTarget   = CrossFlowTarget(Pages.ReliefReason,  "value")
-  private val dateTarget     = CrossFlowTarget(Pages.EffectiveDate, "value")
+  private val reliefTarget = CrossFlowTarget(Pages.ReliefReason,  "value")
+  private val dateTarget   = CrossFlowTarget(Pages.EffectiveDate, "value")
 
   "PageId" - {
 
@@ -68,10 +68,11 @@ class CrossFlowSpec extends SpecBase {
 
     "must return only the targets matching the given page" in {
       val failure = CrossFlowFailure(
-        ruleId     = "R1",
-        affects    = ReturnSection.Transaction,
-        messageKey = "key",
-        targets    = Seq(reliefTarget, dateTarget)
+        ruleId         = "R1",
+        affects        = ReturnSection.Transaction,
+        messageKey     = "key",
+        inlineErrorKey = "key",
+        targets        = Seq(reliefTarget, dateTarget)
       )
 
       failure.targetsOn(Pages.ReliefReason) mustBe Seq(reliefTarget)
@@ -79,10 +80,11 @@ class CrossFlowSpec extends SpecBase {
 
     "must return an empty seq when no targets match the given page" in {
       val failure = CrossFlowFailure(
-        ruleId     = "R1",
-        affects    = ReturnSection.Transaction,
-        messageKey = "key",
-        targets    = Seq(reliefTarget)
+        ruleId         = "R1",
+        affects        = ReturnSection.Transaction,
+        messageKey     = "key",
+        inlineErrorKey = "key",
+        targets        = Seq(reliefTarget)
       )
 
       failure.targetsOn(Pages.EffectiveDate) mustBe empty
@@ -91,10 +93,11 @@ class CrossFlowSpec extends SpecBase {
     "must return every matching target when the same page appears more than once" in {
       val anotherReliefTarget = CrossFlowTarget(Pages.ReliefReason, "altField")
       val failure = CrossFlowFailure(
-        ruleId     = "R1",
-        affects    = ReturnSection.Transaction,
-        messageKey = "key",
-        targets    = Seq(reliefTarget, anotherReliefTarget, dateTarget)
+        ruleId         = "R1",
+        affects        = ReturnSection.Transaction,
+        messageKey     = "key",
+        inlineErrorKey = "key",
+        targets        = Seq(reliefTarget, anotherReliefTarget, dateTarget)
       )
 
       failure.targetsOn(Pages.ReliefReason) mustBe Seq(reliefTarget, anotherReliefTarget)
@@ -105,10 +108,11 @@ class CrossFlowSpec extends SpecBase {
 
     "must return true when at least one target matches the given page" in {
       val failure = CrossFlowFailure(
-        ruleId     = "R1",
-        affects    = ReturnSection.Transaction,
-        messageKey = "key",
-        targets    = Seq(reliefTarget, dateTarget)
+        ruleId         = "R1",
+        affects        = ReturnSection.Transaction,
+        messageKey     = "key",
+        inlineErrorKey = "key",
+        targets        = Seq(reliefTarget, dateTarget)
       )
 
       failure.appearsOn(Pages.ReliefReason) mustBe true
@@ -116,10 +120,11 @@ class CrossFlowSpec extends SpecBase {
 
     "must return false when no target matches the given page" in {
       val failure = CrossFlowFailure(
-        ruleId     = "R1",
-        affects    = ReturnSection.Transaction,
-        messageKey = "key",
-        targets    = Seq(reliefTarget)
+        ruleId         = "R1",
+        affects        = ReturnSection.Transaction,
+        messageKey     = "key",
+        inlineErrorKey = "key",
+        targets        = Seq(reliefTarget)
       )
 
       failure.appearsOn(Pages.EffectiveDate) mustBe false
@@ -127,10 +132,11 @@ class CrossFlowSpec extends SpecBase {
 
     "must return false when the failure has no targets" in {
       val failure = CrossFlowFailure(
-        ruleId     = "R1",
-        affects    = ReturnSection.Transaction,
-        messageKey = "key",
-        targets    = Nil
+        ruleId         = "R1",
+        affects        = ReturnSection.Transaction,
+        messageKey     = "key",
+        inlineErrorKey = "key",
+        targets        = Nil
       )
 
       failure.appearsOn(Pages.ReliefReason) mustBe false
@@ -240,13 +246,39 @@ class CrossFlowSpec extends SpecBase {
 
       rule.validate(emptyUserAnswers) mustBe Some(
         CrossFlowFailure(
-          ruleId     = "TEST",
-          affects    = ReturnSection.Transaction,
-          messageKey = "test.message",
-          targets    = Seq(reliefTarget),
-          args       = Nil
+          ruleId         = "TEST",
+          affects        = ReturnSection.Transaction,
+          messageKey     = "test.message",
+          inlineErrorKey = "test.message",
+          targets        = Seq(reliefTarget),
+          args           = Nil
         )
       )
+    }
+
+    "must default inlineErrorKey to messageKey when not overridden" in {
+      val rule = new TestRule {
+        protected def appliesTo(ua: UserAnswers) = true
+        protected def isValid(ua: UserAnswers)   = false
+      }
+
+      val failure = rule.validate(emptyUserAnswers).value
+
+      failure.inlineErrorKey mustBe failure.messageKey
+      failure.inlineErrorKey mustBe "test.message"
+    }
+
+    "must use the overridden inlineErrorKey when one is provided" in {
+      val rule = new TestRule {
+        protected def appliesTo(ua: UserAnswers)        = true
+        protected def isValid(ua: UserAnswers)          = false
+        protected override def inlineErrorKey: String   = "test.inline"
+      }
+
+      val failure = rule.validate(emptyUserAnswers).value
+
+      failure.messageKey     mustBe "test.message"
+      failure.inlineErrorKey mustBe "test.inline"
     }
 
     "must pass args through to the produced failure" in {

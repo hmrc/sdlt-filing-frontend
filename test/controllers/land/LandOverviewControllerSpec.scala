@@ -30,6 +30,8 @@ import repositories.SessionRepository
 import services.FullReturnService
 import services.land.PopulateLandService
 import views.html.land.LandOverviewView
+import services.crossflow.{CrossFlowFailure, CrossFlowTarget, Pages, ReturnSection}
+import services.crossflow.fields.CrossFlowValidationService
 
 import scala.concurrent.Future
 import scala.util.Success
@@ -323,6 +325,115 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           contentAsString(result) must include("Address 16")
+        }
+      }
+
+      "must redirect to LandAuthorityCodeMultiEntity when cross-flow reports land failures" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockFullReturnService.getFullReturn(any[GetReturnByRefRequest])(any(), any()))
+          .thenReturn(Future.successful(testFullReturn))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val authorityCodeFailure = CrossFlowFailure(
+          ruleId = "F17-6996-6997",
+          affects = ReturnSection.Land,
+          messageKey = "crossflow.land.authority.welsh6996_6997.beforeEffectiveDate",
+          inlineErrorKey = "crossflow.land.authority.welsh6996_6997.beforeEffectiveDate",
+          targets = Seq(CrossFlowTarget(Pages.LandAuthorityCode, "value"))
+        )
+
+        val crossFlow = new CrossFlowValidationService(Set.empty, Set.empty) {
+          override def landFailuresGrouped(ua: UserAnswers): Seq[(Land, Seq[CrossFlowFailure])] =
+            Seq((testLand, Seq(authorityCodeFailure)))
+        }
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(crossFlow)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, landOverviewRoute)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad().url
+        }
+      }
+
+      "must redirect to LandAuthorityCodeMultiEntity when cross-flow reports failures across multiple lands" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        val land2 = createLand("LND002", address = Some("Cardiff Castle"), landResourceRef = Some("LND-REF-002"))
+        val fullReturnMulti = FullReturn(stornId = testStorn, returnResourceRef = testReturnRef,
+          land = Some(Seq(testLand, land2)))
+
+        when(mockFullReturnService.getFullReturn(any[GetReturnByRefRequest])(any(), any()))
+          .thenReturn(Future.successful(fullReturnMulti))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val failure = CrossFlowFailure(
+          ruleId = "F17-6996-6997",
+          affects = ReturnSection.Land,
+          messageKey = "crossflow.land.authority.welsh6996_6997.beforeEffectiveDate",
+          inlineErrorKey = "crossflow.land.authority.welsh6996_6997.beforeEffectiveDate",
+          targets = Seq(CrossFlowTarget(Pages.LandAuthorityCode, "value"))
+        )
+
+        val crossFlow = new CrossFlowValidationService(Set.empty, Set.empty) {
+          override def landFailuresGrouped(ua: UserAnswers): Seq[(Land, Seq[CrossFlowFailure])] =
+            Seq((testLand, Seq(failure)), (land2, Seq(failure)))
+        }
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(crossFlow)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, landOverviewRoute)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad().url
+        }
+      }
+
+      "must render the overview normally when cross-flow reports no land failures" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockFullReturnService.getFullReturn(any[GetReturnByRefRequest])(any(), any()))
+          .thenReturn(Future.successful(testFullReturn))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val crossFlow = new CrossFlowValidationService(Set.empty, Set.empty) {
+          override def landFailuresGrouped(ua: UserAnswers): Seq[(Land, Seq[CrossFlowFailure])] = Nil
+        }
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(crossFlow)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, landOverviewRoute)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          contentAsString(result) must include("Baker Street")
         }
       }
     }

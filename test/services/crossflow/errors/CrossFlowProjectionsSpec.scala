@@ -19,14 +19,14 @@ package services.crossflow.errors
 import base.SpecBase
 import constants.FullReturnConstants.emptyFullReturn
 import models.transaction.ReasonForRelief
-import models.{Land, Transaction, UserAnswers}
+import models.{Land, Lease, Transaction, UserAnswers}
 import org.scalatest.matchers.must.Matchers
-import pages.transaction.{PurchaserEligibleToClaimReliefPage, ReasonForReliefPage, TransactionDateOfContractPage, TransactionEffectiveDatePage}
-import services.crossflow.errors.ReliefProjections.*
+import pages.transaction._
+import services.crossflow.errors.CrossFlowProjections.*
 
 import java.time.LocalDate
 
-class ReliefProjectionsSpec extends SpecBase with Matchers {
+class CrossFlowProjectionsSpec extends SpecBase with Matchers {
 
   private val date2024 = LocalDate.of(2024, 1, 15)
 
@@ -339,6 +339,18 @@ class ReliefProjectionsSpec extends SpecBase with Matchers {
 
   "Dates" - {
 
+    "must have the FTB relief start at 22/11/2017" in {
+      Dates.ftbStart mustBe LocalDate.of(2017, 11, 22)
+    }
+
+    "must have the FTB £625k cap window opening at 23/09/2022" in {
+      Dates.ftbCap625FromSept2022 mustBe LocalDate.of(2022, 9, 23)
+    }
+
+    "must have the FTB £500k cap reset at 01/04/2025" in {
+      Dates.ftbCap500FromApril2025 mustBe LocalDate.of(2025, 4, 1)
+    }
+
     "must have the F23-34/35 floor at 06/03/2013" in {
       Dates.reliefFloor2013 mustBe LocalDate.of(2013, 3, 6)
     }
@@ -363,6 +375,67 @@ class ReliefProjectionsSpec extends SpecBase with Matchers {
 
     "must have the F25 contract-date cutoff at 07/03/2024" in {
       Dates.mdrLatestContractDate mustBe LocalDate.of(2024, 3, 7)
+    }
+
+    "must have the Welsh Act effective date at 01/04/2018" in {
+      Dates.welshActEffective mustBe LocalDate.of(2018, 4, 1)
+    }
+
+    "must have the Welsh Act date at 17/12/2014" in {
+      Dates.welshActDate mustBe LocalDate.of(2014, 12, 17)
+    }
+
+    "must have the Scotland Act date at 01/05/2012" in {
+      Dates.scotlandActDate mustBe LocalDate.of(2012, 5, 1)
+    }
+
+    "must have the CR223 effective date at 01/04/2015" in {
+      Dates.cr223Effective mustBe LocalDate.of(2015, 4, 1)
+    }
+  }
+
+  "totalPremium" - {
+
+    "must return the lease's totalPremiumPayable when present" in {
+      val ua = emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(
+        lease = Some(Lease(totalPremiumPayable = Some("500000.00")))
+      )))
+
+      totalPremium(ua) mustBe Some(BigDecimal(500000))
+    }
+
+    "must parse decimal values" in {
+      val ua = emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(
+        lease = Some(Lease(totalPremiumPayable = Some("625000.50")))
+      )))
+
+      totalPremium(ua) mustBe Some(BigDecimal("625000.50"))
+    }
+
+    "must return None when there is no lease" in {
+      val ua = emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(lease = None)))
+
+      totalPremium(ua) mustBe None
+    }
+
+    "must return None when the lease has no totalPremiumPayable" in {
+      val ua = emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(
+        lease = Some(Lease(totalPremiumPayable = None))
+      )))
+
+      totalPremium(ua) mustBe None
+    }
+
+    "must return None when the value is unparseable" in {
+      val ua = emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(
+        lease = Some(Lease(totalPremiumPayable = Some("not-a-number")))
+      )))
+
+      totalPremium(ua) mustBe None
+    }
+
+    "must return None when there is no fullReturn at all" in {
+      totalPremium(emptyUserAnswers) mustBe None
     }
   }
 }

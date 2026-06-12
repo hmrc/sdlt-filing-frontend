@@ -22,9 +22,10 @@ import models.{GetReturnByRefRequest, Mode, NormalMode, UserAnswers}
 import pages.land.LandOverviewRemovePage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
 import repositories.SessionRepository
 import services.FullReturnService
+import services.crossflow.fields.CrossFlowValidationService
 import services.land.PopulateLandService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.Pagination
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -35,19 +36,20 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class LandOverviewController @Inject()(
+class LandOverviewController @Inject() (
                                          override val messagesApi: MessagesApi,
-                                         sessionRepository: SessionRepository,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         fullReturnService: FullReturnService,
-                                         formProvider: LandOverviewFormProvider,
-                                         populateLandService: PopulateLandService,
-                                         landPaginationHelper: LandPaginationHelper,
+                                         sessionRepository:        SessionRepository,
+                                         identify:                 IdentifierAction,
+                                         getData:                  DataRetrievalAction,
+                                         requireData:              DataRequiredAction,
+                                         fullReturnService:        FullReturnService,
+                                         formProvider:             LandOverviewFormProvider,
+                                         populateLandService:      PopulateLandService,
+                                         landPaginationHelper:     LandPaginationHelper,
+                                         crossFlow:                CrossFlowValidationService,
                                          val controllerComponents: MessagesControllerComponents,
-                                         view: LandOverviewView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
+                                         view:                     LandOverviewView
+                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
   val form = formProvider()
 
@@ -65,22 +67,24 @@ class LandOverviewController @Inject()(
             val userAnswers = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = request.userAnswers.storn)
             sessionRepository.set(userAnswers).map { _ =>
 
-              val landList = fullReturn.land.getOrElse(Seq.empty)
-              val errorCalc: Boolean = landList.length >= 99
+              crossFlowRedirect(userAnswers).getOrElse {
+                val landList = fullReturn.land.getOrElse(Seq.empty)
+                val errorCalc: Boolean = landList.length >= 99
 
-              landList match {
-                case Nil => Ok(view(None, None, None, postAction, form, NormalMode, errorCalc))
-                case lands =>
-                  landPaginationHelper.generateLandSummary(paginationIndex, lands, userAnswers)
-                    .fold(
-                      Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-                    ) { summary =>
-                      val numberOfPages: Int = landPaginationHelper.getNumberOfPages(lands)
-                      val pagination: Option[Pagination] = landPaginationHelper.generatePagination(paginationIndex, numberOfPages)
-                      val paginationText: Option[String] = landPaginationHelper.getPaginationInfoText(paginationIndex, lands)
-                      
-                      Ok(view(Some(summary), pagination, paginationText, postAction, form, NormalMode, errorCalc))
-                    }
+                landList match {
+                  case Nil => Ok(view(None, None, None, postAction, form, NormalMode, errorCalc))
+                  case lands =>
+                    landPaginationHelper.generateLandSummary(paginationIndex, lands, userAnswers)
+                      .fold(
+                        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+                      ) { summary =>
+                        val numberOfPages: Int = landPaginationHelper.getNumberOfPages(lands)
+                        val pagination: Option[Pagination] = landPaginationHelper.generatePagination(paginationIndex, numberOfPages)
+                        val paginationText: Option[String] = landPaginationHelper.getPaginationInfoText(paginationIndex, lands)
+
+                        Ok(view(Some(summary), pagination, paginationText, postAction, form, NormalMode, errorCalc))
+                      }
+                }
               }
             }
           } recover {
@@ -89,6 +93,15 @@ class LandOverviewController @Inject()(
             Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
         }
       }
+  }
+  
+  private def crossFlowRedirect(ua: UserAnswers): Option[Result] = {
+    val failures = crossFlow.landFailuresGrouped(ua)
+    if (failures.isEmpty) {
+      None
+    } else {
+      Some(Redirect(controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad()))
+    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -131,7 +144,7 @@ class LandOverviewController @Inject()(
         case Some(land) =>
           for {
             updatedAnswers <- Future.fromTry(populateLandService.populateLandInSession(land, request.userAnswers))
-            _ <- sessionRepository.set(updatedAnswers)
+            _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
 
         case None =>
@@ -143,7 +156,7 @@ class LandOverviewController @Inject()(
     (identify andThen getData andThen requireData).async { implicit request =>
       for {
         updatedAnswers <- Future.fromTry(request.userAnswers.set(LandOverviewRemovePage, landId))
-        _ <- sessionRepository.set(updatedAnswers)
+        _              <- sessionRepository.set(updatedAnswers)
       } yield Redirect(controllers.land.routes.RemoveLandController.onPageLoad())
     }
 }

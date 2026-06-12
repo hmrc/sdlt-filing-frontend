@@ -1927,3 +1927,80 @@ crossflow.relief.investmentZone.outsideWindow                                   
 crossflow.relief.seeding.dateTooEarly                                               = Seeding relief is only available for an effective date on or after 19 March 2025. Check the effective date or the relief reason.
 crossflow.relief.multipleDwellings.effectiveDateTooLate                             = Multiple Dwellings Relief is only available for an effective date before 1 June 2024. Check the effective date or the relief reason.
 crossflow.relief.multipleDwellings.contractDateTooLate                              = Multiple Dwellings Relief is only available for a contract dated before 7 March 2024. Check the contract date or the relief reason.
+
+crossflow.relief.firstTimeBuyer.over500k                                            = When claiming ‘32 - First Time Buyer’s Relief’, the total premium payable must be £500,000 or less and the effective date of the transaction must be between 22 November 2017 to 22 September 2022, or the same as or after 1 April 2025
+crossflow.relief.firstTimeBuyer.over625k                                            = When claiming ‘32 - First Time Buyer’s Relief’, the total premium payable must be £625,000 or less and the effective date of the transaction must be between 23 September 2022 and 31 March 2025
+
+# === Multi-entity (Cf-7a / Cf-7b / Cf-7c) ===
+
+
+crossflow.land.Cf-7.heading   = Update {0} local authority codes
+crossflow.land.Cf-7.p1        = One or more transaction details have changed. This means you must update some local authority codes.
+crossflow.land.multiEntity.p2 = Select ‘Change’ to update the local authority code for all the interests listed.
+
+# === Single-entity headings (per Cf-* rule id) ===
+
+crossflow.land.Cf-8.heading  = Update the local authority code
+crossflow.land.Cf-9a.heading = Update the local authority code
+crossflow.land.Cf-9b.heading = Update the local authority code
+crossflow.land.Cf-9c.heading = Update the local authority code
+crossflow.land.Cf-10.heading = Update the local authority code
+crossflow.land.Cf-11.heading = Update the local authority code
+crossflow.land.Cf-12.heading = Update the local authority code
+crossflow.land.Cf-13.heading = Update the local authority code
+crossflow.land.Cf-14.heading = Update the local authority code
+crossflow.land.Cf-15.heading = Update the local authority code
+crossflow.land.Cf-16.heading = Update the postcode
+
+
+# === Single-entity body paragraphs (sentence 1: why it's invalid) ===
+
+# Cf-8 — F17 regular Welsh codes, eff date on/after 01/04/2018
+crossflow.land.Cf-8.body = This local authority code is no longer recognised by SDLT when the effective date of the transaction is the same as or after 1 April 2018.
+
+# Cf-9 family — F17 6996/6997/6998/6999, eff date before 01/04/2018
+crossflow.land.Cf-9.welsh6996_6997.body = This local authority code cannot be used when the effective date of transaction is before 1 April 2018.
+crossflow.land.Cf-9.welsh6998.body      = This local authority code cannot be used when the effective date of transaction is before 1 April 2018.
+crossflow.land.Cf-9.welsh6999.body      = This local authority code cannot be used when the effective date of transaction is before 1 April 2018.
+
+# Cf-10 — F17 6998, contract date on/after 01/04/2018
+crossflow.land.Cf-10.body = This local authority code cannot be used when the date of contract is the same as or after 1 April 2018.
+
+# Cf-11 — F17 6999, contract date after 17/12/2014
+crossflow.land.Cf-11.body = This local authority code cannot be used when the date of contract is after 17 December 2014.
+
+# Cf-12 — F18 8998/8999, eff date before 01/04/2015
+crossflow.land.Cf-12.body = This local authority code cannot be used when the effective date of the transaction is before 1 April 2015.
+
+# Cf-13 — F18 8999, contract date on/after 01/05/2012
+crossflow.land.Cf-13.body = This local authority code cannot be used when the date of contract is the same as or after 1 May 2012.
+
+# Cf-14 — F18 8998, contract date on/after 01/04/2015
+crossflow.land.Cf-14.body = This local authority code cannot be used when the date of contract is the same as or after 1 April 2015.
+
+# Cf-15 — F18 Scottish codes, eff date on/after 01/04/2015
+crossflow.land.Cf-15.body = This local authority code is no longer recognised by SDLT when the effective date of the transaction is the same as or after 1 April 2015.
+
+# Cf-16 — F18 Scottish postcode, eff date on/after 01/04/2015
+crossflow.land.Cf-16.body = Areas of land or properties with a Scottish postcode are no longer recognised by SDLT when the effective date of the transaction is the same as or after 1 April 2015.
+
+# === Inline form errors (shown on the field itself, mid-flow) ===
+# These match the spec's "Error Message" wording — Entering this... means...
+
+crossflow.land.Cf-8.inline                = Entering this local authority code means the effective date of the transaction must be before 1 April 2018
+crossflow.land.Cf-9.welsh6996_6997.inline = Entering this local authority code means the effective date of the transaction must be the same as or after 1 April 2018
+crossflow.land.Cf-9.welsh6998.inline      = Entering this local authority code means the effective date of the transaction must be the same as or after 1 April 2018
+crossflow.land.Cf-9.welsh6999.inline      = Entering this local authority code means the effective date of the transaction must be the same as or after 1 April 2018
+crossflow.land.Cf-10.inline               = Entering this local authority code means the date of contract must be before 1 April 2018
+crossflow.land.Cf-11.inline               = Entering this local authority code means the date of contract must be the same as or before 17 December 2014
+crossflow.land.Cf-12.inline               = Entering this local authority code means the effective date of the transaction must be the same as or after 1 April 2015
+crossflow.land.Cf-13.inline               = Entering this local authority code means the date of contract must be before 1 May 2012
+crossflow.land.Cf-14.inline               = Entering this local authority code means the date of contract must be before 1 April 2015
+crossflow.land.Cf-15.inline               = Entering this local authority code means the effective date of the transaction must be before 1 April 2015
+crossflow.land.Cf-16.inline               = Entering this Scottish postcode means the effective date of the transaction must be before 1 April 2015
+
+
+# === Single-entity CTAs (sentence 2: what to do) ===
+
+crossflow.land.cta.enterDifferentCode     = Enter a different local authority code.
+crossflow.land.cta.enterDifferentPostcode = Enter a different postcode.

@@ -19,13 +19,15 @@ package controllers.land
 import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
 import models.land.{CreateLandRequest, LandSessionQuestions, LandTypeOfProperty, UpdateLandRequest}
-import models.{Land, ReturnVersionUpdateRequest, UserAnswers}
+import models.{CheckMode, Land, ReturnVersionUpdateRequest, UserAnswers}
 import pages.land.*
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, JsSuccess}
 import play.api.mvc.*
 import repositories.SessionRepository
 import services.checkAnswers.CheckAnswersService
+import services.crossflow.{CrossFlowFailure, Pages}
+import services.crossflow.fields.CrossFlowValidationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.land.*
@@ -36,17 +38,18 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class LandCheckYourAnswersController @Inject()(
-                                                override val messagesApi: MessagesApi,
-                                                identify: IdentifierAction,
-                                                getData: DataRetrievalAction,
-                                                requireData: DataRequiredAction,
-                                                sessionRepository: SessionRepository,
-                                                backendConnector: StampDutyLandTaxConnector,
-                                                checkAnswersService: CheckAnswersService,
-                                                val controllerComponents: MessagesControllerComponents,
-                                                view: LandCheckYourAnswersView
-                                              )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class LandCheckYourAnswersController @Inject() (
+                                                 override val messagesApi: MessagesApi,
+                                                 identify:                 IdentifierAction,
+                                                 getData:                  DataRetrievalAction,
+                                                 requireData:              DataRequiredAction,
+                                                 sessionRepository:        SessionRepository,
+                                                 backendConnector:         StampDutyLandTaxConnector,
+                                                 checkAnswersService:      CheckAnswersService,
+                                                 crossFlow:                CrossFlowValidationService,
+                                                 val controllerComponents: MessagesControllerComponents,
+                                                 view:                     LandCheckYourAnswersView
+                                               )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -55,24 +58,47 @@ class LandCheckYourAnswersController @Inject()(
       } yield {
 
         val isReturnIdEmpty = result.exists(_.returnId.isEmpty)
-        val isDataEmpty = result.exists(_.data.value.isEmpty)
-        val landDataEmpty = result.exists(ua => (ua.data \ "landCurrent").asOpt[JsObject].forall(_.values.isEmpty))
-        
+        val isDataEmpty     = result.exists(_.data.value.isEmpty)
+        val landDataEmpty   = result.exists(ua => (ua.data \ "landCurrent").asOpt[JsObject].forall(_.values.isEmpty))
+
         (isReturnIdEmpty, isDataEmpty, result, landDataEmpty) match {
-          case (true, _, _, _) => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-          case (_, true, _, _) => Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
+          case (true, _, _, _) =>
+            Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+
+          case (_, true, _, _) =>
+            Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
+
           case (_, _, Some(_), true) =>
             Redirect(controllers.land.routes.LandBeforeYouStartController.onPageLoad())
+
           case (_, _, Some(_), false) =>
-              val rowResults = buildSummaryList(request.userAnswers)
-              
-              checkAnswersService.redirectOrRender(rowResults) match {
-                case Left(call) => Redirect(call)
-                case Right(summaryList) => Ok(view(summaryList))
-              }
-          case (_, _, None, _) => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+            val rowResults = buildSummaryList(request.userAnswers)
+
+            checkAnswersService.redirectOrRender(rowResults) match {
+              case Left(call)         => Redirect(call)
+              case Right(summaryList) => Ok(view(summaryList))
+            }
+
+          case (_, _, None, _) =>
+            Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
         }
       }
+  }
+
+  /** Cross-flow failures attached to the session land's pages. */
+  private def failuresForSessionLand(ua: UserAnswers): Seq[CrossFlowFailure] = {
+    val authorityCodeFailures     = crossFlow.failuresForPage(Pages.LandAuthorityCode, ua)
+    val postcodeFailures = crossFlow.failuresForPage(Pages.LandPostcode, ua)
+    (authorityCodeFailures ++ postcodeFailures).distinct
+  }
+
+  /** Where the user goes to fix a given failure. */
+  private def redirectFor(failure: CrossFlowFailure): Call = {
+    val targetsPostcode = failure.targets.exists(_.page == Pages.LandPostcode)
+    if (targetsPostcode)
+      controllers.land.routes.ConfirmLandOrPropertyAddressController.onPageLoad(CheckMode)
+    else
+      controllers.land.routes.LocalAuthorityCodeController.onPageLoad(CheckMode)
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -121,10 +147,13 @@ class LandCheckYourAnswersController @Inject()(
 
   private def buildSummaryList(userAnswers: UserAnswers)(implicit request: RequestHeader): Seq[SummaryRowResult] = {
     val isMixedOrNonResidential = propertyTypeCheck(userAnswers)
-    val isAgricultural = propertyTypeCheck(userAnswers) && agriculturalCheck(userAnswers)
-    val knowsArea = propertyTypeCheck(userAnswers) && knowAreaCheck(userAnswers) && agriculturalCheck(userAnswers)
+    val isAgricultural          = propertyTypeCheck(userAnswers) && agriculturalCheck(userAnswers)
+    val knowsArea               = propertyTypeCheck(userAnswers) && knowAreaCheck(userAnswers) && agriculturalCheck(userAnswers)
 
-    Seq(
+    val crossFlowMissing: Seq[SummaryRowResult] =
+      failuresForSessionLand(userAnswers).map(f => SummaryRowResult.Missing(redirectFor(f)))
+
+    val landRows: Seq[SummaryRowResult] = Seq(
       Some(LandTypeOfPropertySummary.row(userAnswers)),
       Some(LandInterestTransferredOrCreatedSummary.row(userAnswers)),
       Some(LandAddressSummary.row(userAnswers)),
@@ -139,15 +168,17 @@ class LandCheckYourAnswersController @Inject()(
       Option.when(isAgricultural)(DoYouKnowTheAreaOfLandSummary.row(userAnswers)),
       Option.when(knowsArea)(AreaOfLandSummary.row(userAnswers))
     ).flatten
+
+    crossFlowMissing ++ landRows
   }
 
   private def updateLand(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     for {
-      land <- Land.from(userAnswers)
+      land                       <- Land.from(userAnswers)
       updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
-      updateReturnVersionReturn <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
-      updateLandRequest <- UpdateLandRequest.from(userAnswers, land) if updateReturnVersionReturn.newVersion.isDefined
-      updateLandReturn <- backendConnector.updateLand(updateLandRequest) if updateReturnVersionReturn.newVersion.isDefined
+      updateReturnVersionReturn  <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
+      updateLandRequest          <- UpdateLandRequest.from(userAnswers, land) if updateReturnVersionReturn.newVersion.isDefined
+      updateLandReturn           <- backendConnector.updateLand(updateLandRequest) if updateReturnVersionReturn.newVersion.isDefined
     } yield {
       if (updateLandReturn.updated) {
         Redirect(controllers.land.routes.LandOverviewController.onPageLoad())
@@ -160,9 +191,9 @@ class LandCheckYourAnswersController @Inject()(
 
   private def createLand(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     for {
-      land <- Land.from(userAnswers)
+      land              <- Land.from(userAnswers)
       createLandRequest <- CreateLandRequest.from(userAnswers, land)
-      createLandReturn <- backendConnector.createLand(createLandRequest)
+      createLandReturn  <- backendConnector.createLand(createLandRequest)
     } yield {
       if (createLandReturn.landId.nonEmpty) {
         Redirect(controllers.land.routes.LandOverviewController.onPageLoad())
@@ -188,6 +219,6 @@ class LandCheckYourAnswersController @Inject()(
   private def propertyTypeCheck(userAnswers: UserAnswers): Boolean =
     userAnswers.get(LandTypeOfPropertyPage).exists {
       case LandTypeOfProperty.Mixed | LandTypeOfProperty.NonResidential => true
-      case _ => false
+      case _                                                            => false
     }
 }

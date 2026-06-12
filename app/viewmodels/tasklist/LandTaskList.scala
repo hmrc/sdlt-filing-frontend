@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,47 +19,51 @@ package viewmodels.tasklist
 import config.FrontendAppConfig
 import models.FullReturn
 import play.api.i18n.Messages
+import services.crossflow.{ReturnSection, SectionStatus}
 
 import javax.inject.Singleton
 
 @Singleton
 object LandTaskList {
 
-  def build(fullReturn: FullReturn)
-           (implicit messages: Messages,
-            appConfig: FrontendAppConfig): TaskListSection =
+  private val noFailures: SectionStatus =
+    SectionStatus(ReturnSection.Land, hasFailures = false, ruleIds = Nil, messageKeys = Nil, targets = Nil)
+
+  def build(fullReturn: FullReturn, status: SectionStatus = noFailures)
+           (implicit messages: Messages, appConfig: FrontendAppConfig): TaskListSection =
     TaskListSection(
       heading = messages("tasklist.landQuestion.heading"),
-      rows = Seq(
-        buildLandRow(fullReturn)
-      )
+      rows    = Seq(buildLandRow(fullReturn, status))
     )
 
-  def buildLandRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+  def buildLandRow(fullReturn: FullReturn, status: SectionStatus)
+                  (implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+
     val mainLandID = fullReturn.returnInfo.flatMap(_.mainLandID)
 
-    val url = fullReturn.land match {
-      case Some(list) if list.length > 1 => controllers.land.routes.LandOverviewController.onPageLoad().url
+    val defaultUrl = fullReturn.land match {
+      case Some(list) if list.length > 1                                                => controllers.land.routes.LandOverviewController.onPageLoad().url
       case Some(list) if list.exists(x => x.landID == mainLandID && x.mineralRights.isEmpty)
       => controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
-      case Some(list) if list.nonEmpty
-      => controllers.land.routes.LandOverviewController.onPageLoad().url
-      case _ => controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
+      case Some(list) if list.nonEmpty                                                  => controllers.land.routes.LandOverviewController.onPageLoad().url
+      case _                                                                            => controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
     }
 
+    val multiEntityUrl =
+      controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad().url
+
+    val url =
+      if (status.hasFailures) multiEntityUrl
+      else                    defaultUrl
+
     TaskListRowBuilder(
-      canEdit = {
-        case TLCompleted => true
-        case _ => true
-      },
-      messageKey = _ => "tasklist.landQuestion.details",
-      url = _ => _ => {
-        url
-      },
-      tagId = "landQuestionDetailRow",
-      checks = scheme => Seq(fullReturn.land.exists(_.nonEmpty)),
+      canEdit       = _ => true,
+      messageKey    = _ => "tasklist.landQuestion.details",
+      url           = _ => _ => url,
+      tagId         = "landQuestionDetailRow",
+      checks        = _ => Seq(fullReturn.land.exists(_.nonEmpty)),
+      invalid       = _ => status.hasFailures,
       prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
     ).build(fullReturn)
   }
-
 }

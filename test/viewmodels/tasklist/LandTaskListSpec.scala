@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import constants.FullReturnConstants.*
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
+import services.crossflow.{ReturnSection, SectionStatus}
 
 class LandTaskListSpec extends SpecBase {
 
@@ -32,6 +33,18 @@ class LandTaskListSpec extends SpecBase {
   private val fullReturnIncompleteLand = fullReturnComplete.copy(
     land = Some(Seq(completeLand.copy(mineralRights = None))))
   private val fullReturnMissingLand = fullReturnComplete.copy(land = None)
+
+  private val noFailuresStatus: SectionStatus =
+    SectionStatus(ReturnSection.Land, hasFailures = false, ruleIds = Nil, messageKeys = Nil, targets = Nil)
+
+  private val withFailuresStatus: SectionStatus =
+    SectionStatus(
+      section     = ReturnSection.Land,
+      hasFailures = true,
+      ruleIds     = Seq("F17-6996-6997"),
+      messageKeys = Seq("crossflow.land.authority.welsh6996_6997.beforeEffectiveDate"),
+      targets     = Nil
+    )
 
   "LandTaskList" - {
 
@@ -76,6 +89,47 @@ class LandTaskListSpec extends SpecBase {
           result.rows.size mustBe 1
         }
       }
+
+      "must apply the default no-failures status when called without status (backwards-compat)" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.build(fullReturnCompleteWithOneMainLand)
+
+          result.rows.size mustBe 1
+          result.rows.head.url mustBe controllers.land.routes.LandOverviewController.onPageLoad().url
+        }
+      }
+
+      "must route the row to the multi-entity controller when status has failures" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.build(fullReturnCompleteWithOneMainLand, withFailuresStatus)
+
+          result.rows.head.url mustBe controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad().url
+          result.rows.head.status mustBe TLInvalid
+        }
+      }
+
+      "must keep heading consistent when status has failures" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.build(fullReturnComplete, withFailuresStatus)
+
+          result.heading mustBe messagesInstance("tasklist.landQuestion.heading")
+        }
+      }
     }
 
     ".buildLandRow" - {
@@ -85,7 +139,7 @@ class LandTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = LandTaskList.buildLandRow(fullReturnComplete)
+          val result = LandTaskList.buildLandRow(fullReturnComplete, noFailuresStatus)
 
           result mustBe a[TaskListSectionRow]
         }
@@ -97,7 +151,7 @@ class LandTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = LandTaskList.buildLandRow(fullReturnComplete)
+          val result = LandTaskList.buildLandRow(fullReturnComplete, noFailuresStatus)
 
           result.tagId mustBe "landQuestionDetailRow"
         }
@@ -110,7 +164,7 @@ class LandTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = LandTaskList.buildLandRow(fullReturnComplete)
+          val result = LandTaskList.buildLandRow(fullReturnComplete, noFailuresStatus)
 
           messagesInstance(result.messageKey) mustBe messagesInstance("tasklist.landQuestion.details")
         }
@@ -122,7 +176,7 @@ class LandTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = LandTaskList.buildLandRow(fullReturnMissingLand)
+          val result = LandTaskList.buildLandRow(fullReturnMissingLand, noFailuresStatus)
 
           result.url mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
         }
@@ -134,7 +188,7 @@ class LandTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = LandTaskList.buildLandRow(fullReturnIncompleteLand)
+          val result = LandTaskList.buildLandRow(fullReturnIncompleteLand, noFailuresStatus)
 
           result.url mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
         }
@@ -146,7 +200,7 @@ class LandTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = LandTaskList.buildLandRow(fullReturnCompleteWithOneMainLand)
+          val result = LandTaskList.buildLandRow(fullReturnCompleteWithOneMainLand, noFailuresStatus)
 
           result.url mustBe controllers.land.routes.LandOverviewController.onPageLoad().url
         }
@@ -158,7 +212,7 @@ class LandTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = LandTaskList.buildLandRow(fullReturnCompleteWithMultipleLands)
+          val result = LandTaskList.buildLandRow(fullReturnCompleteWithMultipleLands, noFailuresStatus)
 
           result.url mustBe controllers.land.routes.LandOverviewController.onPageLoad().url
         }
@@ -170,7 +224,7 @@ class LandTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = LandTaskList.buildLandRow(fullReturnComplete)
+          val result = LandTaskList.buildLandRow(fullReturnComplete, noFailuresStatus)
 
           result.status mustBe TLCompleted
         }
@@ -182,9 +236,84 @@ class LandTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = LandTaskList.buildLandRow(emptyFullReturn)
+          val result = LandTaskList.buildLandRow(emptyFullReturn, noFailuresStatus)
 
           result.status mustBe TLCannotStart
+        }
+      }
+    }
+
+    ".buildLandRow with cross-flow failures" - {
+
+      "must route to the multi-entity controller, not the overview" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.buildLandRow(fullReturnCompleteWithOneMainLand, withFailuresStatus)
+
+          result.url mustBe controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad().url
+        }
+      }
+
+      "must route to the multi-entity controller for multiple lands" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.buildLandRow(fullReturnCompleteWithMultipleLands, withFailuresStatus)
+
+          result.url mustBe controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad().url
+        }
+      }
+
+      "must route to the multi-entity controller even when main land is incomplete" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.buildLandRow(fullReturnIncompleteLand, withFailuresStatus)
+
+          result.url mustBe controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad().url
+        }
+      }
+
+      "must route to the multi-entity controller even when land is absent" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.buildLandRow(fullReturnMissingLand, withFailuresStatus)
+
+          result.url mustBe controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad().url
+        }
+      }
+
+      "must mark the row status as TLInvalid" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.buildLandRow(fullReturnCompleteWithOneMainLand, withFailuresStatus)
+
+          result.status mustBe TLInvalid
+        }
+      }
+
+      "must not mark the row status as TLInvalid when status has no failures" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.buildLandRow(fullReturnCompleteWithOneMainLand, noFailuresStatus)
+
+          result.status must not be TLInvalid
         }
       }
     }
@@ -223,7 +352,23 @@ class LandTaskListSpec extends SpecBase {
           row.url mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
         }
       }
+
+      "must build complete TaskListSection routing to multi-entity controller when failures present" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val section = LandTaskList.build(fullReturnCompleteWithOneMainLand, withFailuresStatus)
+          val row = section.rows.head
+
+          section.heading mustBe messagesInstance("tasklist.landQuestion.heading")
+          messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.landQuestion.details")
+          row.url mustBe controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad().url
+          row.status mustBe TLInvalid
+        }
+      }
     }
   }
-
 }

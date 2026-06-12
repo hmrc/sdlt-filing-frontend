@@ -282,7 +282,7 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
       import models.UserAnswers
 
       def stubCrossFlow(failuresForPageResult: Seq[CrossFlowFailure]): CrossFlowValidationService =
-        new CrossFlowValidationService(Set.empty) {
+        new CrossFlowValidationService(Set.empty, Set.empty) {
           override def failuresForPage(page: PageId, ua: UserAnswers): Seq[CrossFlowFailure] = failuresForPageResult
         }
 
@@ -291,6 +291,7 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
           ruleId     = "F23-TEST",
           affects    = ReturnSection.Transaction,
           messageKey = messageKey,
+          inlineErrorKey = messageKey,
           targets    = Seq(CrossFlowTarget(Pages.ReliefReason, "value"))
         )
 

@@ -19,14 +19,14 @@ package services.crossflow.errors
 import base.SpecBase
 import constants.FullReturnConstants.emptyFullReturn
 import models.transaction.ReasonForRelief
-import models.{Land, Transaction, UserAnswers}
+import models.{Land, Lease, Transaction, UserAnswers}
 import org.scalatest.matchers.must.Matchers
 import pages.transaction.{ReasonForReliefPage, TransactionEffectiveDatePage}
 import services.crossflow.*
 
 import java.time.LocalDate
 
-class F23ReliefReasonRulesSpec extends SpecBase with Matchers {
+class CrossFlowRulesSpec extends SpecBase with Matchers {
 
   private val freeportStart      = LocalDate.of(2021, 10, 19)
   private val freeportEnd        = LocalDate.of(2026,  9, 30)
@@ -42,7 +42,8 @@ class F23ReliefReasonRulesSpec extends SpecBase with Matchers {
                            reliefReason:   Option[ReasonForRelief] = None,
                            effectiveDate:  Option[LocalDate]  = None,
                            contractDate:   Option[String]     = None,
-                           propertyType:   Option[String]     = None
+                           propertyType:   Option[String]     = None,
+                           totalPremium:   Option[String]     = None
                          ): UserAnswers = {
     val committedTransaction = Transaction(
       claimingRelief = claimingRelief,
@@ -60,11 +61,13 @@ class F23ReliefReasonRulesSpec extends SpecBase with Matchers {
       contractDate   = contractDate
     )
 
-    val committedLand = propertyType.map(t => Land(propertyType = Some(t)))
+    val committedLand  = propertyType.map(t => Land(propertyType = Some(t)))
+    val committedLease = totalPremium.map(p => Lease(totalPremiumPayable = Some(p)))
 
     val base = emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(
       transaction = Some(committedTransaction),
-      land        = committedLand.map(l => Seq(l))
+      land        = committedLand.map(l => Seq(l)),
+      lease       = committedLease
     )))
 
     val withReason = reliefReason.fold(base)(r => base.set(ReasonForReliefPage, r).success.value)
@@ -321,19 +324,176 @@ class F23ReliefReasonRulesSpec extends SpecBase with Matchers {
     }
   }
 
-  "F23ReliefReasonRules.all" - {
+  "F28FtbCap500k" - {
+
+    val ftbStart = LocalDate.of(2017, 11, 22)
+    val ftb625WindowStart = LocalDate.of(2022, 9, 23)
+    val ftb500PostResetStart = LocalDate.of(2025, 4, 1)
+
+    "must not apply when not claiming relief" in {
+      val ua = answersWith(claimingRelief = Some("NO"), reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2020, 6, 1)), totalPremium = Some("600000.00"))
+
+      F28FtbCap500k.validate(ua) mustBe None
+    }
+
+    "must not apply when the relief reason is not 32" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.ReliefForFreeport), effectiveDate = Some(LocalDate.of(2020, 6, 1)), totalPremium = Some("600000.00"))
+
+      F28FtbCap500k.validate(ua) mustBe None
+    }
+
+    "must not apply when the effective date is in the middle window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2023, 9, 24)), totalPremium = Some("600000.00"))
+
+      F28FtbCap500k.validate(ua) mustBe None
+    }
+
+    "must not apply when the effective date is before FTB relief started" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(ftbStart.minusDays(1)), totalPremium = Some("600000.00"))
+
+      F28FtbCap500k.validate(ua) mustBe None
+    }
+
+    "must pass when premium is exactly £500,000 in the original window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2020, 6, 1)), totalPremium = Some("500000.00"))
+
+      F28FtbCap500k.validate(ua) mustBe None
+    }
+
+    "must pass when premium is under £500,000 in the original window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2020, 6, 1)), totalPremium = Some("450000.00"))
+
+      F28FtbCap500k.validate(ua) mustBe None
+    }
+
+    "must fire when premium is over £500,000 in the original window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2020, 6, 1)), totalPremium = Some("600000.00"))
+
+      F28FtbCap500k.validate(ua).map(_.ruleId) mustBe Some("F28-cap500k")
+    }
+
+    "must fire when premium is over £500,000 in the post-2025 window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2025, 6, 1)), totalPremium = Some("600000.00"))
+
+      F28FtbCap500k.validate(ua).map(_.ruleId) mustBe Some("F28-cap500k")
+    }
+
+    "must pass when premium is missing (incomplete, not in error)" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2020, 6, 1)))
+
+      F28FtbCap500k.validate(ua) mustBe None
+    }
+
+    "must fire on the lower boundary of the original window (22/11/2017)" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(ftbStart), totalPremium = Some("600000.00"))
+
+      F28FtbCap500k.validate(ua).map(_.ruleId) mustBe Some("F28-cap500k")
+    }
+
+    "must fire on the upper boundary of the original window (22/09/2022)" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(ftb625WindowStart.minusDays(1)), totalPremium = Some("600000.00"))
+
+      F28FtbCap500k.validate(ua).map(_.ruleId) mustBe Some("F28-cap500k")
+    }
+
+    "must fire on the lower boundary of the post-2025 window (01/04/2025)" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(ftb500PostResetStart), totalPremium = Some("600000.00"))
+
+      F28FtbCap500k.validate(ua).map(_.ruleId) mustBe Some("F28-cap500k")
+    }
+  }
+
+  "F28FtbCap625k" - {
+
+    val ftb625WindowStart = LocalDate.of(2022, 9, 23)
+    val ftb500PostResetStart = LocalDate.of(2025, 4, 1)
+
+    "must not apply when not claiming relief" in {
+      val ua = answersWith(claimingRelief = Some("NO"), reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2023, 9, 24)), totalPremium = Some("700000.00"))
+
+      F28FtbCap625k.validate(ua) mustBe None
+    }
+
+    "must not apply when the relief reason is not 32" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.ReliefForFreeport), effectiveDate = Some(LocalDate.of(2023, 9, 24)), totalPremium = Some("700000.00"))
+
+      F28FtbCap625k.validate(ua) mustBe None
+    }
+
+    "must not apply when the effective date is in the original window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2020, 6, 1)), totalPremium = Some("700000.00"))
+
+      F28FtbCap625k.validate(ua) mustBe None
+    }
+
+    "must not apply when the effective date is in the post-2025 window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2025, 6, 1)), totalPremium = Some("700000.00"))
+
+      F28FtbCap625k.validate(ua) mustBe None
+    }
+
+    "must pass when premium is exactly £625,000 in the middle window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2023, 9, 24)), totalPremium = Some("625000.00"))
+
+      F28FtbCap625k.validate(ua) mustBe None
+    }
+
+    "must pass when premium is under £625,000 in the middle window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2023, 9, 24)), totalPremium = Some("600000.00"))
+
+      F28FtbCap625k.validate(ua) mustBe None
+    }
+
+    "must fire when premium is over £625,000 in the middle window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2023, 9, 24)), totalPremium = Some("700000.00"))
+
+      F28FtbCap625k.validate(ua).map(_.ruleId) mustBe Some("F28-cap625k")
+    }
+
+    "must pass when premium is missing (incomplete, not in error)" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2023, 9, 24)))
+
+      F28FtbCap625k.validate(ua) mustBe None
+    }
+
+    "must fire on the lower boundary of the middle window (23/09/2022)" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(ftb625WindowStart), totalPremium = Some("700000.00"))
+
+      F28FtbCap625k.validate(ua).map(_.ruleId) mustBe Some("F28-cap625k")
+    }
+
+    "must fire on the upper boundary of the middle window (31/03/2025)" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(ftb500PostResetStart.minusDays(1)), totalPremium = Some("700000.00"))
+
+      F28FtbCap625k.validate(ua).map(_.ruleId) mustBe Some("F28-cap625k")
+    }
+  }
+
+  "F23Rules.all" - {
 
     "must contain all nine rules" in {
-      F23ReliefReasonRules.all.map(_.id) must contain allOf (
-        "F23-32", "F23-33", "F23-34", "F23-35", "F23-36", "F23-37", "F23-38",
-        "F25-effective", "F25-contract"
+      F23Rules.all.map(_.id) must contain allOf(
+        "F23-32", "F23-33", "F23-34", "F23-35", "F23-36", "F23-37", "F23-38"
       )
     }
 
     "must produce no failures for a baseline (no relief claimed)" in {
       val ua = answersWith(claimingRelief = Some("NO"))
 
-      F23ReliefReasonRules.all.flatMap(_.validate(ua)) mustBe empty
+      F23Rules.all.flatMap(_.validate(ua)) mustBe empty
+    }
+  }
+
+  "F28Rules.all" - {
+
+    "must contain both F28 rules" in {
+      F28Rules.all.map(_.id) must contain allOf("F28-cap500k", "F28-cap625k")
+    }
+
+    "must produce no failures for a baseline (no relief claimed)" in {
+      val ua = answersWith(claimingRelief = Some("NO"))
+
+      F28Rules.all.flatMap(_.validate(ua)) mustBe empty
     }
   }
 }
