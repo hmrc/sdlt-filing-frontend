@@ -18,7 +18,7 @@ package viewmodels.taxCalculation
 
 import base.SpecBase
 import models.taxCalculation.*
-import models.{FullReturn, Land, ReturnInfo, Transaction, UserAnswers}
+import models.{FullReturn, Land, Lease, ReturnInfo, Transaction, UserAnswers}
 import org.scalatest.EitherValues
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
@@ -38,7 +38,7 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
   private def slabCalc(taxType: TaxTypes.Value, taxDue: Int, rate: Int, fraction: Option[Int] = None): CalculationDetails =
     CalculationDetails(taxType, CalcTypes.slab, taxDue, None, None, None, Some(rate), fraction, None)
 
-  private def answersWith(transactionDescription: String): UserAnswers =
+  private def answersWith(transactionDescription: String, lease: Option[Lease] = None): UserAnswers =
     emptyUserAnswers.copy(fullReturn = Some(FullReturn(
       stornId           = "TESTSTORN",
       returnResourceRef = "REF001",
@@ -50,11 +50,12 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
         transactionDescription = Some(transactionDescription),
         isLinked               = Some("no")
       )),
-      land              = Some(Seq(Land(landID = Some("L1"), propertyType = Some("R"))))
+      land              = Some(Seq(Land(landID = Some("L1"), propertyType = Some("R")))),
+      lease             = lease
     )))
 
   private val freeholdAnswers  = answersWith("F")
-  private val leaseholdAnswers = answersWith("L")
+  private val leaseholdAnswers = answersWith("L", lease = Some(Lease(totalPremiumPayable = Some("250000"))))
 
   private val freeholdResult = TaxCalculationResult(9000, None, None, None, Seq(
     sliceCalc(TaxTypes.premium, 9000,
@@ -398,6 +399,27 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
         fr.copy(transaction = fr.transaction.map(_.copy(effectiveDate = None)))
       ))
       toViewModel(freeholdResult, missingDate) mustBe Left(MissingTransactionAnswerError("effectiveDate"))
+    }
+
+    "use the lease premium as the consideration for a grant of lease when the transaction consideration is empty" in {
+      val leaseholdNoConsideration = leaseholdAnswers.copy(fullReturn = leaseholdAnswers.fullReturn.map(fr =>
+        fr.copy(transaction = fr.transaction.map(_.copy(totalConsideration = None)))
+      ))
+      toViewModel(leaseResult, leaseholdNoConsideration).isRight mustBe true
+    }
+
+    "Left(MissingLeaseAnswerError) when a grant of lease has no premium" in {
+      val leaseholdNoPremium = leaseholdAnswers.copy(fullReturn = leaseholdAnswers.fullReturn.map(fr =>
+        fr.copy(lease = Some(Lease(totalPremiumPayable = None)))
+      ))
+      toViewModel(leaseResult, leaseholdNoPremium) mustBe Left(MissingLeaseAnswerError("totalPremiumPayable"))
+    }
+
+    "Left(MissingTransactionAnswerError) when a freehold has no total consideration" in {
+      val freeholdNoConsideration = freeholdAnswers.copy(fullReturn = freeholdAnswers.fullReturn.map(fr =>
+        fr.copy(transaction = fr.transaction.map(_.copy(totalConsideration = None)))
+      ))
+      toViewModel(freeholdResult, freeholdNoConsideration) mustBe Left(MissingTransactionAnswerError("totalConsideration"))
     }
 
     "Left(MissingLandAnswerError) when land has no propertyType" in {
