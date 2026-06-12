@@ -740,6 +740,11 @@ POST       /about-the-lease/net-present-value-NPV/change                        
 GET         /about-the-lease/check-answers                                                           controllers.lease.LeaseCheckYourAnswersController.onPageLoad()
 POST        /about-the-lease/check-answers                                                           controllers.lease.LeaseCheckYourAnswersController.onSubmit()
 
+GET        /submit-your-return/who-are-you-submitting-this-return-for                               controllers.submission.WhoAreYouSubmittingForController.onPageLoad(mode: Mode = NormalMode)
+POST       /submit-your-return/who-are-you-submitting-this-return-for                               controllers.submission.WhoAreYouSubmittingForController.onSubmit(mode: Mode = NormalMode)
+GET        /submit-your-return/who-are-you-submitting-this-return-for/change                        controllers.submission.WhoAreYouSubmittingForController.onPageLoad(mode: Mode = CheckMode)
+POST       /submit-your-return/who-are-you-submitting-this-return-for/change                        controllers.submission.WhoAreYouSubmittingForController.onSubmit(mode: Mode = CheckMode)
+
 GET         /update-local-authority-codes                          controllers.land.LandAuthorityCodeMultiEntityController.onPageLoad()
 GET         /update-local-authority-codes/remove/:landId           controllers.land.LandAuthorityCodeMultiEntityController.removeLand(landId: String)
 GET         /update-local-authority-code/:landId                   controllers.land.LandAuthorityCodeSingleEntityController.onPageLoad(landId: String)
