@@ -26,78 +26,54 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.land.LocalAuthorityCodeView
-import services.land.{LocalAuthorityCodeService, LocalAuthorityFormContext}
+import services.crossflow.fields.CrossFlowValidationService
+import services.crossflow.Pages
+import services.crossflow.fields.CrossFlowFormSupport
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class LocalAuthorityCodeController @Inject()(
-                                              override val messagesApi: MessagesApi,
-                                              sessionRepository: SessionRepository,
-                                              navigator: Navigator,
-                                              identify: IdentifierAction,
-                                              getData: DataRetrievalAction,
-                                              requireData: DataRequiredAction,
-                                              formProvider: LocalAuthorityCodeFormProvider,
-                                              preparationService: LocalAuthorityCodeService,
-                                              val controllerComponents: MessagesControllerComponents,
-                                              view: LocalAuthorityCodeView
-                                            )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class LocalAuthorityCodeController @Inject() (
+                                               override val messagesApi: MessagesApi,
+                                               sessionRepository:        SessionRepository,
+                                               navigator:                Navigator,
+                                               identify:                 IdentifierAction,
+                                               getData:                  DataRetrievalAction,
+                                               requireData:              DataRequiredAction,
+                                               formProvider:             LocalAuthorityCodeFormProvider,
+                                               crossFlow:                CrossFlowValidationService,
+                                               val controllerComponents: MessagesControllerComponents,
+                                               view:                     LocalAuthorityCodeView
+                                             )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+
+  val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val context: LocalAuthorityFormContext =
-        preparationService.prepareFormContext(request.userAnswers)
-
-      context.landPostcode match {
-        case Some(postcode) =>
-          val form = formProvider(
-            context.effectiveTransactionDate,
-            context.contractEffectiveDate,
-            context.landPostcode
-          )
-
-          val preparedForm = request.userAnswers.get(LocalAuthorityCodePage) match {
-            case None    => form
-            case Some(v) => form.fill(v)
-          }
-
-          Ok(view(preparedForm, mode))
-
-        case None =>
-          Redirect(controllers.land.routes.ConfirmLandOrPropertyAddressController.onPageLoad(mode))
+      val preparedForm = request.userAnswers.get(LocalAuthorityCodePage) match {
+        case None    => form
+        case Some(v) => form.fill(v)
       }
+      
+      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val context: LocalAuthorityFormContext =
-        preparationService.prepareFormContext(request.userAnswers)
+      CrossFlowFormSupport.bindFromRequestWithCrossFlow(form, Pages.LandAuthorityCode, crossFlow) { value =>
+        request.userAnswers.set(LocalAuthorityCodePage, value).get
+      } match {
 
-      context.landPostcode match {
-        case Some(postcode) =>
-          val form = formProvider(
-            context.effectiveTransactionDate,
-            context.contractEffectiveDate,
-            context.landPostcode
-          )
+        case Left(formWithErrors) =>
+          Future.successful(BadRequest(view(formWithErrors, mode)))
 
-          form.bindFromRequest().fold(
-            formWithErrors =>
-              Future.successful(BadRequest(view(formWithErrors, mode))),
-
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(LocalAuthorityCodePage, value))
-                _ <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(LocalAuthorityCodePage, mode, updatedAnswers))
-          )
-
-        case None =>
-          Future.successful(Redirect(controllers.land.routes.ConfirmLandOrPropertyAddressController.onPageLoad(mode)))
+        case Right((value, updatedAnswers)) =>
+          for {
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(LocalAuthorityCodePage, mode, updatedAnswers))
       }
   }
 }

@@ -17,7 +17,7 @@
 package services.crossflow
 
 import models.UserAnswers
-
+import models.Land
 
 enum ReturnSection:
   case Vendor, VendorAgent, Purchaser, PurchaserAgent, Land,
@@ -26,26 +26,31 @@ enum ReturnSection:
 final case class PageId(value: String)
 
 object Pages:
-  val ReliefReason: PageId = PageId("reliefReason")
-  val EffectiveDate: PageId = PageId("effectiveDate")
-  val LandPropertyType: PageId = PageId("landPropertyType")
-  val ContractDate: PageId = PageId("contractDate")
+  val ReliefReason:      PageId = PageId("reliefReason")
+  val EffectiveDate:     PageId = PageId("effectiveDate")
+  val LandPropertyType:  PageId = PageId("landPropertyType")
+  val ContractDate:      PageId = PageId("contractDate")
+  val LandAuthorityCode: PageId = PageId("landAuthorityCode")
+  val LandPostcode:      PageId = PageId("landPostcode")
 
 object Fields:
-  val ReliefReason  = "value"
-  val EffectiveDate = "value"
-  val PropertyType  = "value"
-  val ContractDate  = "value"
+  val ReliefReason      = "value"
+  val EffectiveDate     = "value"
+  val PropertyType      = "value"
+  val ContractDate      = "value"
+  val LandAuthorityCode = "value"
+  val LandPostcode      = "value"
 
 final case class CrossFlowTarget(page: PageId, field: String)
 
-final case class CrossFlowFailure(
-                                   ruleId:     String,
-                                   affects:    ReturnSection,
-                                   messageKey: String,
-                                   targets:    Seq[CrossFlowTarget],
-                                   args:       Seq[Any] = Nil
-                                 ):
+case class CrossFlowFailure(
+                             ruleId:         String,
+                             affects:        ReturnSection,
+                             messageKey:     String,
+                             inlineErrorKey: String,
+                             targets:        Seq[CrossFlowTarget],
+                             args:           Seq[Any] = Nil
+                           ):
   def targetsOn(page: PageId): Seq[CrossFlowTarget] = targets.filter(_.page == page)
   def appearsOn(page: PageId): Boolean              = targets.exists(_.page == page)
 
@@ -77,9 +82,43 @@ abstract class GuardRule extends CrossFlowRule:
   protected def appliesTo(ua: UserAnswers): Boolean
   protected def isValid(ua: UserAnswers): Boolean
   protected def messageKey: String
+  protected def inlineErrorKey: String = messageKey
   protected def args(ua: UserAnswers): Seq[Any] = Nil
 
   final def validate(ua: UserAnswers): Option[CrossFlowFailure] =
     Option.when(appliesTo(ua) && !isValid(ua))(
-      CrossFlowFailure(id, affects, messageKey, targets, args(ua))
+      CrossFlowFailure(
+        ruleId         = id,
+        affects        = affects,
+        messageKey     = messageKey,
+        inlineErrorKey = inlineErrorKey,
+        targets        = targets,
+        args           = args(ua)
+      )
     )
+
+trait LandRule:
+  def id: String
+  def affects: ReturnSection
+  def inputs: Set[ReturnSection]
+  def targets: Seq[CrossFlowTarget]
+  def validate(land: Land, ua: UserAnswers): Option[CrossFlowFailure]
+
+abstract class LandGuardRule extends LandRule:
+  protected def appliesTo(land: Land, ua: UserAnswers): Boolean
+  protected def isValid(land: Land, ua: UserAnswers): Boolean
+  protected def messageKey: String
+  protected def inlineErrorKey: String = messageKey
+  protected def args(land: Land, ua: UserAnswers): Seq[Any] = Nil
+
+  def validate(land: Land, ua: UserAnswers): Option[CrossFlowFailure] =
+    if (appliesTo(land, ua) && !isValid(land, ua))
+      Some(CrossFlowFailure(
+        ruleId         = id,
+        affects        = affects,
+        messageKey     = messageKey,
+        inlineErrorKey = inlineErrorKey,
+        targets        = targets,
+        args           = args(land, ua)
+      ))
+    else None

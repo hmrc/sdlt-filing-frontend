@@ -31,17 +31,29 @@ class CrossFlowAdaptersSpec extends SpecBase with Matchers {
   private val reliefTarget = CrossFlowTarget(Pages.ReliefReason,  "value")
   private val dateTarget   = CrossFlowTarget(Pages.EffectiveDate, "value")
 
+  /** Test fixture builder. `inlineKey` defaults to the same value as `msgKey`
+   *  to keep tests that don't care about the distinction simple.
+   *  Tests that exercise inline vs body wording pass an explicit inlineKey.
+   */
   private def failure(
-                       ruleId:  String,
-                       msgKey:  String,
-                       targets: Seq[CrossFlowTarget] = Seq(reliefTarget),
-                       args:    Seq[Any]             = Nil
+                       ruleId:    String,
+                       msgKey:    String,
+                       inlineKey: String                = "",
+                       targets:   Seq[CrossFlowTarget]  = Seq(reliefTarget),
+                       args:      Seq[Any]              = Nil
                      ): CrossFlowFailure =
-    CrossFlowFailure(ruleId, ReturnSection.Transaction, msgKey, targets, args)
+    CrossFlowFailure(
+      ruleId         = ruleId,
+      affects        = ReturnSection.Transaction,
+      messageKey     = msgKey,
+      inlineErrorKey = if (inlineKey.isEmpty) msgKey else inlineKey,
+      targets        = targets,
+      args           = args
+    )
 
   private val testForm: Form[String] = Form("value" -> text)
 
-  private class StubService(toReturn: Seq[CrossFlowFailure]) extends CrossFlowValidationService(Set.empty) {
+  private class StubService(toReturn: Seq[CrossFlowFailure]) extends CrossFlowValidationService(Set.empty, Set.empty) {
     override def failuresForPage(page: PageId, ua: UserAnswers): Seq[CrossFlowFailure] = toReturn
     override def failuresAffecting(section: ReturnSection, ua: UserAnswers): Seq[CrossFlowFailure] = toReturn
   }
@@ -54,7 +66,18 @@ class CrossFlowAdaptersSpec extends SpecBase with Matchers {
       result.errors mustBe empty
     }
 
-    "must attach a FormError for the first failure's matching target" in {
+    "must attach a FormError using the inline error key (not the body messageKey)" in {
+      val result = CrossFlowFormSupport.withCrossFlowErrors(
+        testForm,
+        Seq(failure("R1", msgKey = "msg.body", inlineKey = "msg.inline")),
+        Pages.ReliefReason
+      )
+
+      result.errors.map(_.message) mustBe Seq("msg.inline")
+      result.errors.map(_.key)     mustBe Seq("value")
+    }
+
+    "must fall back to messageKey for the FormError if inlineErrorKey equals messageKey" in {
       val result = CrossFlowFormSupport.withCrossFlowErrors(
         testForm,
         Seq(failure("R1", "msg.one")),
@@ -62,7 +85,6 @@ class CrossFlowAdaptersSpec extends SpecBase with Matchers {
       )
 
       result.errors.map(_.message) mustBe Seq("msg.one")
-      result.errors.map(_.key) mustBe Seq("value")
     }
 
     "must show only the first failure when there are multiple" in {
@@ -136,9 +158,9 @@ class CrossFlowAdaptersSpec extends SpecBase with Matchers {
       result.toOption.get._1 mustBe "hello"
     }
 
-    "must return Left with cross-flow error when bind succeeds but failures exist" in {
+    "must return Left with the inline error key when bind succeeds but failures exist" in {
       given Request[?] = FakeRequest().withFormUrlEncodedBody("value" -> "hello")
-      val service = new StubService(Seq(failure("R1", "msg.one")))
+      val service = new StubService(Seq(failure("R1", msgKey = "msg.body", inlineKey = "msg.inline")))
 
       val result = CrossFlowFormSupport.bindFromRequestWithCrossFlow(
         testForm,
@@ -147,7 +169,7 @@ class CrossFlowAdaptersSpec extends SpecBase with Matchers {
       )(_ => emptyUserAnswers)
 
       result.isLeft mustBe true
-      result.left.toOption.get.errors.map(_.message) mustBe Seq("msg.one")
+      result.left.toOption.get.errors.map(_.message) mustBe Seq("msg.inline")
     }
 
     "must build the candidate UserAnswers from the bound value" in {
@@ -175,7 +197,7 @@ class CrossFlowAdaptersSpec extends SpecBase with Matchers {
       val inputs  = Set(ReturnSection.Transaction)
       val targets = Seq(reliefTarget)
       def validate(ua: UserAnswers): Option[CrossFlowFailure] =
-        Some(failure("R1", "msg.one"))
+        Some(failure("R1", msgKey = "msg.body", inlineKey = "msg.inline"))
     }
 
     val passingRule: CrossFlowRule = new CrossFlowRule {
@@ -225,7 +247,7 @@ class CrossFlowAdaptersSpec extends SpecBase with Matchers {
       constraint("anything") mustBe Valid
     }
 
-    "must include the failure's message key on the resulting ValidationError" in {
+    "must use the inline error key on the resulting ValidationError" in {
       val constraint = CrossFlowConstraints.forPage[String](
         Pages.ReliefReason,
         Seq(firingRule),
@@ -233,7 +255,7 @@ class CrossFlowAdaptersSpec extends SpecBase with Matchers {
       )
 
       val result = constraint("anything").asInstanceOf[Invalid]
-      result.errors.map(_.message) mustBe Seq("msg.one")
+      result.errors.map(_.message) mustBe Seq("msg.inline")
     }
   }
 
@@ -243,16 +265,16 @@ class CrossFlowAdaptersSpec extends SpecBase with Matchers {
       CrossFlowErrors.fromFailures(Nil) mustBe empty
     }
 
-    "must convert each failure to a CrossFlowError with its message key and args" in {
+    "must convert each failure to a CrossFlowError using the body messageKey (not inline)" in {
       val failures = Seq(
-        failure("R1", "msg.one", args = Seq("a", 1)),
-        failure("R2", "msg.two")
+        failure("R1", msgKey = "msg.body.one", inlineKey = "msg.inline.one", args = Seq("a", 1)),
+        failure("R2", msgKey = "msg.body.two", inlineKey = "msg.inline.two")
       )
 
       val result = CrossFlowErrors.fromFailures(failures)
 
-      result.map(_.messageKey) mustBe Seq("msg.one", "msg.two")
-      result.map(_.args) mustBe Seq(Seq("a", 1), Nil)
+      result.map(_.messageKey) mustBe Seq("msg.body.one", "msg.body.two")
+      result.map(_.args)       mustBe Seq(Seq("a", 1), Nil)
     }
 
     "must use the first target's field as the anchor" in {

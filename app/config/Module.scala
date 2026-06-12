@@ -18,8 +18,8 @@ package config
 
 import com.google.inject.{AbstractModule, Provides}
 import controllers.actions.*
-import services.crossflow.CrossFlowRule
-import services.crossflow.errors.F23ReliefReasonRules
+import services.crossflow._
+import services.crossflow.errors._
 import services.pdf.{ClasspathPdfTemplateLoader, PdfTemplateLoader}
 
 import java.time.{Clock, ZoneOffset}
@@ -37,8 +37,13 @@ class Module extends AbstractModule {
 
   @Provides
   @Singleton
-  def crossFlowRules(): Set[CrossFlowRule] =
-    F23ReliefReasonRules.all
-  // ++ F24SomethingRules.all
-  // ++ ...
+  def crossFlowRules(): Set[CrossFlowRule] = {
+    F23Rules.all ++ F25Rules.all ++ F28Rules.all
+  }
+
+  @Provides
+  @Singleton
+  def landRules(): Set[LandRule] = {
+    F17Rules.all ++ F18Rules.all
+  }
 }

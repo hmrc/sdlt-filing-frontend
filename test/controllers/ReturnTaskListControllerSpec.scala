@@ -460,7 +460,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           val content = contentAsString(result)
-          
+
           val vendorIndex = content.indexOf("Vendor Questions")
           val PurchaserIndex = content.indexOf("Purchaser Questions")
 
@@ -922,7 +922,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
 
-        val stubCrossFlow = new CrossFlowValidationService(Set.empty) {
+        val stubCrossFlow = new CrossFlowValidationService(Set.empty, Set.empty) {
           override def sectionStatuses(ua: UserAnswers): Map[ReturnSection, SectionStatus] =
             Map(ReturnSection.Transaction -> SectionStatus(
               section = ReturnSection.Transaction,
@@ -964,7 +964,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
 
-        val stubCrossFlow = new CrossFlowValidationService(Set.empty) {
+        val stubCrossFlow = new CrossFlowValidationService(Set.empty, Set.empty) {
           override def sectionStatuses(ua: UserAnswers): Map[ReturnSection, SectionStatus] = Map.empty
         }
 
@@ -991,6 +991,212 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
           content must include("Transaction Questions")
           content must not include messages(application)("tasklist.invalid")
+        }
+      }
+
+      "must render Land row as invalid when cross-flow service reports Land failures" in {
+
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        val stubCrossFlow = new CrossFlowValidationService(Set.empty, Set.empty) {
+          override def sectionStatuses(ua: UserAnswers): Map[ReturnSection, SectionStatus] =
+            Map(ReturnSection.Land -> SectionStatus(
+              section = ReturnSection.Land,
+              hasFailures = true,
+              ruleIds = Seq("F17-6996-6997"),
+              messageKeys = Seq("crossflow.land.authority.welsh6996_6997.beforeEffectiveDate"),
+              targets = Seq(CrossFlowTarget(Pages.LandAuthorityCode, "value"))
+            ))
+        }
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(completeFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(stubCrossFlow)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+
+          content must include("Land Questions")
+          content must include(messages(application)("tasklist.invalid"))
+        }
+      }
+
+      "must render Land row normally when cross-flow service reports no Land failures" in {
+
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        val stubCrossFlow = new CrossFlowValidationService(Set.empty, Set.empty) {
+          override def sectionStatuses(ua: UserAnswers): Map[ReturnSection, SectionStatus] = Map.empty
+        }
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(completeFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(stubCrossFlow)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+
+          content must include("Land Questions")
+          content must not include messages(application)("tasklist.invalid")
+        }
+      }
+
+      "must route Land row to multi-entity controller when Land failures present" in {
+
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        val stubCrossFlow = new CrossFlowValidationService(Set.empty, Set.empty) {
+          override def sectionStatuses(ua: UserAnswers): Map[ReturnSection, SectionStatus] =
+            Map(ReturnSection.Land -> SectionStatus(
+              section = ReturnSection.Land,
+              hasFailures = true,
+              ruleIds = Seq("F17-6996-6997"),
+              messageKeys = Seq("crossflow.land.authority.welsh6996_6997.beforeEffectiveDate"),
+              targets = Seq(CrossFlowTarget(Pages.LandAuthorityCode, "value"))
+            ))
+        }
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(completeFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(stubCrossFlow)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+
+          content must include(controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad().url)
+        }
+      }
+
+      "must route Land row to default url when no Land failures present" in {
+
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        val stubCrossFlow = new CrossFlowValidationService(Set.empty, Set.empty) {
+          override def sectionStatuses(ua: UserAnswers): Map[ReturnSection, SectionStatus] = Map.empty
+        }
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(completeFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(stubCrossFlow)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+
+          content must not include controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad().url
+        }
+      }
+
+      "must render both Transaction and Land rows as invalid when cross-flow reports failures in both" in {
+
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        val stubCrossFlow = new CrossFlowValidationService(Set.empty, Set.empty) {
+          override def sectionStatuses(ua: UserAnswers): Map[ReturnSection, SectionStatus] =
+            Map(
+              ReturnSection.Transaction -> SectionStatus(
+                section = ReturnSection.Transaction,
+                hasFailures = true,
+                ruleIds = Seq("F23-TEST"),
+                messageKeys = Seq("test.message"),
+                targets = Seq(CrossFlowTarget(Pages.ReliefReason, "value"))
+              ),
+              ReturnSection.Land -> SectionStatus(
+                section = ReturnSection.Land,
+                hasFailures = true,
+                ruleIds = Seq("F17-6996-6997"),
+                messageKeys = Seq("crossflow.land.authority.welsh6996_6997.beforeEffectiveDate"),
+                targets = Seq(CrossFlowTarget(Pages.LandAuthorityCode, "value"))
+              )
+            )
+        }
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(completeFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(stubCrossFlow)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+
+          content must include("Transaction Questions")
+          content must include("Land Questions")
+
+          val invalidCount = messages(application)("tasklist.invalid").r.findAllMatchIn(content).size
+          invalidCount must be >= 2
         }
       }
     }

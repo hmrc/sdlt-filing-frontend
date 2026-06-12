@@ -63,14 +63,15 @@ class ReturnTaskListController @Inject()(
           val statuses = crossFlowService.sectionStatuses(userAnswers)
           val transactionStatus = statuses.getOrElse(ReturnSection.Transaction,
             SectionStatus(ReturnSection.Transaction, false, Nil, Nil, Nil))
-
-
+          val landStatus = statuses.getOrElse(ReturnSection.Land,
+            SectionStatus(ReturnSection.Land, false, Nil, Nil, Nil))
+          
           val sections = List(
             Some(VendorTaskList.build(fullReturn)),
             Some(VendorAgentTaskList.build(fullReturn)),
             Some(PurchaserTaskList.build(fullReturn)),
             Some(PurchaserAgentTaskList.build(fullReturn)),
-            Some(LandTaskList.build(fullReturn)),
+            Some(LandTaskList.build(fullReturn, landStatus)),
             if (PropertyTypeHelper.isResidentialProperty(fullReturn)) Some(UkResidencyTaskList.build(fullReturn)) else None,
             Some(TransactionTaskList.build(fullReturn, transactionStatus)),
             if (LeaseHelper.isLeaseDefined(fullReturn)) Some(LeaseTaskList.build(fullReturn)) else None,

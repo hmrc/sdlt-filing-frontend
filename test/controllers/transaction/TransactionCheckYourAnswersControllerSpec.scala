@@ -657,17 +657,18 @@ class TransactionCheckYourAnswersControllerSpec
       import services.crossflow.fields.CrossFlowValidationService
 
       def stubCrossFlow(failures: Seq[CrossFlowFailure]): CrossFlowValidationService =
-        new CrossFlowValidationService(Set.empty) {
+        new CrossFlowValidationService(Set.empty, Set.empty) {
           override def failuresAffecting(section: ReturnSection, ua: UserAnswers): Seq[CrossFlowFailure] = failures
         }
 
       def failure(targetPage: services.crossflow.PageId, ruleId: String = "TEST"): CrossFlowFailure =
         CrossFlowFailure(
-          ruleId = ruleId,
-          affects = ReturnSection.Transaction,
-          messageKey = "test.message",
-          targets = Seq(CrossFlowTarget(targetPage, "value"))
-        )
+          ruleId         = ruleId,
+          affects        = ReturnSection.Transaction,
+          messageKey     = "test.message",
+          inlineErrorKey = "test.message",
+          targets        = Seq(CrossFlowTarget(targetPage, "value"))
+        ) 
 
       "must redirect to the relief reason page when a single cross-flow failure targets it" in {
 

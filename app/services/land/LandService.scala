@@ -19,8 +19,12 @@ package services.land
 import models.land.LandTypeOfProperty
 import models.{Land, NormalMode, UserAnswers}
 import pages.land.LandTypeOfPropertyPage
+import play.api.i18n.Messages
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
+import services.crossflow.CrossFlowFailure
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
 
 class LandService {
 
@@ -35,10 +39,9 @@ class LandService {
 
       case _ =>
         Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
-
     }
   }
-  
+
   def getMainLand(userAnswers: UserAnswers): Option[Land] = {
     val mainLandId: Option[String] = userAnswers.fullReturn
       .flatMap(_.returnInfo)
@@ -48,10 +51,39 @@ class LandService {
   }
 
   def isMainLand(userAnswers: UserAnswers, landId: String): Boolean = {
-    val mainLandId:Option[String] = userAnswers.fullReturn
+    val mainLandId: Option[String] = userAnswers.fullReturn
       .flatMap(_.returnInfo)
       .flatMap(_.mainLandID)
-    
+
     mainLandId.contains(landId)
   }
+  
+  def generateLandErrors(failures: Seq[(Land, Seq[CrossFlowFailure])])
+                        (implicit messages: Messages): SummaryList =
+    SummaryList(rows = failures.flatMap { case (land, _) =>
+      for {
+        landId  <- land.landID
+        address  = land.address1.getOrElse(landId)
+      } yield SummaryListRow(
+        key = Key(
+          content = Text(address),
+          classes = "govuk-!-width-one-third govuk-!-font-weight-regular hmrc-summary-list__key"
+        ),
+        actions = Some(Actions(
+          items = Seq(
+            ActionItem(
+              href               = controllers.land.routes.LandAuthorityCodeSingleEntityController.onPageLoad(landId).url,
+              content            = Text(messages("site.change")),
+              visuallyHiddenText = Some(address)
+            ),
+            ActionItem(
+              href               = controllers.land.routes.LandAuthorityCodeMultiEntityController.removeLand(landId).url,
+              content            = Text(messages("site.remove")),
+              visuallyHiddenText = Some(address)
+            )
+          ),
+          classes = "govuk-!-width-one-third"
+        ))
+      )
+    })
 }

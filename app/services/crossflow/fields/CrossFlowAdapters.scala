@@ -29,10 +29,10 @@ object CrossFlowFormSupport:
   def withCrossFlowErrors[A](form: Form[A], failures: Seq[CrossFlowFailure], page: PageId): Form[A] =
     failures.headOption.fold(form) { failure =>
       failure.targetsOn(page).foldLeft(form) { (acc, target) =>
-        acc.withError(FormError(target.field, failure.messageKey, failure.args))
+        acc.withError(FormError(target.field, failure.inlineErrorKey, failure.args))
       }
     }
-  
+
   def bindFromRequestWithCrossFlow[A](
                                        form:    Form[A],
                                        page:    PageId,
@@ -60,7 +60,7 @@ object CrossFlowConstraints:
       val errors = rules
         .flatMap(_.validate(ua))
         .filter(_.appearsOn(page))
-        .map(failure => ValidationError(failure.messageKey, failure.args*))
+        .map(failure => ValidationError(failure.inlineErrorKey, failure.args*))
       if errors.isEmpty then Valid else Invalid(errors)
     }
 
