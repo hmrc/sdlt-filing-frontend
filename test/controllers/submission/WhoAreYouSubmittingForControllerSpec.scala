@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.routes
 import forms.submission.WhoAreYouSubmittingForFormProvider
 import models.submission.WhoAreYouSubmittingFor
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -39,8 +39,7 @@ class WhoAreYouSubmittingForControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val whoAreYouSubmittingForRoute          = controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad(NormalMode).url
-  lazy val whoAreYouSubmittingForRouteCheckMode = controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad(CheckMode).url
+  lazy val whoAreYouSubmittingForRoute = controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad().url
 
   val formProvider = new WhoAreYouSubmittingForFormProvider()
   val form         = formProvider()
@@ -138,29 +137,6 @@ class WhoAreYouSubmittingForControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
-    "must redirect to the return task list when valid data is submitted in CheckMode" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, whoAreYouSubmittingForRouteCheckMode)
-            .withFormUrlEncodedBody(("value", WhoAreYouSubmittingFor.values.head.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
       }
     }
 

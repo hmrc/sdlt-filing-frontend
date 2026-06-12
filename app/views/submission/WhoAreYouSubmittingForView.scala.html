@@ -30,7 +30,7 @@
 
 @layout(pageTitle = title(form, messages("submission.whoAreYouSubmittingFor.title"), section = Some(messages("site.submission.caption")))) {
 
-    @formHelper(action = controllers.submission.routes.WhoAreYouSubmittingForController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = controllers.submission.routes.WhoAreYouSubmittingForController.onSubmit(), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))

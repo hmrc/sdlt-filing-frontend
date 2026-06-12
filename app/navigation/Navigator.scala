@@ -550,8 +550,6 @@ class Navigator @Inject()() {
     case LeaseholdTaxCalculatedTotalAmountDuePage       => _ => controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
     case LeaseholdTaxCalculatedPenaltiesAndInterestPage => _ => controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
 
-    case WhoAreYouSubmittingForPage => _ => controllers.routes.ReturnTaskListController.onPageLoad()
-
     case _ => _ => controllers.routes.ReturnTaskListController.onPageLoad()
   }
 
