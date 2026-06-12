@@ -55,7 +55,7 @@ class LeaseholdCalculatedSdltBreakdownControllerSpec extends SpecBase with Mocki
     purchaser = Some(Seq(Purchaser(purchaserID = Some("PurchaserID"), returnID = Some("ReturnID"), isCompany = Some("NO"), surname = Some("OBrian"), forename1 = Some("Liam")))),
     land = Some(Seq(Land(landID = Some("L1"), propertyType = Some("01"), interestCreatedTransferred = Some("FPF")))),
     transaction = Some(Transaction(effectiveDate = Some("2024-04-01"), totalConsideration = Some("300000"), claimingRelief = Some("no"), transactionDescription = Some("L"), isLinked = Some("no"))),
-    lease = Some(Lease(leaseID = Some("LeaseID"), returnID = Some("ReturnID"), contractStartDate = Some("2024-10-01"), contractEndDate = Some("2034-09-30"), startingRent = Some("12000.00"))),
+    lease = Some(Lease(leaseID = Some("LeaseID"), returnID = Some("ReturnID"), contractStartDate = Some("2024-10-01"), contractEndDate = Some("2034-09-30"), startingRent = Some("12000.00"), totalPremiumPayable = Some("250000"))),
     residency = Some(Residency(residencyID = Some("ResidencyID"), isNonUkResidents = Some("NO")))
   )))
 

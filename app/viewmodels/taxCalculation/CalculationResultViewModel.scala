@@ -17,7 +17,7 @@
 package viewmodels.taxCalculation
 
 import config.CurrencyFormatter
-import models.UserAnswers
+import models.{Lease, Transaction, UserAnswers}
 import models.taxCalculation.*
 import models.taxCalculation.TaxTypes.*
 import play.api.i18n.Messages
@@ -46,11 +46,12 @@ object CalculationResultViewModel extends CurrencyFormatter {
       land <- fullReturn.land.flatMap(_.find(_.landID.contains(mainLandId))).toRight(MissingAboutTheLandError)
       effectiveDate <- transaction.effectiveDate.toRight(MissingTransactionAnswerError("effectiveDate"))
       formattedDate <- parseDate(effectiveDate).map(_.toLongDate).left.map(_ => InvalidDateError(effectiveDate))
-      totalConsideration <- transaction.totalConsideration.toRight(MissingTransactionAnswerError("totalConsideration"))
+      transactionDescription <- transaction.transactionDescription.toRight(MissingTransactionAnswerError("transactionDescription"))
+      holdingType <- HoldingTypes.fromCode(transactionDescription).toRight(UnknownHoldingTypeError(transactionDescription))
+      totalConsideration <- considerationFor(holdingType, transaction, fullReturn.lease)
       claimingRelief <- transaction.claimingRelief.toRight(MissingTransactionAnswerError("claimingRelief"))
       reliefReason <- Right(transaction.reliefReason)
       formattedRelief <- toYesNo(claimingRelief).left.map(_ => InvalidYesNoAnswerError(claimingRelief))
-      transactionDescription <- transaction.transactionDescription.toRight(MissingTransactionAnswerError("transactionDescription"))
       propertyType <- land.propertyType.toRight(MissingLandAnswerError("propertyType"))
       isLinked <- transaction.isLinked.toRight(MissingTransactionAnswerError("isLinked"))
       formattedLinked <- toYesNo(isLinked).left.map(_ => InvalidYesNoAnswerError(isLinked))
@@ -78,6 +79,12 @@ object CalculationResultViewModel extends CurrencyFormatter {
         npvRateTable = getNpvRateTable(rentCalc),
         totalTax = getTotalTaxTable(result.totalTax.toCurrency)
       )
+    }
+
+  private def considerationFor(holdingType: HoldingTypes.Value, transaction: Transaction, lease: Option[Lease]): Either[BuildRequestError, String] =
+    holdingType match {
+      case HoldingTypes.leasehold => lease.flatMap(_.totalPremiumPayable).toRight(MissingLeaseAnswerError("totalPremiumPayable"))
+      case _                      => transaction.totalConsideration.toRight(MissingTransactionAnswerError("totalConsideration"))
     }
 
   private[taxCalculation] def getTaxCalculationSummary(
