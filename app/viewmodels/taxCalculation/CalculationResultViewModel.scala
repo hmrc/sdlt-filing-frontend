@@ -186,9 +186,9 @@ object CalculationResultViewModel extends CurrencyFormatter {
 
   private[taxCalculation] def getTotalTaxTable(totalSdltDue: String)(implicit messages: Messages): Table = {
     Table(
-      caption = Some(getMessage("totalSdltDue")),
+      caption = Some(getMessage("totalSdltDueWithNpv")),
       captionClasses = mediumCaption,
-      head = Some(rateTableHeader),
+      head = Some(totalTaxTableHeader),
       rows = Seq(totalRow("totalSdltDue", totalSdltDue))
     )
   }
@@ -219,6 +219,13 @@ object CalculationResultViewModel extends CurrencyFormatter {
       HeadCell(content = Text(getMessage("rates.column.description")), classes = ""           ),
       HeadCell(content = Text(getMessage("rates.column.rate")),        classes = numericHeader),
       HeadCell(content = Text(getMessage("rates.column.sdltDue")),     classes = numericHeader)
+    )
+
+  private[taxCalculation] def totalTaxTableHeader(implicit messages: Messages): Seq[HeadCell] =
+    Seq(
+      HeadCell(content = Text(getMessage("rates.column.description")), classes = ""),
+      HeadCell(content = Text(""), classes = numericHeader),
+      HeadCell(content = Text(getMessage("rates.column.sdltDue")), classes = numericHeader)
     )
 
   private[taxCalculation] def sliceDescription(slice: SliceDetails)(implicit messages: Messages): String =
