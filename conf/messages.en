@@ -1937,6 +1937,14 @@ submission.declaration.purchasers.approved.bullet1                              
 submission.declaration.purchasers.approved.bullet2                                  = authorised me to submit this return on their behalf
 submission.declaration.purchasers.myself.p1                                         = The information in this return is correct and complete to the best of my knowledge.
 
+submission.emailConfirmation.title                                                  = What email address should HMRC use to send confirmation?
+submission.emailConfirmation.heading                                                = What email address should HMRC use to send confirmation?
+submission.emailConfirmation.hint                                                   = HMRC will only use this email to send confirmation that this return has been successfully submitted
+submission.emailConfirmation.error.required                                         = Enter the email address HMRC should use to send confirmation
+submission.emailConfirmation.error.length                                           = The email address HMRC should use to send confirmation must be 36 characters or fewer
+submission.emailConfirmation.error.invalid                                          = The email address HMRC should use to send confirmation must only include letters a to z, ampersands (&), at signs (@), forward slashes, full stops, hyphens, numbers 0-9, question marks and spaces
+submission.emailConfirmation.error.invalidFormat                                    = Enter the email address HMRC should use to send confirmation in the correct format, like name@example.com
+submission.emailConfirmation.change.hidden                                          = What email address should HMRC use to send confirmation?
 
 # ---- Cross-flow validation errors ----
 crossflow.relief.heading                                                            = Update the reason for claiming relief

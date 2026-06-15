@@ -19,21 +19,21 @@ package navigation
 import controllers.routes
 import models.*
 import pages.*
+import pages.land.*
+import pages.lease.*
 import pages.preliminary.*
 import pages.purchaser.*
 import pages.purchaserAgent.*
-import pages.vendor.*
-import pages.vendorAgent.*
-import pages.land.*
-import pages.lease.*
-import pages.taxCalculation.ConfirmEffectiveDateOfTransactionPage
-import pages.taxCalculation.freeholdTaxCalculated.*
-import pages.taxCalculation.freeholdSelfAssessed.*
-import pages.taxCalculation.leaseholdTaxCalculated.*
-import pages.taxCalculation.leaseholdSelfAssessed.*
 import pages.submission.*
+import pages.taxCalculation.ConfirmEffectiveDateOfTransactionPage
+import pages.taxCalculation.freeholdSelfAssessed.*
+import pages.taxCalculation.freeholdTaxCalculated.*
+import pages.taxCalculation.leaseholdSelfAssessed.*
+import pages.taxCalculation.leaseholdTaxCalculated.*
 import pages.transaction.*
 import pages.ukResidency.*
+import pages.vendor.*
+import pages.vendorAgent.*
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -304,7 +304,7 @@ class Navigator @Inject()() {
          | EnterAnnualRentVatPage | LeaseEnterTotalPremiumPayablePage | LeaseEndDatePage | LeaseNetPresentValuePage => true
     case _ => false
   }
-  
+
   private def leaseRoutes(page: Page): UserAnswers => Call = page match {
     case TypeOfLeasePage =>
       _ => controllers.lease.routes.LeaseStartDateController.onPageLoad(NormalMode)
@@ -416,11 +416,13 @@ class Navigator @Inject()() {
   }
 
   private def isSubmissionSection(page: Page): Boolean = page match {
-    case WhoAreYouSubmittingForPage => true
+    case WhoAreYouSubmittingForPage | EmailConfirmationPage => true
     case _ => false
   }
 
   private def submissionRoutes(page: Page): UserAnswers => Call = page match {
+    case EmailConfirmationPage =>
+      _ => controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad()
     case WhoAreYouSubmittingForPage =>
       _ => controllers.submission.routes.DeclarationController.onPageLoad()
     case _ => _ => routes.IndexController.onPageLoad()
