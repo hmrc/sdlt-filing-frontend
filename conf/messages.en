@@ -45,6 +45,7 @@ site.land.caption                                                               
 site.ukResidency.caption                                                            = About UK residency
 site.transaction.caption                                                            = About the transaction
 site.lease.caption                                                                  = About the lease
+site.submission.caption                                                             = Submit your return
 site.taxCalculation.caption                                                         = Tax calculation
 site.taxCalculation.leaseholdSelfAssessed.caption                                   = Tax calculation - Leasehold not calculated
 site.taxCalculation.freeholdSdltCalculated.section                                  = Tax calculation - Freehold calculated
@@ -1927,6 +1928,15 @@ crossflow.relief.investmentZone.outsideWindow                                   
 crossflow.relief.seeding.dateTooEarly                                               = Seeding relief is only available for an effective date on or after 19 March 2025. Check the effective date or the relief reason.
 crossflow.relief.multipleDwellings.effectiveDateTooLate                             = Multiple Dwellings Relief is only available for an effective date before 1 June 2024. Check the effective date or the relief reason.
 crossflow.relief.multipleDwellings.contractDateTooLate                              = Multiple Dwellings Relief is only available for a contract dated before 7 March 2024. Check the contract date or the relief reason.
+
+submission.whoAreYouSubmittingFor.title                                             = Who are you submitting this return for?
+submission.whoAreYouSubmittingFor.heading                                           = Who are you submitting this return for?
+submission.whoAreYouSubmittingFor.purchaserAuthorised                               = The purchasers, who have authorised me to enter the effective date of the transaction
+submission.whoAreYouSubmittingFor.purchaserApproved                                 = The purchasers, who have approved the effective date of the transaction
+submission.whoAreYouSubmittingFor.myself                                            = Myself, or as the in-house representative of an organisation
+submission.whoAreYouSubmittingFor.checkYourAnswersLabel                             = Who are you submitting this return for?
+submission.whoAreYouSubmittingFor.error.required                                    = Select who you’re submitting this return for
+submission.whoAreYouSubmittingFor.change.hidden                                     = who you are submitting this return for
 
 crossflow.relief.firstTimeBuyer.over500k                                            = When claiming ‘32 - First Time Buyer’s Relief’, the total premium payable must be £500,000 or less and the effective date of the transaction must be between 22 November 2017 to 22 September 2022, or the same as or after 1 April 2025
 crossflow.relief.firstTimeBuyer.over625k                                            = When claiming ‘32 - First Time Buyer’s Relief’, the total premium payable must be £625,000 or less and the effective date of the transaction must be between 23 September 2022 and 31 March 2025

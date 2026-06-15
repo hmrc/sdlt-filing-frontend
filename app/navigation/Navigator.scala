@@ -31,6 +31,7 @@ import pages.taxCalculation.freeholdTaxCalculated.*
 import pages.taxCalculation.freeholdSelfAssessed.*
 import pages.taxCalculation.leaseholdTaxCalculated.*
 import pages.taxCalculation.leaseholdSelfAssessed.*
+import pages.submission.*
 import pages.transaction.*
 import pages.ukResidency.*
 import play.api.mvc.Call
@@ -78,6 +79,8 @@ class Navigator @Inject()() {
     case taxCalcPage if isFreeholdSelfAssessedSection(taxCalcPage) => freeholdSelfAssessedRoutes(taxCalcPage)
     case taxCalcPage if isLeaseholdTaxCalculatedSection(taxCalcPage) => leaseholdTaxCalculatedRoutes(taxCalcPage)
     case taxCalcPage if isLeaseholdSelfAssessedSection(taxCalcPage) => leaseholdSelfAssessedRoutes(taxCalcPage)
+
+    case submissionPage if isSubmissionSection(submissionPage) => submissionRoutes(submissionPage)
     case _ => _ => routes.IndexController.onPageLoad()
   }
 
@@ -410,6 +413,18 @@ class Navigator @Inject()() {
     case LeaseholdSelfAssessedPenaltiesAndInterestPage =>
       _ => controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
     case _                                             => _ => routes.IndexController.onPageLoad()
+  }
+
+  private def isSubmissionSection(page: Page): Boolean = page match {
+    case WhoAreYouSubmittingForPage => true
+    case _ => false
+  }
+
+  private def submissionRoutes(page: Page): UserAnswers => Call = page match {
+    case WhoAreYouSubmittingForPage =>
+      // TODO - DTR-5724 update to Declaration controller once ds-3 is implemented
+      _ => controllers.routes.ReturnTaskListController.onPageLoad()
+    case _ => _ => routes.IndexController.onPageLoad()
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
