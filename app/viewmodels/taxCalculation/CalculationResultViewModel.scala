@@ -184,8 +184,14 @@ object CalculationResultViewModel extends CurrencyFormatter {
       )
     }
 
-  private[taxCalculation] def getTotalTaxTable(totalSdltDue: String)(implicit messages: Messages): Table =
-    Table(rows = Seq(totalRow("totalSdltDue", totalSdltDue)))
+  private[taxCalculation] def getTotalTaxTable(totalSdltDue: String)(implicit messages: Messages): Table = {
+    Table(
+      caption = Some(getMessage("rates.captionPremium")),
+      captionClasses = mediumCaption,
+      head = Some(rateTableHeader),
+      rows = Seq(totalRow("totalSdltDue", totalSdltDue))
+    )
+  }
 
   private[taxCalculation] def sliceRow(slice: SliceDetails)(implicit messages: Messages): Seq[TableRow] =
     Seq(
