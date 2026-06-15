@@ -18,15 +18,13 @@ package controllers.submission
 
 import base.SpecBase
 import models.NormalMode
-import play.api.mvc.Call
+import models.submission.WhoAreYouSubmittingFor
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import org.scalatestplus.mockito.MockitoSugar
+import pages.submission.WhoAreYouSubmittingForPage
 import views.html.submission.DeclarationView
 
-class DeclarationControllerSpec extends SpecBase with MockitoSugar {
-
-  def onwardRoute = Call("GET", "/foo")
+class DeclarationControllerSpec extends SpecBase {
 
   lazy val declarationRoute = controllers.submission.routes.DeclarationController.onPageLoad().url
 
@@ -34,7 +32,7 @@ class DeclarationControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.PurchaserAuthorised).success.value)).build()
 
       running(application) {
 
@@ -47,28 +45,26 @@ class DeclarationControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    // TODO sprint 17 - DTR-5721 - route to DS-2
-
-    /* "must return OK and the correct view for a GET" in {
+    "must return JourneyRecoveryController when empty userAnswers for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
+
         val request = FakeRequest(GET, declarationRoute)
 
         val result = route(application, request).value
 
-        status(result) mustEqual OK
+        status(result) mustEqual SEE_OTHER
 
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
 
-
       }
-    } */
+    }
 
-    "render DS-1 content in GET method" in {
+    "render 'purchaserAuthorised' content in GET method" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.PurchaserAuthorised).success.value)).build()
 
       running(application) {
         val request = FakeRequest(GET, declarationRoute)
@@ -79,13 +75,13 @@ class DeclarationControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual OK
 
-        view("DS-1", NormalMode)(request, messages(application)).toString must include (messages(application)("declaration.purchasers.authorised.bullet1"))
+        view("purchaserAuthorised", NormalMode)(request, messages(application)).toString must include (messages(application)("submission.declaration.purchasers.authorised.bullet1"))
       }
     }
 
-    "render DS-2 content in GET method" in {
+    "render 'purchaserApproved' content in GET method" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.PurchaserApproved).success.value)).build()
 
       running(application) {
         val request = FakeRequest(GET, declarationRoute)
@@ -95,13 +91,13 @@ class DeclarationControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[DeclarationView]
 
         status(result) mustEqual OK
-        view("DS-2", NormalMode)(request, messages(application)).toString must include(messages(application)("declaration.purchasers.approved.bullet1"))
+        view("purchaserApproved", NormalMode)(request, messages(application)).toString must include(messages(application)("submission.declaration.purchasers.approved.bullet1"))
       }
     }
 
-    "render DS-3 content in GET method" in {
+    "render 'myself' content in GET method" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.Myself).success.value)).build()
 
       running(application) {
         val request = FakeRequest(GET, declarationRoute)
@@ -111,15 +107,13 @@ class DeclarationControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[DeclarationView]
 
         status(result) mustEqual OK
-        view("DS-3", NormalMode)(request, messages(application)).toString must include(messages(application)("declaration.purchasers.myself.p1"))
+        view("myself", NormalMode)(request, messages(application)).toString must include(messages(application)("submission.declaration.purchasers.myself.p1"))
       }
     }
-    /* TODO Implement POST calls*/
 
-    "must redirect to ds-4 page post selection of ds-2 value" in {
+    "must redirect to JourneyRecoveryController page when empty userAnswers for POST" in {
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request =
@@ -128,6 +122,26 @@ class DeclarationControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+
+      }
+    }
+
+    "must redirect to ds-4 page post selection of myself value" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.Myself).success.value)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, declarationRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual controllers.submission.routes.DeclarationController.onPageLoad().url //TODO Sprint17 make changes for ds-4 routing
+
       }
     }
 

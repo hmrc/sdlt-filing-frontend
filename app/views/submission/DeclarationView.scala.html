@@ -27,43 +27,42 @@
 
 @(declarationFor: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("declaration.title"), section = Some(messages("transaction.caption")))) {
+@layout(pageTitle = titleNoForm(messages("submission.declaration.title"), section = Some(messages("site.submission.caption")))) {
 
 @formHelper(action = controllers.submission.routes.DeclarationController.onSubmit(), Symbol("autoComplete") -> "off") {
 
-
-         @caption(messages("declaration.caption"))
-         @h1(messages("declaration.heading"))
+         @caption(messages("site.submission.caption"))
+         @h1(messages("submission.declaration.heading"))
 
        @declarationFor.trim() match {
 
-        case "DS-1" => {
-          @p(messages("transaction.beforeStart.p1"))
+        case "purchaserAuthorised" => {
+          @p(messages("submission.declaration.purchasers.authorised.p1"))
 
           <ul class="govuk-list govuk-list--bullet">
-           <li>@messages("declaration.purchasers.authorised.bullet1")</li>
-           <li>@messages("declaration.purchasers.authorised.bullet2")</li>
+           <li>@messages("submission.declaration.purchasers.authorised.bullet1")</li>
+           <li>@messages("submission.declaration.purchasers.authorised.bullet2")</li>
           </ul>
 
-          @p(messages("declaration.purchasers.authorised.p2"))
+          @p(messages("submission.declaration.purchasers.authorised.p2"))
 
         }
-        case "DS-2" => {
+        case "purchaserApproved" => {
 
-          @p(messages("declaration.purchasers.approved.p1"))
+          @p(messages("submission.declaration.purchasers.approved.p1"))
 
           <ul class="govuk-list govuk-list--bullet">
-           <li>@messages("declaration.purchasers.approved.bullet1")</li>
-           <li>@messages("declaration.purchasers.approved.bullet2")</li>
+           <li>@messages("submission.declaration.purchasers.approved.bullet1")</li>
+           <li>@messages("submission.declaration.purchasers.approved.bullet2")</li>
           </ul>
 
       }
         case _ => {
-         @p(messages("declaration.purchasers.myself.p1"))
+         @p(messages("submission.declaration.purchasers.myself.p1"))
       }
     }
           @govukButton(
-          ButtonViewModel(messages("site.confirm.continue")))
+          ButtonViewModel(messages("site.confirm.submit")))
 
 }
 }

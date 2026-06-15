@@ -422,8 +422,7 @@ class Navigator @Inject()() {
 
   private def submissionRoutes(page: Page): UserAnswers => Call = page match {
     case WhoAreYouSubmittingForPage =>
-      // TODO - DTR-5724 update to Declaration controller once ds-3 is implemented
-      _ => controllers.routes.ReturnTaskListController.onPageLoad()
+      _ => controllers.submission.routes.DeclarationController.onPageLoad()
     case _ => _ => routes.IndexController.onPageLoad()
   }
 

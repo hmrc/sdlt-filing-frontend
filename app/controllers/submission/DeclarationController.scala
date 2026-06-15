@@ -18,14 +18,16 @@ package controllers.submission
 
 import controllers.actions.*
 import models.Mode
+import pages.submission.WhoAreYouSubmittingForPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.submission.DeclarationView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
+@Singleton
 class DeclarationController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        identify: IdentifierAction,
@@ -38,23 +40,21 @@ class DeclarationController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      // val userAnswers = request.userAnswers // TODO sprint 17 - DTR-5721 - route to DS-2
-      val declaration = Option("DS-1")
-      declaration match {
-            case Some(value) =>  Ok(view(value, mode))
-            case None =>
-              Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-          }
+      request.userAnswers.get(WhoAreYouSubmittingForPage) match {
+
+        case Some(declarationFor) => Ok(view(declarationFor.toString, mode))
+        case None =>
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
 
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      // val userAnswers = request.userAnswers // TODO sprint 17 - DTR-5721 - route to DS-2
-      val declaration = Option("DS-1")
-      declaration match {
-        case Some(value) => Future.successful(Redirect(controllers.submission.routes.DeclarationController.onPageLoad())) // TODO sprint 17 - route to DS-4
+      request.userAnswers.get(WhoAreYouSubmittingForPage) match {
+
+        case Some(_) => Future.successful(Redirect(controllers.submission.routes.DeclarationController.onPageLoad())) // TODO sprint 17 - route to DS-4
         case None =>
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }

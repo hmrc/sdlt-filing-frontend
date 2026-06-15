@@ -16,7 +16,7 @@ site.startAgain                                                                 
 site.signIn                                                                         = Sign in
 site.govuk                                                                          = GOV.UK
 site.save.continue                                                                  = Save and continue
-site.confirm.continue                                                               = Confirm and continue
+site.confirm.submit                                                               = Confirm and submit
 site.success                                                                        = Success
 site.section.prefix                                                                 = This section is
 site.fullStop                                                                       = .
@@ -1939,17 +1939,16 @@ submission.whoAreYouSubmittingFor.checkYourAnswersLabel                         
 submission.whoAreYouSubmittingFor.error.required                                    = Select who you’re submitting this return for
 submission.whoAreYouSubmittingFor.change.hidden                                     = who you are submitting this return for
 
-declaration.title                                                                   = Declaration
-declaration.heading                                                                 = Declaration
-declaration.caption                                                                 = Submit your return
-declaration.purchasers.authorised.p1                                                = I confirm that all purchasers have:
-declaration.purchasers.authorised.bullet1                                           = declared that the information in this return is correct and complete to the best of their knowledge, except for the effective date of the transaction
-declaration.purchasers.authorised.bullet2                                           = authorised me to enter the effective date of the transaction and submit this return on their behalf
-declaration.purchasers.authorised.p2                                                = The effective date of the transaction is correct and accurate to the best of my knowledge.
-declaration.purchasers.approved.p1                                                  = I confirm that all purchasers have:
-declaration.purchasers.approved.bullet1                                             = declared that the information in this return is correct and complete to the best of their knowledge
-declaration.purchasers.approved.bullet2                                             = authorised me to submit this return on their behalf
-declaration.purchasers.myself.p1                                                    = The information in this return is correct and complete to the best of my knowledge.
+submission.declaration.title                                                        = Declaration
+submission.declaration.heading                                                      = Declaration
+submission.declaration.purchasers.authorised.p1                                     = I confirm that all purchasers have:
+submission.declaration.purchasers.authorised.bullet1                                = declared that the information in this return is correct and complete to the best of their knowledge, except for the effective date of the transaction
+submission.declaration.purchasers.authorised.bullet2                                = authorised me to enter the effective date of the transaction and submit this return on their behalf
+submission.declaration.purchasers.authorised.p2                                     = The effective date of the transaction is correct and accurate to the best of my knowledge.
+submission.declaration.purchasers.approved.p1                                       = I confirm that all purchasers have:
+submission.declaration.purchasers.approved.bullet1                                  = declared that the information in this return is correct and complete to the best of their knowledge
+submission.declaration.purchasers.approved.bullet2                                  = authorised me to submit this return on their behalf
+submission.declaration.purchasers.myself.p1                                         = The information in this return is correct and complete to the best of my knowledge.
 
 crossflow.relief.firstTimeBuyer.over500k                                            = When claiming ‘32 - First Time Buyer’s Relief’, the total premium payable must be £500,000 or less and the effective date of the transaction must be between 22 November 2017 to 22 September 2022, or the same as or after 1 April 2025
 crossflow.relief.firstTimeBuyer.over625k                                            = When claiming ‘32 - First Time Buyer’s Relief’, the total premium payable must be £625,000 or less and the effective date of the transaction must be between 23 September 2022 and 31 March 2025
