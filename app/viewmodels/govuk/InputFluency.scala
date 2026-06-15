@@ -32,14 +32,16 @@ trait InputFluency {
 
     def apply(
                field: Field,
-               label: Label
+               label: Label,
+               attributes: Map[String, String] = Map.empty
              )(implicit messages: Messages): Input =
       Input(
         id           = field.id,
         name         = field.name,
         value        = field.value,
         label        = label,
-        errorMessage = errorMessage(field)
+        errorMessage = errorMessage(field),
+        attributes = attributes
       )
   }
 
