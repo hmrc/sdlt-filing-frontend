@@ -59,12 +59,12 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("taxCalculation.sdltSelfAssessment.h2")).asPageSubHeading(),
-                attributes = Map("autocomplete" -> "off")
+                label = LabelViewModel(messages("taxCalculation.sdltSelfAssessment.h2")).asPageSubHeading()
             )
             .withWidth(Fixed10)
             .withPrefix(PrefixOrSuffix(content = Text(messages("site.money.prefix"))))
             .withHint(HintViewModel(Text(messages("taxCalculation.sdltSelfAssessment.hint"))))
+            .withAutocomplete("off")
         )
 
         @govukButton(ButtonViewModel(messages("site.save.continue")))
