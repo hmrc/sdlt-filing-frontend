@@ -186,7 +186,7 @@ object CalculationResultViewModel extends CurrencyFormatter {
 
   private[taxCalculation] def getTotalTaxTable(totalSdltDue: String)(implicit messages: Messages): Table = {
     Table(
-      caption = Some(getMessage("rates.captionPremium")),
+      caption = Some(getMessage("totalSdltDue")),
       captionClasses = mediumCaption,
       head = Some(rateTableHeader),
       rows = Seq(totalRow("totalSdltDue", totalSdltDue))
