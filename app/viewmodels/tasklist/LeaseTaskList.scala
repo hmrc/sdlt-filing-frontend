@@ -35,7 +35,12 @@ object LeaseTaskList {
       )
     )
 
-  def buildLeaseRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+  def isLeaseComplete(fullReturn: FullReturn): Boolean = {
+    fullReturn.lease.exists(_.leaseType.isDefined)
+    //TODO ADD ALL REQUIRED FIELDS FOR LEASE
+  }
+  
+  def leaseRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
     val url = fullReturn.lease match {
       case Some(lease) if lease.leaseType.isDefined =>
         controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad().url
@@ -53,9 +58,12 @@ object LeaseTaskList {
         url
       },
       tagId = "leaseQuestionDetailRow",
-      checks = scheme => Seq(fullReturn.lease.exists(_.leaseType.isDefined)),
+      checks = scheme => Seq(isLeaseComplete(fullReturn)),
       prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
-    ).build(fullReturn)
+    )
   }
+  
+  def buildLeaseRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig) : TaskListSectionRow =
+    leaseRowBuilder(fullReturn).build(fullReturn)
 
 }

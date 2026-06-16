@@ -24,7 +24,7 @@
         govukTag: GovukTag
 )
 
-@(message: String, url: String, tagId: String, status: TaskListState, canEdit: Boolean = false)(implicit request: Request[_], messages: Messages)
+@(message: String, url: String, tagId: String, status: TaskListState, canEdit: Boolean = false, hint: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
 <li class="govuk-task-list__item govuk-task-list__item--with-link">
     <div class="govuk-task-list__name-and-hint">
@@ -43,6 +43,12 @@
                         </a>
                 }
             }
+        }
+
+        @hint.map { h =>
+            <div class="govuk-hint govuk-!-margin-top-1">
+                @messages(h)
+            </div>
         }
 
     </div>

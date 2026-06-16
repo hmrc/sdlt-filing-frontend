@@ -62,6 +62,31 @@ class LeaseTaskListSpec extends SpecBase {
       }
     }
 
+    ".isLeaseComplete" - {
+
+      "must return true if lease exists and leaseType is defined" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          val result = LeaseTaskList.isLeaseComplete(fullReturnComplete)
+
+          result mustBe true
+        }
+      }
+
+      "must return false if lease but leaseType is missing" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          val result = LeaseTaskList.isLeaseComplete(fullReturnComplete
+            .copy(lease = Some(completeLease
+              .copy(leaseType = None))))
+
+          result mustBe false
+        }
+      }
+    }
+
     ".buildLeaseRow" - {
       "must return TaskListSectionRow with correct tag id and link text" in {
         val application = applicationBuilder().build()

@@ -52,6 +52,7 @@ site.taxCalculation.leaseholdSelfAssessed.caption                               
 site.taxCalculation.freeholdSdltCalculated.section                                  = Tax calculation - Freehold calculated
 site.taxCalculation.leaseholdSdltCalculated.section                                 = Tax calculation - Leasehold calculated
 site.taxCalculation.freeholdSelfAssessed.section                                    = Tax calculation - Freehold not calculated
+site.submission.caption                                                  = Submit your return
 
 site.vendor.theVendor                                                               = the vendor
 site.purchaser.thePurchaser                                                         = the purchaser
@@ -121,7 +122,7 @@ tasklist.vendorQuestion.heading                                                 
 tasklist.purchaserQuestion.details                                                  = Purchaser Questions
 tasklist.purchaserQuestion.heading                                                  = Purchaser Questions
 tasklist.complete                                                                   = Complete
-tasklist.notStarted                                                                 = Not Started
+tasklist.notStarted                                                                 = Not yet started
 tasklist.purchaserAgentQuestion.details                                             = Purchaser Agent Questions
 tasklist.purchaserAgentQuestion.heading                                             = Purchaser Agent Questions
 tasklist.vendorAgentQuestion.details                                                = Vendor Agent Questions
@@ -132,8 +133,11 @@ tasklist.ukResidencyQuestion.details                                            
 tasklist.ukResidencyQuestion.heading                                                = UK Residency Questions
 tasklist.leaseQuestion.heading                                                      = Lease Questions
 tasklist.leaseQuestion.details                                                      = Lease Questions
+tasklist.submissionQuestion.heading                                                 = Submit your return
+tasklist.submissionQuestion.details                                                 = Submit your return
+tasklist.submissionQuestion.hint                                                    = You must complete all previous sections before starting
 tasklist.inProgress                                                                 = In Progress
-tasklist.cannotStartYet                                                             = Can not Start
+tasklist.cannotStartYet                                                             = Cannot start yet
 tasklist.failed                                                                     = Failed
 tasklist.optional                                                                   = Optional
 tasklist.transactionQuestion.details                                                = Transaction Questions
@@ -1930,6 +1934,16 @@ lease.netPresentValue.error.invalidWholeNumber                                  
 lease.netPresentValue.error.maximum                                                 = The net present value upon which tax is calculated must be equal to or less than £9,999,999,999
 lease.netPresentValue.change.hidden                                                 = Net present value (NPV)
 
+submission.beforeYouStart.title                                                     = Before you start
+submission.beforeYouStart.heading                                                   = Your return is ready for submission
+submission.beforeYouStart.p1.prefix                                                 = You have now completed all sections of your SDLT return. You can <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>
+submission.beforeYouStart.p1.link                                                   = //TODO DTR-5734 update to completed return page once complete
+submission.beforeYouStart.p1.suffix                                                 = view and print this return for your client’s approval before submitting (opens in new tab).
+submission.beforeYouStart.p2                                                        = Once your return is submitted, you will receive:
+submission.beforeYouStart.li1                                                       = a Unique Transaction Reference Number (UTRN)
+submission.beforeYouStart.li2                                                       = an SDLT 5 certificate (the submission receipt)
+submission.beforeYouStart.p3                                                        = You cannot amend your return online once it’s submitted.
+
 submission.whoAreYouSubmittingFor.title                                             = Who are you submitting this return for?
 submission.whoAreYouSubmittingFor.heading                                           = Who are you submitting this return for?
 submission.whoAreYouSubmittingFor.purchaserAuthorised                               = The purchasers, who have authorised me to enter the effective date of the transaction
@@ -1958,6 +1972,8 @@ submission.emailConfirmation.error.length                                       
 submission.emailConfirmation.error.invalid                                          = The email address HMRC should use to send confirmation must only include letters a to z, ampersands (&), at signs (@), forward slashes, full stops, hyphens, numbers 0-9, question marks and spaces
 submission.emailConfirmation.error.invalidFormat                                    = Enter the email address HMRC should use to send confirmation in the correct format, like name@example.com
 submission.emailConfirmation.change.hidden                                          = What email address should HMRC use to send confirmation?
+
+
 
 # ---- Cross-flow validation errors ----
 crossflow.relief.heading                                                            = Update the reason for claiming relief
@@ -2072,3 +2088,4 @@ crossflow.land.Cf-16.inline               = Entering this Scottish postcode mean
 
 crossflow.land.cta.enterDifferentCode     = Enter a different local authority code.
 crossflow.land.cta.enterDifferentPostcode = Enter a different postcode.
+

@@ -71,6 +71,30 @@ class TaxCalculationTaskListSpec extends SpecBase {
       }
     }
 
+    ".isTaxCalculationComplete" - {
+
+      "must return true if tax calculation exists and tax due is defined" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          val result = TaxCalculationTaskList.isTaxCalculationComplete(fullReturnComplete)
+
+          result mustBe true
+        }
+      }
+
+      "must return false if tax calculation but tax due is missing" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          val result = TaxCalculationTaskList.isTaxCalculationComplete(fullReturnComplete.copy(taxCalculation = Some(completeTaxCalculation
+            .copy(taxDue = None))))
+
+          result mustBe false
+        }
+      }
+    }
+
     ".buildTaxCalculationRow" - {
       "must return TaskListSectionRow" in {
         val application = applicationBuilder().build()

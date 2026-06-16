@@ -132,6 +132,29 @@ class LandTaskListSpec extends SpecBase {
       }
     }
 
+    ".isLandComplete" - {
+
+      "must return true if land exists and is not empty" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          val result = LandTaskList.isLandComplete(fullReturnComplete)
+
+          result mustBe true
+        }
+      }
+
+      "must return false if land exists but is empty" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          val result = LandTaskList.isLandComplete(fullReturnComplete.copy(land = Some(Seq.empty)))
+
+          result mustBe false
+        }
+      }
+    }
+
     ".buildLandRow" - {
       "must return TaskListSectionRow" in {
         val application = applicationBuilder().build()

@@ -35,7 +35,12 @@ object TaxCalculationTaskList {
       )
     )
 
-  def buildTaxCalculationRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+  def isTaxCalculationComplete(fullReturn: FullReturn): Boolean = {
+    fullReturn.taxCalculation.exists(_.taxDue.isDefined)
+    //TODO ADD ALL REQUIRED FIELDS FOR TAX CALC
+  }
+  
+  def taxCalculationRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
     val url = controllers.taxCalculation.routes.TaxCalculationConfirmEffectiveDateOfTransactionController.onPageLoad().url
 
@@ -49,9 +54,12 @@ object TaxCalculationTaskList {
         url
       },
       tagId = "taxCalculationQuestionDetailRow",
-      checks = scheme => Seq(fullReturn.taxCalculation.exists(_.taxDue.nonEmpty)),
+      checks = scheme => Seq(isTaxCalculationComplete(fullReturn)),
       prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
-    ).build(fullReturn)
+    )
   }
+
+  def buildTaxCalculationRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow =
+    taxCalculationRowBuilder(fullReturn).build(fullReturn)
 
 }

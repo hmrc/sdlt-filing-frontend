@@ -110,6 +110,30 @@ class TransactionTaskListSpec extends SpecBase {
       }
     }
 
+    ".isTransactionComplete" - {
+
+      "must return true if transaction exists and contains effective date" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          val result = TransactionTaskList.isTransactionComplete(fullReturnComplete)
+
+          result mustBe true
+        }
+      }
+
+      "must return false if transaction exists but effective date is empty" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          val result = TransactionTaskList.isTransactionComplete(fullReturnComplete.copy(transaction = Some(completeTransaction
+          .copy(effectiveDate = None))))
+
+          result mustBe false
+        }
+      }
+    }
+
     ".buildTransactionRow" - {
 
       "must return a TaskListSectionRow" in {

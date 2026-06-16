@@ -27,15 +27,21 @@ object VendorTaskList {
 
   def build(fullReturn: FullReturn)
            (implicit messages: Messages,
-            appConfig: FrontendAppConfig): TaskListSection =
+            appConfig: FrontendAppConfig): TaskListSection = {
     TaskListSection(
       heading = messages("tasklist.vendorQuestion.heading"),
       rows = Seq(
         buildVendorRow(fullReturn)
       )
     )
+  }
+  
+  def isVendorComplete(fullReturn: FullReturn): Boolean = {
+    fullReturn.vendor.exists(_.nonEmpty)
+    //TODO ADD ALL REQUIRED FIELDS FOR VENDOR
+  }
 
-  def buildVendorRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+  def vendorRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
     val url = fullReturn.vendor match {
       case Some(list) if list.nonEmpty => controllers.vendor.routes.VendorOverviewController.onPageLoad().url
@@ -51,10 +57,13 @@ object VendorTaskList {
       url = _ => _ => {
         url
       },
-      tagId = "venderQuestionDetailRow",
-      checks = scheme => Seq(fullReturn.vendor.exists(_.nonEmpty)),
+      tagId = "vendorQuestionDetailRow",
+      checks = scheme => Seq(isVendorComplete(fullReturn)),
       prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
-    ).build(fullReturn)
+    )
   }
+
+  def buildVendorRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow =
+    vendorRowBuilder(fullReturn).build(fullReturn)
 
 }
