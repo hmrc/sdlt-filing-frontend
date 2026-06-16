@@ -21,9 +21,7 @@ import forms.purchaser.ConfirmNameOfThePurchaserFormProvider
 import models.*
 import navigation.Navigator
 import pages.purchaser.ConfirmNameOfThePurchaserPage
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.purchaser.PurchaserService
@@ -46,9 +44,7 @@ class ConfirmNameOfThePurchaserController @Inject()(
                                                      val controllerComponents: MessagesControllerComponents,
                                                      purchaserService: PurchaserService,
                                                      view: ConfirmNameOfThePurchaserView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
-  val form: Form[Boolean] = formProvider()
+                                                   )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -57,18 +53,14 @@ class ConfirmNameOfThePurchaserController @Inject()(
       mainPurchaserOpt match {
         case Some(purchaser) if purchaser.address1.isEmpty
           && (purchaser.surname.isDefined || purchaser.companyName.isDefined) =>
-          
+          val isCompany = purchaser.companyName.isDefined
+          val name = purchaser.companyName.orElse(purchaser.surname).getOrElse("")
+          val form = formProvider(name, isCompany)
           val preparedForm = request.userAnswers.get(ConfirmNameOfThePurchaserPage) match {
             case None => form
             case Some(value) => form.fill(value)
           }
-
-          val isCompany = purchaser.companyName.isDefined
-          val name = purchaser.companyName.orElse(purchaser.surname).getOrElse("")
-
-          sessionRepository.set(request.userAnswers.copy(data = Json.obj())).map { _ =>
-            Ok(view(preparedForm, mode, name, isCompany))
-          }
+          Future.successful(Ok(view(preparedForm, mode, name, isCompany)))
 
         case _ =>
           Future.successful(Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode)))
@@ -77,35 +69,39 @@ class ConfirmNameOfThePurchaserController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        formWithErrors => {
-          val mainPurchaserOpt: Option[Purchaser] = purchaserService.getMainPurchaser(request.userAnswers)
+      val mainPurchaserOpt: Option[Purchaser] = purchaserService.getMainPurchaser(request.userAnswers)
 
-          val isCompany = mainPurchaserOpt.flatMap(_.companyName).isDefined
-          val name = mainPurchaserOpt
-            .flatMap(p => p.companyName.orElse(p.surname))
-            .getOrElse("")
+      mainPurchaserOpt match {
+        case Some(purchaser) if purchaser.address1.isEmpty
+          && (purchaser.surname.isDefined || purchaser.companyName.isDefined) =>
+          val name = purchaser.companyName.orElse(purchaser.surname).getOrElse("")
+          val isCompany = purchaser.companyName.isDefined
+          val form = formProvider(name, isCompany)
 
-          sessionRepository.set(request.userAnswers).map { _ =>
-            BadRequest(view(formWithErrors, mode, name, isCompany))
-          }
-        },
-        value =>
-          purchaserService.populatePurchaserNameInSession(
-            purchaserCheck = value,
-            userAnswers = request.userAnswers
-          ) match {
-            case Success(updatedAnswers) =>
-              sessionRepository.set(updatedAnswers).map { _ =>
-                if (value) {
-                  Redirect(navigator.nextPage(ConfirmNameOfThePurchaserPage, mode, updatedAnswers))
-                } else {
-                  Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode))
-                }
+
+          form.bindFromRequest().fold(
+            formWithErrors =>
+              Future.successful(BadRequest(view(formWithErrors, mode, name, isCompany))),
+            value =>
+              purchaserService.populatePurchaserNameInSession(
+                purchaserCheck = value,
+                userAnswers = request.userAnswers
+              ) match {
+                case Success(updatedAnswers) =>
+                  sessionRepository.set(updatedAnswers).map { _ =>
+                    if (value) {
+                      Redirect(navigator.nextPage(ConfirmNameOfThePurchaserPage, mode, updatedAnswers))
+                    } else {
+                      Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode))
+                    }
+                  }
+                case Failure(exception) =>
+                  Future.successful(InternalServerError("Failed to update session"))
               }
-            case Failure(exception) =>
-              Future.successful(InternalServerError("Failed to update session"))
-          }
-      )
+          )
+
+        case _ =>
+          Future.successful(Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode)))
+      }
   }
 }

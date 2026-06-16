@@ -21,7 +21,6 @@ import forms.purchaser.PurchaserAndVendorConnectedFormProvider
 import models.{Mode, NormalMode}
 import navigation.Navigator
 import pages.purchaser.{NameOfPurchaserPage, PurchaserAndVendorConnectedPage}
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -44,14 +43,13 @@ class PurchaserAndVendorConnectedController @Inject()(
                                        view: PurchaserAndVendorConnectedView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form: Form[Boolean] = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       val purchaserName: Option[String] = request.userAnswers.get(NameOfPurchaserPage).map(_.fullName)
       purchaserName match {
 
         case Some(purchaserName) =>
+          val form = formProvider(purchaserName)
           val preparedForm = request.userAnswers.get(PurchaserAndVendorConnectedPage) match {
             case None => form
             case Some(value) => form.fill(value)
@@ -68,7 +66,7 @@ class PurchaserAndVendorConnectedController @Inject()(
       val purchaserName: Option[String] = request.userAnswers.get(NameOfPurchaserPage).map(_.fullName)
       purchaserName match {
         case Some(purchaserName) =>
-
+          val form = formProvider(purchaserName)
           form.bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, mode, purchaserName))),

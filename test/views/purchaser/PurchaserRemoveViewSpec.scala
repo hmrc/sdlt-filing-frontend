@@ -28,9 +28,9 @@ import play.api.test.Helpers.*
 import views.html.purchaser.PurchaserRemoveView
 
 class PurchaserRemoveViewSpec extends SpecBase {
-
+  implicit val messages: Messages = stubMessages()
   private val formProvider = new PurchaserRemoveFormProvider()
-  private val form = formProvider()
+  private val form = formProvider("Doe")
 
   "PurchaserRemoveView" - {
 

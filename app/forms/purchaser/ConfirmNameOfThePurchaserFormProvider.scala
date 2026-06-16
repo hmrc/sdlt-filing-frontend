@@ -18,13 +18,20 @@ package forms.purchaser
 
 import forms.mappings.Mappings
 import play.api.data.Form
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
 class ConfirmNameOfThePurchaserFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(purchaserName: String, isCompany: Boolean)(implicit messages: Messages): Form[Boolean] =
+   if(isCompany) {
     Form(
-      "value" -> boolean("purchaser.confirmNameOfPurchaser.error.required")
+      "value" -> boolean(messages("purchaser.confirmNameOfPurchaser.error.required.company", purchaserName))
     )
+   } else {
+     Form(
+       "value" -> boolean(messages("purchaser.confirmNameOfPurchaser.error.required.individual", purchaserName))
+     )
+   }
 }

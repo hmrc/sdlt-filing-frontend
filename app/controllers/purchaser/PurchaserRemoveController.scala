@@ -18,13 +18,15 @@ package controllers.purchaser
 
 import controllers.actions.*
 import forms.purchaser.PurchaserRemoveFormProvider
-import models.Mode
+import models.{Mode, Purchaser}
 import models.purchaser.PurchaserRemove
+import pages.purchaser.PurchaserOverviewRemovePage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.purchaser.PurchaserRemoveService
+import services.purchaser.{PurchaserRemoveService, PurchaserService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.FullName
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,13 +39,29 @@ class PurchaserRemoveController @Inject()(
                                        requireData: DataRequiredAction,
                                        formProvider: PurchaserRemoveFormProvider,
                                        purchaserRemoveService: PurchaserRemoveService,
+                                       purchaserService: PurchaserService,
                                        val controllerComponents: MessagesControllerComponents
                                          )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form: Form[PurchaserRemove] = formProvider()
+
+ 
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData) { implicit request =>
+
+      val purchaserName: String = request.userAnswers.get(PurchaserOverviewRemovePage).flatMap { purchaserRefs =>
+        val allPurchasers: Seq[Purchaser] = purchaserService.allPurchasers(request.userAnswers)
+        val purchaserToRemove: Option[Purchaser] = purchaserService.findById(allPurchasers, purchaserRefs.purchaserID)
+
+        purchaserToRemove.flatMap { purchaser =>
+          purchaser.companyName.orElse(
+            FullName.optionalFullName(purchaser.forename1, purchaser.forename2, purchaser.surname)
+          )
+        }
+      }.getOrElse("")
+
+      val form: Form[PurchaserRemove] = formProvider(purchaserName)
+      
       purchaserRemoveService.purchaserRemoveView(form, mode) match {
         case Right(html) => Ok(html)
         case Left(result) => result
@@ -52,6 +70,18 @@ class PurchaserRemoveController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+      val purchaserName: String = request.userAnswers.get(PurchaserOverviewRemovePage).flatMap { purchaserRefs =>
+        val allPurchasers: Seq[Purchaser] = purchaserService.allPurchasers(request.userAnswers)
+        val purchaserToRemove: Option[Purchaser] = purchaserService.findById(allPurchasers, purchaserRefs.purchaserID)
+
+        purchaserToRemove.flatMap { purchaser =>
+          purchaser.companyName.orElse(
+            FullName.optionalFullName(purchaser.forename1, purchaser.forename2, purchaser.surname)
+          )
+        }
+      }.getOrElse("")
+
+      val form: Form[PurchaserRemove] = formProvider(purchaserName)
 
       form.bindFromRequest().fold(
         formWithErrors =>

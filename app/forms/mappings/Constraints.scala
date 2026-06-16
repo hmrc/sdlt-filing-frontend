@@ -19,6 +19,8 @@ package forms.mappings
 import config.CurrencyFormatter
 import play.api.data.validation
 import play.api.data.validation.{Constraint, Invalid, Valid}
+import play.api.i18n.Messages
+
 import java.time.format.DateTimeFormatter
 import java.time.LocalDate
 import scala.util.{Failure, Success, Try}
@@ -175,7 +177,7 @@ trait Constraints {
     }
   }
 
-  protected def validUtr(errorKey: String): Constraint[String] = {
+  protected def validUtr(errorKey: String, purchaserName: String)(implicit messages: Messages): Constraint[String] = {
 
     def checkSum(errorKey: String): Constraint[String] = {
       val weights: Seq[Int] = Seq(6, 7, 8, 9, 10, 5, 4, 3, 2)
@@ -197,14 +199,14 @@ trait Constraints {
     }
 
     firstError(
-      regexp("^[0-9]*$", s"${errorKey}.regex.invalid"),
-      minLength(10, s"${errorKey}.length"),
-      maxLength(10, s"${errorKey}.length"),
-      checkSum(s"${errorKey}.invalid")
+      regexp("^[0-9]*$", messages(s"${errorKey}.regex.invalid", purchaserName)),
+      minLength(10, messages(s"${errorKey}.length", purchaserName)),
+      maxLength(10, messages(s"${errorKey}.length", purchaserName)),
+      checkSum(messages(s"${errorKey}.invalid", purchaserName))
     )
   }
 
-  protected def vatCheckF16Validation(errorKey: String): Constraint[String] = {
+  protected def vatCheckF16Validation(errorKey: String, purchaserName: String)(implicit messages: Messages): Constraint[String] = {
 
     def vatF16Check(errorKey: String): Constraint[String] = {
 
@@ -236,15 +238,15 @@ trait Constraints {
       }
 
       Constraint[String] { str =>
-        if (validateVAT(str)) Valid else Invalid(errorKey)
+        if (validateVAT(str)) Valid else Invalid(messages(s"${errorKey}.invalid", purchaserName))
       }
     }
 
     firstError(
-      regexp("^[0-9]*$", s"${errorKey}.regex.invalid"),
-      minLength(9, s"${errorKey}.length"),
-      maxLength(9, s"${errorKey}.length"),
-      vatF16Check(s"${errorKey}.invalid")
+      regexp("^[0-9]*$", messages(s"${errorKey}.regex.invalid", purchaserName)),
+      minLength(9, messages(s"${errorKey}.length", purchaserName)),
+      maxLength(9, messages(s"${errorKey}.length", purchaserName)),
+      vatF16Check(s"${errorKey}")
     )
   }
 

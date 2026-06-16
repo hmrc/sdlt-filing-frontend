@@ -26,6 +26,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaser.{NameOfPurchaserPage, PurchaserConfirmIdentityPage, RegistrationNumberPage, WhoIsMakingThePurchasePage}
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -41,7 +42,8 @@ class RegistrationNumberControllerSpec extends SpecBase with MockitoSugar {
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new RegistrationNumberFormProvider()
-  val form = formProvider()
+  implicit val messages: Messages = stubMessages()
+  val form = formProvider("Doe")
 
   lazy val registrationNumberRoute = controllers.purchaser.routes.RegistrationNumberController.onPageLoad(NormalMode).url
 
@@ -208,9 +210,8 @@ class RegistrationNumberControllerSpec extends SpecBase with MockitoSugar {
         val request =
           FakeRequest(POST, registrationNumberRoute)
             .withFormUrlEncodedBody("vatRegistrationNumber" -> "123")
-
+        val form = formProvider("John Middle Doe")(messages(application))
         val boundForm = form.bind(Map("vatRegistrationNumber" -> "123"))
-
         val view = application.injector.instanceOf[RegistrationNumberView]
 
         val result = route(application, request).value

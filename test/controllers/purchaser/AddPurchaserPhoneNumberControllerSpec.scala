@@ -25,6 +25,7 @@ import org.mockito.Mockito.{reset, when}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaser.{AddPurchaserPhoneNumberPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -36,6 +37,7 @@ import scala.concurrent.Future
 class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
 
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
+  implicit val messages: Messages = stubMessages()
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -45,7 +47,6 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
   lazy val addPurchaserPhoneNumberRoute: String = controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(NormalMode).url
 
   val formProvider = new AddPurchaserPhoneNumberFormProvider()
-  val form = formProvider()
 
   private val testStorn = "TESTSTORN"
 
@@ -104,7 +105,6 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
       .set(NameOfPurchaserPage, individualPurchaser.toNameOfPurchaser).success.value
   }
 
-
   implicit class PurchaserOps(p: Purchaser) {
     def toNameOfPurchaser = models.purchaser.NameOfPurchaser(p.forename1, p.forename2, p.surname.orElse(p.companyName).getOrElse(""))
   }
@@ -121,7 +121,7 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
       running(application) {
         val request = FakeRequest(GET, addPurchaserPhoneNumberRoute)
         val view = application.injector.instanceOf[AddPurchaserPhoneNumberView]
-
+        val form = formProvider("John Middle Doe")
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -139,6 +139,7 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
       running(application) {
         val request = FakeRequest(GET, addPurchaserPhoneNumberRoute)
         val view = application.injector.instanceOf[AddPurchaserPhoneNumberView]
+        val form = formProvider("ACME Corporation")
 
         val result = route(application, request).value
 
@@ -158,11 +159,13 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
       running(application) {
         val request = FakeRequest(GET, addPurchaserPhoneNumberRoute)
         val view = application.injector.instanceOf[AddPurchaserPhoneNumberView]
+        val form = formProvider("John Middle Doe")
+        val preparedForm = form.fill(true)
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, "John Middle Doe")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(preparedForm, NormalMode, "John Middle Doe")(request, messages(application)).toString
       }
     }
 
@@ -274,7 +277,8 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
 
     "must redirect to WhoIsMakingThePurchaseController when value is false and WhoIsMakingThePurchasePage is not answered" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithName)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithName))
+        .build()
 
       running(application) {
         val request = FakeRequest(POST, addPurchaserPhoneNumberRoute)
@@ -297,7 +301,7 @@ class AddPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar w
         val request = FakeRequest(POST, addPurchaserPhoneNumberRoute)
           .withFormUrlEncodedBody(("value", "invalid"))
 
-        val boundForm = form.bind(Map("value" -> "invalid"))
+        val boundForm = formProvider("ACME Corporation").bind(Map("value" -> "invalid"))
         val view = application.injector.instanceOf[AddPurchaserPhoneNumberView]
 
         val result = route(application, request).value

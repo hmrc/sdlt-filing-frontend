@@ -18,10 +18,13 @@ package forms.purchaser
 
 import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class DoesPurchaserHaveNIFormProviderSpec extends BooleanFieldBehaviours {
 
-  val form = new DoesPurchaserHaveNIFormProvider()()
+  implicit val messages: Messages = stubMessages()
+  val form = new DoesPurchaserHaveNIFormProvider()("Doe")
 
   ".value" - {
 

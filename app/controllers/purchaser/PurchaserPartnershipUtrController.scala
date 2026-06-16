@@ -22,7 +22,6 @@ import models.purchaser.{PurchaserConfirmIdentity, WhoIsMakingThePurchase}
 import models.{Mode, NormalMode}
 import navigation.Navigator
 import pages.purchaser.{NameOfPurchaserPage, PurchaserConfirmIdentityPage, PurchaserUTRPage}
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -47,8 +46,6 @@ class PurchaserPartnershipUtrController @Inject()(
                                         view: PurchaserPartnershipUtrView
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form: Form[String] = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
@@ -61,6 +58,7 @@ class PurchaserPartnershipUtrController @Inject()(
         continueRoute = {
           (purchaserNameOpt, purchaserInformationOpt) match {
             case (Some(purchaserName), Some(purchaserInformationOpt)) if purchaserInformationOpt.equals(PurchaserConfirmIdentity.PartnershipUTR) =>
+              val form = formProvider(purchaserName)
               val preparedForm = request.userAnswers.get(PurchaserUTRPage) match {
                 case None => form
                 case Some(value) => form.fill(value)
@@ -84,6 +82,7 @@ class PurchaserPartnershipUtrController @Inject()(
 
       purchaserName match {
         case Some(purchaserName) =>
+          val form = formProvider(purchaserName)
           form.bindFromRequest().fold(
           formWithErrors =>
             Future.successful(BadRequest(view(formWithErrors, mode, purchaserName))),

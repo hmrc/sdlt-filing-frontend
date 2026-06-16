@@ -18,10 +18,13 @@ package forms.purchaser
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class CompanyFormOfIdFormProviderSpec extends StringFieldBehaviours {
-
-  val form = new CompanyFormOfIdFormProvider()()
+  
+  implicit val messages: Messages = stubMessages()
+  val form = new CompanyFormOfIdFormProvider()("Doe")
 
   ".referenceId" - {
 

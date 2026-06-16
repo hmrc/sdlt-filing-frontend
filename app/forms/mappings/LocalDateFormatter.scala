@@ -28,6 +28,9 @@ private[mappings] class LocalDateFormatter(
                                             allRequiredKey: String,
                                             twoRequiredKey: String,
                                             requiredKey: String,
+                                            dayRequiredKey: Option[String] = None,
+                                            monthRequiredKey: Option[String] = None,
+                                            yearRequiredKey: Option[String] = None,
                                             args: Seq[String] = Seq.empty
                                           )(implicit messages: Messages) extends Formatter[LocalDate] with Formatters {
 
@@ -67,10 +70,12 @@ private[mappings] class LocalDateFormatter(
         field -> data.get(s"$key.$field").filter(_.nonEmpty)
     }.toMap
 
-    lazy val missingFields = fields
+    lazy val missingFieldNames = fields
       .withFilter(_._2.isEmpty)
       .map(_._1)
       .toList
+
+    lazy val missingFieldsLocalized = missingFieldNames
       .map(field => messages(s"date.error.$field"))
 
     fields.count(_._2.isDefined) match {
@@ -79,9 +84,20 @@ private[mappings] class LocalDateFormatter(
           _.map(_.copy(key = key, args = args))
         }
       case 2 =>
-        Left(List(FormError(key, requiredKey, missingFields ++ args)))
+        // One field missing - use specific key if provided, otherwise use requiredKey
+        val errorKey = if (missingFieldNames.nonEmpty) {
+          missingFieldNames.head match {
+            case "day" => dayRequiredKey.getOrElse(requiredKey)
+            case "month" => monthRequiredKey.getOrElse(requiredKey)
+            case "year" => yearRequiredKey.getOrElse(requiredKey)
+            case _ => requiredKey
+          }
+        } else {
+          requiredKey
+        }
+        Left(List(FormError(key, errorKey, missingFieldsLocalized ++ args)))
       case 1 =>
-        Left(List(FormError(key, twoRequiredKey, missingFields ++ args)))
+        Left(List(FormError(key, twoRequiredKey, missingFieldsLocalized ++ args)))
       case _ =>
         Left(List(FormError(key, allRequiredKey, args)))
     }

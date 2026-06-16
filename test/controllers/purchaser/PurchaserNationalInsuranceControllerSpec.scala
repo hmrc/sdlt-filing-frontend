@@ -26,6 +26,7 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaser.{DoesPurchaserHaveNIPage, PurchaserNationalInsurancePage}
 import play.api.data.Form
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -41,7 +42,8 @@ class PurchaserNationalInsuranceControllerSpec extends SpecBase with MockitoSuga
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new PurchaserNationalInsuranceFormProvider()
-  val form: Form[String] = formProvider()
+  implicit val messages: Messages = stubMessages()
+  val form: Form[String] = formProvider("Doe")
 
   val testUserAnswersIndividual = UserAnswers(
     id = "test-session-id",
@@ -195,7 +197,7 @@ class PurchaserNationalInsuranceControllerSpec extends SpecBase with MockitoSuga
         val request =
           FakeRequest(POST, purchaserNationalInsuranceRoute)
             .withFormUrlEncodedBody(("nationalInsuranceNumber", "GB123456X"))
-
+        val form = formProvider("John Middle Doe")(messages(application))
         val boundForm = form.bind(Map("nationalInsuranceNumber" -> "GB123456X"))
 
         val view = application.injector.instanceOf[PurchaserNationalInsuranceView]

@@ -18,13 +18,14 @@ package forms.purchaser
 
 import forms.mappings.Mappings
 import play.api.data.Form
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
 class IsPurchaserActingAsTrusteeFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(purchaserName: String)(implicit messages: Messages): Form[Boolean] =
     Form(
-      "value" -> boolean("purchaser.isPurchaserActingAsTrustee.error.required")
+      "value" -> boolean(messages("purchaser.isPurchaserActingAsTrustee.error.required", purchaserName))
     )
 }

@@ -27,6 +27,7 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaser.{CompanyFormOfIdPage, NameOfPurchaserPage, PurchaserConfirmIdentityPage, WhoIsMakingThePurchasePage}
 import play.api.data.Form
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -41,7 +42,8 @@ class CompanyFormOfIdControllerSpec extends SpecBase with MockitoSugar {
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new CompanyFormOfIdFormProvider()
-  val form: Form[CompanyFormOfId] = formProvider()
+  implicit val messages: Messages = stubMessages()
+  val form: Form[CompanyFormOfId] = formProvider("test company")
 
   lazy val companyFormOfIdRoute: String = controllers.purchaser.routes.CompanyFormOfIdController.onPageLoad(NormalMode).url
 
@@ -198,7 +200,7 @@ class CompanyFormOfIdControllerSpec extends SpecBase with MockitoSugar {
         val request =
           FakeRequest(POST, companyFormOfIdRoute)
             .withFormUrlEncodedBody(("value", "invalid value"))
-
+        val form = formProvider("test company")(messages(application))
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[CompanyFormOfIdView]

@@ -41,8 +41,6 @@ class ConfirmChangeOfMainPurchaserController @Inject()(
                                          purchaserService: PurchaserService
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form = formProvider()
-
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
@@ -52,6 +50,7 @@ class ConfirmChangeOfMainPurchaserController @Inject()(
         case Some(purchaserId) =>
           purchaserService.getPurchaserNameById(request.userAnswers, purchaserId) match {
             case Some(name) =>
+              val form = formProvider(name)
               Ok(view(form, name))
             case None =>
               Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
@@ -70,6 +69,7 @@ class ConfirmChangeOfMainPurchaserController @Inject()(
         case Some(purchaserId) =>
           purchaserService.getPurchaserNameById(request.userAnswers, purchaserId) match {
             case Some(name) =>
+              val form = formProvider(name)
               form.bindFromRequest().fold(
                 formWithErrors =>
                   Future.successful(BadRequest(view(formWithErrors, name))),

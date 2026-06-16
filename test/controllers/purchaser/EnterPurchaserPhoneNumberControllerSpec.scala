@@ -28,6 +28,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaser.{EnterPurchaserPhoneNumberPage, NameOfPurchaserPage, WhoIsMakingThePurchasePage}
 import play.api.data.Form
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -49,7 +50,8 @@ class EnterPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar
   def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new EnterPurchaserPhoneNumberFormProvider()
-  val form: Form[String] = formProvider()
+  implicit val messages: Messages = stubMessages()
+  val form: Form[String] = formProvider("Doe")
 
   lazy val enterPurchaserPhoneNumberRoute: String = controllers.purchaser.routes.EnterPurchaserPhoneNumberController.onPageLoad(NormalMode).url
 
@@ -239,7 +241,7 @@ class EnterPurchaserPhoneNumberControllerSpec extends SpecBase with MockitoSugar
         val request =
           FakeRequest(POST, enterPurchaserPhoneNumberRoute)
             .withFormUrlEncodedBody(("value", ""))
-
+        val form = formProvider(individualNameOfPurchaser.fullName)(messages(application))
         val boundForm = form.bind(Map("value" -> ""))
 
         val view = application.injector.instanceOf[EnterPurchaserPhoneNumberView]

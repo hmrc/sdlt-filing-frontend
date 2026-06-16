@@ -21,7 +21,6 @@ import forms.purchaser.PurchaserConfirmIdentityFormProvider
 import models.purchaser.{PurchaserConfirmIdentity, WhoIsMakingThePurchase}
 import models.{Mode, NormalMode}
 import pages.purchaser.{CompanyFormOfIdPage, NameOfPurchaserPage, PurchaserConfirmIdentityPage, PurchaserUTRPage, RegistrationNumberPage}
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -45,8 +44,6 @@ class PurchaserConfirmIdentityController @Inject()(
                                        view: PurchaserConfirmIdentityView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form: Form[PurchaserConfirmIdentity] = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
@@ -55,6 +52,8 @@ class PurchaserConfirmIdentityController @Inject()(
           Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode))
 
         case Some(purchaserName) =>
+          val purchasersName: String = purchaserName.fullName
+          val form = formProvider(purchasersName)
           val preparedForm = request.userAnswers.get(PurchaserConfirmIdentityPage) match {
             case None => form
             case Some(value) => form.fill(value)
@@ -74,6 +73,8 @@ class PurchaserConfirmIdentityController @Inject()(
           Future.successful(Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode)))
 
         case Some(purchaserName) =>
+          val purchasersName: String = purchaserName.fullName
+          val form = formProvider(purchasersName)
           form.bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, mode, purchaserName.fullName))),

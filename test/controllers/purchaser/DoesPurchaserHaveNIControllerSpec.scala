@@ -26,6 +26,7 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaser.DoesPurchaserHaveNIPage
 import play.api.data.Form
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.libs.json.{JsNull, Json}
 import play.api.mvc.Call
@@ -44,7 +45,8 @@ class DoesPurchaserHaveNIControllerSpec extends SpecBase with MockitoSugar {
   lazy val doesPurchaserHaveNIRoute: String = controllers.purchaser.routes.DoesPurchaserHaveNIController.onPageLoad(NormalMode).url
 
   val formProvider = new DoesPurchaserHaveNIFormProvider()
-  val form: Form[Boolean] = formProvider()
+  implicit val messages: Messages = stubMessages()
+  val form: Form[Boolean] = formProvider("John Middle Doe")
 
   val testUserAnswersIndividual: UserAnswers = UserAnswers(
     id = "test-session-id",

@@ -21,18 +21,22 @@ import play.api.data.FormError
 
 class NameOfPurchaserFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "purchaser.name.error.required"
-  val nameLengthKey = "purchaser.name.error.length"
-  val firstNameLengthKey = "purchaser.individual.error.length.firstName"
-  val middleNameLengthKey = "purchaser.individual.error.length.middleName"
-  val invalidKey = "purchaser.name.form.regex.error"
-  val maxLength = 56
-  val firstNameMaxLength = 14
-  val middleNameMaxLength = 14
+  val formProvider = new NameOfPurchaserFormProvider()
 
-  val form = new NameOfPurchaserFormProvider()()
+  "NameOfPurchaserFormProvider - Individual Branch" - {
 
-  ".nameOfPurchaser" - {
+    val requiredKey = "purchaser.individual.error.required"
+    val lastNameLengthKey = "purchaser.individual.error.length.lastName"
+    val firstNameLengthKey = "purchaser.individual.error.length.firstName"
+    val middleNameLengthKey = "purchaser.individual.error.length.middleName"
+    val lastNameInvalidKey = "purchaser.name.form.regex.error.lastName"
+    val firstNameInvalidKey = "purchaser.name.form.regex.error.firstName"
+    val middleNameInvalidKey = "purchaser.name.form.regex.error.middleName"
+    val maxLength = 56
+    val firstNameMaxLength = 14
+    val middleNameMaxLength = 14
+
+    val form = formProvider("Individual")
 
     val mandatoryFieldName = "name"
     val optionalFirstName = "forename1"
@@ -42,6 +46,246 @@ class NameOfPurchaserFormProviderSpec extends StringFieldBehaviours {
       "must bind valid form data" in {
         val validNames = Seq(
           "Mr test",
+          "Company test name",
+          "Company are us",
+          "Company@company.com",
+          "(555) 123-4567"
+        )
+
+        validNames.foreach { validName =>
+          val result = form.bind(Map(
+            mandatoryFieldName -> validName,
+            optionalFirstName -> "",
+            optionalMiddleName -> ""
+          ))
+          result.errors must be(empty)
+        }
+      }
+
+      "must not bind strings longer than 56 characters" in {
+        val longName = "a" * 57
+        val result = form.bind(Map(
+          mandatoryFieldName -> longName,
+          optionalFirstName -> "",
+          optionalMiddleName -> ""
+        ))
+        result.errors must contain(FormError(mandatoryFieldName, lastNameLengthKey, Seq(maxLength)))
+      }
+
+      behave like mandatoryField(
+        form,
+        mandatoryFieldName,
+        requiredError = FormError(mandatoryFieldName, requiredKey)
+      )
+
+      "must reject invalid name formats" in {
+        val invalidNames = Seq(
+          "Hello #world",
+          "Price: $50",
+          "A < B",
+          "File \\ path",
+          "José",
+          "\"Line1\\nLine2\""
+        )
+
+        invalidNames.foreach { invalidName =>
+          val result = form.bind(Map(
+            mandatoryFieldName -> invalidName,
+            optionalFirstName -> "",
+            optionalMiddleName -> ""
+          ))
+          result.errors must contain(
+            FormError(mandatoryFieldName, lastNameInvalidKey, Seq("[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"))
+          )
+        }
+      }
+
+      "must bind valid form data with max length surname" in {
+        val maxLengthName = "a" * 56
+        val result = form.bind(Map(
+          mandatoryFieldName -> maxLengthName,
+          optionalFirstName -> "",
+          optionalMiddleName -> ""
+        ))
+        result.errors must be(empty)
+      }
+
+      "must accept valid special characters in surname" in {
+        val result = form.bind(Map(
+          mandatoryFieldName -> "Smith-Jones~!@%&'()*+,-./:=?[]^_{};",
+          optionalFirstName -> "",
+          optionalMiddleName -> ""
+        ))
+        result.errors must be(empty)
+      }
+    }
+
+    ".forename1" - {
+      "must bind valid form data" in {
+        val validNames = Seq(
+          "Mr test",
+          "Company",
+          "Pokemon",
+          "Middle Name"
+        )
+
+        validNames.foreach { validName =>
+          val result = form.bind(Map(
+            optionalFirstName -> validName,
+            mandatoryFieldName -> "name",
+            optionalMiddleName -> ""
+          ))
+          result.errors.isEmpty must be(true)
+        }
+      }
+
+      "must not bind strings longer than 14 characters" in {
+        val longName = "a" * 15
+
+        val result = form.bind(Map(
+          optionalFirstName -> longName,
+          mandatoryFieldName -> "name",
+          optionalMiddleName -> ""
+        ))
+        result.errors must contain(FormError(optionalFirstName, firstNameLengthKey, Seq(firstNameMaxLength)))
+      }
+
+      behave like optionalField(
+        form,
+        optionalFirstName
+      )
+
+      "must reject invalid forename1 formats" in {
+        val invalidNames = Seq(
+          "Hello #world",
+          "Price: $50",
+          "A < B",
+          "File \\ path",
+          "José",
+          "\"Line1\\nLine2\""
+        )
+
+        invalidNames.foreach { invalidName =>
+          val result = form.bind(Map(
+            optionalFirstName -> invalidName,
+            mandatoryFieldName -> "name",
+            optionalMiddleName -> ""
+          ))
+          result.errors must contain(
+            FormError(optionalFirstName, firstNameInvalidKey, Seq("[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"))
+          )
+        }
+      }
+    }
+
+    ".forename2" - {
+      "must bind valid form data" in {
+        val validNames = Seq(
+          "Mr test",
+          "Company",
+          "Pokemon",
+          "Middle Name"
+        )
+
+        validNames.foreach { validName =>
+          val result = form.bind(Map(
+            mandatoryFieldName -> "name",
+            optionalMiddleName -> validName,
+            optionalFirstName -> ""
+          ))
+          result.errors.isEmpty must be(true)
+        }
+      }
+
+      "must not bind strings longer than 14 characters" in {
+        val longName = "a" * 15
+
+        val result = form.bind(Map(
+          mandatoryFieldName -> "name",
+          optionalMiddleName -> longName,
+          optionalFirstName -> ""
+        ))
+        result.errors must contain(FormError(optionalMiddleName, middleNameLengthKey, Seq(middleNameMaxLength)))
+      }
+
+      behave like optionalField(
+        form,
+        optionalMiddleName
+      )
+
+      "must reject invalid forename2 formats" in {
+        val invalidNames = Seq(
+          "Hello #world",
+          "Price: $50",
+          "A < B",
+          "File \\ path",
+          "José",
+          "\"Line1\\nLine2\""
+        )
+
+        invalidNames.foreach { invalidName =>
+          val result = form.bind(Map(
+            mandatoryFieldName -> "name",
+            optionalMiddleName -> invalidName,
+            optionalFirstName -> ""
+          ))
+          result.errors must contain(
+            FormError(optionalMiddleName, middleNameInvalidKey, Seq("[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"))
+          )
+        }
+      }
+
+      "must bind valid form data with max length forename2" in {
+        val maxLengthName = "a" * 14
+        val result = form.bind(Map(
+          mandatoryFieldName -> "name",
+          optionalMiddleName -> maxLengthName,
+          optionalFirstName -> ""
+        ))
+        result.errors must be(empty)
+      }
+    }
+
+    "combined fields" - {
+      "must bind valid form data with all fields" in {
+        val result = form.bind(Map(
+          optionalFirstName -> "John",
+          optionalMiddleName -> "Michael",
+          mandatoryFieldName -> "Smith"
+        ))
+        result.errors must be(empty)
+        result.value mustBe Some(models.purchaser.NameOfPurchaser(Some("John"), Some("Michael"), "Smith"))
+      }
+
+      "must bind valid form data with only surname" in {
+        val result = form.bind(Map(
+          optionalFirstName -> "",
+          optionalMiddleName -> "",
+          mandatoryFieldName -> "Smith"
+        ))
+        result.errors must be(empty)
+        result.value mustBe Some(models.purchaser.NameOfPurchaser(None, None, "Smith"))
+      }
+    }
+  }
+
+  "NameOfPurchaserFormProvider - Company Branch" - {
+
+    val requiredKey = "purchaser.company.error.required"
+    val nameLengthKey = "purchaser.company.error.length.name"
+    val invalidKey = "purchaser.name.form.regex.error.company"
+    val maxLength = 56
+
+    val form = formProvider("Company")
+
+    val mandatoryFieldName = "name"
+    val optionalFirstName = "forename1"
+    val optionalMiddleName = "forename2"
+
+    ".name" - {
+      "must bind valid form data" in {
+        val validNames = Seq(
+          "ACME Corporation",
           "Company test name",
           "Company are us",
           "Company@company.com",
@@ -66,7 +310,7 @@ class NameOfPurchaserFormProviderSpec extends StringFieldBehaviours {
         requiredError = FormError(mandatoryFieldName, requiredKey)
       )
 
-      "must reject invalid name formats" in {
+      "must reject invalid company name formats" in {
         val invalidNames = Seq(
           "Hello #world",
           "Price: $50",
@@ -83,98 +327,69 @@ class NameOfPurchaserFormProviderSpec extends StringFieldBehaviours {
           )
         }
       }
-    }
 
-    ".forename1" - {
-      "must bind valid form data" in {
-        val validNames = Seq(
-          "Mr test",
-          "Company",
-          "Pokemon",
-          "Middle Name"
-        )
-
-        validNames.foreach { validName =>
-          val result = form.bind(Map(optionalFirstName -> validName, mandatoryFieldName -> "name"))
-          result.errors.isEmpty must be(true)
-        }
+      "must bind valid form data with max length company name" in {
+        val maxLengthName = "a" * 56
+        val result = form.bind(Map(mandatoryFieldName -> maxLengthName))
+        result.errors must be(empty)
       }
 
-      "must not bind strings longer than 14 characters" in {
-        val longName = "a" * 15
-
-        val result = form.bind(Map(optionalFirstName -> longName, mandatoryFieldName -> "name"))
-        result.errors must contain(FormError(optionalFirstName, firstNameLengthKey, Seq(firstNameMaxLength)))
+      "must accept valid special characters in company name" in {
+        val result = form.bind(Map(
+          mandatoryFieldName -> "Smith & Jones Ltd~!@%&'()*+,-./:=?[]^_{};."
+        ))
+        result.errors must be(empty)
       }
 
-      behave like optionalField(
-        form,
-        optionalFirstName
-      )
-
-      "must reject invalid name formats" in {
-        val invalidNames = Seq(
-          "Hello #world",
-          "Price: $50",
-          "A < B",
-          "File \\ path",
-          "José",
-          "\"Line1\\nLine2\""
-        )
-
-        invalidNames.foreach { invalidName =>
-          val result = form.bind(Map(optionalFirstName -> invalidName, mandatoryFieldName -> "name"))
-          result.errors must contain(
-            FormError(optionalFirstName, invalidKey, Seq("[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"))
-          )
-        }
+      "must ignore forename1 and forename2 for company" in {
+        val result = form.bind(Map(
+          optionalFirstName -> "This should be ignored",
+          optionalMiddleName -> "This should also be ignored",
+          mandatoryFieldName -> "ACME Corporation"
+        ))
+        result.errors must be(empty)
+        result.value mustBe Some(models.purchaser.NameOfPurchaser(None, None, "ACME Corporation"))
       }
     }
+  }
 
-    ".forename2" - {
-      "must bind valid form data" in {
-        val validNames = Seq(
-          "Mr test",
-          "Company",
-          "Pokemon",
-          "Middle Name"
-        )
+  "NameOfPurchaserFormProvider - Other Purchaser Types" - {
 
-        validNames.foreach { validName =>
-          val result = form.bind(Map(mandatoryFieldName -> "name", optionalMiddleName -> validName))
-          result.errors.isEmpty must be(true)
-        }
-      }
+    "must default to Company branch for unknown purchaser type" in {
+      val form = formProvider("Unknown")
+      val result = form.bind(Map("name" -> "ACME Corporation"))
+      result.hasErrors mustBe false
+      result.value mustBe Some(models.purchaser.NameOfPurchaser(None, None, "ACME Corporation"))
+    }
 
-      "must not bind strings longer than 14 characters" in {
-        val longName = "a" * 15
+    "must default to Company branch for empty string" in {
+      val form = formProvider("")
+      val result = form.bind(Map("name" -> "ACME Corporation"))
+      result.hasErrors mustBe false
+      result.value mustBe Some(models.purchaser.NameOfPurchaser(None, None, "ACME Corporation"))
+    }
+  }
 
-        val result = form.bind(Map(mandatoryFieldName -> "name", optionalMiddleName -> longName))
-        result.errors must contain(FormError(optionalMiddleName, middleNameLengthKey, Seq(middleNameMaxLength)))
-      }
+  "NameOfPurchaserFormProvider - Form Filling" - {
 
-      behave like optionalField(
-        form,
-        optionalMiddleName
-      )
+    "must fill and unbind Individual form correctly" in {
+      val form = formProvider("Individual")
+      val data = models.purchaser.NameOfPurchaser(Some("John"), Some("Michael"), "Smith")
+      val filledForm = form.fill(data)
 
-      "must reject invalid name formats" in {
-        val invalidNames = Seq(
-          "Hello #world",
-          "Price: $50",
-          "A < B",
-          "File \\ path",
-          "José",
-          "\"Line1\\nLine2\""
-        )
+      filledForm("forename1").value mustBe Some("John")
+      filledForm("forename2").value mustBe Some("Michael")
+      filledForm("name").value mustBe Some("Smith")
+    }
 
-        invalidNames.foreach { invalidName =>
-          val result = form.bind(Map(mandatoryFieldName -> "name", optionalMiddleName -> invalidName))
-          result.errors must contain(
-            FormError(optionalMiddleName, invalidKey, Seq("[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"))
-          )
-        }
-      }
+    "must fill and unbind Company form correctly" in {
+      val form = formProvider("Company")
+      val data = models.purchaser.NameOfPurchaser(None, None, "ACME Corporation")
+      val filledForm = form.fill(data)
+
+      filledForm("forename1").value mustBe None
+      filledForm("forename2").value mustBe None
+      filledForm("name").value mustBe Some("ACME Corporation")
     }
   }
 }

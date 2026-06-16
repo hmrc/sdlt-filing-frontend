@@ -18,14 +18,15 @@ package forms.purchaser
 
 import forms.mappings.Mappings
 import play.api.data.Form
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
 class PurchaserCorporationTaxUTRFormProvider @Inject() extends Mappings {
   
-  def apply(): Form[String] =
+  def apply(purchaserName: String)(implicit messages: Messages): Form[String] =
     Form(
-      "value" -> text("purchaser.corporationTaxUTR.error.required")
-        .verifying(validUtr("purchaser.corporationTaxUTR.error"))
+      "value" -> text(messages("purchaser.corporationTaxUTR.error.required", purchaserName))
+        .verifying(validUtr("purchaser.corporationTaxUTR.error", purchaserName))
     )
 }
