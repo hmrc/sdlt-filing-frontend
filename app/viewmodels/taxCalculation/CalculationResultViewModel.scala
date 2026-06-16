@@ -61,9 +61,7 @@ object CalculationResultViewModel extends CurrencyFormatter {
       CalculationResultViewModel(
         taxCalculationSummary = getTaxCalculationSummary(
           effectiveDate = formattedDate,
-          totalConsideration = totalConsideration,
-          claimingRelief = formattedRelief,
-          reliefReason = reliefReason,
+          totalConsideration = totalConsideration.toCurrency,
           premiumTax = premiumCalc.taxDue.toCurrency,
           npvTax = rentCalc.map(_.taxDue.toCurrency),
           totalSdltDue = result.totalTax.toCurrency
@@ -90,8 +88,6 @@ object CalculationResultViewModel extends CurrencyFormatter {
   private[taxCalculation] def getTaxCalculationSummary(
                                                         effectiveDate: String,
                                                         totalConsideration: String,
-                                                        claimingRelief: String,
-                                                        reliefReason: Option[String],
                                                         premiumTax: String,
                                                         npvTax: Option[String],
                                                         totalSdltDue: String
@@ -111,19 +107,11 @@ object CalculationResultViewModel extends CurrencyFormatter {
       )
     }
 
-    val bottomRows = reliefReason match {
-      case Some(rReason) => Seq(
-        SummaryListRow(Key(Text(getMessage("taxCalculation.reliefClaimed"))), Value(Text(claimingRelief))),
-        SummaryListRow(Key(Text(getMessage("taxCalculation.reliefReason"))), Value(Text(rReason))),
-        SummaryListRow(Key(Text(getMessage("taxCalculation.sdltDue"))), Value(Text(totalSdltDue)))
-      )
-      case None => Seq(
-        SummaryListRow(Key(Text(getMessage("taxCalculation.reliefClaimed"))), Value(Text(claimingRelief))),
-        SummaryListRow(Key(Text(getMessage("taxCalculation.sdltDue"))), Value(Text(totalSdltDue)))
-      )
-    }
+    val bottomRow = Seq(
+      SummaryListRow(Key(Text(getMessage("taxCalculation.sdltDue"))), Value(Text(totalSdltDue)))
+    )
 
-    SummaryList(topRow ++ middleRows ++ bottomRows)
+    SummaryList(topRow ++ middleRows ++ bottomRow)
   }
 
   private[taxCalculation] def getRateCardSummary(
