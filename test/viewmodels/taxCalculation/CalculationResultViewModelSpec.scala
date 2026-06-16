@@ -81,8 +81,6 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
       val rows = getTaxCalculationSummary(
         effectiveDate      = "1 April 2024",
         totalConsideration = "£300,000",
-        claimingRelief     = "No",
-        reliefReason       = None,
         premiumTax         = "£9,000",
         npvTax             = None,
         totalSdltDue       = "£9,000"
@@ -90,11 +88,10 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
       rows.map(_.key.content) mustEqual Seq(
         Text("taxCalculation.calculation.taxCalculation.effectiveDate"),
         Text("taxCalculation.calculation.taxCalculation.totalConsideration"),
-        Text("taxCalculation.calculation.taxCalculation.reliefClaimed"),
         Text("taxCalculation.calculation.taxCalculation.sdltDue")
       )
       rows.map(_.value.content) mustEqual Seq(
-        Text("1 April 2024"), Text("£300,000"), Text("No"), Text("£9,000")
+        Text("1 April 2024"), Text("£300,000"), Text("£9,000")
       )
     }
 
@@ -102,8 +99,6 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
       val rows = getTaxCalculationSummary(
         effectiveDate      = "1 April 2024",
         totalConsideration = "£300,000",
-        claimingRelief     = "No",
-        reliefReason       = None,
         premiumTax         = "£8,000",
         npvTax             = Some("£3,000"),
         totalSdltDue       = "£11,000"
@@ -112,7 +107,6 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
         Text("taxCalculation.calculation.taxCalculation.effectiveDate"),
         Text("taxCalculation.calculation.taxCalculation.taxDuePremium"),
         Text("taxCalculation.calculation.taxCalculation.taxDueNpv"),
-        Text("taxCalculation.calculation.taxCalculation.reliefClaimed"),
         Text("taxCalculation.calculation.taxCalculation.sdltDue")
       )
       rows.map(_.value.content) must contain allOf(Text("£8,000"), Text("£3,000"), Text("£11,000"))
@@ -121,8 +115,6 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
       val rows = getTaxCalculationSummary(
         effectiveDate      = "1 April 2024",
         totalConsideration = "£300,000",
-        claimingRelief     = "Yes",
-        reliefReason       = Some("22"),
         premiumTax         = "£8,000",
         npvTax             = Some("£3,000"),
         totalSdltDue       = "£11,000"
@@ -131,13 +123,10 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
         Text("taxCalculation.calculation.taxCalculation.effectiveDate"),
         Text("taxCalculation.calculation.taxCalculation.taxDuePremium"),
         Text("taxCalculation.calculation.taxCalculation.taxDueNpv"),
-        Text("taxCalculation.calculation.taxCalculation.reliefClaimed"),
-        Text("taxCalculation.calculation.taxCalculation.reliefReason"),
         Text("taxCalculation.calculation.taxCalculation.sdltDue")
       )
       rows.map(_.value.content) must contain allOf(
-        Text("£8,000"), Text("£3,000"), Text("Yes"),
-        Text("22"), Text("£11,000"))
+        Text("£8,000"), Text("£3,000"), Text("£11,000"))
     }
   }
 
