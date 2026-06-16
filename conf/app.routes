@@ -749,3 +749,5 @@ GET         /update-local-authority-code/:landId                   controllers.l
 
 GET        /submit-your-return/declaration                                                           controllers.submission.DeclarationController.onPageLoad(mode: Mode = NormalMode)
 POST       /submit-your-return/declaration                                                           controllers.submission.DeclarationController.onSubmit()
+GET         /update-transaction-relief                             controllers.transaction.TransactionSingleEntityController.onPageLoad()
+

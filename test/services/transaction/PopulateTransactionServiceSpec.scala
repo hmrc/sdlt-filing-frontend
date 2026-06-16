@@ -25,7 +25,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.transaction.*
 
 import java.time.LocalDate
-import scala.util.{Failure, Success}
+import scala.util.Success
 
 class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
 
@@ -1065,40 +1065,71 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must fail when effectiveDate is missing" in {
-      val transaction = Transaction(
-        transactionDescription = Some("F"),
-        effectiveDate          = None
-      )
+    "graceful handling of incomplete or unparseable data" - {
 
-      val result = service.populateTransactionInSession(transaction, userAnswers)
+      "must succeed when transactionDescription is missing, leaving the page unset" in {
+        val transaction = Transaction(
+          transactionDescription = None,
+          effectiveDate          = Some("15/01/2024"),
+          isLinked               = Some("NO"),
+          claimingRelief         = Some("NO")
+        )
 
-      result mustBe a[Failure[_]]
-      result.failed.get mustBe an[IllegalStateException]
-    }
+        val result = service.populateTransactionInSession(transaction, userAnswers)
 
-    "must fail when transactionDescription is missing" in {
-      val transaction = Transaction(
-        transactionDescription = None,
-        effectiveDate          = Some("15/01/2024")
-      )
+        result mustBe a[Success[_]]
+        result.get.get(TypeOfTransactionPage) mustBe None
+      }
 
-      val result = service.populateTransactionInSession(transaction, userAnswers)
+      "must succeed when transactionDescription is an unrecognised code, leaving the page unset" in {
+        val transaction = Transaction(
+          transactionDescription = Some("INVALID"),
+          effectiveDate          = Some("15/01/2024"),
+          isLinked               = Some("NO"),
+          claimingRelief         = Some("NO")
+        )
 
-      result mustBe a[Failure[_]]
-      result.failed.get mustBe an[IllegalStateException]
-    }
+        val result = service.populateTransactionInSession(transaction, userAnswers)
 
-    "must fail when transactionDescription is an unrecognised code" in {
-      val transaction = Transaction(
-        transactionDescription = Some("INVALID"),
-        effectiveDate          = Some("15/01/2024")
-      )
+        result mustBe a[Success[_]]
+        result.get.get(TypeOfTransactionPage) mustBe None
+      }
 
-      val result = service.populateTransactionInSession(transaction, userAnswers)
+      "must succeed when effectiveDate is missing, leaving the page unset" in {
+        val transaction = Transaction(
+          transactionDescription = Some("F"),
+          effectiveDate          = None,
+          isLinked               = Some("NO"),
+          claimingRelief         = Some("NO")
+        )
 
-      result mustBe a[Failure[_]]
-      result.failed.get mustBe an[IllegalStateException]
+        val result = service.populateTransactionInSession(transaction, userAnswers)
+
+        result mustBe a[Success[_]]
+        result.get.get(TransactionEffectiveDatePage) mustBe None
+      }
+
+      "must populate everything else even when transactionDescription is missing" in {
+        val transaction = Transaction(
+          transactionDescription = None,
+          effectiveDate          = Some("15/01/2024"),
+          isLinked               = Some("YES"),
+          totalConsiderationLinked = Some("500000"),
+          claimingRelief         = Some("NO")
+        )
+
+        val result = service.populateTransactionInSession(transaction, userAnswers)
+
+        result mustBe a[Success[_]]
+
+        val updatedAnswers = result.get
+
+        updatedAnswers.get(TypeOfTransactionPage)                     mustBe None
+        updatedAnswers.get(TransactionEffectiveDatePage)              mustBe Some(LocalDate.of(2024, 1, 15))
+        updatedAnswers.get(TransactionLinkedTransactionsPage)         mustBe Some(true)
+        updatedAnswers.get(TotalConsiderationOfLinkedTransactionPage) mustBe Some("500000")
+        updatedAnswers.get(PurchaserEligibleToClaimReliefPage)        mustBe Some(false)
+      }
     }
   }
 }

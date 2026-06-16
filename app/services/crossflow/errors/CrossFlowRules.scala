@@ -34,11 +34,12 @@ object FirstTimeBuyerRelief extends GuardRule:
   val id      = "F23-32"
   val affects: ReturnSection        = ReturnSection.Transaction
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Transaction, ReturnSection.Land)
-  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget, propertyTypeTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget)
 
   protected def appliesTo(ua: UserAnswers): Boolean = isClaimingRelief(ua) && isReason(ua, "32")
   protected def isValid(ua: UserAnswers):   Boolean = propertyTypeAcceptable(ua, Set(Residential))
   protected def messageKey                          = "crossflow.relief.firstTimeBuyer.notResidential"
+  protected override def inlineErrorKey             = "crossflow.relief.firstTimeBuyer.notResidential.inline"
 
 
 /** Property type must be 01 / 02 / 04. The date side of code 33 is owned by F25. */
@@ -46,13 +47,14 @@ object MultipleDwellingsRelief extends GuardRule:
   val id      = "F23-33"
   val affects: ReturnSection        = ReturnSection.Transaction
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Transaction, ReturnSection.Land)
-  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget, propertyTypeTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget)
 
   private val allowedPropertyTypes = Set(Residential, Mixed, ResidentialAdditional)
 
   protected def appliesTo(ua: UserAnswers): Boolean = isClaimingRelief(ua) && isReason(ua, "33")
   protected def isValid(ua: UserAnswers):   Boolean = propertyTypeAcceptable(ua, allowedPropertyTypes)
   protected def messageKey                          = "crossflow.relief.multipleDwellings.notAllowedPropertyType"
+  protected override def inlineErrorKey             = "crossflow.relief.multipleDwellings.notAllowedPropertyType.inline"
 
 
 /** Effective date on/after 06/03/2013. */
@@ -60,11 +62,12 @@ object PreCompletionRelief extends GuardRule:
   val id      = "F23-34"
   val affects: ReturnSection        = ReturnSection.Transaction
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Transaction)
-  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget, effectiveDateTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget)
 
   protected def appliesTo(ua: UserAnswers): Boolean = isClaimingRelief(ua) && isReason(ua, "34")
   protected def isValid(ua: UserAnswers):   Boolean = effectiveDateAcceptable(ua)(!_.isBefore(Dates.reliefFloor2013))
   protected def messageKey                          = "crossflow.relief.preCompletion.dateTooEarly"
+  protected override def inlineErrorKey             = "crossflow.relief.preCompletion.dateTooEarly.inline"
 
 
 /** Effective date on/after 06/03/2013. */
@@ -77,6 +80,7 @@ object FifteenPercentRateRelief extends GuardRule:
   protected def appliesTo(ua: UserAnswers): Boolean = isClaimingRelief(ua) && isReason(ua, "35")
   protected def isValid(ua: UserAnswers):   Boolean = effectiveDateAcceptable(ua)(!_.isBefore(Dates.reliefFloor2013))
   protected def messageKey                          = "crossflow.relief.fifteenPercentRate.dateTooEarly"
+  protected override def inlineErrorKey             = "crossflow.relief.fifteenPercentRate.dateTooEarly.inline"
 
 
 /** Effective date within 19/10/2021..30/09/2026 (inclusive). */
@@ -89,6 +93,7 @@ object FreeportRelief extends GuardRule:
   protected def appliesTo(ua: UserAnswers): Boolean = isClaimingRelief(ua) && isReason(ua, "36")
   protected def isValid(ua: UserAnswers):   Boolean = effectiveDateAcceptable(ua)(within(_, Dates.freeportStart, Dates.freeportEnd))
   protected def messageKey                          = "crossflow.relief.freeport.outsideWindow"
+  protected override def inlineErrorKey             = "crossflow.relief.freeport.outsideWindow.inline"
 
 
 /** Effective date within 29/09/2023..30/09/2034 (inclusive). */
@@ -101,6 +106,7 @@ object InvestmentZoneRelief extends GuardRule:
   protected def appliesTo(ua: UserAnswers): Boolean = isClaimingRelief(ua) && isReason(ua, "37")
   protected def isValid(ua: UserAnswers):   Boolean = effectiveDateAcceptable(ua)(within(_, Dates.investmentZoneStart, Dates.investmentZoneEnd))
   protected def messageKey                          = "crossflow.relief.investmentZone.outsideWindow"
+  protected override def inlineErrorKey             = "crossflow.relief.investmentZone.outsideWindow.inline"
 
 
 /** Effective date on/after the Reserved Investors Fund date 19/03/2025. */
@@ -113,6 +119,23 @@ object SeedingRelief extends GuardRule:
   protected def appliesTo(ua: UserAnswers): Boolean = isClaimingRelief(ua) && isReason(ua, "38")
   protected def isValid(ua: UserAnswers):   Boolean = effectiveDateAcceptable(ua)(!_.isBefore(Dates.reservedInvestorsFund))
   protected def messageKey                          = "crossflow.relief.seeding.dateTooEarly"
+  protected override def inlineErrorKey             = "crossflow.relief.seeding.dateTooEarly.inline"
+
+object F24AdditionalResidentialEffDate extends LandGuardRule:
+  val id      = "Cf-3"
+  val affects: ReturnSection        = ReturnSection.Land
+  val inputs:  Set[ReturnSection]   = Set(ReturnSection.Land, ReturnSection.Transaction)
+  val targets: Seq[CrossFlowTarget] = Seq(propertyTypeTarget)
+
+  protected def appliesTo(land: Land, ua: UserAnswers): Boolean =
+    land.propertyType.contains(ResidentialAdditional)
+
+  protected def isValid(land: Land, ua: UserAnswers): Boolean =
+    effectiveDate(ua).forall(!_.isBefore(Dates.f24EffectiveFloor))
+
+  protected def messageKey              = "crossflow.land.Cf-3.body"
+  protected override def inlineErrorKey = "crossflow.land.Cf-3.inline"
+  protected override def headingKey     = "crossflow.land.Cf-3.heading"
 
 /** F25 effective-date half: effective date must be before 01/06/2024. Null is OK. */
 object F25EffectiveDate extends GuardRule:
@@ -124,6 +147,7 @@ object F25EffectiveDate extends GuardRule:
   protected def appliesTo(ua: UserAnswers): Boolean = isClaimingRelief(ua) && isReason(ua, "33")
   protected def isValid(ua: UserAnswers):   Boolean = effectiveDateAcceptable(ua)(_.isBefore(Dates.mdrEffectiveDateCutOff))
   protected def messageKey                          = "crossflow.relief.multipleDwellings.effectiveDateTooLate"
+  protected override def inlineErrorKey             = "crossflow.relief.multipleDwellings.effectiveDateTooLate.inline"
 
 
 /** F25 contract-date half: contract date must be present AND before 07/03/2024. */
@@ -136,6 +160,7 @@ object F25ContractDate extends GuardRule:
   protected def appliesTo(ua: UserAnswers): Boolean = isClaimingRelief(ua) && isReason(ua, "33")
   protected def isValid(ua: UserAnswers):   Boolean = contractDate(ua).exists(_.isBefore(Dates.mdrLatestContractDate))
   protected def messageKey                          = "crossflow.relief.multipleDwellings.contractDateTooLate"
+  protected override def inlineErrorKey             = "crossflow.relief.multipleDwellings.contractDateTooLate.inline"
 
 
 // ============================================================================
@@ -150,7 +175,7 @@ object F28FtbCap500k extends GuardRule:
   val id      = "F28-cap500k"
   val affects: ReturnSection        = ReturnSection.Transaction
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Transaction)
-  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget, effectiveDateTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget)
 
   private val Cap: BigDecimal = 500000
 
@@ -160,7 +185,8 @@ object F28FtbCap500k extends GuardRule:
   protected def isValid(ua: UserAnswers): Boolean =
     totalPremium(ua).forall(_ <= Cap)
 
-  protected def messageKey = "crossflow.relief.firstTimeBuyer.over500k"
+  protected def messageKey              = "crossflow.relief.firstTimeBuyer.over500k"
+  protected override def inlineErrorKey = "crossflow.relief.firstTimeBuyer.over500k.inline"
 
   private def in500kWindow(ua: UserAnswers): Boolean =
     effectiveDate(ua).exists { d =>
@@ -168,6 +194,14 @@ object F28FtbCap500k extends GuardRule:
       val inPost2025Window = !d.isBefore(Dates.ftbCap500FromApril2025)
       inOriginalWindow || inPost2025Window
     }
+
+  protected override def body: CrossFlowBody = CrossFlowBody.WithBullets(
+    leadKey = "crossflow.relief.firstTimeBuyer.over500k.intro",
+    bulletKeys = Seq(
+      "crossflow.relief.firstTimeBuyer.over500k.option1",
+      "crossflow.relief.firstTimeBuyer.over500k.option2"
+    )
+  )
 
 
 /** F28 First Time Buyer's Relief — £625k cap.
@@ -178,7 +212,7 @@ object F28FtbCap625k extends GuardRule:
   val id      = "F28-cap625k"
   val affects: ReturnSection        = ReturnSection.Transaction
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Transaction)
-  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget, effectiveDateTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget)
 
   private val Cap: BigDecimal = 625000
 
@@ -188,12 +222,22 @@ object F28FtbCap625k extends GuardRule:
   protected def isValid(ua: UserAnswers): Boolean =
     totalPremium(ua).forall(_ <= Cap)
 
-  protected def messageKey = "crossflow.relief.firstTimeBuyer.over625k"
+  protected def messageKey              = "crossflow.relief.firstTimeBuyer.over625k"
+  protected override def inlineErrorKey = "crossflow.relief.firstTimeBuyer.over625k.inline"
 
   private def in625kWindow(ua: UserAnswers): Boolean =
     effectiveDate(ua).exists { d =>
       !d.isBefore(Dates.ftbCap625FromSept2022) && d.isBefore(Dates.ftbCap500FromApril2025)
     }
+
+  protected override def body: CrossFlowBody = CrossFlowBody.WithBullets(
+    leadKey = "crossflow.relief.firstTimeBuyer.over625k.intro",
+    bulletKeys = Seq(
+      "crossflow.relief.firstTimeBuyer.over625k.option1",
+      "crossflow.relief.firstTimeBuyer.over625k.option2"
+    )
+  )
+
 
 /** Cf-8 — F17 regular Welsh codes (6805–6955 excluding specials) must not be used
  * for transactions on or after the Wales Act effective date (01/04/2018).
@@ -211,7 +255,7 @@ object Cf8_RegularWelshCodes extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     effectiveDate(ua).forall(_.isBefore(Dates.welshActEffective))
 
-  protected def messageKey     = "crossflow.land.Cf-8.body"
+  protected def messageKey              = "crossflow.land.Cf-8.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-8.inline"
 
 
@@ -231,7 +275,7 @@ object Cf9a_Welsh6996_6997EffDate extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     effectiveDate(ua).forall(!_.isBefore(Dates.welshActEffective))
 
-  protected def messageKey     = "crossflow.land.Cf-9.welsh6996_6997.body"
+  protected def messageKey              = "crossflow.land.Cf-9.welsh6996_6997.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-9.welsh6996_6997.inline"
 
 
@@ -251,7 +295,7 @@ object Cf9b_Welsh6998EffDate extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     effectiveDate(ua).forall(!_.isBefore(Dates.welshActEffective))
 
-  protected def messageKey     = "crossflow.land.Cf-9.welsh6998.body"
+  protected def messageKey              = "crossflow.land.Cf-9.welsh6998.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-9.welsh6998.inline"
 
 
@@ -271,7 +315,7 @@ object Cf9c_Welsh6999EffDate extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     effectiveDate(ua).forall(!_.isBefore(Dates.welshActEffective))
 
-  protected def messageKey     = "crossflow.land.Cf-9.welsh6999.body"
+  protected def messageKey              = "crossflow.land.Cf-9.welsh6999.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-9.welsh6999.inline"
 
 
@@ -291,7 +335,7 @@ object Cf10_Welsh6998ContractDate extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     contractDate(ua).forall(_.isBefore(Dates.welshActEffective))
 
-  protected def messageKey     = "crossflow.land.Cf-10.body"
+  protected def messageKey              = "crossflow.land.Cf-10.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-10.inline"
 
 
@@ -311,8 +355,9 @@ object Cf11_Welsh6999ContractDate extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     contractDate(ua).forall(!_.isAfter(Dates.welshActDate))
 
-  protected def messageKey     = "crossflow.land.Cf-11.body"
+  protected def messageKey              = "crossflow.land.Cf-11.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-11.inline"
+
 
 /** Cf-12 — F18 dummy codes 8998/8999 must not be used when effective date is
  * before CR223 (01/04/2015).
@@ -330,7 +375,7 @@ object Cf12_Dummy8998_8999EffDate extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     effectiveDate(ua).forall(!_.isBefore(Dates.cr223Effective))
 
-  protected def messageKey     = "crossflow.land.Cf-12.body"
+  protected def messageKey              = "crossflow.land.Cf-12.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-12.inline"
 
 
@@ -350,7 +395,7 @@ object Cf13_Dummy8999ContractDate extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     contractDate(ua).forall(_.isBefore(Dates.scotlandActDate))
 
-  protected def messageKey     = "crossflow.land.Cf-13.body"
+  protected def messageKey              = "crossflow.land.Cf-13.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-13.inline"
 
 
@@ -370,7 +415,7 @@ object Cf14_Dummy8998ContractDate extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     contractDate(ua).forall(_.isBefore(Dates.cr223Effective))
 
-  protected def messageKey     = "crossflow.land.Cf-14.body"
+  protected def messageKey              = "crossflow.land.Cf-14.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-14.inline"
 
 
@@ -390,7 +435,7 @@ object Cf15_ScottishCodes extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     effectiveDate(ua).forall(_.isBefore(Dates.cr223Effective))
 
-  protected def messageKey     = "crossflow.land.Cf-15.body"
+  protected def messageKey              = "crossflow.land.Cf-15.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-15.inline"
 
 
@@ -410,7 +455,7 @@ object Cf16_ScottishPostcode extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     effectiveDate(ua).forall(_.isBefore(Dates.cr223Effective))
 
-  protected def messageKey     = "crossflow.land.Cf-16.body"
+  protected def messageKey              = "crossflow.land.Cf-16.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-16.inline"
 
 
@@ -423,6 +468,11 @@ object F23Rules:
     FreeportRelief,
     InvestmentZoneRelief,
     SeedingRelief
+  )
+
+object F24Rules:
+  val all: Set[LandRule] = Set(
+    F24AdditionalResidentialEffDate
   )
 
 object F25Rules:

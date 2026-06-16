@@ -51,15 +51,15 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
     controllers.land.routes.LocalAuthorityCodeController.onPageLoad(NormalMode).url
 
   val completeTransaction: Transaction = Transaction(
-    transactionID = Some("TXN001"),
-    returnID = Some("RET123456789"),
-    contractDate = Some("2024-09-15"),
-    effectiveDate = Some("2024-10-01"),
+    transactionID         = Some("TXN001"),
+    returnID              = Some("RET123456789"),
+    contractDate          = Some("2024-09-15"),
+    effectiveDate         = Some("2024-10-01"),
     exchangedLandAddress4 = None
   )
 
   val completeLandForUK: Land = Land(
-    landID = Some("LND001"),
+    landID   = Some("LND001"),
     returnID = Some("RET123456789"),
     postcode = Some("TE1 6XE")
   )
@@ -96,13 +96,15 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
     affects        = ReturnSection.Land,
     messageKey     = "crossflow.land.Cf-9.welsh6996_6997.body",
     inlineErrorKey = "crossflow.land.Cf-9.welsh6996_6997.inline",
+    body           = CrossFlowBody.Single("crossflow.land.Cf-9.welsh6996_6997.body"),
     targets        = Seq(CrossFlowTarget(Pages.LandAuthorityCode, "value")),
+    headingKey     = "crossflow.land.heading",
     args           = Nil
   )
-  
+
   private val cf9aInlineText =
     "Entering this local authority code means the effective date of the transaction must be the same as or after 1 April 2018"
-  
+
   private val cf9aBodyText =
     "This local authority code cannot be used when the effective date of transaction is before 1 April 2018"
 
@@ -118,8 +120,8 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val request = FakeRequest(GET, localAuthorityCodeRoute)
-          val result = route(application, request).value
-          val view = application.injector.instanceOf[LocalAuthorityCodeView]
+          val result  = route(application, request).value
+          val view    = application.injector.instanceOf[LocalAuthorityCodeView]
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
@@ -137,8 +139,8 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val request = FakeRequest(GET, localAuthorityCodeRoute)
-          val view = application.injector.instanceOf[LocalAuthorityCodeView]
-          val result = route(application, request).value
+          val view    = application.injector.instanceOf[LocalAuthorityCodeView]
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual view(form.fill("1234"), NormalMode)(request, messages(application)).toString
@@ -149,7 +151,7 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
         val application = applicationBuilder(userAnswers = None).build()
         running(application) {
           val request = FakeRequest(GET, localAuthorityCodeRoute)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
@@ -167,7 +169,7 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val request = FakeRequest(GET, localAuthorityCodeRoute)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
           val content = contentAsString(result)
@@ -211,8 +213,8 @@ class LocalAuthorityCodeControllerSpec extends SpecBase with MockitoSugar {
             .withFormUrlEncodedBody(("value", ""))
 
           val boundForm = form.bind(Map("value" -> ""))
-          val view = application.injector.instanceOf[LocalAuthorityCodeView]
-          val result = route(application, request).value
+          val view      = application.injector.instanceOf[LocalAuthorityCodeView]
+          val result    = route(application, request).value
 
           status(result) mustEqual BAD_REQUEST
           contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString

@@ -64,8 +64,8 @@ class LandAuthorityCodeSingleEntityController @Inject() (
             updatedAnswers <- Future.fromTry(populateLandService.populateLandInSession(land, request.userAnswers))
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
-            val heading     = s"crossflow.land.${failure.ruleId}.heading"
-            val bodyKey     = s"${failure.messageKey}"
+            val heading     = failure.headingKey
+            val bodyKey     = failure.messageKey
             val ctaKey      = ctaKeyFor(failure)
             val continueUrl = continueUrlFor(failure)
             Ok(view(heading, bodyKey, ctaKey, continueUrl))
@@ -77,16 +77,20 @@ class LandAuthorityCodeSingleEntityController @Inject() (
   }
 
   private def continueUrlFor(failure: CrossFlowFailure): String = {
-    val targetsPostcode = failure.targets.exists(_.page == Pages.LandPostcode)
-    if (targetsPostcode)
-      controllers.land.routes.ConfirmLandOrPropertyAddressController.onPageLoad(CheckMode).url
-    else
-      controllers.land.routes.LocalAuthorityCodeController.onPageLoad(CheckMode).url
+    val targets = failure.targets.map(_.page).toSet
+
+    if (targets.contains(Pages.EffectiveDate))         controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode).url
+    else if (targets.contains(Pages.LandPropertyType)) controllers.land.routes.LandTypeOfPropertyController.onPageLoad(CheckMode).url
+    else if (targets.contains(Pages.LandPostcode))     controllers.land.routes.ConfirmLandOrPropertyAddressController.onPageLoad(CheckMode).url
+    else                                               controllers.land.routes.LocalAuthorityCodeController.onPageLoad(CheckMode).url
   }
 
   private def ctaKeyFor(failure: CrossFlowFailure): String = {
-    val targetsPostcode = failure.targets.exists(_.page == Pages.LandPostcode)
-    if (targetsPostcode) "crossflow.land.cta.enterDifferentPostcode"
-    else                 "crossflow.land.cta.enterDifferentCode"
+    val targets = failure.targets.map(_.page).toSet
+
+    if (targets.contains(Pages.EffectiveDate))         "crossflow.land.cta.changeEffectiveDate"
+    else if (targets.contains(Pages.LandPropertyType)) "crossflow.land.cta.changePropertyType"
+    else if (targets.contains(Pages.LandPostcode))     "crossflow.land.cta.enterDifferentPostcode"
+    else                                               "crossflow.land.cta.enterDifferentCode"
   }
 }

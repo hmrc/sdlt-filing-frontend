@@ -17,9 +17,9 @@
 package viewmodels.tasklist
 
 import config.FrontendAppConfig
-import models.{CheckMode, FullReturn}
+import models.FullReturn
 import play.api.i18n.Messages
-import services.crossflow.{PageId, Pages, ReturnSection, SectionStatus}
+import services.crossflow.{ReturnSection, SectionStatus}
 
 import javax.inject.Singleton
 
@@ -43,16 +43,10 @@ object TransactionTaskList {
 
     val cyaUrl   = controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
     val startUrl = controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
-    
-    def urlFor(page: PageId): String = page match {
-      case Pages.ReliefReason  => controllers.transaction.routes.ReasonForReliefController.onPageLoad(CheckMode).url
-      case Pages.EffectiveDate => controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode).url
-      case _                   => cyaUrl
-    }
+    val errorUrl = controllers.transaction.routes.TransactionSingleEntityController.onPageLoad().url
     
     val url =
-      if (status.hasFailures && status.targets.size == 1) urlFor(status.targets.head.page)
-      else if (status.hasFailures)                        cyaUrl
+      if (status.hasFailures)                        errorUrl
       else if (transactionComplete)                       cyaUrl
       else                                                startUrl
 

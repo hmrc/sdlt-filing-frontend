@@ -24,7 +24,7 @@ import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.{never, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.land.{AgriculturalOrDevelopmentalLandPage, AreaOfLandPage, DoYouKnowTheAreaOfLandPage, LandSelectMeasurementUnitPage, LandTypeOfPropertyPage}
 import play.api.data.Form
@@ -33,6 +33,8 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
+import services.crossflow.*
+import services.crossflow.fields.CrossFlowValidationService
 import views.html.land.LandTypeOfPropertyView
 
 import scala.concurrent.Future
@@ -41,9 +43,10 @@ class LandTypeOfPropertyControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val landTypeOfPropertyRoute: String = controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode).url
+  lazy val landTypeOfPropertyRoute: String =
+    controllers.land.routes.LandTypeOfPropertyController.onPageLoad(NormalMode).url
 
-  val formProvider = new LandTypeOfPropertyFormProvider()
+  val formProvider                   = new LandTypeOfPropertyFormProvider()
   val form: Form[LandTypeOfProperty] = formProvider()
 
   private val testStorn = "TESTSTORN"
@@ -51,7 +54,24 @@ class LandTypeOfPropertyControllerSpec extends SpecBase with MockitoSugar {
   val userAnswersResidential: UserAnswers =
     UserAnswers(userAnswersId, storn = testStorn)
       .set(LandTypeOfPropertyPage, LandTypeOfProperty.Residential).success.value
+  
+  private def crossFlowWithFailures(failures: Seq[CrossFlowFailure]): CrossFlowValidationService =
+    new CrossFlowValidationService(Set.empty, Set.empty) {
+      override def failuresForPage(page: PageId, ua: UserAnswers): Seq[CrossFlowFailure] = failures
+    }
 
+  private val crossFlowNoFailures: CrossFlowValidationService =
+    crossFlowWithFailures(Nil)
+
+  private val cf3Failure = CrossFlowFailure(
+    ruleId         = "Cf-3",
+    affects        = ReturnSection.Land,
+    messageKey     = "crossflow.land.Cf-3.body",
+    inlineErrorKey = "crossflow.land.Cf-3.inline",
+    body           = CrossFlowBody.Single("crossflow.land.Cf-3.body"),
+    targets        = Seq(CrossFlowTarget(Pages.LandPropertyType, "value")),
+    headingKey     = "crossflow.land.Cf-3.heading"
+  )
 
   "LandTypeOfProperty Controller" - {
 
@@ -61,10 +81,8 @@ class LandTypeOfPropertyControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request = FakeRequest(GET, landTypeOfPropertyRoute)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[LandTypeOfPropertyView]
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[LandTypeOfPropertyView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
@@ -77,10 +95,8 @@ class LandTypeOfPropertyControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request = FakeRequest(GET, landTypeOfPropertyRoute)
-
-        val view = application.injector.instanceOf[LandTypeOfPropertyView]
-
-        val result = route(application, request).value
+        val view    = application.injector.instanceOf[LandTypeOfPropertyView]
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form.fill(LandTypeOfProperty.Residential), NormalMode)(request, messages(application)).toString
@@ -90,14 +106,14 @@ class LandTypeOfPropertyControllerSpec extends SpecBase with MockitoSugar {
     "must redirect to the next page when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(crossFlowNoFailures)
           )
           .build()
 
@@ -116,7 +132,6 @@ class LandTypeOfPropertyControllerSpec extends SpecBase with MockitoSugar {
     "must clear land area answers when answer changes from non residential to residential" in {
 
       val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val userAnswers = emptyUserAnswers
@@ -130,7 +145,8 @@ class LandTypeOfPropertyControllerSpec extends SpecBase with MockitoSugar {
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(crossFlowNoFailures)
           )
           .build()
 
@@ -143,19 +159,20 @@ class LandTypeOfPropertyControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
+
         val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
         verify(mockSessionRepository).set(uaCaptor.capture())
+
         uaCaptor.getValue.get(AgriculturalOrDevelopmentalLandPage).isDefined mustBe false
-        uaCaptor.getValue.get(DoYouKnowTheAreaOfLandPage).isDefined mustBe false
-        uaCaptor.getValue.get(LandSelectMeasurementUnitPage).isDefined mustBe false
-        uaCaptor.getValue.get(AreaOfLandPage).isDefined mustBe false
+        uaCaptor.getValue.get(DoYouKnowTheAreaOfLandPage).isDefined           mustBe false
+        uaCaptor.getValue.get(LandSelectMeasurementUnitPage).isDefined        mustBe false
+        uaCaptor.getValue.get(AreaOfLandPage).isDefined                       mustBe false
       }
     }
 
-    "must not clear land area answers when answer remains non residential" in {
+    "must clear land area answers when answer changes to Additional" in {
 
       val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val userAnswers = emptyUserAnswers
@@ -169,7 +186,48 @@ class LandTypeOfPropertyControllerSpec extends SpecBase with MockitoSugar {
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(crossFlowNoFailures)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, landTypeOfPropertyRoute)
+            .withFormUrlEncodedBody(("value", LandTypeOfProperty.Additional.toString))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(uaCaptor.capture())
+
+        uaCaptor.getValue.get(AgriculturalOrDevelopmentalLandPage).isDefined mustBe false
+        uaCaptor.getValue.get(DoYouKnowTheAreaOfLandPage).isDefined           mustBe false
+        uaCaptor.getValue.get(LandSelectMeasurementUnitPage).isDefined        mustBe false
+        uaCaptor.getValue.get(AreaOfLandPage).isDefined                       mustBe false
+      }
+    }
+
+    "must not clear land area answers when answer remains non residential" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers = emptyUserAnswers
+        .set(LandTypeOfPropertyPage, LandTypeOfProperty.NonResidential).success.value
+        .set(AgriculturalOrDevelopmentalLandPage, true).success.value
+        .set(DoYouKnowTheAreaOfLandPage, true).success.value
+        .set(LandSelectMeasurementUnitPage, LandSelectMeasurementUnit.Sqms).success.value
+        .set(AreaOfLandPage, "500").success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(crossFlowNoFailures)
           )
           .build()
 
@@ -182,12 +240,14 @@ class LandTypeOfPropertyControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
+
         val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
         verify(mockSessionRepository).set(uaCaptor.capture())
+
         uaCaptor.getValue.get(AgriculturalOrDevelopmentalLandPage) mustBe Some(true)
-        uaCaptor.getValue.get(DoYouKnowTheAreaOfLandPage) mustBe Some(true)
-        uaCaptor.getValue.get(LandSelectMeasurementUnitPage) mustBe Some(LandSelectMeasurementUnit.Sqms)
-        uaCaptor.getValue.get(AreaOfLandPage) mustBe Some("500")
+        uaCaptor.getValue.get(DoYouKnowTheAreaOfLandPage)          mustBe Some(true)
+        uaCaptor.getValue.get(LandSelectMeasurementUnitPage)       mustBe Some(LandSelectMeasurementUnit.Sqms)
+        uaCaptor.getValue.get(AreaOfLandPage)                      mustBe Some("500")
       }
     }
 
@@ -201,10 +261,8 @@ class LandTypeOfPropertyControllerSpec extends SpecBase with MockitoSugar {
             .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
-
-        val view = application.injector.instanceOf[LandTypeOfPropertyView]
-
-        val result = route(application, request).value
+        val view      = application.injector.instanceOf[LandTypeOfPropertyView]
+        val result    = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
@@ -217,8 +275,7 @@ class LandTypeOfPropertyControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request = FakeRequest(GET, landTypeOfPropertyRoute)
-
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
@@ -237,8 +294,128 @@ class LandTypeOfPropertyControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "cross-flow handling" - {
+
+      "must reject a submission with BadRequest when a Cf-3 failure fires against the candidate answers" in {
+
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val crossFlow = crossFlowWithFailures(Seq(cf3Failure))
+
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswers))
+            .overrides(
+              bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+              bind[SessionRepository].toInstance(mockSessionRepository),
+              bind[CrossFlowValidationService].toInstance(crossFlow)
+            )
+            .build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, landTypeOfPropertyRoute)
+              .withFormUrlEncodedBody(("value", LandTypeOfProperty.Additional.toString))
+
+          val result = route(application, request).value
+
+          val expectedMessage = messages(application)("crossflow.land.Cf-3.inline")
+
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) must include(expectedMessage)
+        }
+      }
+
+      "must not persist the answer when a submission is rejected by cross-flow" in {
+
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val crossFlow = crossFlowWithFailures(Seq(cf3Failure))
+
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswers))
+            .overrides(
+              bind[SessionRepository].toInstance(mockSessionRepository),
+              bind[CrossFlowValidationService].toInstance(crossFlow)
+            )
+            .build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, landTypeOfPropertyRoute)
+              .withFormUrlEncodedBody(("value", LandTypeOfProperty.Additional.toString))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual BAD_REQUEST
+          verify(mockSessionRepository, never()).set(any())
+        }
+      }
+
+      "must persist and redirect normally on submission when no cross-flow failures exist" in {
+
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswers))
+            .overrides(
+              bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+              bind[SessionRepository].toInstance(mockSessionRepository),
+              bind[CrossFlowValidationService].toInstance(crossFlowNoFailures)
+            )
+            .build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, landTypeOfPropertyRoute)
+              .withFormUrlEncodedBody(("value", LandTypeOfProperty.Additional.toString))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual onwardRoute.url
+          verify(mockSessionRepository).set(any())
+        }
+      }
+
+      "must clean up area pages even when a cross-flow rule fires" in {
+
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val crossFlow = crossFlowWithFailures(Seq(cf3Failure))
+
+        val userAnswers = emptyUserAnswers
+          .set(LandTypeOfPropertyPage, LandTypeOfProperty.NonResidential).success.value
+          .set(AgriculturalOrDevelopmentalLandPage, true).success.value
+          .set(DoYouKnowTheAreaOfLandPage, true).success.value
+          .set(LandSelectMeasurementUnitPage, LandSelectMeasurementUnit.Sqms).success.value
+          .set(AreaOfLandPage, "500").success.value
+
+        val application =
+          applicationBuilder(userAnswers = Some(userAnswers))
+            .overrides(
+              bind[SessionRepository].toInstance(mockSessionRepository),
+              bind[CrossFlowValidationService].toInstance(crossFlow)
+            )
+            .build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, landTypeOfPropertyRoute)
+              .withFormUrlEncodedBody(("value", LandTypeOfProperty.Additional.toString))
+
+          val result = route(application, request).value
+          
+          status(result) mustEqual BAD_REQUEST
+          verify(mockSessionRepository, never()).set(any())
+        }
       }
     }
   }

@@ -43,7 +43,7 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
   lazy val reasonForReliefRouteCheckMode = controllers.transaction.routes.ReasonForReliefController.onPageLoad(CheckMode).url
 
   val formProvider = new ReasonForReliefFormProvider()
-  val form = formProvider()
+  val form         = formProvider()
 
   "ReasonForRelief Controller" - {
 
@@ -53,8 +53,8 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request = FakeRequest(GET, reasonForReliefRoute)
-        val result = route(application, request).value
-        val view = application.injector.instanceOf[ReasonForReliefView]
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[ReasonForReliefView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
@@ -68,8 +68,8 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request = FakeRequest(GET, reasonForReliefRoute)
-        val view = application.injector.instanceOf[ReasonForReliefView]
-        val result = route(application, request).value
+        val view    = application.injector.instanceOf[ReasonForReliefView]
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form.fill(ReasonForRelief.values.head), NormalMode)(request, messages(application)).toString
@@ -239,8 +239,8 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
           FakeRequest(POST, reasonForReliefRoute)
             .withFormUrlEncodedBody(("value", "invalid value"))
         val boundForm = form.bind(Map("value" -> "invalid value"))
-        val view = application.injector.instanceOf[ReasonForReliefView]
-        val result = route(application, request).value
+        val view      = application.injector.instanceOf[ReasonForReliefView]
+        val result    = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
@@ -253,7 +253,7 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request = FakeRequest(GET, reasonForReliefRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
@@ -277,7 +277,7 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
 
     "cross-flow handling" - {
 
-      import services.crossflow.{CrossFlowFailure, CrossFlowTarget, Pages, PageId, ReturnSection}
+      import services.crossflow.{CrossFlowBody, CrossFlowFailure, CrossFlowTarget, Pages, PageId, ReturnSection}
       import services.crossflow.fields.CrossFlowValidationService
       import models.UserAnswers
 
@@ -288,52 +288,14 @@ class ReasonForReliefControllerSpec extends SpecBase with MockitoSugar {
 
       def failureOnReliefPage(messageKey: String = "crossflow.relief.freeport.outsideWindow"): CrossFlowFailure =
         CrossFlowFailure(
-          ruleId     = "F23-TEST",
-          affects    = ReturnSection.Transaction,
-          messageKey = messageKey,
+          ruleId         = "F23-TEST",
+          affects        = ReturnSection.Transaction,
+          messageKey     = messageKey,
           inlineErrorKey = messageKey,
-          targets    = Seq(CrossFlowTarget(Pages.ReliefReason, "value"))
+          body           = CrossFlowBody.Single(messageKey),
+          targets        = Seq(CrossFlowTarget(Pages.ReliefReason, "value")),
+          headingKey     = "crossflow.relief.heading"
         )
-
-      "must render the page with a cross-flow error attached on GET when failures exist for the relief reason page" in {
-
-        val service = stubCrossFlow(Seq(failureOnReliefPage()))
-
-        val application =
-          applicationBuilder(userAnswers = Some(emptyUserAnswers))
-            .overrides(bind[CrossFlowValidationService].toInstance(service))
-            .build()
-
-        running(application) {
-          val request = FakeRequest(GET, reasonForReliefRoute)
-          val result  = route(application, request).value
-
-          val expectedMessage = messages(application)("crossflow.relief.freeport.outsideWindow")
-
-          status(result) mustEqual OK
-          contentAsString(result) must include(expectedMessage)
-        }
-      }
-
-      "must render the page without errors on GET when no cross-flow failures exist" in {
-
-        val service = stubCrossFlow(Nil)
-
-        val application =
-          applicationBuilder(userAnswers = Some(emptyUserAnswers))
-            .overrides(bind[CrossFlowValidationService].toInstance(service))
-            .build()
-
-        running(application) {
-          val request = FakeRequest(GET, reasonForReliefRoute)
-          val result  = route(application, request).value
-
-          val freeportMessage = messages(application)("crossflow.relief.freeport.outsideWindow")
-
-          status(result) mustEqual OK
-          contentAsString(result) must not include freeportMessage
-        }
-      }
 
       "must reject a valid submission with BadRequest when cross-flow failures exist on the candidate answers" in {
 

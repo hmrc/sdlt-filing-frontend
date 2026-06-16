@@ -177,3 +177,4 @@ object CrossFlowProjections:
     val welshActDate: LocalDate = LocalDate.of(2014, 12, 17)
     val scotlandActDate: LocalDate = LocalDate.of(2012, 5, 1)
     val cr223Effective: LocalDate = LocalDate.of(2015, 4, 1)
+    val f24EffectiveFloor: LocalDate = LocalDate.of(2016, 4, 1)

@@ -85,20 +85,19 @@ class LandCheckYourAnswersController @Inject() (
       }
   }
 
-  /** Cross-flow failures attached to the session land's pages. */
   private def failuresForSessionLand(ua: UserAnswers): Seq[CrossFlowFailure] = {
     val authorityCodeFailures     = crossFlow.failuresForPage(Pages.LandAuthorityCode, ua)
     val postcodeFailures = crossFlow.failuresForPage(Pages.LandPostcode, ua)
-    (authorityCodeFailures ++ postcodeFailures).distinct
+    val propertyTypeFailures = crossFlow.failuresForPage(Pages.LandPropertyType, ua)
+    (authorityCodeFailures ++ postcodeFailures ++ propertyTypeFailures).distinct
   }
 
-  /** Where the user goes to fix a given failure. */
   private def redirectFor(failure: CrossFlowFailure): Call = {
-    val targetsPostcode = failure.targets.exists(_.page == Pages.LandPostcode)
-    if (targetsPostcode)
-      controllers.land.routes.ConfirmLandOrPropertyAddressController.onPageLoad(CheckMode)
-    else
-      controllers.land.routes.LocalAuthorityCodeController.onPageLoad(CheckMode)
+    val targets = failure.targets.map(_.page).toSet
+
+    if      (targets.contains(Pages.LandPostcode))      controllers.land.routes.ConfirmLandOrPropertyAddressController.onPageLoad(CheckMode)
+    else if (targets.contains(Pages.LandPropertyType))  controllers.land.routes.LandTypeOfPropertyController.onPageLoad(CheckMode)
+    else                                                controllers.land.routes.LocalAuthorityCodeController.onPageLoad(CheckMode)
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

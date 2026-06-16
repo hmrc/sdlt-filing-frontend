@@ -60,35 +60,35 @@ class TransactionCheckYourAnswersControllerSpec
   }
 
   private val baseUserAnswers = UserAnswers(
-    id = "12345",
+    id       = "12345",
     returnId = Some("AB2346"),
-    storn = "TESTSTORN",
-    data = Json.obj("key" -> "value")
+    storn    = "TESTSTORN",
+    data     = Json.obj("key" -> "value")
   )
 
   private val transactionCurrentData = Json.obj(
     "transactionCurrent" -> Json.obj(
-      "typeOfTransaction" -> "GrantOfLease",
-      "transactionEffectiveDate" -> "2024-01-01",
-      "transactionAddDateOfContract" -> false,
-      "transactionLinkedTransactions" -> false,
-      "purchaserEligibleToClaimRelief" -> false,
-      "transactionPartialRelief" -> false,
-      "considerationsAffectedUncertain" -> false,
-      "transactionDeferringPayment" -> false,
-      "saleOfBusiness" -> false,
-      "cap1OrNsbc" -> false,
+      "typeOfTransaction"                             -> "GrantOfLease",
+      "transactionEffectiveDate"                      -> "2024-01-01",
+      "transactionAddDateOfContract"                  -> false,
+      "transactionLinkedTransactions"                 -> false,
+      "purchaserEligibleToClaimRelief"                -> false,
+      "transactionPartialRelief"                      -> false,
+      "considerationsAffectedUncertain"               -> false,
+      "transactionDeferringPayment"                   -> false,
+      "saleOfBusiness"                                -> false,
+      "cap1OrNsbc"                                    -> false,
       "transactionRestrictionsCovenantsAndConditions" -> false,
-      "isLandOrPropertyExchanged" -> false,
-      "transactionExercisingAnOption" -> false,
+      "isLandOrPropertyExchanged"                     -> false,
+      "transactionExercisingAnOption"                 -> false,
       "transactionAddress" -> Json.obj(
         "houseNumber" -> "1",
-        "line1" -> "Test Street",
-        "line2" -> "Test Area",
-        "line3" -> "Test City",
-        "line4" -> "Test County",
-        "line5" -> "UK",
-        "postcode" -> "AB1 2CD",
+        "line1"       -> "Test Street",
+        "line2"       -> "Test Area",
+        "line3"       -> "Test City",
+        "line4"       -> "Test County",
+        "line5"       -> "UK",
+        "postcode"    -> "AB1 2CD",
         "country" -> Json.obj(
           "code" -> "GB",
           "name" -> "United Kingdom"
@@ -100,21 +100,21 @@ class TransactionCheckYourAnswersControllerSpec
 
   private def buildFullReturn(propertyType: String) = incompleteFullReturn.copy(
     returnInfo = Some(ReturnInfo(
-      version = Some("1"),
+      version    = Some("1"),
       mainLandID = Some("LAND001")
     )),
     transaction = Some(Transaction()),
     land = Some(
       Seq(
         Land(
-          landID = Some("LAND001"),
-          landResourceRef = Some("LAND-REF-001"),
-          propertyType = Some(propertyType),
+          landID                     = Some("LAND001"),
+          landResourceRef            = Some("LAND-REF-001"),
+          propertyType               = Some(propertyType),
           interestCreatedTransferred = Some("Transfer"),
-          address1 = Some("1 Test Street"),
-          address2 = Some("Test Town"),
-          postcode = Some("AB1 2CD"),
-          localAuthorityNumber = Some("1234")
+          address1                   = Some("1 Test Street"),
+          address2                   = Some("Test Town"),
+          postcode                   = Some("AB1 2CD"),
+          localAuthorityNumber       = Some("1234")
         )
       )
     )
@@ -124,11 +124,11 @@ class TransactionCheckYourAnswersControllerSpec
 
   private def buildCompleteUserAnswers(fullReturn: FullReturn) =
     UserAnswers(
-      id = "12345",
-      returnId = Some("AB2346"),
-      storn = "TESTSTORN",
+      id         = "12345",
+      returnId   = Some("AB2346"),
+      storn      = "TESTSTORN",
       fullReturn = Some(fullReturn),
-      data = transactionCurrentData
+      data       = transactionCurrentData
     )
       .set(TypeOfTransactionPage, TransactionType.GrantOfLease).success.value
       .set(TransactionEffectiveDatePage, LocalDate.of(2024, 1, 1)).success.value
@@ -144,19 +144,18 @@ class TransactionCheckYourAnswersControllerSpec
       .set(IsLandOrPropertyExchangedPage, false).success.value
       .set(TransactionExercisingAnOptionPage, false).success.value
 
-  private val completeUserAnswers = buildCompleteUserAnswers(completeLandFullReturn)
-
+  private val completeUserAnswers         = buildCompleteUserAnswers(completeLandFullReturn)
   private val userAnswersWithValidSession = buildCompleteUserAnswers(completeLandFullReturn)
 
   private val userAnswersWithTransaction = UserAnswers(
-    id = "12345",
-    returnId = Some("AB2346"),
-    storn = "TESTSTORN",
+    id         = "12345",
+    returnId   = Some("AB2346"),
+    storn      = "TESTSTORN",
     fullReturn = Some(
       FullReturn(
-        stornId = "TESTSTORN",
+        stornId           = "TESTSTORN",
         returnResourceRef = "AB2346",
-        transaction = Some(Transaction())
+        transaction       = Some(Transaction())
       )
     )
   )
@@ -175,7 +174,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
@@ -195,7 +194,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
@@ -213,7 +212,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
           contentAsString(result) must include("Check your answers")
@@ -232,7 +231,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
@@ -260,7 +259,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
         }
@@ -283,7 +282,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
@@ -298,9 +297,16 @@ class TransactionCheckYourAnswersControllerSpec
           .set(TotalConsiderationOfTransactionPage, "12").success.value
           .set(TransactionVatIncludedPage, false).success.value
           .set(TransactionFormsOfConsiderationPage, TransactionFormsOfConsiderationAnswers(
-            cash = "yes", debt = "no", buildingWorks = "no", employment = "no", other = "no",
-            sharesInAQuotedCompany = "no", sharesInAnUnquotedCompany = "no",
-            otherLand = "no", services = "no", contingent = "no"
+            cash                      = "yes",
+            debt                      = "no",
+            buildingWorks             = "no",
+            employment                = "no",
+            other                     = "no",
+            sharesInAQuotedCompany    = "no",
+            sharesInAnUnquotedCompany = "no",
+            otherLand                 = "no",
+            services                  = "no",
+            contingent                = "no"
           )).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
@@ -311,7 +317,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
         }
@@ -333,7 +339,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
         }
@@ -344,7 +350,10 @@ class TransactionCheckYourAnswersControllerSpec
         val ua = completeUserAnswers
           .set(SaleOfBusinessPage, true).success.value
           .set(TransactionSaleOfBusinessAssetsPage, TransactionSaleOfBusinessAssetsAnswers(
-            stock = "yes", goodwill = "no", chattelsAndMoveables = "no", others = "no"
+            stock                = "yes",
+            goodwill             = "no",
+            chattelsAndMoveables = "no",
+            others               = "no"
           )).success.value
           .set(TotalAssetsConsiderationPage, "12").success.value
 
@@ -356,7 +365,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
         }
@@ -376,7 +385,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
         }
@@ -396,7 +405,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
         }
@@ -415,7 +424,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
         }
@@ -427,8 +436,13 @@ class TransactionCheckYourAnswersControllerSpec
 
           val ua = buildCompleteUserAnswers(buildFullReturn("NonResidential"))
             .set(TransactionUseOfLandOrPropertyPage, TransactionUseOfLandOrPropertyAnswers(
-              office = "yes", hotel = "no", shop = "no", warehouse = "no",
-              factory = "no", otherIndustrialUnit = "no", other = "no"
+              office              = "yes",
+              hotel               = "no",
+              shop                = "no",
+              warehouse           = "no",
+              factory             = "no",
+              otherIndustrialUnit = "no",
+              other               = "no"
             )).success.value
 
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
@@ -439,7 +453,7 @@ class TransactionCheckYourAnswersControllerSpec
 
           running(application) {
             val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-            val result = route(application, request).value
+            val result  = route(application, request).value
 
             status(result) mustEqual OK
           }
@@ -449,8 +463,13 @@ class TransactionCheckYourAnswersControllerSpec
 
           val ua = buildCompleteUserAnswers(buildFullReturn("Mixed"))
             .set(TransactionUseOfLandOrPropertyPage, TransactionUseOfLandOrPropertyAnswers(
-              office = "yes", hotel = "no", shop = "no", warehouse = "no",
-              factory = "no", otherIndustrialUnit = "no", other = "no"
+              office              = "yes",
+              hotel               = "no",
+              shop                = "no",
+              warehouse           = "no",
+              factory             = "no",
+              otherIndustrialUnit = "no",
+              other               = "no"
             )).success.value
 
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
@@ -461,7 +480,7 @@ class TransactionCheckYourAnswersControllerSpec
 
           running(application) {
             val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-            val result = route(application, request).value
+            val result  = route(application, request).value
 
             status(result) mustEqual OK
           }
@@ -479,7 +498,7 @@ class TransactionCheckYourAnswersControllerSpec
 
           running(application) {
             val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-            val result = route(application, request).value
+            val result  = route(application, request).value
 
             status(result) mustEqual OK
           }
@@ -489,21 +508,21 @@ class TransactionCheckYourAnswersControllerSpec
 
           val fullReturnNoPropertyType = incompleteFullReturn.copy(
             returnInfo = Some(ReturnInfo(
-              version = Some("1"),
+              version    = Some("1"),
               mainLandID = Some("LAND001")
             )),
             transaction = Some(Transaction()),
             land = Some(
               Seq(
                 Land(
-                  landID = Some("LAND001"),
-                  landResourceRef = Some("LAND-REF-001"),
-                  propertyType = None,
+                  landID                     = Some("LAND001"),
+                  landResourceRef            = Some("LAND-REF-001"),
+                  propertyType               = None,
                   interestCreatedTransferred = Some("Transfer"),
-                  address1 = Some("1 Test Street"),
-                  address2 = Some("Test Town"),
-                  postcode = Some("AB1 2CD"),
-                  localAuthorityNumber = Some("1234")
+                  address1                   = Some("1 Test Street"),
+                  address2                   = Some("Test Town"),
+                  postcode                   = Some("AB1 2CD"),
+                  localAuthorityNumber       = Some("1234")
                 )
               )
             )
@@ -519,7 +538,7 @@ class TransactionCheckYourAnswersControllerSpec
 
           running(application) {
             val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-            val result = route(application, request).value
+            val result  = route(application, request).value
 
             status(result) mustEqual OK
           }
@@ -529,11 +548,11 @@ class TransactionCheckYourAnswersControllerSpec
 
           val fullReturnNoLand = incompleteFullReturn.copy(
             returnInfo = Some(ReturnInfo(
-              version = Some("1"),
+              version    = Some("1"),
               mainLandID = Some("LAND001")
             )),
             transaction = Some(Transaction()),
-            land = None
+            land        = None
           )
 
           val ua = buildCompleteUserAnswers(fullReturnNoLand)
@@ -546,7 +565,7 @@ class TransactionCheckYourAnswersControllerSpec
 
           running(application) {
             val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-            val result = route(application, request).value
+            val result  = route(application, request).value
 
             status(result) mustEqual OK
           }
@@ -576,7 +595,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(POST, routes.TransactionCheckYourAnswersController.onSubmit().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
@@ -604,7 +623,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(POST, routes.TransactionCheckYourAnswersController.onSubmit().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
@@ -623,7 +642,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(POST, routes.TransactionCheckYourAnswersController.onSubmit().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
@@ -642,7 +661,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(POST, routes.TransactionCheckYourAnswersController.onSubmit().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
@@ -653,7 +672,7 @@ class TransactionCheckYourAnswersControllerSpec
 
     "cross-flow handling" - {
 
-      import services.crossflow.{CrossFlowFailure, CrossFlowTarget, Pages, ReturnSection}
+      import services.crossflow.{CrossFlowBody, CrossFlowFailure, CrossFlowTarget, Pages, ReturnSection}
       import services.crossflow.fields.CrossFlowValidationService
 
       def stubCrossFlow(failures: Seq[CrossFlowFailure]): CrossFlowValidationService =
@@ -667,8 +686,10 @@ class TransactionCheckYourAnswersControllerSpec
           affects        = ReturnSection.Transaction,
           messageKey     = "test.message",
           inlineErrorKey = "test.message",
-          targets        = Seq(CrossFlowTarget(targetPage, "value"))
-        ) 
+          body           = CrossFlowBody.Single("test.message"),
+          targets        = Seq(CrossFlowTarget(targetPage, "value")),
+          headingKey     = "crossflow.relief.heading"
+        )
 
       "must redirect to the relief reason page when a single cross-flow failure targets it" in {
 
@@ -683,7 +704,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
@@ -704,7 +725,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
@@ -725,7 +746,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
@@ -746,7 +767,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
@@ -762,7 +783,7 @@ class TransactionCheckYourAnswersControllerSpec
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[CrossFlowValidationService].toInstance(stubCrossFlow(Seq(
-              failure(Pages.ReliefReason, "A"),
+              failure(Pages.ReliefReason,  "A"),
               failure(Pages.EffectiveDate, "B")
             )))
           )
@@ -770,7 +791,7 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
@@ -791,12 +812,11 @@ class TransactionCheckYourAnswersControllerSpec
 
         running(application) {
           val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
         }
       }
     }
-    
   }
 }

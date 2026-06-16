@@ -44,13 +44,25 @@ class LandAuthorityCodeMultiEntityControllerSpec extends SpecBase with MockitoSu
 
   private def userAnswersWithLands(lands: Seq[Land]): UserAnswers =
     emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(land = Some(lands))))
-
+  
   private val cf9aFailure = CrossFlowFailure(
-    ruleId = "Cf-9a",
-    affects = ReturnSection.Land,
-    messageKey = "crossflow.land.Cf-9.welsh6996_6997.body",
+    ruleId         = "Cf-9a",
+    affects        = ReturnSection.Land,
+    messageKey     = "crossflow.land.Cf-9.welsh6996_6997.body",
     inlineErrorKey = "crossflow.land.Cf-9.welsh6996_6997.inline",
-    targets = Seq(CrossFlowTarget(Pages.LandAuthorityCode, "value"))
+    body           = CrossFlowBody.Single("crossflow.land.Cf-9.welsh6996_6997.body"),
+    targets        = Seq(CrossFlowTarget(Pages.LandAuthorityCode, "value")),
+    headingKey     = "crossflow.land.heading"
+  )
+  
+  private val cf3Failure = CrossFlowFailure(
+    ruleId         = "Cf-3",
+    affects        = ReturnSection.Land,
+    messageKey     = "crossflow.land.Cf-3.body",
+    inlineErrorKey = "crossflow.land.Cf-3.inline",
+    body           = CrossFlowBody.Single("crossflow.land.Cf-3.body"),
+    targets        = Seq(CrossFlowTarget(Pages.LandPropertyType, "value")),
+    headingKey     = "crossflow.land.Cf-3.heading"
   )
 
   private def crossFlowWithFailures(failures: Seq[(Land, Seq[CrossFlowFailure])]) =
@@ -102,11 +114,31 @@ class LandAuthorityCodeMultiEntityControllerSpec extends SpecBase with MockitoSu
         }
       }
 
+      "must redirect to the single-entity controller when one land has a Cf-3 (property type) failure" in {
+
+        val userAnswers = userAnswersWithLands(Seq(landA))
+        val stub = crossFlowWithFailures(Seq((landA, Seq(cf3Failure))))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[CrossFlowValidationService].toInstance(stub))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, multiEntityRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual
+            controllers.land.routes.LandAuthorityCodeSingleEntityController.onPageLoad("LND001").url
+        }
+      }
+
       "must redirect to Journey Recovery when the single failing land has no landID" in {
 
-        val landNoId  = Land(landID = None, address1 = Some("Anonymous Lane"))
+        val landNoId    = Land(landID = None, address1 = Some("Anonymous Lane"))
         val userAnswers = userAnswersWithLands(Seq(landNoId))
-        val stub = crossFlowWithFailures(Seq((landNoId, Seq(cf9aFailure))))
+        val stub        = crossFlowWithFailures(Seq((landNoId, Seq(cf9aFailure))))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[CrossFlowValidationService].toInstance(stub))
@@ -143,6 +175,55 @@ class LandAuthorityCodeMultiEntityControllerSpec extends SpecBase with MockitoSu
         }
       }
 
+      "must render the multi-entity view when multiple lands have Cf-3 property-type failures" in {
+
+        val userAnswers = userAnswersWithLands(Seq(landA, landB, landC))
+        val stub = crossFlowWithFailures(Seq(
+          (landA, Seq(cf3Failure)),
+          (landB, Seq(cf3Failure))
+        ))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[CrossFlowValidationService].toInstance(stub))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, multiEntityRoute)
+
+          val result  = route(application, request).value
+          val content = contentAsString(result)
+
+          status(result) mustEqual OK
+          content must include("Castle Street")
+          content must include("Cathays Terrace")
+          content must not include "St Mary Street"
+        }
+      }
+
+      "must render the multi-entity view when lands fail with mixed rule types (Cf-3 and Cf-9a)" in {
+
+        val userAnswers = userAnswersWithLands(Seq(landA, landB, landC))
+        val stub = crossFlowWithFailures(Seq(
+          (landA, Seq(cf3Failure)),
+          (landB, Seq(cf9aFailure))
+        ))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[CrossFlowValidationService].toInstance(stub))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, multiEntityRoute)
+
+          val result  = route(application, request).value
+          val content = contentAsString(result)
+
+          status(result) mustEqual OK
+          content must include("Castle Street")
+          content must include("Cathays Terrace")
+        }
+      }
+
       "must render the multi-entity heading and paragraph when multiple lands have failures" in {
 
         val userAnswers = userAnswersWithLands(Seq(landA, landB, landC))
@@ -158,14 +239,15 @@ class LandAuthorityCodeMultiEntityControllerSpec extends SpecBase with MockitoSu
         running(application) {
           val request = FakeRequest(GET, multiEntityRoute)
 
-          val result = route(application, request).value
+          val result  = route(application, request).value
           val content = contentAsString(result)
 
           status(result) mustEqual OK
           content must include(messages(application)("crossflow.land.Cf-7.heading", 2))
           content must include(messages(application)("crossflow.land.multiEntity.p2"))
         }
-      } 
+      }
+
       "must render each offending land in the summary list" in {
 
         val userAnswers = userAnswersWithLands(Seq(landA, landB, landC))
@@ -181,7 +263,7 @@ class LandAuthorityCodeMultiEntityControllerSpec extends SpecBase with MockitoSu
         running(application) {
           val request = FakeRequest(GET, multiEntityRoute)
 
-          val result = route(application, request).value
+          val result  = route(application, request).value
           val content = contentAsString(result)
 
           status(result) mustEqual OK

@@ -24,7 +24,7 @@ import pages.transaction.*
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import scala.util.{Failure, Success, Try}
+import scala.util.{Success, Try}
 
 class PopulateTransactionService {
 
@@ -47,13 +47,13 @@ class PopulateTransactionService {
   private def typeOfTransactionPage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] =
     TransactionType.parse(transaction.transactionDescription) match {
       case Some(transactionType) => userAnswers.set(TypeOfTransactionPage, transactionType)
-      case None                  => Failure(new IllegalStateException("Transaction is missing required type"))
+      case None                  => Success(userAnswers)
     }
 
   private def effectiveDatePage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] =
     transaction.effectiveDate match {
       case Some(dateStr) => Try(LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"))).flatMap(userAnswers.set(TransactionEffectiveDatePage, _))
-      case None          => Failure(new IllegalStateException("Transaction is missing required effective date"))
+      case None          => Success(userAnswers)
     }
 
   private def contractDatePages(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] =
