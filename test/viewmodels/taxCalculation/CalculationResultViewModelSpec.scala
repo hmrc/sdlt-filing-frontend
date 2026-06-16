@@ -77,7 +77,7 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
 
   ".getTaxCalculationSummary" - {
 
-    "produces effective date, consideration, relief and total rows for a freehold result" in {
+    "produces effective date, consideration, sdlt due rows for a freehold result" in {
       val rows = getTaxCalculationSummary(
         effectiveDate      = "1 April 2024",
         totalConsideration = "£300,000",
@@ -111,7 +111,7 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
       )
       rows.map(_.value.content) must contain allOf(Text("£8,000"), Text("£3,000"), Text("£11,000"))
     }
-    "produces six rate card rows if claiming relief is yes, include relief reason" in {
+    "produces four rate card rows for leasehold sdlt breakdown" in {
       val rows = getTaxCalculationSummary(
         effectiveDate      = "1 April 2024",
         totalConsideration = "£300,000",
