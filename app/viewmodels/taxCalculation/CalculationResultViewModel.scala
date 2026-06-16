@@ -77,7 +77,7 @@ object CalculationResultViewModel extends CurrencyFormatter {
         ),
         premiumRateTable = getPremiumRateTable(premiumCalc, rentCalc.isDefined),
         npvRateTable = getNpvRateTable(rentCalc),
-        totalTax = getTotalTaxTable(result.totalTax.toCurrency)
+        totalTax = getTotalTaxTable(rentCalc.isDefined, result.totalTax.toCurrency)
       )
     }
 
@@ -184,9 +184,9 @@ object CalculationResultViewModel extends CurrencyFormatter {
       )
     }
 
-  private[taxCalculation] def getTotalTaxTable(totalSdltDue: String)(implicit messages: Messages): Table = {
+  private[taxCalculation] def getTotalTaxTable(includesNpv: Boolean, totalSdltDue: String)(implicit messages: Messages): Table = {
     Table(
-      caption = Some(getMessage("totalSdltDueWithNpv")),
+      caption = Some(getMessage(if (includesNpv) "totalSdltDueWithNpv" else "totalPremiumPayable")),
       captionClasses = mediumCaption,
       head = Some(totalTaxTableHeader),
       rows = Seq(totalRow("totalSdltDue", totalSdltDue))
