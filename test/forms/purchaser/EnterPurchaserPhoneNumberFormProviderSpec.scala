@@ -19,6 +19,8 @@ package forms.purchaser
 import forms.behaviours.StringFieldBehaviours
 import org.scalacheck.Gen
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class EnterPurchaserPhoneNumberFormProviderSpec extends StringFieldBehaviours {
 
@@ -27,7 +29,8 @@ class EnterPurchaserPhoneNumberFormProviderSpec extends StringFieldBehaviours {
   val invalidMsgKey = "purchaser.enterPhoneNumber.error.invalid"
   val maxLength = 14
 
-  val form = new EnterPurchaserPhoneNumberFormProvider()()
+  implicit val messages: Messages = stubMessages()
+  val form = new EnterPurchaserPhoneNumberFormProvider()("Doe")
 
   ".value" - {
 

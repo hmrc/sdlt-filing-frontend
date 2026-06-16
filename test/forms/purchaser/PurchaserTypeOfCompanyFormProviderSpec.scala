@@ -19,10 +19,13 @@ package forms.purchaser
 import forms.behaviours.CheckboxFieldBehaviours
 import models.purchaser.PurchaserTypeOfCompany
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class PurchaserTypeOfCompanyFormProviderSpec extends CheckboxFieldBehaviours {
 
-  val form = new PurchaserTypeOfCompanyFormProvider()()
+  implicit val messages: Messages = stubMessages()
+  val form = new PurchaserTypeOfCompanyFormProvider()("Doe")
 
   ".value" - {
 

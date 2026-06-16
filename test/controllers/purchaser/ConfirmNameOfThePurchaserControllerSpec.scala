@@ -50,7 +50,6 @@ class ConfirmNameOfThePurchaserControllerSpec extends SpecBase with MockitoSugar
   def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new ConfirmNameOfThePurchaserFormProvider()
-  val form = formProvider()
 
   lazy val confirmNameOfThePurchaserRoute: String =
     controllers.purchaser.routes.ConfirmNameOfThePurchaserController.onPageLoad(NormalMode).url
@@ -146,9 +145,11 @@ class ConfirmNameOfThePurchaserControllerSpec extends SpecBase with MockitoSugar
           val result = route(application, request).value
 
           val view = application.injector.instanceOf[ConfirmNameOfThePurchaserView]
+          implicit val appMessages = messages(application)
+          val form = formProvider("Doe", isCompany = false)
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form, NormalMode, "Doe", false)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(form, NormalMode, "Doe", false)(request, appMessages).toString
         }
       }
 
@@ -163,9 +164,11 @@ class ConfirmNameOfThePurchaserControllerSpec extends SpecBase with MockitoSugar
           val result = route(application, request).value
 
           val view = application.injector.instanceOf[ConfirmNameOfThePurchaserView]
+          implicit val appMessages = messages(application)
+          val form = formProvider("ACME Corporation", isCompany = true)
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form, NormalMode, "ACME Corporation", true)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(form, NormalMode, "ACME Corporation", true)(request, appMessages).toString
         }
       }
 
@@ -180,9 +183,11 @@ class ConfirmNameOfThePurchaserControllerSpec extends SpecBase with MockitoSugar
           val result = route(application, request).value
 
           val view = application.injector.instanceOf[ConfirmNameOfThePurchaserView]
+          implicit val appMessages = messages(application)
+          val form = formProvider("Doe", isCompany = false).fill(true)
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form.fill(true), NormalMode, "Doe", false)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(form, NormalMode, "Doe", false)(request, appMessages).toString
         }
       }
     }
@@ -237,7 +242,11 @@ class ConfirmNameOfThePurchaserControllerSpec extends SpecBase with MockitoSugar
     "when purchaser exists without address" - {
 
       "must redirect to PurchaserAddress when user selects Yes and service succeeds" in {
+        val mockSessionRepository = mock[SessionRepository]
+        val mockPopulateService = mock[PurchaserService]
+
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+        when(mockPopulateService.getMainPurchaser(any())) thenReturn Some(individualPurchaser)
         when(mockPopulateService.populatePurchaserNameInSession(any(), any())) thenReturn
           Success(userAnswersWithIndividualPurchaser)
 
@@ -285,6 +294,11 @@ class ConfirmNameOfThePurchaserControllerSpec extends SpecBase with MockitoSugar
       }
 
       "must return InternalServerError when service fails" in {
+        val mockSessionRepository = mock[SessionRepository]
+        val mockPopulateService = mock[PurchaserService]
+
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+        when(mockPopulateService.getMainPurchaser(any())) thenReturn Some(individualPurchaser)
         when(mockPopulateService.populatePurchaserNameInSession(any(), any())) thenReturn
           Failure(new Exception("Service failed"))
 
@@ -316,13 +330,14 @@ class ConfirmNameOfThePurchaserControllerSpec extends SpecBase with MockitoSugar
           val request = FakeRequest(POST, confirmNameOfThePurchaserRoute)
             .withFormUrlEncodedBody("value" -> "invalid")
 
-          val boundForm = form.bind(Map("value" -> "invalid"))
           val view = application.injector.instanceOf[ConfirmNameOfThePurchaserView]
+          implicit val appMessages = messages(application)
+          val boundForm = formProvider("Doe", isCompany = false).bind(Map("value" -> "invalid"))
 
           val result = route(application, request).value
 
           status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual view(boundForm, NormalMode, "Doe", false)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(boundForm, NormalMode, "Doe", false)(request, appMessages).toString
         }
       }
 
@@ -337,13 +352,35 @@ class ConfirmNameOfThePurchaserControllerSpec extends SpecBase with MockitoSugar
           val request = FakeRequest(POST, confirmNameOfThePurchaserRoute)
             .withFormUrlEncodedBody("value" -> "")
 
-          val boundForm = form.bind(Map("value" -> ""))
           val view = application.injector.instanceOf[ConfirmNameOfThePurchaserView]
+          implicit val appMessages = messages(application)
+          val boundForm = formProvider("ACME Corporation", isCompany = true).bind(Map("value" -> ""))
 
           val result = route(application, request).value
 
           status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual view(boundForm, NormalMode, "ACME Corporation", true)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(boundForm, NormalMode, "ACME Corporation", true)(request, appMessages).toString
+        }
+      }
+    }
+
+    "when purchaser has an address" - {
+      "must redirect to WhoIsMakingThePurchase for POST" in {
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswersWithPurchaserWithAddress))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, confirmNameOfThePurchaserRoute)
+            .withFormUrlEncodedBody("value" -> "true")
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual
+            controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode).url
         }
       }
     }

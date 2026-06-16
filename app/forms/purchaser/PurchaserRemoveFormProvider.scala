@@ -19,6 +19,7 @@ package forms.purchaser
 import forms.mappings.Mappings
 import models.purchaser.PurchaserRemove
 import play.api.data.Form
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
@@ -27,8 +28,8 @@ class PurchaserRemoveFormProvider @Inject() extends Mappings {
   private val RemovePrefix = "REMOVE-"
   private val PromotePrefix = "PROMOTE-"
 
-  def apply(): Form[PurchaserRemove] = Form(
-    "value" -> text("purchaser.purchaserRemove.error.required")
+  def apply(purchaserName: String)(implicit messages: Messages): Form[PurchaserRemove] = Form(
+    "value" -> text(messages("purchaser.purchaserRemove.error.required", purchaserName))
       .verifying("error.invalid", value => isValid(value))
       .transform[PurchaserRemove](
         {

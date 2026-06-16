@@ -42,6 +42,18 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
     )
   )
 
+  val formWithFieldSpecificKeys = Form(
+    "value" -> localDate(
+      requiredKey    = "error.required",
+      allRequiredKey = "error.required.all",
+      twoRequiredKey = "error.required.two",
+      invalidKey     = "error.invalid",
+      dayRequiredKey = Some("error.required.day"),
+      monthRequiredKey = Some("error.required.month"),
+      yearRequiredKey = Some("error.required.year")
+    )
+  )
+
   val validData = datesBetween(
     min = LocalDate.of(2000, 1, 1),
     max = LocalDate.of(3000, 1, 1)
@@ -181,6 +193,22 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
     }
   }
 
+  "must fail to bind a date with a missing day using field-specific key" in {
+
+    forAll(validData -> "valid date") {
+      date =>
+
+        val data = Map(
+          "value.month" -> date.getMonthValue.toString,
+          "value.year" -> date.getYear.toString
+        )
+
+        val result = formWithFieldSpecificKeys.bind(data)
+
+        result.errors must contain only FormError("value", "error.required.day", List(messages("date.error.day")))
+    }
+  }
+
   "must fail to bind a date with an invalid day" in {
 
     forAll(validData -> "valid date", invalidField -> "invalid field") {
@@ -221,6 +249,22 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
     }
   }
 
+  "must fail to bind a date with a missing month using field-specific key" in {
+
+    forAll(validData -> "valid date") {
+      date =>
+
+        val data = Map(
+          "value.day" -> date.getDayOfMonth.toString,
+          "value.year" -> date.getYear.toString
+        )
+
+        val result = formWithFieldSpecificKeys.bind(data)
+
+        result.errors must contain only FormError("value", "error.required.month", List(messages("date.error.month")))
+    }
+  }
+
   "must fail to bind a date with an invalid month" in {
 
     forAll(validData -> "valid data", invalidField -> "invalid field") {
@@ -258,6 +302,22 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
         val result = form.bind(data)
 
         result.errors must contain only FormError("value", "error.required", List(messages("date.error.year")))
+    }
+  }
+
+  "must fail to bind a date with a missing year using field-specific key" in {
+
+    forAll(validData -> "valid date") {
+      date =>
+
+        val data = Map(
+          "value.day" -> date.getDayOfMonth.toString,
+          "value.month" -> date.getMonthValue.toString
+        )
+
+        val result = formWithFieldSpecificKeys.bind(data)
+
+        result.errors must contain only FormError("value", "error.required.year", List(messages("date.error.year")))
     }
   }
 

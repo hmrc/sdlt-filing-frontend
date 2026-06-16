@@ -20,15 +20,16 @@ import forms.mappings.Mappings
 import models.purchaser.PurchaserTypeOfCompany
 import play.api.data.Form
 import play.api.data.Forms.set
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
 class PurchaserTypeOfCompanyFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Set[PurchaserTypeOfCompany]] =
+  def apply(purchaserName: String)(implicit messages: Messages): Form[Set[PurchaserTypeOfCompany]] =
     Form(
-      "value" -> set(enumerable[PurchaserTypeOfCompany]("purchaser.purchaserTypeOfCompany.error.required"))
-        .verifying(nonEmptySet("purchaser.purchaserTypeOfCompany.error.required"))
-        .verifying(maxCheckboxes(4, "purchaser.purchaserTypeOfCompany.error.required"))
+      "value" -> set(enumerable[PurchaserTypeOfCompany](messages("purchaser.purchaserTypeOfCompany.error.required", purchaserName)))
+        .verifying(nonEmptySet(messages("purchaser.purchaserTypeOfCompany.error.required", purchaserName)))
+        .verifying(maxCheckboxes(4, messages("purchaser.purchaserTypeOfCompany.error.required", purchaserName)))
     )
 }

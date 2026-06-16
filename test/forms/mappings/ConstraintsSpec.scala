@@ -23,11 +23,15 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.validation.{Invalid, Valid}
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 import java.time.LocalDate
 
-class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with Generators  with Constraints {
+class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with Generators with Constraints {
 
+  implicit val messages: Messages = stubMessages()
+  val purchaserName = "John Smith"
 
   "firstError" - {
 
@@ -291,34 +295,39 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
 
     "must return Valid for a valid UTR number" in {
       validUtrString.foreach { utr =>
-        val result = validUtr("error.utr")(utr)
+        val constraint = validUtr("error.utr", purchaserName)
+        val result = constraint(utr)
         result mustBe Valid
       }
     }
 
     "must return Invalid for an invalid UTR number" in {
       invalidUtrStrings.foreach { utr =>
-        val result = validUtr("error.utr")(utr)
+        val constraint = validUtr("error.utr", purchaserName)
+        val result = constraint(utr)
         result mustBe Invalid("error.utr.invalid")
       }
     }
 
     "must return Invalid for numbers more or less than 10 digits" in {
       invalidUtrLength.foreach { utr =>
-        val result = validUtr("error.utr")(utr)
+        val constraint = validUtr("error.utr", purchaserName)
+        val result = constraint(utr)
         result mustBe Invalid("error.utr.length", 10)
       }
     }
 
     "must return Invalid for UTR values with no digits" in {
       invalidUtrRegex.foreach { utr =>
-        val result = validUtr("error.utr")(utr)
+        val constraint = validUtr("error.utr", purchaserName)
+        val result = constraint(utr)
         result mustBe Invalid("error.utr.regex.invalid", "^[0-9]*$")
       }
     }
 
     "must return Invalid and first error message for UTR values with multiple errors" in {
-      val result = validUtr("error.utr")(invalidUtrMultipleErrors)
+      val constraint = validUtr("error.utr", purchaserName)
+      val result = constraint(invalidUtrMultipleErrors)
       result mustBe Invalid("error.utr.regex.invalid", "^[0-9]*$")
     }
   }
@@ -332,34 +341,39 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
 
     "must return Valid for a valid vat number" in {
       validVATString.foreach { vat =>
-        val result = vatCheckF16Validation("purchaser.registrationNumber.error")(vat)
+        val constraint = vatCheckF16Validation("purchaser.registrationNumber.error", purchaserName)
+        val result = constraint(vat)
         result mustBe Valid
       }
     }
 
     "must return Invalid for an invalid vat number" in {
       invalidVatStrings.foreach { vat =>
-        val result = vatCheckF16Validation("purchaser.registrationNumber.error")(vat)
+        val constraint = vatCheckF16Validation("purchaser.registrationNumber.error", purchaserName)
+        val result = constraint(vat)
         result mustBe Invalid("purchaser.registrationNumber.error.invalid")
       }
     }
 
     "must return Invalid for numbers more or less than 9 digits" in {
       invalidVatLength.foreach { vat =>
-        val result = vatCheckF16Validation("purchaser.registrationNumber.error")(vat)
+        val constraint = vatCheckF16Validation("purchaser.registrationNumber.error", purchaserName)
+        val result = constraint(vat)
         result mustBe Invalid("purchaser.registrationNumber.error.length", 9)
       }
     }
 
     "must return Invalid for VAT values with no digits" in {
       invalidVatRegex.foreach { vat =>
-        val result = vatCheckF16Validation("purchaser.registrationNumber.error")(vat)
+        val constraint = vatCheckF16Validation("purchaser.registrationNumber.error", purchaserName)
+        val result = constraint(vat)
         result mustBe Invalid("purchaser.registrationNumber.error.regex.invalid", "^[0-9]*$")
       }
     }
 
     "must return Invalid and first error message for VAT values with multiple errors" in {
-      val result = validUtr("purchaser.registrationNumber.error")(invalidVatMultipleErrors)
+      val constraint = vatCheckF16Validation("purchaser.registrationNumber.error", purchaserName)
+      val result = constraint(invalidVatMultipleErrors)
       result mustBe Invalid("purchaser.registrationNumber.error.regex.invalid", "^[0-9]*$")
     }
   }

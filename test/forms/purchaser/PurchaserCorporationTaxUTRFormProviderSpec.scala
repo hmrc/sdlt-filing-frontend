@@ -18,6 +18,8 @@ package forms.purchaser
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class PurchaserCorporationTaxUTRFormProviderSpec extends StringFieldBehaviours {
 
@@ -28,7 +30,8 @@ class PurchaserCorporationTaxUTRFormProviderSpec extends StringFieldBehaviours {
   val minLength = 10
   val maxLength = 10
 
-  val form = new PurchaserCorporationTaxUTRFormProvider()()
+  implicit val messages: Messages = stubMessages()
+  val form = new PurchaserCorporationTaxUTRFormProvider()("Doe")
 
   ".value" - {
 

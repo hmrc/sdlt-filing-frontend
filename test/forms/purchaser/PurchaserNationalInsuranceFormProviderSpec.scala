@@ -18,6 +18,8 @@ package forms.purchaser
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class PurchaserNationalInsuranceFormProviderSpec extends StringFieldBehaviours {
 
@@ -26,7 +28,8 @@ class PurchaserNationalInsuranceFormProviderSpec extends StringFieldBehaviours {
   val maxLength = 9
   val invalidKey = "purchaser.nationalInsurance.error.invalid"
 
-  val form = new PurchaserNationalInsuranceFormProvider()()
+  implicit val messages: Messages = stubMessages()
+  val form = new PurchaserNationalInsuranceFormProvider()("Doe")
 
   ".nationalInsuranceNumber" - {
 

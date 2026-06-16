@@ -44,7 +44,7 @@ class PurchaserDateOfBirthControllerSpec extends SpecBase with MockitoSugar {
   private val time = TimeMachine()
   private val formProvider = new PurchaserDateOfBirthFormProvider(time)
 
-  private def form = formProvider()
+  private def form = formProvider("Doe")
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -203,6 +203,7 @@ class PurchaserDateOfBirthControllerSpec extends SpecBase with MockitoSugar {
           .withFormUrlEncodedBody(("value", "invalid value"))
 
       running(application) {
+        val form = formProvider(purchaserName)(messages(application))
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[PurchaserDateOfBirthView]

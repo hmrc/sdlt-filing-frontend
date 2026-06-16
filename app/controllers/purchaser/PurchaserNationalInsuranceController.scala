@@ -21,7 +21,6 @@ import forms.purchaser.PurchaserNationalInsuranceFormProvider
 import models.{Mode, NormalMode}
 import navigation.Navigator
 import pages.purchaser.{DoesPurchaserHaveNIPage, NameOfPurchaserPage, PurchaserNationalInsurancePage}
-import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -46,8 +45,7 @@ class PurchaserNationalInsuranceController @Inject()(
                                         val controllerComponents: MessagesControllerComponents,
                                         view: PurchaserNationalInsuranceView
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
-  val form: Form[String] = formProvider()
+  
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -62,6 +60,7 @@ class PurchaserNationalInsuranceController @Inject()(
 
       (purchaserName, doesPurchaserHaveNi) match {
         case (Some(purchaserName), Some(doesPurchaserHaveNi)) if doesPurchaserHaveNi =>
+          val form = formProvider(purchaserName)
           val preparedForm = request.userAnswers.get(PurchaserNationalInsurancePage) match {
             case None => form
             case Some(value) => form.fill(value)
@@ -90,6 +89,7 @@ class PurchaserNationalInsuranceController @Inject()(
 
       purchaserName match {
         case Some(purchaserName) =>
+          val form = formProvider(purchaserName)
           form.bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, mode, purchaserName))),

@@ -45,8 +45,7 @@ class EnterPurchaserPhoneNumberController @Inject()(
                                         val controllerComponents: MessagesControllerComponents,
                                         val view: EnterPurchaserPhoneNumberView
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
-
-  val form = formProvider()
+  
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -57,6 +56,7 @@ class EnterPurchaserPhoneNumberController @Inject()(
 
         case Some(purchaser) =>
           val purchaserName = purchaser.fullName
+          val form = formProvider(purchaserName)
 
           val preparedForm = request.userAnswers.get(EnterPurchaserPhoneNumberPage) match {
             case None => form
@@ -81,6 +81,7 @@ class EnterPurchaserPhoneNumberController @Inject()(
 
         case Some(purchaser) =>
           val purchaserName = purchaser.fullName
+          val form = formProvider(purchaserName)
 
           form.bindFromRequest().fold(
             formWithErrors =>

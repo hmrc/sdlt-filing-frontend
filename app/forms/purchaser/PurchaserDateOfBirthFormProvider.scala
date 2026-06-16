@@ -28,17 +28,21 @@ import javax.inject.Inject
 class PurchaserDateOfBirthFormProvider @Inject()(timeMachine: TimeMachine) extends Mappings {
 
   private def maxDateAllowed: LocalDate = timeMachine.today
-  private def dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+  private def dateFormatter = DateTimeFormatter.ofPattern("dd MM yyyy")
 
-  def apply()(implicit messages: Messages): Form[LocalDate] =
+  def apply(purchaserName: String)(implicit messages: Messages): Form[LocalDate] =
     Form(
       "value" -> localDate(
-        invalidKey     = "purchaser.dateOfBirth.error.invalid",
-        allRequiredKey = "purchaser.dateOfBirth.error.required.all",
+        invalidKey = "purchaser.dateOfBirth.error.invalid",
+        allRequiredKey = messages("purchaser.dateOfBirth.error.required.all", purchaserName),
         twoRequiredKey = "purchaser.dateOfBirth.error.required.two",
-        requiredKey    = "purchaser.dateOfBirth.error.required"
+        requiredKey = messages("purchaser.dateOfBirth.error.required", purchaserName),
+        dayRequiredKey = Some(messages("purchaser.dateOfBirth.error.required.day", purchaserName)),
+        monthRequiredKey = Some(messages("purchaser.dateOfBirth.error.required.month", purchaserName)),
+        yearRequiredKey = Some(messages("purchaser.dateOfBirth.error.required.year", purchaserName)),
+        args = Seq(purchaserName)
       ).verifying(
-        maxDate(maxDateAllowed, "purchaser.dateOfBirth.error.date.range.max", maxDateAllowed.format(dateFormatter)),
+        maxDate(maxDateAllowed, messages("purchaser.dateOfBirth.error.date.range.max", purchaserName), maxDateAllowed.format(dateFormatter))
       )
     )
 }

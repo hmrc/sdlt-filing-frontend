@@ -26,6 +26,7 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaser.PurchaserUTRPage
 import play.api.data.Form
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -41,7 +42,8 @@ class PurchaserPartnershipUtrControllerSpec extends SpecBase with MockitoSugar {
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new PurchaserPartnershipUtrFormProvider()
-  val form: Form[String] = formProvider()
+  implicit val messages: Messages = stubMessages()
+  val form: Form[String] = formProvider("Doe")
 
   lazy val purchaserPartnershipUtrRoute: String = controllers.purchaser.routes.PurchaserPartnershipUtrController.onPageLoad(NormalMode).url
 

@@ -27,18 +27,31 @@ class NameOfPurchaserFormProvider @Inject() extends Mappings {
 
   private val formRegex = "[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"
 
-  def apply(): Form[NameOfPurchaser] =
-    Form(
-      mapping(
-        "forename1" -> optionalText()
-          .verifying(optionalMaxLength(14, "purchaser.individual.error.length.firstName"))
-          .verifying(optionalRegexp(formRegex, "purchaser.name.form.regex.error")),
-        "forename2" -> optionalText()
-          .verifying(optionalMaxLength(14, "purchaser.individual.error.length.middleName"))
-          .verifying(optionalRegexp(formRegex, "purchaser.name.form.regex.error")),
-        "name" -> text("purchaser.name.error.required")
-          .verifying(maxLength(56, "purchaser.name.error.length"))
-          .verifying(regexp(formRegex, "purchaser.name.form.regex.error"))
-      )(NameOfPurchaser.apply)(o => Some(Tuple.fromProductTyped(o)))
-    )
- }
+  def apply(purchaserOrCompany: String): Form[NameOfPurchaser] = {
+    if (purchaserOrCompany == "Individual") {
+      Form(
+        mapping(
+          "forename1" -> optionalText()
+            .verifying(optionalMaxLength(14, "purchaser.individual.error.length.firstName"))
+            .verifying(optionalRegexp(formRegex, "purchaser.name.form.regex.error.firstName")),
+          "forename2" -> optionalText()
+            .verifying(optionalMaxLength(14, "purchaser.individual.error.length.middleName"))
+            .verifying(optionalRegexp(formRegex, "purchaser.name.form.regex.error.middleName")),
+          "name" -> text("purchaser.individual.error.required")
+            .verifying(maxLength(56, "purchaser.individual.error.length.lastName"))
+            .verifying(regexp(formRegex, "purchaser.name.form.regex.error.lastName"))
+        )(NameOfPurchaser.apply)(o => Some(Tuple.fromProductTyped(o)))
+      )
+    } else {
+      Form(
+        mapping(
+          "forename1" -> ignored(Option.empty[String]),
+          "forename2" -> ignored(Option.empty[String]),
+          "name" -> text("purchaser.company.error.required")
+            .verifying(maxLength(56, "purchaser.company.error.length.name"))
+            .verifying(regexp(formRegex, "purchaser.name.form.regex.error.company"))
+        )(NameOfPurchaser.apply)(o => Some(Tuple.fromProductTyped(o)))
+      )
+    }
+  }
+}

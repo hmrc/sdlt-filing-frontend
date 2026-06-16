@@ -19,6 +19,7 @@ package controllers.purchaser
 import base.SpecBase
 import controllers.routes
 import forms.purchaser.PurchaserRemoveFormProvider
+import models.Purchaser
 import models.purchaser.PurchaserAndCompanyId
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -29,287 +30,387 @@ import play.api.mvc.Results.Redirect
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
-import services.purchaser.PurchaserRemoveService
+import services.purchaser.{PurchaserRemoveService, PurchaserService}
 
 import scala.concurrent.Future
 
 class PurchaserRemoveControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new PurchaserRemoveFormProvider()
-  val form = formProvider()
 
   lazy val purchaserRemoveRoute = controllers.purchaser.routes.PurchaserRemoveController.onPageLoad().url
 
+  val purchaserID = "PUR-001"
+  val purchaserName = "John Doe"
+
+  val individualPurchaser = Purchaser(
+    purchaserID = Some(purchaserID),
+    forename1 = Some("John"),
+    forename2 = None,
+    surname = Some("Doe"),
+    companyName = None,
+    address1 = None,
+    address2 = None,
+    address3 = None,
+    address4 = None,
+    postcode = None
+  )
+
+  val companyPurchaser = Purchaser(
+    purchaserID = Some(purchaserID),
+    forename1 = None,
+    forename2 = None,
+    surname = None,
+    companyName = Some("ACME Corporation"),
+    address1 = None,
+    address2 = None,
+    address3 = None,
+    address4 = None,
+    postcode = None
+  )
+
+  val baseUserAnswers = emptyUserAnswers
+    .set(PurchaserOverviewRemovePage, PurchaserAndCompanyId(purchaserID, None)).success.value
+
   "PurchaserRemove Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "onPageLoad" - {
 
-      val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+      "must return OK and the correct view when purchaser is found" in {
+        val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+        val mockPurchaserService = mock[PurchaserService]
 
-      val purchaserID = "PUR-001"
+        when(mockPurchaserService.allPurchasers(any())).thenReturn(Seq(individualPurchaser))
+        when(mockPurchaserService.findById(any(), any())).thenReturn(Some(individualPurchaser))
+        when(mockPurchaserRemoveService.purchaserRemoveView(any(), any())(any(), any()))
+          .thenReturn(Right(Html("<div>Test View</div>")))
 
-      val userAnswers = emptyUserAnswers
-        .set(PurchaserOverviewRemovePage, PurchaserAndCompanyId(purchaserID, None)).success.value
+        val application = applicationBuilder(userAnswers = Some(baseUserAnswers))
+          .overrides(
+            bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService),
+            bind[PurchaserService].toInstance(mockPurchaserService)
+          )
+          .build()
 
-      when(mockPurchaserRemoveService.purchaserRemoveView(any(), any())(any(), any()))
-        .thenReturn(Right(Html("<div>Test View</div>")))
+        running(application) {
+          val request = FakeRequest(GET, purchaserRemoveRoute)
+          val result = route(application, request).value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService))
-        .build()
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual "<div>Test View</div>"
+        }
+      }
 
-      running(application) {
-        val request = FakeRequest(GET, purchaserRemoveRoute)
+      "must return OK with company purchaser name when found" in {
+        val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+        val mockPurchaserService = mock[PurchaserService]
 
-        val result = route(application, request).value
+        when(mockPurchaserService.allPurchasers(any())).thenReturn(Seq(companyPurchaser))
+        when(mockPurchaserService.findById(any(), any())).thenReturn(Some(companyPurchaser))
+        when(mockPurchaserRemoveService.purchaserRemoveView(any(), any())(any(), any()))
+          .thenReturn(Right(Html("<div>Company View</div>")))
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual "<div>Test View</div>"
+        val application = applicationBuilder(userAnswers = Some(baseUserAnswers))
+          .overrides(
+            bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService),
+            bind[PurchaserService].toInstance(mockPurchaserService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, purchaserRemoveRoute)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual "<div>Company View</div>"
+        }
+      }
+
+      "must redirect to Journey Recovery when service returns Left" in {
+        val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+        val mockPurchaserService = mock[PurchaserService]
+
+        when(mockPurchaserService.allPurchasers(any())).thenReturn(Seq(individualPurchaser))
+        when(mockPurchaserService.findById(any(), any())).thenReturn(Some(individualPurchaser))
+        when(mockPurchaserRemoveService.purchaserRemoveView(any(), any())(any(), any()))
+          .thenReturn(Left(Redirect(routes.JourneyRecoveryController.onPageLoad())))
+
+        val application = applicationBuilder(userAnswers = Some(baseUserAnswers))
+          .overrides(
+            bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService),
+            bind[PurchaserService].toInstance(mockPurchaserService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, purchaserRemoveRoute)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+      "must handle when purchaser is not found" in {
+        val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+        val mockPurchaserService = mock[PurchaserService]
+
+        when(mockPurchaserService.allPurchasers(any())).thenReturn(Seq())
+        when(mockPurchaserService.findById(any(), any())).thenReturn(None)
+        when(mockPurchaserRemoveService.purchaserRemoveView(any(), any())(any(), any()))
+          .thenReturn(Right(Html("<div>Empty Name View</div>")))
+
+        val application = applicationBuilder(userAnswers = Some(baseUserAnswers))
+          .overrides(
+            bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService),
+            bind[PurchaserService].toInstance(mockPurchaserService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, purchaserRemoveRoute)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+        }
+      }
+
+      "must redirect to Journey Recovery when PurchaserOverviewRemovePage is missing" in {
+        val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+
+        when(mockPurchaserRemoveService.purchaserRemoveView(any(), any())(any(), any()))
+          .thenReturn(Left(Redirect(routes.JourneyRecoveryController.onPageLoad())))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, purchaserRemoveRoute)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+      "must redirect to Journey Recovery for a GET if no existing data is found" in {
+        val application = applicationBuilder(userAnswers = None).build()
+
+        running(application) {
+          val request = FakeRequest(GET, purchaserRemoveRoute)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        }
       }
     }
 
-    "must redirect to Journey Recovery when service returns Left for a GET" in {
+    "onSubmit" - {
 
-      val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+      "must handle form submission and redirect when valid data is submitted" in {
+        val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+        val mockPurchaserService = mock[PurchaserService]
 
-      val purchaserID = "PUR-001"
+        when(mockPurchaserService.allPurchasers(any())).thenReturn(Seq(individualPurchaser))
+        when(mockPurchaserService.findById(any(), any())).thenReturn(Some(individualPurchaser))
+        when(mockPurchaserRemoveService.handleRemoval(any(), any())(any(), any(), any()))
+          .thenReturn(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
 
-      val userAnswers = emptyUserAnswers
-        .set(PurchaserOverviewRemovePage, PurchaserAndCompanyId(purchaserID, None)).success.value
+        val application = applicationBuilder(userAnswers = Some(baseUserAnswers))
+          .overrides(
+            bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService),
+            bind[PurchaserService].toInstance(mockPurchaserService)
+          )
+          .build()
 
-      when(mockPurchaserRemoveService.purchaserRemoveView(any(), any())(any(), any()))
-        .thenReturn(Left(Redirect(routes.JourneyRecoveryController.onPageLoad())))
+        running(application) {
+          val request = FakeRequest(POST, purchaserRemoveRoute)
+            .withFormUrlEncodedBody(("value", s"REMOVE-$purchaserID"))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService))
-        .build()
+          val result = route(application, request).value
 
-      running(application) {
-        val request = FakeRequest(GET, purchaserRemoveRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        }
       }
-    }
 
-    "must handle form submission and redirect when valid data is submitted" in {
+      "must handle SelectNewMain form submission and redirect" in {
+        val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+        val mockPurchaserService = mock[PurchaserService]
+        val newmainPurchaserID = "PUR-002"
 
-      val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+        when(mockPurchaserService.allPurchasers(any())).thenReturn(Seq(individualPurchaser))
+        when(mockPurchaserService.findById(any(), any())).thenReturn(Some(individualPurchaser))
+        when(mockPurchaserRemoveService.handleRemoval(any(), any())(any(), any(), any()))
+          .thenReturn(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
 
-      val purchaserID = "PUR-001"
+        val application = applicationBuilder(userAnswers = Some(baseUserAnswers))
+          .overrides(
+            bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService),
+            bind[PurchaserService].toInstance(mockPurchaserService)
+          )
+          .build()
 
-      val userAnswers = emptyUserAnswers
-        .set(PurchaserOverviewRemovePage, PurchaserAndCompanyId(purchaserID, None)).success.value
+        running(application) {
+          val request = FakeRequest(POST, purchaserRemoveRoute)
+            .withFormUrlEncodedBody(("value", s"PROMOTE-$newmainPurchaserID"))
 
-      when(mockPurchaserRemoveService.handleRemoval(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
+          val result = route(application, request).value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService))
-        .build()
-
-      running(application) {
-        val request = FakeRequest(POST, purchaserRemoveRoute)
-          .withFormUrlEncodedBody(("value", s"REMOVE-$purchaserID"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        }
       }
-    }
 
-    "must handle SelectNewMain form submission and redirect" in {
+      "must handle No selection and redirect" in {
+        val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+        val mockPurchaserService = mock[PurchaserService]
 
-      val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+        when(mockPurchaserService.allPurchasers(any())).thenReturn(Seq(individualPurchaser))
+        when(mockPurchaserService.findById(any(), any())).thenReturn(Some(individualPurchaser))
+        when(mockPurchaserRemoveService.handleRemoval(any(), any())(any(), any(), any()))
+          .thenReturn(Future.successful(Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad())))
 
-      val oldmainPurchaserID = "PUR-001"
-      val newmainPurchaserID = "PUR-002"
+        val application = applicationBuilder(userAnswers = Some(baseUserAnswers))
+          .overrides(
+            bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService),
+            bind[PurchaserService].toInstance(mockPurchaserService)
+          )
+          .build()
 
-      val userAnswers = emptyUserAnswers
-        .set(PurchaserOverviewRemovePage, PurchaserAndCompanyId(oldmainPurchaserID, None)).success.value
+        running(application) {
+          val request = FakeRequest(POST, purchaserRemoveRoute)
+            .withFormUrlEncodedBody(("value", "no"))
 
-      when(mockPurchaserRemoveService.handleRemoval(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad())))
+          val result = route(application, request).value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService))
-        .build()
-
-      running(application) {
-        val request = FakeRequest(POST, purchaserRemoveRoute)
-          .withFormUrlEncodedBody(("value", s"PROMOTE-$newmainPurchaserID"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOverviewController.onPageLoad().url
+        }
       }
-    }
 
-    "must handle No selection and redirect" in {
+      "must handle Keep selection and redirect" in {
+        val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+        val mockPurchaserService = mock[PurchaserService]
 
-      val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+        when(mockPurchaserService.allPurchasers(any())).thenReturn(Seq(individualPurchaser))
+        when(mockPurchaserService.findById(any(), any())).thenReturn(Some(individualPurchaser))
+        when(mockPurchaserRemoveService.handleRemoval(any(), any())(any(), any(), any()))
+          .thenReturn(Future.successful(Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad())))
 
-      val purchaserID = "PUR-001"
+        val application = applicationBuilder(userAnswers = Some(baseUserAnswers))
+          .overrides(
+            bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService),
+            bind[PurchaserService].toInstance(mockPurchaserService)
+          )
+          .build()
 
-      val userAnswers = emptyUserAnswers
-        .set(PurchaserOverviewRemovePage, PurchaserAndCompanyId(purchaserID, None)).success.value
+        running(application) {
+          val request = FakeRequest(POST, purchaserRemoveRoute)
+            .withFormUrlEncodedBody(("value", "keep"))
 
-      when(mockPurchaserRemoveService.handleRemoval(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad())))
+          val result = route(application, request).value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService))
-        .build()
-
-      running(application) {
-        val request = FakeRequest(POST, purchaserRemoveRoute)
-          .withFormUrlEncodedBody(("value", "no"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOverviewController.onPageLoad().url
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOverviewController.onPageLoad().url
+        }
       }
-    }
 
-    "must handle Keep selection and redirect" in {
+      "must return a Bad Request and errors when empty data is submitted" in {
+        val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+        val mockPurchaserService = mock[PurchaserService]
 
-      val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+        when(mockPurchaserService.allPurchasers(any())).thenReturn(Seq(individualPurchaser))
+        when(mockPurchaserService.findById(any(), any())).thenReturn(Some(individualPurchaser))
+        when(mockPurchaserRemoveService.purchaserRemoveView(any(), any())(any(), any()))
+          .thenReturn(Right(Html("<div>Error View</div>")))
 
-      val purchaserID = "PUR-001"
+        val application = applicationBuilder(userAnswers = Some(baseUserAnswers))
+          .overrides(
+            bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService),
+            bind[PurchaserService].toInstance(mockPurchaserService)
+          )
+          .build()
 
-      val userAnswers = emptyUserAnswers
-        .set(PurchaserOverviewRemovePage, PurchaserAndCompanyId(purchaserID, None)).success.value
+        running(application) {
+          val request = FakeRequest(POST, purchaserRemoveRoute)
+            .withFormUrlEncodedBody(("value", ""))
 
-      when(mockPurchaserRemoveService.handleRemoval(any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad())))
+          val result = route(application, request).value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService))
-        .build()
-
-      running(application) {
-        val request = FakeRequest(POST, purchaserRemoveRoute)
-          .withFormUrlEncodedBody(("value", "keep"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOverviewController.onPageLoad().url
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) mustEqual "<div>Error View</div>"
+        }
       }
-    }
 
-    "must return a Bad Request and errors when empty data is submitted" in {
+      "must return a Bad Request and errors when invalid value is submitted" in {
+        val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+        val mockPurchaserService = mock[PurchaserService]
 
-      val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+        when(mockPurchaserService.allPurchasers(any())).thenReturn(Seq(individualPurchaser))
+        when(mockPurchaserService.findById(any(), any())).thenReturn(Some(individualPurchaser))
+        when(mockPurchaserRemoveService.purchaserRemoveView(any(), any())(any(), any()))
+          .thenReturn(Right(Html("<div>Error View</div>")))
 
-      val purchaserID = "PUR-001"
+        val application = applicationBuilder(userAnswers = Some(baseUserAnswers))
+          .overrides(
+            bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService),
+            bind[PurchaserService].toInstance(mockPurchaserService)
+          )
+          .build()
 
-      val userAnswers = emptyUserAnswers
-        .set(PurchaserOverviewRemovePage, PurchaserAndCompanyId(purchaserID, None)).success.value
+        running(application) {
+          val request = FakeRequest(POST, purchaserRemoveRoute)
+            .withFormUrlEncodedBody(("value", "invalid"))
 
-      when(mockPurchaserRemoveService.purchaserRemoveView(any(), any())(any(), any()))
-        .thenReturn(Right(Html("<div>Error View</div>")))
+          val result = route(application, request).value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService))
-        .build()
-
-      running(application) {
-        val request = FakeRequest(POST, purchaserRemoveRoute)
-          .withFormUrlEncodedBody(("value", ""))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual "<div>Error View</div>"
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) mustEqual "<div>Error View</div>"
+        }
       }
-    }
 
-    "must return a Bad Request and errors when invalid value is submitted" in {
+      "must redirect when service returns Left for invalid form submission" in {
+        val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+        val mockPurchaserService = mock[PurchaserService]
 
-      val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+        when(mockPurchaserService.allPurchasers(any())).thenReturn(Seq(individualPurchaser))
+        when(mockPurchaserService.findById(any(), any())).thenReturn(Some(individualPurchaser))
+        when(mockPurchaserRemoveService.purchaserRemoveView(any(), any())(any(), any()))
+          .thenReturn(Left(Redirect(routes.JourneyRecoveryController.onPageLoad())))
 
-      val purchaserID = "PUR-001"
+        val application = applicationBuilder(userAnswers = Some(baseUserAnswers))
+          .overrides(
+            bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService),
+            bind[PurchaserService].toInstance(mockPurchaserService)
+          )
+          .build()
 
-      val userAnswers = emptyUserAnswers
-        .set(PurchaserOverviewRemovePage, PurchaserAndCompanyId(purchaserID, None)).success.value
+        running(application) {
+          val request = FakeRequest(POST, purchaserRemoveRoute)
+            .withFormUrlEncodedBody(("value", "invalid"))
 
-      when(mockPurchaserRemoveService.purchaserRemoveView(any(), any())(any(), any()))
-        .thenReturn(Right(Html("<div>Error View</div>")))
+          val result = route(application, request).value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService))
-        .build()
-
-      running(application) {
-        val request = FakeRequest(POST, purchaserRemoveRoute)
-          .withFormUrlEncodedBody(("value", "invalid"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual "<div>Error View</div>"
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        }
       }
-    }
 
-    "must redirect when service returns Left for invalid form submission" in {
+      "must redirect to Journey Recovery for a POST if no existing data is found" in {
+        val application = applicationBuilder(userAnswers = None).build()
 
-      val mockPurchaserRemoveService = mock[PurchaserRemoveService]
+        running(application) {
+          val request = FakeRequest(POST, purchaserRemoveRoute)
+            .withFormUrlEncodedBody(("value", "REMOVE-PUR-001"))
 
-      val purchaserID = "PUR-001"
+          val result = route(application, request).value
 
-      val userAnswers = emptyUserAnswers
-        .set(PurchaserOverviewRemovePage, PurchaserAndCompanyId(purchaserID, None)).success.value
-
-      when(mockPurchaserRemoveService.purchaserRemoveView(any(), any())(any(), any()))
-        .thenReturn(Left(Redirect(routes.JourneyRecoveryController.onPageLoad())))
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[PurchaserRemoveService].toInstance(mockPurchaserRemoveService))
-        .build()
-
-      running(application) {
-        val request = FakeRequest(POST, purchaserRemoveRoute)
-          .withFormUrlEncodedBody(("value", "invalid"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, purchaserRemoveRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(POST, purchaserRemoveRoute)
-          .withFormUrlEncodedBody(("value", "REMOVE-PUR-001"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        }
       }
     }
   }

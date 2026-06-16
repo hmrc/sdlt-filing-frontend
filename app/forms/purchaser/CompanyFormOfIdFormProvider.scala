@@ -20,6 +20,7 @@ import forms.mappings.Mappings
 import models.purchaser.CompanyFormOfId
 import play.api.data.Form
 import play.api.data.Forms.*
+import play.api.i18n.Messages
 
 import javax.inject.Inject
 
@@ -31,15 +32,15 @@ class CompanyFormOfIdFormProvider @Inject() extends Mappings {
   private val referenceIdRegex = "[A-Za-z0-9 \\~\\!\\@\\%\\&\\'\\(\\)\\*\\+,\\-\\.\\/\\:\\=\\?\\[\\]\\^\\_\\{\\}\\;]*"
   private val countryIssuedRegex = "[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"
 
-   def apply(): Form[CompanyFormOfId] = Form(
+   def apply(purchaserName: String)(implicit messages: Messages): Form[CompanyFormOfId] = Form(
      mapping(
-      "referenceId" -> text("purchaser.companyFormOfId.error.referenceId.required")
-        .verifying(maxLength(referenceIdMaxLength, "purchaser.companyFormOfId.error.referenceId.length"))
-        .verifying(regexp(referenceIdRegex, "purchaser.companyFormOfId.error.referenceId.invalid")),
+      "referenceId" -> text(messages("purchaser.companyFormOfId.error.referenceId.required", purchaserName))
+        .verifying(maxLength(referenceIdMaxLength, messages("purchaser.companyFormOfId.error.referenceId.length", purchaserName)))
+        .verifying(regexp(referenceIdRegex, messages("purchaser.companyFormOfId.error.referenceId.invalid", purchaserName))),
        
-      "countryIssued" -> text("purchaser.companyFormOfId.error.countryIssued.required")
-        .verifying(maxLength(countryIssuesMaxLength, "purchaser.companyFormOfId.error.countryIssued.length"))
-        .verifying(regexp(countryIssuedRegex, "purchaser.companyFormOfId.error.countryIssued.invalid"))
+      "countryIssued" -> text(messages("purchaser.companyFormOfId.error.countryIssued.required", purchaserName))
+        .verifying(maxLength(countryIssuesMaxLength, messages("purchaser.companyFormOfId.error.countryIssued.length", purchaserName)))
+        .verifying(regexp(countryIssuedRegex, messages("purchaser.companyFormOfId.error.countryIssued.invalid", purchaserName)))
     )(CompanyFormOfId.apply)(x => Some((x.referenceId, x.countryIssued)))
    )
  }

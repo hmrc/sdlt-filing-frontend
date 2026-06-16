@@ -18,6 +18,8 @@ package forms.purchaser
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
+import play.api.i18n.Messages
+import play.api.test.Helpers.stubMessages
 
 class RegistrationNumberFormProviderSpec extends StringFieldBehaviours {
 
@@ -26,7 +28,8 @@ class RegistrationNumberFormProviderSpec extends StringFieldBehaviours {
   val exactLength = 9
   val invalidKey = "purchaser.registrationNumber.error.regex.error"
 
-  val form = new RegistrationNumberFormProvider()()
+  implicit val messages: Messages = stubMessages()
+  val form = new RegistrationNumberFormProvider()("Doe")
   val fieldName = "registrationNumber"
 
   ".value" - {
