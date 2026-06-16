@@ -17,12 +17,10 @@
 package controllers.submission
 
 import base.SpecBase
-import models.NormalMode
 import models.submission.WhoAreYouSubmittingFor
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import pages.submission.WhoAreYouSubmittingForPage
-import views.html.submission.DeclarationView
 
 class DeclarationControllerSpec extends SpecBase {
 
@@ -71,11 +69,9 @@ class DeclarationControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[DeclarationView]
-
         status(result) mustEqual OK
 
-        view("purchaserAuthorised", NormalMode)(request, messages(application)).toString must include (messages(application)("submission.declaration.purchasers.authorised.bullet1"))
+        contentAsString(result)  must include (messages(application)("submission.declaration.purchasers.authorised.bullet1"))
       }
     }
 
@@ -88,10 +84,8 @@ class DeclarationControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[DeclarationView]
-
         status(result) mustEqual OK
-        view("purchaserApproved", NormalMode)(request, messages(application)).toString must include(messages(application)("submission.declaration.purchasers.approved.bullet1"))
+        contentAsString(result) must include(messages(application)("submission.declaration.purchasers.approved.bullet1"))
       }
     }
 
@@ -104,10 +98,8 @@ class DeclarationControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[DeclarationView]
-
         status(result) mustEqual OK
-        view("myself", NormalMode)(request, messages(application)).toString must include(messages(application)("submission.declaration.purchasers.myself.p1"))
+        contentAsString(result) must include(messages(application)("submission.declaration.purchasers.myself.p1"))
       }
     }
 
