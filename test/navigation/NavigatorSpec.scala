@@ -25,6 +25,7 @@ import pages.lease.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 import pages.purchaser.*
 import pages.purchaserAgent.*
+import pages.submission.EmailConfirmationPage
 import pages.taxCalculation.ConfirmEffectiveDateOfTransactionPage
 import pages.taxCalculation.freeholdSelfAssessed.*
 import pages.taxCalculation.freeholdTaxCalculated.*
@@ -488,6 +489,13 @@ class NavigatorSpec extends SpecBase {
 
           navigator.nextPage(ConfirmEffectiveDateOfTransactionPage, NormalMode, answers) mustBe
             controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
+        }
+      }
+
+      "submission routes" - {
+        "go from EmailConfirmationPage to WhoAreYouSubmittingForPage" in {
+          navigator.nextPage(EmailConfirmationPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
+            controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad()
         }
       }
 
