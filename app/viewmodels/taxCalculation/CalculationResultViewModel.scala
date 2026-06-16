@@ -61,7 +61,7 @@ object CalculationResultViewModel extends CurrencyFormatter {
       CalculationResultViewModel(
         taxCalculationSummary = getTaxCalculationSummary(
           effectiveDate = formattedDate,
-          totalConsideration = totalConsideration,
+          totalConsideration = totalConsideration.toCurrency,
           claimingRelief = formattedRelief,
           reliefReason = reliefReason,
           premiumTax = premiumCalc.taxDue.toCurrency,
