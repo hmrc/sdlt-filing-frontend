@@ -41,21 +41,25 @@ class CrossFlowAdaptersSpec extends SpecBase with Matchers {
                        inlineKey: String                = "",
                        targets:   Seq[CrossFlowTarget]  = Seq(reliefTarget),
                        args:      Seq[Any]              = Nil
-                     ): CrossFlowFailure =
+                     ): CrossFlowFailure = {
+    val resolvedInline = if (inlineKey.isEmpty) msgKey else inlineKey
     CrossFlowFailure(
       ruleId         = ruleId,
       affects        = ReturnSection.Transaction,
       messageKey     = msgKey,
-      inlineErrorKey = if (inlineKey.isEmpty) msgKey else inlineKey,
+      inlineErrorKey = resolvedInline,
+      body           = CrossFlowBody.Single(msgKey),
       targets        = targets,
+      headingKey     = "crossflow.relief.heading",
       args           = args
     )
+  }
 
   private val testForm: Form[String] = Form("value" -> text)
 
   private class StubService(toReturn: Seq[CrossFlowFailure]) extends CrossFlowValidationService(Set.empty, Set.empty) {
-    override def failuresForPage(page: PageId, ua: UserAnswers): Seq[CrossFlowFailure] = toReturn
-    override def failuresAffecting(section: ReturnSection, ua: UserAnswers): Seq[CrossFlowFailure] = toReturn
+    override def failuresForPage(page: PageId, ua: UserAnswers): Seq[CrossFlowFailure]                  = toReturn
+    override def failuresAffecting(section: ReturnSection, ua: UserAnswers): Seq[CrossFlowFailure]      = toReturn
   }
 
   "withCrossFlowErrors" - {

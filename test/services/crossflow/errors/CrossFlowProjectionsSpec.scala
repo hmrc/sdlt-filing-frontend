@@ -437,5 +437,9 @@ class CrossFlowProjectionsSpec extends SpecBase with Matchers {
     "must return None when there is no fullReturn at all" in {
       totalPremium(emptyUserAnswers) mustBe None
     }
+
+    "must have the F24 effective floor at 01/04/2016" in {
+      Dates.f24EffectiveFloor mustBe LocalDate.of(2016, 4, 1)
+    }
   }
 }

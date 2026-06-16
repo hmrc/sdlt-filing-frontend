@@ -56,11 +56,8 @@ class ReasonForReliefController @Inject()(
         case None        => form
         case Some(value) => form.fill(value)
       }
-
-      val failures = crossFlow.failuresForPage(Pages.ReliefReason, request.userAnswers)
-      val withCrossFlow = CrossFlowFormSupport.withCrossFlowErrors(preparedForm, failures, Pages.ReliefReason)
-
-      Ok(view(withCrossFlow, mode))
+      
+      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

@@ -25,6 +25,25 @@ import play.api.libs.json.{Json, JsNull}
 
 class CrossFlowValidationServiceSpec extends SpecBase with Matchers {
 
+  /** Helper that builds a CrossFlowFailure with sensible defaults for body and headingKey. */
+  private def fixtureFailure(
+                              ruleId:     String,
+                              affects:    ReturnSection,
+                              targetPage: PageId,
+                              messageKey: String = ""
+                            ): CrossFlowFailure = {
+    val key = if (messageKey.nonEmpty) messageKey else s"$ruleId.message"
+    CrossFlowFailure(
+      ruleId         = ruleId,
+      affects        = affects,
+      messageKey     = key,
+      inlineErrorKey = key,
+      body           = CrossFlowBody.Single(key),
+      targets        = Seq(CrossFlowTarget(targetPage, "value")),
+      headingKey     = "crossflow.relief.heading"
+    )
+  }
+
   private class AlwaysFireRule(
                                 val id:     String,
                                 val affects: ReturnSection = ReturnSection.Transaction,
@@ -33,13 +52,7 @@ class CrossFlowValidationServiceSpec extends SpecBase with Matchers {
     val inputs:  Set[ReturnSection]   = Set(affects)
     val targets: Seq[CrossFlowTarget] = Seq(CrossFlowTarget(targetPage, "value"))
     def validate(ua: UserAnswers): Option[CrossFlowFailure] =
-      Some(CrossFlowFailure(
-        ruleId         = id,
-        affects        = affects,
-        messageKey     = s"$id.message",
-        inlineErrorKey = s"$id.message",
-        targets        = targets
-      ))
+      Some(fixtureFailure(id, affects, targetPage))
   }
 
   private class NeverFireRule(val id: String) extends CrossFlowRule {
@@ -57,13 +70,7 @@ class CrossFlowValidationServiceSpec extends SpecBase with Matchers {
     val inputs:  Set[ReturnSection]   = Set(ReturnSection.Land, ReturnSection.Transaction)
     val targets: Seq[CrossFlowTarget] = Seq(CrossFlowTarget(targetPage, "value"))
     def validate(land: Land, ua: UserAnswers): Option[CrossFlowFailure] =
-      Some(CrossFlowFailure(
-        ruleId         = id,
-        affects        = affects,
-        messageKey     = s"$id.message",
-        inlineErrorKey = s"$id.message",
-        targets        = targets
-      ))
+      Some(fixtureFailure(id, affects, targetPage))
   }
 
   private class NeverFireLandRule(val id: String) extends LandRule {
@@ -337,11 +344,11 @@ class CrossFlowValidationServiceSpec extends SpecBase with Matchers {
 
       val status = service.sectionStatus(ReturnSection.Transaction, emptyUserAnswers)
 
-      status.section mustBe ReturnSection.Transaction
+      status.section     mustBe ReturnSection.Transaction
       status.hasFailures mustBe false
-      status.ruleIds mustBe empty
+      status.ruleIds     mustBe empty
       status.messageKeys mustBe empty
-      status.targets mustBe empty
+      status.targets     mustBe empty
     }
 
     "must set hasFailures = true when at least one rule fires" in {
@@ -377,12 +384,11 @@ class CrossFlowValidationServiceSpec extends SpecBase with Matchers {
         override val targets: Seq[CrossFlowTarget] = Seq(CrossFlowTarget(Pages.ReliefReason, "value"))
 
         override def validate(ua: UserAnswers): Option[CrossFlowFailure] =
-          Some(CrossFlowFailure(
-            ruleId         = "R1",
-            affects        = ReturnSection.Transaction,
-            messageKey     = sharedMessage,
-            inlineErrorKey = sharedMessage,
-            targets        = targets
+          Some(fixtureFailure(
+            ruleId     = "R1",
+            affects    = ReturnSection.Transaction,
+            targetPage = Pages.ReliefReason,
+            messageKey = sharedMessage
           ))
       }
 
@@ -390,12 +396,11 @@ class CrossFlowValidationServiceSpec extends SpecBase with Matchers {
         override val targets: Seq[CrossFlowTarget] = Seq(CrossFlowTarget(Pages.ReliefReason, "value"))
 
         override def validate(ua: UserAnswers): Option[CrossFlowFailure] =
-          Some(CrossFlowFailure(
-            ruleId         = "R2",
-            affects        = ReturnSection.Transaction,
-            messageKey     = sharedMessage,
-            inlineErrorKey = sharedMessage,
-            targets        = targets
+          Some(fixtureFailure(
+            ruleId     = "R2",
+            affects    = ReturnSection.Transaction,
+            targetPage = Pages.ReliefReason,
+            messageKey = sharedMessage
           ))
       }
 
@@ -462,7 +467,7 @@ class CrossFlowValidationServiceSpec extends SpecBase with Matchers {
       ), Set.empty)
 
       service.rulesTriggeredBy(ReturnSection.Transaction).map(_.id) mustBe Seq("TXN")
-      service.rulesTriggeredBy(ReturnSection.Land).map(_.id) mustBe Seq("LAND")
+      service.rulesTriggeredBy(ReturnSection.Land).map(_.id)        mustBe Seq("LAND")
     }
 
     "must return an empty seq when no rule lists the given section as an input" in {
@@ -486,7 +491,7 @@ class CrossFlowValidationServiceSpec extends SpecBase with Matchers {
       val service = new CrossFlowValidationService(Set(multiInputRule), Set.empty)
 
       service.rulesTriggeredBy(ReturnSection.Transaction).map(_.id) mustBe Seq("MULTI")
-      service.rulesTriggeredBy(ReturnSection.Land).map(_.id) mustBe Seq("MULTI")
+      service.rulesTriggeredBy(ReturnSection.Land).map(_.id)        mustBe Seq("MULTI")
     }
   }
 
@@ -509,43 +514,43 @@ class CrossFlowValidationServiceSpec extends SpecBase with Matchers {
 
       val sessionLand = Json.obj(
         "landCurrent" -> Json.obj(
-          "landId" -> "SESSION-LAND",
-          "propertyType" -> "03",
+          "landId"                           -> "SESSION-LAND",
+          "propertyType"                     -> "03",
           "landInterestTransferredOrCreated" -> "FGS",
           "landAddress" -> Json.obj(
-            "houseNumber" -> JsNull,
-            "line1" -> "1 Test Street",
-            "line2" -> "Test Town",
-            "line3" -> JsNull,
-            "line4" -> JsNull,
-            "line5" -> JsNull,
-            "postcode" -> "AB1 2CD",
+            "houseNumber"      -> JsNull,
+            "line1"            -> "1 Test Street",
+            "line2"            -> "Test Town",
+            "line3"            -> JsNull,
+            "line4"            -> JsNull,
+            "line5"            -> JsNull,
+            "postcode"         -> "AB1 2CD",
             "country" -> Json.obj(
               "code" -> "GB",
               "name" -> "UK"
             ),
             "addressValidated" -> true
           ),
-          "localAuthorityCode" -> "0220",
-          "landRegisteredHmRegistry" -> false,
-          "landAddNlpgUprn" -> false,
-          "landSendingPlanByPost" -> false,
-          "landMineralsOrMineralRights" -> false,
+          "localAuthorityCode"              -> "0220",
+          "landRegisteredHmRegistry"        -> false,
+          "landAddNlpgUprn"                 -> false,
+          "landSendingPlanByPost"           -> false,
+          "landMineralsOrMineralRights"     -> false,
           "agriculturalOrDevelopmentalLand" -> false
         )
       )
 
       val ua = emptyUserAnswers.copy(
         fullReturn = Some(emptyFullReturn.copy(land = Some(Seq(committedLand)))),
-        data = sessionLand
+        data       = sessionLand
       )
 
       val service = new CrossFlowValidationService(Set.empty, Set(alwaysFireLand("L1")))
 
       val resultIds = service.landFailures(ua).map(_._1.landID.getOrElse(""))
 
-      resultIds must contain("LND001")
-      resultIds must contain("SESSION-LAND")
+      resultIds      must contain ("LND001")
+      resultIds      must contain ("SESSION-LAND")
       resultIds.size mustBe 2
     }
   }
@@ -625,9 +630,9 @@ class CrossFlowValidationServiceSpec extends SpecBase with Matchers {
       val grouped   = service.landFailuresGrouped(ua)
       val resultIds = grouped.map(_._1.landID.getOrElse(""))
 
-      resultIds       must contain ("LND001")
-      resultIds       must not contain "SESSION-ONLY"
-      grouped.size    mustBe 1
+      resultIds    must contain ("LND001")
+      resultIds    must not contain "SESSION-ONLY"
+      grouped.size mustBe 1
     }
   }
 
@@ -642,9 +647,9 @@ class CrossFlowValidationServiceSpec extends SpecBase with Matchers {
       val service = new CrossFlowValidationService(Set.empty, Set(alwaysFireLand("L1")))
 
       val statuses = service.sectionStatuses(ua)
-      statuses.contains(ReturnSection.Land) mustBe true
+      statuses.contains(ReturnSection.Land)    mustBe true
       statuses(ReturnSection.Land).hasFailures mustBe true
-      statuses(ReturnSection.Land).ruleIds must contain ("L1")
+      statuses(ReturnSection.Land).ruleIds     must contain ("L1")
     }
 
     "must merge land rule failures with cross-flow rule failures on the Land section" in {

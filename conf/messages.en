@@ -1917,19 +1917,6 @@ lease.netPresentValue.error.invalidWholeNumber                                  
 lease.netPresentValue.error.maximum                                                 = The net present value upon which tax is calculated must be equal to or less than £9,999,999,999
 lease.netPresentValue.change.hidden                                                 = Net present value (NPV)
 
-# Crossflow Errors
-# ---- Cross-flow validation errors ----
-
-crossflow.relief.firstTimeBuyer.notResidential                                      = First Time Buyer relief can only be claimed for residential property. Check the property type or the relief reason.
-crossflow.relief.multipleDwellings.notAllowedPropertyType                           = Multiple Dwellings Relief cannot be claimed for non-residential property. Check the property type or the relief reason.
-crossflow.relief.preCompletion.dateTooEarly                                         = Pre-completion transaction relief is only available for an effective date on or after 6 March 2013. Check the effective date or the relief reason.
-crossflow.relief.fifteenPercentRate.dateTooEarly                                    = Relief from the 15% rate of SDLT is only available for an effective date on or after 6 March 2013. Check the effective date or the relief reason.
-crossflow.relief.freeport.outsideWindow                                             = Relief for Freeport tax site can only be claimed for an effective date between 19 October 2021 and 30 September 2026. Check the effective date or the relief reason.
-crossflow.relief.investmentZone.outsideWindow                                       = Relief for Investment Zone tax site can only be claimed for an effective date between 29 September 2023 and 30 September 2034. Check the effective date or the relief reason.
-crossflow.relief.seeding.dateTooEarly                                               = Seeding relief is only available for an effective date on or after 19 March 2025. Check the effective date or the relief reason.
-crossflow.relief.multipleDwellings.effectiveDateTooLate                             = Multiple Dwellings Relief is only available for an effective date before 1 June 2024. Check the effective date or the relief reason.
-crossflow.relief.multipleDwellings.contractDateTooLate                              = Multiple Dwellings Relief is only available for a contract dated before 7 March 2024. Check the contract date or the relief reason.
-
 submission.whoAreYouSubmittingFor.title                                             = Who are you submitting this return for?
 submission.whoAreYouSubmittingFor.heading                                           = Who are you submitting this return for?
 submission.whoAreYouSubmittingFor.purchaserAuthorised                               = The purchasers, who have authorised me to enter the effective date of the transaction
@@ -1950,8 +1937,72 @@ submission.declaration.purchasers.approved.bullet1                              
 submission.declaration.purchasers.approved.bullet2                                  = authorised me to submit this return on their behalf
 submission.declaration.purchasers.myself.p1                                         = The information in this return is correct and complete to the best of my knowledge.
 
+
+# ---- Cross-flow validation errors ----
+crossflow.relief.heading                                                            = Update the reason for claiming relief
+crossflow.relief.firstTimeBuyer.notResidential                                      = ‘32 - First Time Buyer’s Relief’ is only available when the property type is ‘01 - Residential’.
+crossflow.relief.firstTimeBuyer.notResidential.inline                               = When claiming ‘32 - First Time Buyer’s Relief’, the type of property must be ‘01 - Residential’
+
+crossflow.relief.multipleDwellings.notAllowedPropertyType                           = ‘33 - Multiple Dwellings Relief’ is not available when the property type is ‘03 - Non-residential’.
+crossflow.relief.multipleDwellings.notAllowedPropertyType.inline                    = When claiming ‘33 - Multiple Dwellings Relief’, the type of property cannot be ‘03 - Non-residential’
+
+# F28-500k — bullet layout
+crossflow.relief.firstTimeBuyer.over500k.intro   = ‘32 - First Time Buyer’s Relief’ is only available when the total premium payable is £500,000 or less and the effective date of the transaction is either:
+crossflow.relief.firstTimeBuyer.over500k.option1 = between 22 November 2017 and 22 September 2022
+crossflow.relief.firstTimeBuyer.over500k.option2 = the same as or after 1 April 2025
+crossflow.relief.firstTimeBuyer.over500k.outro   = Select a different reason for claiming relief.
+crossflow.relief.firstTimeBuyer.over500k.inline  = When claiming ‘32 - First Time Buyer's Relief’, the total premium payable must be £500,000 or less and the effective date of the transaction must be between 22 November 2017 to 22 September 2022, or the same as or after 1 April 2025
+
+# F28-625k — bullet layout
+crossflow.relief.firstTimeBuyer.over625k.intro   = ‘32 - First Time Buyer’s Relief’ is only available when both:
+crossflow.relief.firstTimeBuyer.over625k.option1 = the total premium payable is £625,000 or less
+crossflow.relief.firstTimeBuyer.over625k.option2 = the effective date of the transaction is between 23 September 2022 and 31 March 2025
+crossflow.relief.firstTimeBuyer.over625k.outro   = Select a different reason for claiming relief.
+crossflow.relief.firstTimeBuyer.over625k.inline                                     = When claiming ‘32 - First Time Buyer's Relief’, the total premium payable must be £625,000 or less and the effective date of the transaction must be between 23 September 2022 and 31 March 2025
+
+crossflow.relief.preCompletion.dateTooEarly                                         = This is a same journey error. just stub data so you can get to the page this would never trigger the "Need Review" status
+crossflow.relief.preCompletion.dateTooEarly.inline                                  = When claiming ‘34 - Pre-completion transaction’ relief, the effective date of the transaction must be the same as or after 6 March 2013
+
 crossflow.relief.firstTimeBuyer.over500k                                            = When claiming ‘32 - First Time Buyer’s Relief’, the total premium payable must be £500,000 or less and the effective date of the transaction must be between 22 November 2017 to 22 September 2022, or the same as or after 1 April 2025
 crossflow.relief.firstTimeBuyer.over625k                                            = When claiming ‘32 - First Time Buyer’s Relief’, the total premium payable must be £625,000 or less and the effective date of the transaction must be between 23 September 2022 and 31 March 2025
+
+crossflow.land.Cf-3.heading = Update the type of property
+crossflow.land.Cf-3.body    = When the type of property is ‘04 - Additional residential property liable to higher rate’, the effective date of the transaction cannot be before 1 April 2016.
+crossflow.land.Cf-3.inline  = When the type of property is ‘04 - Additional residential property liable to higher rate’, the effective date of the transaction must be the same as or after 1 April 2016
+
+crossflow.land.cta.changePropertyType = Select a different type of property.
+
+# F23-35 — 15% rate of SDLT
+crossflow.relief.fifteenPercentRate.dateTooEarly                                    = ‘35 - Relief from 17% rate of SDLT’ is only available when the effective date of the transaction is the same as or after 6 March 2013.
+crossflow.relief.fifteenPercentRate.dateTooEarly.inline                             = When claiming ‘35 - Relief from 17% rate of SDLT’, the effective date of the transaction must be the same as or after 6 March 2013
+
+# F23-36 — Freeport relief
+crossflow.relief.freeport.outsideWindow                                             = ‘36 - Relief for Freeport tax site’ is only available when the effective date of the transaction is between 19 October 2021 and 30 September 2026.
+crossflow.relief.freeport.outsideWindow.inline                                      = When claiming ‘36 - Relief for Freeport tax site’, the effective date of the transaction must be between 19 October 2021 and 30 September 2026
+
+# F23-37 — Investment Zone relief
+crossflow.relief.investmentZone.outsideWindow                                       = ‘37 - Relief for Investment Zone tax site’ is only available when the effective date of the transaction is between 29 September 2023 and 1 October 2034.
+crossflow.relief.investmentZone.outsideWindow.inline                                = When claiming ‘37 - Relief for Investment Zone tax site’, the effective date of the transaction must be between 29 September 2023 and 1 October 2034
+
+# F23-38 — Seeding relief
+crossflow.relief.seeding.dateTooEarly                                               = ‘38 - Seeding Relief’ is only available when the effective date of the transaction is the same as or after 19 March 2025.
+crossflow.relief.seeding.dateTooEarly.inline                                        = When claiming ‘38 - Seeding Relief’, the effective date of the transaction must be the same as or after 19 March 2025
+
+# F25 — Multiple Dwellings Relief (effective date / contract date)
+crossflow.relief.multipleDwellings.effectiveDateTooLate                             = ‘33 - Multiple Dwellings Relief’ is only available when the effective date of the transaction is before 1 June 2024.
+crossflow.relief.multipleDwellings.effectiveDateTooLate.inline                      = When claiming ‘33 - Multiple Dwellings Relief’, the effective date of the transaction must be before 1 June 2024
+
+crossflow.relief.multipleDwellings.contractDateTooLate                              = ‘33 - Multiple Dwellings Relief’ is only available when the date of contract is before 7 March 2024.
+crossflow.relief.multipleDwellings.contractDateTooLate.inline                       = When claiming ‘33 - Multiple Dwellings Relief’, the date of contract must be before 7 March 2024
+
+# Transaction-section CTAs (used by TransactionSingleEntityController)
+crossflow.relief.cta.changeReliefReason   = Select a different reason for claiming relief.
+crossflow.relief.cta.changeEffectiveDate  = Select a different effective date.
+crossflow.relief.cta.changeContractDate   = Select a different date of contract.
+crossflow.relief.cta.changePropertyType   = Select a different type of property.
+
+# Land-section CTA (used by LandAuthorityCodeSingleEntityController for EffectiveDate targets)
+crossflow.land.cta.changeEffectiveDate    = Select a different effective date.
 
 # === Multi-entity (Cf-7a / Cf-7b / Cf-7c) ===
 
@@ -1974,40 +2025,17 @@ crossflow.land.Cf-14.heading = Update the local authority code
 crossflow.land.Cf-15.heading = Update the local authority code
 crossflow.land.Cf-16.heading = Update the postcode
 
-
-# === Single-entity body paragraphs (sentence 1: why it's invalid) ===
-
-# Cf-8 — F17 regular Welsh codes, eff date on/after 01/04/2018
 crossflow.land.Cf-8.body = This local authority code is no longer recognised by SDLT when the effective date of the transaction is the same as or after 1 April 2018.
-
-# Cf-9 family — F17 6996/6997/6998/6999, eff date before 01/04/2018
 crossflow.land.Cf-9.welsh6996_6997.body = This local authority code cannot be used when the effective date of transaction is before 1 April 2018.
 crossflow.land.Cf-9.welsh6998.body      = This local authority code cannot be used when the effective date of transaction is before 1 April 2018.
 crossflow.land.Cf-9.welsh6999.body      = This local authority code cannot be used when the effective date of transaction is before 1 April 2018.
-
-# Cf-10 — F17 6998, contract date on/after 01/04/2018
 crossflow.land.Cf-10.body = This local authority code cannot be used when the date of contract is the same as or after 1 April 2018.
-
-# Cf-11 — F17 6999, contract date after 17/12/2014
 crossflow.land.Cf-11.body = This local authority code cannot be used when the date of contract is after 17 December 2014.
-
-# Cf-12 — F18 8998/8999, eff date before 01/04/2015
 crossflow.land.Cf-12.body = This local authority code cannot be used when the effective date of the transaction is before 1 April 2015.
-
-# Cf-13 — F18 8999, contract date on/after 01/05/2012
 crossflow.land.Cf-13.body = This local authority code cannot be used when the date of contract is the same as or after 1 May 2012.
-
-# Cf-14 — F18 8998, contract date on/after 01/04/2015
 crossflow.land.Cf-14.body = This local authority code cannot be used when the date of contract is the same as or after 1 April 2015.
-
-# Cf-15 — F18 Scottish codes, eff date on/after 01/04/2015
 crossflow.land.Cf-15.body = This local authority code is no longer recognised by SDLT when the effective date of the transaction is the same as or after 1 April 2015.
-
-# Cf-16 — F18 Scottish postcode, eff date on/after 01/04/2015
 crossflow.land.Cf-16.body = Areas of land or properties with a Scottish postcode are no longer recognised by SDLT when the effective date of the transaction is the same as or after 1 April 2015.
-
-# === Inline form errors (shown on the field itself, mid-flow) ===
-# These match the spec's "Error Message" wording — Entering this... means...
 
 crossflow.land.Cf-8.inline                = Entering this local authority code means the effective date of the transaction must be before 1 April 2018
 crossflow.land.Cf-9.welsh6996_6997.inline = Entering this local authority code means the effective date of the transaction must be the same as or after 1 April 2018
@@ -2020,9 +2048,6 @@ crossflow.land.Cf-13.inline               = Entering this local authority code m
 crossflow.land.Cf-14.inline               = Entering this local authority code means the date of contract must be before 1 April 2015
 crossflow.land.Cf-15.inline               = Entering this local authority code means the effective date of the transaction must be before 1 April 2015
 crossflow.land.Cf-16.inline               = Entering this Scottish postcode means the effective date of the transaction must be before 1 April 2015
-
-
-# === Single-entity CTAs (sentence 2: what to do) ===
 
 crossflow.land.cta.enterDifferentCode     = Enter a different local authority code.
 crossflow.land.cta.enterDifferentPostcode = Enter a different postcode.

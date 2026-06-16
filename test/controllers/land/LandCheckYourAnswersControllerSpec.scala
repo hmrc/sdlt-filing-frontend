@@ -43,13 +43,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with MockitoSugar with BeforeAndAfterEach {
 
-  private val mockSessionRepository = mock[SessionRepository]
-  private val mockBackendConnector = mock[StampDutyLandTaxConnector]
+  private val mockSessionRepository   = mock[SessionRepository]
+  private val mockBackendConnector    = mock[StampDutyLandTaxConnector]
   private val mockCheckAnswersService = mock[CheckAnswersService]
 
-  implicit val hc: HeaderCarrier = HeaderCarrier()
-  implicit val request: FakeRequest[_] = FakeRequest()
-  implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
+  implicit val hc:      HeaderCarrier        = HeaderCarrier()
+  implicit val request: FakeRequest[_]       = FakeRequest()
+  implicit val ec:      ExecutionContext     = scala.concurrent.ExecutionContext.Implicits.global
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -60,24 +60,24 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
   private val completeLandFullReturn = incompleteFullReturn.copy(
     returnInfo = Some(ReturnInfo(version = Some("1"))),
     land = Some(Seq(Land(
-      landID = Some("LAND001"),
-      landResourceRef = Some("LAND-REF-001"),
-      propertyType = Some("NonResidential"),
+      landID                     = Some("LAND001"),
+      landResourceRef            = Some("LAND-REF-001"),
+      propertyType               = Some("NonResidential"),
       interestCreatedTransferred = Some("Transfer"),
-      address1 = Some("1 Test Street"),
-      address2 = Some("Test Town"),
-      houseNumber = None,
-      address3 = None,
-      address4 = None,
-      postcode = Some("AB1 2CD"),
-      landArea = None,
-      areaUnit = None,
-      localAuthorityNumber = Some("1234"),
-      mineralRights = None,
-      NLPGUPRN = None,
-      willSendPlanByPost = None,
-      titleNumber = None,
-      nextLandID = None
+      address1                   = Some("1 Test Street"),
+      address2                   = Some("Test Town"),
+      houseNumber                = None,
+      address3                   = None,
+      address4                   = None,
+      postcode                   = Some("AB1 2CD"),
+      landArea                   = None,
+      areaUnit                   = None,
+      localAuthorityNumber       = Some("1234"),
+      mineralRights              = None,
+      NLPGUPRN                   = None,
+      willSendPlanByPost         = None,
+      titleNumber                = None,
+      nextLandID                 = None
     )))
   )
 
@@ -108,23 +108,37 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "agriculturalOrDevelopmentalLand" -> false
     )
   )
-
+  
   private val authorityCodeFailure = CrossFlowFailure(
-    ruleId = "Cf-9a",
-    affects = ReturnSection.Land,
-    messageKey = "crossflow.land.Cf-9.welsh6996_6997.body",
+    ruleId         = "Cf-9a",
+    affects        = ReturnSection.Land,
+    messageKey     = "crossflow.land.Cf-9.welsh6996_6997.body",
     inlineErrorKey = "crossflow.land.Cf-9.welsh6996_6997.inline",
-    targets = Seq(CrossFlowTarget(Pages.LandAuthorityCode, "value"))
+    body           = CrossFlowBody.Single("crossflow.land.Cf-9.welsh6996_6997.body"),
+    targets        = Seq(CrossFlowTarget(Pages.LandAuthorityCode, "value")),
+    headingKey     = "crossflow.land.heading"
   )
 
   private val postcodeFailure = CrossFlowFailure(
-    ruleId = "Cf-16",
-    affects = ReturnSection.Land,
-    messageKey = "crossflow.land.Cf-16.body",
+    ruleId         = "Cf-16",
+    affects        = ReturnSection.Land,
+    messageKey     = "crossflow.land.Cf-16.body",
     inlineErrorKey = "crossflow.land.Cf-16.inline",
-    targets = Seq(CrossFlowTarget(Pages.LandPostcode, "value"))
+    body           = CrossFlowBody.Single("crossflow.land.Cf-16.body"),
+    targets        = Seq(CrossFlowTarget(Pages.LandPostcode, "value")),
+    headingKey     = "crossflow.land.heading"
   )
 
+  private val propertyTypeFailure = CrossFlowFailure(
+    ruleId         = "Cf-3",
+    affects        = ReturnSection.Land,
+    messageKey     = "crossflow.land.Cf-3.body",
+    inlineErrorKey = "crossflow.land.Cf-3.inline",
+    body           = CrossFlowBody.Single("crossflow.land.Cf-3.body"),
+    targets        = Seq(CrossFlowTarget(Pages.LandPropertyType, "value")),
+    headingKey     = "crossflow.land.Cf-3.heading"
+  )
+  
   private def crossFlowWithFailures(forPage: Map[PageId, Seq[CrossFlowFailure]]) =
     new CrossFlowValidationService(Set.empty, Set.empty) {
       override def failuresForPage(page: PageId, ua: UserAnswers): Seq[CrossFlowFailure] =
@@ -149,7 +163,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
@@ -159,10 +173,10 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "must redirect to ReturnTaskList when data is empty but session is not" in {
 
         val userAnswers = UserAnswers(
-          id = "12345",
+          id       = "12345",
           returnId = None,
-          storn = "TESTSTORN",
-          data =  landCurrentData()
+          storn    = "TESTSTORN",
+          data     = landCurrentData()
         )
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
@@ -173,7 +187,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
@@ -183,10 +197,10 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "must return OK and the correct view when UserAnswers contains valid data" in {
 
         val userAnswers = UserAnswers(
-          id = "12345",
+          id       = "12345",
           returnId = Some("AB2346"),
-          storn = "TESTSTORN",
-          data = landCurrentData()
+          storn    = "TESTSTORN",
+          data     = landCurrentData()
         )
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -200,7 +214,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
           contentAsString(result) must include("Check your answers")
@@ -219,7 +233,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
@@ -238,7 +252,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
@@ -257,7 +271,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.preliminary.routes.BeforeStartReturnController.onPageLoad().url
@@ -277,8 +291,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
-
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
@@ -288,10 +301,10 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "must return OK and show agricultural row when property type is NonResidential and agricultural is true" in {
 
         val userAnswers = UserAnswers(
-          id = "12345",
+          id       = "12345",
           returnId = Some("AB2346"),
-          storn = "TESTSTORN",
-          data = landCurrentData()
+          storn    = "TESTSTORN",
+          data     = landCurrentData()
         ).set(LandTypeOfPropertyPage, LandTypeOfProperty.NonResidential).success.value
           .set(AgriculturalOrDevelopmentalLandPage, true).success.value
           .set(DoYouKnowTheAreaOfLandPage, false).success.value
@@ -307,7 +320,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
         }
@@ -316,10 +329,10 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "must return OK and show know area row when property type is NonResidential, agricultural is true and knowArea is true" in {
 
         val userAnswers = UserAnswers(
-          id = "12345",
+          id       = "12345",
           returnId = Some("AB2346"),
-          storn = "TESTSTORN",
-          data = landCurrentData()
+          storn    = "TESTSTORN",
+          data     = landCurrentData()
         ).set(LandTypeOfPropertyPage, LandTypeOfProperty.NonResidential).success.value
           .set(AgriculturalOrDevelopmentalLandPage, true).success.value
           .set(DoYouKnowTheAreaOfLandPage, true).success.value
@@ -337,21 +350,21 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
           contentAsString(result) must include("Do you know the area of the land?")
-          contentAsString (result) must include("Area of land")
+          contentAsString(result) must include("Area of land")
         }
       }
 
       "must return OK and show title number row when HM Registry is true" in {
 
         val userAnswers = UserAnswers(
-          id = "12345",
+          id       = "12345",
           returnId = Some("AB2346"),
-          storn = "TESTSTORN",
-          data = landCurrentData()
+          storn    = "TESTSTORN",
+          data     = landCurrentData()
         ).set(LandRegisteredHmRegistryPage, true).success.value
           .set(LandTitleNumberPage, "12345").success.value
 
@@ -366,7 +379,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
           contentAsString(result) must include("Is the land or property registered with HM Land Registry?")
@@ -377,10 +390,10 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "must return OK and show NLPG UPRN row when add NLPG is true" in {
 
         val userAnswers = UserAnswers(
-          id = "12345",
+          id       = "12345",
           returnId = Some("AB2346"),
-          storn = "TESTSTORN",
-          data = landCurrentData()
+          storn    = "TESTSTORN",
+          data     = landCurrentData()
         ).set(LandAddNlpgUprnPage, true).success.value
           .set(LandNlpgUprnPage, "10012345678").success.value
 
@@ -395,7 +408,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
           contentAsString(result) must include("Do you have an NLPG UPRN?")
@@ -406,10 +419,10 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "must return OK and show Mixed property type rows" in {
 
         val userAnswers = UserAnswers(
-          id = "12345",
+          id       = "12345",
           returnId = Some("AB2346"),
-          storn = "TESTSTORN",
-          data = landCurrentData()
+          storn    = "TESTSTORN",
+          data     = landCurrentData()
         ).set(LandTypeOfPropertyPage, LandTypeOfProperty.Mixed).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -423,7 +436,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
           contentAsString(result) must include("Does the transaction involve agricultural or developmental land?")
@@ -433,10 +446,10 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "must return redirect call when page is missing" in {
 
         val userAnswers = UserAnswers(
-          id = "12345",
+          id       = "12345",
           returnId = Some("AB2346"),
-          storn = "TESTSTORN",
-          data = landCurrentData()
+          storn    = "TESTSTORN",
+          data     = landCurrentData()
         ).set(LandTypeOfPropertyPage, LandTypeOfProperty.NonResidential).success.value
           .set(AgriculturalOrDevelopmentalLandPage, true).success.value
 
@@ -455,13 +468,8 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
           .build()
 
         running(application) {
-
-          val request = FakeRequest(
-            GET,
-            controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
-          )
-
-          val result = route(application, request).value
+          val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
+          val result  = route(application, request).value
 
           redirectLocation(result).value must include("about-the-land/add-area-of-land/change")
         }
@@ -470,10 +478,10 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "must redirect to LocalAuthorityCode in CheckMode when cross-flow reports an authority-code failure for the session land" in {
 
         val userAnswers = UserAnswers(
-          id = "12345",
+          id       = "12345",
           returnId = Some("AB2346"),
-          storn = "TESTSTORN",
-          data = landCurrentData()
+          storn    = "TESTSTORN",
+          data     = landCurrentData()
         )
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -491,7 +499,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.land.routes.LocalAuthorityCodeController.onPageLoad(CheckMode).url
@@ -501,10 +509,10 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "must redirect to ConfirmLandOrPropertyAddress in CheckMode when cross-flow reports a postcode failure for the session land" in {
 
         val userAnswers = UserAnswers(
-          id = "12345",
+          id       = "12345",
           returnId = Some("AB2346"),
-          storn = "TESTSTORN",
-          data = landCurrentData()
+          storn    = "TESTSTORN",
+          data     = landCurrentData()
         )
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -522,20 +530,51 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.land.routes.ConfirmLandOrPropertyAddressController.onPageLoad(CheckMode).url
         }
       }
 
+      "must redirect to LandTypeOfProperty in CheckMode when cross-flow reports a property-type failure for the session land (Cf-3)" in {
+
+        val userAnswers = UserAnswers(
+          id       = "12345",
+          returnId = Some("AB2346"),
+          storn    = "TESTSTORN",
+          data     = landCurrentData()
+        )
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val crossFlow = crossFlowWithFailures(Map(
+          Pages.LandPropertyType -> Seq(propertyTypeFailure)
+        ))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(crossFlow)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.land.routes.LandTypeOfPropertyController.onPageLoad(CheckMode).url
+        }
+      }
+
       "must render the CYA normally when cross-flow reports no failures for the session land" in {
 
         val userAnswers = UserAnswers(
-          id = "12345",
+          id       = "12345",
           returnId = Some("AB2346"),
-          storn = "TESTSTORN",
-          data = landCurrentData()
+          storn    = "TESTSTORN",
+          data     = landCurrentData()
         )
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -549,7 +588,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
           contentAsString(result) must include("Check your answers")
@@ -562,7 +601,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
@@ -575,11 +614,11 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "must create land and redirect to LandOverview when all required data is present and no land ID present" in {
 
         val userAnswers = UserAnswers(
-          id = "test-session-id",
-          storn = "test-storn",
-          returnId = Some("12345"),
+          id         = "test-session-id",
+          storn      = "test-storn",
+          returnId   = Some("12345"),
           fullReturn = Some(completeLandFullReturn),
-          data = landCurrentData()
+          data       = landCurrentData()
         )
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -593,7 +632,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(POST, controllers.land.routes.LandCheckYourAnswersController.onSubmit().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.land.routes.LandOverviewController.onPageLoad().url
@@ -604,11 +643,11 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "must update land and redirect to LandOverview when all required data is present and land ID present" in {
 
         val userAnswers = UserAnswers(
-          id = "test-session-id",
-          storn = "test-storn",
-          returnId = Some("12345"),
+          id         = "test-session-id",
+          storn      = "test-storn",
+          returnId   = Some("12345"),
           fullReturn = Some(completeLandFullReturn),
-          data = landCurrentData(Some("LAND001"))
+          data       = landCurrentData(Some("LAND001"))
         ).set(LandOverviewPage, "LAND001").success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -624,7 +663,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(POST, controllers.land.routes.LandCheckYourAnswersController.onSubmit().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.land.routes.LandOverviewController.onPageLoad().url
@@ -636,11 +675,11 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "must redirect back to LandCheckYourAnswers when update returns false" in {
 
         val userAnswers = UserAnswers(
-          id = "test-session-id",
-          storn = "test-storn",
-          returnId = Some("12345"),
+          id         = "test-session-id",
+          storn      = "test-storn",
+          returnId   = Some("12345"),
           fullReturn = Some(completeLandFullReturn),
-          data = landCurrentData(Some("LAND001"))
+          data       = landCurrentData(Some("LAND001"))
         ).set(LandOverviewPage, "LAND001").success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -656,7 +695,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(POST, controllers.land.routes.LandCheckYourAnswersController.onSubmit().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
@@ -666,11 +705,11 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "must redirect back to LandCheckYourAnswers when create returns empty landId" in {
 
         val userAnswers = UserAnswers(
-          id = "test-session-id",
-          storn = "test-storn",
-          returnId = Some("12345"),
+          id         = "test-session-id",
+          storn      = "test-storn",
+          returnId   = Some("12345"),
           fullReturn = Some(completeLandFullReturn),
-          data = landCurrentData()
+          data       = landCurrentData()
         )
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -684,7 +723,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(POST, controllers.land.routes.LandCheckYourAnswersController.onSubmit().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
@@ -694,11 +733,11 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "must redirect back to LandCheckYourAnswers when title number validation fails" in {
 
         val userAnswers = UserAnswers(
-          id = "test-session-id",
-          storn = "test-storn",
-          returnId = Some("12345"),
+          id         = "test-session-id",
+          storn      = "test-storn",
+          returnId   = Some("12345"),
           fullReturn = Some(completeLandFullReturn),
-          data = landCurrentData()
+          data       = landCurrentData()
         ).set(LandRegisteredHmRegistryPage, true).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -709,7 +748,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(POST, controllers.land.routes.LandCheckYourAnswersController.onSubmit().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
@@ -719,11 +758,11 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "must redirect back to LandCheckYourAnswers when NLPG UPRN validation fails" in {
 
         val userAnswers = UserAnswers(
-          id = "test-session-id",
-          storn = "test-storn",
-          returnId = Some("12345"),
+          id         = "test-session-id",
+          storn      = "test-storn",
+          returnId   = Some("12345"),
           fullReturn = Some(completeLandFullReturn),
-          data = landCurrentData()
+          data       = landCurrentData()
         ).set(LandAddNlpgUprnPage, true).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -734,7 +773,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(POST, controllers.land.routes.LandCheckYourAnswersController.onSubmit().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
@@ -744,11 +783,11 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "must redirect back to LandCheckYourAnswers when agricultural validation fails" in {
 
         val userAnswers = UserAnswers(
-          id = "test-session-id",
-          storn = "test-storn",
-          returnId = Some("12345"),
+          id         = "test-session-id",
+          storn      = "test-storn",
+          returnId   = Some("12345"),
           fullReturn = Some(completeLandFullReturn),
-          data = landCurrentData()
+          data       = landCurrentData()
         ).set(AgriculturalOrDevelopmentalLandPage, true).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -759,7 +798,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(POST, controllers.land.routes.LandCheckYourAnswersController.onSubmit().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
@@ -769,11 +808,11 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "must redirect back to LandCheckYourAnswers when area of land validation fails" in {
 
         val userAnswers = UserAnswers(
-          id = "test-session-id",
-          storn = "test-storn",
-          returnId = Some("12345"),
+          id         = "test-session-id",
+          storn      = "test-storn",
+          returnId   = Some("12345"),
           fullReturn = Some(completeLandFullReturn),
-          data = landCurrentData()
+          data       = landCurrentData()
         ).set(LandTypeOfPropertyPage, LandTypeOfProperty.NonResidential).success.value
           .set(AgriculturalOrDevelopmentalLandPage, true).success.value
           .set(DoYouKnowTheAreaOfLandPage, true).success.value
@@ -786,7 +825,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(POST, controllers.land.routes.LandCheckYourAnswersController.onSubmit().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
@@ -796,10 +835,10 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "must redirect back to LandCheckYourAnswers on JsError" in {
 
         val userAnswers = UserAnswers(
-          id = "test-session-id",
-          storn = "test-storn",
+          id       = "test-session-id",
+          storn    = "test-storn",
           returnId = Some("12345"),
-          data = Json.obj("landCurrent" -> "invalid")
+          data     = Json.obj("landCurrent" -> "invalid")
         )
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -810,7 +849,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(POST, controllers.land.routes.LandCheckYourAnswersController.onSubmit().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url
@@ -820,10 +859,10 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "must redirect to JourneyRecovery when no session data is found on submit" in {
 
         val userAnswers = UserAnswers(
-          id = "test-session-id",
-          storn = "test-storn",
+          id       = "test-session-id",
+          storn    = "test-storn",
           returnId = Some("12345"),
-          data = landCurrentData()
+          data     = landCurrentData()
         )
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
@@ -834,7 +873,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(POST, controllers.land.routes.LandCheckYourAnswersController.onSubmit().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
@@ -847,7 +886,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         running(application) {
           val request = FakeRequest(POST, controllers.land.routes.LandCheckYourAnswersController.onSubmit().url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url

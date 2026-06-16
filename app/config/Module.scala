@@ -44,6 +44,6 @@ class Module extends AbstractModule {
   @Provides
   @Singleton
   def landRules(): Set[LandRule] = {
-    F17Rules.all ++ F18Rules.all
+    F17Rules.all ++ F18Rules.all ++ F24Rules.all
   }
 }

@@ -48,7 +48,9 @@ case class CrossFlowFailure(
                              affects:        ReturnSection,
                              messageKey:     String,
                              inlineErrorKey: String,
+                             body:           CrossFlowBody,
                              targets:        Seq[CrossFlowTarget],
+                             headingKey:     String,
                              args:           Seq[Any] = Nil
                            ):
   def targetsOn(page: PageId): Seq[CrossFlowTarget] = targets.filter(_.page == page)
@@ -84,6 +86,8 @@ abstract class GuardRule extends CrossFlowRule:
   protected def messageKey: String
   protected def inlineErrorKey: String = messageKey
   protected def args(ua: UserAnswers): Seq[Any] = Nil
+  protected def body: CrossFlowBody = CrossFlowBody.Single(messageKey)
+  protected def headingKey: String = "crossflow.relief.heading"
 
   final def validate(ua: UserAnswers): Option[CrossFlowFailure] =
     Option.when(appliesTo(ua) && !isValid(ua))(
@@ -92,6 +96,8 @@ abstract class GuardRule extends CrossFlowRule:
         affects        = affects,
         messageKey     = messageKey,
         inlineErrorKey = inlineErrorKey,
+        body           = body,
+        headingKey     = headingKey,
         targets        = targets,
         args           = args(ua)
       )
@@ -110,6 +116,8 @@ abstract class LandGuardRule extends LandRule:
   protected def messageKey: String
   protected def inlineErrorKey: String = messageKey
   protected def args(land: Land, ua: UserAnswers): Seq[Any] = Nil
+  protected def body: CrossFlowBody = CrossFlowBody.Single(messageKey)
+  protected def headingKey: String = "crossflow.land.heading"
 
   def validate(land: Land, ua: UserAnswers): Option[CrossFlowFailure] =
     if (appliesTo(land, ua) && !isValid(land, ua))
@@ -118,7 +126,20 @@ abstract class LandGuardRule extends LandRule:
         affects        = affects,
         messageKey     = messageKey,
         inlineErrorKey = inlineErrorKey,
+        body           = body,
+        headingKey     = headingKey,
         targets        = targets,
         args           = args(land, ua)
       ))
     else None
+
+
+sealed trait CrossFlowBody
+object CrossFlowBody:
+
+  case class Single(messageKey: String) extends CrossFlowBody
+
+  case class WithBullets(
+                          leadKey:    String,
+                          bulletKeys: Seq[String]
+                        ) extends CrossFlowBody

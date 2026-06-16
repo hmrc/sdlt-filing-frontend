@@ -22,61 +22,97 @@ import constants.FullReturnConstants.*
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import services.crossflow.{CrossFlowTarget, PageId, Pages, ReturnSection, SectionStatus}
-import models.CheckMode
 
 class TransactionTaskListSpec extends SpecBase {
 
   private val fullReturnComplete = completeFullReturn
+
   private val noFailures: SectionStatus =
     SectionStatus(ReturnSection.Transaction, hasFailures = false, ruleIds = Nil, messageKeys = Nil, targets = Nil)
+
+  private def withFailure(targetPage: PageId): SectionStatus =
+    SectionStatus(
+      section     = ReturnSection.Transaction,
+      hasFailures = true,
+      ruleIds     = Seq("F23-test"),
+      messageKeys = Seq("test.message"),
+      targets     = Seq(CrossFlowTarget(targetPage, "value"))
+    )
+
+  private val multipleFailures: SectionStatus =
+    SectionStatus(
+      section     = ReturnSection.Transaction,
+      hasFailures = true,
+      ruleIds     = Seq("F23-a", "F23-b"),
+      messageKeys = Seq("a.message", "b.message"),
+      targets     = Seq(
+        CrossFlowTarget(Pages.ReliefReason,  "value"),
+        CrossFlowTarget(Pages.EffectiveDate, "value")
+      )
+    )
 
   "TransactionTaskList" - {
 
     ".build" - {
-      "must return TaskListSection with correct heading when transaction is present" in {
+
+      "must return a TaskListSection with the correct heading when transaction is present" in {
         val application = applicationBuilder().build()
 
         running(application) {
-          implicit val messagesInstance: Messages = messages(application)
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+          implicit val messagesInstance: Messages   = messages(application)
+          implicit val appConfig:        FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.build(fullReturnComplete,noFailures)
+          val result = TransactionTaskList.build(fullReturnComplete, noFailures)
 
-          result mustBe a[TaskListSection]
-          result.heading mustBe messagesInstance("tasklist.transactionQuestion.heading")
+          result            mustBe a[TaskListSection]
+          result.heading    mustBe messagesInstance("tasklist.transactionQuestion.heading")
         }
       }
 
-      "must return TaskListSection with correct heading when transaction is absent" in {
+      "must return a TaskListSection with the correct heading when transaction is absent" in {
         val application = applicationBuilder().build()
 
         running(application) {
-          implicit val messagesInstance: Messages = messages(application)
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+          implicit val messagesInstance: Messages   = messages(application)
+          implicit val appConfig:        FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
           val result = TransactionTaskList.build(emptyFullReturn, noFailures)
 
-          result mustBe a[TaskListSection]
-          result.heading mustBe messagesInstance("tasklist.transactionQuestion.heading")
+          result            mustBe a[TaskListSection]
+          result.heading    mustBe messagesInstance("tasklist.transactionQuestion.heading")
         }
       }
 
-      "must return TaskListSection with one row" in {
+      "must return a TaskListSection with exactly one row" in {
         val application = applicationBuilder().build()
 
         running(application) {
-          implicit val messagesInstance: Messages = messages(application)
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+          implicit val messagesInstance: Messages   = messages(application)
+          implicit val appConfig:        FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
           val result = TransactionTaskList.build(fullReturnComplete, noFailures)
 
           result.rows.size mustBe 1
         }
       }
+
+      "must default to no failures when status is omitted" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages   = messages(application)
+          implicit val appConfig:        FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.build(fullReturnComplete)
+
+          result.rows.head.status mustNot be(TLInvalid)
+        }
+      }
     }
 
     ".buildTransactionRow" - {
-      "must return TaskListSectionRow" in {
+
+      "must return a TaskListSectionRow" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -88,7 +124,7 @@ class TransactionTaskListSpec extends SpecBase {
         }
       }
 
-      "must have correct tag id" in {
+      "must have the correct tag id" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -100,21 +136,23 @@ class TransactionTaskListSpec extends SpecBase {
         }
       }
 
-      "must have correct link text" in {
+      "must have the correct link text" in {
         val application = applicationBuilder().build()
 
         running(application) {
-          implicit val messagesInstance: Messages = messages(application)
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+          implicit val messagesInstance: Messages           = messages(application)
+          implicit val appConfig:        FrontendAppConfig  = application.injector.instanceOf[FrontendAppConfig]
 
           val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, noFailures)
 
           messagesInstance(result.messageKey) mustBe messagesInstance("tasklist.transactionQuestion.details")
         }
       }
+    }
 
+    ".buildTransactionRow status logic" - {
 
-      "must show completed status when transaction is present" in {
+      "must show completed status when transaction is present and there are no failures" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -126,7 +164,7 @@ class TransactionTaskListSpec extends SpecBase {
         }
       }
 
-      "must show cannot start status when transaction is absent" in {
+      "must show cannot-start status when transaction is absent and there are no failures" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -137,65 +175,6 @@ class TransactionTaskListSpec extends SpecBase {
           result.status mustBe TLCannotStart
         }
       }
-    }
-
-    "integration" - {
-      "must build complete TaskListSection with completed row when transaction present" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val messagesInstance: Messages = messages(application)
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-
-          val section = TransactionTaskList.build(fullReturnComplete, noFailures)
-          val row = section.rows.head
-
-          section.heading mustBe messagesInstance("tasklist.transactionQuestion.heading")
-          messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.transactionQuestion.details")
-          row.status mustBe TLCompleted
-          row.url mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
-        }
-      }
-
-      "must build complete TaskListSection with cannot start row when transaction absent" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val messagesInstance: Messages = messages(application)
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-
-          val section = TransactionTaskList.build(emptyFullReturn, noFailures)
-          val row = section.rows.head
-
-          section.heading mustBe messagesInstance("tasklist.transactionQuestion.heading")
-          messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.transactionQuestion.details")
-          row.status mustBe TLCannotStart
-          row.url mustBe controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
-        }
-      }
-    }
-    ".buildTransactionRow with cross-flow failures" - {
-
-      def singleFailure(targetPage: PageId): SectionStatus =
-        SectionStatus(
-          section = ReturnSection.Transaction,
-          hasFailures = true,
-          ruleIds = Seq("F23-test"),
-          messageKeys = Seq("test.message"),
-          targets = Seq(CrossFlowTarget(targetPage, "value"))
-        )
-
-      val multipleFailures: SectionStatus =
-        SectionStatus(
-          section = ReturnSection.Transaction,
-          hasFailures = true,
-          ruleIds = Seq("F23-a", "F23-b"),
-          messageKeys = Seq("a.message", "b.message"),
-          targets = Seq(
-            CrossFlowTarget(Pages.ReliefReason, "value"),
-            CrossFlowTarget(Pages.EffectiveDate, "value")
-          )
-        )
 
       "must mark the row as invalid when there is a single failure" in {
         val application = applicationBuilder().build()
@@ -203,60 +182,21 @@ class TransactionTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, singleFailure(Pages.ReliefReason))
+          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, withFailure(Pages.ReliefReason))
 
           result.status mustBe TLInvalid
         }
       }
 
-      "must route to the relief reason page when that is the single target" in {
+      "must mark the row as invalid when there are multiple failures" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, singleFailure(Pages.ReliefReason))
+          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, multipleFailures)
 
-          result.url mustBe controllers.transaction.routes.ReasonForReliefController.onPageLoad(CheckMode).url
-        }
-      }
-
-      "must route to the effective date page when that is the single target" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-
-          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, singleFailure(Pages.EffectiveDate))
-
-          result.url mustBe controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode).url
-        }
-      }
-
-      "must route to CYA when the single target has no specific route" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-
-          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, singleFailure(Pages.LandPropertyType))
-
-          result.url mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
-        }
-      }
-
-      "must route to CYA when there are multiple failures" - {
-
-        "to surface the error summary listing every conflict" in {
-          val application = applicationBuilder().build()
-
-          running(application) {
-            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-
-            val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, multipleFailures)
-
-            result.url mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
-          }
+          result.status mustBe TLInvalid
         }
       }
 
@@ -266,25 +206,146 @@ class TransactionTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.buildTransactionRow(emptyFullReturn, singleFailure(Pages.ReliefReason))
+          val result = TransactionTaskList.buildTransactionRow(emptyFullReturn, withFailure(Pages.ReliefReason))
 
           result.status mustBe TLCannotStart
         }
       }
-      
-      "must default to no failures when status is omitted" in {
+    }
+
+    ".buildTransactionRow url routing" - {
+
+      "must route to TransactionCheckYourAnswers when transaction is complete and no failures" in {
         val application = applicationBuilder().build()
 
         running(application) {
-          implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.build(fullReturnComplete)
+          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, noFailures)
 
-          result.rows.head.status mustNot be(TLInvalid)
+          result.url mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
+        }
+      }
+
+      "must route to TransactionBeforeYouStart when transaction is absent and no failures" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(emptyFullReturn, noFailures)
+
+          result.url mustBe controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
+        }
+      }
+
+      "must route to TransactionSingleEntity when there is a single cross-flow failure" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, withFailure(Pages.ReliefReason))
+
+          result.url mustBe controllers.transaction.routes.TransactionSingleEntityController.onPageLoad().url
+        }
+      }
+
+      "must route to TransactionSingleEntity when there are multiple cross-flow failures" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, multipleFailures)
+
+          result.url mustBe controllers.transaction.routes.TransactionSingleEntityController.onPageLoad().url
+        }
+      }
+
+      "must route to TransactionSingleEntity for any failure regardless of target page" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val effectiveDateResult = TransactionTaskList.buildTransactionRow(fullReturnComplete, withFailure(Pages.EffectiveDate))
+          val contractDateResult  = TransactionTaskList.buildTransactionRow(fullReturnComplete, withFailure(Pages.ContractDate))
+          val propertyTypeResult  = TransactionTaskList.buildTransactionRow(fullReturnComplete, withFailure(Pages.LandPropertyType))
+
+          val expected = controllers.transaction.routes.TransactionSingleEntityController.onPageLoad().url
+
+          effectiveDateResult.url mustBe expected
+          contractDateResult.url  mustBe expected
+          propertyTypeResult.url  mustBe expected
+        }
+      }
+
+      "must prioritise failure routing over completion routing" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, withFailure(Pages.ReliefReason))
+
+          result.url       mustBe controllers.transaction.routes.TransactionSingleEntityController.onPageLoad().url
+          result.url mustNot be(controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url)
+        }
+      }
+    }
+
+    "integration" - {
+
+      "must build a TaskListSection with completed row when transaction is present and no failures" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages           = messages(application)
+          implicit val appConfig:        FrontendAppConfig  = application.injector.instanceOf[FrontendAppConfig]
+
+          val section = TransactionTaskList.build(fullReturnComplete, noFailures)
+          val row     = section.rows.head
+
+          section.heading                       mustBe messagesInstance("tasklist.transactionQuestion.heading")
+          messagesInstance(row.messageKey)      mustBe messagesInstance("tasklist.transactionQuestion.details")
+          row.status                            mustBe TLCompleted
+          row.url                               mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
+        }
+      }
+
+      "must build a TaskListSection with cannot-start row when transaction is absent" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages           = messages(application)
+          implicit val appConfig:        FrontendAppConfig  = application.injector.instanceOf[FrontendAppConfig]
+
+          val section = TransactionTaskList.build(emptyFullReturn, noFailures)
+          val row     = section.rows.head
+
+          section.heading                       mustBe messagesInstance("tasklist.transactionQuestion.heading")
+          messagesInstance(row.messageKey)      mustBe messagesInstance("tasklist.transactionQuestion.details")
+          row.status                            mustBe TLCannotStart
+          row.url                               mustBe controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
+        }
+      }
+
+      "must build a TaskListSection with invalid row when there are cross-flow failures" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages           = messages(application)
+          implicit val appConfig:        FrontendAppConfig  = application.injector.instanceOf[FrontendAppConfig]
+
+          val section = TransactionTaskList.build(fullReturnComplete, withFailure(Pages.ReliefReason))
+          val row     = section.rows.head
+
+          section.heading                       mustBe messagesInstance("tasklist.transactionQuestion.heading")
+          row.status                            mustBe TLInvalid
+          row.url                               mustBe controllers.transaction.routes.TransactionSingleEntityController.onPageLoad().url
         }
       }
     }
   }
-
 }

@@ -25,25 +25,27 @@ import pages.land.*
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.crossflow.Pages
+import services.crossflow.fields.{CrossFlowFormSupport, CrossFlowValidationService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.land.LandTypeOfPropertyView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Success
 
 @Singleton
 class LandTypeOfPropertyController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       sessionRepository: SessionRepository,
-                                       navigator: Navigator,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       formProvider: LandTypeOfPropertyFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: LandTypeOfPropertyView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                              override val messagesApi:  MessagesApi,
+                                              sessionRepository:         SessionRepository,
+                                              navigator:                 Navigator,
+                                              identify:                  IdentifierAction,
+                                              getData:                   DataRetrievalAction,
+                                              requireData:               DataRequiredAction,
+                                              formProvider:              LandTypeOfPropertyFormProvider,
+                                              crossFlow:                 CrossFlowValidationService,
+                                              val controllerComponents:  MessagesControllerComponents,
+                                              view:                      LandTypeOfPropertyView
+                                            )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
@@ -51,7 +53,7 @@ class LandTypeOfPropertyController @Inject()(
     implicit request =>
 
       val preparedForm = request.userAnswers.get(LandTypeOfPropertyPage) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
@@ -61,25 +63,30 @@ class LandTypeOfPropertyController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+      CrossFlowFormSupport.bindFromRequestWithCrossFlow(form, Pages.LandPropertyType, crossFlow) { value =>
+        val withValue = request.userAnswers.set(LandTypeOfPropertyPage, value).get
 
-        value =>
+        val cleaned =
+          if (value == Residential || value == Additional)
+            withValue
+              .remove(AgriculturalOrDevelopmentalLandPage)
+              .flatMap(_.remove(DoYouKnowTheAreaOfLandPage))
+              .flatMap(_.remove(AreaOfLandPage))
+              .flatMap(_.remove(LandSelectMeasurementUnitPage))
+              .getOrElse(withValue)
+          else
+            withValue
+
+        cleaned
+      } match {
+
+        case Left(formWithErrors) =>
+          Future.successful(BadRequest(view(formWithErrors, mode)))
+
+        case Right((value, updatedAnswers)) =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(LandTypeOfPropertyPage, value))
-            finalAnswers <- Future.fromTry {
-              if value == Residential || value == Additional then
-                updatedAnswers
-                  .remove(AgriculturalOrDevelopmentalLandPage)
-                  .flatMap(_.remove(DoYouKnowTheAreaOfLandPage))
-                  .flatMap(_.remove(AreaOfLandPage))
-                  .flatMap(_.remove(LandSelectMeasurementUnitPage))
-              else
-                Success(updatedAnswers)
-            }
-            _              <- sessionRepository.set(finalAnswers)
+            _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(LandTypeOfPropertyPage, mode, updatedAnswers))
-      )
+      }
   }
 }

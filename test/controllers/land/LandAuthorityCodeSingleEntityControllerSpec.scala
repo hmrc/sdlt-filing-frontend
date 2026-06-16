@@ -18,8 +18,7 @@ package controllers.land
 
 import base.SpecBase
 import constants.FullReturnConstants.emptyFullReturn
-import controllers.routes
-import models.{CheckMode, Land, UserAnswers}
+import models.{CheckMode, FullReturn, Land, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -32,46 +31,92 @@ import services.crossflow.fields.CrossFlowValidationService
 import services.land.PopulateLandService
 
 import scala.concurrent.Future
-import scala.util.Try
+import scala.util.Success
 
 class LandAuthorityCodeSingleEntityControllerSpec extends SpecBase with MockitoSugar {
 
-  private val landA = Land(landID = Some("LND001"), address1 = Some("Castle Street"))
-  private val landB = Land(landID = Some("LND002"), address1 = Some("Cathays Terrace"))
+  private val testLandId = "LND001"
 
-  private def userAnswersWithLands(lands: Seq[Land]): UserAnswers =
-    emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(land = Some(lands))))
+  private val testLand: Land = Land(
+    landID               = Some(testLandId),
+    returnID             = Some("RET123456789"),
+    propertyType         = Some("01"),
+    postcode             = Some("AB1 2CD"),
+    localAuthorityNumber = Some("6996"),
+    address1             = Some("1 Test Street"),
+    address2             = Some("Test Town")
+  )
+
+  private val testFullReturn: FullReturn =
+    emptyFullReturn.copy(land = Some(Seq(testLand)))
+
+  private val testUserAnswers: UserAnswers =
+    UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(testFullReturn))
 
   lazy val singleEntityRoute: String =
-    controllers.land.routes.LandAuthorityCodeSingleEntityController.onPageLoad("LND001").url
+    controllers.land.routes.LandAuthorityCodeSingleEntityController.onPageLoad(testLandId).url
 
-  private val authorityCodeFailure = CrossFlowFailure(
-    ruleId     = "F17-6996-6997",
-    affects    = ReturnSection.Land,
-    messageKey = "crossflow.land.authority.welsh6996_6997.beforeEffectiveDate",
-    inlineErrorKey = "crossflow.land.authority.welsh6996_6997.beforeEffectiveDate",
-    targets    = Seq(CrossFlowTarget(Pages.LandAuthorityCode, "value"))
+  /** Cf-9a — F17, Welsh 6996/6997 codes used with effective date before Wales Act.
+   *  Targets land authority code page. Uses default `crossflow.land.heading`. */
+  private val cf9aFailure = CrossFlowFailure(
+    ruleId         = "Cf-9a",
+    affects        = ReturnSection.Land,
+    messageKey     = "crossflow.land.Cf-9.welsh6996_6997.body",
+    inlineErrorKey = "crossflow.land.Cf-9.welsh6996_6997.inline",
+    body           = CrossFlowBody.Single("crossflow.land.Cf-9.welsh6996_6997.body"),
+    targets        = Seq(CrossFlowTarget(Pages.LandAuthorityCode, "value")),
+    headingKey     = "crossflow.land.heading"
   )
 
-  private val postcodeFailure = CrossFlowFailure(
-    ruleId     = "F18-scottishPostcode",
-    affects    = ReturnSection.Land,
-    messageKey = "crossflow.land.postcode.scottish.afterCR223",
-    inlineErrorKey = "crossflow.land.postcode.scottish.afterCR223",
-    targets    = Seq(CrossFlowTarget(Pages.LandPostcode, "value"))
+  /** Cf-16 — F18, Scottish postcodes used with effective date on/after CR223.
+   *  Targets land postcode page. Uses default `crossflow.land.heading`. */
+  private val cf16Failure = CrossFlowFailure(
+    ruleId         = "Cf-16",
+    affects        = ReturnSection.Land,
+    messageKey     = "crossflow.land.Cf-16.body",
+    inlineErrorKey = "crossflow.land.Cf-16.inline",
+    body           = CrossFlowBody.Single("crossflow.land.Cf-16.body"),
+    targets        = Seq(CrossFlowTarget(Pages.LandPostcode, "value")),
+    headingKey     = "crossflow.land.heading"
   )
 
-  private def crossFlowWithFailures(failures: Seq[(Land, Seq[CrossFlowFailure])]) =
+  /** Cf-3 — F24, residential additional + pre-2016 effective date.
+   *  Targets land property type page. **Only rule that overrides headingKey.** */
+  private val cf3Failure = CrossFlowFailure(
+    ruleId         = "Cf-3",
+    affects        = ReturnSection.Land,
+    messageKey     = "crossflow.land.Cf-3.body",
+    inlineErrorKey = "crossflow.land.Cf-3.inline",
+    body           = CrossFlowBody.Single("crossflow.land.Cf-3.body"),
+    targets        = Seq(CrossFlowTarget(Pages.LandPropertyType, "value")),
+    headingKey     = "crossflow.land.Cf-3.heading"
+  )
+
+  private def crossFlowWith(failures: Seq[(Land, Seq[CrossFlowFailure])]) =
     new CrossFlowValidationService(Set.empty, Set.empty) {
       override def landFailuresGrouped(ua: UserAnswers): Seq[(Land, Seq[CrossFlowFailure])] =
         failures
     }
 
-  private val crossFlowNoFailures = crossFlowWithFailures(Nil)
+  private def appWith(
+                       userAnswers: UserAnswers,
+                       crossFlow:   CrossFlowValidationService,
+                       populate:    PopulateLandService = passThroughPopulate,
+                       session:     SessionRepository   = mock[SessionRepository]
+                     ) = {
+    when(session.set(any())) thenReturn Future.successful(true)
 
-  private val populateLandPassthrough = new PopulateLandService() {
-    override def populateLandInSession(land: Land, ua: UserAnswers): Try[UserAnswers] =
-      Try(ua)
+    applicationBuilder(userAnswers = Some(userAnswers))
+      .overrides(
+        bind[CrossFlowValidationService].toInstance(crossFlow),
+        bind[PopulateLandService].toInstance(populate),
+        bind[SessionRepository].toInstance(session)
+      )
+      .build()
+  }
+
+  private def passThroughPopulate: PopulateLandService = new PopulateLandService() {
+    override def populateLandInSession(land: Land, ua: UserAnswers) = Success(ua)
   }
 
   "LandAuthorityCodeSingleEntity Controller" - {
@@ -79,104 +124,52 @@ class LandAuthorityCodeSingleEntityControllerSpec extends SpecBase with MockitoS
     "onPageLoad" - {
 
       "must return OK and render the view when the land has an authority-code failure" in {
-
-        val mockSessionRepository = mock[SessionRepository]
-        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-        val userAnswers = userAnswersWithLands(Seq(landA))
-        val stub = crossFlowWithFailures(Seq((landA, Seq(authorityCodeFailure))))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[CrossFlowValidationService].toInstance(stub),
-            bind[PopulateLandService].toInstance(populateLandPassthrough),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+        val crossFlow   = crossFlowWith(Seq((testLand, Seq(cf9aFailure))))
+        val application = appWith(testUserAnswers, crossFlow)
 
         running(application) {
           val request = FakeRequest(GET, singleEntityRoute)
-
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
         }
       }
 
-      "must render the per-rule heading from messages" in {
-
-        val mockSessionRepository = mock[SessionRepository]
-        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-        val userAnswers = userAnswersWithLands(Seq(landA))
-        val stub = crossFlowWithFailures(Seq((landA, Seq(authorityCodeFailure))))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[CrossFlowValidationService].toInstance(stub),
-            bind[PopulateLandService].toInstance(populateLandPassthrough),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      "must render the default land heading from messages" in {
+        val crossFlow   = crossFlowWith(Seq((testLand, Seq(cf9aFailure))))
+        val application = appWith(testUserAnswers, crossFlow)
 
         running(application) {
           val request = FakeRequest(GET, singleEntityRoute)
-
-          val result = route(application, request).value
+          val result  = route(application, request).value
           val content = contentAsString(result)
 
           status(result) mustEqual OK
-          content must include(messages(application)("crossflow.land.F17-6996-6997.heading"))
+          content must include(messages(application)("crossflow.land.heading"))
         }
       }
 
-      "must render the failure message from messages" in {
-
-        val mockSessionRepository = mock[SessionRepository]
-        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-        val userAnswers = userAnswersWithLands(Seq(landA))
-        val stub = crossFlowWithFailures(Seq((landA, Seq(authorityCodeFailure))))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[CrossFlowValidationService].toInstance(stub),
-            bind[PopulateLandService].toInstance(populateLandPassthrough),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      "must render the failure body message from messages" in {
+        val crossFlow   = crossFlowWith(Seq((testLand, Seq(cf9aFailure))))
+        val application = appWith(testUserAnswers, crossFlow)
 
         running(application) {
           val request = FakeRequest(GET, singleEntityRoute)
-
-          val result = route(application, request).value
+          val result  = route(application, request).value
           val content = contentAsString(result)
 
           status(result) mustEqual OK
-          content must include(messages(application)("crossflow.land.authority.welsh6996_6997.beforeEffectiveDate"))
+          content must include(messages(application)("crossflow.land.Cf-9.welsh6996_6997.body"))
         }
       }
 
-      "must point the Continue button at the local authority code page in CheckMode for code-targeted failures" in {
-
-        val mockSessionRepository = mock[SessionRepository]
-        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-        val userAnswers = userAnswersWithLands(Seq(landA))
-        val stub = crossFlowWithFailures(Seq((landA, Seq(authorityCodeFailure))))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[CrossFlowValidationService].toInstance(stub),
-            bind[PopulateLandService].toInstance(populateLandPassthrough),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      "must point the Continue button at the local authority code page in CheckMode for code-targeted failures (Cf-9a)" in {
+        val crossFlow   = crossFlowWith(Seq((testLand, Seq(cf9aFailure))))
+        val application = appWith(testUserAnswers, crossFlow)
 
         running(application) {
           val request = FakeRequest(GET, singleEntityRoute)
-
-          val result = route(application, request).value
+          val result  = route(application, request).value
           val content = contentAsString(result)
 
           status(result) mustEqual OK
@@ -184,26 +177,13 @@ class LandAuthorityCodeSingleEntityControllerSpec extends SpecBase with MockitoS
         }
       }
 
-      "must point the Continue button at the confirm-address page in CheckMode for postcode-targeted failures" in {
-
-        val mockSessionRepository = mock[SessionRepository]
-        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-        val userAnswers = userAnswersWithLands(Seq(landA))
-        val stub = crossFlowWithFailures(Seq((landA, Seq(postcodeFailure))))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[CrossFlowValidationService].toInstance(stub),
-            bind[PopulateLandService].toInstance(populateLandPassthrough),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+      "must point the Continue button at the confirm-address page in CheckMode for postcode-targeted failures (Cf-16)" in {
+        val crossFlow   = crossFlowWith(Seq((testLand, Seq(cf16Failure))))
+        val application = appWith(testUserAnswers, crossFlow)
 
         running(application) {
           val request = FakeRequest(GET, singleEntityRoute)
-
-          val result = route(application, request).value
+          val result  = route(application, request).value
           val content = contentAsString(result)
 
           status(result) mustEqual OK
@@ -211,68 +191,86 @@ class LandAuthorityCodeSingleEntityControllerSpec extends SpecBase with MockitoS
         }
       }
 
-      "must redirect to ReturnTaskList when the landId is not in fullReturn" in {
-
-        val userAnswers = userAnswersWithLands(Seq(landB)) // requested LND001, present is LND002
-        val stub = crossFlowWithFailures(Seq((landB, Seq(authorityCodeFailure))))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[CrossFlowValidationService].toInstance(stub),
-            bind[PopulateLandService].toInstance(populateLandPassthrough)
-          )
-          .build()
+      "must point the Continue button at the type-of-property page in CheckMode for property-type-targeted failures (Cf-3)" in {
+        val crossFlow   = crossFlowWith(Seq((testLand, Seq(cf3Failure))))
+        val application = appWith(testUserAnswers, crossFlow)
 
         running(application) {
           val request = FakeRequest(GET, singleEntityRoute)
+          val result  = route(application, request).value
+          val content = contentAsString(result)
 
-          val result = route(application, request).value
+          status(result) mustEqual OK
+          content must include(controllers.land.routes.LandTypeOfPropertyController.onPageLoad(CheckMode).url)
+        }
+      }
+
+      "must render the Cf-3 specific heading when the rule overrides it" in {
+        val crossFlow   = crossFlowWith(Seq((testLand, Seq(cf3Failure))))
+        val application = appWith(testUserAnswers, crossFlow)
+
+        running(application) {
+          val request = FakeRequest(GET, singleEntityRoute)
+          val result  = route(application, request).value
+          val content = contentAsString(result)
+
+          status(result) mustEqual OK
+          content must include(messages(application)("crossflow.land.Cf-3.heading"))
+        }
+      }
+
+      "must render the Cf-3 body message" in {
+        val crossFlow   = crossFlowWith(Seq((testLand, Seq(cf3Failure))))
+        val application = appWith(testUserAnswers, crossFlow)
+
+        running(application) {
+          val request = FakeRequest(GET, singleEntityRoute)
+          val result  = route(application, request).value
+          val content = contentAsString(result)
+
+          status(result) mustEqual OK
+          content must include(messages(application)("crossflow.land.Cf-3.body"))
+        }
+      }
+
+      "must redirect to ReturnTaskList when the landId is not in fullReturn" in {
+        val crossFlow   = crossFlowWith(Nil)
+        val application = appWith(testUserAnswers, crossFlow)
+
+        running(application) {
+          val unknownLandRoute =
+            controllers.land.routes.LandAuthorityCodeSingleEntityController.onPageLoad("UNKNOWN").url
+          val request = FakeRequest(GET, unknownLandRoute)
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad(None).url
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
         }
       }
 
       "must redirect to ReturnTaskList when no failure exists for the land" in {
-
-        val userAnswers = userAnswersWithLands(Seq(landA))
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[CrossFlowValidationService].toInstance(crossFlowNoFailures),
-            bind[PopulateLandService].toInstance(populateLandPassthrough)
-          )
-          .build()
+        val crossFlow   = crossFlowWith(Nil)
+        val application = appWith(testUserAnswers, crossFlow)
 
         running(application) {
           val request = FakeRequest(GET, singleEntityRoute)
-
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad(None).url
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
         }
       }
 
       "must populate the land in session before rendering" in {
-
         val mockSessionRepository = mock[SessionRepository]
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-        val userAnswers = userAnswersWithLands(Seq(landA))
-        val stub = crossFlowWithFailures(Seq((landA, Seq(authorityCodeFailure))))
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[CrossFlowValidationService].toInstance(stub),
-            bind[PopulateLandService].toInstance(populateLandPassthrough),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+        val crossFlow   = crossFlowWith(Seq((testLand, Seq(cf9aFailure))))
+        val application = appWith(testUserAnswers, crossFlow, session = mockSessionRepository)
 
         running(application) {
           val request = FakeRequest(GET, singleEntityRoute)
-
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
           org.mockito.Mockito.verify(mockSessionRepository).set(any[UserAnswers])
@@ -280,16 +278,14 @@ class LandAuthorityCodeSingleEntityControllerSpec extends SpecBase with MockitoS
       }
 
       "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
         val application = applicationBuilder(userAnswers = None).build()
 
         running(application) {
           val request = FakeRequest(GET, singleEntityRoute)
-
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
     }

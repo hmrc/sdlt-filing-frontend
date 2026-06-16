@@ -30,7 +30,7 @@ import repositories.SessionRepository
 import services.FullReturnService
 import services.land.PopulateLandService
 import views.html.land.LandOverviewView
-import services.crossflow.{CrossFlowFailure, CrossFlowTarget, Pages, ReturnSection}
+import services.crossflow.{CrossFlowBody, CrossFlowFailure, CrossFlowTarget, Pages, ReturnSection}
 import services.crossflow.fields.CrossFlowValidationService
 
 import scala.concurrent.Future
@@ -45,55 +45,55 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
 
   private def createLand(landId: String, address: Option[String], landResourceRef: Option[String]): Land = {
     Land(
-      landID = Some(landId),
-      returnID = Some("RET123456789"),
-      propertyType = Some("01"),
+      landID                     = Some(landId),
+      returnID                   = Some("RET123456789"),
+      propertyType               = Some("01"),
       interestCreatedTransferred = Some("FG"),
-      houseNumber = Some("123"),
-      address1 = address,
-      address2 = Some("Marylebone"),
-      address3 = Some("London"),
-      address4 = None,
-      postcode = Some("NW1 6XE"),
-      landArea = Some("250.5"),
-      areaUnit = Some("SquareMetres"),
-      localAuthorityNumber = Some("5900"),
-      mineralRights = Some("NO"),
-      NLPGUPRN = Some("10012345678"),
-      willSendPlanByPost = Some("NO"),
-      titleNumber = Some("TGL12456"),
-      landResourceRef = landResourceRef,
-      nextLandID = None,
-      DARPostcode = Some("NW1 6XE")
+      houseNumber                = Some("123"),
+      address1                   = address,
+      address2                   = Some("Marylebone"),
+      address3                   = Some("London"),
+      address4                   = None,
+      postcode                   = Some("NW1 6XE"),
+      landArea                   = Some("250.5"),
+      areaUnit                   = Some("SquareMetres"),
+      localAuthorityNumber       = Some("5900"),
+      mineralRights              = Some("NO"),
+      NLPGUPRN                   = Some("10012345678"),
+      willSendPlanByPost         = Some("NO"),
+      titleNumber                = Some("TGL12456"),
+      landResourceRef            = landResourceRef,
+      nextLandID                 = None,
+      DARPostcode                = Some("NW1 6XE")
     )
   }
 
-  val testStorn = "LND001"
+  val testStorn     = "LND001"
   val testReturnRef = "LND-REF-001"
 
   private val testLand = createLand(
     testStorn,
-    address = Some("Baker Street"),
+    address         = Some("Baker Street"),
     landResourceRef = Some(testReturnRef)
   )
 
   private val testFullReturn = FullReturn(
-    stornId = testStorn,
+    stornId           = testStorn,
     returnResourceRef = testReturnRef,
-    land = Some(Seq(testLand))
+    land              = Some(Seq(testLand))
   )
 
   private val testUserAnswers = UserAnswers(
-    id = userAnswersId,
-    returnId = Some("test-return-id"),
-    storn = "TESTSTORN",
+    id         = userAnswersId,
+    returnId   = Some("test-return-id"),
+    storn      = "TESTSTORN",
     fullReturn = Some(testFullReturn)
   )
 
-  lazy val landOverviewRoute = controllers.land.routes.LandOverviewController.onPageLoad(1).url
+  lazy val landOverviewRoute       = controllers.land.routes.LandOverviewController.onPageLoad(1).url
   lazy val landOverviewSubmitRoute = controllers.land.routes.LandOverviewController.onSubmit().url
-  lazy val changeLandRoute = controllers.land.routes.LandOverviewController.changeLand("LND001").url
-  lazy val removeLandRoute = controllers.land.routes.LandOverviewController.removeLand("LND001").url
+  lazy val changeLandRoute         = controllers.land.routes.LandOverviewController.changeLand("LND001").url
+  lazy val removeLandRoute         = controllers.land.routes.LandOverviewController.removeLand("LND001").url
 
   "LandOverviewController" - {
     ".onPageLoad" - {
@@ -159,7 +159,7 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
 
         val lands = (1 to 99).map(i => createLand(
           s"LND0$i",
-          address = Some(s"Address $i"),
+          address         = Some(s"Address $i"),
           landResourceRef = Some(s"LND-REF-$i")
         ))
 
@@ -193,7 +193,7 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
 
         val lands = (1 to 20).map(i => createLand(
           s"LND0$i",
-          address = Some(s"Address $i"),
+          address         = Some(s"Address $i"),
           landResourceRef = Some(s"LND-REF-$i")
         ))
 
@@ -265,7 +265,7 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
 
         val landWithoutRef = createLand(
           testStorn,
-          address = Some("Baker Street"),
+          address         = Some("Baker Street"),
           landResourceRef = None
         )
 
@@ -299,7 +299,7 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
 
         val lands = (1 to 30).map(i => createLand(
           s"LND0$i",
-          address = Some(s"Address $i"),
+          address         = Some(s"Address $i"),
           landResourceRef = Some(s"LND-REF-$i")
         ))
 
@@ -319,7 +319,7 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val page2Route = routes.LandOverviewController.onPageLoad(2).url
-          val request = FakeRequest(GET, page2Route)
+          val request    = FakeRequest(GET, page2Route)
 
           val result = route(application, request).value
 
@@ -337,11 +337,13 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         val authorityCodeFailure = CrossFlowFailure(
-          ruleId = "F17-6996-6997",
-          affects = ReturnSection.Land,
-          messageKey = "crossflow.land.authority.welsh6996_6997.beforeEffectiveDate",
+          ruleId         = "F17-6996-6997",
+          affects        = ReturnSection.Land,
+          messageKey     = "crossflow.land.authority.welsh6996_6997.beforeEffectiveDate",
           inlineErrorKey = "crossflow.land.authority.welsh6996_6997.beforeEffectiveDate",
-          targets = Seq(CrossFlowTarget(Pages.LandAuthorityCode, "value"))
+          body           = CrossFlowBody.Single("crossflow.land.authority.welsh6996_6997.beforeEffectiveDate"),
+          targets        = Seq(CrossFlowTarget(Pages.LandAuthorityCode, "value")),
+          headingKey     = "crossflow.land.heading"
         )
 
         val crossFlow = new CrossFlowValidationService(Set.empty, Set.empty) {
@@ -359,7 +361,7 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val request = FakeRequest(GET, landOverviewRoute)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad().url
@@ -379,11 +381,13 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         val failure = CrossFlowFailure(
-          ruleId = "F17-6996-6997",
-          affects = ReturnSection.Land,
-          messageKey = "crossflow.land.authority.welsh6996_6997.beforeEffectiveDate",
+          ruleId         = "F17-6996-6997",
+          affects        = ReturnSection.Land,
+          messageKey     = "crossflow.land.authority.welsh6996_6997.beforeEffectiveDate",
           inlineErrorKey = "crossflow.land.authority.welsh6996_6997.beforeEffectiveDate",
-          targets = Seq(CrossFlowTarget(Pages.LandAuthorityCode, "value"))
+          body           = CrossFlowBody.Single("crossflow.land.authority.welsh6996_6997.beforeEffectiveDate"),
+          targets        = Seq(CrossFlowTarget(Pages.LandAuthorityCode, "value")),
+          headingKey     = "crossflow.land.heading"
         )
 
         val crossFlow = new CrossFlowValidationService(Set.empty, Set.empty) {
@@ -401,7 +405,7 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val request = FakeRequest(GET, landOverviewRoute)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad().url
@@ -430,7 +434,7 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val request = FakeRequest(GET, landOverviewRoute)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
           contentAsString(result) must include("Baker Street")
@@ -515,7 +519,7 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
       "must calculate errorCalc correctly on submit with form errors" in {
         val lands = (1 to 110).map(i => createLand(
           s"LND0$i",
-          address = Some(s"Address $i"),
+          address         = Some(s"Address $i"),
           landResourceRef = Some(s"LND-REF-$i")
         ))
 
@@ -540,7 +544,7 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
     ".changeLand" - {
       "must populate session and redirect to Land CYA when land found" in {
         val mockPopulateLandService = mock[PopulateLandService]
-        val mockSessionRepository = mock[SessionRepository]
+        val mockSessionRepository   = mock[SessionRepository]
 
         when(mockPopulateLandService.populateLandInSession(any(), any()))
           .thenReturn(Success(testUserAnswers))
@@ -572,7 +576,7 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val nonExistentLandRoute = routes.LandOverviewController.changeLand("NONEXISTENT").url
-          val request = FakeRequest(GET, nonExistentLandRoute)
+          val request              = FakeRequest(GET, nonExistentLandRoute)
 
           val result = route(application, request).value
 
@@ -584,7 +588,7 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
       "must handle lands with different IDs" in {
         val land2 = createLand(
           "LND002",
-          address = Some("Regent's Street"),
+          address         = Some("Regent's Street"),
           landResourceRef = Some("LND-REF-002")
         )
         val fullReturnWithMultiple = FullReturn(stornId = testStorn,
@@ -592,7 +596,7 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
         val userAnswersMultiple = testUserAnswers.copy(fullReturn = Some(fullReturnWithMultiple))
 
         val mockPopulateLandService = mock[PopulateLandService]
-        val mockSessionRepository = mock[SessionRepository]
+        val mockSessionRepository   = mock[SessionRepository]
 
         when(mockPopulateLandService.populateLandInSession(any(), any()))
           .thenReturn(Success(userAnswersMultiple))
@@ -607,7 +611,7 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val changeLand2Route = routes.LandOverviewController.changeLand("LND002").url
-          val request = FakeRequest(GET, changeLand2Route)
+          val request          = FakeRequest(GET, changeLand2Route)
 
           val result = route(application, request).value
 
@@ -657,7 +661,7 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
 
           running(application) {
             val removeRoute = routes.LandOverviewController.removeLand(landId).url
-            val request = FakeRequest(GET, removeRoute)
+            val request     = FakeRequest(GET, removeRoute)
 
             val result = route(application, request).value
 
