@@ -52,7 +52,6 @@ site.taxCalculation.leaseholdSelfAssessed.caption                               
 site.taxCalculation.freeholdSdltCalculated.section                                  = Tax calculation - Freehold calculated
 site.taxCalculation.leaseholdSdltCalculated.section                                 = Tax calculation - Leasehold calculated
 site.taxCalculation.freeholdSelfAssessed.section                                    = Tax calculation - Freehold not calculated
-site.submission.caption                                                  = Submit your return
 
 site.vendor.theVendor                                                               = the vendor
 site.purchaser.thePurchaser                                                         = the purchaser

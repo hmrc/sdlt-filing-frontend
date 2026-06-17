@@ -65,25 +65,16 @@ class LeaseTaskListSpec extends SpecBase {
     ".isLeaseComplete" - {
 
       "must return true if lease exists and leaseType is defined" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
           val result = LeaseTaskList.isLeaseComplete(fullReturnComplete)
-
           result mustBe true
-        }
       }
 
       "must return false if lease but leaseType is missing" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
           val result = LeaseTaskList.isLeaseComplete(fullReturnComplete
             .copy(lease = Some(completeLease
               .copy(leaseType = None))))
 
           result mustBe false
-        }
       }
     }
 
@@ -151,7 +142,19 @@ class LeaseTaskListSpec extends SpecBase {
         }
       }
 
-      "must show cannot start status when lease is absent" in {
+      "must show not started status when lease is absent" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LeaseTaskList.buildLeaseRow(fullReturnMissingLease)
+
+          result.status mustBe TLNotStarted
+        }
+      }
+
+      "must show cannot start status when preliminary section is incomplete" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -182,19 +185,19 @@ class LeaseTaskListSpec extends SpecBase {
         }
       }
 
-      "must build complete TaskListSection with cannot start row when lease absent" in {
+      "must build complete TaskListSection with not started row when lease absent" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val section = LeaseTaskList.build(emptyFullReturn)
+          val section = LeaseTaskList.build(fullReturnMissingLease)
           val row = section.rows.head
 
           section.heading mustBe messagesInstance("tasklist.leaseQuestion.heading")
           messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.leaseQuestion.details")
-          row.status mustBe TLCannotStart
+          row.status mustBe TLNotStarted
           row.url mustBe controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
         }
       }

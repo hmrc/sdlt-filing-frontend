@@ -63,25 +63,17 @@ class VendorAgentTaskListSpec extends SpecBase {
     ".isVendorAgentComplete" - {
 
       "must return true if VendorAgent exists and agent name is defined" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
           val result = VendorAgentTaskList.isVendorAgentComplete(fullReturnCompleteWithVendorAgent)
 
           result mustBe true
-        }
       }
 
       "must return false if VendorAgent exists but agent name is missing" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
           val result = VendorAgentTaskList.isVendorAgentComplete(fullReturnCompleteWithVendorAgent
             .copy(returnAgent = Some(Seq(completeReturnAgentVendor
               .copy(name = None)))))
 
           result mustBe false
-        }
       }
     }
 

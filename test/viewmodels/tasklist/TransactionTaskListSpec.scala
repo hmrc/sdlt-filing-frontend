@@ -113,24 +113,16 @@ class TransactionTaskListSpec extends SpecBase {
     ".isTransactionComplete" - {
 
       "must return true if transaction exists and contains effective date" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
           val result = TransactionTaskList.isTransactionComplete(fullReturnComplete)
 
           result mustBe true
-        }
       }
 
       "must return false if transaction exists but effective date is empty" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
           val result = TransactionTaskList.isTransactionComplete(fullReturnComplete.copy(transaction = Some(completeTransaction
           .copy(effectiveDate = None))))
 
           result mustBe false
-        }
       }
     }
 
@@ -188,7 +180,19 @@ class TransactionTaskListSpec extends SpecBase {
         }
       }
 
-      "must show cannot-start status when transaction is absent and there are no failures" in {
+      "must show not-started status when transaction is absent and there are no failures" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete.copy(transaction = None), noFailures)
+
+          result.status mustBe TLNotStarted
+        }
+      }
+
+      "must show cannot start status when preliminary section is incomplete and there are no failures" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -257,7 +261,7 @@ class TransactionTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.buildTransactionRow(emptyFullReturn, noFailures)
+          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete.copy(transaction = None), noFailures)
 
           result.url mustBe controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
         }
@@ -338,19 +342,19 @@ class TransactionTaskListSpec extends SpecBase {
         }
       }
 
-      "must build a TaskListSection with cannot-start row when transaction is absent" in {
+      "must build a TaskListSection with not started row when transaction is absent" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val messagesInstance: Messages           = messages(application)
           implicit val appConfig:        FrontendAppConfig  = application.injector.instanceOf[FrontendAppConfig]
 
-          val section = TransactionTaskList.build(emptyFullReturn, noFailures)
+          val section = TransactionTaskList.build(fullReturnComplete.copy(transaction = None), noFailures)
           val row     = section.rows.head
 
           section.heading                       mustBe messagesInstance("tasklist.transactionQuestion.heading")
           messagesInstance(row.messageKey)      mustBe messagesInstance("tasklist.transactionQuestion.details")
-          row.status                            mustBe TLCannotStart
+          row.status                            mustBe TLNotStarted
           row.url                               mustBe controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
         }
       }

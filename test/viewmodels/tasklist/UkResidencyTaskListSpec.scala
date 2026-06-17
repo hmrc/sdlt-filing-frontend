@@ -65,49 +65,33 @@ class UkResidencyTaskListSpec extends SpecBase {
     ".isResidencyComplete" - {
 
       "must return true if residency exists and mandatory fields defined" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
           val result = UkResidencyTaskList.isResidencyComplete(fullReturnComplete)
 
           result mustBe true
-        }
       }
 
-      "must return false if residency but isNonUkResidents is missing" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
+      "must return false if residency exists but isNonUkResidents is missing" in {
           val result = UkResidencyTaskList.isResidencyComplete(fullReturnComplete
             .copy(residency = Some(completeResidency
             .copy(isNonUkResidents = None))))
 
           result mustBe false
-        }
       }
 
-      "must return false if residency but isCloseCompany is missing" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
+      "must return false if residency exists but isCloseCompany is missing" in {
           val result = UkResidencyTaskList.isResidencyComplete(fullReturnComplete
             .copy(residency = Some(completeResidency
               .copy(isCloseCompany = None))))
 
           result mustBe false
-        }
       }
 
-      "must return false if residency but isCrownRelief is missing" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
+      "must return false if residency exists but isCrownRelief is missing" in {
           val result = UkResidencyTaskList.isResidencyComplete(fullReturnComplete
             .copy(residency = Some(completeResidency
               .copy(isCrownRelief = None))))
 
           result mustBe false
-        }
       }
     }
 
@@ -175,7 +159,19 @@ class UkResidencyTaskListSpec extends SpecBase {
         }
       }
 
-      "must show cannot start status when Uk Residency is absent" in {
+      "must show not started status when Uk Residency is absent" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = UkResidencyTaskList.buildUkResidencyRow(fullReturnMissingResidency)
+
+          result.status mustBe TLNotStarted
+        }
+      }
+
+      "must show cannot start status when preliminary section is incomplete" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -206,19 +202,19 @@ class UkResidencyTaskListSpec extends SpecBase {
         }
       }
 
-      "must build complete TaskListSection with cannot start row when Uk Residency absent" in {
+      "must build complete TaskListSection with not started row when Uk Residency absent" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val section = UkResidencyTaskList.build(emptyFullReturn)
+          val section = UkResidencyTaskList.build(fullReturnMissingResidency)
           val row = section.rows.head
 
           section.heading mustBe messagesInstance("tasklist.ukResidencyQuestion.heading")
           messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.ukResidencyQuestion.details")
-          row.status mustBe TLCannotStart
+          row.status mustBe TLNotStarted
           row.url mustBe controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad().url
         }
       }

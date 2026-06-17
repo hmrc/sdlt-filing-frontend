@@ -82,23 +82,15 @@ class VendorTaskListSpec extends SpecBase {
     ".isVendorComplete" - {
 
       "must return true if vendor exists and is not empty" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
           val result = VendorTaskList.isVendorComplete(fullReturnComplete)
 
           result mustBe true
-        }
       }
 
       "must return false if vendor exists but is empty" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
           val result = VendorTaskList.isVendorComplete(fullReturnIncompleteVendor)
 
           result mustBe false
-        }
       }
     }
 
@@ -200,7 +192,19 @@ class VendorTaskListSpec extends SpecBase {
         }
       }
 
-      "must show cannot start status when vendor is absent" in {
+      "must show not started status when vendor is absent" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = VendorTaskList.buildVendorRow(fullReturnMissingVendor)
+
+          result.status mustBe TLNotStarted
+        }
+      }
+
+      "must show cannot start status when preliminary section is incomplete" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -231,19 +235,19 @@ class VendorTaskListSpec extends SpecBase {
         }
       }
 
-      "must build complete TaskListSection with cannot start row when vendor absent" in {
+      "must build complete TaskListSection with not started row when vendor absent" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val section = VendorTaskList.build(emptyFullReturn)
+          val section = VendorTaskList.build(fullReturnMissingVendor)
           val row = section.rows.head
 
           section.heading mustBe messagesInstance("tasklist.vendorQuestion.heading")
           messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.vendorQuestion.details")
-          row.status mustBe TLCannotStart
+          row.status mustBe TLNotStarted
           row.url mustBe controllers.vendor.routes.VendorBeforeYouStartController.onPageLoad().url
         }
       }

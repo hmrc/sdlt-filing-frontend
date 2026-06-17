@@ -64,25 +64,17 @@ class PurchaserAgentTaskListSpec extends SpecBase {
     ".isPurchaserAgentComplete" - {
 
       "must return true if purchaserAgent exists and agent name is defined" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
           val result = PurchaserAgentTaskList.isPurchaserAgentComplete(fullReturnCompleteWithPurchaserAgent)
 
           result mustBe true
-        }
       }
 
       "must return false if purchaserAgent but agent name is missing" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
           val result = PurchaserAgentTaskList.isPurchaserAgentComplete(fullReturnCompleteWithPurchaserAgent
             .copy(returnAgent = Some(Seq(completeReturnAgent
               .copy(name = None)))))
 
           result mustBe false
-        }
       }
     }
 

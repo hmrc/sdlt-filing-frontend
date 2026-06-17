@@ -80,23 +80,15 @@ class PurchaserTaskListSpec extends SpecBase {
     ".isPurchaserComplete" - {
 
       "must return true if purchaser exists and is not empty" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
           val result = PurchaserTaskList.isPurchaserComplete(fullReturnComplete)
 
           result mustBe true
-        }
       }
 
       "must return false if purchaser exists but is empty" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
           val result = PurchaserTaskList.isPurchaserComplete(fullReturnComplete.copy(purchaser = Some(Seq.empty)))
 
           result mustBe false
-        }
       }
     }
 
@@ -198,7 +190,19 @@ class PurchaserTaskListSpec extends SpecBase {
         }
       }
 
-      "must show cannot start status when purchaser is absent" in {
+      "must show not started status when purchaser is absent" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = PurchaserTaskList.buildPurchaserRow(fullReturnMissingPurchaser)
+
+          result.status mustBe TLNotStarted
+        }
+      }
+
+      "must show cannot start status when preliminary section is incomplete" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -229,19 +233,19 @@ class PurchaserTaskListSpec extends SpecBase {
         }
       }
 
-      "must build complete TaskListSection with cannot start row when purchaser absent" in {
+      "must build complete TaskListSection with not started row when purchaser absent" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val section = PurchaserTaskList.build(emptyFullReturn)
+          val section = PurchaserTaskList.build(fullReturnMissingPurchaser)
           val row = section.rows.head
 
           section.heading mustBe messagesInstance("tasklist.purchaserQuestion.heading")
           messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.purchaserQuestion.details")
-          row.status mustBe TLCannotStart
+          row.status mustBe TLNotStarted
           row.url mustBe controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
         }
       }

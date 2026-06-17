@@ -135,23 +135,13 @@ class LandTaskListSpec extends SpecBase {
     ".isLandComplete" - {
 
       "must return true if land exists and is not empty" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
           val result = LandTaskList.isLandComplete(fullReturnComplete)
-
           result mustBe true
-        }
       }
 
       "must return false if land exists but is empty" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
           val result = LandTaskList.isLandComplete(fullReturnComplete.copy(land = Some(Seq.empty)))
-
           result mustBe false
-        }
       }
     }
 
@@ -253,7 +243,19 @@ class LandTaskListSpec extends SpecBase {
         }
       }
 
-      "must show cannot start status when land is absent" in {
+      "must show not started status when land is absent" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.buildLandRow(fullReturnMissingLand, noFailuresStatus)
+
+          result.status mustBe TLNotStarted
+        }
+      }
+
+      "must show cannot start status when preliminary section is incomplete" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -359,19 +361,19 @@ class LandTaskListSpec extends SpecBase {
         }
       }
 
-      "must build complete TaskListSection with cannot start row when land absent" in {
+      "must build complete TaskListSection with not started row when land absent" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val section = LandTaskList.build(emptyFullReturn)
+          val section = LandTaskList.build(fullReturnMissingLand)
           val row = section.rows.head
 
           section.heading mustBe messagesInstance("tasklist.landQuestion.heading")
           messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.landQuestion.details")
-          row.status mustBe TLCannotStart
+          row.status mustBe TLNotStarted
           row.url mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
         }
       }
