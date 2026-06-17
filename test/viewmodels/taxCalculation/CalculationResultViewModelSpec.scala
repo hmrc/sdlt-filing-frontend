@@ -276,7 +276,10 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
   ".getTotalTaxTable" - {
 
     "renders the total with a bold label" in {
-      getTotalTaxTable("£15,000").rows.head.map(_.content) mustEqual Seq(
+      getTotalTaxTable("£15,000", HoldingTypes.leasehold).rows.head.map(_.content) mustEqual Seq(
+        Text("taxCalculation.calculation.totalSdltDue"), Empty, Text("£15,000")
+      )
+      getTotalTaxTable("£15,000", HoldingTypes.freehold).rows.head.map(_.content) mustEqual Seq(
         Text("taxCalculation.calculation.totalSdltDue"), Empty, Text("£15,000")
       )
     }
