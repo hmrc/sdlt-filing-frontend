@@ -15,6 +15,7 @@
  *@
 
 @import views.html.components.*
+@import viewmodels.taxCalculation.selfAssessedViewModels.CannotCalculateViewModel
 
 @this(
 layout: templates.Layout,
@@ -24,18 +25,21 @@ p: Paragraph,
 caption: Caption
 )
 
-@(cannotCalculateReason: Option[String])(implicit request: Request[_], messages: Messages)
+@(viewModel: CannotCalculateViewModel)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("taxCalculation.cannotCalculateSdltDue.title"), section = Some(messages("site.taxCalculation.leaseholdSelfAssessed.caption")))) {
     @caption(messages("site.taxCalculation.caption"))
     @h1(messages("taxCalculation.cannotCalculateSdltDue.heading"))
 
-    @cannotCalculateReason.map(reason => p(messages("taxCalculation.cannotCalculateSdltDue.p1", messages(reason))))
+    @viewModel.paragraph.map(p(_))
 
-    @if(cannotCalculateReason.contains("taxCalculation.cannotCalculateSdltDue.reason5")){
+    @viewModel.additionalParagraph.map(p(_))
+
+    @if(viewModel.bulletPoints.nonEmpty) {
         <ul class="govuk-list govuk-list--bullet">
-            <li>@messages("taxCalculation.cannotCalculateSdltDue.reason5.propertyType")</li>
-            <li>@messages("taxCalculation.cannotCalculateSdltDue.reason5.effectiveDate")</li>
+            @for(item <- viewModel.bulletPoints) {
+                <li>@item</li>
+            }
         </ul>
     }
 

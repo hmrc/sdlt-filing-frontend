@@ -24,6 +24,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.CannotCalculateHelper.getCannotCalculateReason
+import viewmodels.taxCalculation.selfAssessedViewModels.CannotCalculateViewModel
 import views.html.taxCalculation.leaseholdSelfAssessed.LeaseholdCannotCalculateSdltDueView
 
 import javax.inject.{Inject, Singleton}
@@ -42,8 +43,9 @@ class LeaseholdCannotCalculateSdltDueController @Inject()(
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       sdltCalculationService.whenInFlow(LeaseholdSelfAssessed) {
-        val maybeReason: Option[String] = getCannotCalculateReason(request.userAnswers)
-        Ok(view(maybeReason))
+        val reasons = getCannotCalculateReason(request.userAnswers)
+        val viewModel = CannotCalculateViewModel.toViewModel(reasons)
+        Ok(view(viewModel))
       }
   }
 }

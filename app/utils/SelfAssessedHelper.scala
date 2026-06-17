@@ -26,13 +26,15 @@ object SelfAssessedHelper {
   private val residentialPropertyTypes: Set[String] = Set("01", "04")
 
   def isResidentialBeforeMarch2012Date(answers: UserAnswers): Boolean =
-    isBeforeMinimumEffectiveDate(answers) && mainLandIsResidentialProperty(answers)
+    parseEffectiveDate(answers).exists(_.isBefore(minimumEffectiveDate)) && mainLandIsResidentialProperty(answers)
 
-  private def isBeforeMinimumEffectiveDate(answers: UserAnswers): Boolean =
+  def isBetweenDates(answers: UserAnswers, dateRange: DateRange): Boolean =
+    parseEffectiveDate(answers).exists(date => !date.isBefore(dateRange.start) && date.isBefore(dateRange.end))
+  
+  private def parseEffectiveDate(answers: UserAnswers): Option[LocalDate] =
     answers.fullReturn
       .flatMap(_.transaction.flatMap(_.effectiveDate))
       .flatMap(PropertyTypeHelper.parseEffectiveDate)
-      .exists(_.isBefore(minimumEffectiveDate))
 
   private def mainLandIsResidentialProperty(answers: UserAnswers): Boolean =
     answers.fullReturn.exists { fullReturn =>
@@ -43,5 +45,4 @@ object SelfAssessedHelper {
         .flatMap(_.propertyType)
         .exists(residentialPropertyTypes.contains)
     }
-
 }

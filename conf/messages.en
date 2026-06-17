@@ -1417,14 +1417,34 @@ taxCalculation.calculatedSdltDue.checkYourAnswersLabel                          
 
 taxCalculation.cannotCalculateSdltDue.title                                         = HMRC cannot calculate the SDLT due
 taxCalculation.cannotCalculateSdltDue.heading                                       = HMRC cannot calculate the SDLT due
-taxCalculation.cannotCalculateSdltDue.p1                                            = The amount of SDLT due cannot be calculated {0}
-taxCalculation.cannotCalculateSdltDue.reason1                                       = because this return includes linked transactions. This means that HMRC does not have full visibility of each transaction.
-taxCalculation.cannotCalculateSdltDue.reason2                                       = because this return includes a claim for partial relief. The tax due on partial relief depends on value judgements that can only be made by the purchaser.
-taxCalculation.cannotCalculateSdltDue.reason3                                       = because this return includes a type of interest that falls outside of the SDLT calculation model.
-taxCalculation.cannotCalculateSdltDue.reason4                                       = because this return includes a claim for Multiple Dwellings Relief. The tax due on this relief depends on the purchaser declaring the number of dwellings.
-taxCalculation.cannotCalculateSdltDue.reason5                                       = because this return predates the modern SDLT calculation model. This is because:
-taxCalculation.cannotCalculateSdltDue.reason5.propertyType                          = the property type is ‘01 - Residential’ or ‘04 - Additional residential property liable to higher rate’
-taxCalculation.cannotCalculateSdltDue.reason5.effectiveDate                         = the effective date of the transaction is before 22 March 2012
+taxCalculation.cannotCalculateSdltDue.p1                                            = The amount of SDLT due cannot be calculated because {0}
+taxCalculation.cannotCalculateSdltDue.p1.withColon                                  = The amount of SDLT due cannot be calculated because:
+taxCalculation.cannotCalculateSdltDue.noReason.p1                                   = The amount of SDLT due cannot be calculated.
+taxCalculation.cannotCalculateSdltDue.noReason.p2                                   = Select ‘Continue’ to enter the self-assessed amount of SDLT due.
+taxCalculation.cannotCalculateSdltDue.reason1                                       = this return includes linked transactions. This means that HMRC does not have full visibility of each transaction.
+taxCalculation.cannotCalculateSdltDue.reason2                                       = this return includes a claim for partial relief. The tax due on partial relief depends on value judgements that can only be made by the purchaser.
+taxCalculation.cannotCalculateSdltDue.reason3                                       = this return includes a type of interest that falls outside of the SDLT calculation model.
+taxCalculation.cannotCalculateSdltDue.reason4                                       = this return includes a claim for Multiple Dwellings Relief. The tax due on this relief depends on the purchaser declaring the number of dwellings.
+taxCalculation.cannotCalculateSdltDue.reason5                                       = this return predates the modern SDLT calculation model. This is because:
+taxCalculation.cannotCalculateSdltDue.reason5.b1                                    = the property type is ‘01 - Residential’ or ‘04 - Additional residential property liable to higher rate’
+taxCalculation.cannotCalculateSdltDue.reason5.b2                                    = the effective date of the transaction is before 22 March 2012
+taxCalculation.cannotCalculateSdltDue.reason6                                       = this return includes a claim for ‘25 - Collective enfranchisement by leaseholders’ relief. The tax calculation for this relief is complex and relies on information HMRC can’t verify.
+taxCalculation.cannotCalculateSdltDue.reason7                                       = this return predates the modern SDLT calculation model. This is because:
+taxCalculation.cannotCalculateSdltDue.reason7.b1                                    = the effective date of the transaction is between 25 March 2010 and 25 March 2012
+taxCalculation.cannotCalculateSdltDue.reason7.b2                                    = the type of transaction is ‘L - Grant of lease’
+taxCalculation.cannotCalculateSdltDue.reason7.b3                                    = ‘32 - First Time Buyer’s Relief’ is being claimed
+taxCalculation.cannotCalculateSdltDue.reason8                                       = this return predates the modern SDLT calculation model. This is because:
+taxCalculation.cannotCalculateSdltDue.reason8.b1                                    = the effective date of the transaction is between 12 March 2008 and 17 March 2016
+taxCalculation.cannotCalculateSdltDue.reason8.b2                                    = the type of property is ‘02 - Mixed’
+taxCalculation.cannotCalculateSdltDue.reason8.b3                                    = the annual rent is £1,000 or more
+taxCalculation.cannotCalculateSdltDue.multipleReasons.b1                            = this return includes linked transactions – this means that HMRC does not have full visibility of each transaction
+taxCalculation.cannotCalculateSdltDue.multipleReasons.b2                            = this return includes a claim for partial relief – the tax due on partial relief depends on value judgements that can only be made by the purchaser
+taxCalculation.cannotCalculateSdltDue.multipleReasons.b3                            = this return includes a type of interest that falls outside of the SDLT calculation model
+taxCalculation.cannotCalculateSdltDue.multipleReasons.b4                            = this return includes a claim for ‘33 - Multiple Dwellings Relief’ – the tax due on this relief depends on the purchaser declaring the number of dwellings
+taxCalculation.cannotCalculateSdltDue.multipleReasons.b5                            = the effective date of the transaction is before 22 March 2012 – this predates the modern SDLT calculation model for residential properties
+taxCalculation.cannotCalculateSdltDue.multipleReasons.b6                            = this return includes a claim for ‘25 - Collective enfranchisement by leaseholders’ relief – the tax calculation for this relief is complex and relies on information HMRC can’t verify
+taxCalculation.cannotCalculateSdltDue.multipleReasons.b7                            = ‘32 - First Time Buyer’s Relief’ is being claimed on a residential property with transaction type ‘L - Grant of lease’ and an effective date of the transaction between 25 March 2010 and 25 March 2012 – this predates the modern SDLT calculation model
+taxCalculation.cannotCalculateSdltDue.multipleReasons.b8                            = the type of property is ‘02 - Mixed’, the annual rent is £1,000 or more and the effective date of the transaction is between 12 March 2008 and 17 March 2016 – this predates the modern SDLT calculation model
 
 taxCalculation.penaltiesAndInterest.button                                          = Save and continue
 
