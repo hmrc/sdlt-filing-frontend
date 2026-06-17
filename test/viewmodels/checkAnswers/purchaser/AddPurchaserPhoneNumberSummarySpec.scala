@@ -54,7 +54,7 @@ class AddPurchaserPhoneNumberSummarySpec extends SpecBase {
         result.actions.get.items.size mustEqual 1
         result.actions.get.items.head.href mustEqual controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(CheckMode).url
         result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.addPurchaserPhoneNumber.change.hidden")
+        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.addPurchaserPhoneNumber.change.hidden", userAnswers.get(NameOfPurchaserPage).map(_.fullName).getOrElse(""))
       }
     }
 
@@ -84,7 +84,7 @@ class AddPurchaserPhoneNumberSummarySpec extends SpecBase {
         result.actions.get.items.size mustEqual 1
         result.actions.get.items.head.href mustEqual controllers.purchaser.routes.AddPurchaserPhoneNumberController.onPageLoad(CheckMode).url
         result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.addPurchaserPhoneNumber.change.hidden")
+        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.addPurchaserPhoneNumber.change.hidden",userAnswers.get(NameOfPurchaserPage).map(_.fullName).getOrElse(""))
       }
     }
 

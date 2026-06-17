@@ -41,7 +41,7 @@ object DoesPurchaserHaveNISummary  {
             value   = value,
             actions = Seq(
               ActionItemViewModel("site.change", changeRoute.url)
-                .withVisuallyHiddenText(messages("purchaser.doesPurchaserHaveNI.change.hidden"))
+                .withVisuallyHiddenText(messages("purchaser.doesPurchaserHaveNI.change.hidden", answers.flatMap(_.get(NameOfPurchaserPage)).map(_.fullName).getOrElse("")))
             )
           )
         )

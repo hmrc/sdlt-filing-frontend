@@ -54,7 +54,7 @@ class AddVendorAgentContactDetailsSummarySpec extends SpecBase {
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendorAgent.addVendorAgentContactDetails.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendorAgent.addVendorAgentContactDetails.change.hidden","Agent name")
         }
       }
 
@@ -82,7 +82,7 @@ class AddVendorAgentContactDetailsSummarySpec extends SpecBase {
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.vendorAgent.routes.AddVendorAgentContactDetailsController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendorAgent.addVendorAgentContactDetails.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("vendorAgent.addVendorAgentContactDetails.change.hidden","Agent name")
         }
       }
 

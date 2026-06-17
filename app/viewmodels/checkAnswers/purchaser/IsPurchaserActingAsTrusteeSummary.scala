@@ -41,7 +41,7 @@ object IsPurchaserActingAsTrusteeSummary  {
             value   = value,
             actions = Seq(
               ActionItemViewModel("site.change", changeRoute.url)
-                .withVisuallyHiddenText(messages("purchaser.isPurchaserActingAsTrustee.change.hidden"))
+                .withVisuallyHiddenText(messages("purchaser.isPurchaserActingAsTrustee.change.hidden",answers.flatMap(_.get(NameOfPurchaserPage)).map(_.fullName).getOrElse("")))
             )
           )
         )

@@ -37,7 +37,7 @@ object AddPurchaserPhoneNumberSummary {
             value = ValueViewModel(value),
             actions = Seq(
               ActionItemViewModel("site.change", changeRoute.url)
-                .withVisuallyHiddenText(messages("purchaser.addPurchaserPhoneNumber.change.hidden"))
+                .withVisuallyHiddenText(messages("purchaser.addPurchaserPhoneNumber.change.hidden",answers.flatMap(_.get(NameOfPurchaserPage)).map(_.fullName).getOrElse("")))
             )
           )
         )

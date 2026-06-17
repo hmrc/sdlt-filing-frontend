@@ -42,7 +42,7 @@ object PurchaserCompanyTypeKnownSummary  {
             value   = ValueViewModel(value),
             actions = Seq(
               ActionItemViewModel("site.change", changeRoute.url)
-                .withVisuallyHiddenText(messages("purchaser.purchaserCompanyTypeKnown.change.hidden"))
+                .withVisuallyHiddenText(messages("purchaser.purchaserCompanyTypeKnown.change.hidden", answers.flatMap(_.get(NameOfPurchaserPage)).map(_.fullName).getOrElse("")))
             )
           )
         )
