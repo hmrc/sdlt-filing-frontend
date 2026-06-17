@@ -51,6 +51,7 @@
             .withCssClass("govuk-input--width-10 govuk-label govuk-label--m")
             .withHint(HintViewModel(HtmlContent(messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.hint"))))
             .withPrefix(PrefixOrSuffix(content = Text(messages("site.money.prefix"))))
+            .withAutocomplete("off")
         )
 
         @govukButton(ButtonViewModel("site.save.continue"))

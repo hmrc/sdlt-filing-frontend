@@ -64,6 +64,7 @@
             .withWidth(Fixed10)
             .withPrefix(PrefixOrSuffix(content = Text(messages("site.money.prefix"))))
             .withHint(HintViewModel(Text(messages("taxCalculation.sdltSelfAssessment.hint"))))
+            .withAutocomplete("off")
         )
 
         @govukButton(ButtonViewModel(messages("site.save.continue")))

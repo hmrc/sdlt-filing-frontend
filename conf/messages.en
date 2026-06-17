@@ -1463,6 +1463,8 @@ taxCalculation.calculation.rates.upTo                                           
 taxCalculation.calculation.rates.aboveAndUpTo                                       = Above {0} and up to {1}
 taxCalculation.calculation.rates.aboveOpen                                          = Above {0}+
 taxCalculation.calculation.totalSdltDue                                             = Total SDLT due
+taxCalculation.calculation.header.totalSdltDueWithNpv                               = Total premium payable + NPV
+taxCalculation.calculation.header.totalSdltDue                                      = Total
 
 taxCalculation.calculation.taxCalculation.heading                                   = Tax calculation
 taxCalculation.calculation.taxCalculation.effectiveDate                             = Effective date of transaction

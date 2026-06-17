@@ -75,7 +75,7 @@ object CalculationResultViewModel extends CurrencyFormatter {
         ),
         premiumRateTable = getPremiumRateTable(premiumCalc, rentCalc.isDefined),
         npvRateTable = getNpvRateTable(rentCalc),
-        totalTax = getTotalTaxTable(result.totalTax.toCurrency)
+        totalTax = getTotalTaxTable(result.totalTax.toCurrency, holdingType)
       )
     }
 
@@ -172,8 +172,19 @@ object CalculationResultViewModel extends CurrencyFormatter {
       )
     }
 
-  private[taxCalculation] def getTotalTaxTable(totalSdltDue: String)(implicit messages: Messages): Table =
-    Table(rows = Seq(totalRow("totalSdltDue", totalSdltDue)))
+  private[taxCalculation] def getTotalTaxTable(totalSdltDue: String, holdingTypes: HoldingTypes.Value)(implicit messages: Messages): Table = {
+    Table(
+      caption = holdingTypes match {
+                  case HoldingTypes.freehold =>
+                    Some(getMessage("header.totalSdltDue"))
+                  case HoldingTypes.leasehold =>
+                    Some(getMessage("header.totalSdltDueWithNpv"))
+                },
+      captionClasses = mediumCaption,
+      head = Some(totalTaxTableHeader),
+      rows = Seq(totalRow("totalSdltDue", totalSdltDue))
+    )
+  }
 
   private[taxCalculation] def sliceRow(slice: SliceDetails)(implicit messages: Messages): Seq[TableRow] =
     Seq(
@@ -201,6 +212,13 @@ object CalculationResultViewModel extends CurrencyFormatter {
       HeadCell(content = Text(getMessage("rates.column.description")), classes = ""           ),
       HeadCell(content = Text(getMessage("rates.column.rate")),        classes = numericHeader),
       HeadCell(content = Text(getMessage("rates.column.sdltDue")),     classes = numericHeader)
+    )
+
+  private[taxCalculation] def totalTaxTableHeader(implicit messages: Messages): Seq[HeadCell] =
+    Seq(
+      HeadCell(content = Text(getMessage("rates.column.description")), classes = ""),
+      HeadCell(content = Text(""), classes = numericHeader),
+      HeadCell(content = Text(getMessage("rates.column.sdltDue")), classes = numericHeader)
     )
 
   private[taxCalculation] def sliceDescription(slice: SliceDetails)(implicit messages: Messages): String =
