@@ -52,6 +52,7 @@
                 content = Text(messages("site.money.prefix"))
             ))
             .withHint(HintViewModel(HtmlContent(Html(messages("transaction.claimingPartialReliefAmount.hint")))))
+            .withAutocomplete("off")
         )
 
         @govukButton(

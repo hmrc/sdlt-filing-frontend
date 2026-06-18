@@ -48,6 +48,7 @@
             )
             .withWidth(Fixed4)
             .withHint(HintViewModel(HtmlContent(Html(messages("land.localAuthorityCode.hint.prefix", s"""<a href=${messages("land.localAuthorityCode.hint.link")} class="govuk-link" target="_blank" rel="noopener noreferrer">${messages("land.localAuthorityCode.hint.suffix")}</a>""")))))
+            .withAutocomplete("off")
         )
 
         @govukButton(

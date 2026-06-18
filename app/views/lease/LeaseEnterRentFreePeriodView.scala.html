@@ -50,6 +50,7 @@
             .withWidth(Fixed2)
             .asNumeric()
             .withHint(HintViewModel(HtmlContent(Html(messages("lease.enterRentFreePeriod.hint")))))
+            .withAutocomplete("off")
         )
 
         @govukButton(

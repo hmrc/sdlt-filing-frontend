@@ -62,6 +62,7 @@
                             label = LabelViewModel(messages("purchaser.formOfIdIndividual.idNumberOrReference"))
                         )
                         .withWidth(Full)
+                        .withAutocomplete("off")
                     ),
                     govukInput(
                         InputViewModel(
@@ -69,6 +70,7 @@
                             label = LabelViewModel(messages("purchaser.formOfIdIndividual.countryIssued"))
                         )
                         .withWidth(Full)
+                        .withAutocomplete("off")
                     )
                 ))
             )

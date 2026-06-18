@@ -56,6 +56,16 @@
                 legend = LegendViewModel(messages("lease.leaseStartingRentEndDate.subheading")).asPageSubHeading()
             )
             .withHint(HintViewModel(messages("lease.leaseStartingRentEndDate.hint")))
+            .copy(
+                items = DateViewModel(
+                    field = form("value"),
+                    legend = LegendViewModel(
+                        messages("lease.leaseStartingRentEndDate.subHeading")
+                    ).asPageSubHeading()
+                ).items.map { item =>
+                    item.copy(autocomplete = Some("off"))
+                }
+            )
         )
 
         @govukButton(

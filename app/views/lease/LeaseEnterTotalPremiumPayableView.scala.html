@@ -52,6 +52,7 @@
                 content = Text(messages("site.money.prefix"))
             ))
             .withHint(HintViewModel(HtmlContent(Html(messages("lease.enterTotalPremiumPayable.hint")))))
+            .withAutocomplete("off")
         )
 
         @govukButton(
