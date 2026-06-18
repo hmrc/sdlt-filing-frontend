@@ -225,7 +225,7 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
         doc.text() must include("Self-assessed SDLT due £12,345")
         doc.text() must include("self-assessed SDLT due Penalties due £200")
         doc.text() must include("Amount to be paid £43,950")
-        doc.text() must include("Change amount to be paid Does the amount include penalties and interest? Yes")
+        doc.text() must include("Change Amount to be paid Does the amount include penalties and interest? Yes")
       }
     }
 
@@ -241,7 +241,7 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
         doc.text() must include("Self-assessed SDLT due £43,957")
         doc.text() must include("Penalties due £0")
         doc.text() must include("Amount to be paid £12,358")
-        doc.text() must include("Change amount to be paid Does the amount include penalties and interest? Yes")
+        doc.text() must include("Change Amount to be paid Does the amount include penalties and interest? Yes")
       }
     }
 
@@ -258,7 +258,7 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
         doc.text() must include("Self-assessed SDLT due £1,191")
         doc.text() must include("Penalties due £100")
         doc.text() must include("Amount to be paid £389")
-        doc.text() must include("Change amount to be paid Does the amount include penalties and interest? No")
+        doc.text() must include("Change Amount to be paid Does the amount include penalties and interest? No")
         doc.text() must include("Tax due on total premium payable £43,750")
         doc.text() mustNot include("Tax due on NPV £43,750")
       }
@@ -277,7 +277,7 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
         doc.text() must include("Self-assessed SDLT due £1,191")
         doc.text() must include("Penalties due £100")
         doc.text() must include("Amount to be paid £389")
-        doc.text() must include("Change amount to be paid Does the amount include penalties and interest? No")
+        doc.text() must include("Change Amount to be paid Does the amount include penalties and interest? No")
         doc.text() mustNot include("Tax due on total premium payable £43,750")
         doc.text() must include("Tax due on NPV £13,758")
       }
@@ -296,7 +296,7 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
         doc.text() must include("Self-assessed SDLT due £1,191")
         doc.text() must include("Penalties due £100")
         doc.text() must include("Amount to be paid £389")
-        doc.text() must include("Change amount to be paid Does the amount include penalties and interest? No")
+        doc.text() must include("Change Amount to be paid Does the amount include penalties and interest? No")
         doc.text() mustNot include("Tax due on total premium payable £43,750")
         doc.text() mustNot include("Tax due on NPV £43,750")
       }
@@ -316,7 +316,7 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
         doc.text() must include("Self-assessed SDLT due £1,191")
         doc.text() must include("Penalties due £100")
         doc.text() must include("Amount to be paid £389")
-        doc.text() must include("Change amount to be paid Does the amount include penalties and interest? No")
+        doc.text() must include("Change Amount to be paid Does the amount include penalties and interest? No")
         doc.text() must include("Tax due on total premium payable £43,750")
         doc.text() mustNot include("Tax due on NPV £43,750")
       }
@@ -333,9 +333,9 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
 
         doc.text() must include("Tax due on premium payable £7,013")
         doc.text() must include("Tax due on NPV £1,891")
-        doc.text() must include("tax due on NPV Penalties due £0")
+        doc.text() must include("Tax due on NPV Penalties due £0")
         doc.text() must include("Amount to be paid £999")
-        doc.text() must include("Change amount to be paid Does the amount include penalties and interest? No")
+        doc.text() must include("Change Amount to be paid Does the amount include penalties and interest? No")
       }
     }
 
