@@ -219,4 +219,52 @@ trait Formatters {
       override def unbind(key: String, value: String): Map[String, String] =
         baseFormatter.unbind(key, value.toString)
     }
+
+  private[mappings] def phoneNumberFormatter(
+                                              requiredKey: String,
+                                              lengthKey: String,
+                                              invalidKey: String,
+                                              args: Seq[String] = Seq.empty
+                                            ): Formatter[String] =
+    new Formatter[String] {
+      private val maxLen = 14
+      private val validCharsRegex = "[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"
+      private val baseFormatter = stringFormatter(requiredKey, args)
+
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
+        baseFormatter
+          .bind(key, data)
+          .map(_.replaceAll("[ \\-()]", ""))
+          .flatMap {
+            case s if s.length > maxLen    => Left(Seq(FormError(key, lengthKey, Seq(maxLen))))
+            case s if !s.matches(validCharsRegex) => Left(Seq(FormError(key, invalidKey, Seq(validCharsRegex))))
+            case s                         => Right(s)
+          }
+
+      override def unbind(key: String, value: String): Map[String, String] =
+        baseFormatter.unbind(key, value)
+    }
+
+  private[mappings] def optionalPhoneNumberFormatter(
+                                                      lengthKey: String,
+                                                      invalidKey: String
+                                                    ): Formatter[Option[String]] =
+    new Formatter[Option[String]] {
+      private val maxLen = 14
+      private val validCharsRegex = "[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"
+      private val baseFormatter = optionalStringFormat
+
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] =
+        baseFormatter
+          .bind(key, data)
+          .map(_.map(_.replaceAll("[ \\-()]", "")).filter(_.nonEmpty))
+          .flatMap {
+            case Some(s) if s.length > maxLen         => Left(Seq(FormError(key, lengthKey, Seq(maxLen))))
+            case Some(s) if !s.matches(validCharsRegex) => Left(Seq(FormError(key, invalidKey, Seq(validCharsRegex))))
+            case opt                                   => Right(opt)
+          }
+
+      override def unbind(key: String, value: Option[String]): Map[String, String] =
+        baseFormatter.unbind(key, value)
+    }
 }

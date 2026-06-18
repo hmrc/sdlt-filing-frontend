@@ -44,11 +44,9 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
         "1",
         "ABC123",
         "A1B2C3!",
-        "9876-5432",
         "Test_Value",
         "Hello.World+!@",
         "A+B=C",
-        "(Agent)42",
         "Value:100%",
         "OK;GO"
       )
@@ -64,6 +62,26 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
         result.errors mustBe empty
         result.get.phoneNumber mustBe Some(number)
       }
+    }
+
+    "must strip spaces, hyphens and brackets before storing" in {
+      val inputs = Seq(
+        "9876-5432"        -> "98765432",
+        "(Agent)42"        -> "Agent42",
+        "+44 808 157 0192" -> "+448081570192"
+      )
+      inputs.foreach { case (input, expected) =>
+        val result = form.bind(Map(fieldName -> input, "emailAddress" -> "test@example.com"))
+        result.errors mustBe empty
+        result.get.phoneNumber mustBe Some(expected)
+      }
+    }
+
+    "must allow a phone number that exceeds 14 characters raw but is within limit after stripping" in {
+      val longWithSpaces = "+44 808 157 0192"
+      val result = form.bind(Map(fieldName -> longWithSpaces, "emailAddress" -> "test@example.com"))
+      result.errors mustBe empty
+      result.get.phoneNumber mustBe Some("+448081570192")
     }
 
     "must bind empty strings as None" in {
@@ -121,7 +139,7 @@ class VendorAgentsContactDetailsFormProviderSpec extends StringFieldBehaviours {
           )
         )
         result.errors must contain(
-          FormError(fieldName, invalidKey, Seq("[A-Za-z0-9 \\~\\!\\@\\%\\&\\'\\(\\)\\*\\+,\\-\\.\\/\\:\\=\\?\\[\\]\\^\\_\\{\\}\\;]*"))
+          FormError(fieldName, invalidKey, Seq("[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"))
         )
       }
     }

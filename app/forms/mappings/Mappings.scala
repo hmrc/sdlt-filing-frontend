@@ -81,4 +81,17 @@ trait Mappings extends Formatters with Constraints {
                            args: Seq[String] = Seq.empty): FieldMapping[String] =
     of(areaOfLandFormatter(unitType, requiredKey, invalidCharsKey, invalidKey, lengthKey, args))
 
+  protected def phoneNumber(
+    requiredKey: String,
+    lengthKey: String,
+    invalidKey: String
+  ): FieldMapping[String] =
+    of(phoneNumberFormatter(requiredKey, lengthKey, invalidKey))
+
+  protected def optionalPhoneNumber(
+    lengthKey: String,
+    invalidKey: String
+  ): FieldMapping[Option[String]] =
+    of(optionalPhoneNumberFormatter(lengthKey, invalidKey))
+
 }
