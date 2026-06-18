@@ -18,11 +18,15 @@ package utils
 
 import base.SpecBase
 import models.{FullReturn, Land, ReturnInfo, Transaction, UserAnswers}
-import utils.SelfAssessedHelper.isResidentialBeforeMarch2012Date
+import utils.SelfAssessedHelper.{isBetweenDates, isResidentialBeforeMarch2012Date}
+
+import java.time.LocalDate
 
 class SelfAssessedHelperSpec extends SpecBase {
 
-  private def answersWith(effectiveDate: String, propertyType: String): UserAnswers =
+  private val testDateRange = DateRange(LocalDate.of(2010, 3, 25), LocalDate.of(2012, 3, 25))
+
+  private def answersWith(effectiveDate: String, propertyType: String = "01"): UserAnswers =
     emptyUserAnswers.copy(fullReturn = Some(FullReturn(
       stornId           = "STORN",
       returnResourceRef = "REF",
@@ -117,6 +121,33 @@ class SelfAssessedHelperSpec extends SpecBase {
         ))
       )))
       isResidentialBeforeMarch2012Date(answers) mustBe false
+    }
+  }
+
+  ".isBetweenDates" - {
+
+    "must return true when the effective date is between the date parameters" in {
+      isBetweenDates(answersWith("2011-01-01"), testDateRange) mustBe true
+    }
+
+    "must return true when the effective date is on the start date" in {
+      isBetweenDates(answersWith("2010-03-25"), testDateRange) mustBe true
+    }
+
+    "must return true when the effective date is a day before the end date" in {
+      isBetweenDates(answersWith("2012-03-24"), testDateRange) mustBe true
+    }
+
+    "must return false when the effective date is outside the date range" in {
+      isBetweenDates(answersWith("2016-03-24"), testDateRange) mustBe false
+    }
+
+    "must return false when the effective date is a day before the start date" in {
+      isBetweenDates(answersWith("2010-03-24"), testDateRange) mustBe false
+    }
+
+    "must return false when the effective date is the same as the end date" in {
+      isBetweenDates(answersWith("2012-03-25"), testDateRange) mustBe false
     }
   }
 }

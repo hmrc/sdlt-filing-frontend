@@ -22,11 +22,11 @@ import models.{FullReturn, Land, Residency, ReturnInfo, Transaction, UserAnswers
 import pages.taxCalculation.TaxCalculationFlowPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import utils.CannotCalculateHelper.getCannotCalculateReason
+import viewmodels.taxCalculation.selfAssessedViewModels.CannotCalculateViewModel
 import views.html.taxCalculation.freeholdSelfAssessed.FreeholdCannotCalculateSdltDueView
 
 class FreeholdCannotCalculateSdltDueControllerSpec extends SpecBase {
-
-  private val value: Option[String] = Some("taxCalculation.cannotCalculateSdltDue.reason1")
 
   private val freeholdAnswers: UserAnswers =
     emptyUserAnswers
@@ -48,10 +48,12 @@ class FreeholdCannotCalculateSdltDueControllerSpec extends SpecBase {
 
   "FreeholdCannotCalculateSdltDue Controller" - {
 
-    "must return OK and the correct view for a GET when valid reason is matched" in {
+    "must return OK and the correct view for a GET" in {
       val application = applicationBuilder(userAnswers = Some(freeholdAnswers)).build()
 
       running(application) {
+        val expectedViewModel = CannotCalculateViewModel.toViewModel(getCannotCalculateReason(freeholdAnswers))(messages(application))
+
         val request = FakeRequest(GET, controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad().url)
 
         val result = route(application, request).value
@@ -59,25 +61,7 @@ class FreeholdCannotCalculateSdltDueControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[FreeholdCannotCalculateSdltDueView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(value)(request, messages(application)).toString
-      }
-    }
-
-    "must return OK and the correct view for a GET when no valid reason is matched" in {
-      val wrongAnswers = freeholdAnswers.copy(fullReturn = freeholdAnswers.fullReturn.map(fr =>
-        fr.copy(transaction = fr.transaction.map(_.copy(isLinked = Some("no"))))
-      ))
-      val application = applicationBuilder(userAnswers = Some(wrongAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdCannotCalculateSdltDueController.onPageLoad().url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[FreeholdCannotCalculateSdltDueView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(None)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(expectedViewModel)(request, messages(application)).toString
       }
     }
 
