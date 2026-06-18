@@ -34,8 +34,13 @@ object PurchaserTaskList {
         buildPurchaserRow(fullReturn)
       )
     )
+    
+  def isPurchaserComplete(fullReturn: FullReturn): Boolean = {
+    fullReturn.purchaser.exists(_.nonEmpty)
+    //TODO ADD ALL REQUIRED FIELDS FOR PURCHASER
+  }
 
-  def buildPurchaserRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+  def purchaserRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
     val mainPurchaserID = fullReturn.returnInfo.flatMap(_.mainPurchaserID)
 
@@ -56,9 +61,12 @@ object PurchaserTaskList {
         url
       },
       tagId = "purchaserQuestionDetailRow",
-      checks = scheme => Seq(fullReturn.purchaser.exists(_.nonEmpty)),
+      checks = scheme => Seq(isPurchaserComplete(fullReturn)),
       prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
-    ).build(fullReturn)
+    )
   }
+
+  def buildPurchaserRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow =
+    purchaserRowBuilder(fullReturn).build(fullReturn)
 
 }

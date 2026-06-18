@@ -17,7 +17,7 @@
 package viewmodels.tasklist
 
 import config.FrontendAppConfig
-import models.{FullReturn, NormalMode}
+import models.{AgentType, FullReturn, NormalMode, ReturnAgent}
 import play.api.i18n.Messages
 
 import javax.inject.Singleton
@@ -35,11 +35,24 @@ object PurchaserAgentTaskList {
       )
     )
 
-  def buildPurchaserAgentRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+  def purchaserAgents(fullReturn: FullReturn): Seq[ReturnAgent] =
+    fullReturn.returnAgent.getOrElse(Seq.empty)
+      .filter(_.agentType.contains(AgentType.Purchaser.toString))
+  
+  def isPurchaserAgentStarted(fullReturn: FullReturn): Boolean = {
+    purchaserAgents(fullReturn).nonEmpty
+  }
+  def isPurchaserAgentComplete(fullReturn: FullReturn): Boolean = {
+    purchaserAgents(fullReturn).nonEmpty &&
+      purchaserAgents(fullReturn).forall( agent =>
+        agent.name.isDefined
+        //TODO ADD ALL MANDATORY CONDITIONS FOR PURCHASER AGENT
+      )
+  }
 
-    val purchaserAgentCheck: Boolean = fullReturn.returnAgent.exists(_.exists(_.agentType.contains("PURCHASER")))
+  def purchaserAgentRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
-    val url = if (purchaserAgentCheck) {
+    val url = if (isPurchaserAgentComplete(fullReturn)) {
       controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad().url
     } else {
       controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode).url
@@ -55,10 +68,12 @@ object PurchaserAgentTaskList {
       url = _ => _ => {
         url
       },
-      tagId = "purchaserQuestionDetailRow",
-      checks = scheme => Seq(purchaserAgentCheck),
+      tagId = "purchaserAgentQuestionDetailRow",
+      checks = scheme => Seq(isPurchaserAgentComplete(fullReturn)),
       prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
-    ).build(fullReturn)
+    )
   }
 
+  def buildPurchaserAgentRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow =
+    purchaserAgentRowBuilder(fullReturn).build(fullReturn)
 }

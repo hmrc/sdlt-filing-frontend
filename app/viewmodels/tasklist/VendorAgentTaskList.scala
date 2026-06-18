@@ -17,7 +17,7 @@
 package viewmodels.tasklist
 
 import config.FrontendAppConfig
-import models.{AgentType, FullReturn}
+import models.{AgentType, FullReturn, ReturnAgent}
 import play.api.i18n.Messages
 
 import javax.inject.Singleton
@@ -35,11 +35,25 @@ object VendorAgentTaskList {
       )
     )
 
-  def buildVendorAgentRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+  def vendorAgents(fullReturn: FullReturn): Seq[ReturnAgent] =
+    fullReturn.returnAgent.getOrElse(Seq.empty)
+      .filter(_.agentType.contains(AgentType.Vendor.toString))
+      
+  def isVendorAgentStarted(fullReturn: FullReturn): Boolean = {
+    vendorAgents(fullReturn).nonEmpty
+  }
 
-    val vendorAgentCheck: Boolean = fullReturn.returnAgent.exists(_.exists(_.agentType.contains(AgentType.Vendor.toString)))
+  def isVendorAgentComplete(fullReturn: FullReturn): Boolean = {
+    vendorAgents(fullReturn).nonEmpty &&
+      vendorAgents(fullReturn).forall( agent =>
+        agent.name.isDefined
+        //TODO ADD ALL MANDATORY CONDITIONS FOR VENDOR AGENT
+      )
+  }
 
-    val url = if(vendorAgentCheck) {
+  def vendorAgentRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
+
+    val url = if(isVendorAgentComplete(fullReturn)) {
         controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad().url
     } else {
       controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
@@ -54,9 +68,12 @@ object VendorAgentTaskList {
       messageKey = _ => "tasklist.vendorAgentQuestion.details",
       url = _ => _ => {url},
       tagId = "vendorAgentQuestionDetailRow",
-      checks = scheme => Seq(vendorAgentCheck),
+      checks = scheme => Seq(isVendorAgentComplete(fullReturn)),
       prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
-    ).build(fullReturn)
+    )
   }
+
+  def buildVendorAgentRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow =
+    vendorAgentRowBuilder(fullReturn).build(fullReturn)
 
 }

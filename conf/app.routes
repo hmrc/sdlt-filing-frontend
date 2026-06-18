@@ -744,6 +744,8 @@ GET        /update-local-authority-codes                                        
 GET        /update-local-authority-codes/remove/:landId                                              controllers.land.LandAuthorityCodeMultiEntityController.removeLand(landId: String)
 GET        /update-local-authority-code/:landId                                                      controllers.land.LandAuthorityCodeSingleEntityController.onPageLoad(landId: String)
 
+GET        /submit-your-return/before-you-start                                                      controllers.submission.SubmissionBeforeYouStartController.onPageLoad()
+
 GET        /submit-your-return/declaration                                                           controllers.submission.DeclarationController.onPageLoad(mode: Mode = NormalMode)
 POST       /submit-your-return/declaration                                                           controllers.submission.DeclarationController.onSubmit()
 

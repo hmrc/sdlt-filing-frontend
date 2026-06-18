@@ -75,7 +75,8 @@ class ReturnTaskListController @Inject()(
             if (PropertyTypeHelper.isResidentialProperty(fullReturn)) Some(UkResidencyTaskList.build(fullReturn)) else None,
             Some(TransactionTaskList.build(fullReturn, transactionStatus)),
             if (LeaseHelper.isLeaseDefined(fullReturn)) Some(LeaseTaskList.build(fullReturn)) else None,
-            Some(TaxCalculationTaskList.build(fullReturn))
+            Some(TaxCalculationTaskList.build(fullReturn)),
+            Some(SubmissionTaskList.build(fullReturn))
           ).flatten
           Ok(view(sections: _*))
         }

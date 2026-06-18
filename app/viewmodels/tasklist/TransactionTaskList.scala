@@ -26,7 +26,7 @@ import javax.inject.Singleton
 @Singleton
 object TransactionTaskList {
   
-  private val noFailures: SectionStatus =
+  val noFailures: SectionStatus =
     SectionStatus(ReturnSection.Transaction, hasFailures = false, ruleIds = Nil, messageKeys = Nil, targets = Nil)
 
   def build(fullReturn: FullReturn, status: SectionStatus = noFailures)
@@ -36,10 +36,13 @@ object TransactionTaskList {
       rows    = Seq(buildTransactionRow(fullReturn, status))
     )
 
-  def buildTransactionRow(fullReturn: FullReturn, status: SectionStatus)
-                         (implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+  def isTransactionComplete(fullReturn: FullReturn): Boolean = {
+    fullReturn.transaction.exists(_.effectiveDate.isDefined)
+    //TODO ADD ALL REQUIRED FIELDS FOR TRANSACTION
+  }
 
-    val transactionComplete = fullReturn.transaction.exists(_.effectiveDate.isDefined)
+  def transactionRowBuilder(fullReturn: FullReturn, status: SectionStatus)
+                         (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
     val cyaUrl   = controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
     val startUrl = controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
@@ -47,7 +50,7 @@ object TransactionTaskList {
     
     val url =
       if (status.hasFailures)                        errorUrl
-      else if (transactionComplete)                       cyaUrl
+      else if (isTransactionComplete(fullReturn))                       cyaUrl
       else                                                startUrl
 
     TaskListRowBuilder(
@@ -55,9 +58,13 @@ object TransactionTaskList {
       messageKey    = _ => "tasklist.transactionQuestion.details",
       url           = _ => _ => url,
       tagId         = "transactionQuestionDetailRow",
-      checks        = _ => Seq(transactionComplete),
+      checks        = _ => Seq(isTransactionComplete(fullReturn)),
       invalid       = _ => status.hasFailures,
       prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
-    ).build(fullReturn)
+    )
   }
+
+  def buildTransactionRow(fullReturn: FullReturn, status: SectionStatus)
+                         (implicit appConfig: FrontendAppConfig): TaskListSectionRow =
+    transactionRowBuilder(fullReturn, status).build(fullReturn)
 }

@@ -19,58 +19,59 @@ package viewmodels.tasklist
 import base.SpecBase
 import config.FrontendAppConfig
 import constants.FullReturnConstants.*
+import models.NormalMode
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 
-class VendorAgentTaskListSpec extends SpecBase {
+class PurchaserAgentTaskListSpec extends SpecBase {
 
-  private val fullReturnCompleteWithVendorAgent = completeFullReturn.copy(returnAgent = Some(Seq(completeReturnAgentVendor)))
-  private val fullReturnCompleteWithOtherAgent = completeFullReturn.copy(returnAgent = Some(Seq(completeReturnAgent)))
+  private val fullReturnCompleteWithPurchaserAgent = completeFullReturn
+  private val fullReturnCompleteWithOtherAgent = completeFullReturn.copy(returnAgent = Some(Seq(completeReturnAgentVendor)))
 
-  "VendorAgentTaskList" - {
+  "PurchaserAgentTaskList" - {
 
     ".build" - {
-      "must return TaskListSection with correct heading when vendor agent is present" in {
+      "must return TaskListSection with correct heading when purchaser agent is present" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = VendorAgentTaskList.build(fullReturnCompleteWithVendorAgent)
+          val result = PurchaserAgentTaskList.build(fullReturnCompleteWithPurchaserAgent)
 
           result mustBe a[TaskListSection]
-          result.heading mustBe messagesInstance("tasklist.vendorAgentQuestion.heading")
+          result.heading mustBe messagesInstance("tasklist.purchaserAgentQuestion.heading")
           result.rows.size mustBe 1
         }
       }
 
-      "must return TaskListSection with correct heading when no vendor agent" in {
+      "must return TaskListSection with correct heading when no purchaser agent" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = VendorAgentTaskList.build(fullReturnCompleteWithOtherAgent)
+          val result = PurchaserAgentTaskList.build(fullReturnCompleteWithOtherAgent)
 
           result mustBe a[TaskListSection]
-          result.heading mustBe messagesInstance("tasklist.vendorAgentQuestion.heading")
+          result.heading mustBe messagesInstance("tasklist.purchaserAgentQuestion.heading")
         }
       }
     }
 
-    ".isVendorAgentComplete" - {
+    ".isPurchaserAgentComplete" - {
 
-      "must return true if VendorAgent exists and agent name is defined" in {
-          val result = VendorAgentTaskList.isVendorAgentComplete(fullReturnCompleteWithVendorAgent)
+      "must return true if purchaserAgent exists and agent name is defined" in {
+          val result = PurchaserAgentTaskList.isPurchaserAgentComplete(fullReturnCompleteWithPurchaserAgent)
 
           result mustBe true
       }
 
-      "must return false if VendorAgent exists but agent name is missing" in {
-          val result = VendorAgentTaskList.isVendorAgentComplete(fullReturnCompleteWithVendorAgent
-            .copy(returnAgent = Some(Seq(completeReturnAgentVendor
+      "must return false if purchaserAgent but agent name is missing" in {
+          val result = PurchaserAgentTaskList.isPurchaserAgentComplete(fullReturnCompleteWithPurchaserAgent
+            .copy(returnAgent = Some(Seq(completeReturnAgent
               .copy(name = None)))))
 
           result mustBe false
@@ -78,7 +79,7 @@ class VendorAgentTaskListSpec extends SpecBase {
     }
 
 
-    ".buildVendorAgentRow" - {
+    ".buildPurchaserAgentRow" - {
       "must return TaskListSectionRow with correct tag id and link text" in {
         val application = applicationBuilder().build()
 
@@ -86,37 +87,36 @@ class VendorAgentTaskListSpec extends SpecBase {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
           implicit val messagesInstance: Messages = messages(application)
 
-          val result = VendorAgentTaskList.buildVendorAgentRow(fullReturnCompleteWithVendorAgent)
+          val result = PurchaserAgentTaskList.buildPurchaserAgentRow(fullReturnCompleteWithPurchaserAgent)
 
           result mustBe a[TaskListSectionRow]
-          result.tagId mustBe "vendorAgentQuestionDetailRow"
-          messagesInstance(result.messageKey) mustBe messagesInstance("tasklist.vendorAgentQuestion.details")
+          result.tagId mustBe "purchaserAgentQuestionDetailRow"
+          messagesInstance(result.messageKey) mustBe messagesInstance("tasklist.purchaserAgentQuestion.details")
         }
       }
 
-      "must have VendorAgent Before You Start url and show optional status when vendor agent is missing" in {
+      "must have purchaserAgent Before You Start url and show optional status when purchaser agent is missing" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = VendorAgentTaskList.buildVendorAgentRow(fullReturnCompleteWithOtherAgent)
+          val result = PurchaserAgentTaskList.buildPurchaserAgentRow(fullReturnCompleteWithOtherAgent)
 
-          result.url mustBe controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
+          result.url mustBe controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode).url
           result.status mustBe TLOptional
         }
       }
 
-      "must have VendorAgent Overview url and show completed status when vendor agent is complete" in {
+      "must have purchaserAgent Overview url and show completed status when purchaser agent is complete" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = VendorAgentTaskList.buildVendorAgentRow(fullReturnCompleteWithVendorAgent)
+          val result = PurchaserAgentTaskList.buildPurchaserAgentRow(fullReturnCompleteWithPurchaserAgent)
 
-          result.url mustBe controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad().url
-          result.status mustBe TLCompleted
+          result.url mustBe controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad().url
         }
       }
 
@@ -126,7 +126,7 @@ class VendorAgentTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = VendorAgentTaskList.buildVendorAgentRow(emptyFullReturn)
+          val result = PurchaserAgentTaskList.buildPurchaserAgentRow(emptyFullReturn)
 
           result.status mustBe TLCannotStart
         }

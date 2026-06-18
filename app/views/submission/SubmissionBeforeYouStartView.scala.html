@@ -1,0 +1,53 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+
+@this(
+        layout: templates.Layout,
+        govukButton: GovukButton,
+        caption: Caption,
+        h1: h1,
+        p: Paragraph,
+        paragraphWithLink: ParagraphWithLink
+)
+
+@()(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = titleNoForm(messages("submission.beforeYouStart.title"), section = Some("site.submission.caption"))) {
+    @caption(messages("site.submission.caption"))
+    @h1(messages("submission.beforeYouStart.heading"))
+
+    @paragraphWithLink(
+        messageKey = "submission.beforeYouStart.p1.prefix",
+        linkKey = "submission.beforeYouStart.p1.link",
+        textKey = "submission.beforeYouStart.p1.suffix"
+    )
+
+    @p(messages("submission.beforeYouStart.p2"))
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@messages("submission.beforeYouStart.li1")</li>
+        <li>@messages("submission.beforeYouStart.li2")</li>
+    </ul>
+
+    @p(messages("submission.beforeYouStart.p3"))
+
+    @govukButton(
+        ButtonViewModel(messages("site.continue"))
+        //TODO update to ds-1 DTR-5715 - SPRINT-17
+        .asLink(controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad().url)
+    )
+}

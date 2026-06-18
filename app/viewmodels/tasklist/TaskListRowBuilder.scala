@@ -28,7 +28,8 @@ case class TaskListRowBuilder(messageKey: FullReturn => String,
                               error: FullReturn => Boolean = _ => false,
                               invalid: FullReturn => Boolean = _ => false,
                               canEdit: TaskListState => Boolean = _ => false,
-                              isOptional: Boolean = false) {
+                              isOptional: Boolean = false,
+                              hint: FullReturn => Option[String]= _ => None) {
 
   def isComplete(fullReturn: FullReturn): Boolean = checks(fullReturn).forall(_ == true)
 
@@ -57,6 +58,6 @@ case class TaskListRowBuilder(messageKey: FullReturn => String,
       case _                                    => TLCannotStart
     }
 
-    TaskListSectionRow(messageKey(fullReturn), url(fullReturn)(status), tagId, status, canEdit(status))
+    TaskListSectionRow(messageKey(fullReturn), url(fullReturn)(status), tagId, status, canEdit(status), hint(fullReturn))
   }
 }

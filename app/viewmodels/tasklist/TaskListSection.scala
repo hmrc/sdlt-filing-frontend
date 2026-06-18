@@ -43,7 +43,8 @@ object TaskListSections {
     Some(PurchaserTaskList.build(fullReturn)),
     Some(PurchaserAgentTaskList.build(fullReturn)),
     Some(LandTaskList.build(fullReturn)),
-    Some(LeaseTaskList.build(fullReturn))
+    Some(LeaseTaskList.build(fullReturn)),
+    Some(SubmissionTaskList.build(fullReturn))
   ).flatten
   def allComplete(fullReturn: FullReturn)
                  (implicit messagesApi: Messages, appConfig: FrontendAppConfig, hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Boolean =
@@ -54,7 +55,8 @@ case class TaskListSectionRow(messageKey: String,
                               url: String,
                               tagId: String,
                               status: TaskListState,
-                              canEdit: Boolean = false)
+                              canEdit: Boolean = false,
+                              hint: Option[String] = None)
 
 sealed trait TaskListState
 

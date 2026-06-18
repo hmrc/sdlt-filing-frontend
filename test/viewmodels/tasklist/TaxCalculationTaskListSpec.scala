@@ -71,6 +71,22 @@ class TaxCalculationTaskListSpec extends SpecBase {
       }
     }
 
+    ".isTaxCalculationComplete" - {
+
+      "must return true if tax calculation exists and tax due is defined" in {
+          val result = TaxCalculationTaskList.isTaxCalculationComplete(fullReturnComplete)
+
+          result mustBe true
+      }
+
+      "must return false if tax calculation but tax due is missing" in {
+          val result = TaxCalculationTaskList.isTaxCalculationComplete(fullReturnComplete.copy(taxCalculation = Some(completeTaxCalculation
+            .copy(taxDue = None))))
+
+          result mustBe false
+      }
+    }
+
     ".buildTaxCalculationRow" - {
       "must return TaskListSectionRow" in {
         val application = applicationBuilder().build()
@@ -122,15 +138,15 @@ class TaxCalculationTaskListSpec extends SpecBase {
         }
       }
 
-      "must show cannot start status when tax calculation is absent" in {
+      "must show not started status when tax calculation is absent" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TaxCalculationTaskList.buildTaxCalculationRow(emptyFullReturn)
+          val result = TaxCalculationTaskList.buildTaxCalculationRow(fullReturnComplete.copy(taxCalculation = None))
 
-          result.status mustBe TLCannotStart
+          result.status mustBe TLNotStarted
         }
       }
 
@@ -145,6 +161,18 @@ class TaxCalculationTaskListSpec extends SpecBase {
 
           TaxCalculationTaskList.buildTaxCalculationRow(emptyFullReturn).url mustBe
             controllers.taxCalculation.routes.TaxCalculationConfirmEffectiveDateOfTransactionController.onPageLoad().url
+        }
+      }
+
+      "must show cannot start status when preliminary section is incomplete" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TaxCalculationTaskList.buildTaxCalculationRow(emptyFullReturn)
+
+          result.status mustBe TLCannotStart
         }
       }
     }
@@ -167,19 +195,19 @@ class TaxCalculationTaskListSpec extends SpecBase {
         }
       }
 
-      "must build complete TaskListSection with cannot start row when tax calculation absent" in {
+      "must build complete TaskListSection with not started row when tax calculation absent" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val section = TaxCalculationTaskList.build(emptyFullReturn)
+          val section = TaxCalculationTaskList.build(fullReturnComplete.copy(taxCalculation = None))
           val row = section.rows.head
 
           section.heading mustBe messagesInstance("tasklist.taxCalculationQuestion.heading")
           messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.taxCalculationQuestion.details")
-          row.status mustBe TLCannotStart
+          row.status mustBe TLNotStarted
           row.url mustBe controllers.taxCalculation.routes.TaxCalculationConfirmEffectiveDateOfTransactionController.onPageLoad().url
         }
       }

@@ -26,18 +26,24 @@ import javax.inject.Singleton
 @Singleton
 object LandTaskList {
 
-  private val noFailures: SectionStatus =
+  val noFailures: SectionStatus =
     SectionStatus(ReturnSection.Land, hasFailures = false, ruleIds = Nil, messageKeys = Nil, targets = Nil)
 
   def build(fullReturn: FullReturn, status: SectionStatus = noFailures)
-           (implicit messages: Messages, appConfig: FrontendAppConfig): TaskListSection =
+           (implicit messages: Messages, appConfig: FrontendAppConfig): TaskListSection = {
     TaskListSection(
       heading = messages("tasklist.landQuestion.heading"),
       rows    = Seq(buildLandRow(fullReturn, status))
     )
+  }
+  
+  def isLandComplete(fullReturn: FullReturn): Boolean = {
+    fullReturn.land.exists(_.nonEmpty)
+    //TODO ADD ALL REQUIRED FIELDS FOR LAND
+  }
 
-  def buildLandRow(fullReturn: FullReturn, status: SectionStatus)
-                  (implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+  def landRowBuilder(fullReturn: FullReturn, status: SectionStatus)
+                  (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
     val mainLandID = fullReturn.returnInfo.flatMap(_.mainLandID)
 
@@ -61,9 +67,14 @@ object LandTaskList {
       messageKey    = _ => "tasklist.landQuestion.details",
       url           = _ => _ => url,
       tagId         = "landQuestionDetailRow",
-      checks        = _ => Seq(fullReturn.land.exists(_.nonEmpty)),
+      checks        = _ => Seq(isLandComplete(fullReturn)),
       invalid       = _ => status.hasFailures,
       prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
-    ).build(fullReturn)
+    )
+  }
+  
+  def buildLandRow(fullReturn: FullReturn, status: SectionStatus)
+                  (implicit appConfig: FrontendAppConfig): TaskListSectionRow  = {
+    landRowBuilder(fullReturn, status).build(fullReturn)
   }
 }

@@ -35,8 +35,17 @@ object UkResidencyTaskList {
       )
     )
 
-  private def buildUkResidencyRow(fullReturn: FullReturn)
-                                 (implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
+  def isResidencyComplete(fullReturn: FullReturn): Boolean = {
+    //TODO ADD ALL REQUIRED FIELDS FOR UK RESIDENCY
+    fullReturn.residency.exists(res =>
+      res.isNonUkResidents.isDefined &&
+        res.isCloseCompany.isDefined &&
+        res.isCrownRelief.isDefined
+    )
+  }
+  
+  def ukResidencyRowBuilder(fullReturn: FullReturn)
+                                 (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
     val residency = fullReturn.residency
 
@@ -56,18 +65,14 @@ object UkResidencyTaskList {
       messageKey = _ => "tasklist.ukResidencyQuestion.details",
       url = _ => _ => url,
       tagId = "ukResidencyQuestionRow",
-      checks = _ =>
-        Seq(
-          residency.exists(res =>
-            res.isNonUkResidents.isDefined ||
-              res.isCloseCompany.isDefined ||
-              res.isCrownRelief.isDefined
-          )
-        ),
+      checks = _ => Seq(isResidencyComplete(fullReturn)),
       prerequisites = _ =>
         Seq(
           PrelimTaskList.buildPrelimRow(fullReturn)
         )
-    ).build(fullReturn)
+    )
   }
+
+  def buildUkResidencyRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow =
+    ukResidencyRowBuilder(fullReturn).build(fullReturn)
 }
