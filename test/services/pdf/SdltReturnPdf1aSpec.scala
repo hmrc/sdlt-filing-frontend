@@ -54,7 +54,7 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
     "lease_contractEndDate_day", "lease_contractEndDate_month", "lease_contractEndDate_year",
     "lease_rentFreePeriod", "lease_startingRent",
     "lease_startingRentEndDate_day", "lease_startingRentEndDate_month", "lease_startingRentEndDate_year",
-    "lease_vatAmount", "lease_premiumPaid", "lease_netPresentValue",
+    "lease_vatAmount", "lease_premiumPaid", "lease_netPresentValue", "lease_totalPremiumTax", "lease_totalNpvTax",
     "land_numberProperties",
     "land_postcode_1", "land_postcode_2",
     "land_houseNumber",
@@ -83,7 +83,6 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
     "land_planAttached_yes", "land_planAttached_no"
   )
 
-  /** Build a PDFBox AcroForm PDF containing all the test fields. */
   private def buildTemplatePdf(): Array[Byte] = {
     val doc   = new PDDocument()
     val page  = new org.apache.pdfbox.pdmodel.PDPage()
@@ -127,10 +126,6 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
     new SdltReturnPdf1a(loader)
   }
 
-  // ---------------------------------------------------------------------------
-  // Helpers for building test FullReturns
-  // ---------------------------------------------------------------------------
-
   private val baseReturn: FullReturn = FullReturn(
     stornId           = "STORN001",
     returnResourceRef = "RRF-001"
@@ -167,7 +162,6 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
 
       "must throw SdltPdfFillException when template has no AcroForm" in {
         val loader = mock[PdfTemplateLoader]
-        // Return a PDF with no AcroForm
         val bare = {
           val d = new PDDocument()
           d.addPage(new org.apache.pdfbox.pdmodel.PDPage())
@@ -182,8 +176,6 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      // ---- Page 1 ----
-
       "must write UTRN from submission" in {
         val r      = withSubmission("UTR-9999")
         val result = fill(r)
@@ -197,9 +189,15 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
       }
 
       "must write transaction description" in {
-        val r      = withTransaction(Transaction(transactionDescription = Some("Freehold purchase")))
+        val r      = withTransaction(Transaction(transactionDescription = Some("F")))
         val result = fill(r)
-        readField(result, "transaction_description") mustBe Some("Freehold purchase")
+        readField(result, "transaction_description") mustBe Some("F")
+      }
+
+      "must write interest created or transferred as 2 character string" in {
+        val r = withLand(Land(interestCreatedTransferred = Some("FGS")))
+        val result = fill(r)
+        readField(result, "land_estateOrInterestTransfered") mustBe Some("FG")
       }
 
       "must split effective date into day / month / year fields" in {
@@ -217,6 +215,13 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
         readField(result, "transaction_effectiveDate_year")  mustBe Some("")
       }
 
+      "must fill yes checkbox when transaction restrictions is yes" in {
+        val r = withTransaction(Transaction(restrictionsAffectInterest = Some("YES")))
+        val result = fill(r)
+        readField(result, "transaction_restrictionsAffecting_yes") mustBe Some("Yes")
+        readField(result, "transaction_restrictionsAffecting_no") mustBe Some("Off")
+      }
+
       "must split contract date into day / month / year fields" in {
         val r      = withTransaction(Transaction(contractDate = Some("01/04/2024")))
         val result = fill(r)
@@ -225,8 +230,8 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
         readField(result, "transaction_contractDate_year")  mustBe Some("2024")
       }
 
-      "must split restriction details across two lines when over 60 characters" in {
-        val longDetail = "This is a restriction detail that is definitely over sixty characters long"
+      "must split restriction details across two lines when over 39 characters" in {
+        val longDetail = "This is a restriction detail that is definitely over 39 characters long"
         val r          = withTransaction(Transaction(restrictionDetails = Some(longDetail)))
         val result = fill(r)
         val line1      = readField(result, "transaction_restrictionsAffectingDetails_1").getOrElse("")
@@ -236,9 +241,8 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
         (line1 + " " + line2).trim mustBe longDetail
       }
 
-      "must write land exchanged address fields when land exchanged is YES" in {
+      "must write land exchanged address fields" in {
         val r = withTransaction(Transaction(
-          isLandExchanged          = Some("YES"),
           exchangedLandPostcode    = Some("SW1A 2AA"),
           exchangedLandHouseNumber = Some("10"),
           exchangedLandAddress1    = Some("Downing Street")
@@ -248,15 +252,6 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
         readField(result, "transaction_landExchangedPostcode_2")  mustBe Some("2AA")
         readField(result, "transaction_landExchangedHouseNumber") mustBe Some("10")
         readField(result, "transaction_landExchangedAddressLine1") mustBe Some("Downing Street")
-      }
-
-      "must not write land exchanged address fields when land exchanged is NO" in {
-        val r = withTransaction(Transaction(
-          isLandExchanged       = Some("NO"),
-          exchangedLandAddress1 = Some("Should not appear")
-        ))
-        val result = fill(r)
-        readField(result, "transaction_landExchangedAddressLine1") mustBe Some("")
       }
 
       "must split a standard postcode with space into two fields" in {
@@ -273,27 +268,49 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
         readField(result, "land_postcode_2") mustBe Some("")
       }
 
-      // ---- Page 2 ----
-
-      "must write total consideration as plain decimal string" in {
+      "must write total consideration as whole number string" in {
         val r      = withTransaction(Transaction(totalConsideration = Some("250000.00")))
         val result = fill(r)
-        readField(result, "calculation_totalConsideration") mustBe Some("250000.00")
+        readField(result, "calculation_totalConsideration") mustBe Some("250000")
       }
 
-      "must split total consideration across four digit-group fields" in {
-        val r      = withTransaction(Transaction(totalConsideration = Some("250000")))
+      "must write forms of consideration as 2 digit codes" in {
+        val r      = withTransaction(Transaction(
+          considerationCash = Some("YES"),
+          considerationDebt = Some("YES"),
+          considerationLand = Some("YES"),
+          considerationContingent = Some("YES")
+        ))
         val result = fill(r)
-        readField(result, "calculation_totalConsideration_1") mustBe Some("000")
-        readField(result, "calculation_totalConsideration_2") mustBe Some("000")
-        readField(result, "calculation_totalConsideration_3") mustBe Some("250")
-        readField(result, "calculation_totalConsideration_4") mustBe Some("000")
+        readField(result, "calculation_totalConsideration_1") mustBe Some("30")
+        readField(result, "calculation_totalConsideration_2") mustBe Some("31")
+        readField(result, "calculation_totalConsideration_3") mustBe Some("37")
+        readField(result, "calculation_totalConsideration_4") mustBe Some("39")
       }
 
-      "must write tax due from taxCalculation" in {
-        val r = baseReturn.copy(taxCalculation = Some(TaxCalculation(taxDue = Some("12500"))))
+      "must not write forms of consideration when not present or NO" in {
+        val r = withTransaction(Transaction(
+          considerationCash = Some("NO")
+        ))
+        val result = fill(r)
+        readField(result, "calculation_totalConsideration_1") mustBe Some("")
+        readField(result, "calculation_totalConsideration_2") mustBe Some("")
+        readField(result, "calculation_totalConsideration_3") mustBe Some("")
+        readField(result, "calculation_totalConsideration_4") mustBe Some("")
+      }
+
+      "must write lease section taxCalculation fields" in {
+        val r = baseReturn.copy(taxCalculation = Some(TaxCalculation(
+          taxDue = Some("12500.00"),
+          amountPaid = Some("1300.00"),
+          taxDuePremium = Some("1400.00"),
+          taxDueNPV = Some("1500.00")
+        )))
         val result = fill(r)
         readField(result, "calculation_taxDueUserEntered") mustBe Some("12500")
+        readField(result, "calculation_amountPaid") mustBe Some("1300")
+        readField(result, "lease_totalPremiumTax") mustBe Some("1400")
+        readField(result, "lease_totalNpvTax") mustBe Some("1500")
       }
 
       "must write amount paid from taxCalculation" in {
@@ -303,9 +320,9 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
       }
 
       "must write lease type when lease is present" in {
-        val r      = withLease(Lease(leaseType = Some("New")))
+        val r      = withLease(Lease(leaseType = Some("R")))
         val result = fill(r)
-        readField(result, "lease_leaseType") mustBe Some("New")
+        readField(result, "lease_leaseType") mustBe Some("R")
       }
 
       "must split lease start date into day / month / year" in {
@@ -316,12 +333,18 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
         readField(result, "lease_contractStartDate_year")  mustBe Some("2024")
       }
 
+      "must split lease end date into day / month / year" in {
+        val r = withLease(Lease(contractEndDate = Some("01/01/2026")))
+        val result = fill(r)
+        readField(result, "lease_contractEndDate_day")   mustBe Some("01")
+        readField(result, "lease_contractEndDate_month") mustBe Some("01")
+        readField(result, "lease_contractEndDate_year")  mustBe Some("2026")
+      }
+
       "must not write lease fields when no lease is present" in {
         val result = fill(baseReturn)
         readField(result, "lease_leaseType") mustBe Some("")
       }
-
-      // ---- Page 3 ----
 
       "must write land count as number of properties" in {
         val r      = withLand(Land(landID = Some("L1")), Land(landID = Some("L2")))
@@ -355,6 +378,28 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
         val result = fill(r)
         readField(result, "land_localAuthorityNumber") mustBe Some("5678")
         readField(result, "land_titleNumber")          mustBe Some("MX123456")
+      }
+
+      "must write area of land in hectares" in {
+        val r = withLand(Land(
+          areaUnit = Some("Hectares"),
+          landArea = Some("100.123")
+        ))
+        val result = fill(r)
+        readField(result, "land_landAreaType_Hectares") mustBe Some("Yes")
+        readField(result, "land_landAreaType_Square_Metres") mustBe Some("Off")
+        readField(result, "land_landArea") mustBe Some("100.123")
+      }
+
+      "must write area of land in square metres" in {
+        val r = withLand(Land(
+          areaUnit = Some("SquareMetres"),
+          landArea = Some("100.000")
+        ))
+        val result = fill(r)
+        readField(result, "land_landAreaType_Square_Metres") mustBe Some("Yes")
+        readField(result, "land_landAreaType_Hectares") mustBe Some("Off")
+        readField(result, "land_landArea") mustBe Some("100.000")
       }
 
       "must write vendor count as number of vendors" in {
@@ -393,13 +438,19 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
         readField(result, "vendor_postcode_2")   mustBe Some("2AB")
       }
 
-      "must write agent name from first returnAgent" in {
-        val r = baseReturn.copy(returnAgent = Some(Seq(ReturnAgent(name = Some("Jones & Co")))))
+      "must write agent name from vendor returnAgent" in {
+        val r = baseReturn.copy(returnAgent = Some(Seq(ReturnAgent(name = Some("Jones & Co"), agentType = Some("VENDOR")))))
         val result = fill(r)
         readField(result, "vendor_agentName") mustBe Some("Jones & Co")
       }
 
-      "must leave agent name blank when no return agent is present" in {
+      "must leave vendor agent name blank when no return agent of type vendor is present" in {
+        val r = baseReturn.copy(returnAgent = Some(Seq(ReturnAgent(name = Some("Jones & Co"), agentType = Some("PURCHASER")))))
+        val result = fill(r)
+        readField(result, "vendor_agentName") mustBe Some("")
+      }
+
+      "must leave vendor agent name blank when no return agent is present" in {
         val result = fill(baseReturn)
         readField(result, "vendor_agentName") mustBe Some("")
       }
