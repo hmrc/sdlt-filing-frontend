@@ -17,7 +17,7 @@
 package controllers.taxCalculation.freeholdSelfAssessed
 
 import controllers.actions.*
-import models.taxCalculation.TaxCalculationFlow
+import models.NormalMode
 import models.taxCalculation.TaxCalculationFlow.FreeholdSelfAssessed
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -25,7 +25,7 @@ import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.CannotCalculateHelper.getCannotCalculateReason
 import viewmodels.taxCalculation.selfAssessedViewModels.CannotCalculateViewModel
-import views.html.taxCalculation.freeholdSelfAssessed.FreeholdCannotCalculateSdltDueView
+import views.html.taxCalculation.shared.CannotCalculateSdltDueView
 
 import javax.inject.{Inject, Singleton}
 
@@ -37,16 +37,19 @@ class FreeholdCannotCalculateSdltDueController @Inject()(
                                                    requireData: DataRequiredAction,
                                                    sdltCalculationService: SdltCalculationService,
                                                    val controllerComponents: MessagesControllerComponents,
-                                                   view: FreeholdCannotCalculateSdltDueView
+                                                   view: CannotCalculateSdltDueView
                                                  ) extends FrontendBaseController with I18nSupport {
+
+  private val sectionKey: String = "site.taxCalculation.freeholdSelfAssessed.section"
+
+  private lazy val continueUrl: String = routes.FreeholdSelfAssessedSdltSelfAssessmentController.onPageLoad(NormalMode).url
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       sdltCalculationService.whenInFlow(FreeholdSelfAssessed) {
         val reasons = getCannotCalculateReason(request.userAnswers)
         val viewModel = CannotCalculateViewModel.toViewModel(reasons)
-        Ok(view(viewModel))
+        Ok(view(viewModel, sectionKey, continueUrl))
       }
   }
-
 }

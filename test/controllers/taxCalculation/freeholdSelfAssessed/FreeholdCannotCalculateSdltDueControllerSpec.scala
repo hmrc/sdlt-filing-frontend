@@ -18,15 +18,19 @@ package controllers.taxCalculation.freeholdSelfAssessed
 
 import base.SpecBase
 import models.taxCalculation.TaxCalculationFlow
-import models.{FullReturn, Land, Residency, ReturnInfo, Transaction, UserAnswers}
+import models.{FullReturn, Land, NormalMode, Residency, ReturnInfo, Transaction, UserAnswers}
 import pages.taxCalculation.TaxCalculationFlowPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import utils.CannotCalculateHelper.getCannotCalculateReason
 import viewmodels.taxCalculation.selfAssessedViewModels.CannotCalculateViewModel
-import views.html.taxCalculation.freeholdSelfAssessed.FreeholdCannotCalculateSdltDueView
+import views.html.taxCalculation.shared.CannotCalculateSdltDueView
 
 class FreeholdCannotCalculateSdltDueControllerSpec extends SpecBase {
+
+  private val sectionKey: String = "site.taxCalculation.freeholdSelfAssessed.section"
+  private def continueUrl: String =
+    controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSelfAssessedSdltSelfAssessmentController.onPageLoad(NormalMode).url
 
   private val freeholdAnswers: UserAnswers =
     emptyUserAnswers
@@ -58,10 +62,10 @@ class FreeholdCannotCalculateSdltDueControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[FreeholdCannotCalculateSdltDueView]
+        val view = application.injector.instanceOf[CannotCalculateSdltDueView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(expectedViewModel)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(expectedViewModel, sectionKey, continueUrl)(request, messages(application)).toString
       }
     }
 

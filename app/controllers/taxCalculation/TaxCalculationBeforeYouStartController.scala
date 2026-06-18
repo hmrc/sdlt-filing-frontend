@@ -30,8 +30,11 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.taxCalculation.SdltCalculationService
+import uk.gov.hmrc.http.{HttpException, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.TaxCalculationHelper
+import viewmodels.taxCalculation.selfAssessedViewModels.CannotCalculateViewModel
+import views.html.taxCalculation.shared.CannotCalculateSdltDueView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,12 +47,13 @@ class TaxCalculationBeforeYouStartController @Inject()(
                                        requireData: DataRequiredAction,
                                        sdltCalculationService: SdltCalculationService,
                                        sessionRepository: SessionRepository,
+                                       cannotCalculateView: CannotCalculateSdltDueView,
                                        val controllerComponents: MessagesControllerComponents,
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      for {
+      (for {
         calc <- sdltCalculationService.calculateStampDutyLandTax(request.userAnswers)
         flow  = calc.toOption.flatMap(TaxCalculationHelper.flowFor(request.userAnswers, _))
         dest  = (flow, calc) match {
@@ -68,6 +72,18 @@ class TaxCalculationBeforeYouStartController @Inject()(
           }
         }
         _ <- sessionRepository.set(updated)
-      } yield Redirect(dest)
+      } yield Redirect(dest))
+        .recoverWith { case error @ (_: UpstreamErrorResponse | _: HttpException) =>
+          logger.error(s"[TaxCalculationBeforeYouStartController][onPageLoad] returnId=${request.userAnswers.returnId.getOrElse("unknown")}: sdltc calculation failed, routing to self-assessment", error)
+          SelfAssessmentFallback
+            .byHoldingType(request.userAnswers, sessionRepository) {
+              (sectionKey, continueUrl) =>
+                Ok(cannotCalculateView(
+                  CannotCalculateViewModel.toViewModel(Nil),
+                  sectionKey,
+                  continueUrl
+                ))
+          }
+        }
   }
 }
