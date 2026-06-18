@@ -755,4 +755,7 @@ POST       /submit-your-return/enter-email-address                              
 GET        /submit-your-return/who-are-you-submitting-this-return-for                                controllers.submission.WhoAreYouSubmittingForController.onPageLoad(mode: Mode = NormalMode)
 POST       /submit-your-return/who-are-you-submitting-this-return-for                                controllers.submission.WhoAreYouSubmittingForController.onSubmit(mode: Mode = NormalMode)
 
+GET        /submit-your-return/add-email-confirmation                                                controllers.submission.AddEmailConfirmationController.onPageLoad(mode: Mode = NormalMode)
+POST       /submit-your-return/add-email-confirmation                                                controllers.submission.AddEmailConfirmationController.onSubmit(mode: Mode = NormalMode)
+
 GET        /update-transaction-relief                                                                controllers.transaction.TransactionSingleEntityController.onPageLoad()

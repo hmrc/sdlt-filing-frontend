@@ -25,7 +25,7 @@ import pages.lease.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 import pages.purchaser.*
 import pages.purchaserAgent.*
-import pages.submission.EmailConfirmationPage
+import pages.submission.{AddEmailConfirmationPage, EmailConfirmationPage}
 import pages.taxCalculation.ConfirmEffectiveDateOfTransactionPage
 import pages.taxCalculation.freeholdSelfAssessed.*
 import pages.taxCalculation.freeholdTaxCalculated.*
@@ -496,6 +496,11 @@ class NavigatorSpec extends SpecBase {
         "go from EmailConfirmationPage to WhoAreYouSubmittingForPage" in {
           navigator.nextPage(EmailConfirmationPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
             controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad()
+        }
+
+        "go from AddEmailConfirmationPage to EmailConfirmationPage" in {
+          navigator.nextPage(AddEmailConfirmationPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
+            controllers.submission.routes.EmailConfirmationController.onPageLoad()
         }
       }
 

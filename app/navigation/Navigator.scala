@@ -416,11 +416,13 @@ class Navigator @Inject()() {
   }
 
   private def isSubmissionSection(page: Page): Boolean = page match {
-    case WhoAreYouSubmittingForPage | EmailConfirmationPage => true
+    case WhoAreYouSubmittingForPage | EmailConfirmationPage | AddEmailConfirmationPage => true
     case _ => false
   }
 
   private def submissionRoutes(page: Page): UserAnswers => Call = page match {
+    case AddEmailConfirmationPage =>
+      _ => controllers.submission.routes.EmailConfirmationController.onPageLoad()
     case EmailConfirmationPage =>
       _ => controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad()
     case WhoAreYouSubmittingForPage =>

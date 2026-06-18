@@ -1994,7 +1994,10 @@ submission.emailConfirmation.error.invalid                                      
 submission.emailConfirmation.error.invalidFormat                                    = Enter the email address HMRC should use to send confirmation in the correct format, like name@example.com
 submission.emailConfirmation.change.hidden                                          = What email address should HMRC use to send confirmation?
 
-
+submission.addEmailConfirmation.title                                               = Would you like an email confirmation once your return has been submitted? - Submit your return
+submission.addEmailConfirmation.heading                                             = Would you like an email confirmation once your return has been submitted?
+submission.addEmailConfirmation.hint                                                = If you select no, you will only be notified in the service if your return is approved immediately
+submission.addEmailConfirmation.error.required                                      = Select yes if you would like an email confirmation once your return has been submitted
 
 # ---- Cross-flow validation errors ----
 crossflow.relief.heading                                                            = Update the reason for claiming relief
