@@ -24,12 +24,12 @@ import javax.inject.Inject
 
 class EnterPurchaserPhoneNumberFormProvider @Inject() extends Mappings {
 
-  private val formNumberRegex = "[A-Za-z0-9 \\~\\!\\@\\%\\&\\'\\(\\)\\*\\+,\\-\\.\\/\\:\\=\\?\\[\\]\\^\\_\\{\\}\\;]*"
-
   def apply(purchaserName: String)(implicit messages: Messages): Form[String] =
     Form(
-      "value" -> text(messages("purchaser.enterPhoneNumber.error.required", purchaserName))
-        .verifying(maxLength(14, messages("purchaser.enterPhoneNumber.error.length", purchaserName)))
-        .verifying(regexp(formNumberRegex, messages("purchaser.enterPhoneNumber.error.invalid", purchaserName)))
+      "value" -> phoneNumber(
+        messages("purchaser.enterPhoneNumber.error.required", purchaserName),
+        messages("purchaser.enterPhoneNumber.error.length", purchaserName),
+        messages("purchaser.enterPhoneNumber.error.invalid", purchaserName)
+      )
     )
 }

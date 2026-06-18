@@ -39,7 +39,7 @@ class EnterPurchaserPhoneNumberFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      Gen.oneOf(Seq("+987654321", "(987)654-32", "987-654-3210", "9876543210"))
+      Gen.oneOf(Seq("+987654321", "9876543210"))
     )
 
     behave like mandatoryField(
@@ -48,17 +48,37 @@ class EnterPurchaserPhoneNumberFormProviderSpec extends StringFieldBehaviours {
       requiredError = FormError(fieldName, requiredKey)
     )
 
-    "must not bind strings longer than max length" in {
+    "must strip spaces, hyphens and brackets before storing" in {
+      val inputs = Seq(
+        "(987)654-32"    -> "987654 32".replace(" ", ""),
+        "987-654-3210"   -> "9876543210",
+        "+44 808 157 0192" -> "+448081570192"
+      )
+      inputs.foreach { case (input, expected) =>
+        val result = form.bind(Map(fieldName -> input))
+        result.errors mustBe empty
+        result.get mustBe expected
+      }
+    }
+
+    "must not bind strings longer than max length after stripping" in {
       val tooLong = "1234567890123456"
       val result = form.bind(Map(fieldName -> tooLong))
       result.errors must contain only FormError(fieldName, lengthKey, Seq(maxLength))
+    }
+
+    "must allow a phone number that exceeds 14 characters raw but is within limit after stripping" in {
+      val longWithSpaces = "+44 808 157 0192"
+      val result = form.bind(Map(fieldName -> longWithSpaces))
+      result.errors mustBe empty
+      result.get mustBe "+448081570192"
     }
 
     "must not bind strings with invalid characters" in {
       val result = form.bind(Map(fieldName -> "123|456"))
       result.errors.map(_.message) must contain(invalidMsgKey)
     }
-    }
   }
+}
 
 

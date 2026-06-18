@@ -26,20 +26,17 @@ import javax.inject.Inject
 
 class PurchaserAgentsContactDetailsFormProvider @Inject() extends Mappings {
 
-  private val phoneNumberMaxLength = 14
   private val emailMaxLength = 36
 
-  private val phoneNumberInvalidCharsRegex = "[A-Za-z0-9 ~!@%&'()*+,\\-./:=?\\[\\]^_{}\\;]*"
   private val emailFormatRegex = "^[^@|<>\"'`]+@[^@|<>\"'`]+$"
   private val emailInvalidCharsRegex = "^[^|<>\"'`]+$"
 
   def apply(agentName: String)(implicit messages: Messages): Form[PurchaserAgentsContactDetails] = Form(
     mapping(
-      "phoneNumber" -> optionalText()
-        .verifying(firstError(
-          optionalMaxLength(phoneNumberMaxLength, messages("purchaserAgent.contactDetails.error.agentPhoneNumber.length", agentName)),
-          optionalRegexp(phoneNumberInvalidCharsRegex, messages("purchaserAgent.contactDetails.error.agentPhoneNumber.invalid", agentName))
-        )),
+      "phoneNumber" -> optionalPhoneNumber(
+        messages("purchaserAgent.contactDetails.error.agentPhoneNumber.length", agentName),
+        messages("purchaserAgent.contactDetails.error.agentPhoneNumber.invalid", agentName)
+      ),
       "emailAddress" -> optionalText()
         .verifying(firstError(
           optionalMaxLength(emailMaxLength, messages("purchaserAgent.contactDetails.error.agentEmailAddress.length", agentName)),

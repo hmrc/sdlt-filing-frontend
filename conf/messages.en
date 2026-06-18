@@ -481,7 +481,7 @@ vendorAgent.vendorAgentsContactDetails.agentEmailAddress.caption                
 vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel                        = Agent contact details
 vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.required              = Enter {0}’s phone number
 vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.required             = Enter {0}’s email address
-vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.length                = {0}’s phone number must be 14 characters or fewer, not including spaces
+vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.length                = {0}’s phone number must be 14 characters or fewer, not including brackets, dashes, hyphens and spaces
 vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.maxlength            = {0}’s email address must be 36 characters or fewer
 vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.minlength            = {0}’s email address must be 3 characters or more
 vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.invalid               = {0}’s phone number must only include numbers 0 to 9, brackets, dashes, hyphens, plus signs and spaces
