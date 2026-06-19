@@ -18,7 +18,7 @@ package services.pdf
 
 import models.FullReturn
 import org.apache.pdfbox.pdmodel.interactive.form.{PDAcroForm, PDCheckBox, PDTextField}
-import services.pdf.SdltPdfFields.{IR_MARK, UTRN}
+import services.pdf.SdltPdfFields.{IR_MARK, PRINT_STATUS, UTRN}
 import utils.LoggingUtil
 
 import java.time.LocalDate
@@ -138,4 +138,5 @@ class PdfFieldWriter(form: PDAcroForm, ctx: String) extends LoggingUtil {
   def fillCommonFields(fullReturn: FullReturn): Unit =
     text(UTRN, fullReturn.submission.flatMap(_.UTRN))
     text(IR_MARK, fullReturn.submission.flatMap(_.irmarkSent))
+    text(PRINT_STATUS, None)
 }
