@@ -1096,7 +1096,7 @@ ukResidency.nonUkResidentPurchaser.p2                                           
 ukResidency.nonUkResidentPurchaser.hint.link                                        = https://www.gov.uk/guidance/rates-of-stamp-duty-land-tax-for-non-uk-residents
 ukResidency.nonUkResidentPurchaser.hint.suffix                                      = HMRC guidance on residence status for SDLT (opens in a new tab)
 ukResidency.nonUkResidentPurchaser.checkYourAnswersLabel                            = Are any of the purchasers non-UK residents?
-ukResidency.nonUkResidentPurchaser.error.required                                   = Select yes if nonUkResidentPurchaser
+ukResidency.nonUkResidentPurchaser.error.required                                   = Select yes if any of the purchasers are non-UK residents
 ukResidency.nonUkResidentPurchaser.change.hidden                                    = Are any of the purchasers non-UK residents?
 
 ukResidency.crownEmploymentRelief.title                                             = Crown employment relief
@@ -1105,7 +1105,7 @@ ukResidency.crownEmploymentRelief.subheading                                    
 ukResidency.crownEmploymentRelief.p1                                                = Relief from the non-UK surcharge is available if purchasers are not resident in the UK due to holding an office or employment under the Crown, such as a member of the UK armed forces, a civil servant or a diplomat. This relief is extended to the spouse or civil partner of a crown servant, provided they are not separated.
 ukResidency.crownEmploymentRelief.checkYourAnswersLabel                             = Are any of the purchasers claiming Crown employment relief?
 ukResidency.crownEmploymentRelief.missing                                           = Select if any purchasers are claiming Crown employment relief
-ukResidency.crownEmploymentRelief.error.required                                    = Please select an option
+ukResidency.crownEmploymentRelief.error.required                                    = Select yes if any of the purchasers are claiming Crown employment relief
 ukResidency.crownEmploymentRelief.change.hidden                                     = Are any of the purchasers claiming Crown employment relief?
 
 ukResidency.closeCompany.title                                                      = Close companies
