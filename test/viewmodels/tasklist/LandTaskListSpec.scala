@@ -46,6 +46,33 @@ class LandTaskListSpec extends SpecBase {
       targets     = Nil
     )
 
+  private val cf6OnlyStatus: SectionStatus =
+    SectionStatus(
+      section     = ReturnSection.Land,
+      hasFailures = true,
+      ruleIds     = Seq("Cf-6"),
+      messageKeys = Seq("crossflow.land.Cf-6.body"),
+      targets     = Nil
+    )
+
+  private val cf6PerLandStatus: SectionStatus =
+    SectionStatus(
+      section     = ReturnSection.Land,
+      hasFailures = true,
+      ruleIds     = Seq("Cf-6", "Cf-6"),
+      messageKeys = Seq("crossflow.land.Cf-6.body"),
+      targets     = Nil
+    )
+
+  private val cf6AndOtherStatus: SectionStatus =
+    SectionStatus(
+      section     = ReturnSection.Land,
+      hasFailures = true,
+      ruleIds     = Seq("Cf-6", "Cf-9a"),
+      messageKeys = Seq("crossflow.land.Cf-6.body", "crossflow.land.Cf-9.welsh6996_6997.body"),
+      targets     = Nil
+    )
+
   "LandTaskList" - {
 
     ".build" - {
@@ -114,6 +141,20 @@ class LandTaskListSpec extends SpecBase {
           val result = LandTaskList.build(fullReturnCompleteWithOneMainLand, withFailuresStatus)
 
           result.rows.head.url mustBe controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad().url
+          result.rows.head.status mustBe TLInvalid
+        }
+      }
+
+      "must route the row to the Cf-6 property type multi-entity controller when only Cf-6 failures present" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.build(fullReturnCompleteWithOneMainLand, cf6OnlyStatus)
+
+          result.rows.head.url mustBe controllers.land.routes.LandPropertyTypeMultiEntityController.onPageLoad().url
           result.rows.head.status mustBe TLInvalid
         }
       }
@@ -343,6 +384,57 @@ class LandTaskListSpec extends SpecBase {
       }
     }
 
+    ".buildLandRow with Cf-6 routing" - {
+
+      "must route to LandPropertyTypeMultiEntity when only Cf-6 failures present (single rule id)" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.buildLandRow(fullReturnCompleteWithOneMainLand, cf6OnlyStatus)
+
+          result.url mustBe controllers.land.routes.LandPropertyTypeMultiEntityController.onPageLoad().url
+        }
+      }
+
+      "must route to LandPropertyTypeMultiEntity when Cf-6 fires on multiple lands (all rule ids are Cf-6)" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.buildLandRow(fullReturnCompleteWithMultipleLands, cf6PerLandStatus)
+
+          result.url mustBe controllers.land.routes.LandPropertyTypeMultiEntityController.onPageLoad().url
+        }
+      }
+
+      "must route to LandAuthorityCodeMultiEntity when Cf-6 coexists with other rule ids (non-Cf-6 takes priority)" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.buildLandRow(fullReturnCompleteWithMultipleLands, cf6AndOtherStatus)
+
+          result.url mustBe controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad().url
+        }
+      }
+
+      "must mark the row status as TLInvalid when Cf-6 fires" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.buildLandRow(fullReturnCompleteWithOneMainLand, cf6OnlyStatus)
+
+          result.status mustBe TLInvalid
+        }
+      }
+    }
+
     "integration" - {
       "must build complete TaskListSection with completed row when land present" in {
         val application = applicationBuilder().build()
@@ -391,6 +483,23 @@ class LandTaskListSpec extends SpecBase {
           section.heading mustBe messagesInstance("tasklist.landQuestion.heading")
           messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.landQuestion.details")
           row.url mustBe controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad().url
+          row.status mustBe TLInvalid
+        }
+      }
+
+      "must build complete TaskListSection routing to Cf-6 multi-entity controller when only Cf-6 failures" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val section = LandTaskList.build(fullReturnCompleteWithMultipleLands, cf6PerLandStatus)
+          val row = section.rows.head
+
+          section.heading mustBe messagesInstance("tasklist.landQuestion.heading")
+          messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.landQuestion.details")
+          row.url mustBe controllers.land.routes.LandPropertyTypeMultiEntityController.onPageLoad().url
           row.status mustBe TLInvalid
         }
       }

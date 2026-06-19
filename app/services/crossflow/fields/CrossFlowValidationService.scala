@@ -43,6 +43,16 @@ class CrossFlowValidationService @Inject() (
   private def committedLands(ua: UserAnswers): Seq[Land] =
     ua.fullReturn.flatMap(_.land).getOrElse(Seq.empty)
 
+  def landFailuresOnly(ruleIds: Set[String], ua: UserAnswers): Seq[(Land, Seq[CrossFlowFailure])] =
+    landFailuresGrouped(ua)
+      .map { case (land, failures) => land -> failures.filter(f => ruleIds.contains(f.ruleId)) }
+      .filter(_._2.nonEmpty)
+
+  def landFailuresExcluding(ruleIds: Set[String], ua: UserAnswers): Seq[(Land, Seq[CrossFlowFailure])] =
+    landFailuresGrouped(ua)
+      .map { case (land, failures) => land -> failures.filterNot(f => ruleIds.contains(f.ruleId)) }
+      .filter(_._2.nonEmpty)
+
   def landFailures(ua: UserAnswers): Seq[(Land, CrossFlowFailure)] =
     for {
       land    <- allLands(ua)
@@ -81,16 +91,18 @@ class CrossFlowValidationService @Inject() (
 
     (fromCrossFlowRules ++ fromLandRules).sortBy(_.ruleId)
   }
-  
+
   def failuresForPage(page: PageId, ua: UserAnswers): Seq[CrossFlowFailure] = {
     val fromCrossFlowRules =
       byTargetPage.getOrElse(page, Nil)
+        .filterNot(_.aggregateOnly)
         .flatMap(_.validate(ua))
         .filter(_.appearsOn(page))
 
     val fromLandRules =
       CrossFlowProjections.currentSessionLand(ua).toSeq.flatMap { sessionLand =>
         landRuleList
+          .filterNot(_.aggregateOnly)
           .filter(_.targets.exists(_.page == page))
           .flatMap(_.validate(sessionLand, ua))
           .filter(_.appearsOn(page))

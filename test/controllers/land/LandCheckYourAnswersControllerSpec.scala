@@ -108,7 +108,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       "agriculturalOrDevelopmentalLand" -> false
     )
   )
-  
+
   private val authorityCodeFailure = CrossFlowFailure(
     ruleId         = "Cf-9a",
     affects        = ReturnSection.Land,
@@ -138,7 +138,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
     targets        = Seq(CrossFlowTarget(Pages.LandPropertyType, "value")),
     headingKey     = "crossflow.land.Cf-3.heading"
   )
-  
+
   private def crossFlowWithFailures(forPage: Map[PageId, Seq[CrossFlowFailure]]) =
     new CrossFlowValidationService(Set.empty, Set.empty) {
       override def failuresForPage(page: PageId, ua: UserAnswers): Seq[CrossFlowFailure] =
@@ -579,6 +579,38 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(crossFlowSilent)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual OK
+          contentAsString(result) must include("Check your answers")
+        }
+      }
+
+      "must render the CYA normally when cross-flow filters Cf-6 (aggregate-only) from page-level failures" in {
+
+        // Cf-6 targets LandPropertyType but is aggregate-only — so the dispatcher's
+        // filter in failuresForPage strips it from the result. The CYA should not
+        // see it and should render normally.
+        val userAnswers = UserAnswers(
+          id       = "12345",
+          returnId = Some("AB2346"),
+          storn    = "TESTSTORN",
+          data     = landCurrentData()
+        )
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        // Stub `failuresForPage` to return nothing (mimicking the dispatcher
+        // having already filtered out Cf-6 because aggregateOnly = true).
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),

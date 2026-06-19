@@ -32,6 +32,7 @@ object Pages:
   val ContractDate:      PageId = PageId("contractDate")
   val LandAuthorityCode: PageId = PageId("landAuthorityCode")
   val LandPostcode:      PageId = PageId("landPostcode")
+  val LeaseType: PageId = PageId("leaseType")
 
 object Fields:
   val ReliefReason      = "value"
@@ -40,6 +41,7 @@ object Fields:
   val ContractDate      = "value"
   val LandAuthorityCode = "value"
   val LandPostcode      = "value"
+  val LeaseType = "value"
 
 final case class CrossFlowTarget(page: PageId, field: String)
 
@@ -79,6 +81,7 @@ trait CrossFlowRule:
   def inputs: Set[ReturnSection]
   def targets: Seq[CrossFlowTarget]
   def validate(userAnswers: UserAnswers): Option[CrossFlowFailure]
+  def aggregateOnly: Boolean = false
 
 abstract class GuardRule extends CrossFlowRule:
   protected def appliesTo(ua: UserAnswers): Boolean
@@ -109,6 +112,7 @@ trait LandRule:
   def inputs: Set[ReturnSection]
   def targets: Seq[CrossFlowTarget]
   def validate(land: Land, ua: UserAnswers): Option[CrossFlowFailure]
+  def aggregateOnly: Boolean = false
 
 abstract class LandGuardRule extends LandRule:
   protected def appliesTo(land: Land, ua: UserAnswers): Boolean

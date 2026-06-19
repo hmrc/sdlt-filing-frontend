@@ -78,6 +78,10 @@ class CrossFlowSpec extends SpecBase {
     "must expose the land postcode page id" in {
       Pages.LandPostcode mustBe PageId("landPostcode")
     }
+
+    "must expose the lease type page id" in {
+      Pages.LeaseType mustBe PageId("leaseType")
+    }
   }
 
   "Fields" - {
@@ -89,6 +93,7 @@ class CrossFlowSpec extends SpecBase {
       Fields.ContractDate       mustBe "value"
       Fields.LandAuthorityCode  mustBe "value"
       Fields.LandPostcode       mustBe "value"
+      Fields.LeaseType          mustBe "value"
     }
   }
 
@@ -338,6 +343,31 @@ class CrossFlowSpec extends SpecBase {
     }
   }
 
+  "CrossFlowRule.aggregateOnly" - {
+
+    abstract class BaseRule extends CrossFlowRule {
+      val id                                                 = "BASE"
+      val affects: ReturnSection                             = ReturnSection.Transaction
+      val inputs:  Set[ReturnSection]                        = Set(ReturnSection.Transaction)
+      val targets: Seq[CrossFlowTarget]                      = Seq(reliefTarget)
+      def validate(ua: UserAnswers): Option[CrossFlowFailure] = None
+    }
+
+    "must default to false when not overridden" in {
+      val rule = new BaseRule {}
+
+      rule.aggregateOnly mustBe false
+    }
+
+    "must return true when overridden" in {
+      val rule = new BaseRule {
+        override val aggregateOnly: Boolean = true
+      }
+
+      rule.aggregateOnly mustBe true
+    }
+  }
+
   "LandGuardRule.validate" - {
 
     val testLand = models.Land(landID = Some("LND001"))
@@ -390,6 +420,31 @@ class CrossFlowSpec extends SpecBase {
       }
 
       rule.validate(testLand, emptyUserAnswers).value.headingKey mustBe "custom.land.heading"
+    }
+  }
+
+  "LandRule.aggregateOnly" - {
+    
+    abstract class BaseLandRule extends LandRule {
+      val id                                                                       = "BASE-LAND"
+      val affects: ReturnSection                                                   = ReturnSection.Land
+      val inputs:  Set[ReturnSection]                                              = Set(ReturnSection.Land)
+      val targets: Seq[CrossFlowTarget]                                            = Seq(CrossFlowTarget(Pages.LandPropertyType, "value"))
+      def validate(land: models.Land, ua: UserAnswers): Option[CrossFlowFailure]   = None
+    }
+
+    "must default to false when not overridden" in {
+      val rule = new BaseLandRule {}
+
+      rule.aggregateOnly mustBe false
+    }
+
+    "must return true when overridden" in {
+      val rule = new BaseLandRule {
+        override val aggregateOnly: Boolean = true
+      }
+
+      rule.aggregateOnly mustBe true
     }
   }
 }

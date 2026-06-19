@@ -65,7 +65,9 @@ class ReturnTaskListController @Inject()(
             SectionStatus(ReturnSection.Transaction, false, Nil, Nil, Nil))
           val landStatus = statuses.getOrElse(ReturnSection.Land,
             SectionStatus(ReturnSection.Land, false, Nil, Nil, Nil))
-          
+          val leaseStatus = statuses.getOrElse(ReturnSection.Lease,
+            SectionStatus(ReturnSection.Lease, false, Nil, Nil, Nil))
+
           val sections = List(
             Some(VendorTaskList.build(fullReturn)),
             Some(VendorAgentTaskList.build(fullReturn)),
@@ -74,7 +76,7 @@ class ReturnTaskListController @Inject()(
             Some(LandTaskList.build(fullReturn, landStatus)),
             if (PropertyTypeHelper.isResidentialProperty(fullReturn)) Some(UkResidencyTaskList.build(fullReturn)) else None,
             Some(TransactionTaskList.build(fullReturn, transactionStatus)),
-            if (LeaseHelper.isLeaseDefined(fullReturn)) Some(LeaseTaskList.build(fullReturn)) else None,
+            if (LeaseHelper.isLeaseDefined(fullReturn)) Some(LeaseTaskList.build(fullReturn, leaseStatus)) else None,
             Some(TaxCalculationTaskList.build(fullReturn)),
             Some(SubmissionTaskList.build(fullReturn))
           ).flatten

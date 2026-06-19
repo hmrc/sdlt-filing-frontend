@@ -32,6 +32,11 @@ object CrossFlowProjections:
   val Residential           = "01"
   val Mixed                 = "02"
   val ResidentialAdditional = "04"
+  val NonResidential = "03"
+
+  val LeaseResidential = "R"
+  val LeaseMixed = "M"
+  val LeaseNonResidential = "N"
 
   private def committedTransaction(ua: UserAnswers)     = ua.fullReturn.flatMap(_.transaction)
   private def committedClaiming(ua: UserAnswers)        = committedTransaction(ua).flatMap(_.claimingRelief)
@@ -160,6 +165,41 @@ object CrossFlowProjections:
 
   val welshAllCodes: Set[String] =
     welshRegularCodes ++ welshSpecial6996_6997 ++ Set(welshSpecial6998, welshSpecial6999)
+
+  private def committedLease(ua: UserAnswers): Option[models.Lease] =
+    ua.fullReturn.flatMap(_.lease)
+
+  def leaseType(ua: UserAnswers): Option[String] = {
+    val session = ua.get(pages.lease.TypeOfLeasePage).map {
+      case models.lease.TypeOfLease.R => "R"
+      case models.lease.TypeOfLease.M => "M"
+      case models.lease.TypeOfLease.N => "N"
+    }
+    session.orElse(committedLease(ua).flatMap(_.leaseType).map(_.trim).filter(_.nonEmpty))
+  }
+  def hasLeaseInvolvement(ua: UserAnswers): Boolean =
+    committedLease(ua).isDefined
+
+  def isLeaseType(ua: UserAnswers, code: String): Boolean =
+    leaseType(ua).contains(code)
+
+  def allLandPropertyTypes(ua: UserAnswers): Set[String] =
+    ua.fullReturn.flatMap(_.land).toSeq.flatten.flatMap(_.propertyType).toSet
+
+  def landCount(ua: UserAnswers): Int =
+    ua.fullReturn.flatMap(_.land).toSeq.flatten.size
+
+  def mainLand(ua: UserAnswers): Option[Land] = {
+    val maybeMainId = ua.fullReturn.flatMap(_.returnInfo).flatMap(_.mainLandID)
+    for {
+      mainId <- maybeMainId
+      lands <- ua.fullReturn.flatMap(_.land)
+      land <- lands.find(_.landID.contains(mainId))
+    } yield land
+  }
+
+  def mainLandPropertyType(ua: UserAnswers): Option[String] =
+    mainLand(ua).flatMap(_.propertyType)
 
   object Dates:
     val reliefFloor2013: LocalDate = LocalDate.of(2013, 3, 6)

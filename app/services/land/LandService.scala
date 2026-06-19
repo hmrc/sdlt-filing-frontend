@@ -25,8 +25,42 @@ import play.api.mvc.Results.Redirect
 import services.crossflow.CrossFlowFailure
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
+import viewmodels.land.LandPropertyTypeRow
 
 class LandService {
+
+  def generateLandPropertyTypeRows(
+                                    allLands: Seq[Land],
+                                    mismatchLands: Seq[Land]
+                                  ): Seq[LandPropertyTypeRow] = {
+    val mismatchIds = mismatchLands.flatMap(_.landID).toSet
+
+    allLands.zipWithIndex.map { case (land, idx) =>
+      val landId = land.landID.getOrElse("")
+      val label = land.address1
+        .map(addr => land.postcode.fold(addr)(pc => s"$addr, $pc"))
+        .getOrElse(s"Land ${idx + 1}")
+
+      val propertyTypeDisplay = land.propertyType match {
+        case Some("01") => "01 - Residential"
+        case Some("02") => "02 - Mixed"
+        case Some("03") => "03 - Non-residential"
+        case Some("04") => "04 - Additional residential property liable to higher rate"
+        case Some(other) => other
+        case None => ""
+      }
+
+      LandPropertyTypeRow(
+        landId = landId,
+        label = label,
+        propertyTypeDisplay = propertyTypeDisplay,
+        updateUrl = controllers.land.routes.LandPropertyTypeMultiEntityController.updateLand(landId).url,
+        removeUrl = controllers.land.routes.LandPropertyTypeMultiEntityController.removeLand(landId).url,
+        canRemove = allLands.size > 1,
+        isMismatch = mismatchIds.contains(landId)
+      )
+    }
+  }
 
   def propertyTypeCheck(userAnswers: UserAnswers, continueRoute: Result): Result = {
 

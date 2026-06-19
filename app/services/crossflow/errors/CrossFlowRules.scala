@@ -18,6 +18,7 @@ package services.crossflow.errors
 
 import models.{Land, UserAnswers}
 import services.crossflow.*
+import services.crossflow.CrossFlowBody.WithBullets
 import services.crossflow.errors.CrossFlowProjections.*
 import services.crossflow.errors.Targets.*
 
@@ -28,6 +29,8 @@ private object Targets:
   val contractDateTarget:      CrossFlowTarget = CrossFlowTarget(Pages.ContractDate,      Fields.ContractDate)
   val landAuthorityCodeTarget: CrossFlowTarget = CrossFlowTarget(Pages.LandAuthorityCode, Fields.LandAuthorityCode)
   val landPostcodeTarget:      CrossFlowTarget = CrossFlowTarget(Pages.LandPostcode,      Fields.LandPostcode)
+  val leaseTypeTarget:         CrossFlowTarget = CrossFlowTarget(Pages.LeaseType,         Fields.LeaseType)
+
 
 /** Property type must be 01 (Residential). */
 object FirstTimeBuyerRelief extends GuardRule:
@@ -255,6 +258,7 @@ object Cf8_RegularWelshCodes extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     effectiveDate(ua).forall(_.isBefore(Dates.welshActEffective))
 
+  protected override def headingKey = "crossflow.land.heading"
   protected def messageKey              = "crossflow.land.Cf-8.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-8.inline"
 
@@ -275,6 +279,7 @@ object Cf9a_Welsh6996_6997EffDate extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     effectiveDate(ua).forall(!_.isBefore(Dates.welshActEffective))
 
+  protected override def headingKey = "crossflow.land.heading"
   protected def messageKey              = "crossflow.land.Cf-9.welsh6996_6997.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-9.welsh6996_6997.inline"
 
@@ -295,6 +300,7 @@ object Cf9b_Welsh6998EffDate extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     effectiveDate(ua).forall(!_.isBefore(Dates.welshActEffective))
 
+  protected override def headingKey = "crossflow.land.heading"
   protected def messageKey              = "crossflow.land.Cf-9.welsh6998.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-9.welsh6998.inline"
 
@@ -315,6 +321,7 @@ object Cf9c_Welsh6999EffDate extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     effectiveDate(ua).forall(!_.isBefore(Dates.welshActEffective))
 
+  protected override def headingKey = "crossflow.land.heading"
   protected def messageKey              = "crossflow.land.Cf-9.welsh6999.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-9.welsh6999.inline"
 
@@ -335,6 +342,7 @@ object Cf10_Welsh6998ContractDate extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     contractDate(ua).forall(_.isBefore(Dates.welshActEffective))
 
+  protected override def headingKey = "crossflow.land.heading"
   protected def messageKey              = "crossflow.land.Cf-10.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-10.inline"
 
@@ -355,6 +363,7 @@ object Cf11_Welsh6999ContractDate extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     contractDate(ua).forall(!_.isAfter(Dates.welshActDate))
 
+  protected override def headingKey = "crossflow.land.heading"
   protected def messageKey              = "crossflow.land.Cf-11.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-11.inline"
 
@@ -375,6 +384,7 @@ object Cf12_Dummy8998_8999EffDate extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     effectiveDate(ua).forall(!_.isBefore(Dates.cr223Effective))
 
+  protected override def headingKey = "crossflow.land.heading"
   protected def messageKey              = "crossflow.land.Cf-12.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-12.inline"
 
@@ -395,6 +405,7 @@ object Cf13_Dummy8999ContractDate extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     contractDate(ua).forall(_.isBefore(Dates.scotlandActDate))
 
+  protected override def headingKey = "crossflow.land.heading"
   protected def messageKey              = "crossflow.land.Cf-13.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-13.inline"
 
@@ -415,6 +426,7 @@ object Cf14_Dummy8998ContractDate extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     contractDate(ua).forall(_.isBefore(Dates.cr223Effective))
 
+  protected override def headingKey = "crossflow.land.heading"
   protected def messageKey              = "crossflow.land.Cf-14.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-14.inline"
 
@@ -435,6 +447,7 @@ object Cf15_ScottishCodes extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     effectiveDate(ua).forall(_.isBefore(Dates.cr223Effective))
 
+  protected override def headingKey = "crossflow.land.heading"
   protected def messageKey              = "crossflow.land.Cf-15.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-15.inline"
 
@@ -455,9 +468,106 @@ object Cf16_ScottishPostcode extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     effectiveDate(ua).forall(_.isBefore(Dates.cr223Effective))
 
+  protected override def headingKey = "crossflow.land.heading"
   protected def messageKey              = "crossflow.land.Cf-16.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-16.inline"
 
+  /** Cf-5a — When the main land is '01 - Residential' or '04 - Additional residential',
+   * the lease type must be 'R - Residential'. Fires when a residential-type main land
+   * exists but the lease type is something other than R.
+   *
+   * Cf-6 enforces all lands sharing a single property type, so checking the main land
+   * is representative of the whole return.
+   */
+object Cf5a_LeaseRResidential extends GuardRule:
+    val id = "Cf-5a"
+    val affects: ReturnSection = ReturnSection.Lease
+    val inputs: Set[ReturnSection] = Set(ReturnSection.Lease, ReturnSection.Land)
+    val targets: Seq[CrossFlowTarget] = Seq(leaseTypeTarget)
+
+    private val triggeringPropertyTypes: Set[String] = Set(Residential, ResidentialAdditional)
+
+    protected def appliesTo(ua: UserAnswers): Boolean =
+      mainLandPropertyType(ua).exists(triggeringPropertyTypes.contains)
+
+    protected def isValid(ua: UserAnswers): Boolean =
+      isLeaseType(ua, LeaseResidential)
+
+    protected def messageKey = "crossflow.lease.Cf-5a.body"
+
+    protected override def inlineErrorKey = "crossflow.lease.Cf-5a.inline"
+
+    protected override def headingKey = "crossflow.lease.heading"
+
+    protected override def body: CrossFlowBody = WithBullets(
+      messageKey,
+      Seq("crossflow.lease.Cf-5a.bullet1", "crossflow.lease.Cf-5a.bullet2")
+    )
+
+
+  /** Cf-5b — When the main land is '02 - Mixed', the lease type must be 'M - Mixed use'. */
+object Cf5b_LeaseMMixed extends GuardRule:
+    val id = "Cf-5b"
+    val affects: ReturnSection = ReturnSection.Lease
+    val inputs: Set[ReturnSection] = Set(ReturnSection.Lease, ReturnSection.Land)
+    val targets: Seq[CrossFlowTarget] = Seq(leaseTypeTarget)
+
+    protected def appliesTo(ua: UserAnswers): Boolean =
+      mainLandPropertyType(ua).contains(Mixed)
+
+    protected def isValid(ua: UserAnswers): Boolean =
+      isLeaseType(ua, LeaseMixed)
+
+    protected def messageKey = "crossflow.lease.Cf-5b.body"
+
+    protected override def inlineErrorKey = "crossflow.lease.Cf-5b.inline"
+
+    protected override def headingKey = "crossflow.lease.heading"
+
+
+  /** Cf-5c — When the main land is '03 - Non-residential', the lease type must be 'N - Non-residential'. */
+object Cf5c_LeaseNNonResidential extends GuardRule:
+    val id = "Cf-5c"
+    val affects: ReturnSection = ReturnSection.Lease
+    val inputs: Set[ReturnSection] = Set(ReturnSection.Lease, ReturnSection.Land)
+    val targets: Seq[CrossFlowTarget] = Seq(leaseTypeTarget)
+
+    protected def appliesTo(ua: UserAnswers): Boolean =
+      mainLandPropertyType(ua).contains(NonResidential)
+
+    protected def isValid(ua: UserAnswers): Boolean =
+      isLeaseType(ua, LeaseNonResidential)
+
+    protected def messageKey = "crossflow.lease.Cf-5c.body"
+
+    protected override def inlineErrorKey = "crossflow.lease.Cf-5c.inline"
+
+    protected override def headingKey = "crossflow.lease.heading"
+
+object Cf6_MultiLandPropertyTypeMismatch extends LandGuardRule:
+  val id      = "Cf-6"
+  val affects: ReturnSection        = ReturnSection.Land
+  val inputs:  Set[ReturnSection]   = Set(ReturnSection.Land, ReturnSection.Lease, ReturnSection.Transaction)
+  val targets: Seq[CrossFlowTarget] = Seq(propertyTypeTarget)
+
+  protected def appliesTo(land: Land, ua: UserAnswers): Boolean =
+    hasLeaseInvolvement(ua) && landCount(ua) > 1
+
+  protected def isValid(land: Land, ua: UserAnswers): Boolean = {
+    val pts = allLandPropertyTypes(ua)
+    pts.size <= 1
+  }
+  
+  protected def messageKey              = "crossflow.land.Cf-6.body"
+  protected override def inlineErrorKey = "crossflow.land.Cf-6.inline"
+  protected override def headingKey     = "crossflow.land.Cf-6.heading"
+  override val aggregateOnly: Boolean = true
+
+  protected override def body: CrossFlowBody = WithBullets(
+    messageKey,
+    Seq("crossflow.land.Cf-6.bullet1",
+      "crossflow.land.Cf-6.bullet2")
+  )
 
 object F23Rules:
   val all: Set[CrossFlowRule] = Set(
@@ -504,4 +614,17 @@ object F18Rules:
     Cf14_Dummy8998ContractDate,
     Cf15_ScottishCodes,
     Cf16_ScottishPostcode
+  )
+
+
+object F30Rules:
+  val all: Set[CrossFlowRule] = Set(
+    Cf5a_LeaseRResidential,
+    Cf5b_LeaseMMixed,
+    Cf5c_LeaseNNonResidential
+  )
+
+object F30RulesLand:
+  val all: Set[LandRule] = Set(
+    Cf6_MultiLandPropertyTypeMismatch
   )

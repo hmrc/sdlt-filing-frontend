@@ -38,12 +38,12 @@ class Module extends AbstractModule {
   @Provides
   @Singleton
   def crossFlowRules(): Set[CrossFlowRule] = {
-    F23Rules.all ++ F25Rules.all ++ F28Rules.all
+    F23Rules.all ++ F25Rules.all ++ F28Rules.all ++ F30Rules.all
   }
 
   @Provides
   @Singleton
   def landRules(): Set[LandRule] = {
-    F17Rules.all ++ F18Rules.all ++ F24Rules.all
+    F17Rules.all ++ F18Rules.all ++ F24Rules.all ++ F30RulesLand.all
   }
 }

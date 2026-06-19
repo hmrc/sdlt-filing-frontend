@@ -45,9 +45,10 @@ class CrossFlowValidationServiceSpec extends SpecBase with Matchers {
   }
 
   private class AlwaysFireRule(
-                                val id:     String,
-                                val affects: ReturnSection = ReturnSection.Transaction,
-                                targetPage: PageId         = Pages.ReliefReason
+                                val id:                String,
+                                val affects:           ReturnSection = ReturnSection.Transaction,
+                                targetPage:            PageId        = Pages.ReliefReason,
+                                override val aggregateOnly: Boolean  = false
                               ) extends CrossFlowRule {
     val inputs:  Set[ReturnSection]   = Set(affects)
     val targets: Seq[CrossFlowTarget] = Seq(CrossFlowTarget(targetPage, "value"))
@@ -63,9 +64,10 @@ class CrossFlowValidationServiceSpec extends SpecBase with Matchers {
   }
 
   private class AlwaysFireLandRule(
-                                    val id:         String,
-                                    val affects:    ReturnSection = ReturnSection.Land,
-                                    targetPage:     PageId        = Pages.LandAuthorityCode
+                                    val id:                String,
+                                    val affects:           ReturnSection = ReturnSection.Land,
+                                    targetPage:            PageId        = Pages.LandAuthorityCode,
+                                    override val aggregateOnly: Boolean  = false
                                   ) extends LandRule {
     val inputs:  Set[ReturnSection]   = Set(ReturnSection.Land, ReturnSection.Transaction)
     val targets: Seq[CrossFlowTarget] = Seq(CrossFlowTarget(targetPage, "value"))
@@ -81,17 +83,19 @@ class CrossFlowValidationServiceSpec extends SpecBase with Matchers {
   }
 
   private def alwaysFire(
-                          id:         String,
-                          section:    ReturnSection = ReturnSection.Transaction,
-                          targetPage: PageId        = Pages.ReliefReason
-                        ): CrossFlowRule = new AlwaysFireRule(id, section, targetPage)
+                          id:            String,
+                          section:       ReturnSection = ReturnSection.Transaction,
+                          targetPage:    PageId        = Pages.ReliefReason,
+                          aggregateOnly: Boolean       = false
+                        ): CrossFlowRule = new AlwaysFireRule(id, section, targetPage, aggregateOnly)
 
   private def neverFire(id: String): CrossFlowRule = new NeverFireRule(id)
 
   private def alwaysFireLand(
-                              id:         String,
-                              targetPage: PageId = Pages.LandAuthorityCode
-                            ): LandRule = new AlwaysFireLandRule(id, targetPage = targetPage)
+                              id:            String,
+                              targetPage:    PageId  = Pages.LandAuthorityCode,
+                              aggregateOnly: Boolean = false
+                            ): LandRule = new AlwaysFireLandRule(id, targetPage = targetPage, aggregateOnly = aggregateOnly)
 
   private def neverFireLand(id: String): LandRule = new NeverFireLandRule(id)
 
@@ -190,6 +194,58 @@ class CrossFlowValidationServiceSpec extends SpecBase with Matchers {
 
       service.failuresForPage(Pages.ReliefReason, emptyUserAnswers) mustBe Nil
     }
+
+    "must exclude aggregate-only cross-flow rules from inline form binding" in {
+      val service = new CrossFlowValidationService(Set(
+        alwaysFire("INLINE",  targetPage = Pages.ReliefReason),
+        alwaysFire("AGG",     targetPage = Pages.ReliefReason, aggregateOnly = true)
+      ), Set.empty)
+
+      val ids = service.failuresForPage(Pages.ReliefReason, emptyUserAnswers).map(_.ruleId)
+      ids       must contain ("INLINE")
+      ids       must not contain "AGG"
+    }
+
+    "must exclude aggregate-only land rules from inline form binding even when a session land is present" in {
+      val sessionLand = Json.obj(
+        "landCurrent" -> Json.obj(
+          "landId"                           -> "SESSION-LAND",
+          "propertyType"                     -> "03",
+          "landInterestTransferredOrCreated" -> "FGS",
+          "landAddress" -> Json.obj(
+            "houseNumber"      -> JsNull,
+            "line1"            -> "1 Test Street",
+            "line2"            -> "Test Town",
+            "line3"            -> JsNull,
+            "line4"            -> JsNull,
+            "line5"            -> JsNull,
+            "postcode"         -> "AB1 2CD",
+            "country" -> Json.obj(
+              "code" -> "GB",
+              "name" -> "UK"
+            ),
+            "addressValidated" -> true
+          ),
+          "localAuthorityCode"              -> "0220",
+          "landRegisteredHmRegistry"        -> false,
+          "landAddNlpgUprn"                 -> false,
+          "landSendingPlanByPost"           -> false,
+          "landMineralsOrMineralRights"     -> false,
+          "agriculturalOrDevelopmentalLand" -> false
+        )
+      )
+
+      val ua = emptyUserAnswers.copy(data = sessionLand)
+
+      val service = new CrossFlowValidationService(Set.empty, Set(
+        alwaysFireLand("INLINE-LAND", targetPage = Pages.LandAuthorityCode),
+        alwaysFireLand("AGG-LAND",    targetPage = Pages.LandAuthorityCode, aggregateOnly = true)
+      ))
+
+      val ids = service.failuresForPage(Pages.LandAuthorityCode, ua).map(_.ruleId)
+      ids       must contain ("INLINE-LAND")
+      ids       must not contain "AGG-LAND"
+    }
   }
 
   "sectionStatuses" - {
@@ -233,6 +289,21 @@ class CrossFlowValidationServiceSpec extends SpecBase with Matchers {
 
       val keys = service.sectionStatuses(emptyUserAnswers)(ReturnSection.Transaction).messageKeys
       keys must contain allOf ("R1.message", "R2.message")
+    }
+
+    "must include aggregate-only rules in section status (they only opt out of inline binding)" in {
+      val landA = Land(landID = Some("LND001"))
+      val ua    = emptyUserAnswers.copy(
+        fullReturn = Some(emptyFullReturn.copy(land = Some(Seq(landA))))
+      )
+
+      val service = new CrossFlowValidationService(Set.empty, Set(
+        alwaysFireLand("AGG-LAND", targetPage = Pages.LandAuthorityCode, aggregateOnly = true)
+      ))
+
+      val statuses = service.sectionStatuses(ua)
+      statuses.contains(ReturnSection.Land)    mustBe true
+      statuses(ReturnSection.Land).ruleIds     must contain ("AGG-LAND")
     }
   }
 
@@ -633,6 +704,132 @@ class CrossFlowValidationServiceSpec extends SpecBase with Matchers {
       resultIds    must contain ("LND001")
       resultIds    must not contain "SESSION-ONLY"
       grouped.size mustBe 1
+    }
+  }
+
+  "landFailuresOnly" - {
+
+    "must return an empty list when no land rules are registered" in {
+      val service = new CrossFlowValidationService(Set.empty, Set.empty)
+
+      service.landFailuresOnly(Set("Cf-6"), emptyUserAnswers) mustBe Nil
+    }
+
+    "must return only failures whose ruleId is in the given set" in {
+      val landA = Land(landID = Some("LND001"))
+      val ua    = emptyUserAnswers.copy(
+        fullReturn = Some(emptyFullReturn.copy(land = Some(Seq(landA))))
+      )
+
+      val service = new CrossFlowValidationService(Set.empty, Set(
+        alwaysFireLand("Cf-6"),
+        alwaysFireLand("Cf-9a")
+      ))
+
+      val result = service.landFailuresOnly(Set("Cf-6"), ua)
+      result must have size 1
+      result.head._2.map(_.ruleId) mustBe Seq("Cf-6")
+    }
+
+    "must filter out lands whose failures have no matching ruleIds" in {
+      val landA = Land(landID = Some("LND001"))
+      val ua    = emptyUserAnswers.copy(
+        fullReturn = Some(emptyFullReturn.copy(land = Some(Seq(landA))))
+      )
+
+      val service = new CrossFlowValidationService(Set.empty, Set(
+        alwaysFireLand("Cf-9a")
+      ))
+
+      service.landFailuresOnly(Set("Cf-6"), ua) mustBe Nil
+    }
+
+    "must support filtering across multiple ruleIds" in {
+      val landA = Land(landID = Some("LND001"))
+      val ua    = emptyUserAnswers.copy(
+        fullReturn = Some(emptyFullReturn.copy(land = Some(Seq(landA))))
+      )
+
+      val service = new CrossFlowValidationService(Set.empty, Set(
+        alwaysFireLand("Cf-6"),
+        alwaysFireLand("Cf-9a"),
+        alwaysFireLand("Cf-15")
+      ))
+
+      val result = service.landFailuresOnly(Set("Cf-6", "Cf-15"), ua)
+      result.head._2.map(_.ruleId) must contain allOf ("Cf-6", "Cf-15")
+      result.head._2.map(_.ruleId) must not contain "Cf-9a"
+    }
+  }
+
+  "landFailuresExcluding" - {
+
+    "must return an empty list when no land rules are registered" in {
+      val service = new CrossFlowValidationService(Set.empty, Set.empty)
+
+      service.landFailuresExcluding(Set("Cf-6"), emptyUserAnswers) mustBe Nil
+    }
+
+    "must return all failures except those in the given set" in {
+      val landA = Land(landID = Some("LND001"))
+      val ua    = emptyUserAnswers.copy(
+        fullReturn = Some(emptyFullReturn.copy(land = Some(Seq(landA))))
+      )
+
+      val service = new CrossFlowValidationService(Set.empty, Set(
+        alwaysFireLand("Cf-6"),
+        alwaysFireLand("Cf-9a")
+      ))
+
+      val result = service.landFailuresExcluding(Set("Cf-6"), ua)
+      result must have size 1
+      result.head._2.map(_.ruleId) mustBe Seq("Cf-9a")
+    }
+
+    "must filter out lands whose failures are all in the excluded set" in {
+      val landA = Land(landID = Some("LND001"))
+      val ua    = emptyUserAnswers.copy(
+        fullReturn = Some(emptyFullReturn.copy(land = Some(Seq(landA))))
+      )
+
+      val service = new CrossFlowValidationService(Set.empty, Set(
+        alwaysFireLand("Cf-6")
+      ))
+
+      service.landFailuresExcluding(Set("Cf-6"), ua) mustBe Nil
+    }
+
+    "must support excluding multiple ruleIds" in {
+      val landA = Land(landID = Some("LND001"))
+      val ua    = emptyUserAnswers.copy(
+        fullReturn = Some(emptyFullReturn.copy(land = Some(Seq(landA))))
+      )
+
+      val service = new CrossFlowValidationService(Set.empty, Set(
+        alwaysFireLand("Cf-6"),
+        alwaysFireLand("Cf-9a"),
+        alwaysFireLand("Cf-15")
+      ))
+
+      val result = service.landFailuresExcluding(Set("Cf-6", "Cf-9a"), ua)
+      result.head._2.map(_.ruleId) mustBe Seq("Cf-15")
+    }
+
+    "must keep a land entry that has both excluded and non-excluded failures" in {
+      val landA = Land(landID = Some("LND001"))
+      val ua    = emptyUserAnswers.copy(
+        fullReturn = Some(emptyFullReturn.copy(land = Some(Seq(landA))))
+      )
+
+      val service = new CrossFlowValidationService(Set.empty, Set(
+        alwaysFireLand("Cf-6"),
+        alwaysFireLand("Cf-9a")
+      ))
+
+      val result = service.landFailuresExcluding(Set("Cf-6"), ua)
+      result.head._1.landID                must contain ("LND001")
+      result.head._2.map(_.ruleId)         must contain ("Cf-9a")
+      result.head._2.map(_.ruleId)         must not contain "Cf-6"
     }
   }
 

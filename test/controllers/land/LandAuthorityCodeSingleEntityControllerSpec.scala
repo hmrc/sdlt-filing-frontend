@@ -92,10 +92,27 @@ class LandAuthorityCodeSingleEntityControllerSpec extends SpecBase with MockitoS
     headingKey     = "crossflow.land.Cf-3.heading"
   )
 
+  /** Cf-6 — F30, multi-land property type mismatch with lease involvement.
+   *  Targets land property type page. Aggregate-only; should be filtered out
+   *  by `landFailuresExcluding(Set("Cf-6"), ...)` before reaching this controller. */
+  private val cf6Failure = CrossFlowFailure(
+    ruleId         = "Cf-6",
+    affects        = ReturnSection.Land,
+    messageKey     = "crossflow.land.Cf-6.body",
+    inlineErrorKey = "crossflow.land.Cf-6.inline",
+    body           = CrossFlowBody.Single("crossflow.land.Cf-6.body"),
+    targets        = Seq(CrossFlowTarget(Pages.LandPropertyType, "value")),
+    headingKey     = "crossflow.land.Cf-6.heading"
+  )
+
+  /** Mimics the real dispatcher: takes all failures and applies the rule-id filter
+   *  the same way `CrossFlowValidationService.landFailuresExcluding` does. */
   private def crossFlowWith(failures: Seq[(Land, Seq[CrossFlowFailure])]) =
     new CrossFlowValidationService(Set.empty, Set.empty) {
-      override def landFailuresGrouped(ua: UserAnswers): Seq[(Land, Seq[CrossFlowFailure])] =
+      override def landFailuresExcluding(ruleIds: Set[String], ua: UserAnswers): Seq[(Land, Seq[CrossFlowFailure])] =
         failures
+          .map { case (land, fs) => land -> fs.filterNot(f => ruleIds.contains(f.ruleId)) }
+          .filter(_._2.nonEmpty)
     }
 
   private def appWith(
@@ -286,6 +303,33 @@ class LandAuthorityCodeSingleEntityControllerSpec extends SpecBase with MockitoS
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+      "must redirect to ReturnTaskList when the only failure for the land is Cf-6" in {
+        val crossFlow   = crossFlowWith(Seq((testLand, Seq(cf6Failure))))
+        val application = appWith(testUserAnswers, crossFlow)
+
+        running(application) {
+          val request = FakeRequest(GET, singleEntityRoute)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        }
+      }
+
+      "must surface a non-Cf-6 failure even when Cf-6 is also present for the land" in {
+        val crossFlow   = crossFlowWith(Seq((testLand, Seq(cf6Failure, cf9aFailure))))
+        val application = appWith(testUserAnswers, crossFlow)
+
+        running(application) {
+          val request = FakeRequest(GET, singleEntityRoute)
+          val result  = route(application, request).value
+          val content = contentAsString(result)
+
+          status(result) mustEqual OK
+          content must include(messages(application)("crossflow.land.Cf-9.welsh6996_6997.body"))
         }
       }
     }

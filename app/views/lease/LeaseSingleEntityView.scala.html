@@ -14,49 +14,51 @@
  * limitations under the License.
  *@
 
-@import views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import viewmodels.CaptionSize.Large
 @import services.crossflow.CrossFlowBody
+@import services.crossflow.CrossFlowBody.*
+@import views.html.components.h1
+@import views.html.components.Caption
+@import views.html.components.Paragraph
 
 @this(
         layout: templates.Layout,
         govukButton: GovukButton,
-        p: Paragraph,
-        h1: h1,
-        caption: Caption
+        p:           Paragraph
 )
 
 @(
-        heading:     String,
+        headingKey:  String,
         body:        CrossFlowBody,
         ctaKey:      String,
         continueUrl: String
-)(
-        implicit request: Request[_],
-        messages: Messages
-)
+)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(heading), showBackLink = true) {
+@layout(pageTitle = titleNoForm(messages(headingKey))) {
 
-    @caption(messages("site.land.caption"), size = Large)
-    @h1(heading)
+    <h2 class="govuk-caption-l hmrc-caption-l">
+        <span class="govuk-visually-hidden">@messages("crossflow.lease.section.visuallyHidden")</span>
+        @messages("crossflow.lease.section")
+    </h2>
+
+    <h1 class="govuk-heading-l">@messages(headingKey)</h1>
 
     @body match {
+
         case CrossFlowBody.Single(messageKey) => {
-            @p(messageKey)
+            <p class="govuk-body">@messages(messageKey)</p>
         }
+
         case CrossFlowBody.WithBullets(leadKey, bulletKeys) => {
             @p(leadKey)
-            <ul class="govuk-list govuk-list--bullet">
-            @for(key <- bulletKeys) {
-                <li>@messages(key)</li>
+                <ul class="govuk-list govuk-list--bullet">
+                @for(key <- bulletKeys) {
+                    <li>@messages(key)</li>
+                }
+                </ul>
             }
-            </ul>
-        }
     }
 
-    @p(ctaKey)
+    <p class="govuk-body">@messages(ctaKey)</p>
 
     @govukButton(
         ButtonViewModel(messages("site.continue")).asLink(continueUrl)

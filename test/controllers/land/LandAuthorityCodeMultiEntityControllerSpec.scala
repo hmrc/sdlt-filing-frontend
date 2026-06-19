@@ -44,7 +44,7 @@ class LandAuthorityCodeMultiEntityControllerSpec extends SpecBase with MockitoSu
 
   private def userAnswersWithLands(lands: Seq[Land]): UserAnswers =
     emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(land = Some(lands))))
-  
+
   private val cf9aFailure = CrossFlowFailure(
     ruleId         = "Cf-9a",
     affects        = ReturnSection.Land,
@@ -54,7 +54,7 @@ class LandAuthorityCodeMultiEntityControllerSpec extends SpecBase with MockitoSu
     targets        = Seq(CrossFlowTarget(Pages.LandAuthorityCode, "value")),
     headingKey     = "crossflow.land.heading"
   )
-  
+
   private val cf3Failure = CrossFlowFailure(
     ruleId         = "Cf-3",
     affects        = ReturnSection.Land,
@@ -65,13 +65,27 @@ class LandAuthorityCodeMultiEntityControllerSpec extends SpecBase with MockitoSu
     headingKey     = "crossflow.land.Cf-3.heading"
   )
 
-  private def crossFlowWithFailures(failures: Seq[(Land, Seq[CrossFlowFailure])]) =
+  private val cf6Failure = CrossFlowFailure(
+    ruleId         = "Cf-6",
+    affects        = ReturnSection.Land,
+    messageKey     = "crossflow.land.Cf-6.body",
+    inlineErrorKey = "crossflow.land.Cf-6.inline",
+    body           = CrossFlowBody.Single("crossflow.land.Cf-6.body"),
+    targets        = Seq(CrossFlowTarget(Pages.LandPropertyType, "value")),
+    headingKey     = "crossflow.land.Cf-6.heading"
+  )
+
+  /** Mimics the real dispatcher: takes all failures and applies the rule-id exclusion
+   *  filter the same way `CrossFlowValidationService.landFailuresExcluding` does. */
+  private def crossFlowWithAllFailures(failures: Seq[(Land, Seq[CrossFlowFailure])]) =
     new CrossFlowValidationService(Set.empty, Set.empty) {
-      override def landFailuresGrouped(ua: UserAnswers): Seq[(Land, Seq[CrossFlowFailure])] =
+      override def landFailuresExcluding(ruleIds: Set[String], ua: UserAnswers): Seq[(Land, Seq[CrossFlowFailure])] =
         failures
+          .map { case (land, fs) => land -> fs.filterNot(f => ruleIds.contains(f.ruleId)) }
+          .filter(_._2.nonEmpty)
     }
 
-  private val crossFlowNoFailures = crossFlowWithFailures(Nil)
+  private val crossFlowNoFailures = crossFlowWithAllFailures(Nil)
 
   "LandAuthorityCodeMultiEntity Controller" - {
 
@@ -97,7 +111,7 @@ class LandAuthorityCodeMultiEntityControllerSpec extends SpecBase with MockitoSu
       "must redirect to the single-entity controller when exactly one land has failures" in {
 
         val userAnswers = userAnswersWithLands(Seq(landA))
-        val stub = crossFlowWithFailures(Seq((landA, Seq(cf9aFailure))))
+        val stub = crossFlowWithAllFailures(Seq((landA, Seq(cf9aFailure))))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[CrossFlowValidationService].toInstance(stub))
@@ -117,7 +131,7 @@ class LandAuthorityCodeMultiEntityControllerSpec extends SpecBase with MockitoSu
       "must redirect to the single-entity controller when one land has a Cf-3 (property type) failure" in {
 
         val userAnswers = userAnswersWithLands(Seq(landA))
-        val stub = crossFlowWithFailures(Seq((landA, Seq(cf3Failure))))
+        val stub = crossFlowWithAllFailures(Seq((landA, Seq(cf3Failure))))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[CrossFlowValidationService].toInstance(stub))
@@ -138,7 +152,7 @@ class LandAuthorityCodeMultiEntityControllerSpec extends SpecBase with MockitoSu
 
         val landNoId    = Land(landID = None, address1 = Some("Anonymous Lane"))
         val userAnswers = userAnswersWithLands(Seq(landNoId))
-        val stub        = crossFlowWithFailures(Seq((landNoId, Seq(cf9aFailure))))
+        val stub        = crossFlowWithAllFailures(Seq((landNoId, Seq(cf9aFailure))))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[CrossFlowValidationService].toInstance(stub))
@@ -157,7 +171,7 @@ class LandAuthorityCodeMultiEntityControllerSpec extends SpecBase with MockitoSu
       "must return OK and render the multi-entity view when multiple lands have failures" in {
 
         val userAnswers = userAnswersWithLands(Seq(landA, landB, landC))
-        val stub = crossFlowWithFailures(Seq(
+        val stub = crossFlowWithAllFailures(Seq(
           (landA, Seq(cf9aFailure)),
           (landB, Seq(cf9aFailure))
         ))
@@ -178,7 +192,7 @@ class LandAuthorityCodeMultiEntityControllerSpec extends SpecBase with MockitoSu
       "must render the multi-entity view when multiple lands have Cf-3 property-type failures" in {
 
         val userAnswers = userAnswersWithLands(Seq(landA, landB, landC))
-        val stub = crossFlowWithFailures(Seq(
+        val stub = crossFlowWithAllFailures(Seq(
           (landA, Seq(cf3Failure)),
           (landB, Seq(cf3Failure))
         ))
@@ -203,7 +217,7 @@ class LandAuthorityCodeMultiEntityControllerSpec extends SpecBase with MockitoSu
       "must render the multi-entity view when lands fail with mixed rule types (Cf-3 and Cf-9a)" in {
 
         val userAnswers = userAnswersWithLands(Seq(landA, landB, landC))
-        val stub = crossFlowWithFailures(Seq(
+        val stub = crossFlowWithAllFailures(Seq(
           (landA, Seq(cf3Failure)),
           (landB, Seq(cf9aFailure))
         ))
@@ -227,7 +241,7 @@ class LandAuthorityCodeMultiEntityControllerSpec extends SpecBase with MockitoSu
       "must render the multi-entity heading and paragraph when multiple lands have failures" in {
 
         val userAnswers = userAnswersWithLands(Seq(landA, landB, landC))
-        val stub = crossFlowWithFailures(Seq(
+        val stub = crossFlowWithAllFailures(Seq(
           (landA, Seq(cf9aFailure)),
           (landB, Seq(cf9aFailure))
         ))
@@ -251,7 +265,7 @@ class LandAuthorityCodeMultiEntityControllerSpec extends SpecBase with MockitoSu
       "must render each offending land in the summary list" in {
 
         val userAnswers = userAnswersWithLands(Seq(landA, landB, landC))
-        val stub = crossFlowWithFailures(Seq(
+        val stub = crossFlowWithAllFailures(Seq(
           (landA, Seq(cf9aFailure)),
           (landB, Seq(cf9aFailure))
         ))
@@ -270,6 +284,49 @@ class LandAuthorityCodeMultiEntityControllerSpec extends SpecBase with MockitoSu
           content must include("Castle Street")
           content must include("Cathays Terrace")
           content must not include "St Mary Street"
+        }
+      }
+
+      "must not surface Cf-6 failures (those go to the property type multi-entity flow)" in {
+
+        val userAnswers = userAnswersWithLands(Seq(landA, landB))
+        val stub = crossFlowWithAllFailures(Seq(
+          (landA, Seq(cf6Failure)),
+          (landB, Seq(cf6Failure))
+        ))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[CrossFlowValidationService].toInstance(stub))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, multiEntityRoute)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad(None).url
+        }
+      }
+
+      "must surface a non-Cf-6 failure even when Cf-6 is also present" in {
+
+        val userAnswers = userAnswersWithLands(Seq(landA, landB))
+        val stub = crossFlowWithAllFailures(Seq(
+          (landA, Seq(cf6Failure, cf9aFailure)),
+          (landB, Seq(cf6Failure))
+        ))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[CrossFlowValidationService].toInstance(stub))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, multiEntityRoute)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual
+            controllers.land.routes.LandAuthorityCodeSingleEntityController.onPageLoad("LND001").url
         }
       }
 

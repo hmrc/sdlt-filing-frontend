@@ -19,19 +19,23 @@ package viewmodels.tasklist
 import config.FrontendAppConfig
 import models.FullReturn
 import play.api.i18n.Messages
+import services.crossflow.{ReturnSection, SectionStatus}
 
 import javax.inject.Singleton
 
 @Singleton
 object LeaseTaskList {
 
-  def build(fullReturn: FullReturn)
+  val noFailures: SectionStatus =
+    SectionStatus(ReturnSection.Lease, hasFailures = false, ruleIds = Nil, messageKeys = Nil, targets = Nil)
+
+  def build(fullReturn: FullReturn, status: SectionStatus = noFailures)
            (implicit messages: Messages,
             appConfig: FrontendAppConfig): TaskListSection =
     TaskListSection(
       heading = messages("tasklist.leaseQuestion.heading"),
-      rows = Seq(
-        buildLeaseRow(fullReturn)
+      rows    = Seq(
+        buildLeaseRow(fullReturn, status)
       )
     )
 
@@ -39,31 +43,34 @@ object LeaseTaskList {
     fullReturn.lease.exists(_.leaseType.isDefined)
     //TODO ADD ALL REQUIRED FIELDS FOR LEASE
   }
-  
-  def leaseRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
-    val url = fullReturn.lease match {
-      case Some(lease) if lease.leaseType.isDefined =>
-        controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad().url
-      case _ =>
-        controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
-    }
+
+  def leaseRowBuilder(fullReturn: FullReturn, status: SectionStatus)
+                     (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
+
+    val cyaUrl   = controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad().url
+    val startUrl = controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
+    val errorUrl = controllers.lease.routes.LeaseSingleEntityController.onPageLoad().url
+
+    val url =
+      if (status.hasFailures)            errorUrl
+      else if (isLeaseComplete(fullReturn)) cyaUrl
+      else                                 startUrl
 
     TaskListRowBuilder(
       canEdit = {
         case TLCompleted => true
-        case _ => true
+        case _           => true
       },
-      messageKey = _ => "tasklist.leaseQuestion.details",
-      url = _ => _ => {
-        url
-      },
-      tagId = "leaseQuestionDetailRow",
-      checks = scheme => Seq(isLeaseComplete(fullReturn)),
+      messageKey    = _ => "tasklist.leaseQuestion.details",
+      url           = _ => _ => url,
+      tagId         = "leaseQuestionDetailRow",
+      checks        = scheme => Seq(isLeaseComplete(fullReturn)),
+      invalid       = _ => status.hasFailures,
       prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
     )
   }
-  
-  def buildLeaseRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig) : TaskListSectionRow =
-    leaseRowBuilder(fullReturn).build(fullReturn)
 
+  def buildLeaseRow(fullReturn: FullReturn, status: SectionStatus = noFailures)
+                   (implicit appConfig: FrontendAppConfig): TaskListSectionRow =
+    leaseRowBuilder(fullReturn, status).build(fullReturn)
 }

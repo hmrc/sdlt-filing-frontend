@@ -24,6 +24,8 @@ import pages.lease.TypeOfLeasePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.crossflow.Pages
+import services.crossflow.fields.{CrossFlowFormSupport, CrossFlowValidationService}
 import services.lease.LeaseService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.lease.TypeOfLeaseView
@@ -40,6 +42,7 @@ class TypeOfLeaseController @Inject()(
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        formProvider: TypeOfLeaseFormProvider,
+                                       crossFlow: CrossFlowValidationService,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: TypeOfLeaseView,
                                        leaseService: LeaseService
@@ -54,7 +57,7 @@ class TypeOfLeaseController @Inject()(
         case Some(redirect) => Redirect(redirect)
         case None =>
           val preparedForm = request.userAnswers.get(TypeOfLeasePage) match {
-            case None => form
+            case None        => form
             case Some(value) => form.fill(value)
           }
           Ok(view(preparedForm, mode))
@@ -64,24 +67,17 @@ class TypeOfLeaseController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+      CrossFlowFormSupport.bindFromRequestWithCrossFlow(form, Pages.LeaseType, crossFlow) { value =>
+        request.userAnswers.set(TypeOfLeasePage, value).get
+      } match {
 
-        value =>
+        case Left(formWithErrors) =>
+          Future.successful(BadRequest(view(formWithErrors, mode)))
+
+        case Right((_, updatedAnswers)) =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(TypeOfLeasePage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield {
-            val result = leaseService.leasePropertyLandPropertyValidation(updatedAnswers, value)
-
-            result match {
-              case LeaseService.Valid => Redirect(navigator.nextPage(TypeOfLeasePage, mode, updatedAnswers))
-              case LeaseService.InvalidResidentialRule => BadRequest(view(form.withError("value", "lease.typeOfLease.error.invalidResidentialRule"), mode))
-              case LeaseService.InvalidMixedRule => BadRequest(view(form.withError("value", "lease.typeOfLease.error.invalidMixedRule"), mode))
-              case LeaseService.InvalidNonResidentialRule => BadRequest(view(form.withError("value", "lease.typeOfLease.error.invalidNonResidentialRule"), mode))
-            }
-          }
-      )
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield Redirect(navigator.nextPage(TypeOfLeasePage, mode, updatedAnswers))
+      }
   }
 }
