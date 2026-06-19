@@ -91,7 +91,7 @@ object FreeportRelief extends GuardRule:
   val id      = "F23-36"
   val affects: ReturnSection        = ReturnSection.Transaction
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Transaction)
-  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget, effectiveDateTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget)
 
   protected def appliesTo(ua: UserAnswers): Boolean = isClaimingRelief(ua) && isReason(ua, "36")
   protected def isValid(ua: UserAnswers):   Boolean = effectiveDateAcceptable(ua)(within(_, Dates.freeportStart, Dates.freeportEnd))
@@ -104,7 +104,7 @@ object InvestmentZoneRelief extends GuardRule:
   val id      = "F23-37"
   val affects: ReturnSection        = ReturnSection.Transaction
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Transaction)
-  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget, effectiveDateTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget)
 
   protected def appliesTo(ua: UserAnswers): Boolean = isClaimingRelief(ua) && isReason(ua, "37")
   protected def isValid(ua: UserAnswers):   Boolean = effectiveDateAcceptable(ua)(within(_, Dates.investmentZoneStart, Dates.investmentZoneEnd))
@@ -117,7 +117,7 @@ object SeedingRelief extends GuardRule:
   val id      = "F23-38"
   val affects: ReturnSection        = ReturnSection.Transaction
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Transaction)
-  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget, effectiveDateTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget)
 
   protected def appliesTo(ua: UserAnswers): Boolean = isClaimingRelief(ua) && isReason(ua, "38")
   protected def isValid(ua: UserAnswers):   Boolean = effectiveDateAcceptable(ua)(!_.isBefore(Dates.reservedInvestorsFund))
@@ -145,7 +145,7 @@ object F25EffectiveDate extends GuardRule:
   val id      = "F25-effective"
   val affects: ReturnSection        = ReturnSection.Transaction
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Transaction)
-  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget, effectiveDateTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget)
 
   protected def appliesTo(ua: UserAnswers): Boolean = isClaimingRelief(ua) && isReason(ua, "33")
   protected def isValid(ua: UserAnswers):   Boolean = effectiveDateAcceptable(ua)(_.isBefore(Dates.mdrEffectiveDateCutOff))
@@ -158,7 +158,7 @@ object F25ContractDate extends GuardRule:
   val id      = "F25-contract"
   val affects: ReturnSection        = ReturnSection.Transaction
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Transaction)
-  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget, contractDateTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget)
 
   protected def appliesTo(ua: UserAnswers): Boolean = isClaimingRelief(ua) && isReason(ua, "33")
   protected def isValid(ua: UserAnswers):   Boolean = contractDate(ua).exists(_.isBefore(Dates.mdrLatestContractDate))
@@ -250,7 +250,7 @@ object Cf8_RegularWelshCodes extends LandGuardRule:
   val id      = "Cf-8"
   val affects: ReturnSection        = ReturnSection.Land
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Land, ReturnSection.Transaction)
-  val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget, effectiveDateTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget)
 
   protected def appliesTo(land: Land, ua: UserAnswers): Boolean =
     land.localAuthorityNumber.exists(welshRegularCodes.contains)
@@ -271,7 +271,7 @@ object Cf9a_Welsh6996_6997EffDate extends LandGuardRule:
   val id      = "Cf-9a"
   val affects: ReturnSection        = ReturnSection.Land
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Land, ReturnSection.Transaction)
-  val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget, effectiveDateTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget)
 
   protected def appliesTo(land: Land, ua: UserAnswers): Boolean =
     land.localAuthorityNumber.exists(welshSpecial6996_6997.contains)
@@ -292,7 +292,7 @@ object Cf9b_Welsh6998EffDate extends LandGuardRule:
   val id      = "Cf-9b"
   val affects: ReturnSection        = ReturnSection.Land
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Land, ReturnSection.Transaction)
-  val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget, effectiveDateTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget)
 
   protected def appliesTo(land: Land, ua: UserAnswers): Boolean =
     land.localAuthorityNumber.contains(welshSpecial6998)
@@ -313,7 +313,7 @@ object Cf9c_Welsh6999EffDate extends LandGuardRule:
   val id      = "Cf-9c"
   val affects: ReturnSection        = ReturnSection.Land
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Land, ReturnSection.Transaction)
-  val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget, effectiveDateTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget)
 
   protected def appliesTo(land: Land, ua: UserAnswers): Boolean =
     land.localAuthorityNumber.contains(welshSpecial6999)
@@ -334,7 +334,7 @@ object Cf10_Welsh6998ContractDate extends LandGuardRule:
   val id      = "Cf-10"
   val affects: ReturnSection        = ReturnSection.Land
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Land, ReturnSection.Transaction)
-  val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget, contractDateTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget)
 
   protected def appliesTo(land: Land, ua: UserAnswers): Boolean =
     land.localAuthorityNumber.contains(welshSpecial6998)
@@ -355,7 +355,7 @@ object Cf11_Welsh6999ContractDate extends LandGuardRule:
   val id      = "Cf-11"
   val affects: ReturnSection        = ReturnSection.Land
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Land, ReturnSection.Transaction)
-  val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget, contractDateTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget)
 
   protected def appliesTo(land: Land, ua: UserAnswers): Boolean =
     land.localAuthorityNumber.contains(welshSpecial6999)
@@ -376,7 +376,7 @@ object Cf12_Dummy8998_8999EffDate extends LandGuardRule:
   val id      = "Cf-12"
   val affects: ReturnSection        = ReturnSection.Land
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Land, ReturnSection.Transaction)
-  val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget, effectiveDateTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget)
 
   protected def appliesTo(land: Land, ua: UserAnswers): Boolean =
     land.localAuthorityNumber.exists(Set("8998", "8999").contains)
@@ -397,7 +397,7 @@ object Cf13_Dummy8999ContractDate extends LandGuardRule:
   val id      = "Cf-13"
   val affects: ReturnSection        = ReturnSection.Land
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Land, ReturnSection.Transaction)
-  val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget, contractDateTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget)
 
   protected def appliesTo(land: Land, ua: UserAnswers): Boolean =
     land.localAuthorityNumber.contains("8999")
@@ -418,7 +418,7 @@ object Cf14_Dummy8998ContractDate extends LandGuardRule:
   val id      = "Cf-14"
   val affects: ReturnSection        = ReturnSection.Land
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Land, ReturnSection.Transaction)
-  val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget, contractDateTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget)
 
   protected def appliesTo(land: Land, ua: UserAnswers): Boolean =
     land.localAuthorityNumber.contains("8998")
@@ -439,7 +439,7 @@ object Cf15_ScottishCodes extends LandGuardRule:
   val id      = "Cf-15"
   val affects: ReturnSection        = ReturnSection.Land
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Land, ReturnSection.Transaction)
-  val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget, effectiveDateTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget)
 
   protected def appliesTo(land: Land, ua: UserAnswers): Boolean =
     land.localAuthorityNumber.exists(scottishCodePattern.matches)
@@ -460,7 +460,7 @@ object Cf16_ScottishPostcode extends LandGuardRule:
   val id      = "Cf-16"
   val affects: ReturnSection        = ReturnSection.Land
   val inputs:  Set[ReturnSection]   = Set(ReturnSection.Land, ReturnSection.Transaction)
-  val targets: Seq[CrossFlowTarget] = Seq(landPostcodeTarget, effectiveDateTarget)
+  val targets: Seq[CrossFlowTarget] = Seq(landPostcodeTarget)
 
   protected def appliesTo(land: Land, ua: UserAnswers): Boolean =
     land.postcode.exists(isScottishPostcode)
@@ -468,7 +468,7 @@ object Cf16_ScottishPostcode extends LandGuardRule:
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
     effectiveDate(ua).forall(_.isBefore(Dates.cr223Effective))
 
-  protected override def headingKey = "crossflow.land.heading"
+  protected override def headingKey     = "crossflow.land.Cf-16.heading"
   protected def messageKey              = "crossflow.land.Cf-16.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-16.inline"
 

@@ -2141,7 +2141,6 @@ crossflow.land.Cf-6.column.land         = Land
 crossflow.land.Cf-6.column.propertyType = Type of property
 crossflow.land.Cf-6.column.actions      = Actions
 
-
 crossflow.lease.Cf-5a.cta = Select ‘R - Residential’ as the type of lease.
 crossflow.lease.Cf-5b.cta = Select ‘M - Mixed use’ as the type of lease.
 crossflow.lease.Cf-5c.cta = Select ‘N - Non-residential’ as the type of lease.
