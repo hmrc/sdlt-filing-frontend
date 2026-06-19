@@ -41,7 +41,7 @@ object PurchaserAndVendorConnectedSummary  {
             value   = value,
             actions = Seq(
               ActionItemViewModel("site.change", changeRoute.url)
-                .withVisuallyHiddenText(messages("purchaser.purchaserAndVendorConnected.change.hidden"))
+                .withVisuallyHiddenText(messages("purchaser.purchaserAndVendorConnected.change.hidden",answers.flatMap(_.get(NameOfPurchaserPage)).map(_.fullName).getOrElse("")))
             )
           )
         )

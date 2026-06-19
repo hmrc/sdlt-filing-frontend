@@ -57,7 +57,7 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("prelim.purchaser.name.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("prelim.purchaser.name.change.hidden.purchaser")
         }
       }
 
@@ -87,7 +87,7 @@ class PurchaserSurnameOrCompanyNameSummarySpec extends SpecBase {
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.preliminary.routes.PurchaserSurnameOrCompanyNameController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("prelim.purchaser.name.change.hidden")
+          result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("prelim.purchaser.name.change.hidden.company")
         }
       }
 

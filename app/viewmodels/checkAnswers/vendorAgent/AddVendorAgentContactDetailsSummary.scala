@@ -40,7 +40,7 @@ object AddVendorAgentContactDetailsSummary {
             value = ValueViewModel(value),
             actions = Seq(
               ActionItemViewModel("site.change", changeRoute.url)
-                .withVisuallyHiddenText(messages("vendorAgent.addVendorAgentContactDetails.change.hidden"))
+                .withVisuallyHiddenText(messages("vendorAgent.addVendorAgentContactDetails.change.hidden", agentName))
             )
           )
         )

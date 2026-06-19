@@ -44,7 +44,7 @@ object PurchaserSurnameOrCompanyNameSummary  {
             value   = ValueViewModel(HtmlContent(HtmlFormat.escape(answer).toString)),
             actions = Seq(
               ActionItemViewModel("site.change", changeRoute.url)
-                .withVisuallyHiddenText(messages("prelim.purchaser.name.change.hidden"))
+                .withVisuallyHiddenText(messages(s"prelim.purchaser.name.change.hidden.${typeOfPurchaser}"))
             )
           )
         )

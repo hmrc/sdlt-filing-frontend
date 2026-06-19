@@ -40,7 +40,7 @@ object ConsiderationsAffectedUncertainSummary  {
           value = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", changeRoute.url)
-              .withVisuallyHiddenText(messages("transaction.purchaserEligibleToClaimRelief.change.hidden"))
+              .withVisuallyHiddenText(messages("transaction.considerationsAffectedUncertain.change.hidden"))
           )
         )
       )

@@ -47,7 +47,7 @@ class ConsiderationsAffectedUncertainSummarySpec extends SpecBase {
               r.actions.get.items.size mustEqual 1
               r.actions.get.items.head.href mustEqual controllers.transaction.routes.ConsiderationsAffectedUncertainController.onPageLoad(CheckMode).url
               r.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-              r.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.purchaserEligibleToClaimRelief.change.hidden")
+              r.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.considerationsAffectedUncertain.change.hidden")
             case _ => fail("Expected Row but got Missing")
           }
         }
@@ -71,7 +71,7 @@ class ConsiderationsAffectedUncertainSummarySpec extends SpecBase {
               r.actions.get.items.size mustEqual 1
               r.actions.get.items.head.href mustEqual controllers.transaction.routes.ConsiderationsAffectedUncertainController.onPageLoad(CheckMode).url
               r.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-              r.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.purchaserEligibleToClaimRelief.change.hidden")
+              r.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("transaction.considerationsAffectedUncertain.change.hidden")
             case _ => fail("Expected Row but got Missing")
           }
         }

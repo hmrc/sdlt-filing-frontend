@@ -55,7 +55,7 @@ class PurchaserConfirmIdentitySummarySpec extends SpecBase{
         result.actions.get.items.size mustEqual 1
         result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(CheckMode).url
         result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.confirmIdentity.change.hidden")
+        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.confirmIdentity.change.hidden", userAnswers.get(NameOfPurchaserPage).map(_.name).getOrElse(""))
       }
     }
 
@@ -83,7 +83,7 @@ class PurchaserConfirmIdentitySummarySpec extends SpecBase{
         result.actions.get.items.size mustEqual 1
         result.actions.get.items.head.href mustEqual controllers.purchaser.routes.PurchaserConfirmIdentityController.onPageLoad(CheckMode).url
         result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))
-        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.confirmIdentity.change.hidden")
+        result.actions.get.items.head.visuallyHiddenText.value mustEqual msgs("purchaser.confirmIdentity.change.hidden", userAnswers.get(NameOfPurchaserPage).map(_.name).getOrElse(""))
       }
     }
 

@@ -110,7 +110,7 @@ site.error.noReturnReference.fileNewReturn                                      
 site.error.noReturnReference.manageTaxes                                            = Manage your Stamp Taxes
 site.error.noReturnReference.checkYourAnswersLabel                                  = You cannot reach this page
 site.error.noReturnReference.error.required                                         = Please select an option
-site.error.noReturnReference.change.hidden                                          = NoReturnReference
+site.error.noReturnReference.change.hidden                                          = You cannot reach this page
 
 # Task List
 taskList.title                                                                      = returnTaskList
@@ -185,7 +185,9 @@ prelim.purchaser.name.checkYourAnswersLabel.purchaser                           
 prelim.purchaser.name.checkYourAnswersLabel.company                                 = Company name
 prelim.purchaser.name.checkYourAnswersLabel.default                                 = Purchaser / Company name
 prelim.purchaser.name.link.message                                                  = Enter purchaser name
-prelim.purchaser.name.change.hidden                                                 = Purchaser last name or company name
+prelim.purchaser.name.change.hidden.purchaser                                       = Purchaser name
+prelim.purchaser.name.change.hidden.company                                         = Company name
+prelim.purchaser.name.change.hidden.default                                         = Purchaser / Company name
 
 prelim.purchaser.name.form.regex.error                                              = Invalid Error
 prelim.purchaser.name.form.no.input.error                                           = Nothing has been added
@@ -206,7 +208,7 @@ prelim.transactionType.conveyanceTransferLease                                  
 prelim.transactionType.otherTransaction                                             = O - Other
 prelim.transactionType.checkYourAnswersLabel                                        = Type of transaction
 prelim.transactionType.error.required                                               = Select the type of transaction
-prelim.transactionType.change.hidden                                                = Transaction type
+prelim.transactionType.change.hidden                                                = Type of transaction
 prelim.transactionType.link.message                                                 = Enter type of transaction
 
 # Address Lookup
@@ -442,7 +444,7 @@ vendorAgent.addVendorAgentContactDetails.title                                  
 vendorAgent.addVendorAgentContactDetails.hint.radio                                 = We’ll only use these details to contact {0} about this return
 vendorAgent.addVendorAgentContactDetails.heading                                    = Do you want to add contact details for {0}?
 vendorAgent.addVendorAgentContactDetails.checkYourAnswersLabel                      = Do you want to add contact details for {0}?
-vendorAgent.addVendorAgentContactDetails.change.hidden                              = Do you want to add contact details for the agent?
+vendorAgent.addVendorAgentContactDetails.change.hidden                              = Do you want to add contact details for {0}?
 vendorAgent.addVendorAgentContactDetails.error.required                             = Select yes if you want to add contact details for {0}
 
 agent.agentName.title                                                               = What is the agent’s name? – About the vendor’s agent
@@ -451,7 +453,7 @@ agent.agentName.hint                                                            
 agent.agentName.error.required                                                      = Enter the agent’s name
 agent.agentName.error.length                                                        = The agent’s name must be 28 characters or fewer
 agent.agentName.error.invalid                                                       = The agent’s name must only include letters a to z, apostrophes, hyphens and spaces
-agent.agentName.change.hidden                                                       = Agent’s name
+agent.agentName.change.hidden                                                       = Agent name
 
 vendorAgent.agentsReference.title                                                   = What is the agent’s reference for this return? - About the vendor’s agent
 vendorAgent.agentsReference.heading                                                 = What is {0}’s reference for this return?
@@ -459,7 +461,7 @@ vendorAgent.agentsReference.heading                                             
 vendorAgent.agentsReference.checkYourAnswersLabel                                   = Agent Reference
 vendorAgent.agentsReference.error.required                                          = Enter {0}’s reference for this return
 vendorAgent.agentsReference.error.length                                            = {0}’s reference must be 14 characters or fewer
-vendorAgent.agentsReference.change.hidden                                           = Agent’s Reference
+vendorAgent.agentsReference.change.hidden                                           = Agent Reference
 vendorAgent.agentsReference.error.invalid                                           = {0}’s reference must only include letters a to z, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, numbers 0-9, question marks and spaces
 vendorAgent.agentsReference.reference.hint                                          = We’ll only use this to help reference this return
 
@@ -494,9 +496,9 @@ vendorAgent.vendorAgentsContactDetails.change.hidden                            
 vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.invalidFormat        = Enter {0}’s email address in the correct format, like name@example.com
 vendorAgent.removeVendorAgent.title                                                 = Are you sure you want to remove the vendor’s agent? - About the vendor’s agent
 vendorAgent.removeVendorAgent.heading                                               = Are you sure you want to remove {0}?
-vendorAgent.removeVendorAgent.checkYourAnswersLabel                                 = removeVendorAgent
+vendorAgent.removeVendorAgent.checkYourAnswersLabel                                 = Remove vendor agent
 vendorAgent.removeVendorAgent.error.required                                        = Select yes if you want to remove {0}
-vendorAgent.removeVendorAgent.change.hidden                                         = RemoveVendorAgent
+vendorAgent.removeVendorAgent.change.hidden                                         = Remove vendor agent
 
 
 # Purchaser Messages
@@ -506,9 +508,9 @@ purchaser.addPurchaserPhoneNumber.title                                         
 purchaser.addPurchaserPhoneNumber.heading                                           = Do you want to add a phone number for {0}?
 purchaser.addPurchaserPhoneNumber.hint                                              = We’ll only use this to contact {0} about this return
 purchaser.addPurchaserPhoneNumber.checkYourAnswersLabel                             = Do you want to add a phone number for {0}?
-purchaser.addPurchaserPhoneNumber.change.hidden                                     = Purchaser phone number yes or no
+purchaser.addPurchaserPhoneNumber.change.hidden                                     = Do you want to add a phone number for {0}?
 
-purchaser.checkYourAnswers.purchaserAddress.label                                   = Address
+purchaser.checkYourAnswers.purchaserAddress.label                                   = Purchaser address
 purchaser.checkYourAnswers.purchaserAddress.hidden                                  = Purchaser address
 purchaser.address.checkYourAnswersLabel                                             = Property address
 purchaser.address.change.hidden                                                     = Property address
@@ -536,7 +538,7 @@ purchaser.confirmIdentity.confirmIdentityDivider                                
 purchaser.confirmIdentity.anotherFormOfId                                           = Another form of ID
 purchaser.confirmIdentity.checkYourAnswersLabel                                     = Form of ID
 purchaser.confirmIdentity.error.required                                            = Select the form of ID you can provide about {0} 
-purchaser.confirmIdentity.change.hidden                                             = Purchaser information
+purchaser.confirmIdentity.change.hidden                                             = Form of ID
 
 purchaser.confirmNameOfPurchaser.title                                              = Is this the name of the purchaser? - About the purchaser
 purchaser.confirmNameOfPurchaser.company.heading                                    = Is {0} the name of the purchaser?
@@ -567,13 +569,13 @@ purchaser.dateOfBirth.error.required.day                                        
 purchaser.dateOfBirth.error.required.month                                          = {0}’s date of birth must include a month
 purchaser.dateOfBirth.error.required.year                                           = {0}’s date of birth must include a year
 purchaser.dateOfBirth.error.invalid                                                 = {0}’s date of birth must only include numbers 0 to 9
-purchaser.dateOfBirth.change.hidden                                                 = Purchaser’s date of birth
+purchaser.dateOfBirth.change.hidden                                                 = Date of birth
 purchaser.dateOfBirth.error.date.range.max                                          = {0}’s date of birth must be in the past
 
 purchaser.doesPurchaserHaveNI.title                                                 = Does the purchaser have a National Insurance number? - About the purchaser
 purchaser.doesPurchaserHaveNI.heading                                               = Does {0} have a National Insurance number?
 purchaser.doesPurchaserHaveNI.checkYourAnswersLabel                                 = Does {0} have a National Insurance number?
-purchaser.doesPurchaserHaveNI.change.hidden                                         = Purchaser National Insurance number
+purchaser.doesPurchaserHaveNI.change.hidden                                         = Does {0} have a National Insurance number?
 purchaser.doesPurchaserHaveNI.error.required                                        = Select yes if {0} has a National Insurance number
 
 purchaser.enterPhoneNumber.title                                                    = What is the purchaser’s phone number? - About the purchaser
@@ -583,8 +585,7 @@ purchaser.enterPhoneNumber.checkYourAnswersLabel                                
 purchaser.enterPhoneNumber.error.required                                           = Enter {0}’s phone number
 purchaser.enterPhoneNumber.error.invalid                                            = {0}’s phone number must only include numbers 0 to 9, brackets, dashes, hyphens, plus signs and spaces
 purchaser.enterPhoneNumber.error.length                                             = {0}’s phone number must be 14 characters or fewer, not including brackets, dashes, hyphens and spaces
-purchaser.enterPhoneNumber.change.hidden                                            = What is the purchaser’s phone number?
-purchaser.enterPhoneNumber.change.hidden                                            = Purchaser contact number
+purchaser.enterPhoneNumber.change.hidden                                            = Contact number
 
 purchaser.formOfIdIndividual.title                                                  = Provide a form of ID for the purchaser - About the purchaser
 purchaser.formOfIdIndividual.heading                                                = Provide a form of ID for {0}
@@ -599,6 +600,7 @@ purchaser.formOfIdIndividual.p3                                                 
 purchaser.formOfIdIndividual.idNumberOrReference                                    = ID number or reference
 purchaser.formOfIdIndividual.countryIssued                                          = Country of issue
 purchaser.formOfIdIndividual.checkYourAnswersLabel                                  = ID and country of issue
+purchaser.formOfIdIndividual.change.hidden                                          = ID and country of issue
 purchaser.formOfIdIndividual.error.idNumberOrReference.required                     = Enter {0}’s ID number or reference
 purchaser.formOfIdIndividual.error.idNumberOrReference.length                       = {0}’s ID number or reference must be 14 characters or fewer
 purchaser.formOfIdIndividual.error.idNumberOrReference.invalid                      = {0}’s ID number or reference must only include letters a to z, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, numbers 0-9, question marks and spaces
@@ -615,7 +617,7 @@ purchaser.individual.nameOfThePurchaser.heading                                 
 purchaser.individual.nameOfThePurchaser.firstName                                   = First name
 purchaser.individual.nameOfThePurchaser.middleName                                  = Middle names
 purchaser.individual.nameOfThePurchaser.surname                                     = Surname
-purchaser.nameOfThePurchaser.checkYourAnswersLabel                                  = Name
+purchaser.nameOfThePurchaser.checkYourAnswersLabel                                  = Purchaser name
 purchaser.nameOfThePurchaser.change.hidden                                          = Purchaser name
 
 purchaser.individual.error.required                                                 = Enter the purchaser’s last name
@@ -638,7 +640,7 @@ purchaser.nationalInsurance.checkYourAnswersLabel                               
 purchaser.nationalInsurance.error.required                                          = Enter {0}’s National Insurance number
 purchaser.nationalInsurance.error.length                                            = National insurance number must be {0} characters or less
 purchaser.nationalInsurance.error.invalid                                           = Enter {0}’s National Insurance number in the correct format
-purchaser.nationalInsurance.change.hidden                                           = What is the purchaser’s National Insurance number?
+purchaser.nationalInsurance.change.hidden                                           = National Insurance number
 
 purchaser.partnershipUtr.title                                                      = What is the purchaser’s Partnership Unique Taxpayer Reference (UTR)? - About the purchaser
 purchaser.partnershipUtr.heading                                                    = {0}’s Partnership Unique Taxpayer Reference (UTR)
@@ -654,10 +656,10 @@ purchaser.partnershipUtr.change.hidden                                          
 
 purchaser.registrationNumber.title                                                  = What is the purchaser’s VAT registration number? - About the purchaser
 purchaser.registrationNumber.heading                                                = What is {0}’s VAT registration number?
-purchaser.registrationNumber.checkYourAnswersLabel                                  = VAT Registration Number
+purchaser.registrationNumber.checkYourAnswersLabel                                  = VAT registration number
 purchaser.registrationNumber.error.required                                         = Enter {0}’s VAT registration number
-purchaser.registrationNumber.error.length                                           = Registration Number must be 9 digits
-purchaser.registrationNumber.change.hidden                                          = VAT Registration Number
+purchaser.registrationNumber.error.length                                           = Registration number must be 9 digits
+purchaser.registrationNumber.change.hidden                                          = VAT registration number
 purchaser.registrationNumber.error.regex.invalid                                    = {0}’s VAT registration number must only include numbers 0 to 9
 purchaser.registrationNumber.error.invalid                                          = Enter {0}’s VAT registration number in the correct format
 purchaser.registrationNumber.hint                                                   = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate
@@ -684,6 +686,7 @@ purchaser.companyFormOfId.li3                                                   
 purchaser.companyFormOfId.referenceId                                               = ID number or reference
 purchaser.companyFormOfId.countryIssued                                             = Country of issue
 purchaser.companyFormOfId.checkYourAnswersLabel                                     = ID and country of issue
+purchaser.companyFormOfId.change.hidden                                             = ID and country of issue
 purchaser.companyFormOfId.error.referenceId.required                                = Enter {0}’s ID number or reference
 purchaser.companyFormOfId.error.referenceId.length                                  = {0}’s ID number or reference must be 14 characters or fewer
 purchaser.companyFormOfId.error.referenceId.invalid                                 = {0}’s ID number or reference must only include letters a to z, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, numbers 0-9, question marks and spaces
@@ -719,14 +722,14 @@ purchaser.purchaserAndVendorConnected.title                                     
 purchaser.purchaserAndVendorConnected.heading                                       = Are {0} and the vendor connected?
 purchaser.purchaserAndVendorConnected.checkYourAnswersLabel                         = Are {0} and the vendor connected?
 purchaser.purchaserAndVendorConnected.error.required                                = Select yes if {0} and the vendor are connected
-purchaser.purchaserAndVendorConnected.change.hidden                                 = Purchaser and vendor connected yes or no
+purchaser.purchaserAndVendorConnected.change.hidden                                 = Are {0} and the vendor connected?
 purchaser.purchaserAndVendorConnected.hint                                          = A purchaser and vendor can be connected in different ways, like a marriage, civil partnership, family link or business interest
 
 purchaser.purchaserRemove.title                                                     = Are you sure you want to remove the purchaser? – About the purchaser
 purchaser.purchaserRemove.headingSingle                                             = Are you sure you want to remove {0}?
 purchaser.purchaserRemove.remove                                                    = Remove 2
 purchaser.purchaserRemove.error.required                                            = Select yes if you want to remove {0}
-purchaser.purchaserRemove.change.hidden                                             = PurchaserRemove
+purchaser.purchaserRemove.change.hidden                                             = Purchaser remove
 purchaser.purchaserRemove.double.heading                                            = Removing {0}
 purchaser.purchaserRemove.double.keep                                               = Keep {0}
 purchaser.purchaserRemove.double.remove                                             = Remove {0} and update {1}
@@ -742,7 +745,7 @@ purchaser.isPurchaserActingAsTrustee.title                                      
 purchaser.isPurchaserActingAsTrustee.heading                                        = Is {0} acting as a trustee?
 purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel                          = Is {0} acting as a trustee?
 purchaser.isPurchaserActingAsTrustee.error.required                                 = Select yes if {0} is acting as a trustee
-purchaser.isPurchaserActingAsTrustee.change.hidden                                  = Purchaser acting as trustee yes or no
+purchaser.isPurchaserActingAsTrustee.change.hidden                                  = Is {0} acting as a trustee?
 
 confirmChangeOfMainPurchaser.title = Are you sure you want to change purchaser 1? - About the purchaser
 confirmChangeOfMainPurchaser.heading = Are you sure you want to select {0} as purchaser 1?
@@ -755,7 +758,7 @@ purchaser.confirmPurchaserAddress.confirmAddress                                
 purchaser.confirmPurchaserAddress.isThisTheLand                                     = Is this {0}’s address?
 purchaser.confirmPurchaserAddress.checkYourAnswersLabel                             = Confirm the address of the land or property
 purchaser.confirmPurchaserAddress.error.required                                    = Select yes if the purchaser’s address is correct
-purchaser.confirmPurchaserAddress.change.hidden                                     = confirmPurchaserAddress
+purchaser.confirmPurchaserAddress.change.hidden                                     = Confirm the address of the land or property
 purchaser.confirmPurchaserAddress.missing                                           = Enter purchaser's address
 
 # Purchaser Overview
@@ -808,12 +811,12 @@ site.error.noReturnReference.fileNewReturn                                      
 site.error.noReturnReference.manageTaxes                                            = Manage your Stamp Taxes
 site.error.noReturnReference.checkYourAnswersLabel                                  = You cannot reach this page
 site.error.noReturnReference.error.required                                         = Please select an option
-site.error.noReturnReference.change.hidden                                          = NoReturnReference
+site.error.noReturnReference.change.hidden                                          = You cannot reach this page
 
 purchaserAgent.addContactDetailsForPurchaserAgent.title                             = Do you want to add contact details for the agent?
 purchaserAgent.addContactDetailsForPurchaserAgent.heading                           = Do you want to add contact details for {0}?
 purchaserAgent.addContactDetailsForPurchaserAgent.error.required                    = Select yes if you want to add contact details for {0}
-purchaserAgent.addContactDetailsForPurchaserAgent.change.hidden                     = If you want to add contact details for {0}
+purchaserAgent.addContactDetailsForPurchaserAgent.change.hidden                     = Do you want to add contact details for {0}?
 purchaserAgent.addContactDetailsForPurchaserAgent.hint.radio                        = We’ll only use these details to contact {0} about this return
 purchaserAgent.addContactDetailsForPurchaserAgent.checkYourAnswersLabel             = Do you want to add contact details for {0}?
 
@@ -846,7 +849,7 @@ purchaserAgent.addAgentReferenceNumber.heading                                  
 purchaserAgent.addAgentReferenceNumber.p                                            = This is the unique number or code that {0} will use to locate the return in their records
 purchaserAgent.addAgentReferenceNumber.checkYourAnswersLabel                        = Do you want to add a reference for this return?
 purchaserAgent.addAgentReferenceNumber.error.required                               = Select yes to add a reference for this return
-purchaserAgent.addAgentReferenceNumber.change.hidden                                = If you want to add a reference for this return
+purchaserAgent.addAgentReferenceNumber.change.hidden                                = Do you want to add a reference for this return?
 
 purchaserAgent.reference.title                                                      = What is the agent’s reference for this return?
 purchaserAgent.reference.heading                                                    = What is {0}’s reference for this return?
@@ -861,22 +864,22 @@ purchaserAgent.selectPurchaserAgent.title                                       
 purchaserAgent.selectPurchaserAgent.heading                                         = Select {0}’s agent
 purchaserAgent.selectPurchaserAgent.existingAgent                                   = An existing agent
 purchaserAgent.selectPurchaserAgent.addNewAgent                                     = Add an agent for this return
-purchaserAgent.selectPurchaserAgent.checkYourAnswersLabel                           = selectPurchaserAgent
+purchaserAgent.selectPurchaserAgent.checkYourAnswersLabel                           = Select purchaser agent
 purchaserAgent.selectPurchaserAgent.error.required                                  = Select {0}’s agent or add a new agent
-purchaserAgent.selectPurchaserAgent.change.hidden                                   = SelectPurchaserAgent
+purchaserAgent.selectPurchaserAgent.change.hidden                                   = Select purchaser agent
 
 purchaserAgent.purchaserAgentAuthorised.title                                       = Is the agent authorised to handle correspondence on behalf of the purchaser? - About the purchaser’s agent
 purchaserAgent.purchaserAgentAuthorised.heading                                     = Is {0} authorised to handle correspondence on behalf of the purchaser?
 purchaserAgent.purchaserAgentAuthorised.checkYourAnswersLabel                       = Is {0} authorised for correspondence?
 purchaserAgent.purchaserAgentAuthorised.error.required                              = Select yes if {0} is authorised to handle correspondence on behalf of the purchaser
-purchaserAgent.purchaserAgentAuthorised.change.hidden                               = If {0} is authorised for correspondence
+purchaserAgent.purchaserAgentAuthorised.change.hidden                               = Is {0} authorised for correspondence?
 
 
 purchaserAgent.removePurchaserAgent.title                                           = Are you sure you want to remove the purchaser’s agent? - About the purchaser’s agent
 purchaserAgent.removePurchaserAgent.heading                                         = Are you sure you want to remove {0}?
-purchaserAgent.removePurchaserAgent.checkYourAnswersLabel                           = removePurchaserAgent
+purchaserAgent.removePurchaserAgent.checkYourAnswersLabel                           = Remove purchaser agent
 purchaserAgent.removePurchaserAgent.error.required                                  = Select yes if you want to remove {0}
-purchaserAgent.removePurchaserAgent.change.hidden                                   = RemovePurchaserAgent
+purchaserAgent.removePurchaserAgent.change.hidden                                   = Remove purchaser agent
 
 vendorAgent.BeforeYouStart.title                                                    = Before you start - About the vendor’s agent
 vendorAgent.BeforeYouStart.p1                                                       = In this section, you need to tell us about the vendor’s agent.
@@ -890,7 +893,7 @@ vendorAgent.BeforeYouStart.bullet4                                              
 vendorAgent.BeforeYouStart.subheading                                               = Do you want to add an agent for the vendor?
 vendorAgent.BeforeYouStart.checkYourAnswersLabel                                    = Add an agent for the vendor
 vendorAgent.BeforeYouStart.error.required                                           = Select yes to add an agent for the vendor
-vendorAgent.BeforeYouStart.change.hidden                                            = if you want to add an agent for the vendor
+vendorAgent.BeforeYouStart.change.hidden                                            = Add an agent for the vendor
 
 vendorAgent.overview.title                                                          = Vendor’s agent overview
 vendorAgent.overview.heading                                                        = Vendor’s agent overview
@@ -955,7 +958,7 @@ land.addNlpgUprn.title                                                          
 land.addNlpgUprn.heading                                                            = Do you have an NLPG UPRN for the land or property?
 land.addNlpgUprn.checkYourAnswersLabel                                              = Do you have an NLPG UPRN?
 land.addNlpgUprn.error.required                                                     = Select yes if you have an NLPG UPRN for the land or property
-land.addNlpgUprn.change.hidden                                                      = If you have an NLPG UPRN
+land.addNlpgUprn.change.hidden                                                      = Do you have an NLPG UPRN?
 land.addNlpgUprn.hint                                                               = A National Land and Property Gazetteer Unique Property Reference Number (NLPG UPRN) is a unique identifier for every addressable location in England, Scotland, Wales and Northern Ireland
 
 land.titleNumber.title                                                              = Title number for the land or property - About the land
@@ -969,7 +972,7 @@ land.titleNumber.error.invalid                                                  
 land.titleNumber.error.length                                                       = The title or folio number must be 14 characters or fewer
 land.titleNumber.error.minLength                                                    = The title or folio number must be longer than 1 character
 land.titleNumber.error.invalidFormat                                                = Enter the title or folio number in the correct format
-land.titleNumber.change.hidden                                                      = Title or folio number
+land.titleNumber.change.hidden                                                      = Title number
 
 land.confirmLandOrPropertyAddress.title                                             = Confirm the address of the land or property - About the land
 land.confirmLandOrPropertyAddress.heading                                           = Confirm the address of the land or property
@@ -977,7 +980,7 @@ land.confirmLandOrPropertyAddress.confirmAddress                                
 land.confirmLandOrPropertyAddress.isThisTheLand                                     = Is this the address of the land or property?
 land.confirmLandOrPropertyAddress.checkYourAnswersLabel                             = Confirm the address of the land or property
 land.confirmLandOrPropertyAddress.error.required                                    = Select yes if this is the address of the land or property
-land.confirmLandOrPropertyAddress.change.hidden                                     = ConfirmLandOrPropertyAddress
+land.confirmLandOrPropertyAddress.change.hidden                                     = Confirm the address of the land or property
 land.confirmLandOrPropertyAddress.missing                                           = Enter land or property address
 
 
@@ -1004,7 +1007,7 @@ land.nlpgUprn.hint                                                              
 land.nlpgUprn.checkYourAnswersLabel                                                 = NLPG UPRN
 land.nlpgUprn.error.required                                                        = Enter the NLPG UPRN for the land or property
 land.nlpgUprn.error.length                                                          = The NLPG UPRN must be 14 characters or fewer
-land.nlpgUprn.change.hidden                                                         = Land NLPG UPRN
+land.nlpgUprn.change.hidden                                                         = NLPG UPRN
 land.nlpgUprn.error.format                                                          = The NLPG UPRN must only include numbers 0 to 9
 land.nlpgUprn.error.invalidFormat                                                   = Enter the NLPG UPRN in the correct format
 
@@ -1014,7 +1017,7 @@ land.landMineralsOrMineralRights.subheading                                     
 land.landMineralsOrMineralRights.p                                                  = Mineral rights are the legal entitlement to exploit, mine or produce minerals and other natural resources beneath the land or property. When mineral rights are reserved or excluded, the owner of the land or property has no claim to any minerals or other natural resources beneath the land.
 land.landMineralsOrMineralRights.checkYourAnswersLabel                              = Minerals or mineral rights reserved or excluded?
 land.landMineralsOrMineralRights.error.required                                     = Select yes if there are minerals or mineral rights reserved or excluded for the land or property
-land.landMineralsOrMineralRights.change.hidden                                      = Minerals or mineral rights
+land.landMineralsOrMineralRights.change.hidden                                      = Minerals or mineral rights reserved or excluded?
 
 land.landSelectMeasurementUnit.title                                                = Select one unit of measurement for the area of land
 land.landSelectMeasurementUnit.heading                                              = Select one unit of measurement for the area of land
@@ -1064,14 +1067,14 @@ land.agriculturalOrDevelopmental.subHeading                                     
 land.agriculturalOrDevelopmental.p1                                                 = Agricultural land refers to land primarily used for activities like farming, keeping livestock and horticulture. Developmental land refers to land with planning permission for a use other than agriculture.
 land.agriculturalOrDevelopmental.checkYourAnswersLabel                              = Does the transaction involve agricultural or developmental land?
 land.agriculturalOrDevelopmental.error.required                                     = Select yes if the transaction involves agricultural or developmental land
-land.agriculturalOrDevelopmental.change.hidden                                      = if the transaction involves agricultural or developmental land
+land.agriculturalOrDevelopmental.change.hidden                                      = Does the transaction involve agricultural or developmental land?
 
 land.doYouKnowTheAreaOfLand.title                                                   = Do you know the area of the land? - About the land
 land.doYouKnowTheAreaOfLand.heading                                                 = Do you know the area of the land?
 land.doYouKnowTheAreaOfLand.hint                                                    = This is the accurate measurement of the area of the land or property in hectares or square metres
 land.doYouKnowTheAreaOfLand.checkYourAnswersLabel                                   = Do you know the area of the land?
 land.doYouKnowTheAreaOfLand.error.required                                          = Select yes if you know the area of the land
-land.doYouKnowTheAreaOfLand.change.hidden                                           = DoYouKnowTheAreaOfLand
+land.doYouKnowTheAreaOfLand.change.hidden                                           = Do you know the area of the land?
 
 land.landOverview.title                                                             = Land or property overview - About the land
 land.landOverview.heading                                                           = Land or property overview
@@ -1094,7 +1097,7 @@ ukResidency.nonUkResidentPurchaser.hint.link                                    
 ukResidency.nonUkResidentPurchaser.hint.suffix                                      = HMRC guidance on residence status for SDLT (opens in a new tab)
 ukResidency.nonUkResidentPurchaser.checkYourAnswersLabel                            = Are any of the purchasers non-UK residents?
 ukResidency.nonUkResidentPurchaser.error.required                                   = Select yes if nonUkResidentPurchaser
-ukResidency.nonUkResidentPurchaser.change.hidden                                    = Non-UK Resident Purchaser
+ukResidency.nonUkResidentPurchaser.change.hidden                                    = Are any of the purchasers non-UK residents?
 
 ukResidency.crownEmploymentRelief.title                                             = Crown employment relief
 ukResidency.crownEmploymentRelief.heading                                           = Crown employment relief
@@ -1103,7 +1106,7 @@ ukResidency.crownEmploymentRelief.p1                                            
 ukResidency.crownEmploymentRelief.checkYourAnswersLabel                             = Are any of the purchasers claiming Crown employment relief?
 ukResidency.crownEmploymentRelief.missing                                           = Select if any purchasers are claiming Crown employment relief
 ukResidency.crownEmploymentRelief.error.required                                    = Please select an option
-ukResidency.crownEmploymentRelief.change.hidden                                     = CrownEmploymentRelief
+ukResidency.crownEmploymentRelief.change.hidden                                     = Are any of the purchasers claiming Crown employment relief?
 
 ukResidency.closeCompany.title                                                      = Close companies
 ukResidency.closeCompany.heading                                                    = Close companies
@@ -1111,7 +1114,7 @@ ukResidency.closeCompany.subheading                                             
 ukResidency.closeCompany.p1                                                         = A close company is broadly defined as a company controlled by five or fewer participators (usually shareholders), or where any number of directors are also shareholders. If the company is controlled by non-UK residents, then it will be treated as a non-UK resident for the purposes of SDLT.
 ukResidency.closeCompany.checkYourAnswersLabel                                      = Are any of the purchasers a UK resident close company controlled directly or non-directly by non-UK residents?
 ukResidency.closeCompany.error.required                                             = Select yes if any of the purchasers are a UK resident close company controlled directly or non-directly by non-UK residents
-ukResidency.closeCompany.change.hidden                                              = Close company
+ukResidency.closeCompany.change.hidden                                              = Are any of the purchasers a UK resident close company controlled directly or non-directly by non-UK residents?
 
 land.removeLand.title                                                               = Are you sure you want to remove the land or property?
 land.removeLand.heading                                                             = Are you sure you want to remove {0}?
@@ -1119,13 +1122,13 @@ land.removeLand.error.required                                                  
 land.removeLand.change.hidden                                                       = Are you sure you want to remove the land or property?
 
 land.address.checkYourAnswersLabel                                                  = Property Address
-land.address.change.hidden                                                          = Land address
+land.address.change.hidden                                                          = Property Address
 
 purchaser.purchaserCompanyTypeKnown.title                                           = Do you know what type of company the purchaser is? - About the purchaser
 purchaser.purchaserCompanyTypeKnown.heading                                         = Do you know what type of company {0} is?
 purchaser.purchaserCompanyTypeKnown.checkYourAnswersLabel                           = Do you know what type of company {0} is?
 purchaser.purchaserCompanyTypeKnown.error.required                                  = Select yes if you know what type of company {0} is
-purchaser.purchaserCompanyTypeKnown.change.hidden                                   = Do you know what type of company the purchaser is?
+purchaser.purchaserCompanyTypeKnown.change.hidden                                   = Do you know what type of company {0} is?
 
 transaction.beforeStart.title                                                       = Before you start - About the transaction
 transaction.beforeStart.p1                                                          = In this section, you need to tell us about the transaction.
@@ -1167,7 +1170,7 @@ transaction.transactionEffectiveDate.error.required.all                         
 transaction.transactionEffectiveDate.error.required.two                             = The effective date of transaction must include {0} and {1}
 transaction.transactionEffectiveDate.error.required                                 = The effective date of the transaction must include a {0}
 transaction.transactionEffectiveDate.error.invalid                                  = The effective date of the transaction must be a real date
-transaction.transactionEffectiveDate.change.hidden                                  = Effective date of the transaction
+transaction.transactionEffectiveDate.change.hidden                                  = Effective date of transaction
 transaction.transactionEffectiveDate.error.date.range.min                           = The effective date of transaction must be the same as or after 1 11 2003
 transaction.transactionEffectiveDate.error.date.range.max                           = The effective date of the transaction cannot be in the future
 transaction.transactionEffectiveDate.missing                                        = Provide Effective Date
@@ -1177,7 +1180,7 @@ transaction.confirmTypeOfTransaction.heading                                    
 transaction.confirmTypeOfTransaction.subHeading                                     = Is this the correct type of transaction?
 transaction.confirmTypeOfTransaction.p                                              = This was your answer when creating this return.
 transaction.confirmTypeOfTransaction.error.required                                 = Select Yes or No
-transaction.confirmTypeOfTransaction.change.hidden                                  = Confirm Type Of Transaction
+transaction.confirmTypeOfTransaction.change.hidden                                  = Confirm the type of transaction
 
 transaction.changeTypeOfTransaction.title                                           = Changing the type of transaction - About the transaction
 transaction.changeTypeOfTransaction.heading                                         = Changing the transaction type
@@ -1188,7 +1191,7 @@ transaction.changeTypeOfTransaction.hint.option3                                
 transaction.changeTypeOfTransaction.hint.option4                                    = By changing the type of transaction, the amount of SDLT due may change. All information you have entered about the total consideration of the transaction will be deleted. You will now need to enter the total premium payable and the net present value.
 transaction.changeTypeOfTransaction.checkYourAnswersLabel                           = Changing the transaction type
 transaction.changeTypeOfTransaction.error.required                                  = Select yes if you need to change the transaction type
-transaction.changeTypeOfTransaction.change.hidden                                   = ChangeTypeOfTransaction
+transaction.changeTypeOfTransaction.change.hidden                                   = Changing the transaction type
 transaction.changeTypeOfTransaction.missing                                         = Select yes or no
 
 
@@ -1198,7 +1201,7 @@ transaction.addDateOfContract.h2                                                
 transaction.addDateOfContract.p1                                                    = The date of contract (or conclusion of missives) is when the agreement of sale becomes a binding contract between the purchaser and vendor, usually through the exchange of contracts. Typically, this is not the same day as the effective date of transaction.
 transaction.addDateOfContract.checkYourAnswersLabel                                 = Contract or conclusion of missives
 transaction.addDateOfContract.error.required                                        = Select yes if you know the date of contract or conclusion of missives
-transaction.addDateOfContract.change.hidden                                         = Do you know the date of contract or conclusion of missives?
+transaction.addDateOfContract.change.hidden                                         = Contract or conclusion of missives
 transaction.addDateOfContract.missing                                               = Select if you know the date of contract or conclusion of missives
 
 transaction.linkedTransactions.title                                                = Linked transactions
@@ -1226,7 +1229,7 @@ transaction.transactionDateOfContract.error.required.all                        
 transaction.transactionDateOfContract.error.required.two                            = The date of contract must include {0} and {1}
 transaction.transactionDateOfContract.error.required                                = The date of contract must include {0}
 transaction.transactionDateOfContract.error.invalid                                 = The date of contract must be a real date
-transaction.transactionDateOfContract.change.hidden                                 = Contract date or conclusion of missives
+transaction.transactionDateOfContract.change.hidden                                 = Date of contract or conclusion of missives
 transaction.transactionDateOfContract.error.date.range.min                          = The date of contract must be the same as or after 01 01 1900
 transaction.transactionDateOfContract.error.date.range.max                          = The date of contract cannot be in the future
 
@@ -1246,7 +1249,7 @@ transaction.totalConsiderationOfTransaction.error.invalidWholeNumber            
 transaction.totalConsiderationOfTransaction.error.maximum                           = The total consideration in money or money’s worth must be equal to or less than £9,999,999,999
 transaction.totalConsiderationOfTransaction.error.vatIncludedInTotalConsideration   = The total consideration in money or money’s worth must be more than the amount of VAT included in the total consideration
 transaction.totalConsiderationOfTransaction.error.totalConsideration                = The total consideration in money or money’s worth must be less than the total consideration of all linked transactions
-transaction.totalConsiderationOfTransaction.change.hidden                           = The total consideration in money or money’s worth
+transaction.totalConsiderationOfTransaction.change.hidden                           = Total consideration of the transaction
 transaction.totalConsiderationOfTransaction.missing                                 = Enter the total consideration in money or money’s worth
 
 transaction.vatAmount.title                                                         = Amount of VAT
@@ -1260,7 +1263,7 @@ transaction.vatAmount.error.invalidNumeric                                      
 transaction.vatAmount.error.invalidWholeNumber                                      = Enter the amount of VAT included in the total consideration in whole pounds
 transaction.vatAmount.error.maximum                                                 = The amount of VAT included in the total consideration must be equal to or less than £9,999,999,999
 transaction.vatAmount.error.vatIncludedInTotalConsideration                         = The amount of VAT included in the total consideration must be less than the total consideration in money or money’s worth
-transaction.vatAmount.change.hidden                                                 = the amount of VAT included in the total consideration
+transaction.vatAmount.change.hidden                                                 = Amount of VAT included in the total consideration
 transaction.vatAmount.missing                                                       = Enter the amount of VAT included in the total consideration
 
 transaction.transactionFormsOfConsideration.title                                   = Forms of consideration
@@ -1283,7 +1286,7 @@ transaction.transactionFormsOfConsideration.services                            
 transaction.transactionFormsOfConsideration.contingent                              = Contingent
 transaction.transactionFormsOfConsideration.checkYourAnswersLabel                   = Forms of consideration
 transaction.transactionFormsOfConsideration.error.required                          = Select up to 4 considerations
-transaction.transactionFormsOfConsideration.change.hidden                           = Transaction forms of consideration
+transaction.transactionFormsOfConsideration.change.hidden                           = Forms of consideration
 transaction.transactionFormsOfConsideration.missing                                 = Select forms of consideration
 
 transaction.addRegisteredCharityNumber.title                                        = Registered charity number - About the transaction
@@ -1298,7 +1301,7 @@ transaction.addRegisteredCharityNumber.p3.suffix                                
 transaction.addRegisteredCharityNumber.p3.link                                      = https://www.charitycommissionni.org.uk/charity-search/?pageNumber=1
 transaction.addRegisteredCharityNumber.checkYourAnswersLabel                        = Do you know the charity’s registered number?
 transaction.addRegisteredCharityNumber.error.required                               = Select yes if you know the charity’s registered number
-transaction.addRegisteredCharityNumber.change.hidden                                = Registered charity number
+transaction.addRegisteredCharityNumber.change.hidden                                = Do you know the charity’s registered number?
 transaction.addRegisteredCharityNumber.missing                                     = Select registered charity number
 
 transaction.ReasonForRelief.title                                                   = What is the reason for claiming relief? - About the transaction
@@ -1365,7 +1368,7 @@ transaction.purchaserEligibleToClaimRelief.p1                                   
 transaction.purchaserEligibleToClaimRelief.h2                                       = Is the purchaser eligible to claim relief?
 transaction.purchaserEligibleToClaimRelief.checkYourAnswersLabel                    = Is the purchaser eligible to claim relief?
 transaction.purchaserEligibleToClaimRelief.error.required                           = Select yes if the purchaser is eligible to claim relief
-transaction.purchaserEligibleToClaimRelief.change.hidden                            = Claiming relief
+transaction.purchaserEligibleToClaimRelief.change.hidden                            = Is the purchaser eligible to claim relief?
 transaction.purchaserEligibleToClaimRelief.change.missing                           = Select if purchaser is eligible to claim relief
 
 transaction.transactionPartialRelief.title                                          = Partial relief
@@ -1374,7 +1377,7 @@ transaction.transactionPartialRelief.subheading                                 
 transaction.transactionPartialRelief.p                                              = Partial relief is available when a transaction meets most, but not all, conditions for full relief, like Freeport or Investment Zone Relief. This is where the land or property is partially located within a designated tax site, meaning a purchaser would only claim relief for the qualifying part.
 transaction.transactionPartialRelief.checkYourAnswersLabel                          = Is the purchaser claiming relief on part of the land or property?
 transaction.transactionPartialRelief.error.required                                 = Select yes if the purchaser is claiming relief on part of the land or property
-transaction.transactionPartialRelief.change.hidden                                  = Partial relief
+transaction.transactionPartialRelief.change.hidden                                  = Is the purchaser claiming relief on part of the land or property?
 transaction.transactionPartialRelief.missing                                        = Select if the purchaser is claiming relief on part of the land or property
 
 transaction.claimingPartialReliefAmount.title                                       = Claiming partial relief
@@ -1387,13 +1390,13 @@ transaction.claimingPartialReliefAmount.error.required                          
 transaction.claimingPartialReliefAmount.error.invalidNumeric                        = The amount of relief being claimed on part of the land or property must only include numbers 0 to 9 and commas
 transaction.claimingPartialReliefAmount.error.invalidWholeNumber                    = Enter the amount of relief being claimed on part of the land or property in whole pounds
 transaction.claimingPartialReliefAmount.error.maximum                               = The amount of relief being claimed on part of the land or property must be equal to or less than £9,999,999,999
-transaction.claimingPartialReliefAmount.change.hidden                               = the amount of relief being claimed on part of the land or property
+transaction.claimingPartialReliefAmount.change.hidden                               = Amount of partial relief being claimed
 transaction.claimingPartialReliefAmount.missing                                     = Enter the amount of relief being claimed on part of the land or property
 
 transaction.checkYourAnswers.title                                                    = Check your answers - About the transaction
 transaction.purchaserEligibleToClaimRelief.missing                                    = Select if the purchaser is eligible to claim relief
 transaction.ReasonForRelief.checkYourAnswersLabel                                     = Reason for claiming relief
-transaction.ReasonForRelief.change.hidden                                             = reason for claiming relief
+transaction.ReasonForRelief.change.hidden                                             = Reason for claiming relief
 transaction.ReasonForRelief.missing                                                   = Enter the reason for claiming relief
 
 taxCalculation.checkYourAnswers.title                                               = Check your answers - Tax calculation
@@ -1463,8 +1466,8 @@ taxCalculation.penaltiesAndInterest.leasehold-tax-not-calculated.title          
 taxCalculation.penaltiesAndInterest.leasehold-tax-not-calculated.heading                            = Does the amount you intend to pay include penalties and interest charges?
 
 
-taxCalculation.penaltiesAndInterest.checkYourAnswersLabel                           = Does the amount include penalties and interest?
-taxCalculation.penaltiesAndInterest.checkYourAnswersHidden                           = whether penalties and interest are included
+taxCalculation.penaltiesAndInterest.checkYourAnswersLabel                            = Does the amount include penalties and interest?
+taxCalculation.penaltiesAndInterest.checkYourAnswersHidden                           = Does the amount include penalties and interest?
 
 taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Leasehold calculated
 taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.heading                            = Does the amount you intend to pay include penalties and interest charges?
@@ -1519,7 +1522,7 @@ taxCalculation.calculation.propertyType.04                                      
 taxCalculation.calculation.returnToTaxCalculation                                   = Return to tax calculation
 
 taxCalculation.sdltSelfAssessment.checkYourAnswersLabel                             = Self-assessed SDLT due
-taxCalculation.sdltSelfAssessment.change.hidden                                     = self-assessed SDLT due
+taxCalculation.sdltSelfAssessment.change.hidden                                     = Self-assessed SDLT due
 
 taxCalculation.sdltSelfAssessment.error.required                                    = Enter the self-assessed amount of SDLT, in pounds
 taxCalculation.sdltSelfAssessment.error.invalidNumeric                              = The self-assessed amount of SDLT must only include commas and numbers 0 to 9
@@ -1541,7 +1544,7 @@ taxCalculation.taxDueOnNpv.error.invalidWholeNumber                             
 taxCalculation.taxDueOnNpv.error.maximum                                            = The tax due on the NPV must be equal to or less than £9,999,999,999
 taxCalculation.taxDueOnNpv.error.length                                             = The tax due on the NPV must be 16 characters or fewer
 taxCalculation.taxDueOnNpv.checkYourAnswersLabel                                    = Tax due on NPV
-taxCalculation.taxDueOnNpv.change.hidden                                            = tax due on NPV
+taxCalculation.taxDueOnNpv.change.hidden                                            = Tax due on NPV
 
 taxCalculation.sdltSelfAssessment.title                                             = SDLT self-assessment
 taxCalculation.sdltSelfAssessment.heading                                           = SDLT self-assessment
@@ -1572,7 +1575,7 @@ taxCalculation.confirmEffectiveDateOfTransaction.error.required              = S
 
 taxCalculation.genericPenaltiesDue.checkYourAnswersLabel                            = Penalties due
 taxCalculation.totalAmountDue.checkYourAnswersLabel                                 = Amount to be paid
-taxCalculation.totalAmountDue.change.hidden                                         = amount to be paid
+taxCalculation.totalAmountDue.change.hidden                                         = Amount to be paid
 
 taxCalculation.leaseholdSelfAssessed.premiumPayable.title = What is the tax due on the total premium payable?
 taxCalculation.leaseholdSelfAssessed.premiumPayable.heading = What is the tax due on the total premium payable?
@@ -1580,7 +1583,7 @@ taxCalculation.leaseholdSelfAssessed.premiumPayable.description = You entered th
 taxCalculation.leaseholdSelfAssessed.premiumPayable.hint = Enter the amount in whole pounds only, for example £10,000
 
 taxCalculation.leaseholdSelfAssessed.premiumPayable.checkYourAnswers                = Tax due on premium payable
-taxCalculation.leaseholdSelfAssessed.premiumPayable.change.hidden                   = tax due on premium payable
+taxCalculation.leaseholdSelfAssessed.premiumPayable.change.hidden                   = Tax due on premium payable
 
 taxCalculation.leaseholdSelfAssessed.premiumPayable.error.emptyValue = Enter the tax due on the total premium payable, in pounds
 taxCalculation.leaseholdSelfAssessed.premiumPayable.error.maxLength = The tax due on the total premium payable must be 16 characters or fewer
@@ -1602,7 +1605,7 @@ transaction.charityRegisteredNumber.checkYourAnswersLabel                       
 transaction.charityRegisteredNumber.hint                                            = Their charity number should be 5-8 digits long and may contain letters
 transaction.charityRegisteredNumber.error.required                                  = Enter the charity’s registered number
 transaction.charityRegisteredNumber.error.length                                    = The charity’s registered number must be 14 characters or fewer
-transaction.charityRegisteredNumber.change.hidden                                   = Charity Registered Number
+transaction.charityRegisteredNumber.change.hidden                                   = Charity’s registered number
 transaction.charityRegisteredNumber.regex                                           = The charity’s registered number must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, at signs (@), forward slashes, full stops, hyphens, question marks and spaces
 transaction.charityRegisteredNumber.missing                                         = Enter charity registered number
 
@@ -1614,7 +1617,7 @@ transaction.deferringPayment.li2                                                
 transaction.deferringPayment.h2                                                     = Is the purchaser applying for a deferment?
 transaction.deferringPayment.checkYourAnswersLabel                                  = Is the purchaser applying for a deferment?
 transaction.deferringPayment.error.required                                         = Select yes if the purchaser is applying for a deferment
-transaction.deferringPayment.change.hidden                                          = if the purchaser is applying for a deferment
+transaction.deferringPayment.change.hidden                                          = Is the purchaser applying for a deferment?
 
 transaction.transactionUseOfLandOrProperty.title                                    = The use of the land or property
 transaction.transactionUseOfLandOrProperty.heading                                  = The use of the land or property
@@ -1629,7 +1632,7 @@ transaction.transactionUseOfLandOrProperty.factory                              
 transaction.transactionUseOfLandOrProperty.otherIndustrialUnit                      = Other industrial unit
 transaction.transactionUseOfLandOrProperty.other                                    = Other
 transaction.transactionUseOfLandOrProperty.error.required                           = Select at least one use for the land or property
-transaction.transactionUseOfLandOrProperty.change.hidden                            = The use of the land or property
+transaction.transactionUseOfLandOrProperty.change.hidden                            = How the land or property will be used
 transaction.transactionUseOfLandOrProperty.hint                                     = Select all that apply
 transaction.transactionUseOfLandOrProperty.checkYourAnswersLabel                    = How the land or property will be used
 transaction.transactionUseOfLandOrProperty.missing                                  = Select how the land or property will be used
@@ -1643,6 +1646,7 @@ transaction.considerationsAffectedUncertain.p2                                  
 transaction.considerationsAffectedUncertain.bullet1                                 = a contingent consideration, where a fixed sum is only paid, or not paid, when the uncertain future event occurs
 transaction.considerationsAffectedUncertain.bullet2                                 = a dependent consideration, where the amount or value of a consideration depends on the uncertain future event
 transaction.considerationsAffectedUncertain.checkYourAnswersLabel                   = Is any part of the consideration contingent or dependent on uncertain future events?
+transaction.considerationsAffectedUncertain.change.hidden                           = Is any part of the consideration contingent or dependent on uncertain future events?
 
 transaction.rulingFollowed.title                                                    = Have you followed the ruling under CAP1 or NSBC when completing this return?
 transaction.rulingFollowed.heading                                                  = Have you followed the ruling under CAP1 or NSBC when completing this return?
@@ -1652,7 +1656,7 @@ transaction.rulingFollowed.RulingNotReceived                                    
 transaction.rulingFollowed.checkYourAnswersLabel                                    = CAP1 or NSBC ruling followed
 transaction.rulingFollowed.hint                                                     = If you’ve received a ruling, confirm that you have followed that ruling when completing this return
 transaction.rulingFollowed.error.required                                           = Select yes or no if you have received the ruling under CAP1 or NSBC, or select ‘Ruling not yet received’
-transaction.rulingFollowed.change.hidden                                            = if you have followed the ruling under CAP1 or NSBC when completing this return
+transaction.rulingFollowed.change.hidden                                            = CAP1 or NSBC ruling followed
 
 transaction.transactionSaleOfBusinessAssets.title                                   = What is included in the sale of the business?
 transaction.transactionSaleOfBusinessAssets.heading                                 = What is included in the sale of the business?
@@ -1671,7 +1675,7 @@ transaction.saleOfBusiness.subheading                                           
 transaction.saleOfBusiness.paragraph                                                = If a transaction is part of the sale of a business, the land or property is separated from other assets that may not be liable for SDLT, like raw materials and machinery.
 transaction.saleOfBusiness.checkYourAnswersLabel                                    = Is the transaction part of the sale of a business?
 transaction.saleOfBusiness.error.required                                           = Select yes if this transaction is part of the sale of a business
-transaction.saleOfBusiness.change.hidden                                            = Sale of a business
+transaction.saleOfBusiness.change.hidden                                            = Is the transaction part of the sale of a business?
 
 transaction.restrictionsCovenantsAndConditions.title                                = Restrictions, covenants and conditions
 transaction.restrictionsCovenantsAndConditions.heading                              = Restrictions, covenants and conditions
@@ -1682,7 +1686,7 @@ transaction.restrictionsCovenantsAndConditions.li2                              
 transaction.restrictionsCovenantsAndConditions.li3                                  = Conditions can afford the vendor certain rights, like the right to buy back the land or property at a reduced rate.
 transaction.restrictionsCovenantsAndConditions.checkYourAnswersLabel                = Are there any restrictions, covenants or conditions affecting the value of the interest transferred or granted?
 transaction.restrictionsCovenantsAndConditions.error.required                       = Select yes if there are restrictions, covenants or conditions affecting the value of the interest transferred or granted
-transaction.restrictionsCovenantsAndConditions.change.hidden                        = if there are restrictions, covenants or conditions affecting the value of the interest transferred or granted
+transaction.restrictionsCovenantsAndConditions.change.hidden                        = Are there any restrictions, covenants or conditions affecting the value of the interest transferred or granted?
 
 transaction.cap1OrNsbc.title                                                        = CAP1 or NSBC - About the transaction
 transaction.cap1OrNsbc.heading                                                      = CAP1 or NSBC
@@ -1690,7 +1694,7 @@ transaction.cap1OrNsbc.subHeading                                               
 transaction.cap1OrNsbc.p1                                                           = Clearance Applications Phase 1 (CAP1) and Non-Statutory Business Clearance (NSBC) service both provide formal written confirmation of HMRC’s view on how tax law applies to a specific transaction. They can help mitigate risk and provide clarity when there is uncertainty over tax obligations.
 transaction.cap1OrNsbc.error.required                                               = Select yes if you have applied for a CAP1 or NSBC in relation to this transaction
 transaction.cap1OrNsbc.checkYourAnswersLabel                                        = Have you applied for a CAP1 or NSBC in relation to the transaction?
-transaction.cap1OrNsbc.change.hidden                                                = CAP1 or NSBC
+transaction.cap1OrNsbc.change.hidden                                                = Have you applied for a CAP1 or NSBC in relation to the transaction?
 
 transaction.isLandOrPropertyExchanged.title                                         = The exchange or part exchange of the land or property
 transaction.isLandOrPropertyExchanged.heading                                       = The exchange or part exchange of the land or property
@@ -1710,7 +1714,7 @@ transaction.totalAssetsConsideration.hint                                       
 transaction.totalAssetsConsideration.error.invalidNumeric                           = The total amount of consideration for the sale of the business must only include numbers 0 to 9 and commas
 transaction.totalAssetsConsideration.error.invalidWholeNumber                       = Enter the total amount of consideration for the sale of the business in whole pounds
 transaction.totalAssetsConsideration.error.maximum                                  = The total amount of consideration for the sale of the business must be equal to or less than £9,999,999,999
-transaction.totalAssetsConsideration.change.hidden                                  = Total consideration for all assets included in the sale of the business
+transaction.totalAssetsConsideration.change.hidden                                  = The total consideration for the items included
 
 transaction.cisNumber.title                                                         = What is the purchaser’s CIS registration number?
 transaction.cisNumber.heading                                                       = What is the purchaser’s CIS registration number?
@@ -1719,7 +1723,7 @@ transaction.cisNumber.checkYourAnswersLabel                                     
 transaction.cisNumber.error.required                                                = Enter the purchaser’s CIS registration number
 transaction.cisNumber.error.length                                                  = The purchaser’s CIS number must be 14 characters or less
 transaction.cisNumber.invalid                                                       = invalid error
-transaction.cisNumber.change.hidden                                                 = The purchaser’s CIS registration number
+transaction.cisNumber.change.hidden                                                 = What is the purchaser’s CIS registration number?
 
 transaction.descriptionOfRestrictions.title                                         = What are the restrictions, covenants or conditions affecting the value of the interest transferred or granted? - About the transaction
 transaction.descriptionOfRestrictions.heading                                       = What are the restrictions, covenants or conditions affecting the value of the interest transferred or granted?
@@ -1729,7 +1733,7 @@ transaction.descriptionOfRestrictions.error.required                            
 transaction.descriptionOfRestrictions.error.regex                                   = The brief description of the restrictions, covenants or conditions must only include letters a to z, numbers 0 to 9, spaces and full stops
 transaction.descriptionOfRestrictions.error.length                                  = The brief description of the restrictions, covenants or conditions must be 42 characters or fewer
 transaction.descriptionOfRestrictions.checkYourAnswersLabel                         = What are the restrictions, covenants or conditions?
-transaction.descriptionOfRestrictions.change.hidden                                 = Restrictions, covenants or conditions
+transaction.descriptionOfRestrictions.change.hidden                                 = What are the restrictions, covenants or conditions?
 
 transaction.transactionExercisingAnOption.title                                     = Exercising an option
 transaction.transactionExercisingAnOption.heading                                   = Exercising an option
@@ -1737,7 +1741,7 @@ transaction.transactionExercisingAnOption.p                                     
 transaction.transactionExercisingAnOption.subheading                                = Is this transaction pursuant to a previous option agreement?
 transaction.transactionExercisingAnOption.checkYourAnswersLabel                     = Transaction pursuant to a previous option agreement?
 transaction.transactionExercisingAnOption.error.required                            = Select yes if this transaction is pursuant to a previous option agreement
-transaction.transactionExercisingAnOption.change.hidden                             = Is this transaction pursuant to a previous option agreement?
+transaction.transactionExercisingAnOption.change.hidden                             = Transaction pursuant to a previous option agreement?
 
 lease.beforeYouStart.p1                                                             = In this section, you need to tell us about the lease on the land or property.
 lease.beforeYouStart.p2                                                             = We will ask for:
@@ -1970,7 +1974,7 @@ submission.whoAreYouSubmittingFor.purchaserApproved                             
 submission.whoAreYouSubmittingFor.myself                                            = Myself, or as the in-house representative of an organisation
 submission.whoAreYouSubmittingFor.checkYourAnswersLabel                             = Who are you submitting this return for?
 submission.whoAreYouSubmittingFor.error.required                                    = Select who you’re submitting this return for
-submission.whoAreYouSubmittingFor.change.hidden                                     = who you are submitting this return for
+submission.whoAreYouSubmittingFor.change.hidden                                     = Who are you submitting this return for?
 
 submission.declaration.title                                                        = Declaration
 submission.declaration.heading                                                      = Declaration
