@@ -47,6 +47,7 @@
                 label = LabelViewModel(messages("land.areaOfLand.heading", messages(s"land.areaOfLand.$unitType"))).asPageHeading(Large)
             )
             .withWidth(Fixed10)
+            .withAutocomplete("off")
             .withHint(HintViewModel(HtmlContent(Html(messages(s"land.areaOfLand.hint.$unitType")))))
             .withSuffix(PrefixOrSuffix(
                 content = Text(messages(s"land.areaOfLand.$unitType.suffix"))

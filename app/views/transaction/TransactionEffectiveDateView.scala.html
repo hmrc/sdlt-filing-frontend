@@ -58,6 +58,16 @@
                 legend = LegendViewModel(messages("transaction.transactionEffectiveDate.subheading")).asPageSubHeading()
             )
             .withHint(HintViewModel(messages("transaction.transactionEffectiveDate.hint")))
+            .copy(
+                items = DateViewModel(
+                    field = form("value"),
+                    legend = LegendViewModel(
+                        messages("transaction.transactionEffectiveDate.subheading")
+                    ).asPageSubHeading()
+                ).items.map { item =>
+                    item.copy(autocomplete = Some("off"))
+                }
+            )
         )
 
         @govukButton(

@@ -54,6 +54,7 @@
                                     label = LabelViewModel(messages(s"$key.firstName"))
                                 )
                                 .withWidth(Full)
+                                .withAutocomplete("off")
                             ),
                             govukInput(
                                 InputViewModel(
@@ -61,6 +62,7 @@
                                     label = LabelViewModel(messages(s"$key.middleName"))
                                 )
                                 .withWidth(Full)
+                                .withAutocomplete("off")
                             ),
                             govukInput(
                                 InputViewModel(
@@ -68,6 +70,7 @@
                                     label = LabelViewModel(messages(s"$key.surname"))
                                 )
                                 .withWidth(Full)
+                                .withAutocomplete("off")
                             )
                         ))
                     )
@@ -79,6 +82,7 @@
                         label = LabelViewModel(messages(s"$key.heading")).asPageHeading(size = LargeLabel)
                     )
                     .withWidth(Full)
+                    .withAutocomplete("off")
                 )
             }
 

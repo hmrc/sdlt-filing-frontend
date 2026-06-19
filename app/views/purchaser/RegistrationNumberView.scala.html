@@ -46,6 +46,7 @@
             )
             .withWidth(Full)
             .withHint(HintViewModel(HtmlContent(Html(messages("purchaser.registrationNumber.hint", purchaserName)))))
+            .withAutocomplete("off")
         )
 
         @govukButton(

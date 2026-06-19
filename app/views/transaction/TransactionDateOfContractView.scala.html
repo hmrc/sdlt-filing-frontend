@@ -43,6 +43,16 @@
                 legend = LegendViewModel(messages("transaction.transactionDateOfContract.heading")).asPageHeading()
             )
             .withHint(HintViewModel(messages("transaction.transactionDateOfContract.hint")))
+            .copy(
+                items = DateViewModel(
+                    field = form("value"),
+                    legend = LegendViewModel(
+                        messages("transaction.transactionDateOfContract.subheading")
+                    ).asPageSubHeading()
+                ).items.map { item =>
+                    item.copy(autocomplete = Some("off"))
+                }
+            )
         )
 
         @govukButton(
