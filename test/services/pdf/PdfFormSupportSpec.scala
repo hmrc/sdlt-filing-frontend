@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package services.pdf
 
 import base.SpecBase
@@ -48,9 +64,9 @@ class PdfFormSupportSpec extends SpecBase with MockitoSugar {
         result mustBe(Some("first second"), None)
       }
 
-      "must return a string in 1 part when input contains no spaces" in {
-        val result = splitLines(Some("first"), 5)
-        result mustBe(Some("first"), None)
+      "must return a string in 2 parts when input contains no spaces and input is greater than max length" in {
+        val result = splitLines(Some("first"), 3)
+        result mustBe(Some("fir"), Some("st"))
       }
 
       "must return a string in 1 part when input contains no spaces and word length exceeds max length" in {

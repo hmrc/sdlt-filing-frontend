@@ -21,6 +21,9 @@ import models.*
 import org.apache.pdfbox.Loader
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.interactive.form.{PDAcroForm, PDTextField, PDCheckBox}
+import org.apache.pdfbox.cos.{COSDictionary, COSName}
+import org.apache.pdfbox.pdmodel.common.PDRectangle
+import org.apache.pdfbox.pdmodel.interactive.annotation.{PDAppearanceDictionary, PDAppearanceStream}
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
 
@@ -100,6 +103,26 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
     allCheckboxFields.foreach { name =>
       val cb = new PDCheckBox(acroForm)
       cb.setPartialName(name)
+
+      val widget = cb.getWidgets.get(0)
+      widget.setRectangle(new PDRectangle(0, 0, 10, 10))
+
+      def appearanceStream(): PDAppearanceStream = {
+        val s = new PDAppearanceStream(doc)
+        s.setBBox(new PDRectangle(0, 0, 10, 10))
+        s
+      }
+
+      val normalStates = new COSDictionary()
+      normalStates.setItem(COSName.YES, appearanceStream())
+      normalStates.setItem(COSName.Off, appearanceStream())
+
+      val apDict = new PDAppearanceDictionary()
+      apDict.getCOSObject.setItem(COSName.N, normalStates)
+
+      widget.setAppearance(apDict)
+      widget.getCOSObject.setItem(COSName.AS, COSName.Off)
+
       acroForm.getFields.add(cb)
     }
 
