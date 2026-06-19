@@ -194,7 +194,7 @@ class LandAuthorityCodeSingleEntityControllerSpec extends SpecBase with MockitoS
         }
       }
 
-      "must point the Continue button at the confirm-address page in CheckMode for postcode-targeted failures (Cf-16)" in {
+      "must point the Continue button at the address lookup for postcode-targeted failures (Cf-16)" in {
         val crossFlow   = crossFlowWith(Seq((testLand, Seq(cf16Failure))))
         val application = appWith(testUserAnswers, crossFlow)
 
@@ -204,7 +204,7 @@ class LandAuthorityCodeSingleEntityControllerSpec extends SpecBase with MockitoS
           val content = contentAsString(result)
 
           status(result) mustEqual OK
-          content must include(controllers.land.routes.ConfirmLandOrPropertyAddressController.onPageLoad(CheckMode).url)
+          content must include(controllers.land.routes.LandAddressController.redirectToAddressLookupLand(Some("change")).url)
         }
       }
 

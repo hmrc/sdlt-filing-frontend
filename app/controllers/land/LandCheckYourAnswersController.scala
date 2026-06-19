@@ -86,18 +86,26 @@ class LandCheckYourAnswersController @Inject() (
   }
 
   private def failuresForSessionLand(ua: UserAnswers): Seq[CrossFlowFailure] = {
-      val authorityCodeFailures = crossFlow.failuresForPage(Pages.LandAuthorityCode, ua)
-      val postcodeFailures = crossFlow.failuresForPage(Pages.LandPostcode, ua)
-      val propertyTypeFailures = crossFlow.failuresForPage(Pages.LandPropertyType, ua)
-      (authorityCodeFailures ++ postcodeFailures ++ propertyTypeFailures).distinct
-    }
+    val authorityCodeFailures = crossFlow.failuresForPage(Pages.LandAuthorityCode, ua)
+    val postcodeFailures      = crossFlow.failuresForPage(Pages.LandPostcode, ua)
+    val propertyTypeFailures  = crossFlow.failuresForPage(Pages.LandPropertyType, ua)
+    (authorityCodeFailures ++ postcodeFailures ++ propertyTypeFailures).distinct
+  }
 
-  private def redirectFor(failure: CrossFlowFailure): Call = {
+  private def currentLandId(ua: UserAnswers): Option[String] =
+    (ua.data \ "landCurrent").asOpt[LandSessionQuestions].flatMap(_.landId)
+
+  private def redirectFor(failure: CrossFlowFailure, landId: Option[String]): Call = {
     val targets = failure.targets.map(_.page).toSet
 
-    if      (targets.contains(Pages.LandPostcode))      controllers.land.routes.ConfirmLandOrPropertyAddressController.onPageLoad(CheckMode)
-    else if (targets.contains(Pages.LandPropertyType))  controllers.land.routes.LandTypeOfPropertyController.onPageLoad(CheckMode)
-    else                                                controllers.land.routes.LocalAuthorityCodeController.onPageLoad(CheckMode)
+    if (targets.contains(Pages.LandPostcode))
+      landId
+        .map(id => controllers.land.routes.LandAuthorityCodeSingleEntityController.onPageLoad(id))
+        .getOrElse(controllers.routes.JourneyRecoveryController.onPageLoad())
+    else if (targets.contains(Pages.LandPropertyType))
+      controllers.land.routes.LandTypeOfPropertyController.onPageLoad(CheckMode)
+    else
+      controllers.land.routes.LocalAuthorityCodeController.onPageLoad(CheckMode)
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
@@ -149,8 +157,10 @@ class LandCheckYourAnswersController @Inject() (
     val isAgricultural          = propertyTypeCheck(userAnswers) && agriculturalCheck(userAnswers)
     val knowsArea               = propertyTypeCheck(userAnswers) && knowAreaCheck(userAnswers) && agriculturalCheck(userAnswers)
 
+    val landId = currentLandId(userAnswers)
+
     val crossFlowMissing: Seq[SummaryRowResult] =
-      failuresForSessionLand(userAnswers).map(f => SummaryRowResult.Missing(redirectFor(f)))
+      failuresForSessionLand(userAnswers).map(f => SummaryRowResult.Missing(redirectFor(f, landId)))
 
     val landRows: Seq[SummaryRowResult] = Seq(
       Some(LandTypeOfPropertySummary.row(userAnswers)),

@@ -506,13 +506,15 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
         }
       }
 
-      "must redirect to ConfirmLandOrPropertyAddress in CheckMode when cross-flow reports a postcode failure for the session land" in {
+      "must redirect to LandAuthorityCodeSingleEntity with the session landId when cross-flow reports a postcode failure" in {
+
+        val landId = "LAND001"
 
         val userAnswers = UserAnswers(
           id       = "12345",
           returnId = Some("AB2346"),
           storn    = "TESTSTORN",
-          data     = landCurrentData()
+          data     = landCurrentData(Some(landId))
         )
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -533,7 +535,39 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.land.routes.ConfirmLandOrPropertyAddressController.onPageLoad(CheckMode).url
+          redirectLocation(result).value mustEqual
+            controllers.land.routes.LandAuthorityCodeSingleEntityController.onPageLoad(landId).url
+        }
+      }
+
+      "must redirect to JourneyRecovery when cross-flow reports a postcode failure but no landId is in session" in {
+
+        val userAnswers = UserAnswers(
+          id       = "12345",
+          returnId = Some("AB2346"),
+          storn    = "TESTSTORN",
+          data     = landCurrentData(landId = None)
+        )
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val crossFlow = crossFlowWithFailures(Map(
+          Pages.LandPostcode -> Seq(postcodeFailure)
+        ))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(crossFlow)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.land.routes.LandCheckYourAnswersController.onPageLoad().url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
 
@@ -596,10 +630,6 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
       }
 
       "must render the CYA normally when cross-flow filters Cf-6 (aggregate-only) from page-level failures" in {
-
-        // Cf-6 targets LandPropertyType but is aggregate-only — so the dispatcher's
-        // filter in failuresForPage strips it from the result. The CYA should not
-        // see it and should render normally.
         val userAnswers = UserAnswers(
           id       = "12345",
           returnId = Some("AB2346"),

@@ -230,13 +230,14 @@ class F17RulesSpec extends SpecBase with Matchers {
       failure.messageKey mustBe "crossflow.land.Cf-9.welsh6996_6997.body"
     }
 
-    "must target both the land authority code page and the effective date page" in {
+    "must target the land authority code page" in {
       val ua   = answersWith(effectiveDate = Some(welshActEffective.minusDays(1)))
       val land = landWithCode("6996")
 
       val failure = Cf9a_Welsh6996_6997EffDate.validate(land, ua).value
 
-      failure.targets.map(_.page) must contain allOf (Pages.LandAuthorityCode, Pages.EffectiveDate)
+      failure.targets.map(_.page) must contain (Pages.LandAuthorityCode)
+      failure.targets.map(_.page) must not contain (Pages.EffectiveDate)
     }
   }
 

@@ -81,7 +81,7 @@ class LandAuthorityCodeSingleEntityController @Inject() (
 
     if (targets.contains(Pages.EffectiveDate))         controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode).url
     else if (targets.contains(Pages.LandPropertyType)) controllers.land.routes.LandTypeOfPropertyController.onPageLoad(CheckMode).url
-    else if (targets.contains(Pages.LandPostcode))     controllers.land.routes.ConfirmLandOrPropertyAddressController.onPageLoad(CheckMode).url
+    else if (targets.contains(Pages.LandPostcode))     controllers.land.routes.LandAddressController.redirectToAddressLookupLand(Some("change")).url
     else                                               controllers.land.routes.LocalAuthorityCodeController.onPageLoad(CheckMode).url
   }
 
