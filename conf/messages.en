@@ -109,7 +109,7 @@ site.error.noReturnReference.fileNewReturn                                      
 site.error.noReturnReference.manageTaxes                                            = Manage your Stamp Taxes
 site.error.noReturnReference.checkYourAnswersLabel                                  = You cannot reach this page
 site.error.noReturnReference.error.required                                         = Please select an option
-site.error.noReturnReference.change.hidden                                          = NoReturnReference
+site.error.noReturnReference.change.hidden                                          = You cannot reach this page
 
 # Task List
 taskList.title                                                                      = returnTaskList
@@ -492,9 +492,9 @@ vendorAgent.vendorAgentsContactDetails.change.hidden                            
 vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.invalidFormat        = Enter {0}’s email address in the correct format, like name@example.com
 vendorAgent.removeVendorAgent.title                                                 = Are you sure you want to remove the vendor’s agent? - About the vendor’s agent
 vendorAgent.removeVendorAgent.heading                                               = Are you sure you want to remove {0}?
-vendorAgent.removeVendorAgent.checkYourAnswersLabel                                 = removeVendorAgent
+vendorAgent.removeVendorAgent.checkYourAnswersLabel                                 = Remove vendor agent
 vendorAgent.removeVendorAgent.error.required                                        = Select yes if you want to remove {0}
-vendorAgent.removeVendorAgent.change.hidden                                         = RemoveVendorAgent
+vendorAgent.removeVendorAgent.change.hidden                                         = Remove vendor agent
 
 
 # Purchaser Messages
@@ -652,10 +652,10 @@ purchaser.partnershipUtr.change.hidden                                          
 
 purchaser.registrationNumber.title                                                  = What is the purchaser’s VAT registration number? - About the purchaser
 purchaser.registrationNumber.heading                                                = What is {0}’s VAT registration number?
-purchaser.registrationNumber.checkYourAnswersLabel                                  = VAT Registration Number
+purchaser.registrationNumber.checkYourAnswersLabel                                  = VAT registration number
 purchaser.registrationNumber.error.required                                         = Enter {0}’s VAT registration number
-purchaser.registrationNumber.error.length                                           = Registration Number must be 9 digits
-purchaser.registrationNumber.change.hidden                                          = VAT Registration Number
+purchaser.registrationNumber.error.length                                           = Registration number must be 9 digits
+purchaser.registrationNumber.change.hidden                                          = VAT registration number
 purchaser.registrationNumber.error.regex.invalid                                    = {0}’s VAT registration number must only include numbers 0 to 9
 purchaser.registrationNumber.error.invalid                                          = Enter {0}’s VAT registration number in the correct format
 purchaser.registrationNumber.hint                                                   = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate
@@ -725,7 +725,7 @@ purchaser.purchaserRemove.title                                                 
 purchaser.purchaserRemove.headingSingle                                             = Are you sure you want to remove {0}?
 purchaser.purchaserRemove.remove                                                    = Remove 2
 purchaser.purchaserRemove.error.required                                            = Select yes if you want to remove {0}
-purchaser.purchaserRemove.change.hidden                                             = PurchaserRemove
+purchaser.purchaserRemove.change.hidden                                             = Purchaser remove
 purchaser.purchaserRemove.double.heading                                            = Removing {0}
 purchaser.purchaserRemove.double.keep                                               = Keep {0}
 purchaser.purchaserRemove.double.remove                                             = Remove {0} and update {1}
@@ -754,7 +754,7 @@ purchaser.confirmPurchaserAddress.confirmAddress                                
 purchaser.confirmPurchaserAddress.isThisTheLand                                     = Is this {0}’s address?
 purchaser.confirmPurchaserAddress.checkYourAnswersLabel                             = Confirm the address of the land or property
 purchaser.confirmPurchaserAddress.error.required                                    = Select yes if the purchaser’s address is correct
-purchaser.confirmPurchaserAddress.change.hidden                                     = confirmPurchaserAddress
+purchaser.confirmPurchaserAddress.change.hidden                                     = Confirm the address of the land or property
 purchaser.confirmPurchaserAddress.missing                                           = Enter purchaser's address
 
 # Purchaser Overview
@@ -807,7 +807,7 @@ site.error.noReturnReference.fileNewReturn                                      
 site.error.noReturnReference.manageTaxes                                            = Manage your Stamp Taxes
 site.error.noReturnReference.checkYourAnswersLabel                                  = You cannot reach this page
 site.error.noReturnReference.error.required                                         = Please select an option
-site.error.noReturnReference.change.hidden                                          = NoReturnReference
+site.error.noReturnReference.change.hidden                                          = You cannot reach this page
 
 purchaserAgent.addContactDetailsForPurchaserAgent.title                             = Do you want to add contact details for the agent?
 purchaserAgent.addContactDetailsForPurchaserAgent.heading                           = Do you want to add contact details for {0}?
@@ -860,9 +860,9 @@ purchaserAgent.selectPurchaserAgent.title                                       
 purchaserAgent.selectPurchaserAgent.heading                                         = Select {0}’s agent
 purchaserAgent.selectPurchaserAgent.existingAgent                                   = An existing agent
 purchaserAgent.selectPurchaserAgent.addNewAgent                                     = Add an agent for this return
-purchaserAgent.selectPurchaserAgent.checkYourAnswersLabel                           = selectPurchaserAgent
+purchaserAgent.selectPurchaserAgent.checkYourAnswersLabel                           = Select purchaser agent
 purchaserAgent.selectPurchaserAgent.error.required                                  = Select {0}’s agent or add a new agent
-purchaserAgent.selectPurchaserAgent.change.hidden                                   = SelectPurchaserAgent
+purchaserAgent.selectPurchaserAgent.change.hidden                                   = Select purchaser agent
 
 purchaserAgent.purchaserAgentAuthorised.title                                       = Is the agent authorised to handle correspondence on behalf of the purchaser? - About the purchaser’s agent
 purchaserAgent.purchaserAgentAuthorised.heading                                     = Is {0} authorised to handle correspondence on behalf of the purchaser?
@@ -873,9 +873,9 @@ purchaserAgent.purchaserAgentAuthorised.change.hidden                           
 
 purchaserAgent.removePurchaserAgent.title                                           = Are you sure you want to remove the purchaser’s agent? - About the purchaser’s agent
 purchaserAgent.removePurchaserAgent.heading                                         = Are you sure you want to remove {0}?
-purchaserAgent.removePurchaserAgent.checkYourAnswersLabel                           = removePurchaserAgent
+purchaserAgent.removePurchaserAgent.checkYourAnswersLabel                           = Remove purchaser agent
 purchaserAgent.removePurchaserAgent.error.required                                  = Select yes if you want to remove {0}
-purchaserAgent.removePurchaserAgent.change.hidden                                   = RemovePurchaserAgent
+purchaserAgent.removePurchaserAgent.change.hidden                                   = Remove purchaser agent
 
 vendorAgent.BeforeYouStart.title                                                    = Before you start - About the vendor’s agent
 vendorAgent.BeforeYouStart.p1                                                       = In this section, you need to tell us about the vendor’s agent.
@@ -889,7 +889,7 @@ vendorAgent.BeforeYouStart.bullet4                                              
 vendorAgent.BeforeYouStart.subheading                                               = Do you want to add an agent for the vendor?
 vendorAgent.BeforeYouStart.checkYourAnswersLabel                                    = Add an agent for the vendor
 vendorAgent.BeforeYouStart.error.required                                           = Select yes to add an agent for the vendor
-vendorAgent.BeforeYouStart.change.hidden                                            = if you want to add an agent for the vendor
+vendorAgent.BeforeYouStart.change.hidden                                            = Add an agent for the vendor
 
 vendorAgent.overview.title                                                          = Vendor’s agent overview
 vendorAgent.overview.heading                                                        = Vendor’s agent overview
@@ -976,7 +976,7 @@ land.confirmLandOrPropertyAddress.confirmAddress                                
 land.confirmLandOrPropertyAddress.isThisTheLand                                     = Is this the address of the land or property?
 land.confirmLandOrPropertyAddress.checkYourAnswersLabel                             = Confirm the address of the land or property
 land.confirmLandOrPropertyAddress.error.required                                    = Select yes if this is the address of the land or property
-land.confirmLandOrPropertyAddress.change.hidden                                     = ConfirmLandOrPropertyAddress
+land.confirmLandOrPropertyAddress.change.hidden                                     = Confirm the address of the land or property
 land.confirmLandOrPropertyAddress.missing                                           = Enter land or property address
 
 
@@ -1176,7 +1176,7 @@ transaction.confirmTypeOfTransaction.heading                                    
 transaction.confirmTypeOfTransaction.subHeading                                     = Is this the correct type of transaction?
 transaction.confirmTypeOfTransaction.p                                              = This was your answer when creating this return.
 transaction.confirmTypeOfTransaction.error.required                                 = Select Yes or No
-transaction.confirmTypeOfTransaction.change.hidden                                  = Confirm Type Of Transaction
+transaction.confirmTypeOfTransaction.change.hidden                                  = Confirm the type of transaction
 
 transaction.changeTypeOfTransaction.title                                           = Changing the type of transaction - About the transaction
 transaction.changeTypeOfTransaction.heading                                         = Changing the transaction type
@@ -1187,7 +1187,7 @@ transaction.changeTypeOfTransaction.hint.option3                                
 transaction.changeTypeOfTransaction.hint.option4                                    = By changing the type of transaction, the amount of SDLT due may change. All information you have entered about the total consideration of the transaction will be deleted. You will now need to enter the total premium payable and the net present value.
 transaction.changeTypeOfTransaction.checkYourAnswersLabel                           = Changing the transaction type
 transaction.changeTypeOfTransaction.error.required                                  = Select yes if you need to change the transaction type
-transaction.changeTypeOfTransaction.change.hidden                                   = ChangeTypeOfTransaction
+transaction.changeTypeOfTransaction.change.hidden                                   = Changing the transaction type
 transaction.changeTypeOfTransaction.missing                                         = Select yes or no
 
 
@@ -1498,7 +1498,7 @@ taxCalculation.calculation.propertyType.04                                      
 taxCalculation.calculation.returnToTaxCalculation                                   = Return to tax calculation
 
 taxCalculation.sdltSelfAssessment.checkYourAnswersLabel                             = Self-assessed SDLT due
-taxCalculation.sdltSelfAssessment.change.hidden                                     = self-assessed SDLT due
+taxCalculation.sdltSelfAssessment.change.hidden                                     = Self-assessed SDLT due
 
 taxCalculation.sdltSelfAssessment.error.required                                    = Enter the self-assessed amount of SDLT, in pounds
 taxCalculation.sdltSelfAssessment.error.invalidNumeric                              = The self-assessed amount of SDLT must only include commas and numbers 0 to 9
@@ -1943,7 +1943,7 @@ submission.whoAreYouSubmittingFor.purchaserApproved                             
 submission.whoAreYouSubmittingFor.myself                                            = Myself, or as the in-house representative of an organisation
 submission.whoAreYouSubmittingFor.checkYourAnswersLabel                             = Who are you submitting this return for?
 submission.whoAreYouSubmittingFor.error.required                                    = Select who you’re submitting this return for
-submission.whoAreYouSubmittingFor.change.hidden                                     = who you are submitting this return for
+submission.whoAreYouSubmittingFor.change.hidden                                     = Who are you submitting this return for?
 
 submission.declaration.title                                                        = Declaration
 submission.declaration.heading                                                      = Declaration

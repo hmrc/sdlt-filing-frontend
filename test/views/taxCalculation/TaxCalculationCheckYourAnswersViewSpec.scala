@@ -223,7 +223,7 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
 
         doc.text() must include("HMRC calculated SDLT due £27,500")
         doc.text() must include("Self-assessed SDLT due £12,345")
-        doc.text() must include("self-assessed SDLT due Penalties due £200")
+        doc.text() must include("Self-assessed SDLT due Penalties due £200")
         doc.text() must include("Amount to be paid £43,950")
         doc.text() must include("Change Amount to be paid Does the amount include penalties and interest? Yes")
       }
