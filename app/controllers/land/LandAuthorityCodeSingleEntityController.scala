@@ -51,7 +51,7 @@ class LandAuthorityCodeSingleEntityController @Inject() (
         .flatMap(_.find(_.landID.contains(landId)))
 
       val maybeFailure = maybeLand.flatMap { land =>
-        crossFlow.landFailuresGrouped(request.userAnswers)
+        crossFlow.landFailuresExcluding(Set("Cf-6"), request.userAnswers)
           .find(_._1.landID == land.landID)
           .flatMap(_._2.headOption)
       }
@@ -64,11 +64,11 @@ class LandAuthorityCodeSingleEntityController @Inject() (
             updatedAnswers <- Future.fromTry(populateLandService.populateLandInSession(land, request.userAnswers))
             _              <- sessionRepository.set(updatedAnswers)
           } yield {
-            val heading     = failure.headingKey
-            val bodyKey     = failure.messageKey
-            val ctaKey      = ctaKeyFor(failure)
+            val heading = failure.headingKey
+            val body = failure.body
+            val ctaKey = ctaKeyFor(failure)
             val continueUrl = continueUrlFor(failure)
-            Ok(view(heading, bodyKey, ctaKey, continueUrl))
+            Ok(view(heading, body, ctaKey, continueUrl))
           }
 
         case _ =>

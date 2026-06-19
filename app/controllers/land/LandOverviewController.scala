@@ -94,13 +94,19 @@ class LandOverviewController @Inject() (
         }
       }
   }
-  
+
   private def crossFlowRedirect(ua: UserAnswers): Option[Result] = {
     val failures = crossFlow.landFailuresGrouped(ua)
     if (failures.isEmpty) {
       None
     } else {
-      Some(Redirect(controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad()))
+      val allRuleIds = failures.flatMap(_._2.map(_.ruleId))
+      val onlyCf6   = allRuleIds.nonEmpty && allRuleIds.forall(_ == "Cf-6")
+
+      if (onlyCf6)
+        Some(Redirect(controllers.land.routes.LandPropertyTypeMultiEntityController.onPageLoad()))
+      else
+        Some(Redirect(controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad()))
     }
   }
 

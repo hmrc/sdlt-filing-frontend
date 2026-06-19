@@ -55,12 +55,15 @@ object LandTaskList {
       case _                                                                            => controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
     }
 
-    val multiEntityUrl =
-      controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad().url
+    val errorUrl = controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad().url
+    val cf6Url = controllers.land.routes.LandPropertyTypeMultiEntityController.onPageLoad().url
+
+    val onlyCf6 = status.ruleIds.nonEmpty && status.ruleIds.forall(_ == "Cf-6")
 
     val url =
-      if (status.hasFailures) multiEntityUrl
-      else                    defaultUrl
+      if (status.hasFailures && onlyCf6) cf6Url
+      else if (status.hasFailures) errorUrl
+      else defaultUrl
 
     TaskListRowBuilder(
       canEdit       = _ => true,

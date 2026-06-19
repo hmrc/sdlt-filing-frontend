@@ -86,11 +86,11 @@ class LandCheckYourAnswersController @Inject() (
   }
 
   private def failuresForSessionLand(ua: UserAnswers): Seq[CrossFlowFailure] = {
-    val authorityCodeFailures     = crossFlow.failuresForPage(Pages.LandAuthorityCode, ua)
-    val postcodeFailures = crossFlow.failuresForPage(Pages.LandPostcode, ua)
-    val propertyTypeFailures = crossFlow.failuresForPage(Pages.LandPropertyType, ua)
-    (authorityCodeFailures ++ postcodeFailures ++ propertyTypeFailures).distinct
-  }
+      val authorityCodeFailures = crossFlow.failuresForPage(Pages.LandAuthorityCode, ua)
+      val postcodeFailures = crossFlow.failuresForPage(Pages.LandPostcode, ua)
+      val propertyTypeFailures = crossFlow.failuresForPage(Pages.LandPropertyType, ua)
+      (authorityCodeFailures ++ postcodeFailures ++ propertyTypeFailures).distinct
+    }
 
   private def redirectFor(failure: CrossFlowFailure): Call = {
     val targets = failure.targets.map(_.page).toSet

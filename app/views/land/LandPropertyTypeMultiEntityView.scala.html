@@ -16,9 +16,9 @@
 
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import viewmodels.land.LandPropertyTypeRow
 @import viewmodels.CaptionSize.Large
 @import services.crossflow.CrossFlowBody
-
 @this(
         layout: templates.Layout,
         govukButton: GovukButton,
@@ -26,22 +26,19 @@
         h1: h1,
         caption: Caption
 )
-
 @(
-        heading:     String,
-        body:        CrossFlowBody,
-        ctaKey:      String,
-        continueUrl: String
+        rows:          Seq[LandPropertyTypeRow],
+        heading:       String,
+        body:          CrossFlowBody,
+        continueUrl:   String,
+        problemCount:  Int
 )(
         implicit request: Request[_],
         messages: Messages
 )
-
 @layout(pageTitle = titleNoForm(heading), showBackLink = true) {
-
     @caption(messages("site.land.caption"), size = Large)
-    @h1(heading)
-
+    @h1(messages(heading, problemCount))
     @body match {
         case CrossFlowBody.Single(messageKey) => {
             @p(messageKey)
@@ -55,9 +52,30 @@
             </ul>
         }
     }
-
-    @p(ctaKey)
-
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">@messages("crossflow.land.Cf-6.column.land")</th>
+                <th scope="col" class="govuk-table__header">@messages("crossflow.land.Cf-6.column.propertyType")</th>
+                <th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">@messages("crossflow.land.Cf-6.column.actions")</span></th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+        @for(row <- rows) {
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">@row.label</td>
+                <td class="govuk-table__cell">@row.propertyTypeDisplay</td>
+                <td class="govuk-table__cell">
+                    <a class="govuk-link" href="@row.updateUrl">@messages("site.update")</a>
+                    @if(row.canRemove) {
+                            &nbsp;
+                        <a class="govuk-link" href="@row.removeUrl">@messages("site.remove")</a>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
     @govukButton(
         ButtonViewModel(messages("site.continue")).asLink(continueUrl)
     )

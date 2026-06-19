@@ -19,8 +19,9 @@ package services.crossflow.errors
 import base.SpecBase
 import constants.FullReturnConstants.emptyFullReturn
 import models.transaction.ReasonForRelief
-import models.{Land, Lease, Transaction, UserAnswers}
+import models.{Land, Lease, ReturnInfo, Transaction, UserAnswers}
 import org.scalatest.matchers.must.Matchers
+import pages.lease.TypeOfLeasePage
 import pages.transaction._
 import services.crossflow.errors.CrossFlowProjections.*
 
@@ -49,6 +50,25 @@ class CrossFlowProjectionsSpec extends SpecBase with Matchers {
     emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(
       land = Some(Seq(Land(propertyType = Some(propertyType))))
     )))
+
+  private def withCommittedLease(leaseType: Option[String] = None): UserAnswers =
+    emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(
+      lease = Some(Lease(leaseType = leaseType))
+    )))
+
+  private def withLands(lands: Land*): UserAnswers =
+    emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(
+      land = Some(lands)
+    )))
+
+  private def withMainLandAndLands(mainLandId: String, lands: Land*): UserAnswers = {
+    val baseReturnInfo = emptyFullReturn.returnInfo.getOrElse(ReturnInfo())
+    val returnInfoWithMain = baseReturnInfo.copy(mainLandID = Some(mainLandId))
+    emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(
+      returnInfo = Some(returnInfoWithMain),
+      land       = Some(lands)
+    )))
+  }
 
   "isClaimingRelief" - {
 
@@ -440,6 +460,219 @@ class CrossFlowProjectionsSpec extends SpecBase with Matchers {
 
     "must have the F24 effective floor at 01/04/2016" in {
       Dates.f24EffectiveFloor mustBe LocalDate.of(2016, 4, 1)
+    }
+  }
+
+  "leaseType" - {
+
+    "must return the session-selected lease type as its code (R)" in {
+      val ua = emptyUserAnswers.set(TypeOfLeasePage, models.lease.TypeOfLease.R).success.value
+
+      leaseType(ua) mustBe Some("R")
+    }
+
+    "must return the session-selected lease type as its code (M)" in {
+      val ua = emptyUserAnswers.set(TypeOfLeasePage, models.lease.TypeOfLease.M).success.value
+
+      leaseType(ua) mustBe Some("M")
+    }
+
+    "must return the session-selected lease type as its code (N)" in {
+      val ua = emptyUserAnswers.set(TypeOfLeasePage, models.lease.TypeOfLease.N).success.value
+
+      leaseType(ua) mustBe Some("N")
+    }
+
+    "must prefer the session lease type over the committed snapshot" in {
+      val ua = withCommittedLease(leaseType = Some("R"))
+        .set(TypeOfLeasePage, models.lease.TypeOfLease.N).success.value
+
+      leaseType(ua) mustBe Some("N")
+    }
+
+    "must fall back to the committed lease type when no session answer exists" in {
+      val ua = withCommittedLease(leaseType = Some("R"))
+
+      leaseType(ua) mustBe Some("R")
+    }
+
+    "must trim whitespace on the committed lease type" in {
+      val ua = withCommittedLease(leaseType = Some("  M  "))
+
+      leaseType(ua) mustBe Some("M")
+    }
+
+    "must return None when the committed lease type is empty after trimming" in {
+      val ua = withCommittedLease(leaseType = Some("   "))
+
+      leaseType(ua) mustBe None
+    }
+
+    "must return None when there is no lease at all" in {
+      leaseType(emptyUserAnswers) mustBe None
+    }
+  }
+
+  "isLeaseType" - {
+
+    "must return true when the lease type matches" in {
+      val ua = withCommittedLease(leaseType = Some("R"))
+
+      isLeaseType(ua, "R") mustBe true
+    }
+
+    "must return false when the lease type does not match" in {
+      val ua = withCommittedLease(leaseType = Some("R"))
+
+      isLeaseType(ua, "N") mustBe false
+    }
+
+    "must return false when there is no lease" in {
+      isLeaseType(emptyUserAnswers, "R") mustBe false
+    }
+  }
+
+  "hasLeaseInvolvement" - {
+
+    "must return true when the lease is present" in {
+      val ua = withCommittedLease(leaseType = Some("R"))
+
+      hasLeaseInvolvement(ua) mustBe true
+    }
+
+    "must return true when the lease is present but has no leaseType" in {
+      val ua = withCommittedLease(leaseType = None)
+
+      hasLeaseInvolvement(ua) mustBe true
+    }
+
+    "must return false when there is no lease at all" in {
+      hasLeaseInvolvement(emptyUserAnswers) mustBe false
+    }
+  }
+
+  "allLandPropertyTypes" - {
+
+    "must return an empty set when no committed lands exist" in {
+      allLandPropertyTypes(emptyUserAnswers) mustBe empty
+    }
+
+    "must return a single property type when only one land is committed" in {
+      val ua = withLands(Land(propertyType = Some("01")))
+
+      allLandPropertyTypes(ua) mustBe Set("01")
+    }
+
+    "must return distinct property types across multiple lands" in {
+      val ua = withLands(
+        Land(propertyType = Some("01")),
+        Land(propertyType = Some("03")),
+        Land(propertyType = Some("02"))
+      )
+
+      allLandPropertyTypes(ua) mustBe Set("01", "02", "03")
+    }
+
+    "must deduplicate when multiple lands share the same property type" in {
+      val ua = withLands(
+        Land(propertyType = Some("01")),
+        Land(propertyType = Some("01"))
+      )
+
+      allLandPropertyTypes(ua) mustBe Set("01")
+    }
+
+    "must skip lands with no property type" in {
+      val ua = withLands(
+        Land(propertyType = Some("01")),
+        Land(propertyType = None)
+      )
+
+      allLandPropertyTypes(ua) mustBe Set("01")
+    }
+  }
+
+  "landCount" - {
+
+    "must return 0 when there are no committed lands" in {
+      landCount(emptyUserAnswers) mustBe 0
+    }
+
+    "must return the number of committed lands" in {
+      val ua = withLands(
+        Land(landID = Some("LND001")),
+        Land(landID = Some("LND002")),
+        Land(landID = Some("LND003"))
+      )
+
+      landCount(ua) mustBe 3
+    }
+
+    "must count lands even when they have no property type" in {
+      val ua = withLands(
+        Land(landID = Some("LND001"), propertyType = None),
+        Land(landID = Some("LND002"), propertyType = Some("01"))
+      )
+
+      landCount(ua) mustBe 2
+    }
+  }
+
+  "mainLand" - {
+
+    "must return the land matching the returnInfo's mainLandID" in {
+      val landA = Land(landID = Some("LND001"), propertyType = Some("01"))
+      val landB = Land(landID = Some("LND002"), propertyType = Some("03"))
+      val ua    = withMainLandAndLands("LND002", landA, landB)
+
+      mainLand(ua).flatMap(_.landID) mustBe Some("LND002")
+    }
+
+    "must return None when there is no mainLandID" in {
+      val ua = withLands(
+        Land(landID = Some("LND001"), propertyType = Some("01"))
+      )
+
+      mainLand(ua) mustBe None
+    }
+
+    "must return None when the mainLandID does not match any land" in {
+      val landA = Land(landID = Some("LND001"), propertyType = Some("01"))
+      val ua    = withMainLandAndLands("LND999", landA)
+
+      mainLand(ua) mustBe None
+    }
+
+    "must return None when no lands are committed" in {
+      val baseReturnInfo = emptyFullReturn.returnInfo.getOrElse(ReturnInfo())
+      val ua = emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(
+        returnInfo = Some(baseReturnInfo.copy(mainLandID = Some("LND001"))),
+        land       = None
+      )))
+
+      mainLand(ua) mustBe None
+    }
+  }
+
+  "mainLandPropertyType" - {
+
+    "must return the main land's property type" in {
+      val landA = Land(landID = Some("LND001"), propertyType = Some("01"))
+      val landB = Land(landID = Some("LND002"), propertyType = Some("03"))
+      val ua    = withMainLandAndLands("LND002", landA, landB)
+
+      mainLandPropertyType(ua) mustBe Some("03")
+    }
+
+    "must return None when there is no main land" in {
+      mainLandPropertyType(emptyUserAnswers) mustBe None
+    }
+
+    "must return None when the main land has no property type" in {
+      val landA = Land(landID = Some("LND001"), propertyType = None)
+      val ua    = withMainLandAndLands("LND001", landA)
+
+      mainLandPropertyType(ua) mustBe None
     }
   }
 }

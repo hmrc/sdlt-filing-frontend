@@ -16,46 +16,17 @@
 
 package services.lease
 
-import models.lease.TypeOfLease
 import models.UserAnswers
 import models.prelimQuestions.TransactionType
 import models.prelimQuestions.TransactionType.{ConveyanceTransferLease, GrantOfLease}
 import play.api.mvc.Call
-import services.lease.LeaseService.*
 
 class LeaseService {
 
-  def leasePropertyLandPropertyValidation(userAnswers: UserAnswers, leaseType: TypeOfLease): Result = {
-    val lands =
-      userAnswers.fullReturn
-        .flatMap(_.land)
-        .getOrElse(Seq.empty)
-
-    val propertyTypes =
-      lands.flatMap(_.propertyType)
-
-    if(propertyTypes.isEmpty) {
-      Valid
-    }
-    else {
-      val propertyType = propertyTypes.head
-
-      (leaseType, propertyType) match {
-        case (TypeOfLease.R, "01") | (TypeOfLease.R, "04") => Valid
-        case (TypeOfLease.R, _) => InvalidResidentialRule
-        case (TypeOfLease.M, "02") => Valid
-        case (TypeOfLease.M, _) => InvalidMixedRule
-        case (TypeOfLease.N, "03") => Valid
-        case (TypeOfLease.N, _) => InvalidNonResidentialRule
-      }
-    }
-  }
-  
-  def transactionType(userAnswers: UserAnswers): Option[TransactionType] = {
+  def transactionType(userAnswers: UserAnswers): Option[TransactionType] =
     TransactionType.parse(
       userAnswers.fullReturn.flatMap(_.transaction).flatMap(_.transactionDescription)
     )
-  }
 
   def leaseFlowValidationCheck(userAnswers: UserAnswers): Option[Call] =
     transactionType(userAnswers) match {
@@ -65,18 +36,4 @@ class LeaseService {
       case _ =>
         Some(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
-}
-
-object LeaseService {
-
-  sealed trait Result
-
-  case object Valid extends Result
-
-  case object InvalidResidentialRule extends Result
-
-  case object InvalidNonResidentialRule extends Result
-
-  case object InvalidMixedRule extends Result
-  
 }

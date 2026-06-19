@@ -18,103 +18,123 @@ package services.lease
 
 import base.SpecBase
 import constants.FullReturnConstants.completeTransaction
-import models.{FullReturn, Land, Transaction, UserAnswers}
-import models.lease.TypeOfLease
-import models.prelimQuestions.TransactionType.GrantOfLease
+import models.{FullReturn, UserAnswers}
+import models.prelimQuestions.TransactionType.{ConveyanceTransferLease, GrantOfLease}
 import org.scalatest.matchers.must.Matchers
-import services.lease.LeaseService.{InvalidMixedRule, InvalidNonResidentialRule, InvalidResidentialRule, Valid}
 
 class LeaseServiceSpec extends SpecBase with Matchers {
+
   private val service = new LeaseService()
 
-  def userAnswersWithPropertyTypes(types: Seq[String]): UserAnswers = {
-    val lands = types.map(t => Land(propertyType = Some(t)))
-
+  private def userAnswersWithTransactionType(
+                                              transactionDescription: Option[String],
+                                              returnId:               Option[String] = None
+                                            ): UserAnswers = {
     val fullReturn = FullReturn(
-      stornId = "1",
+      stornId           = "1",
       returnResourceRef = "ref",
-      land = Some(lands)
-    )
-
-    emptyUserAnswers.copy(fullReturn = Some(fullReturn))
-  }
-  
-  def userAnswersWithTransactionType(transactionDescription: Option[String]): UserAnswers = {
-    val fullReturn = FullReturn(
-      stornId = "1",
-      returnResourceRef = "ref",
-      transaction = Some(completeTransaction.copy(
+      transaction       = Some(completeTransaction.copy(
         transactionDescription = transactionDescription))
     )
 
-    emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+    emptyUserAnswers.copy(
+      fullReturn = Some(fullReturn),
+      returnId   = returnId
+    )
   }
 
-  "leasePropertyLandPropertyValidation" - {
-
-    "must return Valid when no land present in full return" in {
-      val result = service.leasePropertyLandPropertyValidation(emptyUserAnswers, TypeOfLease.R)
-      result mustBe Valid
-    }
-
-    "must return Valid when lease type is Residential and property type is '01 - Residential'" in {
-      val userAnswers = userAnswersWithPropertyTypes(Seq("01"))
-      val result = service.leasePropertyLandPropertyValidation(userAnswers, TypeOfLease.R)
-      result mustBe Valid
-    }
-
-    "must return Valid when lease type is Residential and property type is '04 - Additional Residential'" in {
-      val userAnswers = userAnswersWithPropertyTypes(Seq("04"))
-      val result = service.leasePropertyLandPropertyValidation(userAnswers, TypeOfLease.R)
-      result mustBe Valid
-    }
-
-    "must return Valid when lease type is Non-Residential and property type is '03 - Non-Residential'" in {
-      val userAnswers = userAnswersWithPropertyTypes(Seq("03"))
-      val result = service.leasePropertyLandPropertyValidation(userAnswers, TypeOfLease.N)
-      result mustBe Valid
-    }
-
-    "must return Valid when lease type is Mixed and property type is '02 - Mixed'" in {
-      val userAnswers = userAnswersWithPropertyTypes(Seq("02"))
-      val result = service.leasePropertyLandPropertyValidation(userAnswers, TypeOfLease.M)
-      result mustBe Valid
-    }
-
-    "must return InvalidResidentialRule when Residential lease does not match property type" in {
-      val userAnswers = userAnswersWithPropertyTypes(Seq("02"))
-      val result = service.leasePropertyLandPropertyValidation(userAnswers, TypeOfLease.R)
-      result mustBe InvalidResidentialRule
-    }
-
-    "must return InvalidNonResidentialRule when Non-Residential lease does not match property type" in {
-      val userAnswers = userAnswersWithPropertyTypes(Seq("01"))
-      val result = service.leasePropertyLandPropertyValidation(userAnswers, TypeOfLease.N)
-      result mustBe InvalidNonResidentialRule
-    }
-
-    "must return InvalidMixedRule when Mixed lease does not match property type" in {
-      val userAnswers = userAnswersWithPropertyTypes(Seq("01"))
-      val result = service.leasePropertyLandPropertyValidation(userAnswers, TypeOfLease.M)
-      result mustBe InvalidMixedRule
-    }
-  }
-  
   "transactionType" - {
-    "when transaction type exists in full return" - {
-      "must return transaction type" in {
-        val userAnswers = userAnswersWithTransactionType(Some("L"))
-        
-        service.transactionType(userAnswers) mustBe Some(GrantOfLease)
-      }
-    }
-    
-    "when transaction type doesn't exist in full return" - {
-      "must return None" in {
-        val userAnswers = userAnswersWithTransactionType(None)
 
-        service.transactionType(userAnswers) mustBe None
-      }
+    "must return GrantOfLease when transaction description is 'L'" in {
+      val userAnswers = userAnswersWithTransactionType(Some("L"))
+
+      service.transactionType(userAnswers) mustBe Some(GrantOfLease)
+    }
+
+    "must return ConveyanceTransferLease when transaction description is 'A'" in {
+      val userAnswers = userAnswersWithTransactionType(Some("A"))
+
+      service.transactionType(userAnswers) mustBe Some(ConveyanceTransferLease)
+    }
+
+    "must return None when transaction description is None" in {
+      val userAnswers = userAnswersWithTransactionType(None)
+
+      service.transactionType(userAnswers) mustBe None
+    }
+
+    "must return None when transaction description is unrecognised" in {
+      val userAnswers = userAnswersWithTransactionType(Some("Z"))
+
+      service.transactionType(userAnswers) mustBe None
+    }
+
+    "must return None when fullReturn is None" in {
+      val userAnswers = emptyUserAnswers.copy(fullReturn = None)
+
+      service.transactionType(userAnswers) mustBe None
+    }
+  }
+
+  "leaseFlowValidationCheck" - {
+
+    "must return None when transaction type is GrantOfLease" in {
+      val userAnswers = userAnswersWithTransactionType(Some("L"))
+
+      service.leaseFlowValidationCheck(userAnswers) mustBe None
+    }
+
+    "must return None when transaction type is ConveyanceTransferLease" in {
+      val userAnswers = userAnswersWithTransactionType(Some("A"))
+
+      service.leaseFlowValidationCheck(userAnswers) mustBe None
+    }
+
+    "must return Some redirect to ReturnTaskList when transaction type is not a lease and returnId is present" in {
+      val userAnswers = userAnswersWithTransactionType(
+        transactionDescription = Some("F"),
+        returnId               = Some("RE12345")
+      )
+
+      service.leaseFlowValidationCheck(userAnswers) mustBe
+        Some(controllers.routes.ReturnTaskListController.onPageLoad())
+    }
+
+    "must return Some redirect to JourneyRecovery when transaction type is not a lease and returnId is absent" in {
+      val userAnswers = userAnswersWithTransactionType(
+        transactionDescription = Some("F"),
+        returnId               = None
+      )
+
+      service.leaseFlowValidationCheck(userAnswers) mustBe
+        Some(controllers.routes.JourneyRecoveryController.onPageLoad())
+    }
+
+    "must return Some redirect to ReturnTaskList when transaction type is missing and returnId is present" in {
+      val userAnswers = userAnswersWithTransactionType(
+        transactionDescription = None,
+        returnId               = Some("RE12345")
+      )
+
+      service.leaseFlowValidationCheck(userAnswers) mustBe
+        Some(controllers.routes.ReturnTaskListController.onPageLoad())
+    }
+
+    "must return Some redirect to JourneyRecovery when transaction type is missing and returnId is absent" in {
+      val userAnswers = userAnswersWithTransactionType(
+        transactionDescription = None,
+        returnId               = None
+      )
+
+      service.leaseFlowValidationCheck(userAnswers) mustBe
+        Some(controllers.routes.JourneyRecoveryController.onPageLoad())
+    }
+
+    "must return Some redirect to JourneyRecovery when there is no fullReturn at all" in {
+      val userAnswers = emptyUserAnswers.copy(fullReturn = None, returnId = None)
+
+      service.leaseFlowValidationCheck(userAnswers) mustBe
+        Some(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
   }
 }

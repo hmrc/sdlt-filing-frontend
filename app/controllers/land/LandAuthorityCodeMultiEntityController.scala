@@ -47,8 +47,8 @@ class LandAuthorityCodeMultiEntityController @Inject()(
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val offending = crossFlow.landFailuresGrouped(request.userAnswers)
-
+      val offending = crossFlow.landFailuresExcluding(Set("Cf-6"), request.userAnswers)
+      
       offending match {
 
         case Nil =>

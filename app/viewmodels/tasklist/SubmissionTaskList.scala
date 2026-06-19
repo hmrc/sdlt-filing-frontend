@@ -45,7 +45,7 @@ object SubmissionTaskList {
       )
     )
 
-  def buildSubmissionRow(fullReturn: FullReturn)(implicit messages:Messages, appConfig: FrontendAppConfig): TaskListSectionRow = {
+  def buildSubmissionRow(fullReturn: FullReturn)(implicit messages: Messages, appConfig: FrontendAppConfig): TaskListSectionRow = {
     val url = fullReturn.submission match {
       case Some(submission) if submission.submissionID.isDefined =>
         //TODO UPDATE to DTR-5731 Success page
@@ -57,7 +57,7 @@ object SubmissionTaskList {
     TaskListRowBuilder(
       canEdit = {
         case TLCompleted => true
-        case _ => true
+        case _           => true
       },
       messageKey = _ => "tasklist.submissionQuestion.details",
       hint = fullReturn => {
@@ -69,7 +69,7 @@ object SubmissionTaskList {
       url = _ => _ => {
         url
       },
-      tagId = "submissionQuestionDetailRow",
+      tagId  = "submissionQuestionDetailRow",
       checks = scheme => Seq(fullReturn.submission.exists(_.submissionID.isDefined)),
       prerequisites = _ => {
         val mandatory = Seq(
@@ -82,7 +82,9 @@ object SubmissionTaskList {
 
         val conditional = Seq(
           Option.when(isResidencyRequired(fullReturn))(UkResidencyTaskList.ukResidencyRowBuilder(fullReturn)),
-          Option.when(isLeaseRequired(fullReturn))(LeaseTaskList.leaseRowBuilder(fullReturn)),
+          Option.when(isLeaseRequired(fullReturn))(
+            LeaseTaskList.leaseRowBuilder(fullReturn, viewmodels.tasklist.LeaseTaskList.noFailures)
+          ),
           Option.when(isPurchaserAgentStarted(fullReturn))(
             PurchaserAgentTaskList.purchaserAgentRowBuilder(fullReturn)
           ),

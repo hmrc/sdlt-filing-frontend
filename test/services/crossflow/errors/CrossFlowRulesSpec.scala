@@ -19,7 +19,7 @@ package services.crossflow.errors
 import base.SpecBase
 import constants.FullReturnConstants.emptyFullReturn
 import models.transaction.ReasonForRelief
-import models.{Land, Lease, Transaction, UserAnswers}
+import models.{Land, Lease, ReturnInfo, Transaction, UserAnswers}
 import org.scalatest.matchers.must.Matchers
 import pages.transaction.{ReasonForReliefPage, TransactionEffectiveDatePage}
 import services.crossflow.*
@@ -38,12 +38,15 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
   private val mdrContractCutOff  = LocalDate.of(2024,  3,  7)
 
   private def answersWith(
-                           claimingRelief: Option[String]     = Some("YES"),
-                           reliefReason:   Option[ReasonForRelief] = None,
-                           effectiveDate:  Option[LocalDate]  = None,
-                           contractDate:   Option[String]     = None,
-                           propertyType:   Option[String]     = None,
-                           totalPremium:   Option[String]     = None
+                           claimingRelief:  Option[String]          = Some("YES"),
+                           reliefReason:    Option[ReasonForRelief] = None,
+                           effectiveDate:   Option[LocalDate]       = None,
+                           contractDate:    Option[String]          = None,
+                           propertyType:    Option[String]          = None,
+                           totalPremium:    Option[String]          = None,
+                           mainLandId:      Option[String]          = None,
+                           additionalLands: Seq[Land]               = Nil,
+                           leaseType:       Option[String]          = None
                          ): UserAnswers = {
     val committedTransaction = Transaction(
       claimingRelief = claimingRelief,
@@ -61,12 +64,33 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
       contractDate   = contractDate
     )
 
-    val committedLand  = propertyType.map(t => Land(propertyType = Some(t)))
-    val committedLease = totalPremium.map(p => Lease(totalPremiumPayable = Some(p)))
+    val firstLand = propertyType.map(t => Land(
+      landID       = mainLandId.orElse(Some("LND001")),
+      propertyType = Some(t)
+    ))
+
+    val allLands: Option[Seq[Land]] = (firstLand, additionalLands) match {
+      case (None, Nil)        => None
+      case (None, ls)         => Some(ls)
+      case (Some(l), Nil)     => Some(Seq(l))
+      case (Some(l), ls)      => Some(Seq(l) ++ ls)
+    }
+
+    val committedLease = (totalPremium, leaseType) match {
+      case (None, None) => None
+      case _ => Some(Lease(
+        totalPremiumPayable = totalPremium,
+        leaseType           = leaseType
+      ))
+    }
+
+    val baseReturnInfo = emptyFullReturn.returnInfo.getOrElse(ReturnInfo())
+    val returnInfoWithMain = mainLandId.fold(baseReturnInfo)(id => baseReturnInfo.copy(mainLandID = Some(id)))
 
     val base = emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(
+      returnInfo  = Some(returnInfoWithMain),
       transaction = Some(committedTransaction),
-      land        = committedLand.map(l => Seq(l)),
+      land        = allLands,
       lease       = committedLease
     )))
 
@@ -469,6 +493,276 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
     }
   }
 
+  "Cf5a_LeaseRResidential" - {
+
+    "must fire when main land is '01 - Residential' but lease type is not R" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("01"),
+        mainLandId     = Some("LND001"),
+        leaseType      = Some("N")
+      )
+
+      Cf5a_LeaseRResidential.validate(ua).map(_.ruleId) mustBe Some("Cf-5a")
+    }
+
+    "must fire when main land is '04 - Additional residential' but lease type is not R" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("04"),
+        mainLandId     = Some("LND001"),
+        leaseType      = Some("M")
+      )
+
+      Cf5a_LeaseRResidential.validate(ua).map(_.ruleId) mustBe Some("Cf-5a")
+    }
+
+    "must pass when main land is '01' and lease type is R" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("01"),
+        mainLandId     = Some("LND001"),
+        leaseType      = Some("R")
+      )
+
+      Cf5a_LeaseRResidential.validate(ua) mustBe None
+    }
+
+    "must pass when main land is '04' and lease type is R" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("04"),
+        mainLandId     = Some("LND001"),
+        leaseType      = Some("R")
+      )
+
+      Cf5a_LeaseRResidential.validate(ua) mustBe None
+    }
+
+    "must not apply when main land is '02 - Mixed'" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("02"),
+        mainLandId     = Some("LND001"),
+        leaseType      = Some("M")
+      )
+
+      Cf5a_LeaseRResidential.validate(ua) mustBe None
+    }
+
+    "must not apply when main land is '03 - Non-residential'" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("03"),
+        mainLandId     = Some("LND001"),
+        leaseType      = Some("N")
+      )
+
+      Cf5a_LeaseRResidential.validate(ua) mustBe None
+    }
+
+    "must not apply when no main land is configured" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("01"),
+        mainLandId     = None,
+        leaseType      = Some("N")
+      )
+
+      Cf5a_LeaseRResidential.validate(ua) mustBe None
+    }
+
+    "must not apply when main land has no property type" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        mainLandId     = Some("LND001"),
+        leaseType      = Some("N")
+      )
+
+      Cf5a_LeaseRResidential.validate(ua) mustBe None
+    }
+  }
+
+  "Cf5b_LeaseMMixed" - {
+
+    "must fire when main land is '02 - Mixed' but lease type is not M" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("02"),
+        mainLandId     = Some("LND001"),
+        leaseType      = Some("R")
+      )
+
+      Cf5b_LeaseMMixed.validate(ua).map(_.ruleId) mustBe Some("Cf-5b")
+    }
+
+    "must pass when main land is '02' and lease type is M" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("02"),
+        mainLandId     = Some("LND001"),
+        leaseType      = Some("M")
+      )
+
+      Cf5b_LeaseMMixed.validate(ua) mustBe None
+    }
+
+    "must not apply when main land is '01 - Residential'" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("01"),
+        mainLandId     = Some("LND001"),
+        leaseType      = Some("R")
+      )
+
+      Cf5b_LeaseMMixed.validate(ua) mustBe None
+    }
+
+    "must not apply when main land is '03 - Non-residential'" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("03"),
+        mainLandId     = Some("LND001"),
+        leaseType      = Some("N")
+      )
+
+      Cf5b_LeaseMMixed.validate(ua) mustBe None
+    }
+
+    "must not apply when main land is '04 - Additional residential'" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("04"),
+        mainLandId     = Some("LND001"),
+        leaseType      = Some("R")
+      )
+
+      Cf5b_LeaseMMixed.validate(ua) mustBe None
+    }
+  }
+
+  "Cf5c_LeaseNNonResidential" - {
+
+    "must fire when main land is '03 - Non-residential' but lease type is not N" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("03"),
+        mainLandId     = Some("LND001"),
+        leaseType      = Some("R")
+      )
+
+      Cf5c_LeaseNNonResidential.validate(ua).map(_.ruleId) mustBe Some("Cf-5c")
+    }
+
+    "must fire when main land is '03' and lease type is M" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("03"),
+        mainLandId     = Some("LND001"),
+        leaseType      = Some("M")
+      )
+
+      Cf5c_LeaseNNonResidential.validate(ua).map(_.ruleId) mustBe Some("Cf-5c")
+    }
+
+    "must pass when main land is '03' and lease type is N" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("03"),
+        mainLandId     = Some("LND001"),
+        leaseType      = Some("N")
+      )
+
+      Cf5c_LeaseNNonResidential.validate(ua) mustBe None
+    }
+
+    "must not apply when main land is '01 - Residential'" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("01"),
+        mainLandId     = Some("LND001"),
+        leaseType      = Some("R")
+      )
+
+      Cf5c_LeaseNNonResidential.validate(ua) mustBe None
+    }
+
+    "must not apply when main land is '02 - Mixed'" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("02"),
+        mainLandId     = Some("LND001"),
+        leaseType      = Some("M")
+      )
+
+      Cf5c_LeaseNNonResidential.validate(ua) mustBe None
+    }
+  }
+
+  "Cf6_MultiLandPropertyTypeMismatch" - {
+
+    "must be flagged as aggregateOnly so it does not fire during inline form binding" in {
+      Cf6_MultiLandPropertyTypeMismatch.aggregateOnly mustBe true
+    }
+
+    "must fire on each committed land when there is lease involvement and lands have differing property types" in {
+      val land1 = Land(landID = Some("LND001"), propertyType = Some("01"))
+      val land2 = Land(landID = Some("LND002"), propertyType = Some("03"))
+      val ua    = answersWith(
+        claimingRelief  = Some("NO"),
+        propertyType    = Some("01"),
+        mainLandId      = Some("LND001"),
+        additionalLands = Seq(land2),
+        leaseType       = Some("R")
+      )
+
+      Cf6_MultiLandPropertyTypeMismatch.validate(land1, ua).map(_.ruleId) mustBe Some("Cf-6")
+      Cf6_MultiLandPropertyTypeMismatch.validate(land2, ua).map(_.ruleId) mustBe Some("Cf-6")
+    }
+
+    "must pass when all committed lands share the same property type" in {
+      val land1 = Land(landID = Some("LND001"), propertyType = Some("01"))
+      val land2 = Land(landID = Some("LND002"), propertyType = Some("01"))
+      val ua    = answersWith(
+        claimingRelief  = Some("NO"),
+        propertyType    = Some("01"),
+        mainLandId      = Some("LND001"),
+        additionalLands = Seq(land2),
+        leaseType       = Some("R")
+      )
+
+      Cf6_MultiLandPropertyTypeMismatch.validate(land1, ua) mustBe None
+      Cf6_MultiLandPropertyTypeMismatch.validate(land2, ua) mustBe None
+    }
+
+    "must not apply when there is no lease involvement" in {
+      val land1 = Land(landID = Some("LND001"), propertyType = Some("01"))
+      val land2 = Land(landID = Some("LND002"), propertyType = Some("03"))
+      val ua    = answersWith(
+        claimingRelief  = Some("NO"),
+        propertyType    = Some("01"),
+        mainLandId      = Some("LND001"),
+        additionalLands = Seq(land2),
+        leaseType       = None
+      )
+
+      Cf6_MultiLandPropertyTypeMismatch.validate(land1, ua) mustBe None
+      Cf6_MultiLandPropertyTypeMismatch.validate(land2, ua) mustBe None
+    }
+
+    "must not apply when there is only one land" in {
+      val land1 = Land(landID = Some("LND001"), propertyType = Some("01"))
+      val ua    = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("01"),
+        mainLandId     = Some("LND001"),
+        leaseType      = Some("R")
+      )
+
+      Cf6_MultiLandPropertyTypeMismatch.validate(land1, ua) mustBe None
+    }
+  }
+
   "F23Rules.all" - {
 
     "must contain all nine rules" in {
@@ -494,6 +788,26 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
       val ua = answersWith(claimingRelief = Some("NO"))
 
       F28Rules.all.flatMap(_.validate(ua)) mustBe empty
+    }
+  }
+
+  "F30Rules.all" - {
+
+    "must contain Cf-5a, Cf-5b, and Cf-5c" in {
+      F30Rules.all.map(_.id) must contain allOf("Cf-5a", "Cf-5b", "Cf-5c")
+    }
+
+    "must produce no failures when no lease and no land are configured" in {
+      val ua = answersWith(claimingRelief = Some("NO"))
+
+      F30Rules.all.flatMap(_.validate(ua)) mustBe empty
+    }
+  }
+
+  "F30RulesLand.all" - {
+
+    "must contain Cf-6" in {
+      F30RulesLand.all.map(_.id) must contain("Cf-6")
     }
   }
 }
