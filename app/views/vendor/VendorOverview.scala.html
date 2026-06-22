@@ -130,6 +130,10 @@
                     @govukButton(
                         ButtonViewModel(messages("site.continue"))
                     )
+                } else {
+                    @govukButton(
+                        ButtonViewModel(messages("site.continue")).asLink(controllers.routes.ReturnTaskListController.onPageLoad().url)
+                    )
                 }
             }
             case None => {
