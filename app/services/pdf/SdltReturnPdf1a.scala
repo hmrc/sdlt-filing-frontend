@@ -67,88 +67,93 @@ class SdltReturnPdf1a @Inject()(
   }
   
   private def fillTransactionFields(w: PdfFieldWriter, r: FullReturn): Unit = {
-    val t = r.transaction.getOrElse(Transaction())
+    val mainLandId: Option[String] = r.returnInfo.flatMap(_.mainLandID)
+    val mainLand = r.land.flatMap(_.find(land => mainLandId.equals(land.landID)))
 
-    w.text(LAND_TYPE_PROPERTY, r.land.flatMap(_.headOption).flatMap(_.propertyType))
-    w.text(TRANSACTION_DESCRIPTION, t.transactionDescription)
-    w.text(LAND_ESTATE_OR_INTEREST_TRANSFERRED,
-      r.land.flatMap(_.headOption).flatMap(_.interestCreatedTransferred.map(_.substring(0, 2))))
-    w.dateStr(
-      TRANSACTION_EFFECTIVE_DATE_DAY,
-      TRANSACTION_EFFECTIVE_DATE_MONTH,
-      TRANSACTION_EFFECTIVE_DATE_YEAR,
-      t.effectiveDate
-    )
-    w.yesNo(
-      TRANSACTION_RESTRICTIONS_YES,
-      TRANSACTION_RESTRICTIONS_NO,
-      t.restrictionsAffectInterest.map(_.equalsIgnoreCase("YES"))
-    )
-    val (details1, details2) = splitLines(t.restrictionDetails, 39)
-    w.text(TRANSACTION_RESTRICTIONS_DETAILS_1, details1)
-    w.text(TRANSACTION_RESTRICTIONS_DETAILS_2, details2)
-    w.dateStr(
-      TRANSACTION_CONTRACT_DATE_DAY,
-      TRANSACTION_CONTRACT_DATE_MONTH,
-      TRANSACTION_CONTRACT_DATE_YEAR,
-      t.contractDate
-    )
-    w.yesNo(
-      TRANSACTION_LAND_EXCHANGED_YES,
-      TRANSACTION_LAND_EXCHANGED_NO,
-      t.isLandExchanged.map(_.equalsIgnoreCase("YES"))
-    )
-    w.postcode(TRANSACTION_LAND_EXCHANGED_POSTCODE_1, TRANSACTION_LAND_EXCHANGED_POSTCODE_2, t.exchangedLandPostcode)
-    w.text(TRANSACTION_LAND_EXCHANGED_HOUSE_NUMBER, t.exchangedLandHouseNumber)
-    w.text(TRANSACTION_LAND_EXCHANGED_ADDRESS_1,    t.exchangedLandAddress1)
-    w.text(TRANSACTION_LAND_EXCHANGED_ADDRESS_2,    t.exchangedLandAddress2)
-    w.text(TRANSACTION_LAND_EXCHANGED_ADDRESS_3,    t.exchangedLandAddress3)
-    w.text(TRANSACTION_LAND_EXCHANGED_ADDRESS_4,    t.exchangedLandAddress4)
-    w.yesNo(
-      TRANSACTION_PURSUANT_TO_OPTION_YES,
-      TRANSACTION_PURSUANT_TO_OPTION_NO,
-      t.isPursuantToPreviousOption.map(_.equalsIgnoreCase("YES"))
-    )
+    mainLand.foreach { land =>
+      w.text(LAND_TYPE_PROPERTY, land.propertyType)
+      w.text(LAND_ESTATE_OR_INTEREST_TRANSFERRED, land.interestCreatedTransferred.map(_.substring(0, 2)))
+    }
+    r.transaction.foreach { t =>
+      w.text(TRANSACTION_DESCRIPTION, t.transactionDescription)
+      w.dateStr(
+        TRANSACTION_EFFECTIVE_DATE_DAY,
+        TRANSACTION_EFFECTIVE_DATE_MONTH,
+        TRANSACTION_EFFECTIVE_DATE_YEAR,
+        t.effectiveDate
+      )
+      w.yesNo(
+        TRANSACTION_RESTRICTIONS_YES,
+        TRANSACTION_RESTRICTIONS_NO,
+        t.restrictionsAffectInterest.map(_.equalsIgnoreCase("YES"))
+      )
+      val (details1, details2) = splitLines(t.restrictionDetails, 39)
+      w.text(TRANSACTION_RESTRICTIONS_DETAILS_1, details1)
+      w.text(TRANSACTION_RESTRICTIONS_DETAILS_2, details2)
+      w.dateStr(
+        TRANSACTION_CONTRACT_DATE_DAY,
+        TRANSACTION_CONTRACT_DATE_MONTH,
+        TRANSACTION_CONTRACT_DATE_YEAR,
+        t.contractDate
+      )
+      w.yesNo(
+        TRANSACTION_LAND_EXCHANGED_YES,
+        TRANSACTION_LAND_EXCHANGED_NO,
+        t.isLandExchanged.map(_.equalsIgnoreCase("YES"))
+      )
+      w.postcode(TRANSACTION_LAND_EXCHANGED_POSTCODE_1, TRANSACTION_LAND_EXCHANGED_POSTCODE_2, t.exchangedLandPostcode)
+      w.text(TRANSACTION_LAND_EXCHANGED_HOUSE_NUMBER, t.exchangedLandHouseNumber)
+      w.text(TRANSACTION_LAND_EXCHANGED_ADDRESS_1, t.exchangedLandAddress1)
+      w.text(TRANSACTION_LAND_EXCHANGED_ADDRESS_2, t.exchangedLandAddress2)
+      w.text(TRANSACTION_LAND_EXCHANGED_ADDRESS_3, t.exchangedLandAddress3)
+      w.text(TRANSACTION_LAND_EXCHANGED_ADDRESS_4, t.exchangedLandAddress4)
+      w.yesNo(
+        TRANSACTION_PURSUANT_TO_OPTION_YES,
+        TRANSACTION_PURSUANT_TO_OPTION_NO,
+        t.isPursuantToPreviousOption.map(_.equalsIgnoreCase("YES"))
+      )
+    }
   }
 
   private def fillTaxCalculationFields(w: PdfFieldWriter, r: FullReturn): Unit = {
-    val t  = r.transaction.getOrElse(Transaction())
-    val tc = r.taxCalculation.getOrElse(TaxCalculation())
-
-    val claimingRelief = t.claimingRelief.map(_.equalsIgnoreCase("YES"))
-    w.yesNo(CALCULATION_CLAIMING_RELIEF_YES, CALCULATION_CLAIMING_RELIEF_NO, claimingRelief)
-    w.text(CALCULATION_CLAIMING_RELIEF_REASON,        t.reliefReason)
-    w.text(CALCULATION_CLAIMING_RELIEF_SCHEME_NUMBER, t.reliefSchemeNumber)
-    w.wholeDecimal(CALCULATION_CLAIMING_RELIEF_AMOUNT,  t.reliefAmount)
-    w.wholeDecimal(CALCULATION_TOTAL_CONSIDERATION, t.totalConsideration)
-    w.wholeDecimal(CALCULATION_TOTAL_CONSIDERATION_VAT, t.considerationVAT)
-    fillFormsOfConsideration(w,
-      Seq(
-        t.considerationCash -> 30,
-        t.considerationDebt -> 31,
-        t.considerationBuild -> 32,
-        t.considerationEmploy -> 33,
-        t.considerationOther -> 34,
-        t.considerationSharesQTD -> 35,
-        t.considerationSharesUNQTD -> 36,
-        t.considerationLand -> 37,
-        t.considerationServices -> 38,
-        t.considerationContingent -> 39
+    r.transaction.foreach { t =>
+      val claimingRelief = t.claimingRelief.map(_.equalsIgnoreCase("YES"))
+      w.yesNo(CALCULATION_CLAIMING_RELIEF_YES, CALCULATION_CLAIMING_RELIEF_NO, claimingRelief)
+      w.text(CALCULATION_CLAIMING_RELIEF_REASON, t.reliefReason)
+      w.text(CALCULATION_CLAIMING_RELIEF_SCHEME_NUMBER, t.reliefSchemeNumber)
+      w.wholeDecimal(CALCULATION_CLAIMING_RELIEF_AMOUNT, t.reliefAmount)
+      w.wholeDecimal(CALCULATION_TOTAL_CONSIDERATION, t.totalConsideration)
+      w.wholeDecimal(CALCULATION_TOTAL_CONSIDERATION_VAT, t.considerationVAT)
+      fillFormsOfConsideration(w,
+        Seq(
+          t.considerationCash -> 30,
+          t.considerationDebt -> 31,
+          t.considerationBuild -> 32,
+          t.considerationEmploy -> 33,
+          t.considerationOther -> 34,
+          t.considerationSharesQTD -> 35,
+          t.considerationSharesUNQTD -> 36,
+          t.considerationLand -> 37,
+          t.considerationServices -> 38,
+          t.considerationContingent -> 39
+        )
       )
-    )
-    w.yesNo(
-      CALCULATION_LINKED_TRANSACTION_YES,
-      CALCULATION_LINKED_TRANSACTION_NO,
-      t.isLinked.map(_.equalsIgnoreCase("YES"))
-    )
-    w.wholeDecimal(CALCULATION_LINKED_TRANSACTION_TOTAL, t.totalConsiderationLinked)
-    w.wholeDecimal(CALCULATION_TAX_DUE, tc.taxDue)
-    w.wholeDecimal(CALCULATION_AMOUNT_PAID, tc.amountPaid)
-    w.yesNo(
-      CALCULATION_AMOUNT_PAID_INCLUDES_PENALTIES_YES,
-      CALCULATION_AMOUNT_PAID_INCLUDES_PENALTIES_NO,
-      tc.includesPenalty.map(_.equalsIgnoreCase("YES"))
-    )
+      w.yesNo(
+        CALCULATION_LINKED_TRANSACTION_YES,
+        CALCULATION_LINKED_TRANSACTION_NO,
+        t.isLinked.map(_.equalsIgnoreCase("YES"))
+      )
+      w.wholeDecimal(CALCULATION_LINKED_TRANSACTION_TOTAL, t.totalConsiderationLinked)
+    }
+    r.taxCalculation.foreach { tc =>
+      w.wholeDecimal(CALCULATION_TAX_DUE, tc.taxDue)
+      w.wholeDecimal(CALCULATION_AMOUNT_PAID, tc.amountPaid)
+      w.yesNo(
+        CALCULATION_AMOUNT_PAID_INCLUDES_PENALTIES_YES,
+        CALCULATION_AMOUNT_PAID_INCLUDES_PENALTIES_NO,
+        tc.includesPenalty.map(_.equalsIgnoreCase("YES"))
+      )
+    }
   }
 
   private def fillLeaseFields(w: PdfFieldWriter, r: FullReturn): Unit = {
