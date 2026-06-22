@@ -34,6 +34,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.taxCalculation.PopulateTaxCalculationService
+import uk.gov.hmrc.http.UpstreamErrorResponse
 import utils.TimeMachine
 
 import java.time.LocalDate
@@ -265,6 +266,15 @@ class TaxCalculationCheckYourAnswersControllerSpec extends SpecBase with Mockito
         val app = appWith(answersWithoutFlow, Future.successful(CalculationResponse(Seq(calculatedResult))))
         running(app) {
           status(onPageLoad(app)) mustEqual OK
+        }
+      }
+
+      "routes to the self-assessed cannot-calculate page when sdltc fails while deriving the flow" in {
+        val app = appWith(answersWithoutFlow, Future.failed(UpstreamErrorResponse("Validation error: Non UK resident question not answered", 400)))
+        running(app) {
+          val result = onPageLoad(app)
+          status(result) mustEqual OK
+          contentAsString(result) must include("cannot be calculated")
         }
       }
     }

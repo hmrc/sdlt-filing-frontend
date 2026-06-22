@@ -33,13 +33,14 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
 import services.checkAnswers.CheckAnswersService
 import services.taxCalculation.{PopulateTaxCalculationService, SdltCalculationService}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.DateTimeFormats.parseDate
 import utils.{TaxCalculationHelper, TaxCalculationPenaltiesHelper, TimeMachine}
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.taxCalculation.*
-import views.html.taxCalculation.shared.CheckYourAnswersView
+import viewmodels.taxCalculation.selfAssessedViewModels.CannotCalculateViewModel
+import views.html.taxCalculation.shared.{CannotCalculateSdltDueView, CheckYourAnswersView}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -58,6 +59,7 @@ class TaxCalculationCheckYourAnswersController @Inject()(
                                                          sessionRepository: SessionRepository,
                                                          timeMachine: TimeMachine,
                                                          view: CheckYourAnswersView,
+                                                         cannotCalculateView: CannotCalculateSdltDueView,
                                                          val controllerComponents: MessagesControllerComponents
                                                        )(implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport with Logging with TaxCalculationErrorRecovery {
@@ -79,6 +81,18 @@ class TaxCalculationCheckYourAnswersController @Inject()(
             }
           }
       }
+        .recoverWith { case error @ (_: UpstreamErrorResponse | _: HttpException) =>
+          logger.error(s"[TaxCalculationCheckYourAnswersController][onPageLoad] returnId=${request.userAnswers.returnId.getOrElse("unknown")}: sdltc calculation failed, routing to self-assessment", error)
+          SelfAssessmentFallback
+            .byHoldingType(request.userAnswers, sessionRepository) {
+              (sectionKey, continueUrl) =>
+                Ok(cannotCalculateView(
+                  CannotCalculateViewModel.toViewModel(Nil),
+                  sectionKey,
+                  continueUrl
+                ))
+          }
+        }
   }
 
   private def deriveFlow(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: DataRequest[?]): Future[Result] =

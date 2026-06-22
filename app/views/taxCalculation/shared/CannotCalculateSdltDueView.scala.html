@@ -1,5 +1,5 @@
 @*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,16 @@
 @import viewmodels.taxCalculation.selfAssessedViewModels.CannotCalculateViewModel
 
 @this(
-layout: templates.Layout,
-govukButton: GovukButton,
-h1: h1,
-p: Paragraph,
-caption: Caption
+        layout: templates.Layout,
+        govukButton: GovukButton,
+        h1: h1,
+        p: Paragraph,
+        caption: Caption
 )
 
-@(viewModel: CannotCalculateViewModel)(implicit request: Request[_], messages: Messages)
+@(viewModel: CannotCalculateViewModel, sectionKey: String, continueUrl: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("taxCalculation.cannotCalculateSdltDue.title"), section = Some(messages("site.taxCalculation.leaseholdSelfAssessed.caption")))) {
+@layout(pageTitle = titleNoForm(messages("taxCalculation.cannotCalculateSdltDue.title"), section = Some(messages(sectionKey)))) {
     @caption(messages("site.taxCalculation.caption"))
     @h1(messages("taxCalculation.cannotCalculateSdltDue.heading"))
 
@@ -45,7 +45,7 @@ caption: Caption
 
     @govukButton(
         ButtonViewModel(messages("site.continue"))
-        .asLink(controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedPremiumPayableTaxController.onPageLoad(NormalMode).url)
+        .asLink(continueUrl)
         .withCssClass("govuk-!-margin-top-2")
     )
 
