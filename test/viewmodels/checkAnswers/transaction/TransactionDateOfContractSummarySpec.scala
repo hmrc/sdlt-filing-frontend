@@ -48,7 +48,7 @@ class TransactionDateOfContractSummarySpec extends SpecBase {
           }
 
           result.key.content.asHtml.toString() mustEqual msgs("transaction.transactionDateOfContract.checkYourAnswersLabel")
-          result.value.content.asHtml.toString() mustEqual msgs("26 10 2022")
+          result.value.content.asHtml.toString() mustEqual msgs("26 October 2022")
           result.actions.get.items.size mustEqual 1
           result.actions.get.items.head.href mustEqual controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(CheckMode).url
           result.actions.get.items.head.content.asHtml.toString() must include(msgs("site.change"))

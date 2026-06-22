@@ -18,8 +18,8 @@ package viewmodels.checkAnswers.transaction
 
 import models.{CheckMode, UserAnswers}
 import pages.transaction.{TransactionAddDateOfContractPage, TransactionDateOfContractPage}
-import play.api.i18n.Messages
-import utils.DateTimeFormats.dateTimeHintFormat
+import play.api.i18n.{Lang, Messages}
+import utils.DateTimeFormats.dateTimeFormat
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
@@ -33,10 +33,11 @@ object TransactionDateOfContractSummary  {
 
     (answers.get(TransactionDateOfContractPage), answers.get(TransactionAddDateOfContractPage)) match {
       case (Some(date), _) =>
+        implicit val lang: Lang = messages.lang
         Some(Row(
           SummaryListRowViewModel(
             key     = label,
-            value   = ValueViewModel(date.format(dateTimeHintFormat)),
+            value   = ValueViewModel(date.format(dateTimeFormat())),
             actions = Seq(
               ActionItemViewModel("site.change", changeRoute.url)
                 .withVisuallyHiddenText(messages("transaction.transactionDateOfContract.change.hidden"))
