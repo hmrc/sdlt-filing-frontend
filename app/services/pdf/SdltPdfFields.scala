@@ -85,31 +85,28 @@ object SdltPdfFields {
   // PAGE 2 — About the Tax Calculation (Boxes 9-15) + New Leases (16-25)
   // =========================================================================
 
-  // Relief claimed (left column, above box 9)
+  // Box 9: Relief claimed
   val CALCULATION_CLAIMING_RELIEF_YES           = "calculation_claimingRelief_yes"
   val CALCULATION_CLAIMING_RELIEF_NO            = "calculation_claimingRelief_no"
   val CALCULATION_CLAIMING_RELIEF_REASON        = "calculation_claimingReliefReason"
   val CALCULATION_CLAIMING_RELIEF_SCHEME_NUMBER = "calculation_claimingReliefSchemeNumber"
   val CALCULATION_CLAIMING_RELIEF_AMOUNT        = "calculation_claimingReliefAmount"
 
-  // Box 9: Total consideration (single wide field — full amount as string)
+  // Box 10: Total consideration including VAT
   val CALCULATION_TOTAL_CONSIDERATION = "calculation_totalConsideration"
 
-  // Box 9 also has split digit-group fields (_1 leftmost, _4 rightmost)
-  // These appear to be for manual entry boxes — populate both for compatibility
-  val CALCULATION_TOTAL_CONSIDERATION_1 = "calculation_totalConsideration_1"
-  val CALCULATION_TOTAL_CONSIDERATION_2 = "calculation_totalConsideration_2"
-  val CALCULATION_TOTAL_CONSIDERATION_3 = "calculation_totalConsideration_3"
-  val CALCULATION_TOTAL_CONSIDERATION_4 = "calculation_totalConsideration_4"
-
-  // Box 10: VAT in consideration
+  // Box 11: VAT in consideration
   val CALCULATION_TOTAL_CONSIDERATION_VAT = "calculation_totalConsiderationVatAmount"
 
-  // Box 12: Linked transactions
+  // Box 12: Forms of consideration
+  val CALCULATION_FORM_OF_CONSIDERATION_1 = "calculation_totalConsideration_1"
+  val CALCULATION_FORM_OF_CONSIDERATION_2 = "calculation_totalConsideration_2"
+  val CALCULATION_FORM_OF_CONSIDERATION_3 = "calculation_totalConsideration_3"
+  val CALCULATION_FORM_OF_CONSIDERATION_4 = "calculation_totalConsideration_4"
+
+  // Box 13: Linked transactions
   val CALCULATION_LINKED_TRANSACTION_YES   = "calculation_linkedTransaction_yes"
   val CALCULATION_LINKED_TRANSACTION_NO    = "calculation_linkedTransaction_no"
-
-  // Box 13: Total linked consideration
   val CALCULATION_LINKED_TRANSACTION_TOTAL = "calculation_linkedTransactionTotalConsideration"
 
   // Box 14: Tax due
@@ -141,28 +138,26 @@ object SdltPdfFields {
   // Box 20: Annual starting rent
   val LEASE_STARTING_RENT = "lease_startingRent"
 
-  // Box 21: End date for starting rent (split)
   val LEASE_STARTING_RENT_END_DATE_DAY   = "lease_startingRentEndDate_day"
   val LEASE_STARTING_RENT_END_DATE_MONTH = "lease_startingRentEndDate_month"
   val LEASE_STARTING_RENT_END_DATE_YEAR  = "lease_startingRentEndDate_year"
 
-  // Box 22: Later rent known
   val LEASE_STARTING_RENT_LATER_KNOWN_YES = "lease_startingRentLaterKnown_yes"
   val LEASE_STARTING_RENT_LATER_KNOWN_NO  = "lease_startingRentLaterKnown_no"
 
-  // Box 23: VAT on lease
+  // Box 21: VAT on lease
   val LEASE_VAT_AMOUNT = "lease_vatAmount"
 
-  // Box 24: Total premium
+  // Box 22: Total premium payable
   val LEASE_PREMIUM_PAID = "lease_premiumPaid"
 
-  // Box 25: Net present value
+  // Box 23: Net present value
   val LEASE_NET_PRESENT_VALUE = "lease_netPresentValue"
 
-  // Box 25a: Tax due — premium
+  // Box 24: Tax due — premium
   val LEASE_TOTAL_PREMIUM_TAX = "lease_totalPremiumTax"
 
-  // Box 25b: Tax due — NPV
+  // Box 25: Tax due — NPV
   val LEASE_TOTAL_NPV_TAX = "lease_totalNpvTax"
 
   // =========================================================================
@@ -185,10 +180,7 @@ object SdltPdfFields {
   val LAND_ADDRESS_LINE3 = "land_addressLine3"
   val LAND_ADDRESS_LINE4 = "land_addressLine4"
 
-  // Box 29: Address on SDLT3
-  val REST_OF_ADDRESS_ON_SUPPLEMENTARY_RETURN = "restOfAddressOnSupplementaryReturn"
-  // Note: the "?" named field is the yes checkbox for box 29 (unnamed in template)
-  val LAND_ADDRESS_ON_SDLT3_YES = "?"
+  // Box 29: Is Address continued on SDLT3
   val LAND_ADDRESS_ON_SDLT3_NO  = "restOfAddressOnSupplementaryReturn"
 
   // Box 30: Local authority number
@@ -229,7 +221,7 @@ object SdltPdfFields {
   val VENDOR_ADDRESS_LINE3 = "vendor_addressLine3"
   val VENDOR_ADDRESS_LINE4 = "vendor_addressLine4"
 
-  // Box 39: Agent name
+  // Box 39: Vendor agent name
   val VENDOR_AGENT_NAME = "vendor_agentName"
 
   // =========================================================================

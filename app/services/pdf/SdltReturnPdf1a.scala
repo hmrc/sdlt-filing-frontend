@@ -27,6 +27,7 @@ import javax.inject.{Inject, Singleton}
 import scala.util.Using
 import SdltPdfFields.*
 import PdfFormSupport.*
+import models.land.LandSelectMeasurementUnit
 
 @Singleton
 class SdltReturnPdf1a @Inject()(
@@ -43,9 +44,12 @@ class SdltReturnPdf1a @Inject()(
       val form   = getAcroForm(doc)
       val writer = new PdfFieldWriter(form, "SdltReturnPdf1a")
 
-      fillPage1(writer, fullReturn)
-      fillPage2(writer, fullReturn)
-      fillPage3(writer, fullReturn)
+      fillTransactionFields(writer, fullReturn)
+      fillTaxCalculationFields(writer, fullReturn)
+      fillLeaseFields(writer, fullReturn)
+      fillLandFields(writer, fullReturn)
+      fillVendorFields(writer, fullReturn)
+      fillCommonFields(writer, fullReturn)
 
       if (flatten) form.flatten()
 
@@ -61,284 +65,214 @@ class SdltReturnPdf1a @Inject()(
       identity
     )
   }
+  
+  private def fillTransactionFields(w: PdfFieldWriter, r: FullReturn): Unit = {
+    val mainLandId: Option[String] = r.returnInfo.flatMap(_.mainLandID)
+    val mainLand = r.land.flatMap(_.find(land => mainLandId.equals(land.landID)))
 
-  // ---------------------------------------------------------------------------
-  // Page 1 — About the Transaction (Boxes 1-8)
-  // Field source: fullReturn.transaction
-  // ---------------------------------------------------------------------------
-
-  private def fillPage1(w: PdfFieldWriter, r: FullReturn): Unit = {
-    val t = r.transaction.getOrElse(Transaction())
-
-    // UTRN from submission
-    w.text(UTRN, r.submission.flatMap(_.UTRN).orNull)
-
-    // Box 1: Type of property — first land's propertyType
-    w.text(LAND_TYPE_PROPERTY, r.land.flatMap(_.headOption).flatMap(_.propertyType).orNull)
-
-    // Box 2: Description of transaction
-    w.text(TRANSACTION_DESCRIPTION, t.transactionDescription.orNull)
-
-    // Box 3: Interest/estate transferred — first land
-    w.text(LAND_ESTATE_OR_INTEREST_TRANSFERRED,
-      r.land.flatMap(_.headOption).flatMap(_.interestCreatedTransferred).orNull)
-
-    // Box 4: Effective date (split day/month/year)
-    w.dateStr(
-      TRANSACTION_EFFECTIVE_DATE_DAY,
-      TRANSACTION_EFFECTIVE_DATE_MONTH,
-      TRANSACTION_EFFECTIVE_DATE_YEAR,
-      t.effectiveDate.orNull
-    )
-
-    // Box 5: Restrictions/covenants
-    w.yesNo(
-      TRANSACTION_RESTRICTIONS_YES,
-      TRANSACTION_RESTRICTIONS_NO,
-      t.restrictionsAffectInterest.contains("YES")
-    )
-    val (details1, details2) = splitLines(t.restrictionDetails.getOrElse(""), 60)
-    w.text(TRANSACTION_RESTRICTIONS_DETAILS_1, details1)
-    w.text(TRANSACTION_RESTRICTIONS_DETAILS_2, details2)
-
-    // Box 6: Date of contract (split day/month/year)
-    w.dateStr(
-      TRANSACTION_CONTRACT_DATE_DAY,
-      TRANSACTION_CONTRACT_DATE_MONTH,
-      TRANSACTION_CONTRACT_DATE_YEAR,
-      t.contractDate.orNull
-    )
-
-    // Box 7: Land exchanged
-    w.yesNo(
-      TRANSACTION_LAND_EXCHANGED_YES,
-      TRANSACTION_LAND_EXCHANGED_NO,
-      t.isLandExchanged.contains("YES")
-    )
-    if (t.isLandExchanged.contains("YES")) {
-      val (pc1, pc2) = splitPostcode(t.exchangedLandPostcode.getOrElse(""))
-      w.text(TRANSACTION_LAND_EXCHANGED_POSTCODE_1,   pc1)
-      w.text(TRANSACTION_LAND_EXCHANGED_POSTCODE_2,   pc2)
-      w.text(TRANSACTION_LAND_EXCHANGED_HOUSE_NUMBER, t.exchangedLandHouseNumber.orNull)
-      w.text(TRANSACTION_LAND_EXCHANGED_ADDRESS_1,    t.exchangedLandAddress1.orNull)
-      w.text(TRANSACTION_LAND_EXCHANGED_ADDRESS_2,    t.exchangedLandAddress2.orNull)
-      w.text(TRANSACTION_LAND_EXCHANGED_ADDRESS_3,    t.exchangedLandAddress3.orNull)
-      w.text(TRANSACTION_LAND_EXCHANGED_ADDRESS_4,    t.exchangedLandAddress4.orNull)
+    mainLand.foreach { land =>
+      w.text(LAND_TYPE_PROPERTY, land.propertyType)
+      w.text(LAND_ESTATE_OR_INTEREST_TRANSFERRED, land.interestCreatedTransferred.map(_.substring(0, 2)))
     }
-
-    // Box 8: Pursuant to previous option agreement
-    w.yesNo(
-      TRANSACTION_PURSUANT_TO_OPTION_YES,
-      TRANSACTION_PURSUANT_TO_OPTION_NO,
-      t.isPursuantToPreviousOption.contains("YES")
-    )
-  }
-
-  // ---------------------------------------------------------------------------
-  // Page 2 — Tax Calculation (Boxes 9-15) + New Leases (Boxes 16-25)
-  // Field sources: fullReturn.transaction, fullReturn.taxCalculation, fullReturn.lease
-  // ---------------------------------------------------------------------------
-
-  private def fillPage2(w: PdfFieldWriter, r: FullReturn): Unit = {
-    val t  = r.transaction.getOrElse(Transaction())
-    val tc = r.taxCalculation.getOrElse(TaxCalculation())
-
-    // Relief claimed
-    val claimingRelief = t.claimingRelief.contains("YES")
-    w.yesNo(CALCULATION_CLAIMING_RELIEF_YES, CALCULATION_CLAIMING_RELIEF_NO, claimingRelief)
-    if (claimingRelief) {
-      w.text(CALCULATION_CLAIMING_RELIEF_REASON,        t.reliefReason.orNull)
-      w.text(CALCULATION_CLAIMING_RELIEF_SCHEME_NUMBER, t.reliefSchemeNumber.orNull)
-      w.text(CALCULATION_CLAIMING_RELIEF_AMOUNT,  t.reliefAmount.orNull)
-    }
-
-    // Box 9: Total consideration — also fill the split digit-group fields
-    w.text(CALCULATION_TOTAL_CONSIDERATION, t.totalConsideration.orNull)
-    fillSplitConsideration(w, t.totalConsideration)
-
-    // Box 10: VAT in consideration
-    w.text(CALCULATION_TOTAL_CONSIDERATION_VAT, t.considerationVAT.orNull)
-
-    // Box 12: Linked transactions
-    w.yesNo(
-      CALCULATION_LINKED_TRANSACTION_YES,
-      CALCULATION_LINKED_TRANSACTION_NO,
-      t.isLinked.contains("YES")
-    )
-
-    // Box 13: Total linked consideration
-    w.text(CALCULATION_LINKED_TRANSACTION_TOTAL, t.totalConsiderationLinked.orNull)
-
-    // Box 14: Tax due
-    w.text(CALCULATION_TAX_DUE, tc.taxDue.orNull)
-
-    // Box 15: Amount paid
-    w.text(CALCULATION_AMOUNT_PAID, tc.amountPaid.orNull)
-
-    // Does amount include penalties?
-    w.yesNo(
-      CALCULATION_AMOUNT_PAID_INCLUDES_PENALTIES_YES,
-      CALCULATION_AMOUNT_PAID_INCLUDES_PENALTIES_NO,
-      tc.includesPenalty.contains("YES")
-    )
-
-    // Boxes 16-25: Lease fields (only if a lease is present)
-    r.lease.foreach(fillLeaseFields(w, _))
-  }
-
-  private def fillLeaseFields(w: PdfFieldWriter, l: Lease): Unit = {
-    // Box 16: Lease type
-    w.text(LEASE_LEASE_TYPE, l.leaseType.orNull)
-
-    // Box 17: Contract start date
-    w.dateStr(
-      LEASE_CONTRACT_START_DATE_DAY,
-      LEASE_CONTRACT_START_DATE_MONTH,
-      LEASE_CONTRACT_START_DATE_YEAR,
-      l.contractStartDate.orNull
-    )
-
-    // Box 18: Contract end date
-    w.dateStr(
-      LEASE_CONTRACT_END_DATE_DAY,
-      LEASE_CONTRACT_END_DATE_MONTH,
-      LEASE_CONTRACT_END_DATE_YEAR,
-      l.contractEndDate.orNull
-    )
-
-    // Box 19: Rent-free period (months)
-    w.text(LEASE_RENT_FREE_PERIOD, l.rentFreePeriod.orNull)
-
-    // Box 20: Annual starting rent
-    w.text(LEASE_STARTING_RENT, l.startingRent.orNull)
-
-    // Box 21: End date for starting rent
-    w.dateStr(
-      LEASE_STARTING_RENT_END_DATE_DAY,
-      LEASE_STARTING_RENT_END_DATE_MONTH,
-      LEASE_STARTING_RENT_END_DATE_YEAR,
-      l.startingRentEndDate.orNull
-    )
-
-    // Box 22: Later rent known
-    w.yesNo(
-      LEASE_STARTING_RENT_LATER_KNOWN_YES,
-      LEASE_STARTING_RENT_LATER_KNOWN_NO,
-      l.laterRentKnown.contains("YES")
-    )
-
-    // Box 23: VAT amount
-    w.text(LEASE_VAT_AMOUNT, l.VATAmount.orNull)
-
-    // Box 24: Total premium payable
-    w.text(LEASE_PREMIUM_PAID, l.totalPremiumPayable.orNull)
-
-    // Box 25: Net present value
-    w.text(LEASE_NET_PRESENT_VALUE, l.netPresentValue.orNull)
-  }
-
-  // ---------------------------------------------------------------------------
-  // Page 3 — About the Land (26-33) + About the Vendor (34-39)
-  // Field sources: fullReturn.land.head, fullReturn.vendor.head, fullReturn.returnAgent
-  // ---------------------------------------------------------------------------
-
-  private def fillPage3(w: PdfFieldWriter, r: FullReturn): Unit = {
-    val lands   = r.land.getOrElse(Seq.empty)
-    val vendors = r.vendor.getOrElse(Seq.empty)
-    val agents  = r.returnAgent.getOrElse(Seq.empty)
-
-    // Box 26: Number of properties
-    w.text(LAND_NUMBER_PROPERTIES, lands.size.toString)
-
-    // Box 27: Certificate for each property (only if > 1 land)
-    if (lands.size > 1) {
+    r.transaction.foreach { t =>
+      w.text(TRANSACTION_DESCRIPTION, t.transactionDescription)
+      w.dateStr(
+        TRANSACTION_EFFECTIVE_DATE_DAY,
+        TRANSACTION_EFFECTIVE_DATE_MONTH,
+        TRANSACTION_EFFECTIVE_DATE_YEAR,
+        t.effectiveDate
+      )
       w.yesNo(
-        LAND_CERTIFICATE_FOR_EACH_YES,
-        LAND_CERTIFICATE_FOR_EACH_NO,
-        r.returnInfo.flatMap(_.landCertForEachProp).contains("YES")
+        TRANSACTION_RESTRICTIONS_YES,
+        TRANSACTION_RESTRICTIONS_NO,
+        t.restrictionsAffectInterest.map(_.equalsIgnoreCase("YES"))
+      )
+      val (details1, details2) = splitLines(t.restrictionDetails, 39)
+      w.text(TRANSACTION_RESTRICTIONS_DETAILS_1, details1)
+      w.text(TRANSACTION_RESTRICTIONS_DETAILS_2, details2)
+      w.dateStr(
+        TRANSACTION_CONTRACT_DATE_DAY,
+        TRANSACTION_CONTRACT_DATE_MONTH,
+        TRANSACTION_CONTRACT_DATE_YEAR,
+        t.contractDate
+      )
+      w.yesNo(
+        TRANSACTION_LAND_EXCHANGED_YES,
+        TRANSACTION_LAND_EXCHANGED_NO,
+        t.isLandExchanged.map(_.equalsIgnoreCase("YES"))
+      )
+      w.postcode(TRANSACTION_LAND_EXCHANGED_POSTCODE_1, TRANSACTION_LAND_EXCHANGED_POSTCODE_2, t.exchangedLandPostcode)
+      w.text(TRANSACTION_LAND_EXCHANGED_HOUSE_NUMBER, t.exchangedLandHouseNumber)
+      w.text(TRANSACTION_LAND_EXCHANGED_ADDRESS_1, t.exchangedLandAddress1)
+      w.text(TRANSACTION_LAND_EXCHANGED_ADDRESS_2, t.exchangedLandAddress2)
+      w.text(TRANSACTION_LAND_EXCHANGED_ADDRESS_3, t.exchangedLandAddress3)
+      w.text(TRANSACTION_LAND_EXCHANGED_ADDRESS_4, t.exchangedLandAddress4)
+      w.yesNo(
+        TRANSACTION_PURSUANT_TO_OPTION_YES,
+        TRANSACTION_PURSUANT_TO_OPTION_NO,
+        t.isPursuantToPreviousOption.map(_.equalsIgnoreCase("YES"))
       )
     }
+  }
 
-    // Box 28: Primary land address (first land in list)
-    lands.headOption.foreach { land =>
-      val (pc1, pc2) = splitPostcode(land.postcode.getOrElse(""))
-      w.text(LAND_POSTCODE_1,    pc1)
-      w.text(LAND_POSTCODE_2,    pc2)
-      w.text(LAND_HOUSE_NUMBER,  land.houseNumber.orNull)
-      w.text(LAND_ADDRESS_LINE1, land.address1.orNull)
-      w.text(LAND_ADDRESS_LINE2, land.address2.orNull)
-      w.text(LAND_ADDRESS_LINE3, land.address3.orNull)
-      w.text(LAND_ADDRESS_LINE4, land.address4.orNull)
-
-      // Box 29: Address continued on SDLT3 (true if more than 1 land)
-      w.yesNo(
-        LAND_ADDRESS_ON_SDLT3_YES,
-        LAND_ADDRESS_ON_SDLT3_NO,
-        lands.size > 1
+  private def fillTaxCalculationFields(w: PdfFieldWriter, r: FullReturn): Unit = {
+    r.transaction.foreach { t =>
+      val claimingRelief = t.claimingRelief.map(_.equalsIgnoreCase("YES"))
+      w.yesNo(CALCULATION_CLAIMING_RELIEF_YES, CALCULATION_CLAIMING_RELIEF_NO, claimingRelief)
+      w.text(CALCULATION_CLAIMING_RELIEF_REASON, t.reliefReason)
+      w.text(CALCULATION_CLAIMING_RELIEF_SCHEME_NUMBER, t.reliefSchemeNumber)
+      w.wholeDecimal(CALCULATION_CLAIMING_RELIEF_AMOUNT, t.reliefAmount)
+      w.wholeDecimal(CALCULATION_TOTAL_CONSIDERATION, t.totalConsideration)
+      w.wholeDecimal(CALCULATION_TOTAL_CONSIDERATION_VAT, t.considerationVAT)
+      fillFormsOfConsideration(w,
+        Seq(
+          t.considerationCash -> 30,
+          t.considerationDebt -> 31,
+          t.considerationBuild -> 32,
+          t.considerationEmploy -> 33,
+          t.considerationOther -> 34,
+          t.considerationSharesQTD -> 35,
+          t.considerationSharesUNQTD -> 36,
+          t.considerationLand -> 37,
+          t.considerationServices -> 38,
+          t.considerationContingent -> 39
+        )
       )
+      w.yesNo(
+        CALCULATION_LINKED_TRANSACTION_YES,
+        CALCULATION_LINKED_TRANSACTION_NO,
+        t.isLinked.map(_.equalsIgnoreCase("YES"))
+      )
+      w.wholeDecimal(CALCULATION_LINKED_TRANSACTION_TOTAL, t.totalConsiderationLinked)
+    }
+    r.taxCalculation.foreach { tc =>
+      w.wholeDecimal(CALCULATION_TAX_DUE, tc.taxDue)
+      w.wholeDecimal(CALCULATION_AMOUNT_PAID, tc.amountPaid)
+      w.yesNo(
+        CALCULATION_AMOUNT_PAID_INCLUDES_PENALTIES_YES,
+        CALCULATION_AMOUNT_PAID_INCLUDES_PENALTIES_NO,
+        tc.includesPenalty.map(_.equalsIgnoreCase("YES"))
+      )
+    }
+  }
 
-      // Box 30: Local authority number
-      w.text(LAND_LOCAL_AUTHORITY_NUMBER, land.localAuthorityNumber.orNull)
+  private def fillLeaseFields(w: PdfFieldWriter, r: FullReturn): Unit = {
+    val tc = r.taxCalculation
+    r.lease.foreach { l =>
+      w.text(LEASE_LEASE_TYPE, l.leaseType)
+      w.dateStr(
+        LEASE_CONTRACT_START_DATE_DAY,
+        LEASE_CONTRACT_START_DATE_MONTH,
+        LEASE_CONTRACT_START_DATE_YEAR,
+        l.contractStartDate
+      )
+      w.dateStr(
+        LEASE_CONTRACT_END_DATE_DAY,
+        LEASE_CONTRACT_END_DATE_MONTH,
+        LEASE_CONTRACT_END_DATE_YEAR,
+        l.contractEndDate
+      )
+      w.text(LEASE_RENT_FREE_PERIOD, l.rentFreePeriod)
+      w.wholeDecimal(LEASE_STARTING_RENT, l.startingRent)
+      w.dateStr(
+        LEASE_STARTING_RENT_END_DATE_DAY,
+        LEASE_STARTING_RENT_END_DATE_MONTH,
+        LEASE_STARTING_RENT_END_DATE_YEAR,
+        l.startingRentEndDate
+      )
+      w.yesNo(
+        LEASE_STARTING_RENT_LATER_KNOWN_YES,
+        LEASE_STARTING_RENT_LATER_KNOWN_NO,
+        l.laterRentKnown.map(_.equalsIgnoreCase("YES"))
+      )
+      w.wholeDecimal(LEASE_VAT_AMOUNT, l.VATAmount)
+      w.wholeDecimal(LEASE_PREMIUM_PAID, l.totalPremiumPayable)
+      w.wholeDecimal(LEASE_NET_PRESENT_VALUE, l.netPresentValue)
+    }
+    w.wholeDecimal(LEASE_TOTAL_PREMIUM_TAX, tc.flatMap(_.taxDuePremium))
+    w.wholeDecimal(LEASE_TOTAL_NPV_TAX, tc.flatMap(_.taxDueNPV))
+  }
 
-      // Box 31: Title number
-      w.text(LAND_TITLE_NUMBER, land.titleNumber.orNull)
+  private def fillLandFields(w: PdfFieldWriter, r: FullReturn): Unit = {
+    val mainLandId: Option[String] = r.returnInfo.flatMap(_.mainLandID)
+    val mainLand = r.land.flatMap(_.find(land => mainLandId.equals(land.landID)))
 
-      // Box 32: NLPG UPRN
-      w.text(LAND_NLPG_UPRN, land.NLPGUPRN.orNull)
-
-      // Box 33: Land area / plan attached
+    w.text(LAND_NUMBER_PROPERTIES, Some(r.land.getOrElse(Seq.empty).size.toString))
+    w.yesNo(
+      LAND_CERTIFICATE_FOR_EACH_YES,
+      LAND_CERTIFICATE_FOR_EACH_NO,
+      r.returnInfo.flatMap(_.landCertForEachProp).map(_.equalsIgnoreCase("YES"))
+    )
+    mainLand.foreach { land =>
+      w.postcode(LAND_POSTCODE_1, LAND_POSTCODE_2, land.postcode)
+      w.text(LAND_HOUSE_NUMBER,  land.houseNumber)
+      w.text(LAND_ADDRESS_LINE1, land.address1)
+      w.text(LAND_ADDRESS_LINE2, land.address2)
+      w.text(LAND_ADDRESS_LINE3, land.address3)
+      w.text(LAND_ADDRESS_LINE4, land.address4)
+      w.check(LAND_ADDRESS_ON_SDLT3_NO)
+      w.text(LAND_LOCAL_AUTHORITY_NUMBER, land.localAuthorityNumber)
+      w.text(LAND_TITLE_NUMBER, land.titleNumber)
+      w.text(LAND_NLPG_UPRN, land.NLPGUPRN)
       land.areaUnit match {
-        case Some("Hectares")      => w.check(LAND_AREA_TYPE_HECTARES);      w.uncheck(LAND_AREA_TYPE_SQUARE_METRES)
-        case Some("Square metres") => w.uncheck(LAND_AREA_TYPE_HECTARES);    w.check(LAND_AREA_TYPE_SQUARE_METRES)
-        case _                     => w.uncheck(LAND_AREA_TYPE_HECTARES);    w.uncheck(LAND_AREA_TYPE_SQUARE_METRES)
+        case Some(LandSelectMeasurementUnit.Hectares.toString) =>
+          w.check(LAND_AREA_TYPE_HECTARES)
+          w.uncheck(LAND_AREA_TYPE_SQUARE_METRES)
+        case Some(LandSelectMeasurementUnit.Sqms.toString) =>
+          w.check(LAND_AREA_TYPE_SQUARE_METRES)
+          w.uncheck(LAND_AREA_TYPE_HECTARES)
+        case _ =>
+          w.uncheck(LAND_AREA_TYPE_HECTARES)
+          w.uncheck(LAND_AREA_TYPE_SQUARE_METRES)
       }
-      w.text(LAND_AREA, land.landArea.orNull)
+      w.text(LAND_AREA, land.landArea)
       w.yesNo(
         LAND_PLAN_ATTACHED_YES,
         LAND_PLAN_ATTACHED_NO,
-        land.willSendPlanByPost.contains("YES")
+        land.willSendPlanByPost.map(_.equalsIgnoreCase("YES"))
       )
     }
-
-    // Box 34: Number of vendors
-    w.text(VENDOR_NUMBER_VENDORS, vendors.size.toString)
-
-    // Boxes 35-38: First vendor
-    vendors.headOption.foreach { vendor =>
-      w.text(VENDOR_TITLE,    vendor.title.orNull)
-      w.text(VENDOR_NAME,     vendor.name.orNull)
-
-      // Split forenames — forename1 and forename2 are already separate fields
-      w.text(VENDOR_FORENAME_1, vendor.forename1.orNull)
-      w.text(VENDOR_FORENAME_2, vendor.forename2.orNull)
-
-      val (pc1, pc2) = splitPostcode(vendor.postcode.getOrElse(""))
-      w.text(VENDOR_POSTCODE_1,    pc1)
-      w.text(VENDOR_POSTCODE_2,    pc2)
-      w.text(VENDOR_HOUSE_NUMBER,  vendor.houseNumber.orNull)
-      w.text(VENDOR_ADDRESS_LINE1, vendor.address1.orNull)
-      w.text(VENDOR_ADDRESS_LINE2, vendor.address2.orNull)
-      w.text(VENDOR_ADDRESS_LINE3, vendor.address3.orNull)
-      w.text(VENDOR_ADDRESS_LINE4, vendor.address4.orNull)
-    }
-
-    // Box 39: Agent name — from the first returnAgent
-    w.text(VENDOR_AGENT_NAME, agents.headOption.flatMap(_.name).orNull)
   }
 
-  // ---------------------------------------------------------------------------
-  // Split consideration across the four digit-group fields (_1 leftmost, _4 rightmost)
-  // Each box holds ~3 digits. Left-pad the full pound amount to 12 chars.
-  // ---------------------------------------------------------------------------
+  private def fillVendorFields(w: PdfFieldWriter, r: FullReturn): Unit = {
+    val mainVendorId: Option[String] = r.returnInfo.flatMap(_.mainVendorID)
+    val mainVendor = r.vendor.flatMap(_.find(vendor => mainVendorId.equals(vendor.vendorID)))
+    val vendorAgent = r.returnAgent.flatMap(_.find(_.agentType.contains(AgentType.Vendor.toString)))
 
-  private def fillSplitConsideration(w: PdfFieldWriter, amount: Option[String]): Unit =
-    amount.foreach { bd =>
-      val padded = bd.reverse.padTo(12, '0').reverse
-      w.text(CALCULATION_TOTAL_CONSIDERATION_1, padded.substring(0, 3))
-      w.text(CALCULATION_TOTAL_CONSIDERATION_2, padded.substring(3, 6))
-      w.text(CALCULATION_TOTAL_CONSIDERATION_3, padded.substring(6, 9))
-      w.text(CALCULATION_TOTAL_CONSIDERATION_4, padded.substring(9, 12))
+    w.text(VENDOR_NUMBER_VENDORS, Some(r.vendor.getOrElse(Seq.empty).size.toString))
+    mainVendor.foreach { vendor =>
+      w.text(VENDOR_TITLE,    vendor.title)
+      w.text(VENDOR_NAME,     vendor.name)
+      w.text(VENDOR_FORENAME_1, vendor.forename1)
+      w.text(VENDOR_FORENAME_2, vendor.forename2)
+
+      w.postcode(VENDOR_POSTCODE_1, VENDOR_POSTCODE_2, vendor.postcode)
+      w.text(VENDOR_HOUSE_NUMBER,  vendor.houseNumber)
+      w.text(VENDOR_ADDRESS_LINE1, vendor.address1)
+      w.text(VENDOR_ADDRESS_LINE2, vendor.address2)
+      w.text(VENDOR_ADDRESS_LINE3, vendor.address3)
+      w.text(VENDOR_ADDRESS_LINE4, vendor.address4)
     }
+    w.text(VENDOR_AGENT_NAME, vendorAgent.flatMap(_.name))
+  }
+
+  private def fillCommonFields(w: PdfFieldWriter, r: FullReturn): Unit =
+    w.fillCommonFields(r)
+
+  private def fillFormsOfConsideration(w: PdfFieldWriter, formsOfConsideration: Seq[(Option[String], Int)]): Unit = {
+    var codesIdx: Int = 0
+    val codes = Array.fill(4)("")
+    formsOfConsideration.foreach { case (formOfConsideration, code) =>
+      if (formOfConsideration.exists(_.equalsIgnoreCase("YES"))) {
+        codes(codesIdx) = code.toString
+        codesIdx += 1
+      }
+    }
+    w.text(CALCULATION_FORM_OF_CONSIDERATION_1, Some(codes(0)))
+    w.text(CALCULATION_FORM_OF_CONSIDERATION_2, Some(codes(1)))
+    w.text(CALCULATION_FORM_OF_CONSIDERATION_3, Some(codes(2)))
+    w.text(CALCULATION_FORM_OF_CONSIDERATION_4, Some(codes(3)))
+  }
 
   private def getAcroForm(doc: PDDocument): PDAcroForm =
     Option(doc.getDocumentCatalog.getAcroForm)

@@ -16,38 +16,44 @@
 
 package services.pdf
 
+import models.FullReturn
 import org.apache.pdfbox.pdmodel.interactive.form.{PDAcroForm, PDCheckBox, PDTextField}
+import services.pdf.SdltPdfFields.{IR_MARK, PRINT_STATUS, UTRN}
 import utils.LoggingUtil
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import scala.util.Try
 
 object PdfFormSupport {
 
-  /** Split "SW1A 2AA" -> ("SW1A", "2AA"). Single-part postcodes go entirely into field 1. */
-  def splitPostcode(postcode: String): (String, String) =
-    Option(postcode).map(_.trim).filter(_.nonEmpty) match {
-      case None => ("", "")
+  def splitPostcode(postcode: Option[String]): (Option[String], Option[String]) =
+    postcode.map(_.trim).filter(_.nonEmpty) match {
+      case None => (None, None)
       case Some(pc) =>
-        val parts = pc.split(" ", 2)
-        if (parts.length == 2) (parts(0), parts(1)) else (pc, "")
+        val parts = pc.split(" +", 2)
+        if (parts.length == 2) (Some(parts(0)), Some(parts(1))) else (Some(pc), None)
     }
 
   /** Split a long string at a word boundary near maxLen across two fields. */
-  def splitLines(s: String, maxLen: Int): (String, String) =
-    if (s.length <= maxLen) (s, "")
-    else {
-      val cut = s.lastIndexOf(' ', maxLen)
-      if (cut > 0) (s.substring(0, cut), s.substring(cut + 1))
-      else (s.substring(0, maxLen), s.substring(maxLen))
+  def splitLines(s: Option[String], maxLen: Int): (Option[String], Option[String]) =
+    s.map(_.trim).filter(_.nonEmpty) match {
+      case None => (None, None)
+      case Some(str) =>
+        if str.length <= maxLen then (Some(str), None)
+        else {
+          val cut = str.lastIndexOf(' ', maxLen)
+          if (cut > 0) (Some(str.substring(0, cut)), Some(str.substring(cut + 1)))
+          else (Some(str.substring(0, maxLen)), Some(str.substring(maxLen)))
+        }
     }
-}
+  }
 
 class PdfFieldWriter(form: PDAcroForm, ctx: String) extends LoggingUtil {
 
   /** Set a text field. Null/blank values silently clear the field. */
-  def text(fieldName: String, value: String): Unit = {
-    val safe = Option(value).map(_.trim).getOrElse("")
+  def text(fieldName: String, value: Option[String]): Unit = {
+    val safe = value.map(_.trim).getOrElse("")
     Try(form.getField(fieldName)).toOption match {
       case Some(f: PDTextField) =>
         Try(f.setValue(safe)).failed.foreach { e =>
@@ -61,9 +67,18 @@ class PdfFieldWriter(form: PDAcroForm, ctx: String) extends LoggingUtil {
   }
 
   /** Set a Yes/No checkbox pair from a boolean. */
-  def yesNo(yesField: String, noField: String, isYes: Boolean): Unit =
-    if (isYes) { check(yesField); uncheck(noField) }
-    else       { uncheck(yesField); check(noField) }
+  def yesNo(yesField: String, noField: String, isYes: Option[Boolean]): Unit =
+    isYes match {
+      case Some(true) =>
+        check(yesField)
+        uncheck(noField)
+      case Some(false) =>
+        uncheck(yesField)
+        check(noField)
+      case None =>
+        uncheck(yesField)
+        uncheck(noField)
+    }
 
   def check(fieldName: String): Unit   = setCheckbox(fieldName, checked = true)
   def uncheck(fieldName: String): Unit = setCheckbox(fieldName, checked = false)
@@ -81,30 +96,47 @@ class PdfFieldWriter(form: PDAcroForm, ctx: String) extends LoggingUtil {
     }
 
   /**
-   * Set a BigDecimal money field as a plain string.
-   * The PDF template renders the £ symbol and decimal separator as static content.
+   * Set a whole decimal field as a plain string, removing any 0s after the decimal point.
    */
-  def bigDecimal(fieldName: String, amount: Option[BigDecimal]): Unit =
-    text(fieldName, amount.map(_.setScale(2, BigDecimal.RoundingMode.DOWN).toString).orNull)
+  def wholeDecimal(fieldName: String, value: Option[String]): Unit =
+    value.map(_.trim).filter(_.nonEmpty) match {
+      case None => text(fieldName, None)
+      case Some(s) =>
+        val idx = s.indexOf('.')
+        if (idx < 0) text(fieldName, Some(s))
+        else text(fieldName, Some(s.substring(0, idx)))
+    }
 
   /**
-   * Parse a stored date string ("dd/MM/yyyy") and split into three fields.
+   * Parse a stored date string ("dd/MM/yyyy") or ("yyyy-MM-dd") and split into three fields.
    * Tolerant of null — leaves fields blank.
    */
-  def dateStr(dayField: String, monthField: String, yearField: String, stored: String): Unit =
-    Option(stored).map(_.trim).filter(_.nonEmpty) match {
+  def dateStr(dayField: String, monthField: String, yearField: String, stored: Option[String]): Unit =
+    stored.map(_.trim).filter(_.nonEmpty) match {
       case None =>
-        text(dayField, ""); text(monthField, ""); text(yearField, "")
+        text(dayField, None); text(monthField, None); text(yearField, None)
       case Some(d) =>
-        Try {
-          val fmt  = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")
-          val date = LocalDate.parse(d, fmt)
-          text(dayField,   f"${date.getDayOfMonth}%02d")
-          text(monthField, f"${date.getMonthValue}%02d")
-          text(yearField,   date.getYear.toString)
-        }.failed.foreach { e =>
-          logger.warn(s"[$ctx][FieldWriter] Could not parse date '$d': ${e.getMessage}")
-          text(dayField, d); text(monthField, ""); text(yearField, "")
+        val fmts = Seq("dd/MM/yyyy", "yyyy-MM-dd").map(DateTimeFormatter.ofPattern)
+        val optDate = fmts.iterator.flatMap(f => Try(LocalDate.parse(d.trim, f)).toOption).nextOption()
+        optDate match {
+          case Some(date) =>
+            text(dayField, Some(f"${date.getDayOfMonth}%02d"))
+            text(monthField, Some(f"${date.getMonthValue}%02d"))
+            text(yearField, Some(date.getYear.toString))
+          case None =>
+            logger.warn(s"[$ctx][FieldWriter] Could not parse date '$d'")
         }
     }
+
+  def postcode(postcodeField1: String, postcodeField2: String, postcode: Option[String]): Unit =
+    PdfFormSupport.splitPostcode(postcode) match {
+      case (part1, part2) =>
+        text(postcodeField1, part1)
+        text(postcodeField2, part2)
+    }
+
+  def fillCommonFields(fullReturn: FullReturn): Unit =
+    text(UTRN, fullReturn.submission.flatMap(_.UTRN))
+    text(IR_MARK, fullReturn.submission.flatMap(_.irmarkSent))
+    text(PRINT_STATUS, None)
 }
