@@ -30,6 +30,7 @@ private object Targets:
   val landAuthorityCodeTarget: CrossFlowTarget = CrossFlowTarget(Pages.LandAuthorityCode, Fields.LandAuthorityCode)
   val landPostcodeTarget:      CrossFlowTarget = CrossFlowTarget(Pages.LandPostcode,      Fields.LandPostcode)
   val leaseTypeTarget:         CrossFlowTarget = CrossFlowTarget(Pages.LeaseType,         Fields.LeaseType)
+  val useOfPropertyTarget:     CrossFlowTarget = CrossFlowTarget(Pages.UseOfProperty, Fields.UseOfProperty)
 
 
 /** Property type must be 01 (Residential). */
@@ -472,6 +473,46 @@ object Cf16_ScottishPostcode extends LandGuardRule:
   protected def messageKey              = "crossflow.land.Cf-16.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-16.inline"
 
+
+  /** Cf-17 — Mural Business Function. Tr-11 (use of land or property) only appears when
+   * property type is '02 - Mixed' or '03 - Non-residential'. If the user committed the
+   * transaction before choosing 02/03 on Lr-1, Tr-11 has never fired and no use-of-property
+   * flags are set. Per BA spec, this is not technically a validation error — but the
+   * section must be flagged as needing completion via a dedicated cross-flow screen.
+   *
+   * AggregateOnly because there is no form-level inline message; the failure exists only
+   * to drive section status and the dedicated cross-flow page.
+   */
+object Cf17_UseOfPropertyMissing extends GuardRule:
+    val id = "Cf-17"
+    val affects: ReturnSection = ReturnSection.Transaction
+    val inputs: Set[ReturnSection] = Set(ReturnSection.Transaction, ReturnSection.Land)
+    val targets: Seq[CrossFlowTarget] = Seq(useOfPropertyTarget)
+
+    private val triggeringPropertyTypes: Set[String] = Set(Mixed, NonResidential)
+
+    protected def appliesTo(ua: UserAnswers): Boolean =
+      anyLandPropertyType(ua, triggeringPropertyTypes)
+
+    protected def isValid(ua: UserAnswers): Boolean =
+      useOfPropertyAnswered(ua)
+
+    protected def messageKey = "crossflow.transaction.Cf-17.body"
+
+    protected override def inlineErrorKey = "crossflow.transaction.Cf-17.body"
+
+    protected override def headingKey = "crossflow.transaction.Cf-17.heading"
+
+    override val aggregateOnly: Boolean = true
+
+    protected override def body: CrossFlowBody = CrossFlowBody.WithBullets(
+      leadKey = "crossflow.transaction.Cf-17.body",
+      bulletKeys = Seq(
+        "crossflow.transaction.Cf-17.bullet1",
+        "crossflow.transaction.Cf-17.bullet2"
+      )
+    )
+
   /** Cf-5a — When the main land is '01 - Residential' or '04 - Additional residential',
    * the lease type must be 'R - Residential'. Fires when a residential-type main land
    * exists but the lease type is something other than R.
@@ -621,7 +662,8 @@ object F30Rules:
   val all: Set[CrossFlowRule] = Set(
     Cf5a_LeaseRResidential,
     Cf5b_LeaseMMixed,
-    Cf5c_LeaseNNonResidential
+    Cf5c_LeaseNNonResidential,
+    Cf17_UseOfPropertyMissing
   )
 
 object F30RulesLand:

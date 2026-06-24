@@ -130,12 +130,12 @@ class TransactionCheckYourAnswersController @Inject()(
       case Right(summaryList) => Ok(view(summaryList))
     }
 
-  // In TransactionCheckYourAnswersController, or pulled out into a small CrossFlowRouting object
   private def callForFailure(failure: CrossFlowFailure): Call =
     failure.targets.headOption.map(_.page) match {
       case Some(Pages.EffectiveDate) => controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode)
       case Some(Pages.ContractDate) => controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(CheckMode)
       case Some(Pages.ReliefReason) => controllers.transaction.routes.ReasonForReliefController.onPageLoad(CheckMode)
+      case Some(Pages.UseOfProperty) => controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(CheckMode)
       case _ => controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad()
     }
 

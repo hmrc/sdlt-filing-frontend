@@ -38,19 +38,26 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
   private val mdrContractCutOff  = LocalDate.of(2024,  3,  7)
 
   private def answersWith(
-                           claimingRelief:  Option[String]          = Some("YES"),
-                           reliefReason:    Option[ReasonForRelief] = None,
-                           effectiveDate:   Option[LocalDate]       = None,
-                           contractDate:    Option[String]          = None,
-                           propertyType:    Option[String]          = None,
-                           totalPremium:    Option[String]          = None,
-                           mainLandId:      Option[String]          = None,
-                           additionalLands: Seq[Land]               = Nil,
-                           leaseType:       Option[String]          = None
+                           claimingRelief:   Option[String]          = Some("YES"),
+                           reliefReason:     Option[ReasonForRelief] = None,
+                           effectiveDate:    Option[LocalDate]       = None,
+                           contractDate:     Option[String]          = None,
+                           propertyType:     Option[String]          = None,
+                           totalPremium:     Option[String]          = None,
+                           mainLandId:       Option[String]          = None,
+                           additionalLands:  Seq[Land]               = Nil,
+                           leaseType:        Option[String]          = None,
+                           usedAsFactory:    Option[String]          = None,
+                           usedAsHotel:      Option[String]          = None,
+                           usedAsIndustrial: Option[String]          = None,
+                           usedAsOffice:     Option[String]          = None,
+                           usedAsOther:      Option[String]          = None,
+                           usedAsShop:       Option[String]          = None,
+                           usedAsWarehouse:  Option[String]          = None
                          ): UserAnswers = {
     val committedTransaction = Transaction(
-      claimingRelief = claimingRelief,
-      reliefReason   = reliefReason.flatMap {
+      claimingRelief   = claimingRelief,
+      reliefReason     = reliefReason.flatMap {
         case ReasonForRelief.FirstTimeBuyer       => Some("32")
         case ReasonForRelief.MultipleDwellings    => Some("33")
         case ReasonForRelief.PreCompletion        => Some("34")
@@ -60,8 +67,15 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
         case ReasonForRelief.SeedingRelief        => Some("38")
         case _                                    => None
       },
-      effectiveDate  = effectiveDate.map(_.toString),
-      contractDate   = contractDate
+      effectiveDate    = effectiveDate.map(_.toString),
+      contractDate     = contractDate,
+      usedAsFactory    = usedAsFactory,
+      usedAsHotel      = usedAsHotel,
+      usedAsIndustrial = usedAsIndustrial,
+      usedAsOffice     = usedAsOffice,
+      usedAsOther      = usedAsOther,
+      usedAsShop       = usedAsShop,
+      usedAsWarehouse  = usedAsWarehouse
     )
 
     val firstLand = propertyType.map(t => Land(
@@ -763,10 +777,119 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
     }
   }
 
+  "Cf17_UseOfPropertyMissing" - {
+
+    "must be flagged as aggregateOnly so it does not fire during inline form binding" in {
+      Cf17_UseOfPropertyMissing.aggregateOnly mustBe true
+    }
+
+    "must fire when property type is '02 - Mixed' and no use-of-property flags are set" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("02"),
+        mainLandId     = Some("LND001")
+      )
+
+      Cf17_UseOfPropertyMissing.validate(ua).map(_.ruleId) mustBe Some("Cf-17")
+    }
+
+    "must fire when property type is '03 - Non-residential' and no use-of-property flags are set" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("03"),
+        mainLandId     = Some("LND001")
+      )
+
+      Cf17_UseOfPropertyMissing.validate(ua).map(_.ruleId) mustBe Some("Cf-17")
+    }
+
+    "must pass when property type is '02' and at least one use-of-property flag is 'yes'" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("02"),
+        mainLandId     = Some("LND001"),
+        usedAsOffice   = Some("yes")
+      )
+
+      Cf17_UseOfPropertyMissing.validate(ua) mustBe None
+    }
+
+    "must pass when property type is '03' and multiple use-of-property flags are 'yes'" in {
+      val ua = answersWith(
+        claimingRelief  = Some("NO"),
+        propertyType    = Some("03"),
+        mainLandId      = Some("LND001"),
+        usedAsFactory   = Some("yes"),
+        usedAsWarehouse = Some("yes"),
+        usedAsOther     = Some("yes")
+      )
+
+      Cf17_UseOfPropertyMissing.validate(ua) mustBe None
+    }
+
+    "must fire when property type is '02' and all use-of-property flags are 'no'" in {
+      val ua = answersWith(
+        claimingRelief   = Some("NO"),
+        propertyType     = Some("02"),
+        mainLandId       = Some("LND001"),
+        usedAsFactory    = Some("no"),
+        usedAsHotel      = Some("no"),
+        usedAsIndustrial = Some("no"),
+        usedAsOffice     = Some("no"),
+        usedAsOther      = Some("no"),
+        usedAsShop       = Some("no"),
+        usedAsWarehouse  = Some("no")
+      )
+
+      Cf17_UseOfPropertyMissing.validate(ua).map(_.ruleId) mustBe Some("Cf-17")
+    }
+
+    "must not apply when property type is '01 - Residential'" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("01"),
+        mainLandId     = Some("LND001")
+      )
+
+      Cf17_UseOfPropertyMissing.validate(ua) mustBe None
+    }
+
+    "must not apply when property type is '04 - Additional residential'" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = Some("04"),
+        mainLandId     = Some("LND001")
+      )
+
+      Cf17_UseOfPropertyMissing.validate(ua) mustBe None
+    }
+
+    "must not apply when no land is configured" in {
+      val ua = answersWith(
+        claimingRelief = Some("NO"),
+        propertyType   = None
+      )
+
+      Cf17_UseOfPropertyMissing.validate(ua) mustBe None
+    }
+
+    "must fire when at least one of multiple lands has a triggering property type (02) and use-of-property is unanswered" in {
+      val additionalLand = Land(landID = Some("LND002"), propertyType = Some("01"))
+      val ua = answersWith(
+        claimingRelief  = Some("NO"),
+        propertyType    = Some("02"),
+        mainLandId      = Some("LND001"),
+        additionalLands = Seq(additionalLand)
+      )
+
+      Cf17_UseOfPropertyMissing.validate(ua).map(_.ruleId) mustBe Some("Cf-17")
+    }
+  }
+
   "F23Rules.all" - {
 
-    "must contain all nine rules" in {
-      F23Rules.all.map(_.id) must contain allOf(
+    "must contain all seven F23 rules" in {
+      F23Rules.all.map(_.id) must contain allOf (
         "F23-32", "F23-33", "F23-34", "F23-35", "F23-36", "F23-37", "F23-38"
       )
     }
@@ -781,7 +904,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
   "F28Rules.all" - {
 
     "must contain both F28 rules" in {
-      F28Rules.all.map(_.id) must contain allOf("F28-cap500k", "F28-cap625k")
+      F28Rules.all.map(_.id) must contain allOf ("F28-cap500k", "F28-cap625k")
     }
 
     "must produce no failures for a baseline (no relief claimed)" in {
@@ -793,8 +916,8 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
   "F30Rules.all" - {
 
-    "must contain Cf-5a, Cf-5b, and Cf-5c" in {
-      F30Rules.all.map(_.id) must contain allOf("Cf-5a", "Cf-5b", "Cf-5c")
+    "must contain Cf-5a, Cf-5b, Cf-5c, and Cf-17" in {
+      F30Rules.all.map(_.id) must contain allOf ("Cf-5a", "Cf-5b", "Cf-5c", "Cf-17")
     }
 
     "must produce no failures when no lease and no land are configured" in {
@@ -807,7 +930,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
   "F30RulesLand.all" - {
 
     "must contain Cf-6" in {
-      F30RulesLand.all.map(_.id) must contain("Cf-6")
+      F30RulesLand.all.map(_.id) must contain ("Cf-6")
     }
   }
 }

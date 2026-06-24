@@ -82,6 +82,10 @@ class CrossFlowSpec extends SpecBase {
     "must expose the lease type page id" in {
       Pages.LeaseType mustBe PageId("leaseType")
     }
+
+    "must expose the use of property page id" in {
+      Pages.UseOfProperty mustBe PageId("useOfProperty")
+    }
   }
 
   "Fields" - {
@@ -94,6 +98,7 @@ class CrossFlowSpec extends SpecBase {
       Fields.LandAuthorityCode  mustBe "value"
       Fields.LandPostcode       mustBe "value"
       Fields.LeaseType          mustBe "value"
+      Fields.UseOfProperty      mustBe "value"
     }
   }
 
@@ -424,7 +429,7 @@ class CrossFlowSpec extends SpecBase {
   }
 
   "LandRule.aggregateOnly" - {
-    
+
     abstract class BaseLandRule extends LandRule {
       val id                                                                       = "BASE-LAND"
       val affects: ReturnSection                                                   = ReturnSection.Land
