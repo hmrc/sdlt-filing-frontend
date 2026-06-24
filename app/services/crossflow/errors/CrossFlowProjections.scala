@@ -201,6 +201,38 @@ object CrossFlowProjections:
   def mainLandPropertyType(ua: UserAnswers): Option[String] =
     mainLand(ua).flatMap(_.propertyType)
 
+  def useOfPropertyAnswered(ua: UserAnswers): Boolean = {
+    // First check the committed transaction
+    val committedAnswered = ua.fullReturn.flatMap(_.transaction).exists { t =>
+      Seq(
+        t.usedAsFactory,
+        t.usedAsHotel,
+        t.usedAsIndustrial,
+        t.usedAsOffice,
+        t.usedAsOther,
+        t.usedAsShop,
+        t.usedAsWarehouse
+      ).exists(_.exists(_.equalsIgnoreCase("yes")))
+    }
+
+    val sessionAnswered = ua.get(TransactionUseOfLandOrPropertyPage).exists { use =>
+      Seq(
+        use.factory,
+        use.hotel,
+        use.otherIndustrialUnit,
+        use.office,
+        use.other,
+        use.shop,
+        use.warehouse
+      ).exists(_.equalsIgnoreCase("yes"))
+    }
+
+    committedAnswered || sessionAnswered
+  }
+
+  def anyLandPropertyType(ua: UserAnswers, types: Set[String]): Boolean =
+    allLandPropertyTypes(ua).exists(types.contains)
+
   object Dates:
     val reliefFloor2013: LocalDate = LocalDate.of(2013, 3, 6)
     val freeportStart: LocalDate = LocalDate.of(2021, 10, 19)

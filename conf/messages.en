@@ -2089,6 +2089,14 @@ crossflow.land.Cf-14.heading = Update the local authority code
 crossflow.land.Cf-15.heading = Update the local authority code
 crossflow.land.Cf-16.heading = Update the postcode
 
+crossflow.transaction.Cf-17.heading = Enter the use of the land or property
+crossflow.transaction.Cf-17.body = You have selected the type of property as either:
+crossflow.transaction.Cf-17.bullet1 = 02 - Mixed
+crossflow.transaction.Cf-17.bullet2 = 03 - Non-residential
+crossflow.transaction.Cf-17.body2 = This means you must now confirm how the land or property will be used.
+crossflow.transaction.Cf-17.cta = Continue
+crossflow.transaction.cta.enterUseOfProperty = This means you must now confirm how the land or property will be used.
+
 crossflow.land.Cf-8.body = This local authority code is no longer recognised by SDLT when the effective date of the transaction is the same as or after 1 April 2018.
 crossflow.land.Cf-9.welsh6996_6997.body = This local authority code cannot be used when the effective date of transaction is before 1 April 2018.
 crossflow.land.Cf-9.welsh6998.body      = This local authority code cannot be used when the effective date of transaction is before 1 April 2018.

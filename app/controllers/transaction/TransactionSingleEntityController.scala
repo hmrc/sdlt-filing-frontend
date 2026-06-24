@@ -33,16 +33,16 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class TransactionSingleEntityController @Inject() (
-                                                          override val messagesApi:    MessagesApi,
-                                                          identify:                    IdentifierAction,
-                                                          getData:                     DataRetrievalAction,
-                                                          requireData:                 DataRequiredAction,
-                                                          sessionRepository:           SessionRepository,
-                                                          populateTransactionService:  PopulateTransactionService,
-                                                          crossFlow:                   CrossFlowValidationService,
-                                                          val controllerComponents:    MessagesControllerComponents,
-                                                          view:                        TransactionReliefSingleEntityView
-                                                        )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                    override val messagesApi:    MessagesApi,
+                                                    identify:                    IdentifierAction,
+                                                    getData:                     DataRetrievalAction,
+                                                    requireData:                 DataRequiredAction,
+                                                    sessionRepository:           SessionRepository,
+                                                    populateTransactionService:  PopulateTransactionService,
+                                                    crossFlow:                   CrossFlowValidationService,
+                                                    val controllerComponents:    MessagesControllerComponents,
+                                                    view:                        TransactionReliefSingleEntityView
+                                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
@@ -69,7 +69,7 @@ class TransactionSingleEntityController @Inject() (
             ))
         }
     }
-  
+
   private def renderOrRedirect(userAnswers: UserAnswers)(implicit request: Request[_]): Result =
     crossFlow.failuresAffecting(ReturnSection.Transaction, userAnswers).headOption match {
 
@@ -88,7 +88,8 @@ class TransactionSingleEntityController @Inject() (
   private def continueUrlFor(failure: CrossFlowFailure): String = {
     val targets = failure.targets.map(_.page).toSet
 
-    if      (targets.contains(Pages.LandPropertyType)) controllers.transaction.routes.ReasonForReliefController.onPageLoad(CheckMode).url
+    if      (targets.contains(Pages.UseOfProperty))    controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(CheckMode).url
+    else if (targets.contains(Pages.LandPropertyType)) controllers.transaction.routes.ReasonForReliefController.onPageLoad(CheckMode).url
     else if (targets.contains(Pages.EffectiveDate))    controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode).url
     else if (targets.contains(Pages.ContractDate))     controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(CheckMode).url
     else                                               controllers.transaction.routes.ReasonForReliefController.onPageLoad(CheckMode).url
@@ -97,7 +98,8 @@ class TransactionSingleEntityController @Inject() (
   private def ctaKeyFor(failure: CrossFlowFailure): String = {
     val targets = failure.targets.map(_.page).toSet
 
-    if      (targets.contains(Pages.LandPropertyType)) "crossflow.relief.cta.changePropertyType"
+    if      (targets.contains(Pages.UseOfProperty))    "crossflow.transaction.cta.enterUseOfProperty"
+    else if (targets.contains(Pages.LandPropertyType)) "crossflow.relief.cta.changePropertyType"
     else if (targets.contains(Pages.EffectiveDate))    "crossflow.relief.cta.changeEffectiveDate"
     else if (targets.contains(Pages.ContractDate))     "crossflow.relief.cta.changeContractDate"
     else                                               "crossflow.relief.cta.changeReliefReason"

@@ -754,6 +754,27 @@ class TransactionCheckYourAnswersControllerSpec
         }
       }
 
+      "must redirect to the use-of-land-or-property page when a cross-flow failure targets it (Cf-17)" in {
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(completeUserAnswers)))
+
+        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(stubCrossFlow(Seq(failure(Pages.UseOfProperty, "Cf-17"))))
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.TransactionCheckYourAnswersController.onPageLoad().url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual
+            routes.TransactionUseOfLandOrPropertyController.onPageLoad(models.CheckMode).url
+        }
+      }
+
       "must fall back to CYA when a cross-flow failure has no recognised target page" in {
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(completeUserAnswers)))

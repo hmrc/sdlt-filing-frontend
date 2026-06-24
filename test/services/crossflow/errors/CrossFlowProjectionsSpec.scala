@@ -18,7 +18,7 @@ package services.crossflow.errors
 
 import base.SpecBase
 import constants.FullReturnConstants.emptyFullReturn
-import models.transaction.ReasonForRelief
+import models.transaction.{ReasonForRelief, TransactionUseOfLandOrPropertyAnswers}
 import models.{Land, Lease, ReturnInfo, Transaction, UserAnswers}
 import org.scalatest.matchers.must.Matchers
 import pages.lease.TypeOfLeasePage
@@ -32,17 +32,31 @@ class CrossFlowProjectionsSpec extends SpecBase with Matchers {
   private val date2024 = LocalDate.of(2024, 1, 15)
 
   private def withCommittedTransaction(
-                                        claimingRelief: Option[String] = None,
-                                        reliefReason:   Option[String] = None,
-                                        effectiveDate:  Option[String] = None,
-                                        contractDate:   Option[String] = None
+                                        claimingRelief:   Option[String] = None,
+                                        reliefReason:     Option[String] = None,
+                                        effectiveDate:    Option[String] = None,
+                                        contractDate:     Option[String] = None,
+                                        usedAsFactory:    Option[String] = None,
+                                        usedAsHotel:      Option[String] = None,
+                                        usedAsIndustrial: Option[String] = None,
+                                        usedAsOffice:     Option[String] = None,
+                                        usedAsOther:      Option[String] = None,
+                                        usedAsShop:       Option[String] = None,
+                                        usedAsWarehouse:  Option[String] = None
                                       ): UserAnswers =
     emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(
       transaction = Some(Transaction(
-        claimingRelief = claimingRelief,
-        reliefReason   = reliefReason,
-        effectiveDate  = effectiveDate,
-        contractDate   = contractDate
+        claimingRelief   = claimingRelief,
+        reliefReason     = reliefReason,
+        effectiveDate    = effectiveDate,
+        contractDate     = contractDate,
+        usedAsFactory    = usedAsFactory,
+        usedAsHotel      = usedAsHotel,
+        usedAsIndustrial = usedAsIndustrial,
+        usedAsOffice     = usedAsOffice,
+        usedAsOther      = usedAsOther,
+        usedAsShop       = usedAsShop,
+        usedAsWarehouse  = usedAsWarehouse
       ))
     )))
 
@@ -673,6 +687,174 @@ class CrossFlowProjectionsSpec extends SpecBase with Matchers {
       val ua    = withMainLandAndLands("LND001", landA)
 
       mainLandPropertyType(ua) mustBe None
+    }
+  }
+
+  "useOfPropertyAnswered" - {
+
+    "must return false when there is no transaction at all" in {
+      useOfPropertyAnswered(emptyUserAnswers) mustBe false
+    }
+
+    "must return false when all committed use-of-property flags are None" in {
+      val ua = withCommittedTransaction()
+
+      useOfPropertyAnswered(ua) mustBe false
+    }
+
+    "must return false when all committed use-of-property flags are 'no'" in {
+      val ua = withCommittedTransaction(
+        usedAsFactory    = Some("no"),
+        usedAsHotel      = Some("no"),
+        usedAsIndustrial = Some("no"),
+        usedAsOffice     = Some("no"),
+        usedAsOther      = Some("no"),
+        usedAsShop       = Some("no"),
+        usedAsWarehouse  = Some("no")
+      )
+
+      useOfPropertyAnswered(ua) mustBe false
+    }
+
+    "must return true when at least one committed use-of-property flag is 'yes'" in {
+      val ua = withCommittedTransaction(usedAsOffice = Some("yes"))
+
+      useOfPropertyAnswered(ua) mustBe true
+    }
+
+    "must accept 'yes' case-insensitively in committed flags ('YES')" in {
+      val ua = withCommittedTransaction(usedAsFactory = Some("YES"))
+
+      useOfPropertyAnswered(ua) mustBe true
+    }
+
+    "must accept 'yes' case-insensitively in committed flags ('Yes')" in {
+      val ua = withCommittedTransaction(usedAsShop = Some("Yes"))
+
+      useOfPropertyAnswered(ua) mustBe true
+    }
+
+    "must return true when multiple committed flags are 'yes'" in {
+      val ua = withCommittedTransaction(
+        usedAsFactory   = Some("yes"),
+        usedAsWarehouse = Some("yes"),
+        usedAsOther     = Some("yes")
+      )
+
+      useOfPropertyAnswered(ua) mustBe true
+    }
+
+    "must return true when the session-level use of property has at least one 'yes'" in {
+      val sessionUse = TransactionUseOfLandOrPropertyAnswers(
+        factory             = "no",
+        hotel               = "no",
+        otherIndustrialUnit = "no",
+        office              = "yes",
+        other               = "no",
+        shop                = "no",
+        warehouse           = "no"
+      )
+      val ua = emptyUserAnswers.set(TransactionUseOfLandOrPropertyPage, sessionUse).success.value
+
+      useOfPropertyAnswered(ua) mustBe true
+    }
+
+    "must return true when the session-level use of property has 'yes' with mixed casing" in {
+      val sessionUse = TransactionUseOfLandOrPropertyAnswers(
+        factory             = "YES",
+        hotel               = "no",
+        otherIndustrialUnit = "no",
+        office              = "no",
+        other               = "no",
+        shop                = "no",
+        warehouse           = "no"
+      )
+      val ua = emptyUserAnswers.set(TransactionUseOfLandOrPropertyPage, sessionUse).success.value
+
+      useOfPropertyAnswered(ua) mustBe true
+    }
+
+    "must return false when the session-level use of property has all 'no' values" in {
+      val sessionUse = TransactionUseOfLandOrPropertyAnswers(
+        factory             = "no",
+        hotel               = "no",
+        otherIndustrialUnit = "no",
+        office              = "no",
+        other               = "no",
+        shop                = "no",
+        warehouse           = "no"
+      )
+      val ua = emptyUserAnswers.set(TransactionUseOfLandOrPropertyPage, sessionUse).success.value
+
+      useOfPropertyAnswered(ua) mustBe false
+    }
+
+    "must return true when committed is unanswered but session has a 'yes'" in {
+      val sessionUse = TransactionUseOfLandOrPropertyAnswers(
+        factory             = "no",
+        hotel               = "no",
+        otherIndustrialUnit = "no",
+        office              = "no",
+        other               = "no",
+        shop                = "yes",
+        warehouse           = "no"
+      )
+      val ua = withCommittedTransaction()
+        .set(TransactionUseOfLandOrPropertyPage, sessionUse).success.value
+
+      useOfPropertyAnswered(ua) mustBe true
+    }
+
+    "must return true when committed has a 'yes' even if session is missing" in {
+      val ua = withCommittedTransaction(usedAsWarehouse = Some("yes"))
+
+      useOfPropertyAnswered(ua) mustBe true
+    }
+  }
+
+  "anyLandPropertyType" - {
+
+    "must return false when there are no committed lands" in {
+      anyLandPropertyType(emptyUserAnswers, Set(Mixed, NonResidential)) mustBe false
+    }
+
+    "must return true when at least one committed land matches the trigger set" in {
+      val ua = withLands(Land(propertyType = Some(Mixed)))
+
+      anyLandPropertyType(ua, Set(Mixed, NonResidential)) mustBe true
+    }
+
+    "must return true when ANY of multiple committed lands matches" in {
+      val ua = withLands(
+        Land(propertyType = Some(Residential)),
+        Land(propertyType = Some(NonResidential))
+      )
+
+      anyLandPropertyType(ua, Set(Mixed, NonResidential)) mustBe true
+    }
+
+    "must return false when no committed lands match the trigger set" in {
+      val ua = withLands(
+        Land(propertyType = Some(Residential)),
+        Land(propertyType = Some(ResidentialAdditional))
+      )
+
+      anyLandPropertyType(ua, Set(Mixed, NonResidential)) mustBe false
+    }
+
+    "must return false when an empty trigger set is provided" in {
+      val ua = withLands(Land(propertyType = Some(Mixed)))
+
+      anyLandPropertyType(ua, Set.empty) mustBe false
+    }
+
+    "must ignore lands with no property type set" in {
+      val ua = withLands(
+        Land(propertyType = None),
+        Land(propertyType = Some(Mixed))
+      )
+
+      anyLandPropertyType(ua, Set(Mixed, NonResidential)) mustBe true
     }
   }
 }

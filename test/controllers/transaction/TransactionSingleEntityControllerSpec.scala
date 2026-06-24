@@ -37,7 +37,7 @@ class TransactionSingleEntityControllerSpec extends SpecBase with MockitoSugar {
 
   lazy val singleEntityRoute: String =
     controllers.transaction.routes.TransactionSingleEntityController.onPageLoad().url
-  
+
   /** F23-32 FTB property-type failure. Targets the relief reason and land property type pages. */
   private val propertyTypeFailure = CrossFlowFailure(
     ruleId         = "F23-32",
@@ -91,6 +91,23 @@ class TransactionSingleEntityControllerSpec extends SpecBase with MockitoSugar {
     headingKey     = "crossflow.relief.heading"
   )
 
+  /** Cf-17 Mural BF failure. Targets the use-of-property page only. */
+  private val useOfPropertyFailure = CrossFlowFailure(
+    ruleId         = "Cf-17",
+    affects        = ReturnSection.Transaction,
+    messageKey     = "crossflow.transaction.Cf-17.body",
+    inlineErrorKey = "crossflow.transaction.Cf-17.body",
+    body           = CrossFlowBody.WithBullets(
+      leadKey    = "crossflow.transaction.Cf-17.body",
+      bulletKeys = Seq(
+        "crossflow.transaction.Cf-17.bullet1",
+        "crossflow.transaction.Cf-17.bullet2"
+      )
+    ),
+    targets        = Seq(CrossFlowTarget(Pages.UseOfProperty, "value")),
+    headingKey     = "crossflow.transaction.Cf-17.heading"
+  )
+
   private def crossFlowWithFailures(failures: Seq[CrossFlowFailure]) =
     new CrossFlowValidationService(Set.empty, Set.empty) {
       override def failuresAffecting(section: ReturnSection, ua: UserAnswers): Seq[CrossFlowFailure] =
@@ -139,7 +156,7 @@ class TransactionSingleEntityControllerSpec extends SpecBase with MockitoSugar {
   "TransactionSingleEntity Controller" - {
 
     "onPageLoad" - {
-      
+
       "must redirect to TransactionBeforeYouStart when the user has no committed transaction" in {
 
         val application = appWith(userAnswersWithoutTransaction, crossFlowNoFailures)
@@ -243,6 +260,22 @@ class TransactionSingleEntityControllerSpec extends SpecBase with MockitoSugar {
             controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
         }
       }
+
+      "must render the Cf-17 heading and body when a Mural Business Function failure is surfaced" in {
+
+        val crossFlow   = crossFlowWithFailures(Seq(useOfPropertyFailure))
+        val application = appWith(userAnswersWithCommittedTransaction, crossFlow)
+
+        running(application) {
+          val request = FakeRequest(GET, singleEntityRoute)
+          val result  = route(application, request).value
+          val content = contentAsString(result)
+
+          status(result) mustEqual OK
+          content must include(messages(application)("crossflow.transaction.Cf-17.heading"))
+          content must include(messages(application)("crossflow.transaction.Cf-17.body"))
+        }
+      }
     }
 
     "onPageLoad continue URL routing" - {
@@ -289,6 +322,21 @@ class TransactionSingleEntityControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           content must include(controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(CheckMode).url)
+        }
+      }
+
+      "must point Continue at the use-of-land-or-property page in CheckMode when failure targets use of property (Cf-17)" in {
+
+        val crossFlow   = crossFlowWithFailures(Seq(useOfPropertyFailure))
+        val application = appWith(userAnswersWithCommittedTransaction, crossFlow)
+
+        running(application) {
+          val request = FakeRequest(GET, singleEntityRoute)
+          val result  = route(application, request).value
+          val content = contentAsString(result)
+
+          status(result) mustEqual OK
+          content must include(controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(CheckMode).url)
         }
       }
 
@@ -352,6 +400,21 @@ class TransactionSingleEntityControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           content must include(messages(application)("crossflow.relief.cta.changeContractDate"))
+        }
+      }
+
+      "must use the use-of-property CTA key when failure targets use of property (Cf-17)" in {
+
+        val crossFlow   = crossFlowWithFailures(Seq(useOfPropertyFailure))
+        val application = appWith(userAnswersWithCommittedTransaction, crossFlow)
+
+        running(application) {
+          val request = FakeRequest(GET, singleEntityRoute)
+          val result  = route(application, request).value
+          val content = contentAsString(result)
+
+          status(result) mustEqual OK
+          content must include(messages(application)("crossflow.transaction.cta.enterUseOfProperty"))
         }
       }
 
