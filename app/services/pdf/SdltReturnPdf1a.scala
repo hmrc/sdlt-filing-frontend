@@ -28,6 +28,9 @@ import scala.util.Using
 import SdltPdfFields.*
 import PdfFormSupport.*
 import models.land.LandSelectMeasurementUnit
+import org.apache.pdfbox.cos.COSName
+import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont
+import org.apache.pdfbox.pdmodel.font.encoding.WinAnsiEncoding
 
 @Singleton
 class SdltReturnPdf1a @Inject()(
@@ -42,6 +45,11 @@ class SdltReturnPdf1a @Inject()(
     Using.Manager { use =>
       val doc    = use(Loader.loadPDF(templateBytes))
       val form   = getAcroForm(doc)
+      val customFontResourceInputStream = getClass.getResourceAsStream(CUSTOM_FONT_RESOURCE_PATH)
+      val res = form.getDefaultResources
+      val customFont = PDTrueTypeFont.load(doc, customFontResourceInputStream, WinAnsiEncoding.INSTANCE)
+      res.put(COSName.getPDFName(CUSTOM_FONT_NAME), customFont)
+      form.setDefaultResources(res)
       val writer = new PdfFieldWriter(form, "SdltReturnPdf1a")
 
       fillTransactionFields(writer, fullReturn)
