@@ -18,6 +18,7 @@ package services.pdf
 
 import models.FullReturn
 import org.apache.pdfbox.pdmodel.interactive.form.{PDAcroForm, PDCheckBox, PDTextField}
+import services.pdf.PdfFormSupport.{CUSTOM_FONT_NAME, PAGE_INFO_FONT_SIZE}
 import services.pdf.SdltPdfFields.{IR_MARK, PRINT_STATUS, UTRN}
 import utils.LoggingUtil
 
@@ -26,6 +27,10 @@ import java.time.format.DateTimeFormatter
 import scala.util.Try
 
 object PdfFormSupport {
+
+  val PAGE_INFO_FONT_SIZE = 9f
+  val CUSTOM_FONT_NAME = "Courier"
+  val CUSTOM_FONT_RESOURCE_PATH = "/pdf/font/Courier-Bold.ttf"
 
   def splitPostcode(postcode: Option[String]): (Option[String], Option[String]) =
     postcode.map(_.trim).filter(_.nonEmpty) match {
@@ -56,6 +61,8 @@ class PdfFieldWriter(form: PDAcroForm, ctx: String) extends LoggingUtil {
     val safe = value.map(_.trim).getOrElse("")
     Try(form.getField(fieldName)).toOption match {
       case Some(f: PDTextField) =>
+        val fixedAppearance = s"/$CUSTOM_FONT_NAME $PAGE_INFO_FONT_SIZE Tf 0 g"
+        f.setDefaultAppearance(fixedAppearance)
         Try(f.setValue(safe)).failed.foreach { e =>
           logger.warn(s"[$ctx][FieldWriter] Could not set '$fieldName': ${e.getMessage}")
         }
