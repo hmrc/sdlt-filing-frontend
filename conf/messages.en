@@ -2071,9 +2071,10 @@ crossflow.land.cta.changeEffectiveDate    = Select a different effective date.
 # === Multi-entity (Cf-7a / Cf-7b / Cf-7c) ===
 
 
-crossflow.land.Cf-7.heading   = Update {0} local authority codes
+crossflow.land.Cf-7.heading   = There are {0} problems with this return
 crossflow.land.Cf-7.p1        = One or more transaction details have changed. This means you must update some local authority codes.
-crossflow.land.multiEntity.p2 = Select ‘Change’ to update the local authority code for all the interests listed.
+crossflow.land.multiEntity.p1 = Select ‘Update’ to see each problem and what to do next.
+crossflow.land.multiEntity.p2 = You must update or remove all interests listed.
 
 # === Single-entity headings (per Cf-* rule id) ===
 

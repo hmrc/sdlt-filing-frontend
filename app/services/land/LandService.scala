@@ -107,7 +107,7 @@ class LandService {
           items = Seq(
             ActionItem(
               href               = controllers.land.routes.LandAuthorityCodeSingleEntityController.onPageLoad(landId).url,
-              content            = Text(messages("site.change")),
+              content            = Text(messages("site.update")),
               visuallyHiddenText = Some(address)
             ),
             ActionItem(
