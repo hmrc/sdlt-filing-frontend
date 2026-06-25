@@ -56,8 +56,14 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
     m
   }
 
-  private def buildService(pdf1a: SdltReturnPdf1a = mockPdf1a()): PDFGenerationService =
-    new PDFGenerationService(pdf1a)
+  private def mockPdf3(bytes: Array[Byte] = blankPdfBytes): SdltReturnPdf3 = {
+    val m = mock[SdltReturnPdf3]
+    when(m.fillPdf(any[FullReturn](), any[Land], any[Boolean]())).thenReturn(bytes)
+    m
+  }
+
+  private def buildService(pdf1a: SdltReturnPdf1a = mockPdf1a(), pdf3: SdltReturnPdf3 = mockPdf3()): PDFGenerationService =
+    new PDFGenerationService(pdf1a, pdf3)
   
   "PDFGenerationService" - {
 
@@ -98,6 +104,49 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
         service.generatePdf(minimalFullReturn).futureValue
         service.generatePdf(completeFullReturn).futureValue
         verify(pdf1a, times(2)).fillPdf(any[FullReturn](), any[Boolean]())
+      }
+
+      "must call pdf3Filler for one additional land" in {
+        val pdf1a = mockPdf1a()
+        val pdf3 = mockPdf3()
+        val service = buildService(pdf1a, pdf3)
+        service.generatePdf(completeFullReturn.copy(
+          land = Some(Seq(
+            Land(landID = Some("LND001")),
+            Land(landID = Some("LND002"))
+          )),
+          returnInfo = Some(ReturnInfo(mainLandID = Some("LND001")))
+        )).futureValue
+        verify(pdf3, times(1)).fillPdf(any[FullReturn](), any[Land], any[Boolean])
+      }
+
+      "must call pdf3Filler for each additional land" in {
+        val pdf1a = mockPdf1a()
+        val pdf3 = mockPdf3()
+        val service = buildService(pdf1a, pdf3)
+        service.generatePdf(completeFullReturn.copy(
+          land = Some(Seq(
+            Land(landID = Some("LND001")),
+            Land(landID = Some("LND002")),
+            Land(landID = Some("LND003")),
+            Land(landID = Some("LND004"))
+          )),
+          returnInfo = Some(ReturnInfo(mainLandID = Some("LND001")))
+        )).futureValue
+        verify(pdf3, times(3)).fillPdf(any[FullReturn](), any[Land], any[Boolean])
+      }
+
+      "must not call pdf3Filler when only one land" in {
+        val pdf1a = mockPdf1a()
+        val pdf3 = mockPdf3()
+        val service = buildService(pdf1a, pdf3)
+        service.generatePdf(completeFullReturn.copy(
+          land = Some(Seq(
+            Land(landID = Some("LND001"))
+          )),
+          returnInfo = Some(ReturnInfo(mainLandID = Some("LND001")))
+        )).futureValue
+        verify(pdf3, never).fillPdf(any[FullReturn](), any[Land], any[Boolean])
       }
 
       "must propagate failures from pdf1aFiller" in {

@@ -47,7 +47,7 @@ class PDFGenerationService @Inject()(
                                       pdf1aFiller:     SdltReturnPdf1a,
 //                                      pdf2PurchFiller: SdltReturnPdf2Purchaser,
 //                                      pdf2VendFiller:  SdltReturnPdf2Vendor,
-//                                      pdf3Filler:      SdltReturnPdf3,
+                                      pdf3Filler:      SdltReturnPdf3,
 //                                      pdf4Filler:      SdltReturnPdf4,
 //                                      pdf4aFiller:     SdltReturnPdf4a
                                     ) extends LoggingUtil {
@@ -80,7 +80,7 @@ class PDFGenerationService @Inject()(
 
 //    val purchasers = r.purchaser.getOrElse(Seq.empty)
 //    val vendors    = r.vendor.getOrElse(Seq.empty)
-//    val lands      = r.land.getOrElse(Seq.empty)
+    val lands      = r.land.getOrElse(Seq.empty)
 //    val isLease    = r.lease.isDefined
 
     // ---- SDLT1: always present ----
@@ -104,14 +104,16 @@ class PDFGenerationService @Inject()(
 //      }
 //    }
 
-//    // ---- SDLT3: one per additional land parcel (index 0 is on SDLT1 itself) ----
-//    if (lands.size > 1) {
-//      lands.tail.zipWithIndex.foreach { case (land, idx) =>
-//        tryFill(s"SDLT3 land index ${idx + 1}") {
-//          parts :+= pdf3Filler.fillPdf(land, r)
-//        }
-//      }
-//    }
+//    // ---- SDLT3: one per additional land ----
+    if (lands.size > 1) {
+      val mainLandId = r.returnInfo.flatMap(_.mainLandID)
+      val otherLands = lands.filterNot(l => l.landID.equals(mainLandId))
+      otherLands.zipWithIndex.foreach { case (land, idx) =>
+        tryFill(s"SDLT3 land index ${idx + 1}") {
+          parts :+= pdf3Filler.fillPdf(r, land)
+        }
+      }
+    }
 //
 //    // ---- SDLT4 / SDLT4a: conditioned on lease type and land count ----
 //    val propertyType = r.land.flatMap(_.headOption).flatMap(_.propertyType).getOrElse("")
@@ -140,14 +142,14 @@ class PDFGenerationService @Inject()(
   }
 
 
-//  private def tryFill(description: String)(block: => Unit): Unit =
-//    try {
-//      logger.debug(s"[PDFGenerationService][collectPdfParts] Adding $description")
-//      block
-//    } catch {
-//      case _: NotImplementedError =>
-//        logger.warn(s"[PDFGenerationService][collectPdfParts] Skipping $description — not yet implemented")
-//    }
+  private def tryFill(description: String)(block: => Unit): Unit =
+    try {
+      logger.debug(s"[PDFGenerationService][collectPdfParts] Adding $description")
+      block
+    } catch {
+      case _: NotImplementedError =>
+        logger.warn(s"[PDFGenerationService][collectPdfParts] Skipping $description — not yet implemented")
+    }
 
   private def mergePdfs(parts: Vector[Array[Byte]]): Array[Byte] = {
     val merger    = new PDFMergerUtility()
