@@ -94,41 +94,33 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
         new String(result.take(4), "UTF-8") mustBe "%PDF"
       }
 
-      "must call pdf1aFiller exactly once regardless of return content" in {
-        val pdf1a   = mockPdf1a()
-        val service = buildService(pdf1a)
-        service.generatePdf(minimalFullReturn).futureValue
-        verify(pdf1a, times(1)).fillPdf(any[FullReturn](), any[Boolean]())
+      "must handle a return with no optional fields set" in {
+        val result = buildService().generatePdf(emptyFullReturn).futureValue
+        result must not be empty
       }
 
-      "must call pdf1aFiller with the full return passed in" in {
-        val pdf1a   = mockPdf1a()
-        val service = buildService(pdf1a)
-        service.generatePdf(completeFullReturn).futureValue
-        verify(pdf1a, times(1)).fillPdf(eqTo(completeFullReturn), any[Boolean]())
-      }
+      "pdf1a" - {
+        "must call pdf1aFiller exactly once regardless of return content" in {
+          val pdf1a = mockPdf1a()
+          val service = buildService(pdf1a)
+          service.generatePdf(minimalFullReturn).futureValue
+          verify(pdf1a, times(1)).fillPdf(any[FullReturn](), any[Boolean]())
+        }
 
-      "must call pdf1aFiller exactly once per invocation when called multiple times" in {
-        val pdf1a   = mockPdf1a()
-        val service = buildService(pdf1a)
-        service.generatePdf(minimalFullReturn).futureValue
-        service.generatePdf(completeFullReturn).futureValue
-        verify(pdf1a, times(2)).fillPdf(any[FullReturn](), any[Boolean]())
-      }
+        "must call pdf1aFiller with the full return passed in" in {
+          val pdf1a = mockPdf1a()
+          val service = buildService(pdf1a)
+          service.generatePdf(completeFullReturn).futureValue
+          verify(pdf1a, times(1)).fillPdf(eqTo(completeFullReturn), any[Boolean]())
+        }
 
-      "must call pdf3Filler for one additional land" in {
-        val pdf1a = mockPdf1a()
-        val pdf3 = mockPdf3()
-        val service = buildService(pdf1a, pdf3)
-        service.generatePdf(completeFullReturn.copy(
-          land = Some(Seq(
-            Land(landID = Some("LND001")),
-            Land(landID = Some("LND002"))
-          )),
-          returnInfo = Some(ReturnInfo(mainLandID = Some("LND001")))
-        )).futureValue
-        verify(pdf3, times(1)).fillPdf(any[FullReturn](), any[Land], any[Boolean])
-      }
+        "must call pdf1aFiller exactly once per invocation when called multiple times" in {
+          val pdf1a = mockPdf1a()
+          val service = buildService(pdf1a)
+          service.generatePdf(minimalFullReturn).futureValue
+          service.generatePdf(completeFullReturn).futureValue
+          verify(pdf1a, times(2)).fillPdf(any[FullReturn](), any[Boolean]())
+        }
 
       "must call pdf3Filler for each additional land" in {
         val pdf1a = mockPdf1a()
@@ -164,6 +156,44 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
         when(pdf1a.fillPdf(any[FullReturn](), any[Boolean]())).thenThrow(new SdltPdfFillException("template missing", null))
         whenReady(buildService(pdf1a).generatePdf(minimalFullReturn).failed) { ex =>
           ex mustBe a[SdltPdfFillException]
+        "must propagate failures from pdf1aFiller" in {
+          val pdf1a = mock[SdltReturnPdf1a]
+          when(pdf1a.fillPdf(any[FullReturn](), any[Boolean]())).thenThrow(new SdltPdfFillException("template missing", null))
+          whenReady(buildService(pdf1a).generatePdf(minimalFullReturn).failed) { ex =>
+            ex mustBe a[SdltPdfFillException]
+          }
+        }
+      }
+
+      "pdf1b" - {
+        "must call pdf1bFiller exactly once regardless of return content" in {
+          val pdf1b = mockPdf1b()
+          val service = buildService(pdf1b = pdf1b)
+          service.generatePdf(minimalFullReturn).futureValue
+          verify(pdf1b, times(1)).fillPdf(any[FullReturn](), any[Boolean]())
+        }
+
+        "must call pdf1bFiller with the full return passed in" in {
+          val pdf1b = mockPdf1b()
+          val service = buildService(pdf1b = pdf1b)
+          service.generatePdf(completeFullReturn).futureValue
+          verify(pdf1b, times(1)).fillPdf(eqTo(completeFullReturn), any[Boolean]())
+        }
+
+        "must call pdf1bFiller exactly once per invocation when called multiple times" in {
+          val pdf1b = mockPdf1b()
+          val service = buildService(pdf1b = pdf1b)
+          service.generatePdf(minimalFullReturn).futureValue
+          service.generatePdf(completeFullReturn).futureValue
+          verify(pdf1b, times(2)).fillPdf(any[FullReturn](), any[Boolean]())
+        }
+
+        "must propagate failures from pdf1bFiller" in {
+          val pdf1b = mock[SdltReturnPdf1b]
+          when(pdf1b.fillPdf(any[FullReturn](), any[Boolean]())).thenThrow(new SdltPdfFillException("template missing", null))
+          whenReady(buildService(pdf1b = pdf1b).generatePdf(minimalFullReturn).failed) { ex =>
+            ex mustBe a[SdltPdfFillException]
+          }
         }
       }
 
@@ -194,23 +224,46 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
 
     "load" - {
 
-      "must return the bytes from the resource stream when the file exists" in {
-        val loader = new ClasspathPdfTemplateLoader(mockEnvWith("SDLT1a.pdf", testBytes))
-        loader.load("SDLT1a.pdf") mustBe testBytes
-      }
-
-      "must look up the resource under the pdf/ prefix" in {
-        val env = mockEnvWith("SDLT1a.pdf", testBytes)
-        new ClasspathPdfTemplateLoader(env).load("SDLT1a.pdf")
-        verify(env, times(1)).resourceAsStream("pdf/SDLT1a.pdf")
-      }
-
-      "must throw IllegalStateException when the file is not found" in {
-        val loader = new ClasspathPdfTemplateLoader(mockEnvMissing("SDLT1a.pdf"))
-        val ex = intercept[IllegalStateException] {
-          loader.load("SDLT1a.pdf")
+      "sdlt1a" - {
+        "must return the bytes from the resource stream when the file exists" in {
+          val loader = new ClasspathPdfTemplateLoader(mockEnvWith("SDLT1a.pdf", testBytes))
+          loader.load("SDLT1a.pdf") mustBe testBytes
         }
-        ex.getMessage must include("SDLT1a.pdf")
+
+        "must look up the resource under the pdf/ prefix" in {
+          val env = mockEnvWith("SDLT1a.pdf", testBytes)
+          new ClasspathPdfTemplateLoader(env).load("SDLT1a.pdf")
+          verify(env, times(1)).resourceAsStream("pdf/SDLT1a.pdf")
+        }
+
+        "must throw IllegalStateException when the file is not found" in {
+          val loader = new ClasspathPdfTemplateLoader(mockEnvMissing("SDLT1a.pdf"))
+          val ex = intercept[IllegalStateException] {
+            loader.load("SDLT1a.pdf")
+          }
+          ex.getMessage must include("SDLT1a.pdf")
+        }
+      }
+
+      "sdlt1b" - {
+        "must return the bytes from the resource stream when the file exists" in {
+          val loader = new ClasspathPdfTemplateLoader(mockEnvWith("SDLT1b.pdf", testBytes))
+          loader.load("SDLT1b.pdf") mustBe testBytes
+        }
+
+        "must look up the resource under the pdf/ prefix" in {
+          val env = mockEnvWith("SDLT1b.pdf", testBytes)
+          new ClasspathPdfTemplateLoader(env).load("SDLT1b.pdf")
+          verify(env, times(1)).resourceAsStream("pdf/SDLT1b.pdf")
+        }
+
+        "must throw IllegalStateException when the file is not found" in {
+          val loader = new ClasspathPdfTemplateLoader(mockEnvMissing("SDLT1b.pdf"))
+          val ex = intercept[IllegalStateException] {
+            loader.load("SDLT1b.pdf")
+          }
+          ex.getMessage must include("SDLT1b.pdf")
+        }
       }
 
       "must include the filename in the exception message when not found" in {

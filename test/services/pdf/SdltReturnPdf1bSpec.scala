@@ -266,7 +266,7 @@ class SdltReturnPdf1bSpec extends SpecBase with MockitoSugar {
         readField(result, "vendor_agentReference") mustBe Some("")
       }
 
-      "must write vendor agent details when return agent of type PURCHASER present" in {
+      "must not write vendor agent details when return agent of type PURCHASER present" in {
         val r = withReturnAgent(ReturnAgent(
           returnAgentID = Some("RA001"),
           returnID = Some("RET001"),

@@ -237,7 +237,7 @@ object SdltPdfFields {
   val VENDOR_AGENT_ADDRESS_LINE3 = "vendor_agentAddressLine3"
   val VENDOR_AGENT_ADDRESS_LINE4 = "vendor_agentAddressLine4"
 
-  // Box 41: Vendor agent DX number and exchange
+  // Box 41: Vendor agent DX number and exchange - TO BE LEFT EMPTY
 
   // Box 42: Vendor agent email address
   val VENDOR_AGENT_EMAIL_ADDRESS = "vendor_agentEmailAddress"
