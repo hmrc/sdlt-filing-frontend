@@ -90,7 +90,7 @@ class PdfFieldWriter(form: PDAcroForm, ctx: String) extends LoggingUtil {
   def check(fieldName: String): Unit   = setCheckbox(fieldName, checked = true)
   def uncheck(fieldName: String): Unit = setCheckbox(fieldName, checked = false)
 
-  private def setCheckbox(fieldName: String, checked: Boolean): Unit =
+  def setCheckbox(fieldName: String, checked: Boolean): Unit =
     Try(form.getField(fieldName)).toOption match {
       case Some(cb: PDCheckBox) =>
         Try(if (checked) cb.check() else cb.unCheck()).failed.foreach { e =>
