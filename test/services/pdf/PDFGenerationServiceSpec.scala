@@ -223,47 +223,23 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
     }
 
     "load" - {
-
-      "sdlt1a" - {
-        "must return the bytes from the resource stream when the file exists" in {
-          val loader = new ClasspathPdfTemplateLoader(mockEnvWith("SDLT1a.pdf", testBytes))
-          loader.load("SDLT1a.pdf") mustBe testBytes
-        }
-
-        "must look up the resource under the pdf/ prefix" in {
-          val env = mockEnvWith("SDLT1a.pdf", testBytes)
-          new ClasspathPdfTemplateLoader(env).load("SDLT1a.pdf")
-          verify(env, times(1)).resourceAsStream("pdf/SDLT1a.pdf")
-        }
-
-        "must throw IllegalStateException when the file is not found" in {
-          val loader = new ClasspathPdfTemplateLoader(mockEnvMissing("SDLT1a.pdf"))
-          val ex = intercept[IllegalStateException] {
-            loader.load("SDLT1a.pdf")
-          }
-          ex.getMessage must include("SDLT1a.pdf")
-        }
+      "must return the bytes from the resource stream when the file exists" in {
+        val loader = new ClasspathPdfTemplateLoader(mockEnvWith("SDLT1a.pdf", testBytes))
+        loader.load("SDLT1a.pdf") mustBe testBytes
       }
 
-      "sdlt1b" - {
-        "must return the bytes from the resource stream when the file exists" in {
-          val loader = new ClasspathPdfTemplateLoader(mockEnvWith("SDLT1b.pdf", testBytes))
-          loader.load("SDLT1b.pdf") mustBe testBytes
-        }
+      "must look up the resource under the pdf/ prefix" in {
+        val env = mockEnvWith("SDLT1a.pdf", testBytes)
+        new ClasspathPdfTemplateLoader(env).load("SDLT1a.pdf")
+        verify(env, times(1)).resourceAsStream("pdf/SDLT1a.pdf")
+      }
 
-        "must look up the resource under the pdf/ prefix" in {
-          val env = mockEnvWith("SDLT1b.pdf", testBytes)
-          new ClasspathPdfTemplateLoader(env).load("SDLT1b.pdf")
-          verify(env, times(1)).resourceAsStream("pdf/SDLT1b.pdf")
+      "must throw IllegalStateException when the file is not found" in {
+        val loader = new ClasspathPdfTemplateLoader(mockEnvMissing("SDLT1a.pdf"))
+        val ex = intercept[IllegalStateException] {
+          loader.load("SDLT1a.pdf")
         }
-
-        "must throw IllegalStateException when the file is not found" in {
-          val loader = new ClasspathPdfTemplateLoader(mockEnvMissing("SDLT1b.pdf"))
-          val ex = intercept[IllegalStateException] {
-            loader.load("SDLT1b.pdf")
-          }
-          ex.getMessage must include("SDLT1b.pdf")
-        }
+        ex.getMessage must include("SDLT1a.pdf")
       }
 
       "must include the filename in the exception message when not found" in {
