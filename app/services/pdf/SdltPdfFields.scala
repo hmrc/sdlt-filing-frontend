@@ -452,4 +452,43 @@ object SdltPdfFields {
   // =========================================================================
   val CHECKBOX_ON  = "Yes"
   val CHECKBOX_OFF = "Off"
+
+  // =========================================================================
+  // Page number 6 & 7 additional purchaser PAGE 6 & 7 — About the Additional Purchaser (63-73)
+  // =========================================================================
+  
+  val PURCHASER_TITLE = "purchaser_title"
+  val PURCHASER_SURNAME = "purchaser_companyName"
+  val PURCHASER_COMPANY_NAME = "purchaser_companyName"
+  val PURCHASER_FORENAME_1 = "purchaser_forename1"
+  val PURCHASER_FORENAME_2 = "purchaser_forename2"
+  val PURCHASER_HOUSE_NUMBER = "purchaser_houseNumber"
+  val PURCHASER_ADDRESS_LINE1 = "purchaser_addressLine1"
+  val PURCHASER_ADDRESS_LINE2 = "purchaser_addressLine2"
+  val PURCHASER_ADDRESS_LINE3 = "purchaser_addressLine3"
+  val PURCHASER_ADDRESS_LINE4 = "purchaser_addressLine4"
+  val PURCHASER_POSTCODE_1 = "purchaser_postcode_1"
+  val PURCHASER_POSTCODE_2 = "purchaser_postcode_2"
+  val PURCHASER_ACTING_TRUSTEE_YES = "purchaser_actingTrustee_yes"
+  val PURCHASER_ACTING_TRUSTEE_NO = "purchaser_actingTrustee_no"
+
+  val PURCHASER2_SAMEADDRESS = "purchaser_sameAddress"
+
+  val PURCHASER_AGENT_NAME = "purchaser_agentName"
+  val PURCHASER_AGENT_POSTCODE_1 = "purchaser_agentPostcode_1"
+  val PURCHASER_AGENT_POSTCODE_2 = "purchaser_agentPostcode_2"
+  val PURCHASER_AGENT_HOUSE_NUMBER = "purchaser_agentHouseNumber"
+  val PURCHASER_AGENT_ADDRESS_LINE1 = "purchaser_agentAddressLine1"
+  val PURCHASER_AGENT_ADDRESS_LINE2 = "purchaser_agentAddressLine2"
+  val PURCHASER_AGENT_ADDRESS_LINE3 = "purchaser_agentAddressLine3"
+  val PURCHASER_AGENT_ADDRESS_LINE4 = "purchaser_agentAddressLine4"
+  val PURCHASER_AGENT_DX_NUMBER = "purchaser_agentDxAddress"
+  val PURCHASER_AGENT_REFERENCE = "purchaser_agentReference"
+  val PURCHASER_AGENT_PHONE_NUMBER = "purchaser_agentPhoneNumber"
+
+  val PURCHASER_ADDITIONALDETAILS_SDLT2 = "return_additionalDetailsSdlt2"
+  val LAND_ADDITIONALDETAILS_SDLT3 = "return_additionalDetailsSdlt3"
+  val LEASE_ADDITIONALDETAILS_SDLT4 = "return_additionalDetailsSdlt4"
+
+
 }

@@ -68,6 +68,12 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
     m
   }
 
+  private def mockPdf1d(bytes: Array[Byte] = blankPdfBytes): SdltReturnPdf1d = {
+    val m = mock[SdltReturnPdf1d]
+    when(m.fillPdf(any[FullReturn](), any[Boolean]())).thenReturn(bytes)
+    m
+  }
+
   private def mockPdf2Purchaser(bytes: Array[Byte] = blankPdfBytes): SdltReturnPdf2Purchaser = {
     val m = mock[SdltReturnPdf2Purchaser]
     when(m.fillPdf(any[Purchaser], any[FullReturn](), any[Boolean]())).thenReturn(bytes)
@@ -89,11 +95,12 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
   private def buildService(pdf1a: SdltReturnPdf1a = mockPdf1a(),
                            pdf1b: SdltReturnPdf1b = mockPdf1b(),
                            pdf1c: SdltReturnPdf1c = mockPdf1c(),
+                           pdf1d: SdltReturnPdf1d = mockPdf1d(),
                            pdf2Purchaser: SdltReturnPdf2Purchaser = mockPdf2Purchaser(),
                            pdf3: SdltReturnPdf3 = mockPdf3(),
                            pdf4: SdltReturnPdf4 = mockPdf4())
   : PDFGenerationService =
-    new PDFGenerationService(pdf1a, pdf1b, pdf1c, pdf2Purchaser, pdf3, pdf4)
+    new PDFGenerationService(pdf1a, pdf1b, pdf1c, pdf1d, pdf2Purchaser, pdf3, pdf4)
 
 
   "PDFGenerationService" - {
