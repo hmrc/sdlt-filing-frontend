@@ -24,8 +24,8 @@ import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont
 import org.apache.pdfbox.pdmodel.font.encoding.WinAnsiEncoding
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
 import services.pdf.PdfFormSupport.{CUSTOM_FONT_NAME, CUSTOM_FONT_RESOURCE_PATH}
-import services.pdf.Sdlt2PurchaserFields.*
 import utils.LoggingUtil
+import services.pdf.SdltPdfFields.*
 
 import java.io.ByteArrayOutputStream
 import javax.inject.{Inject, Singleton}
