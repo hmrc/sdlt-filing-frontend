@@ -205,14 +205,14 @@ object SdltPdfFields {
   // Box 35: Vendor title
   val VENDOR_TITLE = "vendor_title"
 
-  // Box 36: Vendor surname/company name
+  // Box 36: Vendor surname/company name & Box 46: Additional vendor surname/company name
   val VENDOR_NAME = "vendor_name"
 
-  // Box 37: Vendor first name(s)
+  // Box 37: Vendor first name(s) & Box 47: Additional vendor first name(s)
   val VENDOR_FORENAME_1 = "vendor_forename1"
   val VENDOR_FORENAME_2 = "vendor_forename2"
 
-  // Box 38: Vendor address
+  // Box 38: Vendor address & Box 48: Vendor address
   val VENDOR_POSTCODE_1    = "vendor_postcode_1"
   val VENDOR_POSTCODE_2    = "vendor_postcode_2"
   val VENDOR_HOUSE_NUMBER  = "vendor_houseNumber"
@@ -224,6 +224,30 @@ object SdltPdfFields {
   // Box 39: Vendor agent name
   val VENDOR_AGENT_NAME = "vendor_agentName"
 
+  // =========================================================================
+  // PAGE 4 — About the Vendor (continued) (40-44) + Additional Vendor (45-48)
+  // =========================================================================
+
+  // Box 40: Vendor agent address
+  val VENDOR_AGENT_POSTCODE_1 = "vendor_agentPostcode_1"
+  val VENDOR_AGENT_POSTCODE_2 = "vendor_agentPostcode_2"
+  val VENDOR_AGENT_HOUSE_NUMBER = "vendor_agentHouseNumber"
+  val VENDOR_AGENT_ADDRESS_LINE1 = "vendor_agentAddressLine1"
+  val VENDOR_AGENT_ADDRESS_LINE2 = "vendor_agentAddressLine2"
+  val VENDOR_AGENT_ADDRESS_LINE3 = "vendor_agentAddressLine3"
+  val VENDOR_AGENT_ADDRESS_LINE4 = "vendor_agentAddressLine4"
+
+  // Box 41: Vendor agent DX number and exchange - TO BE LEFT EMPTY
+
+  // Box 42: Vendor agent email address
+  val VENDOR_AGENT_EMAIL_ADDRESS = "vendor_agentEmailAddress"
+
+  // Box 43: Vendor agent email address
+  val VENDOR_AGENT_REFERENCE = "vendor_agentReference"
+
+  // Box 44: Vendor agent phone number
+  val VENDOR_AGENT_PHONE_NUMBER = "vendor_agentPhoneNumber"
+  
   // =========================================================================
   // SDLT3
   // =========================================================================
