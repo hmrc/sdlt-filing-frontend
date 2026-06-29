@@ -74,15 +74,12 @@ class SdltReturnPdf1d @Inject()(
     val purchasers = r.purchaser.getOrElse(Seq.empty)
     val additionalPurchaser2 = purchasers.lift(1)
     val purchaserAgent = r.returnAgent.flatMap(_.find(_.agentType.contains(AgentType.Purchaser.toString)))
-    /* val purchaser1 = purchasers.headOption // TODO : make changes once receive pdf field name of Purchaser sameAddress check box
-    val sameAddress = sameAddressCheck(purchaser1, additionalPurchaser2) */
+    // val sameAddress = sameAddressCheck(purchaser1, additionalPurchaser2) // TODO : make changes once receive pdf field name of Purchaser sameAddress check box
     val vendors = r.vendor.getOrElse(Seq.empty)
     val lands = r.land.getOrElse(Seq.empty)
-    val isLease = r.lease.isDefined
-
     val sdlt2Count = (purchasers.size - 2).max(0) + (vendors.size - 2).max(0)
     val sdlt3Count = (lands.size - 1).max(0)
-    val sdlt4Count = if (isLease) 1 else 0
+    val sdlt4Count = captureSDLT4Count(r)
 
     w.postcode(PURCHASER_AGENT_POSTCODE_1, PURCHASER_AGENT_POSTCODE_2, purchaserAgent.flatMap(_.postcode))
     w.text(PURCHASER_AGENT_HOUSE_NUMBER, purchaserAgent.flatMap(_.houseNumber))
@@ -149,6 +146,54 @@ class SdltReturnPdf1d @Inject()(
     Option(doc.getDocumentCatalog.getAcroForm)
       .getOrElse(throw new SdltPdfFillException("PDF template has no AcroForm", null))
 
+  private def captureSDLT4Count(r: FullReturn) = {
+    val lands = r.land.getOrElse(Seq.empty)
+    val purchasers = r.purchaser.getOrElse(Seq.empty)
+    val mainPurchaser = purchasers.headOption
+
+    val purchaserQuestionAnswered = mainPurchaser.exists(t => t.registrationNumber.isDefined && t.placeOfRegistration.isDefined)
+
+    val mainLand = lands.headOption
+    val landPropertyType = mainLand.flatMap(_.propertyType)
+    val landQuestionAnswered = landPropertyType.exists(Set("02", "03"))
+
+    val transactionIncludeQuestionAnswered = r.transaction.flatMap(_.includesStock).isDefined || r.transaction.flatMap(_.includesGoodwill).isDefined ||
+      r.transaction.flatMap(_.includesOther).isDefined || r.transaction.flatMap(_.includesChattel).isDefined
+
+    val transactionDeferementQuestionAnswered = r.transaction.flatMap(_.agreedToDeferPayment).isDefined || r.transaction.flatMap(_.isDependantOnFutureEvent).isDefined
+
+    val mainPurchaserId: Option[String] = r.returnInfo.flatMap(_.mainPurchaserID)
+    val companyDetails = r.companyDetails.filter(_.purchaserID == mainPurchaserId)
+
+    val companyDetailsQuestionAnswered =
+      companyDetails.exists(cd =>
+        Seq(
+          cd.companyTypeBank,
+          cd.companyTypeBuilder,
+          cd.companyTypeBuildsoc,
+          cd.companyTypeCentgov,
+          cd.companyTypeIndividual,
+          cd.companyTypeInsurance,
+          cd.companyTypeLocalauth,
+          cd.companyTypeOthercharity,
+          cd.companyTypeOthercompany,
+          cd.companyTypeOtherfinancial,
+          cd.companyTypePartnership,
+          cd.companyTypeProperty,
+          cd.companyTypePubliccorp,
+          cd.companyTypeSoletrader,
+          cd.companyTypePensionfund
+        ).exists(_.contains("yes"))
+      )
+
+    (lands.size > 1, purchaserQuestionAnswered, landQuestionAnswered,
+      transactionIncludeQuestionAnswered, transactionDeferementQuestionAnswered, companyDetailsQuestionAnswered) match {
+      case (true, _, _, _, _, _) => lands.size - 1
+      case (false, false, false, false, false, false) => 0
+      case (false ,_ , _, _, _, _) => 1
+      case _ => 0
+    }
+
+  }
+
 }
-
-
