@@ -140,7 +140,7 @@ class SdltReturnPdf2PurchaserSpec extends SpecBase with MockitoSugar {
         d.close()
         out.toByteArray
       }
-      when(loader.load("SDLT3.pdf")).thenReturn(bare)
+      when(loader.load("SDLT2.pdf")).thenReturn(bare)
       val filler = new SdltReturnPdf2Purchaser(loader)
       intercept[SdltPdfFillException] {
         filler.fillPdf(Purchaser(), baseReturn)

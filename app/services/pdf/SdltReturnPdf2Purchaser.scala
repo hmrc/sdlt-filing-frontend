@@ -25,7 +25,6 @@ import org.apache.pdfbox.pdmodel.font.encoding.WinAnsiEncoding
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm
 import services.pdf.PdfFormSupport.{CUSTOM_FONT_NAME, CUSTOM_FONT_RESOURCE_PATH}
 import services.pdf.Sdlt2PurchaserFields.*
-import services.pdf.SdltPdfFields.UTRN
 import utils.LoggingUtil
 
 import java.io.ByteArrayOutputStream
@@ -101,7 +100,7 @@ class SdltReturnPdf2Purchaser @Inject()(
   }
 
   private def fillCommonFields(w: PdfFieldWriter, r: FullReturn): Unit =
-    w.text(UTRN, r.submission.flatMap(_.UTRN))
+    w.fillCommonFields(r)
 
   private def getAcroForm(doc: PDDocument): PDAcroForm =
     Option(doc.getDocumentCatalog.getAcroForm)
