@@ -225,6 +225,13 @@ object SdltPdfFields {
   val VENDOR_AGENT_NAME = "vendor_agentName"
 
   // =========================================================================
+  // SDLT3
+  // =========================================================================
+
+  val LAND_AREA_DECIMAL = "land_landArea_decimal"
+  val LAND_MINERAL_RIGHTS = "land_mineralRights"
+
+  // =========================================================================
   // Checkbox state constants
   // =========================================================================
   val CHECKBOX_ON  = "Yes"
