@@ -431,8 +431,8 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
         returnResourceRef = "RRF-999",
         returnInfo = Some(ReturnInfo(returnID = Some("RET999"), landCertForEachProp = Some("YES"), mainPurchaserID = Some("PUR0001"))),
         submission = Some(Submission(UTRN = Some("UTR-1234"))),
-        transaction = Some(Transaction(transactionDescription = Some("Freehold"),effectiveDate = Some("25/12/2024"),contractDate = Some("01/11/2024"),
-          totalConsideration = Some("500000"),isLinked = Some("NO")
+        transaction = Some(Transaction(transactionDescription = Some("Freehold"), effectiveDate = Some("25/12/2024"), contractDate = Some("01/11/2024"),
+          totalConsideration = Some("500000"), isLinked = Some("NO")
         )),
         land = Some(Seq(Land(
           propertyType = Some("01"), houseNumber = Some("1"), address1 = Some("Test Street"),
@@ -440,7 +440,7 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
         ), Land(
           propertyType = Some("02"), houseNumber = Some("2"), address1 = Some("Test Street"),
           postcode = Some("ST2 1AA"), localAuthorityNumber = Some("12344")))),
-        purchaser = Some(Seq(Purchaser(surname = Some("Purchaser One"), postcode = Some("ST2 2BB"),registrationNumber = Some("123456"), placeOfRegistration = Some("London"), purchaserID = Some("PUR0001")),
+        purchaser = Some(Seq(Purchaser(surname = Some("Purchaser One"), postcode = Some("ST2 2BB"), registrationNumber = Some("123456"), placeOfRegistration = Some("London"), purchaserID = Some("PUR0001")),
           Purchaser(title = Some("MR"), surname = Some("Jones"), forename1 = Some("Jane"), forename2 = Some("Mary"),
             purchaserID = Some("PUR002"), houseNumber = Some("5"), address1 = Some("Address 1"), address2 = Some("Address 2"),
             address3 = Some("Address 3"), address4 = Some("Address 4"), postcode = Some("M1 2AB"), isTrustee = Some("NO")))),
@@ -451,11 +451,11 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
           agentType = Some("PURCHASER"), houseNumber = Some("1"), address1 = Some("Agent address 1"), address2 = Some("Agent address 2"),
           address3 = Some("Agent address 3"), address4 = Some("Agent address 4"), postcode = Some("EC4A 2DQ"), phone = Some("0123456789"),
           DXAddress = Some("London"), reference = Some("123456")))),
-        companyDetails = Some(CompanyDetails(companyDetailsID =  Some("382966900"), returnID =  Some("382966898"),purchaserID =  Some("PUR0001"),
-          UTR =  null,VATReference =  null, companyTypeBank =  Some("no"), companyTypeBuilder =  Some("yes"),companyTypeBuildsoc =  Some("no"),
-          companyTypeCentgov =  Some("no"), companyTypeIndividual =  Some("no"), companyTypeInsurance =  Some("no"), companyTypeLocalauth =  Some("no"),
-          companyTypeOthercharity =  Some("no"),companyTypeOtherfinancial =  Some("no"), companyTypePartnership =  Some("yes"), companyTypeProperty =  Some("no"),
-          companyTypePubliccorp =  Some("no"), companyTypeSoletrader =  Some("yes"), companyTypePensionfund =  Some("no")))
+        companyDetails = Some(CompanyDetails(companyDetailsID = Some("382966900"), returnID = Some("382966898"), purchaserID = Some("PUR0001"),
+          UTR = null, VATReference = null, companyTypeBank = Some("no"), companyTypeBuilder = Some("yes"), companyTypeBuildsoc = Some("no"),
+          companyTypeCentgov = Some("no"), companyTypeIndividual = Some("no"), companyTypeInsurance = Some("no"), companyTypeLocalauth = Some("no"),
+          companyTypeOthercharity = Some("no"), companyTypeOtherfinancial = Some("no"), companyTypePartnership = Some("yes"), companyTypeProperty = Some("no"),
+          companyTypePubliccorp = Some("no"), companyTypeSoletrader = Some("yes"), companyTypePensionfund = Some("no")))
       )
       val result = fill(r)
       readField(result, "purchaser_agentHouseNumber") mustBe Some("1")
@@ -538,5 +538,6 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
 
     }
   }
- }
+}
+
 
