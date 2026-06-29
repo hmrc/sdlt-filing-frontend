@@ -27,6 +27,7 @@ import play.api.mvc.*
 import repositories.SessionRepository
 import services.checkAnswers.CheckAnswersService
 import services.lease.*
+import services.taxCalculation.UpdateTaxCalcService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.lease.*
@@ -48,7 +49,8 @@ class LeaseCheckYourAnswersController @Inject()(
                                                           view: LeaseCheckYourAnswersView,
                                                           leaseService: LeaseService,
                                                           populateLeaseService: PopulateLeaseService,
-                                                          checkAnswersService: CheckAnswersService
+                                                          checkAnswersService: CheckAnswersService,
+                                                          updateTaxCalcService: UpdateTaxCalcService
                                                         )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -120,16 +122,36 @@ class LeaseCheckYourAnswersController @Inject()(
       lease <- Lease.from(userAnswers)
       updateRequest <- ReturnVersionUpdateRequest.from(userAnswers)
       version <- backendConnector.updateReturnVersion(updateRequest)
-      updateLeaseRequest <- UpdateLeaseRequest.from(userAnswers, lease) if version.newVersion.isDefined
-      updateLeaseReturn <- backendConnector.updateLease(updateLeaseRequest) if version.newVersion.isDefined
-    } yield {
-      if (updateLeaseReturn.updated) {
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-      } else {
-        Redirect(controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad())
-      }
-    }
+      result <-
+        if (version.newVersion.isDefined) {
+          for {
+            updateLeaseRequest <- UpdateLeaseRequest.from(userAnswers, lease)
+            updateLeaseReturn <- backendConnector.updateLease(updateLeaseRequest)
+            _ <- maybeUpdateLeaseTaxCalc(userAnswers)
+          } yield
+            if (updateLeaseReturn.updated) {
+              Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+            } else {
+              Redirect(controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad())
+            }
+        } else {
+          Future.successful(
+            Redirect(controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad())
+          )
+        }
+    } yield result
   }
+
+  private def maybeUpdateLeaseTaxCalc(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Unit] =
+    if (updateTaxCalcService.leaseDataMatches(userAnswers)) {
+      for {
+        req <- updateTaxCalcService.updateTaxCalcRequest(userAnswers)
+        _ <- backendConnector.updateTaxCalculationInfo(req)
+      } yield ()
+    } else {
+      Future.successful(())
+    }
+
 
   private def populateFromLease(userAnswers: UserAnswers)(implicit request: Request[_]): Future[Result] =
     userAnswers.fullReturn.flatMap(_.lease) match {

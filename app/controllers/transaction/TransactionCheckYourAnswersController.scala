@@ -37,6 +37,7 @@ import views.html.transaction.TransactionCheckYourAnswersView
 import services.crossflow.fields.CrossFlowValidationService
 import services.crossflow.*
 import models.CheckMode
+import services.taxCalculation.UpdateTaxCalcService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -54,7 +55,8 @@ class TransactionCheckYourAnswersController @Inject()(
   populateTransactionService: PopulateTransactionService,
   crossFlow: CrossFlowValidationService,
   val controllerComponents: MessagesControllerComponents,
-  view: TransactionCheckYourAnswersView
+  view: TransactionCheckYourAnswersView,
+  updateTaxCalcService: UpdateTaxCalcService
 )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -100,17 +102,36 @@ class TransactionCheckYourAnswersController @Inject()(
       transaction <- Transaction.from(userAnswers)
       updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
       updateReturnVersionReturn <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
-      updateTransactionRequest <- UpdateTransactionRequest.from(userAnswers, transaction) if updateReturnVersionReturn.newVersion.isDefined
-      updateTransactionReturn <- backendConnector.updateTransaction(updateTransactionRequest) if updateReturnVersionReturn.newVersion.isDefined
-    } yield {
-      if (updateTransactionReturn.updated) {
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-      } else {
-        Redirect(controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad())
-      }
-    }
+      result <-
+        if (updateReturnVersionReturn.newVersion.isDefined) {
+          for {
+            updateTransactionRequest <- UpdateTransactionRequest.from(userAnswers, transaction)
+            updateTransactionReturn <- backendConnector.updateTransaction(updateTransactionRequest)
+            _ <- maybeUpdateTransactionTaxCalc(userAnswers)
+          } yield
+            if (updateTransactionReturn.updated) {
+              Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+            } else {
+              Redirect(controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad())
+            }
+        } else {
+          Future.successful(
+            Redirect(controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad())
+          )
+        }
+    } yield result
   }
 
+  private def maybeUpdateTransactionTaxCalc(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Unit] =
+    if (updateTaxCalcService.transactionDataMatches(userAnswers)) {
+      for {
+        req <- updateTaxCalcService.updateTaxCalcRequest(userAnswers)
+        _ <- backendConnector.updateTaxCalculationInfo(req)
+      } yield ()
+    } else {
+      Future.successful(())
+    }
+    
   private def populateFromTransaction(userAnswers: UserAnswers)(implicit request: Request[_]): Future[Result] =
     userAnswers.fullReturn.flatMap(_.transaction) match {
       case None =>

@@ -28,6 +28,7 @@ import repositories.SessionRepository
 import services.checkAnswers.CheckAnswersService
 import services.crossflow.{CrossFlowFailure, Pages}
 import services.crossflow.fields.CrossFlowValidationService
+import services.taxCalculation.UpdateTaxCalcService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.land.*
@@ -48,7 +49,8 @@ class LandCheckYourAnswersController @Inject() (
                                                  checkAnswersService:      CheckAnswersService,
                                                  crossFlow:                CrossFlowValidationService,
                                                  val controllerComponents: MessagesControllerComponents,
-                                                 view:                     LandCheckYourAnswersView
+                                                 view:                     LandCheckYourAnswersView,
+                                                 updateTaxCalcService: UpdateTaxCalcService
                                                )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -183,21 +185,39 @@ class LandCheckYourAnswersController @Inject() (
 
   private def updateLand(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     for {
-      land                       <- Land.from(userAnswers)
+      land <- Land.from(userAnswers)
       updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
-      updateReturnVersionReturn  <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
-      updateLandRequest          <- UpdateLandRequest.from(userAnswers, land) if updateReturnVersionReturn.newVersion.isDefined
-      updateLandReturn           <- backendConnector.updateLand(updateLandRequest) if updateReturnVersionReturn.newVersion.isDefined
-    } yield {
-      if (updateLandReturn.updated) {
-        Redirect(controllers.land.routes.LandOverviewController.onPageLoad())
-          .flashing("landUpdated" -> updateLandRequest.addressLine1)
-      } else {
-        Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
-      }
-    }
+      updateReturnVersionReturn <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
+      result <-
+        if (updateReturnVersionReturn.newVersion.isDefined) {
+          for {
+            updateLandRequest <- UpdateLandRequest.from(userAnswers, land)
+            updateLandReturn <- backendConnector.updateLand(updateLandRequest)
+            _ <- maybeUpdateTaxCalc(userAnswers)
+          } yield
+            if (updateLandReturn.updated)
+              Redirect(controllers.land.routes.LandOverviewController.onPageLoad())
+                .flashing("landUpdated" -> updateLandRequest.addressLine1)
+            else
+              Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
+        } else {
+          Future.successful(
+            Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
+          )
+        }
+    } yield result
   }
 
+  private def maybeUpdateTaxCalc(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Unit] =
+    if (updateTaxCalcService.landDataMatches(userAnswers)) {
+      for {
+        req <- updateTaxCalcService.updateTaxCalcRequest(userAnswers)
+        _ <- backendConnector.updateTaxCalculationInfo(req)
+      } yield ()
+    } else {
+      Future.successful(())
+    }
+    
   private def createLand(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     for {
       land              <- Land.from(userAnswers)

@@ -24,6 +24,7 @@ import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResi
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.*
 import repositories.SessionRepository
+import services.taxCalculation.UpdateTaxCalcService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.ukResidency.{CloseCompanySummary, CrownEmploymentReliefSummary, NonUkResidentPurchaserSummary}
@@ -44,7 +45,8 @@ class UkResidencyCheckYourAnswersController @Inject()(
   sessionRepository: SessionRepository,
   backendConnector: StampDutyLandTaxConnector,
   val controllerComponents: MessagesControllerComponents,
-  view: UkResidencyCheckYourAnswersView
+  view: UkResidencyCheckYourAnswersView,
+  updateTaxCalcService: UpdateTaxCalcService
 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -119,17 +121,36 @@ class UkResidencyCheckYourAnswersController @Inject()(
   private def updateResidency(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     for {
       updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
-      updateReturnVersionReturn  <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
-      updateResidencyRequest     <- UpdateResidencyRequest.from(userAnswers) if updateReturnVersionReturn.newVersion.isDefined
-      updateResidencyReturn      <- backendConnector.updateResidency(updateResidencyRequest) if updateReturnVersionReturn.newVersion.isDefined
-    } yield {
-      if (updateResidencyReturn.updated) {
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-      } else {
-        Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
-      }
-    }
+      updateReturnVersionReturn <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
+      result <-
+        if (updateReturnVersionReturn.newVersion.isDefined) {
+          for {
+            updateResidencyRequest <- UpdateResidencyRequest.from(userAnswers)
+            updateResidencyReturn <- backendConnector.updateResidency(updateResidencyRequest)
+            _ <- maybeUpdateResidencyTaxCalc(userAnswers)
+          } yield
+            if (updateResidencyReturn.updated) {
+              Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+            } else {
+              Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
+            }
+        } else {
+          Future.successful(
+            Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
+          )
+        }
+    } yield result
   }
+
+  private def maybeUpdateResidencyTaxCalc(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Unit] =
+    if (updateTaxCalcService.residencyDataMatches(userAnswers)) {
+      for {
+        req <- updateTaxCalcService.updateTaxCalcRequest(userAnswers)
+        _ <- backendConnector.updateTaxCalculationInfo(req)
+      } yield ()
+    } else {
+      Future.successful(())
+    }
 
   private def buildSummaryList(userAnswers: UserAnswers)(implicit messages: Messages) =
     SummaryListViewModel(
