@@ -46,7 +46,7 @@ class ClasspathPdfTemplateLoader @Inject()(env: Environment) extends PdfTemplate
 class PDFGenerationService @Inject()(
                                       pdf1aFiller:     SdltReturnPdf1a,
                                       pdf1bFiller:     SdltReturnPdf1b,
-//                                      pdf2PurchFiller: SdltReturnPdf2Purchaser,
+                                      pdf2PurchFiller: SdltReturnPdf2Purchaser,
 //                                      pdf2VendFiller:  SdltReturnPdf2Vendor,
                                       pdf3Filler:      SdltReturnPdf3,
 //                                      pdf4Filler:      SdltReturnPdf4,
@@ -79,7 +79,7 @@ class PDFGenerationService @Inject()(
   private def collectPdfParts(r: FullReturn): Vector[Array[Byte]] = {
     var parts = Vector.empty[Array[Byte]]
 
-//    val purchasers = r.purchaser.getOrElse(Seq.empty)
+    val purchasers = r.purchaser.getOrElse(Seq.empty)
 //    val vendors    = r.vendor.getOrElse(Seq.empty)
     val lands      = r.land.getOrElse(Seq.empty)
 //    val isLease    = r.lease.isDefined
@@ -88,14 +88,14 @@ class PDFGenerationService @Inject()(
     parts :+= pdf1aFiller.fillPdf(r)
     parts :+= pdf1bFiller.fillPdf(r)
 
-//    // ---- SDLT2: one per purchaser beyond the first two ----
-//    if (purchasers.size > 2) {
-//      purchasers.drop(2).zipWithIndex.foreach { case (purchaser, idx) =>
-//        tryFill(s"SDLT2 purchaser index ${idx + 2}") {
-//          parts :+= pdf2PurchFiller.fillPdf(purchaser, r)
-//        }
-//      }
-//    }
+    // ---- SDLT2: one per purchaser beyond the first two ----
+    if (purchasers.size > 2) {
+      purchasers.drop(2).zipWithIndex.foreach { case (purchaser, idx) =>
+        tryFill(s"SDLT2 purchaser index ${idx + 2}") {
+          parts :+= pdf2PurchFiller.fillPdf(purchaser, r)
+        }
+      }
+    }
 //
 //    // ---- SDLT2: one per vendor beyond the first two ----
 //    if (vendors.size > 2) {

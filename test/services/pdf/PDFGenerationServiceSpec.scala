@@ -62,6 +62,12 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
     m
   }
 
+  private def mockPdf2Purchaser(bytes: Array[Byte] = blankPdfBytes): SdltReturnPdf2Purchaser = {
+    val m = mock[SdltReturnPdf2Purchaser]
+    when(m.fillPdf(any[Purchaser], any[FullReturn](), any[Boolean]())).thenReturn(bytes)
+    m
+  }
+
   private def mockPdf3(bytes: Array[Byte] = blankPdfBytes): SdltReturnPdf3 = {
     val m = mock[SdltReturnPdf3]
     when(m.fillPdf(any[FullReturn](), any[Land], any[Boolean]())).thenReturn(bytes)
@@ -70,9 +76,10 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
 
   private def buildService(pdf1a: SdltReturnPdf1a = mockPdf1a(),
                            pdf1b: SdltReturnPdf1b = mockPdf1b(),
+                           pdf2Purchaser: SdltReturnPdf2Purchaser = mockPdf2Purchaser(),
                            pdf3: SdltReturnPdf3 = mockPdf3())
   : PDFGenerationService =
-    new PDFGenerationService(pdf1a, pdf1b, pdf3)
+    new PDFGenerationService(pdf1a, pdf1b, pdf2Purchaser, pdf3)
 
 
   "PDFGenerationService" - {
@@ -158,6 +165,69 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
           val pdf1b = mock[SdltReturnPdf1b]
           when(pdf1b.fillPdf(any[FullReturn](), any[Boolean]())).thenThrow(new SdltPdfFillException("template missing", null))
           whenReady(buildService(pdf1b = pdf1b).generatePdf(minimalFullReturn).failed) { ex =>
+            ex mustBe a[SdltPdfFillException]
+          }
+        }
+      }
+
+      "pdf2 purchaser" - {
+        "must call pdf2PurchFiller for one additional purchaser" in {
+          val pdf2Purchaser = mockPdf2Purchaser()
+          val service = buildService(pdf2Purchaser = pdf2Purchaser)
+          service.generatePdf(completeFullReturn.copy(
+            purchaser = Some(Seq(
+              Purchaser(purchaserID = Some("PUR001")),
+              Purchaser(purchaserID = Some("PUR002")),
+              Purchaser(purchaserID = Some("PUR003")),
+            )),
+            returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR001")))
+          )).futureValue
+          verify(pdf2Purchaser, times(1)).fillPdf(any[Purchaser], any[FullReturn](), any[Boolean]())
+        }
+
+        "must call pdf2PurchFiller for each additional purchaser" in {
+          val pdf2Purchaser = mockPdf2Purchaser()
+          val service = buildService(pdf2Purchaser = pdf2Purchaser)
+          service.generatePdf(completeFullReturn.copy(
+            purchaser = Some(Seq(
+              Purchaser(purchaserID = Some("PUR001")),
+              Purchaser(purchaserID = Some("PUR002")),
+              Purchaser(purchaserID = Some("PUR003")),
+              Purchaser(purchaserID = Some("PUR004")),
+              Purchaser(purchaserID = Some("PUR005")),
+              Purchaser(purchaserID = Some("PUR006"))
+            )),
+            returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR001")))
+          )).futureValue
+          verify(pdf2Purchaser, times(4)).fillPdf(any[Purchaser], any[FullReturn](), any[Boolean]())
+        }
+
+        "must not call pdf2PurchFiller when only one purchaser" in {
+          val pdf2Purchaser = mockPdf2Purchaser()
+          val service = buildService(pdf2Purchaser = pdf2Purchaser)
+          service.generatePdf(completeFullReturn.copy(
+            purchaser = Some(Seq(
+              Purchaser(purchaserID = Some("PUR001"))
+            )),
+            returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR001")))
+          )).futureValue
+          verify(pdf2Purchaser, times(0)).fillPdf(any[Purchaser], any[FullReturn](), any[Boolean]())
+        }
+
+        "must propagate failures from pdf2PurchFiller" in {
+          val pdf2Purchaser = mock[SdltReturnPdf2Purchaser]
+          when(pdf2Purchaser.fillPdf(any[Purchaser], any[FullReturn](), any[Boolean]())).thenThrow(new SdltPdfFillException("template missing", null))
+          whenReady(buildService(pdf2Purchaser = pdf2Purchaser).generatePdf(completeFullReturn.copy(
+            purchaser = Some(Seq(
+              Purchaser(purchaserID = Some("PUR001")),
+              Purchaser(purchaserID = Some("PUR002")),
+              Purchaser(purchaserID = Some("PUR003")),
+              Purchaser(purchaserID = Some("PUR004")),
+              Purchaser(purchaserID = Some("PUR005")),
+              Purchaser(purchaserID = Some("PUR006"))
+            )),
+            returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR001")))
+          )).failed) { ex =>
             ex mustBe a[SdltPdfFillException]
           }
         }

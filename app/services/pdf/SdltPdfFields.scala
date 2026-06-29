@@ -247,6 +247,49 @@ object SdltPdfFields {
 
   // Box 44: Vendor agent phone number
   val VENDOR_AGENT_PHONE_NUMBER = "vendor_agentPhoneNumber"
+
+  // =========================================================================
+  // SDLT2 Purchaser
+  // =========================================================================
+
+  // =========================================================================
+  // PAGE 1 — About the Purchaser (Boxes 1-5)
+  // =========================================================================
+
+  // Box 1: Additional Vendor or Purchaser
+  val IS_PURCHASER = "is_purchaser"
+
+  // Box 2: Title
+  val PURCHASER_TITLE = "purchaser_title"
+
+  // BOX 3: Surname or Company name
+  val PURCHASER_SURNAME = "purchaser_surname"
+  val PURCHASER_COMPANY_NAME = "purchaser_companyName"
+
+  // Box 4: Forename 1 and 2
+  val PURCHASER_FORENAME_1 = "purchaser_forename1"
+  val PURCHASER_FORENAME_2 = "purchaser_forename2"
+
+  // Box 5: Address
+  val PURCHASER_HOUSE_NUMBER = "purchaser_houseNumber"
+  val PURCHASER_ADDRESS_LINE_1 = "purchaser_addressLine1"
+  val PURCHASER_ADDRESS_LINE_2 = "purchaser_addressLine2"
+  val PURCHASER_ADDRESS_LINE_3 = "purchaser_addressLine3"
+  val PURCHASER_ADDRESS_LINE_4 = "purchaser_addressLine4"
+  val PURCHASER_POSTCODE_1 = "purchaser_postcode_1"
+  val PURCHASER_POSTCODE_2 = "purchaser_postcode_2"
+
+  // =========================================================================
+  // PAGE 2 — Additional purchaser details (Boxes 6-7)
+  // =========================================================================
+
+  // Box 6: Purchaser and vendor connected
+  val PURCHASER_CONNECTED_TO_VENDOR_YES = "purchaser_connectedToVendor_yes"
+  val PURCHASER_CONNECTED_TO_VENDOR_NO = "purchaser_connectedToVendor_no"
+
+  // Box 7: Purchaser acting as a trustee
+  val PURCHASER_ACTING_TRUSTEE_YES = "purchaser_actingTrustee_yes"
+  val PURCHASER_ACTING_TRUSTEE_NO = "purchaser_actingTrustee_no"
   
   // =========================================================================
   // SDLT3
