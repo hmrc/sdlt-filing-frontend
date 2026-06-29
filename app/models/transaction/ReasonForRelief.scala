@@ -107,6 +107,10 @@ object ReasonForRelief extends Enumerable.Implicits {
       )
   }
 
+  def parse(s: Option[String]): Option[ReasonForRelief] = s.flatMap { code =>
+    values.find(_.toString == code)
+  }
+
   def isValid(value: String): Boolean =
     values.exists(_.toString == value)
 
