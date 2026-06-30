@@ -18,7 +18,7 @@ package services.pdf
 
 import base.SpecBase
 import constants.FullReturnConstants.*
-import models.*
+import models.{Purchaser, *}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
@@ -214,6 +214,19 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
           verify(pdf2Purchaser, times(0)).fillPdf(any[Purchaser], any[FullReturn](), any[Boolean]())
         }
 
+        "must not call pdf2PurchFiller when only two purchaser" in {
+          val pdf2Purchaser = mockPdf2Purchaser()
+          val service = buildService(pdf2Purchaser = pdf2Purchaser)
+          service.generatePdf(completeFullReturn.copy(
+            purchaser = Some(Seq(
+              Purchaser(purchaserID = Some("PUR001")),
+                Purchaser(purchaserID = Some("PUR002"))
+            )),
+            returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR001")))
+          )).futureValue
+          verify(pdf2Purchaser, times(0)).fillPdf(any[Purchaser], any[FullReturn](), any[Boolean]())
+        }
+
         "must propagate failures from pdf2PurchFiller" in {
           val pdf2Purchaser = mock[SdltReturnPdf2Purchaser]
           when(pdf2Purchaser.fillPdf(any[Purchaser], any[FullReturn](), any[Boolean]())).thenThrow(new SdltPdfFillException("template missing", null))
@@ -331,6 +344,77 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
           new ClasspathPdfTemplateLoader(env).load("SDLT1a.pdf")
           verify(env, times(1)).resourceAsStream(any[String]())
         }
+      }
+    }
+
+    "computeAdditionalPurchasers" - {
+
+      "must return no purchaser when no additional purchasers" in {
+        val service = buildService()
+        val fullReturn = completeFullReturn.copy(returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR001"))))
+
+        val purchasers = Seq(
+          Purchaser(purchaserID = Some("PUR001"))
+        )
+
+        val (sdlt1Purchaser, sdlt2Purchasers) = service.computeAdditionalPurchasers(fullReturn, purchasers)
+
+        sdlt1Purchaser mustBe None
+        sdlt2Purchasers mustBe Seq.empty
+      }
+
+      "must return only one sdlt1 purchaser when no more additional purchasers" in {
+        val service = buildService()
+        val fullReturn = completeFullReturn.copy(returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR001"))))
+
+        val purchasers = Seq(
+          Purchaser(purchaserID = Some("PUR001")),
+          Purchaser(purchaserID = Some("PUR002"))
+        )
+
+        val (sdlt1Purchaser, sdlt2Purchasers) = service.computeAdditionalPurchasers(fullReturn, purchasers)
+
+        sdlt1Purchaser mustBe Some(Purchaser(purchaserID = Some("PUR002")))
+        sdlt2Purchasers mustBe Seq.empty
+      }
+
+      "must return one slt1 purchaser and one sldt2 purchaser" in {
+        val service = buildService()
+        val fullReturn = completeFullReturn.copy(returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR001"))))
+
+        val purchasers = Seq(
+          Purchaser(purchaserID = Some("PUR001")),
+          Purchaser(purchaserID = Some("PUR002")),
+          Purchaser(purchaserID = Some("PUR003"))
+        )
+
+        val (sdlt1Purchaser, sdlt2Purchasers) = service.computeAdditionalPurchasers(fullReturn, purchasers)
+
+        sdlt1Purchaser mustBe Some(Purchaser(purchaserID = Some("PUR002")))
+        sdlt2Purchasers mustBe Seq(Purchaser(purchaserID = Some("PUR003")))
+      }
+
+
+      "must return one slt1 purchaser and multiple sldt2 purchasers" in {
+        val service = buildService()
+        val fullReturn = completeFullReturn.copy(returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR001"))))
+
+        val purchasers = Seq(
+          Purchaser(purchaserID = Some("PUR001")),
+          Purchaser(purchaserID = Some("PUR002")),
+          Purchaser(purchaserID = Some("PUR003")),
+          Purchaser(purchaserID = Some("PUR004")),
+          Purchaser(purchaserID = Some("PUR005"))
+        )
+
+        val (sdlt1Purchaser, sdlt2Purchasers) = service.computeAdditionalPurchasers(fullReturn, purchasers)
+
+        sdlt1Purchaser mustBe Some(Purchaser(purchaserID = Some("PUR002")))
+        sdlt2Purchasers mustBe Seq(
+          Purchaser(purchaserID = Some("PUR003")),
+          Purchaser(purchaserID = Some("PUR004")),
+          Purchaser(purchaserID = Some("PUR005"))
+        )
       }
     }
   }

@@ -80,6 +80,8 @@ class PDFGenerationService @Inject()(
     var parts = Vector.empty[Array[Byte]]
 
     val purchasers = r.purchaser.getOrElse(Seq.empty)
+    val (sdlt1AdditionalPurchaser, sdlt2AdditionalPurchasers) = computeAdditionalPurchasers(r, purchasers)
+
 //    val vendors    = r.vendor.getOrElse(Seq.empty)
     val lands      = r.land.getOrElse(Seq.empty)
 //    val isLease    = r.lease.isDefined
@@ -88,14 +90,12 @@ class PDFGenerationService @Inject()(
     parts :+= pdf1aFiller.fillPdf(r)
     parts :+= pdf1bFiller.fillPdf(r)
 
-    // ---- SDLT2: one per purchaser beyond the first two ----
-    if (purchasers.size > 2) {
-      purchasers.drop(2).zipWithIndex.foreach { case (purchaser, idx) =>
+    // ---- SDLT2: one per purchaser beyond the first two (main purchaser and one additional) ----
+    sdlt2AdditionalPurchasers.zipWithIndex.foreach { case (purchaser, idx) =>
         tryFill(s"SDLT2 purchaser index ${idx + 2}") {
           parts :+= pdf2PurchFiller.fillPdf(purchaser, r)
         }
       }
-    }
 //
 //    // ---- SDLT2: one per vendor beyond the first two ----
 //    if (vendors.size > 2) {
@@ -203,6 +203,16 @@ class PDFGenerationService @Inject()(
     info.setAuthor(null)
     info.setCreationDate(null)
     info.setModificationDate(null)
+  }
+
+  def computeAdditionalPurchasers(r: FullReturn, purchasers: Seq[Purchaser]): (Option[Purchaser], Seq[Purchaser]) = {
+    val mainPurchaserID = r.returnInfo.flatMap(_.mainPurchaserID)
+    val slt1dPurchaser = purchasers.filterNot(p => mainPurchaserID.equals(p.purchaserID)).headOption
+    val sdlt2Purchasers = purchasers.filterNot { p =>
+      mainPurchaserID.equals(p.purchaserID) || slt1dPurchaser.exists(_.purchaserID.equals(p.purchaserID))
+    }
+
+    (slt1dPurchaser, sdlt2Purchasers)
   }
 }
 
