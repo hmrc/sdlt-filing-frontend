@@ -30,6 +30,7 @@ import PdfFormSupport.*
 import org.apache.pdfbox.cos.COSName
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont
 import org.apache.pdfbox.pdmodel.font.encoding.WinAnsiEncoding
+import utils.PdfHelper.hasSdlt4Answers
 
 @Singleton
 
@@ -95,7 +96,7 @@ class SdltReturnPdf1d @Inject()(
       if (purchaser.isCompany.exists(_.equalsIgnoreCase("yes"))) {
         w.text(PURCHASER_COMPANY_NAME, purchaser.companyName)
       } else {
-        w.text(PURCHASER_SURNAME, purchaser.surname)
+        w.text(PURCHASER_SURNAME_BOX68, purchaser.surname)
         w.text(PURCHASER_FORENAME_1, purchaser.forename1)
         w.text(PURCHASER_FORENAME_2, purchaser.forename2)
       }
@@ -145,54 +146,15 @@ class SdltReturnPdf1d @Inject()(
     Option(doc.getDocumentCatalog.getAcroForm)
       .getOrElse(throw new SdltPdfFillException("PDF template has no AcroForm", null))
 
-  private def captureSDLT4Count(r: FullReturn) = {
-    val lands = r.land.getOrElse(Seq.empty)
-    val purchasers = r.purchaser.getOrElse(Seq.empty)
-    val mainPurchaser = purchasers.headOption
+   private def captureSDLT4Count(r: FullReturn) = {
+    val propertyType = r.land.flatMap(_.headOption).flatMap(_.propertyType).getOrElse("")
+     val lands = r.land.getOrElse(Seq.empty)
+    (lands.size > 1, hasSdlt4Answers(r, propertyType)) match {
 
-    val purchaserQuestionAnswered = mainPurchaser.exists(t => t.registrationNumber.isDefined && t.placeOfRegistration.isDefined)
-
-    val mainLand = lands.headOption
-    val landPropertyType = mainLand.flatMap(_.propertyType)
-    val landQuestionAnswered = landPropertyType.exists(Set("02", "03"))
-
-    val transactionIncludeQuestionAnswered = r.transaction.flatMap(_.includesStock).isDefined || r.transaction.flatMap(_.includesGoodwill).isDefined ||
-      r.transaction.flatMap(_.includesOther).isDefined || r.transaction.flatMap(_.includesChattel).isDefined
-
-    val transactionDeferementQuestionAnswered = r.transaction.flatMap(_.agreedToDeferPayment).isDefined || r.transaction.flatMap(_.isDependantOnFutureEvent).isDefined
-
-    val mainPurchaserId: Option[String] = r.returnInfo.flatMap(_.mainPurchaserID)
-    val companyDetails = r.companyDetails.filter(_.purchaserID == mainPurchaserId)
-
-    val companyDetailsQuestionAnswered =
-      companyDetails.exists(cd =>
-        Seq(
-          cd.companyTypeBank,
-          cd.companyTypeBuilder,
-          cd.companyTypeBuildsoc,
-          cd.companyTypeCentgov,
-          cd.companyTypeIndividual,
-          cd.companyTypeInsurance,
-          cd.companyTypeLocalauth,
-          cd.companyTypeOthercharity,
-          cd.companyTypeOthercompany,
-          cd.companyTypeOtherfinancial,
-          cd.companyTypePartnership,
-          cd.companyTypeProperty,
-          cd.companyTypePubliccorp,
-          cd.companyTypeSoletrader,
-          cd.companyTypePensionfund
-        ).exists(_.contains("yes"))
-      )
-
-    (lands.size > 1, purchaserQuestionAnswered, landQuestionAnswered,
-      transactionIncludeQuestionAnswered, transactionDeferementQuestionAnswered, companyDetailsQuestionAnswered) match {
-      case (true, _, _, _, _, _) => lands.size - 1
-      case (false, false, false, false, false, false) => 0
-      case (false ,_ , _, _, _, _) => 1
+      case (true,_) => (lands.size - 1).max(0)
+      case (false, true) => 1
       case _ => 0
     }
-
   }
 
 }
