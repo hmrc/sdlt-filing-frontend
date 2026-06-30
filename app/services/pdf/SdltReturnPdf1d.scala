@@ -39,7 +39,7 @@ class SdltReturnPdf1d @Inject()(
 
   private lazy val templateBytes: Array[Byte] = pdfTemplateLoader.load("SDLT1d.pdf")
 
-  def fillPdf(fullReturn: FullReturn, flatten: Boolean = true): Array[Byte] = {
+  def fillPdf(additionalPurchaser: Option[Purchaser], fullReturn: FullReturn, flatten: Boolean = true): Array[Byte] = {
     logger.info(s"[SdltReturnPdf1d][fillPdf] Filling SDLT1 for returnID: ${fullReturn.returnInfo.flatMap(_.returnID).getOrElse("unknown")}")
 
     Using.Manager { use =>
@@ -52,7 +52,7 @@ class SdltReturnPdf1d @Inject()(
       form.setDefaultResources(res)
       val writer = new PdfFieldWriter(form, "SdltReturnPdf1d")
 
-      fillPurchaserFields(writer, fullReturn)
+      fillPurchaserFields(writer, additionalPurchaser, fullReturn)
       fillCommonFields(writer, fullReturn)
 
       if (flatten) form.flatten()
@@ -70,9 +70,9 @@ class SdltReturnPdf1d @Inject()(
     )
   }
 
-  private def fillPurchaserFields(w: PdfFieldWriter, r: FullReturn): Unit = {
+  private def fillPurchaserFields(w: PdfFieldWriter, additionalPurchaser: Option[Purchaser], r: FullReturn): Unit = {
     val purchasers = r.purchaser.getOrElse(Seq.empty)
-    val additionalPurchaser2 = purchasers.lift(1)
+    // val additionalPurchaser2 = purchasers.lift(1)
     val purchaserAgent = r.returnAgent.flatMap(_.find(_.agentType.contains(AgentType.Purchaser.toString)))
     // val sameAddress = sameAddressCheck(purchaser1, additionalPurchaser2) // TODO : make changes once receive pdf field name of Purchaser sameAddress check box
     val vendors = r.vendor.getOrElse(Seq.empty)
@@ -91,7 +91,7 @@ class SdltReturnPdf1d @Inject()(
     w.text(PURCHASER_AGENT_REFERENCE, purchaserAgent.flatMap(_.reference))
     w.text(PURCHASER_AGENT_PHONE_NUMBER, purchaserAgent.flatMap(_.phone))
 
-    additionalPurchaser2.foreach { purchaser =>
+    additionalPurchaser.foreach { purchaser =>
       w.text(PURCHASER_TITLE, purchaser.title)
       if (purchaser.isCompany.exists(_.equalsIgnoreCase("yes"))) {
         w.text(PURCHASER_COMPANY_NAME, purchaser.companyName)

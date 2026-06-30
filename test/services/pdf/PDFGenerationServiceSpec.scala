@@ -70,7 +70,7 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
 
   private def mockPdf1d(bytes: Array[Byte] = blankPdfBytes): SdltReturnPdf1d = {
     val m = mock[SdltReturnPdf1d]
-    when(m.fillPdf(any[FullReturn](), any[Boolean]())).thenReturn(bytes)
+    when(m.fillPdf(any[Option[Purchaser]](), any[FullReturn](), any[Boolean]())).thenReturn(bytes)
     m
   }
 
@@ -218,6 +218,38 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
           val pdf1c = mock[SdltReturnPdf1c]
           when(pdf1c.fillPdf(any[FullReturn](), any[Boolean]())).thenThrow(new SdltPdfFillException("template missing", null))
           whenReady(buildService(pdf1c = pdf1c).generatePdf(minimalFullReturn).failed) { ex =>
+            ex mustBe a[SdltPdfFillException]
+          }
+        }
+      }
+
+      "pdf1d" - {
+        "must call pdf1dFiller exactly once regardless of return content" in {
+          val pdf1d = mockPdf1d()
+          val service = buildService(pdf1d = pdf1d)
+          service.generatePdf(minimalFullReturn).futureValue
+          verify(pdf1d, times(1)).fillPdf(any[Option[Purchaser]](), any[FullReturn](), any[Boolean]())
+        }
+
+        "must call pdf1dFiller with the full return passed in" in {
+          val pdf1d = mockPdf1d()
+          val service = buildService(pdf1d = pdf1d)
+          service.generatePdf(completeFullReturn).futureValue
+          verify(pdf1d, times(1)).fillPdf(any[Option[Purchaser]](), eqTo(completeFullReturn), any[Boolean]())
+        }
+
+        "must call pdf1dFiller exactly once per invocation when called multiple times" in {
+          val pdf1d = mockPdf1d()
+          val service = buildService(pdf1d = pdf1d)
+          service.generatePdf(minimalFullReturn).futureValue
+          service.generatePdf(completeFullReturn).futureValue
+          verify(pdf1d, times(2)).fillPdf(any[Option[Purchaser]](), any[FullReturn](), any[Boolean]())
+        }
+
+        "must propagate failures from pdf1dFiller" in {
+          val pdf1d = mock[SdltReturnPdf1d]
+          when(pdf1d.fillPdf(any[Option[Purchaser]](), any[FullReturn](), any[Boolean]())).thenThrow(new SdltPdfFillException("template missing", null))
+          whenReady(buildService(pdf1d = pdf1d).generatePdf(minimalFullReturn).failed) { ex =>
             ex mustBe a[SdltPdfFillException]
           }
         }

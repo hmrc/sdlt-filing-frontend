@@ -312,7 +312,7 @@ object SdltPdfFields {
   val PURCHASER_TITLE = "purchaser_title"
 
   // BOX 3: Surname or Company name
-  val PURCHASER_SURNAME = "purchaser_surname"
+  //val PURCHASER_SURNAME = "purchaser_surname"
   val PURCHASER_COMPANY_NAME = "purchaser_companyName"
 
   // Box 4: Forename 1 and 2
@@ -457,20 +457,20 @@ object SdltPdfFields {
   // Page number 6 & 7 additional purchaser PAGE 6 & 7 — About the Additional Purchaser (63-73)
   // =========================================================================
   
-  val PURCHASER_TITLE = "purchaser_title"
-  val PURCHASER_SURNAME = "purchaser_companyName"
-  val PURCHASER_COMPANY_NAME = "purchaser_companyName"
-  val PURCHASER_FORENAME_1 = "purchaser_forename1"
-  val PURCHASER_FORENAME_2 = "purchaser_forename2"
-  val PURCHASER_HOUSE_NUMBER = "purchaser_houseNumber"
+  // val PURCHASER_TITLE = "purchaser_title"
+   val PURCHASER_SURNAME = "purchaser_companyName"
+  // val PURCHASER_COMPANY_NAME = "purchaser_companyName"
+  // val PURCHASER_FORENAME_1 = "purchaser_forename1"
+  // val PURCHASER_FORENAME_2 = "purchaser_forename2"
+  // val PURCHASER_HOUSE_NUMBER = "purchaser_houseNumber"
   val PURCHASER_ADDRESS_LINE1 = "purchaser_addressLine1"
   val PURCHASER_ADDRESS_LINE2 = "purchaser_addressLine2"
   val PURCHASER_ADDRESS_LINE3 = "purchaser_addressLine3"
   val PURCHASER_ADDRESS_LINE4 = "purchaser_addressLine4"
-  val PURCHASER_POSTCODE_1 = "purchaser_postcode_1"
-  val PURCHASER_POSTCODE_2 = "purchaser_postcode_2"
-  val PURCHASER_ACTING_TRUSTEE_YES = "purchaser_actingTrustee_yes"
-  val PURCHASER_ACTING_TRUSTEE_NO = "purchaser_actingTrustee_no"
+  // val PURCHASER_POSTCODE_1 = "purchaser_postcode_1"
+  // val PURCHASER_POSTCODE_2 = "purchaser_postcode_2"
+  // val PURCHASER_ACTING_TRUSTEE_YES = "purchaser_actingTrustee_yes"
+  // val PURCHASER_ACTING_TRUSTEE_NO = "purchaser_actingTrustee_no"
 
   val PURCHASER2_SAMEADDRESS = "purchaser_sameAddress"
 
