@@ -40,7 +40,7 @@ class SdltReturnPdf1b @Inject()(
 
   private lazy val templateBytes: Array[Byte] = pdfTemplateLoader.load("SDLT1b.pdf")
   
-  def fillPdf(fullReturn: FullReturn, flatten: Boolean = true): Array[Byte] = {
+  def fillPdf(secondVendor: Option[Vendor], fullReturn: FullReturn, flatten: Boolean = true): Array[Byte] = {
     logger.info(s"[SdltReturnPdf1b[fillPdf] Filling SDLT1 for returnID: ${fullReturn.returnInfo.flatMap(_.returnID).getOrElse("unknown")}")
     
     Using.Manager { use =>
@@ -54,7 +54,7 @@ class SdltReturnPdf1b @Inject()(
       form.setDefaultResources(res)
       val writer = new PdfFieldWriter(form, "SdltReturnPdf1b")
 
-      fillVendorFields(writer, fullReturn)
+      fillVendorFields(writer, secondVendor, fullReturn)
       fillCommonFields(writer, fullReturn)
 
       if (flatten) form.flatten()
@@ -71,15 +71,9 @@ class SdltReturnPdf1b @Inject()(
     )
   }
 
-  private def fillVendorFields(w: PdfFieldWriter, r: FullReturn): Unit = {
-    val mainVendorId: Option[String] = r.returnInfo.flatMap(_.mainVendorID)
-    val mainVendor = r.vendor.flatMap(_.find(_.vendorID == mainVendorId))
-    val secondVendorId = mainVendor.flatMap(_.nextVendorID)
-    val secondVendor = secondVendorId.flatMap(id =>
-      r.vendor.flatMap(_.find(_.vendorID.contains(id)))
-    )
+  private def fillVendorFields(w: PdfFieldWriter, secondVendor: Option[Vendor], r: FullReturn): Unit = {
     val vendorAgent = r.returnAgent.flatMap(_.find(_.agentType.contains(AgentType.Vendor.toString)))
-
+    
     w.postcode(VENDOR_AGENT_POSTCODE_1, VENDOR_AGENT_POSTCODE_2, vendorAgent.flatMap(_.postcode))
     w.text(VENDOR_AGENT_HOUSE_NUMBER, vendorAgent.flatMap(_.houseNumber))
     w.text(VENDOR_AGENT_ADDRESS_LINE1, vendorAgent.flatMap(_.address1))
@@ -90,19 +84,17 @@ class SdltReturnPdf1b @Inject()(
     w.text(VENDOR_AGENT_EMAIL_ADDRESS, vendorAgent.flatMap(_.email))
     w.text(VENDOR_AGENT_REFERENCE, vendorAgent.flatMap(_.reference))
     w.text(VENDOR_AGENT_PHONE_NUMBER, vendorAgent.flatMap(_.phone))
-        
-    secondVendor.foreach { vendor =>
-      w.text(VENDOR_NAME, vendor.name)
-      w.text(VENDOR_FORENAME_1, vendor.forename1)
-      w.text(VENDOR_FORENAME_2, vendor.forename2)
+    
+    w.text(VENDOR_NAME, secondVendor.flatMap(_.name))
+    w.text(VENDOR_FORENAME_1, secondVendor.flatMap(_.forename1))
+    w.text(VENDOR_FORENAME_2, secondVendor.flatMap(_.forename2))
 
-      w.postcode(VENDOR_POSTCODE_1, VENDOR_POSTCODE_2, vendor.postcode)
-      w.text(VENDOR_HOUSE_NUMBER, vendor.houseNumber)
-      w.text(VENDOR_ADDRESS_LINE1, vendor.address1)
-      w.text(VENDOR_ADDRESS_LINE2, vendor.address2)
-      w.text(VENDOR_ADDRESS_LINE3, vendor.address3)
-      w.text(VENDOR_ADDRESS_LINE4, vendor.address4)
-    }
+    w.postcode(VENDOR_POSTCODE_1, VENDOR_POSTCODE_2, secondVendor.flatMap(_.postcode))
+    w.text(VENDOR_HOUSE_NUMBER, secondVendor.flatMap(_.houseNumber))
+    w.text(VENDOR_ADDRESS_LINE1, secondVendor.flatMap(_.address1))
+    w.text(VENDOR_ADDRESS_LINE2, secondVendor.flatMap(_.address2))
+    w.text(VENDOR_ADDRESS_LINE3, secondVendor.flatMap(_.address3))
+    w.text(VENDOR_ADDRESS_LINE4, secondVendor.flatMap(_.address4))
   }
 
   private def fillCommonFields(w: PdfFieldWriter, r: FullReturn): Unit =
