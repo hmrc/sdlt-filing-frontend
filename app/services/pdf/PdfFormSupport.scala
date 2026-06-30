@@ -98,6 +98,37 @@ class PdfFieldWriter(form: PDAcroForm, ctx: String) extends LoggingUtil {
         uncheck(noField)
     }
 
+  /** Maps the answer to the relevant checkbox */
+  def selectOne(selected: Option[String], fields: Map[String, String]): Unit =
+    fields.foreach {
+      case (value, fieldName) =>
+        setCheckbox(fieldName, selected.contains(value))
+    }
+
+  /** Set all checkboxes where fields have been set as Yes */
+  def selectMultiple(fields: Seq[(String, Option[String])]): Unit =
+    fields.foreach {
+      case (fieldName, Some(value)) if value.equalsIgnoreCase("YES") =>
+        check(fieldName)
+      case (fieldName, _) =>
+        uncheck(fieldName)
+    }
+
+  /** Fills consideration boxes where present */
+  def fillSelectedCodes(
+                         w: PdfFieldWriter,
+                         selections: Seq[(Option[String], String)],
+                         outputFields: Seq[String]): Unit = {
+    val selectedCodes =
+      selections.collect {
+        case (Some(answer), code) if answer.equalsIgnoreCase("YES") => code.toString
+      }
+
+    outputFields.zipWithIndex.foreach {
+      case (field, idx) => w.text(field, selectedCodes.lift(idx))
+    }
+  }
+
   def check(fieldName: String): Unit   = setCheckbox(fieldName, checked = true)
   def uncheck(fieldName: String): Unit = setCheckbox(fieldName, checked = false)
 

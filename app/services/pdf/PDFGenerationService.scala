@@ -25,6 +25,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode
 import org.apache.pdfbox.pdmodel.font.{PDType1Font, Standard14Fonts}
 import play.api.Environment
 import utils.LoggingUtil
+import utils.PdfHelper.hasSdlt4Answers
 
 import java.io.ByteArrayOutputStream
 import javax.inject.{Inject, Singleton}
@@ -50,7 +51,7 @@ class PDFGenerationService @Inject()(
                                       pdf2PurchFiller: SdltReturnPdf2Purchaser,
 //                                      pdf2VendFiller:  SdltReturnPdf2Vendor,
                                       pdf3Filler:      SdltReturnPdf3,
-//                                      pdf4Filler:      SdltReturnPdf4,
+                                      pdf4Filler:      SdltReturnPdf4,
 //                                      pdf4aFiller:     SdltReturnPdf4a
                                     ) extends LoggingUtil {
 
@@ -87,7 +88,7 @@ class PDFGenerationService @Inject()(
     val (sdlt1AdditionalVendor, sdlt2AdditionalVendors) = computeAdditionalVendors(r, vendors)
 
     val lands      = r.land.getOrElse(Seq.empty)
-//    val isLease    = r.lease.isDefined
+    val isLease    = r.lease.isDefined
 
     // ---- SDLT1: always present ----
     parts :+= pdf1aFiller.fillPdf(r)
@@ -120,27 +121,33 @@ class PDFGenerationService @Inject()(
       }
     }
 //
-//    // ---- SDLT4 / SDLT4a: conditioned on lease type and land count ----
-//    val propertyType = r.land.flatMap(_.headOption).flatMap(_.propertyType).getOrElse("")
-//    val needsSdlt4   = Seq("02", "03").contains(propertyType) || isLease
-//
-//    if (needsSdlt4) {
-//      if (!isLease) {
-//        tryFill("SDLT4a (non-lease)") {
-//          parts :+= pdf4aFiller.fillPdf(r)
-//        }
-//      } else if (lands.size > 1) {
-//        lands.tail.zipWithIndex.foreach { case (land, idx) =>
-//          tryFill(s"SDLT4 land index ${idx + 1} (lease, multi-land)") {
-//            parts :+= pdf4Filler.fillPdf(land, r, firstTimeThrough = idx == 0)
-//          }
-//        }
-//      } else {
+    // ---- SDLT4 / SDLT4a: conditioned on lease type and land count ----
+    val propertyType = r.land.flatMap(_.headOption).flatMap(_.propertyType).getOrElse("")
+    val needsSdlt4   = isLease || hasSdlt4Answers(r, propertyType)
+
+    if (needsSdlt4) {
+      if (lands.size > 1 && isLease) {
+        lands.tail.zipWithIndex.foreach { case (land, idx) =>
+          tryFill(s"SDLT4 land index ${idx + 1} (lease, multi-land)") {
+            parts :+= pdf4Filler.fillPdf(land, r, firstTimeThrough = idx == 0)
+          }
+        }
+      } else if (lands.size > 1 && !isLease) {
+        lands.tail.zipWithIndex.foreach { case (land, idx) =>
+          tryFill(s"SDLT4 land index ${idx + 1} (non-lease, multi-land)") {
+            parts :+= pdf4Filler.fillPdf(land, r, firstTimeThrough = idx == 0)
+          }
+        }
+      } else if (!isLease) {
+        //        tryFill("SDLT4a (non-lease)") {
+        //          parts :+= pdf4aFiller.fillPdf(r)
+        //        }
+      } else {
 //        tryFill("SDLT4a (lease, single land)") {
 //          parts :+= pdf4aFiller.fillPdf(r)
 //        }
-//      }
-//    }
+      }
+    }
 
     logger.info(s"[PDFGenerationService][collectPdfParts] Collected ${parts.length} PDF part(s)")
     parts
