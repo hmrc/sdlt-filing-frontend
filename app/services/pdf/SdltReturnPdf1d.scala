@@ -72,7 +72,6 @@ class SdltReturnPdf1d @Inject()(
 
   private def fillPurchaserFields(w: PdfFieldWriter, additionalPurchaser: Option[Purchaser], r: FullReturn): Unit = {
     val purchasers = r.purchaser.getOrElse(Seq.empty)
-    // val additionalPurchaser2 = purchasers.lift(1)
     val purchaserAgent = r.returnAgent.flatMap(_.find(_.agentType.contains(AgentType.Purchaser.toString)))
     // val sameAddress = sameAddressCheck(purchaser1, additionalPurchaser2) // TODO : make changes once receive pdf field name of Purchaser sameAddress check box
     val vendors = r.vendor.getOrElse(Seq.empty)
