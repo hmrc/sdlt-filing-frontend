@@ -66,7 +66,7 @@ class SdltReturnPdf1bSpec extends SpecBase with MockitoSugar {
     out.toByteArray
   }
 
-  private def fill(r: FullReturn) = buildFiller().fillPdf(r, flatten = false)
+  private def fill(r: FullReturn, secondVendor: Option[Vendor]) = buildFiller().fillPdf(secondVendor, r, flatten = false)
 
   def readField(pdfBytes: Array[Byte], fieldName: String): Option[String] = {
     val doc = Loader.loadPDF(pdfBytes)
@@ -90,6 +90,19 @@ class SdltReturnPdf1bSpec extends SpecBase with MockitoSugar {
     returnInfo = Some(completeReturnInfo)
   )
 
+  private val secondVendor = Some(Vendor(
+    name = Some("Jones"),
+    forename1 = Some("Jane"),
+    forename2 = Some("Mary"),
+    vendorID = Some("VEN002"),
+    houseNumber = Some("5"),
+    address1    = Some("Address 1"),
+    address2    = Some("Address 2"),
+    address3    = Some("Address 3"),
+    address4    = Some("Address 4"),
+    postcode    = Some("M1 2AB")
+  ))
+
   private def withSubmission(utrn: String): FullReturn =
     baseReturn.copy(submission = Some(Submission(UTRN = Some(utrn))))
 
@@ -106,12 +119,12 @@ class SdltReturnPdf1bSpec extends SpecBase with MockitoSugar {
     "fillPdf" - {
 
       "must return a non-empty byte array" in {
-        val result = fill(baseReturn)
+        val result = fill(baseReturn, None)
         result must not be empty
       }
 
       "must return bytes starting with the %PDF header" in {
-        val result = fill(baseReturn)
+        val result = fill(baseReturn, None)
         new String(result.take(4)) mustBe "%PDF"
       }
 
@@ -127,13 +140,13 @@ class SdltReturnPdf1bSpec extends SpecBase with MockitoSugar {
         when(loader.load("SDLT1b.pdf")).thenReturn(bare)
         val filler = new SdltReturnPdf1b(loader)
         intercept[SdltPdfFillException] {
-          filler.fillPdf(baseReturn)
+          filler.fillPdf(None, baseReturn)
         }
       }
 
       "must write UTRN from submission" in {
         val r      = withSubmission("UTR-9999")
-        val result = fill(r)
+        val result = fill(r, None)
         readField(result, "UTRN") mustBe Some("UTR-9999")
       }
 
@@ -143,43 +156,28 @@ class SdltReturnPdf1bSpec extends SpecBase with MockitoSugar {
             name = Some("Smith"),
             forename1 = Some("John"),
             forename2 = Some("Paul"),
-            vendorID = Some("VEN001"),
-            nextVendorID = Some("VEN002")
+            vendorID = Some("VEN001")
           ),
-          Vendor(
-            name = Some("Jones"),
-            forename1 = Some("Jane"),
-            forename2 = Some("Mary"),
-            vendorID = Some("VEN002")
-          )
+          secondVendor.get
         )
-        val result = fill(r)
-        readField(result, "vendor_name")     mustBe Some("Jones")
+
+        val result = fill(r, secondVendor)
+
+        readField(result, "vendor_name") mustBe Some("Jones")
         readField(result, "vendor_forename1") mustBe Some("Jane")
         readField(result, "vendor_forename2") mustBe Some("Mary")
       }
 
       "must write second vendor address and postcode" in {
+
         val r = withVendor(Vendor(
           name = Some("Smith"),
           forename1 = Some("John"),
           forename2 = Some("Paul"),
-          vendorID = Some("VEN001"),
-          nextVendorID = Some("VEN002")
-        ),
-          Vendor(
-            name = Some("Jones"),
-            forename1 = Some("Jane"),
-            forename2 = Some("Mary"),
-            vendorID = Some("VEN002"),
-            houseNumber = Some("5"),
-            address1    = Some("Address 1"),
-            address2    = Some("Address 2"),
-            address3    = Some("Address 3"),
-            address4    = Some("Address 4"),
-            postcode    = Some("M1 2AB")
-          ))
-        val result = fill(r)
+          vendorID = Some("VEN001")
+        ), secondVendor.get)
+
+        val result = fill(r, secondVendor)
         readField(result, "vendor_houseNumber")  mustBe Some("5")
         readField(result, "vendor_addressLine1") mustBe Some("Address 1")
         readField(result, "vendor_addressLine2") mustBe Some("Address 2")
@@ -197,7 +195,7 @@ class SdltReturnPdf1bSpec extends SpecBase with MockitoSugar {
             forename2 = Some("Paul"),
             vendorID = Some("VEN001")
           ))
-        val result = fill(r)
+        val result = fill(r, None)
         readField(result, "vendor_name")     mustBe Some("")
         readField(result, "vendor_forename1") mustBe Some("")
         readField(result, "vendor_forename2") mustBe Some("")
@@ -210,7 +208,7 @@ class SdltReturnPdf1bSpec extends SpecBase with MockitoSugar {
           forename2 = Some("Paul"),
           vendorID = Some("VEN001")
         ))
-        val result = fill(r)
+        val result = fill(r, None)
         readField(result, "vendor_houseNumber") mustBe Some("")
         readField(result, "vendor_addressLine1") mustBe Some("")
         readField(result, "vendor_addressLine2") mustBe Some("")
@@ -238,7 +236,7 @@ class SdltReturnPdf1bSpec extends SpecBase with MockitoSugar {
           reference = Some("123456")
         ))
 
-        val result = fill(r)
+        val result = fill(r, None)
         readField(result, "vendor_agentHouseNumber") mustBe Some("1")
         readField(result, "vendor_agentAddressLine1") mustBe Some("Agent address 1")
         readField(result, "vendor_agentAddressLine2") mustBe Some("Agent address 2")
@@ -253,7 +251,7 @@ class SdltReturnPdf1bSpec extends SpecBase with MockitoSugar {
 
       "must not write vendor agent details when return agent not present" in {
 
-        val result = fill(baseReturn)
+        val result = fill(baseReturn, None)
         readField(result, "vendor_agentHouseNumber") mustBe Some("")
         readField(result, "vendor_agentAddressLine1") mustBe Some("")
         readField(result, "vendor_agentAddressLine2") mustBe Some("")
@@ -284,7 +282,7 @@ class SdltReturnPdf1bSpec extends SpecBase with MockitoSugar {
           reference = Some("123456")
         ))
 
-        val result = fill(r)
+        val result = fill(r, None)
         readField(result, "vendor_agentHouseNumber") mustBe Some("")
         readField(result, "vendor_agentAddressLine1") mustBe Some("")
         readField(result, "vendor_agentAddressLine2") mustBe Some("")
@@ -340,7 +338,7 @@ class SdltReturnPdf1bSpec extends SpecBase with MockitoSugar {
             reference = Some("123456")
           )))
         )
-        noException mustBe thrownBy(buildFiller().fillPdf(r))
+        noException mustBe thrownBy(buildFiller().fillPdf(None, r))
       }
     }
   }

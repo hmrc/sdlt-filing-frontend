@@ -58,7 +58,7 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
 
   private def mockPdf1b(bytes: Array[Byte] = blankPdfBytes): SdltReturnPdf1b = {
     val m = mock[SdltReturnPdf1b]
-    when(m.fillPdf(any[FullReturn](), any[Boolean]())).thenReturn(bytes)
+    when(m.fillPdf(any[Option[Vendor]](), any[FullReturn](), any[Boolean]())).thenReturn(bytes)
     m
   }
 
@@ -143,14 +143,14 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
           val pdf1b = mockPdf1b()
           val service = buildService(pdf1b = pdf1b)
           service.generatePdf(minimalFullReturn).futureValue
-          verify(pdf1b, times(1)).fillPdf(any[FullReturn](), any[Boolean]())
+          verify(pdf1b, times(1)).fillPdf(any[Option[Vendor]](), any[FullReturn](), any[Boolean]())
         }
 
         "must call pdf1bFiller with the full return passed in" in {
           val pdf1b = mockPdf1b()
           val service = buildService(pdf1b = pdf1b)
           service.generatePdf(completeFullReturn).futureValue
-          verify(pdf1b, times(1)).fillPdf(eqTo(completeFullReturn), any[Boolean]())
+          verify(pdf1b, times(1)).fillPdf(any[Option[Vendor]](), eqTo(completeFullReturn), any[Boolean]())
         }
 
         "must call pdf1bFiller exactly once per invocation when called multiple times" in {
@@ -158,12 +158,12 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
           val service = buildService(pdf1b = pdf1b)
           service.generatePdf(minimalFullReturn).futureValue
           service.generatePdf(completeFullReturn).futureValue
-          verify(pdf1b, times(2)).fillPdf(any[FullReturn](), any[Boolean]())
+          verify(pdf1b, times(2)).fillPdf(any[Option[Vendor]](), any[FullReturn](), any[Boolean]())
         }
 
         "must propagate failures from pdf1bFiller" in {
           val pdf1b = mock[SdltReturnPdf1b]
-          when(pdf1b.fillPdf(any[FullReturn](), any[Boolean]())).thenThrow(new SdltPdfFillException("template missing", null))
+          when(pdf1b.fillPdf(any[Option[Vendor]](), any[FullReturn](), any[Boolean]())).thenThrow(new SdltPdfFillException("template missing", null))
           whenReady(buildService(pdf1b = pdf1b).generatePdf(minimalFullReturn).failed) { ex =>
             ex mustBe a[SdltPdfFillException]
           }
@@ -415,6 +415,76 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
           Purchaser(purchaserID = Some("PUR004")),
           Purchaser(purchaserID = Some("PUR005"))
         )
+      }
+    }
+
+    "computeAdditionalVendors" - {
+
+      "must return no vendor when no addition vendors" in {
+        val service = buildService()
+        val v1 = Vendor(vendorID = Some("V1"))
+
+        val r = completeFullReturn.copy(
+          returnInfo = Some(ReturnInfo(mainVendorID = Some("V1")))
+        )
+
+        val (sdlt1bVendor, sdlt2Vendors) =
+          service.computeAdditionalVendors(r, Seq(v1))
+
+        sdlt1bVendor mustBe None
+        sdlt2Vendors mustBe empty
+      }
+
+      "must return only one sdlt1b vendor when no more additional vendors present" in {
+        val service = buildService()
+        val v1 = Vendor(vendorID = Some("V1"))
+        val v2 = Vendor(vendorID = Some("V2"))
+
+        val r = completeFullReturn.copy(
+          returnInfo = Some(ReturnInfo(mainVendorID = Some("V1")))
+        )
+
+        val (sdlt1bVendor, sdlt2Vendors) =
+          service.computeAdditionalVendors(r, Seq(v1, v2))
+
+        sdlt1bVendor mustBe Some(v2)
+        sdlt2Vendors mustBe empty
+      }
+
+      "must return one sdlt1b vendor and one sdlt2 vendor " in {
+        val service = buildService()
+        val v1 = Vendor(vendorID = Some("V1"))
+        val v2 = Vendor(vendorID = Some("V2"))
+        val v3 = Vendor(vendorID = Some("V3"))
+
+        val r = completeFullReturn.copy(
+          returnInfo = Some(ReturnInfo(mainVendorID = Some("V1")))
+        )
+
+        val (sdlt1bVendor, sdlt2Vendors) =
+          service.computeAdditionalVendors(r, Seq(v1, v2, v3))
+
+        sdlt1bVendor mustBe Some(v2)
+        sdlt2Vendors mustBe Seq(v3)
+      }
+
+      "must return one sdlt1b vendor and multiple sdlt2 vendor " in {
+        val service = buildService()
+        val v1 = Vendor(vendorID = Some("V1"))
+        val v2 = Vendor(vendorID = Some("V2"))
+        val v3 = Vendor(vendorID = Some("V3"))
+        val v4 = Vendor(vendorID = Some("V4"))
+        val v5 = Vendor(vendorID = Some("V5"))
+
+        val r = completeFullReturn.copy(
+          returnInfo = Some(ReturnInfo(mainVendorID = Some("V1")))
+        )
+
+        val (sdlt1bVendor, sdlt2Vendors) =
+          service.computeAdditionalVendors(r, Seq(v1, v2, v3, v4, v5))
+
+        sdlt1bVendor mustBe Some(v2)
+        sdlt2Vendors mustBe Seq(v3, v4, v5)
       }
     }
   }
