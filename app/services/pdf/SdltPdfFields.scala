@@ -348,6 +348,106 @@ object SdltPdfFields {
   val LAND_MINERAL_RIGHTS = "land_mineralRights"
 
   // =========================================================================
+  // SDLT4
+  // =========================================================================
+
+  // Box 1: Business sale
+  val TRANSACTION_BUSINESS_SALE_STOCK = "transaction_businessSaleStock"
+  val TRANSACTION_BUSINESS_SALE_GOODWILL = "transaction_businessSaleGoodwill"
+  val TRANSACTION_BUSINESS_SALE_CHATTEL = "transaction_businessSaleChattel"
+  val TRANSACTION_BUSINESS_SALE_OTHER = "transaction_businessSaleOther"
+  val TRANSACTION_TOTAL_CONSIDERATION = "transaction_totalConsideration"
+
+  // Box 2: Commercial use
+  val TRANSACTION_COMMERCIAL_USE_OFFICE = "transaction_commercialUseOffice"
+  val TRANSACTION_COMMERCIAL_USE_SHOP = "transaction_commercialUseShop"
+  val TRANSACTION_COMMERCIAL_USE_FACTORY = "transaction_commercialUseFactory"
+  val TRANSACTION_COMMERCIAL_USE_HOTEL = "transaction_commercialUseHotel"
+  val TRANSACTION_COMMERCIAL_USE_WAREHOUSE = "transaction_commercialUseWarehouse"
+  val TRANSACTION_COMMERCIAL_USE_INDUSTRIAL = "transaction_commercialUseIndustrial"
+  val TRANSACTION_COMMERCIAL_USE_OTHER = "transaction_commercialUseOther"
+
+  // Box 3: Transaction ruling
+  val TRANSACTION_POST_TRANSACTION_RULING_YES = "transaction_postTransactionRuling_yes"
+  val TRANSACTION_POST_TRANSACTION_RULING_NO = "transaction_postTransactionRuling_no"
+  val TRANSACTION_RULING_FOLLOWED_YES = "transaction_rulingFollowed_yes"
+  val TRANSACTION_RULING_FOLLOWED_NO = "transaction_rulingFollowed_no"
+  val TRANSACTION_RULING_FOLLOWED_RULING_NOT_RECEIVED = "transaction_rulingFollowed_ruling"
+
+  // Box 4: Depends on future event
+  val TRANSACTION_DEPENDS_FUTURE_EVENT_YES = "transaction_dependsFutureEvent_yes"
+  val TRANSACTION_DEPENDS_FUTURE_EVENT_NO = "transaction_dependsFutureEvent_no"
+
+  // Box 5: Pay deferred
+  val TRANSACTION_PAY_DEFERRED_YES = "transaction_payDeferred_yes"
+  val TRANSACTION_PAY_DEFERRED_NO = "transaction_payDeferred_no"
+
+  // Box 7: Purchaser Description
+  val PURCHASER_DESCRIPTION_1 = "purchaser_description_1"
+  val PURCHASER_DESCRIPTION_2 = "purchaser_description_2"
+  val PURCHASER_DESCRIPTION_3 = "purchaser_description_3"
+  val PURCHASER_DESCRIPTION_4 = "purchaser_description_4"
+
+  // Box 26: Terms surrendered
+  val LEASE_TERMS_SURRENDERED = "lease_termsSurrendered"
+
+  // Box 27: Break clause type
+  val LEASE_BREAK_CLAUSE_LANDLORD = "lease_breakClause_landlord"
+  val LEASE_BREAK_CLAUSE_TENANT = "lease_breakClause_tenant"
+  val LEASE_BREAK_CLAUSE_EITHER = "lease_breakClause_either"
+
+  // Box 28: Break clause date
+  val LEASE_BREAK_CLAUSE_DAY = "lease_breakClauseDate_day"
+  val LEASE_BREAK_CLAUSE_MONTH = "lease_breakClauseDate_month"
+  val LEASE_BREAK_CLAUSE_YEAR = "lease_breakClauseDate_year"
+
+  // Box 29: Relate to the lease
+  val LEASE_OPTION_TO_RENEW = "lease_optionToRenew"
+  val LEASE_MARKET_RENT = "lease_marketRent"
+  val LEASE_TURNOVER_RENT = "lease_turnoverRent"
+  val LEASE_UNASCERTAINABLE_RENT = "lease_unascertainableRent"
+  val LEASE_CONTINGENT_RESERVED_RENT = "lease_contingentReservedRent"
+
+  // Box 30: Rent review frequency
+  val LEASE_REVIEW_FREQUENCY = "lease_reviewFrequency"
+
+  // Box 31: First review date
+  val LEASE_FIRST_REVIEW_DATE_DAY = "lease_firstReviewDate_day"
+  val LEASE_FIRST_REVIEW_DATE_MONTH = "lease_firstReviewDate_month"
+  val LEASE_FIRST_REVIEW_DATE_YEAR = "lease_firstReviewDate_year"
+
+  // Box 32: Rent review clause
+  val LEASE_REVIEW_CLAUSE_OPEN = "lease_reviewClause_open"
+  val LEASE_REVIEW_CLAUSE_RPI = "lease_reviewClause_rpi"
+  val LEASE_REVIEW_CLAUSE_OTHER = "lease_reviewClause_other"
+
+  // Box 33: Rent charge date
+  val LEASE_RENT_CHARGE_DATE_DAY = "lease_rentChargeDate_day"
+  val LEASE_RENT_CHARGE_DATE_MONTH = "lease_rentChargeDate_month"
+  val LEASE_RENT_CHARGE_DATE_YEAR = "lease_rentChargeDate_year"
+
+  // Box 34: Service charge amount
+  val LEASE_SERVICE_CHARGE = "lease_serviceCharge"
+
+  // Box 35: Service charge frequency
+  val LEASE_SERVICE_CHARGE_FREQUENCY_MONTHLY = "lease_serviceChargeFrequency_monthly"
+  val LEASE_SERVICE_CHARGE_FREQUENCY_QUARTERLY = "lease_serviceChargeFrequency_quarterly"
+  val LEASE_SERVICE_CHARGE_ANNUALLY = "lease_serviceChargeFrequency_annually"
+  val LEASE_SERVICE_CHARGE_OTHER = "lease_serviceChargeFrequency_other"
+
+  // Box 36: Other considerations - tenant to landlord
+  val LEASE_TO_LANDLORD_1 = "lease_toLandlord_1"
+  val LEASE_TO_LANDLORD_2 = "lease_toLandlord_2"
+  val LEASE_TO_LANDLORD_3 = "lease_toLandlord_3"
+  val LEASE_TO_LANDLORD_4 = "lease_toLandlord_4"
+
+  // Box 37: Other considerations - landlord to tenant
+  val LEASE_TO_TENANT_1 = "lease_toTenant_1"
+  val LEASE_TO_TENANT_2 = "lease_toTenant_2"
+  val LEASE_TO_TENANT_3 = "lease_toTenant_3"
+  val LEASE_TO_TENANT_4 = "lease_toTenant_4"
+
+  // =========================================================================
   // Checkbox state constants
   // =========================================================================
   val CHECKBOX_ON  = "Yes"

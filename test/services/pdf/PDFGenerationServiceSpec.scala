@@ -80,13 +80,20 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
     m
   }
 
+  private def mockPdf4(bytes: Array[Byte] = blankPdfBytes): SdltReturnPdf4 = {
+    val m = mock[SdltReturnPdf4]
+    when(m.fillPdf(any[Land], any[FullReturn](), any[Boolean](), any[Boolean]())).thenReturn(bytes)
+    m
+  }
+
   private def buildService(pdf1a: SdltReturnPdf1a = mockPdf1a(),
                            pdf1b: SdltReturnPdf1b = mockPdf1b(),
                            pdf1c: SdltReturnPdf1c = mockPdf1c(),
                            pdf2Purchaser: SdltReturnPdf2Purchaser = mockPdf2Purchaser(),
-                           pdf3: SdltReturnPdf3 = mockPdf3())
+                           pdf3: SdltReturnPdf3 = mockPdf3(),
+                           pdf4: SdltReturnPdf4 = mockPdf4())
   : PDFGenerationService =
-    new PDFGenerationService(pdf1a, pdf1b, pdf1c, pdf2Purchaser, pdf3)
+    new PDFGenerationService(pdf1a, pdf1b, pdf1c, pdf2Purchaser, pdf3, pdf4)
 
 
   "PDFGenerationService" - {
@@ -315,6 +322,89 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
         }
       }
 
+      "pdf4" - {
+
+        "must call pdf4Filler for one additional land when lease" in {
+          val pdf1a = mockPdf1a()
+          val pdf4 = mockPdf4()
+          val service = buildService(pdf1a, pdf4 = pdf4)
+          service.generatePdf(completeFullReturn.copy(
+            land = Some(Seq(
+              Land(landID = Some("LND001")),
+              Land(landID = Some("LND002"))
+            )),
+            returnInfo = Some(ReturnInfo(mainLandID = Some("LND001")))
+          )).futureValue
+          verify(pdf4, times(1)).fillPdf(any[Land], any[FullReturn](), any[Boolean], any[Boolean])
+        }
+
+        "must call pdf4Filler for each additional land when lease" in {
+          val pdf1a = mockPdf1a()
+          val pdf4 = mockPdf4()
+          val service = buildService(pdf1a, pdf4 = pdf4)
+          service.generatePdf(completeFullReturn.copy(
+            land = Some(Seq(
+              Land(landID = Some("LND001")),
+              Land(landID = Some("LND002")),
+              Land(landID = Some("LND003")),
+              Land(landID = Some("LND004"))
+            )),
+            returnInfo = Some(ReturnInfo(mainLandID = Some("LND001")))
+          )).futureValue
+          verify(pdf4, times(3)).fillPdf(any[Land], any[FullReturn](), any[Boolean], any[Boolean])
+        }
+
+        "must call pdf4Filler when freehold residential & has sdlt4 answers" in {
+          val pdf1a = mockPdf1a()
+          val pdf4 = mockPdf4()
+          val service = buildService(pdf1a, pdf4 = pdf4)
+          service.generatePdf(completeFullReturn.copy(
+            lease = None,
+            land = Some(Seq(
+              Land(landID = Some("LND001"), propertyType = Some("01")),
+              Land(landID = Some("LND002")),
+              Land(landID = Some("LND003")),
+              Land(landID = Some("LND004"))
+            )),
+            returnInfo = Some(ReturnInfo(mainLandID = Some("LND001"))),
+            transaction = Some(Transaction(
+              includesStock = Some("yes"),
+              isDependantOnFutureEvent = Some("yes"),
+            )),
+          )).futureValue
+          verify(pdf4, times(3)).fillPdf(any[Land], any[FullReturn](), any[Boolean], any[Boolean])
+        }
+
+        "must not call pdf4Filler when only one land and lease" in {
+          val pdf1a = mockPdf1a()
+          val pdf4 = mockPdf4()
+          val service = buildService(pdf1a, pdf4 = pdf4)
+          service.generatePdf(completeFullReturn.copy(
+            land = Some(Seq(
+              Land(landID = Some("LND001"))
+            )),
+            returnInfo = Some(ReturnInfo(mainLandID = Some("LND001")))
+          )).futureValue
+          verify(pdf4, never).fillPdf(any[Land], any[FullReturn](), any[Boolean], any[Boolean])
+        }
+
+        "must not call pdf4Filler when freehold residential & does not have sdlt4 answers" in {
+          val pdf1a = mockPdf1a()
+          val pdf4 = mockPdf4()
+          val service = buildService(pdf1a, pdf4 = pdf4)
+          service.generatePdf(completeFullReturn.copy(
+            lease = None,
+            land = Some(Seq(
+              Land(landID = Some("LND001"), propertyType = Some("01")),
+              Land(landID = Some("LND002")),
+              Land(landID = Some("LND003")),
+              Land(landID = Some("LND004"))
+            )),
+            returnInfo = Some(ReturnInfo(mainLandID = Some("LND001")))
+          )).futureValue
+          verify(pdf4, never).fillPdf(any[Land], any[FullReturn](), any[Boolean], any[Boolean])
+        }
+      }
     }
 
     "ClasspathPdfTemplateLoader" - {
