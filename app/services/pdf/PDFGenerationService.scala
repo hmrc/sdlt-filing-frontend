@@ -46,6 +46,7 @@ class ClasspathPdfTemplateLoader @Inject()(env: Environment) extends PdfTemplate
 class PDFGenerationService @Inject()(
                                       pdf1aFiller:     SdltReturnPdf1a,
                                       pdf1bFiller:     SdltReturnPdf1b,
+                                      pdf1cFiller:     SdltReturnPdf1c,
                                       pdf2PurchFiller: SdltReturnPdf2Purchaser,
 //                                      pdf2VendFiller:  SdltReturnPdf2Vendor,
                                       pdf3Filler:      SdltReturnPdf3,
@@ -91,6 +92,7 @@ class PDFGenerationService @Inject()(
     // ---- SDLT1: always present ----
     parts :+= pdf1aFiller.fillPdf(r)
     parts :+= pdf1bFiller.fillPdf(sdlt1AdditionalVendor, r)
+    parts :+= pdf1cFiller.fillPdf(r)
 
 
     // ---- SDLT2: one per purchaser beyond the first two (main purchaser and one additional) ----

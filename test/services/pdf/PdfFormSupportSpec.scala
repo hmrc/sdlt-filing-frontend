@@ -89,5 +89,43 @@ class PdfFormSupportSpec extends SpecBase with MockitoSugar {
         result mustBe(Some("first second"), Some("third fourth"))
       }
     }
+
+    ".splitNino" - {
+
+      "must split a standard NINO with spaces into five boxes (2/2/2/2/1)" in {
+        val result = splitNino(Some("AB 123456 C"))
+        result mustBe (Some("AB"), Some("12"), Some("34"), Some("56"), Some("C"))
+      }
+
+      "must strip spaces before splitting" in {
+        val result = splitNino(Some("AB123456C"))
+        result mustBe (Some("AB"), Some("12"), Some("34"), Some("56"), Some("C"))
+      }
+
+      "must uppercase the input before splitting" in {
+        val result = splitNino(Some("ab 123456 c"))
+        result mustBe (Some("AB"), Some("12"), Some("34"), Some("56"), Some("C"))
+      }
+
+      "must return all Nones when nino is None" in {
+        val result = splitNino(None)
+        result mustBe (None, None, None, None, None)
+      }
+
+      "must return all Nones when nino is an empty string" in {
+        val result = splitNino(Some(""))
+        result mustBe (None, None, None, None, None)
+      }
+
+      "must return all Nones when nino is whitespace only" in {
+        val result = splitNino(Some("   "))
+        result mustBe (None, None, None, None, None)
+      }
+
+      "must handle a short string without throwing" in {
+        val result = splitNino(Some("AB"))
+        result mustBe (Some("AB"), None, None, None, None)
+      }
+    }
   }
 }

@@ -249,6 +249,55 @@ object SdltPdfFields {
   val VENDOR_AGENT_PHONE_NUMBER = "vendor_agentPhoneNumber"
 
   // =========================================================================
+  // PAGE 5 — About the Purchaser (Boxes 49-62)
+  // =========================================================================
+
+  // Box 49: National Insurance number (split across five boxes)
+  val PURCHASER_NINO_1 = "purchaser_nino_1"
+  val PURCHASER_NINO_2 = "purchaser_nino_2"
+  val PURCHASER_NINO_3 = "purchaser_nino_3"
+  val PURCHASER_NINO_4 = "purchaser_nino_4"
+  val PURCHASER_NINO_5 = "purchaser_nino_5"
+
+  // Box 49 sub-field: Date of birth
+  val PURCHASER_DOB_DAY   = "purchaser_dob_day"
+  val PURCHASER_DOB_MONTH = "purchaser_dob_month"
+  val PURCHASER_DOB_YEAR  = "purchaser_dob_year"
+
+  // Box 50: VAT Registration Number
+  val PURCHASER_VAT_REFERENCE = "purchaser_vatReference"
+
+  // Box 51: UK company/partnership UTR / foreign tax reference / country of registration
+  val PURCHASER_COMPANY_UTR       = "purchaser_companyUtr"
+  val PURCHASER_REGISTERED_NUMBER = "purchaser_registeredNumber"
+  val PURCHASER_REGISTERED_PLACE  = "purchaser_registeredPlace"
+
+  // Box 52: Number of purchasers included
+  val PURCHASER_NUMBER_PURCHASERS = "purchaser_numberPurchasers"
+
+  // Box 53: Title          — reuse PURCHASER_TITLE
+  // Box 54: Surname or company name — reuse PURCHASER_COMPANY_NAME (single field for both)
+  // Box 55: First name(s)  — reuse PURCHASER_FORENAME_1/2
+  // Box 56: Address        — reuse PURCHASER_HOUSE_NUMBER, PURCHASER_ADDRESS_LINE_1..4, PURCHASER_POSTCODE_1/2
+  // Box 57: Acting trustee — reuse PURCHASER_ACTING_TRUSTEE_YES/NO
+  // Box 59: Connected to vendor — reuse PURCHASER_CONNECTED_TO_VENDOR_YES/NO
+
+  // Box 58: Daytime phone number
+  val PURCHASER_DAYTIME_PHONE_NUMBER = "purchaser_daytimePhoneNumber"
+
+  // Box 60: Where to send the certificate
+  val LAND_CERTIFICATE_ADDRESS_PROPERTY  = "land_certificateAddress_property"
+  val LAND_CERTIFICATE_ADDRESS_PURCHASER = "land_certificateAddress_purchaser"
+  val LAND_CERTIFICATE_ADDRESS_AGENT     = "land_certificateAddress_agent"
+
+  // Box 61: Agent authorised to handle correspondence
+  val PURCHASER_AGENT_AUTHORISED_YES = "purchaser_agentAuthorised_yes"
+  val PURCHASER_AGENT_AUTHORISED_NO  = "purchaser_agentAuthorised_no"
+
+  // Box 62: Agent name
+  val PURCHASER_AGENT_NAME = "purchaser_agentName"
+
+  // =========================================================================
   // SDLT2 Purchaser
   // =========================================================================
 

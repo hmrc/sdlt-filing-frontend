@@ -40,6 +40,17 @@ object PdfFormSupport {
         if (parts.length == 2) (Some(parts(0)), Some(parts(1))) else (Some(pc), None)
     }
 
+  /** Split a NINO (e.g. "AB 123456 C") across five boxes as 2/2/2/2/1 characters.
+   *  Strips whitespace and uppercases before splitting. Tolerant of blank or None. */
+  def splitNino(nino: Option[String]): (Option[String], Option[String], Option[String], Option[String], Option[String]) =
+    nino.map(_.replaceAll("\\s+", "").toUpperCase).filter(_.nonEmpty) match {
+      case None => (None, None, None, None, None)
+      case Some(n) =>
+        def part(from: Int, len: Int): Option[String] =
+          if (from >= n.length) None else Some(n.substring(from, (from + len).min(n.length)))
+        (part(0, 2), part(2, 2), part(4, 2), part(6, 2), part(8, 1))
+    }
+
   /** Split a long string at a word boundary near maxLen across two fields. */
   def splitLines(s: Option[String], maxLen: Int): (Option[String], Option[String]) =
     s.map(_.trim).filter(_.nonEmpty) match {
