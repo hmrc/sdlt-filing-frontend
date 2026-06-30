@@ -157,6 +157,26 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
     isTrustee = Some("YES")
   ))
 
+  val r = withPurchaser(
+    Purchaser(
+      isCompany = Some("NO"),
+      title = Some("MR"),
+      surname = Some("Smith"),
+      forename1 = Some("John"),
+      forename2 = Some("Paul"),
+      purchaserID = Some("PUR001"),
+      nextPurchaserID = Some("PUR002")
+    ),
+    Purchaser(
+      isCompany = Some("NO"),
+      title = Some("MR"),
+      surname = Some("Jones"),
+      forename1 = Some("Jane"),
+      forename2 = Some("Mary"),
+      purchaserID = Some("PUR002")
+    )
+  )
+
   "fillPdf" - {
 
     "must return a non-empty byte array" in {
@@ -193,25 +213,7 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
     }
 
     "must write second purchaser name and forenames" in {
-      val r = withPurchaser(
-        Purchaser(
-          isCompany = Some("NO"),
-          title = Some("MR"),
-          surname = Some("Smith"),
-          forename1 = Some("John"),
-          forename2 = Some("Paul"),
-          purchaserID = Some("PUR001"),
-          nextPurchaserID = Some("PUR002")
-        ),
-        Purchaser(
-          isCompany = Some("NO"),
-          title = Some("MR"),
-          surname = Some("Jones"),
-          forename1 = Some("Jane"),
-          forename2 = Some("Mary"),
-          purchaserID = Some("PUR002")
-        )
-      )
+
       val result = fill(r, additionalPurchaser)
       readField(result, "purchaser_companyName") mustBe Some("Jones")
       readField(result, "purchaser_forename1") mustBe Some("Jane")
@@ -219,23 +221,7 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
     }
 
     "must write second purchaser companyName when isCompany is 'Yes' " in {
-      val r = withPurchaser(
-        Purchaser(
-          title = Some("MR"),
-          surname = Some("Smith"),
-          forename1 = Some("John"),
-          forename2 = Some("Paul"),
-          purchaserID = Some("PUR001"),
-          nextPurchaserID = Some("PUR002")
-        ),
-        Purchaser(
-          isCompany = Some("YES"),
-          companyName = Some("Apple"),
-          forename1 = Some("Jane"),
-          forename2 = Some("Mary"),
-          purchaserID = Some("PUR002")
-        )
-      )
+
       val result = fill(r, additionalPurchaserWithCompany)
       readField(result, "purchaser_companyName") mustBe Some("Apple")
       readField(result, "purchaser_forename1") mustBe Some("")
@@ -243,29 +229,7 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
     }
 
     "must write second purchaser address and postcode" in {
-      val r = withPurchaser(Purchaser(
-        isCompany = Some("NO"),
-        title = Some("MR"),
-        surname = Some("Smith"),
-        forename1 = Some("John"),
-        forename2 = Some("Paul"),
-        purchaserID = Some("PUR001"),
-        nextPurchaserID = Some("PUR002")
-      ),
-        Purchaser(
-          title = Some("MR"),
-          surname = Some("Jon"),
-          forename1 = Some("Jane"),
-          forename2 = Some("Mary"),
-          purchaserID = Some("PUR002"),
-          houseNumber = Some("5"),
-          address1 = Some("Address 1"),
-          address2 = Some("Address 2"),
-          address3 = Some("Address 3"),
-          address4 = Some("Address 4"),
-          postcode = Some("M1 2AB"),
-          isTrustee = Some("YES")
-        ))
+
       val result = fill(r, additionalPurchaser)
       readField(result, "purchaser_houseNumber") mustBe Some("5")
       readField(result, "purchaser_addressLine1") mustBe Some("Address 1")
@@ -278,31 +242,14 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
       readField(result, "purchaser_actingTrustee_no") mustBe Some("Off")
     }
 
-    "must leave purchaser name blank when no purchaser 2 is present" in {
-      val r = withPurchaser(
-        Purchaser(
-          isCompany = Some("NO"),
-          title = Some("MR"),
-          surname = Some("Smith"),
-          forename1 = Some("John"),
-          forename2 = Some("Paul"),
-          purchaserID = Some("PUR001")
-        ))
+    "must leave purchaser name blank when no additional purchaser is present" in {
       val result = fill(r, None)
       readField(result, "purchaser_companyName") mustBe Some("")
       readField(result, "purchaser_forename1") mustBe Some("")
       readField(result, "purchaser_forename2") mustBe Some("")
     }
 
-    "must leave address blank when no purchaser 2 is present" in {
-      val r = withPurchaser(Purchaser(
-        isCompany = Some("NO"),
-        title = Some("MR"),
-        surname = Some("Smith"),
-        forename1 = Some("John"),
-        forename2 = Some("Paul"),
-        purchaserID = Some("PUR001")
-      ))
+    "must leave address blank when no additional purchaser is present" in {
       val result = fill(r, None)
       readField(result, "purchaser_houseNumber") mustBe Some("")
       readField(result, "purchaser_addressLine1") mustBe Some("")
@@ -329,7 +276,6 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
         DXAddress = Some("London"),
         reference = Some("123456")
       ))
-
       val result = fill(r, additionalPurchaser)
       readField(result, "purchaser_agentHouseNumber") mustBe Some("1")
       readField(result, "purchaser_agentAddressLine1") mustBe Some("Agent address 1")
@@ -389,70 +335,11 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
     }
 
     "must handle a completely populated return without throwing" in {
-      val r = FullReturn(
-        stornId = "STORN999",
-        returnResourceRef = "RRF-999",
-        returnInfo = Some(ReturnInfo(returnID = Some("RET999"))),
-        submission = Some(Submission(UTRN = Some("UTR-1234"))),
-        purchaser = Some(Seq(
-          Purchaser(
-            isCompany = Some("NO"),
-            title = Some("MR"),
-            surname = Some("Smith"),
-            forename1 = Some("John"),
-            forename2 = Some("Paul"),
-            purchaserID = Some("PUR001"),
-            nextPurchaserID = Some("PUR002")
-          ),
-          Purchaser(
-            title = Some("MR"),
-            surname = Some("Jones"),
-            forename1 = Some("Jane"),
-            forename2 = Some("Mary"),
-            purchaserID = Some("PUR002"),
-            houseNumber = Some("5"),
-            address1 = Some("Address 1"),
-            address2 = Some("Address 2"),
-            address3 = Some("Address 3"),
-            address4 = Some("Address 4"),
-            postcode = Some("M1 2AB")
-          ))),
-        returnAgent = Some(Seq(ReturnAgent(
-          name = Some("Agent Ltd"),
-          returnAgentID = Some("RA001"),
-          returnID = Some("RET001"),
-          agentType = Some("PURCHASER"),
-          houseNumber = Some("1"),
-          address1 = Some("Agent address 1"),
-          address2 = Some("Agent address 2"),
-          address3 = Some("Agent address 3"),
-          address4 = Some("Agent address 4"),
-          postcode = Some("EC4A 2DQ"),
-          phone = Some("0123456789"),
-          DXAddress = Some("London"),
-          reference = Some("123456")
-        )))
-      )
       noException mustBe thrownBy(buildFiller().fillPdf(None,r))
     }
 
 
     "must write '0' for sdlt2, sdlt3, sdlt4 values when no additional data existed for vendor, purchaser, land and lease" in {
-      val r = withPurchaser(Purchaser(
-        isCompany = Some("NO"),
-        title = Some("MR"),
-        surname = Some("Smith"),
-        forename1 = Some("John"),
-        forename2 = Some("Paul"),
-        purchaserID = Some("PUR001"),
-        nextPurchaserID = Some("PUR002")
-      ),
-        Purchaser(
-          title = Some("MR"),
-          surname = Some("Jon"),
-          forename1 = Some("Jane"),
-          purchaserID = Some("PUR002")
-        ))
       val result = fill(r, additionalPurchaser)
       readField(result, "return_additionalDetailsSdlt2") mustBe Some("0")
       readField(result, "return_additionalDetailsSdlt3") mustBe Some("0")
