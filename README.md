@@ -44,6 +44,15 @@ test/
 └── views/[section]/         # e.g. views/vendor
 ```
 
+### Example routes and messages
+
+```GET  /preliminary-questions/who-is-making-the-purchase  controllers.preliminary.PurchaserIsIndividualController.onPageLoad(mode: Mode = NormalMode)```
+
+Message key (messages.en):
+
+```prelim.purchaserIsIndividual.heading = Who is making the purchase?```
+
+
 ### License
 
 This code is open source software licensed under
