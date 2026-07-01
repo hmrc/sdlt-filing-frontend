@@ -298,6 +298,36 @@ object SdltPdfFields {
   val PURCHASER_AGENT_NAME = "purchaser_agentName"
 
   // =========================================================================
+  // Page number 6 & 7 additional purchaser PAGE 6 & 7 — About the Additional Purchaser (63-73)
+  // =========================================================================
+
+  //Box 68
+  val PURCHASER_SURNAME_BOX68 = "purchaser_companyName"
+
+  //Box 63
+  val PURCHASER_AGENT_POSTCODE_1 = "purchaser_agentPostcode_1"
+  val PURCHASER_AGENT_POSTCODE_2 = "purchaser_agentPostcode_2"
+  val PURCHASER_AGENT_HOUSE_NUMBER = "purchaser_agentHouseNumber"
+  val PURCHASER_AGENT_ADDRESS_LINE1 = "purchaser_agentAddressLine1"
+  val PURCHASER_AGENT_ADDRESS_LINE2 = "purchaser_agentAddressLine2"
+  val PURCHASER_AGENT_ADDRESS_LINE3 = "purchaser_agentAddressLine3"
+  val PURCHASER_AGENT_ADDRESS_LINE4 = "purchaser_agentAddressLine4"
+
+  //Box64
+  val PURCHASER_AGENT_DX_NUMBER = "purchaser_agentDxAddress"
+
+  //Box65
+  val PURCHASER_AGENT_REFERENCE = "purchaser_agentReference"
+
+  //Box 66
+  val PURCHASER_AGENT_PHONE_NUMBER = "purchaser_agentPhoneNumber"
+
+  //Box 72
+  val PURCHASER_ADDITIONALDETAILS_SDLT2 = "return_additionalDetailsSdlt2"
+  val LAND_ADDITIONALDETAILS_SDLT3 = "return_additionalDetailsSdlt3"
+  val LEASE_ADDITIONALDETAILS_SDLT4 = "return_additionalDetailsSdlt4"
+
+  // =========================================================================
   // SDLT2 Purchaser
   // =========================================================================
 
@@ -452,41 +482,5 @@ object SdltPdfFields {
   // =========================================================================
   val CHECKBOX_ON  = "Yes"
   val CHECKBOX_OFF = "Off"
-
-  // =========================================================================
-  // Page number 6 & 7 additional purchaser PAGE 6 & 7 — About the Additional Purchaser (63-73)
-  // =========================================================================
-
-  //Box 68 
-   val PURCHASER_SURNAME_BOX68 = "purchaser_companyName"
-
-  //Box 70
-  val PURCHASER_ADDRESS_LINE1 = "purchaser_addressLine1"
-  val PURCHASER_ADDRESS_LINE2 = "purchaser_addressLine2"
-  val PURCHASER_ADDRESS_LINE3 = "purchaser_addressLine3"
-  val PURCHASER_ADDRESS_LINE4 = "purchaser_addressLine4"
-  val PURCHASER2_SAMEADDRESS = "purchaser_sameAddress"
-
-  //Box 63
-  val PURCHASER_AGENT_POSTCODE_1 = "purchaser_agentPostcode_1"
-  val PURCHASER_AGENT_POSTCODE_2 = "purchaser_agentPostcode_2"
-  val PURCHASER_AGENT_HOUSE_NUMBER = "purchaser_agentHouseNumber"
-  val PURCHASER_AGENT_ADDRESS_LINE1 = "purchaser_agentAddressLine1"
-  val PURCHASER_AGENT_ADDRESS_LINE2 = "purchaser_agentAddressLine2"
-  val PURCHASER_AGENT_ADDRESS_LINE3 = "purchaser_agentAddressLine3"
-  val PURCHASER_AGENT_ADDRESS_LINE4 = "purchaser_agentAddressLine4"
-
-  //Box64
-  val PURCHASER_AGENT_DX_NUMBER = "purchaser_agentDxAddress"
-
-  //Box65
-  val PURCHASER_AGENT_REFERENCE = "purchaser_agentReference"
-
-  //Box 66
-  val PURCHASER_AGENT_PHONE_NUMBER = "purchaser_agentPhoneNumber"
-
-  //Box 72
-  val PURCHASER_ADDITIONALDETAILS_SDLT2 = "return_additionalDetailsSdlt2"
-  val LAND_ADDITIONALDETAILS_SDLT3 = "return_additionalDetailsSdlt3"
-  val LEASE_ADDITIONALDETAILS_SDLT4 = "return_additionalDetailsSdlt4"
+  
 }

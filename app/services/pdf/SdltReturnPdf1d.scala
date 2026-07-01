@@ -74,7 +74,6 @@ class SdltReturnPdf1d @Inject()(
   private def fillPurchaserFields(w: PdfFieldWriter, additionalPurchaser: Option[Purchaser], r: FullReturn): Unit = {
     val purchasers = r.purchaser.getOrElse(Seq.empty)
     val purchaserAgent = r.returnAgent.flatMap(_.find(_.agentType.contains(AgentType.Purchaser.toString)))
-    // val sameAddress = sameAddressCheck(purchaser1, additionalPurchaser2) // TODO : make changes once receive pdf field name of Purchaser sameAddress check box
     val vendors = r.vendor.getOrElse(Seq.empty)
     val lands = r.land.getOrElse(Seq.empty)
     val sdlt2Count = (purchasers.size - 2).max(0) + (vendors.size - 2).max(0)
@@ -100,24 +99,12 @@ class SdltReturnPdf1d @Inject()(
         w.text(PURCHASER_FORENAME_1, purchaser.forename1)
         w.text(PURCHASER_FORENAME_2, purchaser.forename2)
       }
-
-      /* if (!sameAddress) { // TODO : make changes once receive pdf field name of Purchaser sameAddress check box
-        w.text(PURCHASER2_SAMEADDRESS, Some("X"))
-      } else {
-        w.postcode(PURCHASER_POSTCODE_1, PURCHASER_POSTCODE_2, purchaser.postcode)
-        w.text(PURCHASER_HOUSE_NUMBER, purchaser.houseNumber)
-        w.text(PURCHASER_ADDRESS_LINE1, purchaser.address1)
-        w.text(PURCHASER_ADDRESS_LINE2, purchaser.address2)
-        w.text(PURCHASER_ADDRESS_LINE3, purchaser.address3)
-        w.text(PURCHASER_ADDRESS_LINE4, purchaser.address4)
-      } */
-
       w.postcode(PURCHASER_POSTCODE_1, PURCHASER_POSTCODE_2, purchaser.postcode)
       w.text(PURCHASER_HOUSE_NUMBER, purchaser.houseNumber)
-      w.text(PURCHASER_ADDRESS_LINE1, purchaser.address1)
-      w.text(PURCHASER_ADDRESS_LINE2, purchaser.address2)
-      w.text(PURCHASER_ADDRESS_LINE3, purchaser.address3)
-      w.text(PURCHASER_ADDRESS_LINE4, purchaser.address4)
+      w.text(PURCHASER_ADDRESS_LINE_1, purchaser.address1)
+      w.text(PURCHASER_ADDRESS_LINE_2, purchaser.address2)
+      w.text(PURCHASER_ADDRESS_LINE_3, purchaser.address3)
+      w.text(PURCHASER_ADDRESS_LINE_4, purchaser.address4)
 
       w.yesNo(
         PURCHASER_ACTING_TRUSTEE_YES,
@@ -129,15 +116,6 @@ class SdltReturnPdf1d @Inject()(
     w.text(LAND_ADDITIONALDETAILS_SDLT3, Some(sdlt3Count.toString))
     w.text(LEASE_ADDITIONALDETAILS_SDLT4, Some(sdlt4Count.toString))
   }
-
-  /* private def sameAddressCheck(p1: Option[Purchaser], p2: Option[Purchaser]): Boolean = { // TODO : make changes once receive pdf field name of Purchaser sameAddress check box
-     p1.flatMap(_.houseNumber) == p2.flatMap(_.houseNumber) &&
-       p1.flatMap(_.address1) == p2.flatMap(_.address1) &&
-       p1.flatMap(_.address2) == p2.flatMap(_.address2) &&
-       p1.flatMap(_.address3) == p2.flatMap(_.address3) &&
-       p1.flatMap(_.address4) == p2.flatMap(_.address4) &&
-       p1.flatMap(_.postcode) == p2.flatMap(_.postcode)
-   } */
 
   private def fillCommonFields(w: PdfFieldWriter, r: FullReturn): Unit =
     w.text(UTRN, r.submission.flatMap(_.UTRN))
