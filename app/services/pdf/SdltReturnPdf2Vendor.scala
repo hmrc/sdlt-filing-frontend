@@ -43,9 +43,6 @@ class SdltReturnPdf2Vendor @Inject()(
     Using.Manager { use =>
       val doc = use(Loader.loadPDF(templateBytes))
       val form = getAcroForm(doc)
-      form.getFields.forEach { field =>
-        println(field.getFullyQualifiedName)
-      }
       val customFontResourceInputStream = getClass.getResourceAsStream(CUSTOM_FONT_RESOURCE_PATH)
       val res = form.getDefaultResources
       val customFont = PDTrueTypeFont.load(doc, customFontResourceInputStream, WinAnsiEncoding.INSTANCE)
