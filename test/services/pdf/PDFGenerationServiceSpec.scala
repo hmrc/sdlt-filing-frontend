@@ -80,6 +80,12 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
     m
   }
 
+  private def mockPdf2Vendor(bytes: Array[Byte] = blankPdfBytes): SdltReturnPdf2Vendor = {
+    val m = mock[SdltReturnPdf2Vendor]
+    when(m.fillPdf(any[Vendor], any[FullReturn](), any[Boolean]())).thenReturn(bytes)
+    m
+  }
+
   private def mockPdf3(bytes: Array[Byte] = blankPdfBytes): SdltReturnPdf3 = {
     val m = mock[SdltReturnPdf3]
     when(m.fillPdf(any[FullReturn](), any[Land], any[Boolean]())).thenReturn(bytes)
@@ -97,10 +103,11 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
                            pdf1c: SdltReturnPdf1c = mockPdf1c(),
                            pdf1d: SdltReturnPdf1d = mockPdf1d(),
                            pdf2Purchaser: SdltReturnPdf2Purchaser = mockPdf2Purchaser(),
+                           pdf2Vendor: SdltReturnPdf2Vendor = mockPdf2Vendor(),
                            pdf3: SdltReturnPdf3 = mockPdf3(),
                            pdf4: SdltReturnPdf4 = mockPdf4())
   : PDFGenerationService =
-    new PDFGenerationService(pdf1a, pdf1b, pdf1c, pdf1d, pdf2Purchaser, pdf3, pdf4)
+    new PDFGenerationService(pdf1a, pdf1b, pdf1c, pdf1d, pdf2Purchaser, pdf2Vendor, pdf3, pdf4)
 
 
   "PDFGenerationService" - {
@@ -325,6 +332,82 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
               Purchaser(purchaserID = Some("PUR006"))
             )),
             returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR001")))
+          )).failed) { ex =>
+            ex mustBe a[SdltPdfFillException]
+          }
+        }
+      }
+
+      "pdf2 vendor" - {
+        "must call pdfVendFiller for one additional vendor" in {
+          val pdf2Vendor = mockPdf2Vendor()
+          val service = buildService(pdf2Vendor = pdf2Vendor)
+          service.generatePdf(completeFullReturn.copy(
+            vendor = Some(Seq(
+              Vendor(vendorID = Some("VEN001")),
+              Vendor(vendorID = Some("VEN002")),
+              Vendor(vendorID = Some("VEN003")),
+            )),
+            returnInfo = Some(ReturnInfo(mainVendorID = Some("VEN001")))
+          )).futureValue
+          verify(pdf2Vendor, times(1)).fillPdf(any[Vendor], any[FullReturn](), any[Boolean]())
+        }
+
+        "must call pdf2VendFiller for each additional vendor" in {
+          val pdf2Vendor = mockPdf2Vendor()
+          val service = buildService(pdf2Vendor = pdf2Vendor)
+          service.generatePdf(completeFullReturn.copy(
+            vendor = Some(Seq(
+              Vendor(vendorID = Some("VEN001")),
+              Vendor(vendorID = Some("VEN002")),
+              Vendor(vendorID = Some("VEN003")),
+              Vendor(vendorID = Some("VEN004")),
+              Vendor(vendorID = Some("VEN005")),
+              Vendor(vendorID = Some("VEN006"))
+            )),
+            returnInfo = Some(ReturnInfo(mainVendorID = Some("VEN001")))
+          )).futureValue
+          verify(pdf2Vendor, times(4)).fillPdf(any[Vendor], any[FullReturn](), any[Boolean]())
+        }
+
+        "must not call pdf2VendFiller when only one vendor" in {
+          val pdf2Vendor = mockPdf2Vendor()
+          val service = buildService(pdf2Vendor = pdf2Vendor)
+          service.generatePdf(completeFullReturn.copy(
+            vendor = Some(Seq(
+              Vendor(vendorID = Some("VEN001"))
+            )),
+            returnInfo = Some(ReturnInfo(mainVendorID = Some("VEN001")))
+          )).futureValue
+          verify(pdf2Vendor, times(0)).fillPdf(any[Vendor], any[FullReturn](), any[Boolean]())
+        }
+
+        "must not call pdf2VendFiller when only two vendor" in {
+          val pdf2Vendor = mockPdf2Vendor()
+          val service = buildService(pdf2Vendor = pdf2Vendor)
+          service.generatePdf(completeFullReturn.copy(
+            vendor = Some(Seq(
+              Vendor(vendorID = Some("VEN001")),
+              Vendor(vendorID = Some("VEN002"))
+            )),
+            returnInfo = Some(ReturnInfo(mainVendorID = Some("VEN001")))
+          )).futureValue
+          verify(pdf2Vendor, times(0)).fillPdf(any[Vendor], any[FullReturn](), any[Boolean]())
+        }
+
+        "must propagate failures from pdf2VendFiller" in {
+          val pdf2Vendor = mock[SdltReturnPdf2Vendor]
+          when(pdf2Vendor.fillPdf(any[Vendor], any[FullReturn](), any[Boolean]())).thenThrow(new SdltPdfFillException("template missing", null))
+          whenReady(buildService(pdf2Vendor = pdf2Vendor).generatePdf(completeFullReturn.copy(
+            vendor = Some(Seq(
+              Vendor(vendorID = Some("VEN001")),
+              Vendor(vendorID = Some("VEN002")),
+              Vendor(vendorID = Some("VEN003")),
+              Vendor(vendorID = Some("VEN004")),
+              Vendor(vendorID = Some("VEN005")),
+              Vendor(vendorID = Some("VEN006"))
+            )),
+            returnInfo = Some(ReturnInfo(mainPurchaserID = Some("VEN001")))
           )).failed) { ex =>
             ex mustBe a[SdltPdfFillException]
           }
