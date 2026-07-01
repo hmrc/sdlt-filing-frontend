@@ -50,7 +50,7 @@ class PDFGenerationService @Inject()(
                                       pdf1cFiller:     SdltReturnPdf1c,
                                       pdf1dFiller:     SdltReturnPdf1d,
                                       pdf2PurchFiller: SdltReturnPdf2Purchaser,
-//                                      pdf2VendFiller:  SdltReturnPdf2Vendor,
+                                      pdf2VendFiller:  SdltReturnPdf2Vendor,
                                       pdf3Filler:      SdltReturnPdf3,
                                       pdf4Filler:      SdltReturnPdf4,
 //                                      pdf4aFiller:     SdltReturnPdf4a
@@ -104,13 +104,13 @@ class PDFGenerationService @Inject()(
           parts :+= pdf2PurchFiller.fillPdf(purchaser, r)
         }
       }
-//
-//    // ---- SDLT2: one per vendor beyond the first two ----
-//    sdlt2AdditionalVendors.zipWithIndex.foreach { case (vendor, idx) =>
-//      tryFill(s"SDLT2 vendor index ${idx + 2}") {
-//        parts :+= pdf2VendFiller.fillPdf(vendor, r)
-//      }
-//    }
+
+    // ---- SDLT2: one per vendor beyond the first two ----
+    sdlt2AdditionalVendors.zipWithIndex.foreach { case (vendor, idx) =>
+      tryFill(s"SDLT2 vendor index ${idx + 2}") {
+        parts :+= pdf2VendFiller.fillPdf(vendor, r)
+      }
+    }
 
 //    // ---- SDLT3: one per additional land ----
     if (lands.size > 1) {
