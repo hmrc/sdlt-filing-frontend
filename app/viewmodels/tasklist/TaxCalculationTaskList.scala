@@ -36,7 +36,7 @@ object TaxCalculationTaskList {
     )
 
   def isTaxCalculationComplete(fullReturn: FullReturn): Boolean = {
-    fullReturn.taxCalculation.exists(_.taxDue.isDefined)
+    fullReturn.taxCalculation.exists(x => x.taxDue.isDefined || (x.taxDueNPV.isDefined && x.taxDuePremium.isDefined))
     //TODO ADD ALL REQUIRED FIELDS FOR TAX CALC
   }
   
