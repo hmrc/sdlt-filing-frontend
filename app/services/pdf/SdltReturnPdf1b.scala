@@ -41,7 +41,7 @@ class SdltReturnPdf1b @Inject()(
   private lazy val templateBytes: Array[Byte] = pdfTemplateLoader.load("SDLT1b.pdf")
   
   def fillPdf(secondVendor: Option[Vendor], fullReturn: FullReturn, flatten: Boolean = true): Array[Byte] = {
-    logger.info(s"[SdltReturnPdf1b[fillPdf] Filling SDLT1 for returnID: ${fullReturn.returnInfo.flatMap(_.returnID).getOrElse("unknown")}")
+    logger.info(s"[SdltReturnPdf1b][fillPdf] Filling SDLT1 for returnID: ${fullReturn.returnInfo.flatMap(_.returnID).getOrElse("unknown")}")
     
     Using.Manager { use =>
       val doc = use(Loader.loadPDF(templateBytes))

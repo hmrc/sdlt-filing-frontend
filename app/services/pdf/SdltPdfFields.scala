@@ -369,7 +369,30 @@ object SdltPdfFields {
   // Box 7: Purchaser acting as a trustee
   val PURCHASER_ACTING_TRUSTEE_YES = "purchaser_actingTrustee_yes"
   val PURCHASER_ACTING_TRUSTEE_NO = "purchaser_actingTrustee_no"
-  
+
+  // =========================================================================
+  // SDLT2 Vendor
+  // =========================================================================
+
+  // =========================================================================
+  // PAGE 1 — About the vendor (Boxes 1-5)
+  // =========================================================================
+
+  // Box 1: Additional Vendor or Purchaser
+  val IS_VENDOR = "is_vendor"
+
+  // Box 2: Title - reuse BOX 35
+  // BOX 3: Surname or Company name - reuse BOX 36
+  // Box 4: Forename 1 and 2 - reuse BOX 37
+  // Box 5: Address - reuse BOX 38
+
+  // =========================================================================
+  // PAGE 2 — Additional vendor details (Boxes 6-7)
+  // =========================================================================
+
+  // Box 6: Purchaser and vendor connected - always empty if vendor
+  // Box 7: Purchaser acting as a trustee - always empty if vendor
+
   // =========================================================================
   // SDLT3
   // =========================================================================
