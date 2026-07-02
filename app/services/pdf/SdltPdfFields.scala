@@ -375,7 +375,7 @@ object SdltPdfFields {
   // =========================================================================
 
   // =========================================================================
-  // PAGE 1 — About the Purchaser (Boxes 1-5)
+  // PAGE 1 — About the vendor (Boxes 1-5)
   // =========================================================================
 
   // Box 1: Additional Vendor or Purchaser
@@ -387,7 +387,7 @@ object SdltPdfFields {
   // Box 5: Address - reuse BOX 38
 
   // =========================================================================
-  // PAGE 2 — Additional purchaser details (Boxes 6-7)
+  // PAGE 2 — Additional vendor details (Boxes 6-7)
   // =========================================================================
 
   // Box 6: Purchaser and vendor connected - always empty if vendor

@@ -407,7 +407,7 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
               Vendor(vendorID = Some("VEN005")),
               Vendor(vendorID = Some("VEN006"))
             )),
-            returnInfo = Some(ReturnInfo(mainPurchaserID = Some("VEN001")))
+            returnInfo = Some(ReturnInfo(mainVendorID = Some("VEN001")))
           )).failed) { ex =>
             ex mustBe a[SdltPdfFillException]
           }

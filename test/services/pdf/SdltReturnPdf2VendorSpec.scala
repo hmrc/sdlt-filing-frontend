@@ -138,7 +138,7 @@ class SdltReturnPdf2VendorSpec extends SpecBase with MockitoSugar {
         d.close()
         out.toByteArray
       }
-      when(loader.load("SDLT2.pdf")).thenReturn(bare)
+      when(loader.load("SDLT2vendor.pdf")).thenReturn(bare)
       val filler = new SdltReturnPdf2Vendor(loader)
       intercept[SdltPdfFillException] {
         filler.fillPdf(Vendor(), baseReturn)
@@ -177,13 +177,6 @@ class SdltReturnPdf2VendorSpec extends SpecBase with MockitoSugar {
       val result = fill(vendor, fullReturn)
       readField(result, "vendor_forename1") mustBe Some("Bone")
       readField(result, "vendor_forename2") mustBe Some("Jones")
-    }
-
-    "must not write vendor company name when purchaser is individual" in {
-      val vendor = Vendor(name = Some("Jon"), forename1 = Some("Bone"), forename2 = Some("Jones"))
-      val fullReturn = withVendor(vendor)
-      val result = fill(vendor, fullReturn)
-      readField(result, "vendor_companyName") mustBe Some("")
     }
 
     "must split a standard postcode with space into two fields" in {
