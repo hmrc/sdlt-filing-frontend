@@ -19,6 +19,7 @@ package viewmodels.tasklist
 import base.SpecBase
 import config.FrontendAppConfig
 import constants.FullReturnConstants.*
+import models.TaxCalculation
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 
@@ -79,9 +80,16 @@ class TaxCalculationTaskListSpec extends SpecBase {
           result mustBe true
       }
 
-      "must return false if tax calculation but tax due is missing" in {
+      "must return true if tax calculation exists and tax due on npv & tax due premium is defined" in {
+        val result = TaxCalculationTaskList.isTaxCalculationComplete(emptyFullReturn.copy(taxCalculation =
+          Some(TaxCalculation(taxDueNPV = Some("1897"), taxDuePremium = Some("9999")))))
+
+        result mustBe true
+      }
+
+      "must return false if tax calculation but tax due or npv & premium is missing" in {
           val result = TaxCalculationTaskList.isTaxCalculationComplete(fullReturnComplete.copy(taxCalculation = Some(completeTaxCalculation
-            .copy(taxDue = None))))
+            .copy(taxDue = None, taxDueNPV = None, taxDuePremium = None))))
 
           result mustBe false
       }
