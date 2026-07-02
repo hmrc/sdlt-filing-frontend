@@ -2153,3 +2153,29 @@ crossflow.land.Cf-6.column.actions      = Actions
 crossflow.lease.Cf-5a.cta = Select ‘R - Residential’ as the type of lease.
 crossflow.lease.Cf-5b.cta = Select ‘M - Mixed use’ as the type of lease.
 crossflow.lease.Cf-5c.cta = Select ‘N - Non-residential’ as the type of lease.
+
+submission.submissionComplete.title = Submission complete
+submission.submissionComplete.panel.heading = Submission complete
+submission.submissionComplete.panel.body = Your UTRN
+submission.submissionComplete.link1 = View your submitted return
+submission.submissionComplete.link2 = Print or save a copy of this page
+submission.submissionComplete.heading1 = What happens next
+submission.submissionComplete.p1 = HMRC have sent a confirmation email to {0}.
+submission.submissionComplete.p2 = You must:
+submission.submissionComplete.b1 = <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a> – this is official evidence that your return has been successfully submitted
+submission.submissionComplete.b1.linkText = save your SDLT 5 certificate (opens in new tab)
+submission.submissionComplete.b2 = send your SDLT5 to HM Land Registry when registering the land or property
+submission.submissionComplete.b3 = pay the SDLT due within 14 days of submission
+submission.submissionComplete.p3 = Submitted returns and the SDLT5 certificate are deleted from your Stamp Taxes Online account after 30 days of inactivity. To stop this return being deleted, select and view.
+submission.submissionComplete.heading2 = How to pay
+submission.submissionComplete.p4 = Your deadline for SDLT payment is {0}. You intend to pay {1} with this return. You must quote your UTRN when <a href="{2}" class="govuk-link" target="_blank" rel="noopener noreferrer">{3}</a>. Do not include any other information before or after the UTRN.
+submission.submissionComplete.p4.link = https://www.gov.uk/guidance/pay-stamp-duty-land-tax
+submission.submissionComplete.p4.linkText = making an SDLT payment (opens in new tab)
+submission.submissionComplete.details = How to amend this return
+submission.submissionComplete.details.p1 = For minor changes, like spelling mistakes, you can contact the <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+submission.submissionComplete.details.p1.link = https://www.gov.uk/find-hmrc-contacts/stamp-duty-land-tax-general-enquiries
+submission.submissionComplete.details.p1.linkText = Stamp Taxes Helpline (opens in new tab)
+submission.submissionComplete.details.p2 = For substantial changes, like a new purchaser name, you must <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+submission.submissionComplete.details.p2.link = https://www.gov.uk/guidance/how-to-send-a-stamp-duty-land-tax-return#write
+submission.submissionComplete.details.p2.linkText = submit a new SDLT return and write to HMRC (opens in new tab)
+submission.submissionComplete.link3 = Return to your stamp taxes online account

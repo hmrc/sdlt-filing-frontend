@@ -455,7 +455,7 @@ object FullReturnConstants {
     amountPaid = Some("15000.00"),
     includesPenalty = Some("false"),
     taxDue = Some("15000.00"),
-    taxDuePremium = Some("15000.00"),
+    taxDuePremium = None,
     taxDueNPV = None,
     calcPenaltyDue = Some("0.00"),
     calcTaxDue = Some("15000.00"),
@@ -485,7 +485,7 @@ object FullReturnConstants {
     acceptedDate = Some("2024-10-15T11:00:00"),
     submittedDate = Some("2024-10-15T10:30:00"),
     email = Some("john.smith@email.com"),
-    submissionRequestDate = Some("2024-10-15T10:15:00"),
+    submissionRequestDate = Some("2024-10-15T10:15:00Z"),
     irmarkSent = Some("IRMARK-SENT-001")
   )
 
