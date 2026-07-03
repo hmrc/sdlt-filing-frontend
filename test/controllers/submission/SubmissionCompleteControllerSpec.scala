@@ -76,13 +76,6 @@ class SubmissionCompleteControllerSpec extends SpecBase with MockitoSugar {
       taxDueNPV = None
     )))
   
-  private val fullReturnWithOnlyTaxDue = completeFullReturn.copy(
-    taxCalculation = Some(completeTaxCalculation.copy(
-      taxDue = Some("15000"),
-      taxDuePremium = None,
-      taxDueNPV = None
-    )))
-
   private val fullReturnWithOnlyTaxDuePremiumAndTaxDueNPV = completeFullReturn.copy(
     taxCalculation = Some(completeTaxCalculation.copy(
       taxDue = None,
@@ -177,10 +170,10 @@ class SubmissionCompleteControllerSpec extends SpecBase with MockitoSugar {
       val mockFullReturnService = mock[FullReturnService]
       val mockSessionRepository = mock[SessionRepository]
 
-      val userAnswers = emptyUserAnswers.copy(returnId = Some(testReturnId), fullReturn = Some(fullReturnWithOnlyTaxDue))
+      val userAnswers = emptyUserAnswers.copy(returnId = Some(testReturnId), fullReturn = Some(fullReturnWithRequiredData))
 
       when(mockFullReturnService.getFullReturn(any[GetReturnByRefRequest])(any(), any()))
-        .thenReturn(Future.successful(fullReturnWithOnlyTaxDue))
+        .thenReturn(Future.successful(fullReturnWithRequiredData))
 
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
