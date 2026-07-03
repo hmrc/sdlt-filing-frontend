@@ -1,0 +1,130 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
+@import config.FrontendAppConfig
+@import views.html.helper.CSPNonce
+
+@this(
+        layout: templates.Layout,
+        govukButton: GovukButton,
+        govukPanel : GovukPanel,
+        h2: h2,
+        p: Paragraph,
+        govukDetails : GovukDetails,
+        paragraphWithLink: ParagraphWithLink,
+        link: link,
+        appConfig: FrontendAppConfig
+)
+
+@(
+        utrn: String,
+        deadline: String,
+        amount: String,
+        maybeEmail: Option[String] = None
+)(implicit request: Request[_], messages: Messages)
+
+@insetContent = {
+    @paragraphWithLink(
+        messageKey = "submission.submissionComplete.details.p1",
+        linkKey = "submission.submissionComplete.details.p1.link",
+        textKey = "submission.submissionComplete.details.p1.linkText"
+    )
+
+    @paragraphWithLink(
+        messageKey = "submission.submissionComplete.details.p2",
+        linkKey = "submission.submissionComplete.details.p2.link",
+        textKey = "submission.submissionComplete.details.p2.linkText"
+    )
+}
+
+@layout(pageTitle = titleNoForm(messages("submission.submissionComplete.title"), section = Some(messages("site.submission.caption")))){
+
+    @govukPanel(
+        Panel(
+            title = Text(messages("submission.submissionComplete.panel.heading")),
+            content = HtmlContent(
+                s"${messages("submission.submissionComplete.panel.body")}<br><strong>$utrn</strong>"
+            )
+        )
+    )
+
+    <div class="govuk-body">
+        @link(
+            link = "#", // TODO DTR-5734: The link should redirect to completed-return
+            messageKey = "submission.submissionComplete.link1"
+        )
+    </div>
+
+    <div class="govuk-body">
+        <a href="#" id="printLink" class="govuk-link print-page">
+            @messages("submission.submissionComplete.link2")
+        </a>
+    </div>
+
+    @h2("submission.submissionComplete.heading1")
+
+    @maybeEmail.map { e =>
+        @p(messages("submission.submissionComplete.p1", e))
+    }
+
+    @p("submission.submissionComplete.p2")
+
+    <ul class="govuk-list govuk-list--bullet">
+        <li>
+            @paragraphWithLink(
+                messageKey = "submission.submissionComplete.b1",
+                linkKey = "#", // TODO DTR-5737: The link should redirect to submission receipt and electronic SDLT 5 certificate
+                textKey = "submission.submissionComplete.b1.linkText"
+            )
+        </li>
+        <li>@messages("submission.submissionComplete.b2")</li>
+        <li>@messages("submission.submissionComplete.b3")</li>
+    </ul>
+
+    @p("submission.submissionComplete.p3")
+
+    @h2("submission.submissionComplete.heading2")
+
+    @p(
+        messages("submission.submissionComplete.p4",
+            deadline,
+            amount,
+            messages("submission.submissionComplete.p4.link"),
+            messages("submission.submissionComplete.p4.linkText")
+        ),
+    )
+
+    @govukDetails(Details(
+        summary = Text(messages("submission.submissionComplete.details")),
+        content = HtmlContent(insetContent)
+    ))
+
+    <div class="govuk-body">
+        @link(
+            link = appConfig.sdltManagementRedirectUrl,
+            messageKey = "submission.submissionComplete.link3"
+        )
+    </div>
+
+    <script nonce="@CSPNonce.get">
+            document.getElementById("printLink").addEventListener("click", function(e) {
+                e.preventDefault();
+                window.print();
+            });
+    </script>
+}
