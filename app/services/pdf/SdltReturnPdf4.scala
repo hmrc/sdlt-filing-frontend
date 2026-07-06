@@ -37,10 +37,10 @@ class SdltReturnPdf4 @Inject()(
                                  pdfTemplateLoader: PdfTemplateLoader
                                ) extends LoggingUtil {
 
-  private lazy val templateBytes: Array[Byte] = pdfTemplateLoader.load("SDLT4New.pdf")
+  def fillPdf(land: Option[Land], fullReturn: FullReturn, firstTimeThrough: Boolean, variant: PdfVariant, flatten: Boolean = true): Array[Byte] = {
+    logger.info(s"[SdltReturn][${variant}][fillPdf] Filling ${variant} for returnID: ${fullReturn.returnInfo.flatMap(_.returnID).getOrElse("unknown")}")
 
-  def fillPdf(land: Land, fullReturn: FullReturn, firstTimeThrough: Boolean, flatten: Boolean = true): Array[Byte] = {
-    logger.info(s"[SdltReturnPdf4][fillPdf] Filling SDLT4 for returnID: ${fullReturn.returnInfo.flatMap(_.returnID).getOrElse("unknown")}")
+    val templateBytes: Array[Byte] = pdfTemplateLoader.load(variant.template)
 
     Using.Manager { use =>
       val doc    = use(Loader.loadPDF(templateBytes))
@@ -53,8 +53,12 @@ class SdltReturnPdf4 @Inject()(
       val writer = new PdfFieldWriter(form, "SdltReturnPdf4")
 
       if(firstTimeThrough) fillTransactionFields(writer, fullReturn)
-      fillLandFields(writer, land)
-      fillLeaseFields(writer, fullReturn)
+
+      if (variant == Sdlt4) {
+        val l = land.getOrElse(throw new IllegalArgumentException("SDLT4 requires land"))
+        fillLandFields(writer, l)
+        fillLeaseFields(writer, fullReturn)
+      }
       fillCommonFields(writer, fullReturn)
 
       if (flatten) form.flatten()
@@ -65,8 +69,8 @@ class SdltReturnPdf4 @Inject()(
 
     }.fold(
       err => {
-        logger.error(s"[SdltReturnPdf4][fillPdf] Failed to fill SDLT4 PDF", err)
-        throw new SdltPdfFillException("Failed to fill SDLT4 PDF", err)
+        logger.error(s"[SdltReturn${variant}][fillPdf] Failed to fill ${variant} PDF", err)
+        throw new SdltPdfFillException(s"Failed to fill $variant PDF", err)
       },
       identity
     )
@@ -87,7 +91,7 @@ class SdltReturnPdf4 @Inject()(
           (TRANSACTION_BUSINESS_SALE_OTHER, t.includesOther)
         )
       )
-      w.text(TRANSACTION_TOTAL_CONSIDERATION, t.totalConsideration)
+      w.wholeDecimal(TRANSACTION_TOTAL_CONSIDERATION, t.totalConsiderationBusiness)
       w.selectMultiple(
         Seq(
           (TRANSACTION_COMMERCIAL_USE_OFFICE, t.usedAsOffice),

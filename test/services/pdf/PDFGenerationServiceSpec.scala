@@ -94,7 +94,7 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
 
   private def mockPdf4(bytes: Array[Byte] = blankPdfBytes): SdltReturnPdf4 = {
     val m = mock[SdltReturnPdf4]
-    when(m.fillPdf(any[Land], any[FullReturn](), any[Boolean](), any[Boolean]())).thenReturn(bytes)
+    when(m.fillPdf(any[Option[Land]], any[FullReturn](), any[Boolean](), any[PdfVariant], any[Boolean]())).thenReturn(bytes)
     m
   }
 
@@ -457,7 +457,7 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
             )),
             returnInfo = Some(ReturnInfo(mainLandID = Some("LND001")))
           )).futureValue
-          verify(pdf4, times(1)).fillPdf(any[Land], any[FullReturn](), any[Boolean], any[Boolean])
+          verify(pdf4, times(1)).fillPdf(any[Option[Land]], any[FullReturn](), any[Boolean], any[PdfVariant], any[Boolean])
         }
 
         "must call pdf4Filler for each additional land when lease" in {
@@ -473,10 +473,10 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
             )),
             returnInfo = Some(ReturnInfo(mainLandID = Some("LND001")))
           )).futureValue
-          verify(pdf4, times(3)).fillPdf(any[Land], any[FullReturn](), any[Boolean], any[Boolean])
+          verify(pdf4, times(3)).fillPdf(any[Option[Land]], any[FullReturn](), any[Boolean], any[PdfVariant], any[Boolean])
         }
 
-        "must call pdf4Filler when freehold residential & has sdlt4 answers" in {
+        "must only call pdf4Filler once when freehold residential, has multiple lands & has sdlt4 answers" in {
           val pdf1a = mockPdf1a()
           val pdf4 = mockPdf4()
           val service = buildService(pdf1a, pdf4 = pdf4)
@@ -494,10 +494,10 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
               isDependantOnFutureEvent = Some("yes"),
             )),
           )).futureValue
-          verify(pdf4, times(3)).fillPdf(any[Land], any[FullReturn](), any[Boolean], any[Boolean])
+          verify(pdf4, times(1)).fillPdf(any[Option[Land]], any[FullReturn](), any[Boolean], any[PdfVariant], any[Boolean])
         }
 
-        "must not call pdf4Filler when only one land and lease" in {
+        "must call pdf4Filler once when only one land and lease" in {
           val pdf1a = mockPdf1a()
           val pdf4 = mockPdf4()
           val service = buildService(pdf1a, pdf4 = pdf4)
@@ -507,7 +507,7 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
             )),
             returnInfo = Some(ReturnInfo(mainLandID = Some("LND001")))
           )).futureValue
-          verify(pdf4, never).fillPdf(any[Land], any[FullReturn](), any[Boolean], any[Boolean])
+          verify(pdf4, times(1)).fillPdf(any[Option[Land]], any[FullReturn](), any[Boolean], any[PdfVariant], any[Boolean])
         }
 
         "must not call pdf4Filler when freehold residential & does not have sdlt4 answers" in {
@@ -524,7 +524,7 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
             )),
             returnInfo = Some(ReturnInfo(mainLandID = Some("LND001")))
           )).futureValue
-          verify(pdf4, never).fillPdf(any[Land], any[FullReturn](), any[Boolean], any[Boolean])
+          verify(pdf4, never).fillPdf(any[Option[Land]], any[FullReturn](), any[Boolean], any[PdfVariant], any[Boolean])
         }
       }
     }

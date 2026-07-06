@@ -127,7 +127,8 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
     out.toByteArray
   }
 
-  private def fill(l: Land, r: FullReturn, firstTimeThrough: Boolean) = buildFiller().fillPdf(l, r, firstTimeThrough, flatten = false)
+  private def fill(l: Option[Land], r: FullReturn, firstTimeThrough: Boolean, variant: PdfVariant = Sdlt4) =
+    buildFiller(variant.template).fillPdf(l, r, firstTimeThrough, variant, flatten = false)
 
   def readField(pdfBytes: Array[Byte], fieldName: String): Option[String] = {
     val doc = Loader.loadPDF(pdfBytes)
@@ -138,9 +139,9 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
     } finally doc.close()
   }
 
-  private def buildFiller(): SdltReturnPdf4 = {
+  private def buildFiller(pdfFile: String): SdltReturnPdf4 = {
     val loader = mock[PdfTemplateLoader]
-    when(loader.load("SDLT4New.pdf")).thenReturn(buildTemplatePdf())
+    when(loader.load(pdfFile)).thenReturn(buildTemplatePdf())
     new SdltReturnPdf4(loader)
   }
 
@@ -171,12 +172,12 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
     "fillPdf" - {
 
       "must return a non-empty byte array" in {
-        val result = fill(baseLand, baseReturn, true)
+        val result = fill(Some(baseLand), baseReturn, true)
         result must not be empty
       }
 
       "must return bytes starting with the %PDF header" in {
-        val result = fill(baseLand, baseReturn, true)
+        val result = fill(Some(baseLand), baseReturn, true)
         new String(result.take(4)) mustBe "%PDF"
       }
 
@@ -192,13 +193,22 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
         when(loader.load("SDLT4New.pdf")).thenReturn(bare)
         val filler = new SdltReturnPdf4(loader)
         intercept[SdltPdfFillException] {
-          filler.fillPdf(baseLand, baseReturn, true)
+          filler.fillPdf(Some(baseLand), baseReturn, true, Sdlt4)
         }
+      }
+
+      "must throw exception if Sdlt4 is called with no land" in {
+        val ex = the[SdltPdfFillException] thrownBy {
+          buildFiller(Sdlt4.template).fillPdf(None, baseReturn, true, Sdlt4)
+        }
+
+        ex.getCause mustBe a[IllegalArgumentException]
+        ex.getCause.getMessage mustBe "SDLT4 requires land"
       }
 
       "must write UTRN from submission" in {
         val r      = withSubmission("UTR-9999")
-        val result = fill(baseLand, r, true)
+        val result = fill(Some(baseLand), r, true)
         readField(result, "UTRN") mustBe Some("UTR-9999")
       }
 
@@ -211,7 +221,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           includesChattel  = Some("yes"),
           includesOther    = None
         ))
-        val result = fill(baseLand, r, true)
+        val result = fill(Some(baseLand), r, true)
 
         readField(result, "transaction_businessSaleStock")    mustBe Some("Yes")
         readField(result, "transaction_businessSaleGoodwill") mustBe Some("Off")
@@ -219,9 +229,9 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
         readField(result, "transaction_businessSaleOther")    mustBe Some("Off")
       }
 
-      "must write total consideration" in {
-        val r = withTransaction(Transaction(totalConsideration = Some("5000")))
-        val result = fill(baseLand, r, true)
+      "must write total consideration for business" in {
+        val r = withTransaction(Transaction(totalConsiderationBusiness = Some("5000.00")))
+        val result = fill(Some(baseLand), r, true)
         readField(result, "transaction_totalConsideration") mustBe Some("5000")
       }
 
@@ -235,7 +245,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           usedAsIndustrial = Some("no"),
           usedAsOther      = Some("No")
         ))
-        val result = fill(baseLand, r, true)
+        val result = fill(Some(baseLand), r, true)
 
         readField(result, "transaction_commercialUseOffice")     mustBe Some("Yes")
         readField(result, "transaction_commercialUseShop")       mustBe Some("Yes")
@@ -248,7 +258,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
 
       "must fill yes checkbox when postTransRulingApplied is yes" in {
         val r = withTransaction(Transaction(postTransRulingApplied = Some("YES")))
-        val result = fill(baseLand, r, true)
+        val result = fill(Some(baseLand), r, true)
         readField(result, "transaction_postTransactionRuling_yes") mustBe Some("Yes")
         readField(result, "transaction_postTransactionRuling_no")  mustBe Some("Off")
       }
@@ -258,7 +268,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           postTransRulingApplied = Some("YES"),
           postTransRulingFollowed = Some("YES")
         ))
-        val result = fill(baseLand, r, true)
+        val result = fill(Some(baseLand), r, true)
         readField(result, "transaction_rulingFollowed_yes") mustBe Some("Yes")
         readField(result, "transaction_rulingFollowed_no") mustBe Some("Off")
         readField(result, "transaction_rulingFollowed_ruling") mustBe Some("Off")
@@ -269,7 +279,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           postTransRulingApplied  = Some("YES"),
           postTransRulingFollowed = Some("NO")
         ))
-        val result = fill(baseLand, r, true)
+        val result = fill(Some(baseLand), r, true)
         readField(result, "transaction_rulingFollowed_yes")    mustBe Some("Off")
         readField(result, "transaction_rulingFollowed_no")     mustBe Some("Yes")
         readField(result, "transaction_rulingFollowed_ruling") mustBe Some("Off")
@@ -280,7 +290,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           postTransRulingApplied  = Some("YES"),
           postTransRulingFollowed = Some("RulingNotReceived")
         ))
-        val result = fill(baseLand, r, true)
+        val result = fill(Some(baseLand), r, true)
         readField(result, "transaction_rulingFollowed_yes")    mustBe Some("Off")
         readField(result, "transaction_rulingFollowed_no")     mustBe Some("Off")
         readField(result, "transaction_rulingFollowed_ruling") mustBe Some("Yes")
@@ -291,7 +301,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           postTransRulingApplied  = Some("NO"),
           postTransRulingFollowed = Some("RulingNotReceived")
         ))
-        val result = fill(baseLand, r, true)
+        val result = fill(Some(baseLand), r, true)
         readField(result, "transaction_rulingFollowed_yes")    mustBe Some("Off")
         readField(result, "transaction_rulingFollowed_no")     mustBe Some("Off")
         readField(result, "transaction_rulingFollowed_ruling") mustBe Some("Off")
@@ -299,14 +309,14 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
 
       "must fill yes checkbox when isDependantOnFutureEvent is yes" in {
         val r = withTransaction(Transaction(isDependantOnFutureEvent = Some("YES")))
-        val result = fill(baseLand, r, true)
+        val result = fill(Some(baseLand), r, true)
         readField(result, "transaction_dependsFutureEvent_yes") mustBe Some("Yes")
         readField(result, "transaction_dependsFutureEvent_no")  mustBe Some("Off")
       }
 
       "must fill no checkbox when agreedToDeferPayment is no" in {
         val r = withTransaction(Transaction(agreedToDeferPayment = Some("NO")))
-        val result = fill(baseLand, r, true)
+        val result = fill(Some(baseLand), r, true)
         readField(result, "transaction_payDeferred_yes") mustBe Some("Off")
         readField(result, "transaction_payDeferred_no")  mustBe Some("Yes")
       }
@@ -319,7 +329,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           )),
           returnInfo = Some(ReturnInfo(mainLandID = Some("LND001")))
         )
-        val result = fill(baseLand, r, true)
+        val result = fill(Some(baseLand), r, true)
         readField(result, "land_mineralRights") mustBe Some("Yes")
       }
 
@@ -330,7 +340,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           companyTypeBank = Some("Yes"),
           companyTypePensionfund = Some("Yes")
         ))
-        val result = fill(baseLand, r, true)
+        val result = fill(Some(baseLand), r, true)
 
         readField(result, "purchaser_description_1") mustBe Some("03")
         readField(result, "purchaser_description_2") mustBe Some("05")
@@ -343,7 +353,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           includesStock    = Some("YES"),
           totalConsideration = Some("5000")
         ))
-        val result = fill(baseLand, r, false)
+        val result = fill(Some(baseLand), r, false)
 
         readField(result, "transaction_businessSaleStock") mustBe Some("Off")
         readField(result, "transaction_totalConsideration") mustBe Some("")
@@ -365,7 +375,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           postcode = Some("SW1A 2AA"),
           interestCreatedTransferred = Some("OT")
         )
-        val result = fill(l, baseReturn, false)
+        val result = fill(Some(l), baseReturn, false)
 
         readField(result, "land_typeProperty") mustBe Some("02")
         readField(result, "land_localAuthorityNumber") mustBe Some("3015")
@@ -385,7 +395,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           areaUnit = Some("Hectares"),
           landArea = Some("100.123")
         )
-        val result = fill(l, baseReturn, false)
+        val result = fill(Some(l), baseReturn, false)
 
         readField(result, "land_landAreaType_Hectares") mustBe Some("Yes")
         readField(result, "land_landAreaType_Square_Metres") mustBe Some("Off")
@@ -397,7 +407,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           areaUnit = Some("SquareMetres"),
           landArea = Some("100.000")
         )
-        val result = fill(l, baseReturn, false)
+        val result = fill(Some(l), baseReturn, false)
         readField(result, "land_landAreaType_Square_Metres") mustBe Some("Yes")
         readField(result, "land_landAreaType_Hectares") mustBe Some("Off")
         readField(result, "land_landArea") mustBe Some("100.000")
@@ -405,9 +415,31 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
 
       "must fill yes checkbox when planAttached is yes" in {
         val l = baseLand.copy(willSendPlanByPost = Some("Yes"))
-        val result = fill(l, baseReturn, false)
+        val result = fill(Some(l), baseReturn, false)
         readField(result, "land_planAttached_yes") mustBe Some("Yes")
         readField(result, "land_planAttached_no") mustBe Some("Off")
+      }
+
+      "must not fill any land or lease section fields when pdf4a is passed" in {
+        val l = baseLand.copy(
+          address1 = Some("Test Lane"),
+          areaUnit = Some("SquareMetres"),
+          landArea = Some("100.000")
+        )
+        val r = withLease(Lease(
+          startingRent = Some("2000"),
+          netPresentValue = Some("1897"),
+          laterRentKnown = Some("No")
+        ))
+        val result = fill(Some(l), r, false, Sdlt4a)
+
+        readField(result, "land_addressLine1") mustBe Some("")
+        readField(result, "land_landAreaType_Square_Metres") mustBe Some("Off")
+        readField(result, "land_landArea") mustBe Some("")
+
+        readField(result, "lease_startingRent") mustBe Some("")
+        readField(result, "lease_netPresentValue") mustBe Some("")
+        readField(result, "lease_startingRentLaterKnown_no") mustBe Some("Off")
       }
 
       // Lease
@@ -424,7 +456,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           totalPremiumPayable = Some("500000"),
           netPresentValue = Some("1897")
         ))
-        val result = fill(baseLand, r, false)
+        val result = fill(Some(baseLand), r, false)
 
         readField(result, "lease_leaseType") mustBe Some("R")
         readField(result, "lease_contractStartDate_day") mustBe Some("01")
@@ -445,7 +477,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
 
       "must fill no checkbox when startingRentLaterKnown is no" in {
         val r = withLease(Lease(laterRentKnown = Some("No")))
-        val result = fill(baseLand, r, false)
+        val result = fill(Some(baseLand), r, false)
         readField(result, "lease_startingRentLaterKnown_yes") mustBe Some("Off")
         readField(result, "lease_startingRentLaterKnown_no") mustBe Some("Yes")
       }
@@ -457,7 +489,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
             taxDueNPV = Some("1500.00")
           ))
         )
-        val result = fill(baseLand, r, false)
+        val result = fill(Some(baseLand), r, false)
 
         readField(result, "lease_totalPremiumTax") mustBe Some("1400")
         readField(result, "lease_totalNpvTax") mustBe Some("1500")
@@ -472,7 +504,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           rentChargeDate = Some("01/04/2021"),
           serviceCharge = Some("1000")
         ))
-        val result = fill(baseLand, r, false)
+        val result = fill(Some(baseLand), r, false)
 
         readField(result, "lease_termsSurrendered") mustBe Some("Surrender & Regrant")
         readField(result, "lease_breakClauseDate_day") mustBe Some("01")
@@ -491,7 +523,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
         val r = withLease(Lease(
           breakClauseType = Some("landlord")
         ))
-        val result = fill(baseLand, r, false)
+        val result = fill(Some(baseLand), r, false)
 
         readField(result, "lease_breakClause_landlord") mustBe Some("Yes")
         readField(result, "lease_breakClause_tenant") mustBe Some("Off")
@@ -506,7 +538,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           unasertainableRent = None,
           leaseContReservedRent = Some("NO")
         ))
-        val result = fill(baseLand, r, false)
+        val result = fill(Some(baseLand), r, false)
 
         readField(result, "lease_optionToRenew") mustBe Some("Yes")
         readField(result, "lease_marketRent") mustBe Some("Off")
@@ -519,7 +551,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
         val r = withLease(Lease(
           reviewClauseType = Some("RPI")
         ))
-        val result = fill(baseLand, r, false)
+        val result = fill(Some(baseLand), r, false)
 
         readField(result, "lease_reviewClause_open") mustBe Some("Off")
         readField(result, "lease_reviewClause_rpi") mustBe Some("Yes")
@@ -530,7 +562,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
         val r = withLease(Lease(
           serviceChargeFrequency = Some("Anually")
         ))
-        val result = fill(baseLand, r, false)
+        val result = fill(Some(baseLand), r, false)
 
         readField(result, "lease_serviceChargeFrequency_monthly") mustBe Some("Off")
         readField(result, "lease_serviceChargeFrequency_quarterly") mustBe Some("Off")
@@ -545,7 +577,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           considToLndlrdSharedQTD = Some("Yes"),
           considToLndlrdServices = Some("yes")
         ))
-        val result = fill(baseLand, r, true)
+        val result = fill(Some(baseLand), r, true)
 
         readField(result, "lease_toLandlord_1") mustBe Some("01")
         readField(result, "lease_toLandlord_2") mustBe Some("04")
@@ -560,7 +592,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           considToTenantServices = Some("Yes"),
           considToTenantContin = Some("yes")
         ))
-        val result = fill(baseLand, r, true)
+        val result = fill(Some(baseLand), r, true)
 
         readField(result, "lease_toTenant_1") mustBe Some("02")
         readField(result, "lease_toTenant_2") mustBe Some("06")
@@ -686,8 +718,9 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           interestCreatedTransferred = Some("OT")
         )
 
-        noException mustBe thrownBy(buildFiller().fillPdf(l, r, true))
-        noException mustBe thrownBy(buildFiller().fillPdf(l, r, false))
+        noException mustBe thrownBy(buildFiller(Sdlt4.template).fillPdf(Some(l), r, true, Sdlt4))
+        noException mustBe thrownBy(buildFiller(Sdlt4.template).fillPdf(Some(l), r, false, Sdlt4))
+        noException mustBe thrownBy(buildFiller(Sdlt4a.template).fillPdf(Some(l), r, true, Sdlt4a))
       }
     }
   }

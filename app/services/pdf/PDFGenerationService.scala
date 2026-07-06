@@ -53,7 +53,6 @@ class PDFGenerationService @Inject()(
                                       pdf2VendFiller:  SdltReturnPdf2Vendor,
                                       pdf3Filler:      SdltReturnPdf3,
                                       pdf4Filler:      SdltReturnPdf4,
-//                                      pdf4aFiller:     SdltReturnPdf4a
                                     ) extends LoggingUtil {
 
   private val MaxMemBytes        = 10 * 1024 * 1024L
@@ -128,26 +127,20 @@ class PDFGenerationService @Inject()(
     val needsSdlt4   = isLease || hasSdlt4Answers(r, propertyType)
 
     if (needsSdlt4) {
-      if (lands.size > 1 && isLease) {
+      if (!isLease) {
+        tryFill("SDLT4a (non-lease)") {
+          parts :+= pdf4Filler.fillPdf(None, r, true, Sdlt4a)
+        }
+      } else if (lands.size > 1) {
         lands.tail.zipWithIndex.foreach { case (land, idx) =>
           tryFill(s"SDLT4 land index ${idx + 1} (lease, multi-land)") {
-            parts :+= pdf4Filler.fillPdf(land, r, firstTimeThrough = idx == 0)
+            parts :+= pdf4Filler.fillPdf(Some(land), r, firstTimeThrough = idx == 0, Sdlt4)
           }
         }
-      } else if (lands.size > 1 && !isLease) {
-        lands.tail.zipWithIndex.foreach { case (land, idx) =>
-          tryFill(s"SDLT4 land index ${idx + 1} (non-lease, multi-land)") {
-            parts :+= pdf4Filler.fillPdf(land, r, firstTimeThrough = idx == 0)
-          }
-        }
-      } else if (!isLease) {
-        //        tryFill("SDLT4a (non-lease)") {
-        //          parts :+= pdf4aFiller.fillPdf(r)
-        //        }
       } else {
-//        tryFill("SDLT4a (lease, single land)") {
-//          parts :+= pdf4aFiller.fillPdf(r)
-//        }
+        tryFill("SDLT4a (lease, single land)") {
+          parts :+= pdf4Filler.fillPdf(None, r, true, Sdlt4a)
+        }
       }
     }
 
