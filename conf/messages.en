@@ -17,7 +17,7 @@ site.startAgain                                                                 
 site.signIn                                                                         = Sign in
 site.govuk                                                                          = GOV.UK
 site.save.continue                                                                  = Save and continue
-site.confirm.submit                                                               = Confirm and submit
+site.confirm.submit                                                                 = Confirm and submit
 site.success                                                                        = Success
 site.section.prefix                                                                 = This section is
 site.fullStop                                                                       = .
@@ -1302,7 +1302,7 @@ transaction.addRegisteredCharityNumber.p3.link                                  
 transaction.addRegisteredCharityNumber.checkYourAnswersLabel                        = Do you know the charity’s registered number?
 transaction.addRegisteredCharityNumber.error.required                               = Select yes if you know the charity’s registered number
 transaction.addRegisteredCharityNumber.change.hidden                                = Do you know the charity’s registered number?
-transaction.addRegisteredCharityNumber.missing                                     = Select registered charity number
+transaction.addRegisteredCharityNumber.missing                                      = Select registered charity number
 
 transaction.ReasonForRelief.title                                                   = What is the reason for claiming relief? - About the transaction
 transaction.ReasonForRelief.heading                                                 = What is the reason for claiming relief?
@@ -1393,11 +1393,11 @@ transaction.claimingPartialReliefAmount.error.maximum                           
 transaction.claimingPartialReliefAmount.change.hidden                               = Amount of partial relief being claimed
 transaction.claimingPartialReliefAmount.missing                                     = Enter the amount of relief being claimed on part of the land or property
 
-transaction.checkYourAnswers.title                                                    = Check your answers - About the transaction
-transaction.purchaserEligibleToClaimRelief.missing                                    = Select if the purchaser is eligible to claim relief
-transaction.ReasonForRelief.checkYourAnswersLabel                                     = Reason for claiming relief
-transaction.ReasonForRelief.change.hidden                                             = Reason for claiming relief
-transaction.ReasonForRelief.missing                                                   = Enter the reason for claiming relief
+transaction.checkYourAnswers.title                                                  = Check your answers - About the transaction
+transaction.purchaserEligibleToClaimRelief.missing                                  = Select if the purchaser is eligible to claim relief
+transaction.ReasonForRelief.checkYourAnswersLabel                                   = Reason for claiming relief
+transaction.ReasonForRelief.change.hidden                                           = Reason for claiming relief
+transaction.ReasonForRelief.missing                                                 = Enter the reason for claiming relief
 
 taxCalculation.checkYourAnswers.title                                               = Check your answers - Tax calculation
 taxCalculation.checkYourAnswers.continue                                            = Confirm and continue
@@ -1459,18 +1459,18 @@ taxCalculation.penaltiesAndInterest.freehold-tax-calculated.title               
 taxCalculation.penaltiesAndInterest.heading                                         = Does the amount you intend to pay include penalties and interest charges?
 taxCalculation.penaltiesAndInterest.error.required                                  = Select yes if the amount you intend to pay includes penalties and interest charges
 
-taxCalculation.penaltiesAndInterest.freehold-tax-not-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Freehold not calculated
-taxCalculation.penaltiesAndInterest.freehold-tax-not-calculated.heading                            = Does the amount you intend to pay include penalties and interest charges?
+taxCalculation.penaltiesAndInterest.freehold-tax-not-calculated.title               = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Freehold not calculated
+taxCalculation.penaltiesAndInterest.freehold-tax-not-calculated.heading             = Does the amount you intend to pay include penalties and int
 
-taxCalculation.penaltiesAndInterest.leasehold-tax-not-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Leasehold not calculated
-taxCalculation.penaltiesAndInterest.leasehold-tax-not-calculated.heading                            = Does the amount you intend to pay include penalties and interest charges?
+taxCalculation.penaltiesAndInterest.leasehold-tax-not-calculated.title              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Leasehold not calculated
+taxCalculation.penaltiesAndInterest.leasehold-tax-not-calculated.heading            = Does the amount you intend to pay include penalties and interest charges?
 
 
-taxCalculation.penaltiesAndInterest.checkYourAnswersLabel                            = Does the amount include penalties and interest?
-taxCalculation.penaltiesAndInterest.checkYourAnswersHidden                           = Does the amount include penalties and interest?
+taxCalculation.penaltiesAndInterest.checkYourAnswersLabel                           = Does the amount include penalties and interest?
+taxCalculation.penaltiesAndInterest.checkYourAnswersHidden                          = Does the amount include penalties and interest?
 
-taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.title                              = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Leasehold calculated
-taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.heading                            = Does the amount you intend to pay include penalties and interest charges?
+taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.title                  = Does the amount you intend to pay include penalties and interest charges? - Tax calculation - Leasehold calculated
+taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.heading                = Does the amount you intend to pay include penalties and interest charges?
 
 taxCalculation.calculation.freehold.title                                           = SDLT breakdown - Tax calculation - Freehold calculated
 taxCalculation.calculation.leasehold.title                                          = SDLT breakdown - Tax calculation - Leasehold calculated
@@ -1556,40 +1556,40 @@ taxCalculation.sdltSelfAssessment.calculator.text                               
 taxCalculation.sdltSelfAssessment.h2                                                = What is the self-assessed amount of SDLT?
 taxCalculation.sdltSelfAssessment.hint                                              = Enter the amount in whole pounds only, for example £10,000. This amount should not include any penalties or interest due.
 
-taxCalculation.totalAmountDue.h2                                             = What is the total amount you intend to pay with this return?
-taxCalculation.totalAmountDue.hint                                           = Enter the amount in whole pounds only, for example £10,000
-taxCalculation.totalAmountDue.heading                                        = Total amount due
-taxCalculation.totalAmountDue.title                                          = Total amount due
-taxCalculation.totalAmountDue.sdltDue                                        = SDLT due
-taxCalculation.totalAmountDue.penalties                                      = Penalties
-taxCalculation.totalAmountDue.total                                          = Total
-taxCalculation.totalAmountDue.error.required                                 = Enter the total amount you intend to pay, in pounds
-taxCalculation.totalAmountDue.error.invalidNumeric                           = The amount you intend to pay must only include commas and numbers 0 to 9
-taxCalculation.totalAmountDue.error.invalidWholeNumber                       = Enter the amount you intend to pay in whole pounds
-taxCalculation.totalAmountDue.error.maximum                                  = The amount you intend to pay must be equal to or less than £9,999,999,999
-taxCalculation.totalAmountDue.error.length                                   = The amount you intend to pay must be 16 characters or fewer
+taxCalculation.totalAmountDue.h2                                                    = What is the total amount you intend to pay with this return?
+taxCalculation.totalAmountDue.hint                                                  = Enter the amount in whole pounds only, for example £10,000
+taxCalculation.totalAmountDue.heading                                               = Total amount due
+taxCalculation.totalAmountDue.title                                                 = Total amount due
+taxCalculation.totalAmountDue.sdltDue                                               = SDLT due
+taxCalculation.totalAmountDue.penalties                                             = Penalties
+taxCalculation.totalAmountDue.total                                                 = Total
+taxCalculation.totalAmountDue.error.required                                        = Enter the total amount you intend to pay, in pounds
+taxCalculation.totalAmountDue.error.invalidNumeric                                  = The amount you intend to pay must only include commas and numbers 0 to 9
+taxCalculation.totalAmountDue.error.invalidWholeNumber                              = Enter the amount you intend to pay in whole pounds
+taxCalculation.totalAmountDue.error.maximum                                         = The amount you intend to pay must be equal to or less than £9,999,999,999
+taxCalculation.totalAmountDue.error.length                                          = The amount you intend to pay must be 16 characters or fewer
 
-taxCalculation.confirmEffectiveDateOfTransaction.title                       = Is this the effective date of the transaction?
-taxCalculation.confirmEffectiveDateOfTransaction.heading                     = Is {0} the effective date of the transaction?
-taxCalculation.confirmEffectiveDateOfTransaction.error.required              = Select yes if this is the effective date of the transaction
+taxCalculation.confirmEffectiveDateOfTransaction.title                              = Is this the effective date of the transaction?
+taxCalculation.confirmEffectiveDateOfTransaction.heading                            = Is {0} the effective date of the transaction?
+taxCalculation.confirmEffectiveDateOfTransaction.error.required                     = Select yes if this is the effective date of the transaction
 
 taxCalculation.genericPenaltiesDue.checkYourAnswersLabel                            = Penalties due
 taxCalculation.totalAmountDue.checkYourAnswersLabel                                 = Amount to be paid
 taxCalculation.totalAmountDue.change.hidden                                         = Amount to be paid
 
-taxCalculation.leaseholdSelfAssessed.premiumPayable.title = What is the tax due on the total premium payable?
-taxCalculation.leaseholdSelfAssessed.premiumPayable.heading = What is the tax due on the total premium payable?
-taxCalculation.leaseholdSelfAssessed.premiumPayable.description = You entered the total premium payable as: {0}
-taxCalculation.leaseholdSelfAssessed.premiumPayable.hint = Enter the amount in whole pounds only, for example £10,000
+taxCalculation.leaseholdSelfAssessed.premiumPayable.title                           = What is the tax due on the total premium payable?
+taxCalculation.leaseholdSelfAssessed.premiumPayable.heading                         = What is the tax due on the total premium payable?
+taxCalculation.leaseholdSelfAssessed.premiumPayable.description                     = You entered the total premium payable as: {0}
+taxCalculation.leaseholdSelfAssessed.premiumPayable.hint                            = Enter the amount in whole pounds only, for example £10,000
 
 taxCalculation.leaseholdSelfAssessed.premiumPayable.checkYourAnswers                = Tax due on premium payable
 taxCalculation.leaseholdSelfAssessed.premiumPayable.change.hidden                   = Tax due on premium payable
 
-taxCalculation.leaseholdSelfAssessed.premiumPayable.error.emptyValue = Enter the tax due on the total premium payable, in pounds
-taxCalculation.leaseholdSelfAssessed.premiumPayable.error.maxLength = The tax due on the total premium payable must be 16 characters or fewer
-taxCalculation.leaseholdSelfAssessed.premiumPayable.error.maxValue = The tax due on the total premium payable must be equal to or less than £9,999,999,999
-taxCalculation.leaseholdSelfAssessed.premiumPayable.error.invalidWholeNumber = Enter the tax due on the total premium payable in whole pounds
-taxCalculation.leaseholdSelfAssessed.premiumPayable.error.invalidNumeric = The tax due on the total premium payable must only include commas and numbers 0 to 9
+taxCalculation.leaseholdSelfAssessed.premiumPayable.error.emptyValue                = Enter the tax due on the total premium payable, in pounds
+taxCalculation.leaseholdSelfAssessed.premiumPayable.error.maxLength                 = The tax due on the total premium payable must be 16 characters or fewer
+taxCalculation.leaseholdSelfAssessed.premiumPayable.error.maxValue                  = The tax due on the total premium payable must be equal to or less than £9,999,999,999
+taxCalculation.leaseholdSelfAssessed.premiumPayable.error.invalidWholeNumber        = Enter the tax due on the total premium payable in whole pounds
+taxCalculation.leaseholdSelfAssessed.premiumPayable.error.invalidNumeric            = The tax due on the total premium payable must only include commas and numbers 0 to 9
 
 taxCalculation.leaseholdTaxCalculated.premiumPayable.checkYourAnswers               = Tax due on total premium payable
 taxCalculation.leaseholdTaxCalculated.taxDueOnNpv.checkYourAnswers                  = Tax due on NPV
@@ -1846,23 +1846,23 @@ lease.leaseThousandPoundsThreshold.checkYourAnswersLabel                        
 lease.leaseThousandPoundsThreshold.error.required                                   = Select yes if the annual rent is £1,000 or more
 lease.leaseThousandPoundsThreshold.change.hidden                                    = Annual rent £1,000 or more
 
-lease.leaseStartingRentEndDate.title                                                 = End of annual starting rent
-lease.leaseStartingRentEndDate.heading                                               = End of annual starting rent
-lease.leaseStartingRentEndDate.p1                                                    = This date will either be:
-lease.leaseStartingRentEndDate.l1.li1                                                = the day before the first rent review
-lease.leaseStartingRentEndDate.l1.li2                                                = the end of the fifth year of the lease term, if no review happens earlier
-lease.leaseStartingRentEndDate.p2                                                    = If a lease has been surrendered, this date will typically be the effective date of the transaction.
-lease.leaseStartingRentEndDate.subheading                                            = What is the end date for starting rent?
-lease.leaseStartingRentEndDate.hint                                                  = For example, 27 3 2023
-lease.leaseStartingRentEndDate.checkYourAnswersLabel                                 = End of annual starting rent
-lease.leaseStartingRentEndDate.error.required.all                                    = Enter the end date for starting rent
-lease.leaseStartingRentEndDate.error.required.two                                    = The end date for starting rent must include a {0} and {1}
-lease.leaseStartingRentEndDate.error.required                                        = The end date for starting rent must include a {0}
-lease.leaseStartingRentEndDate.error.invalid                                         = The end date for starting rent must be a real date
-lease.leaseStartingRentEndDate.error.date.range.min                                  = The end date for starting rent must be the same as or after 1 January 1900
-lease.leaseStartingRentEndDate.error.afterLeaseStartDate                             = The end date for starting rent must be after the start date as specified in the lease
-lease.leaseStartingRentEndDate.error.beforeLeaseEndDate                              = The end date for starting rent must be before the end date as specified in the lease
-lease.leaseStartingRentEndDate.change.hidden                                         = End of annual starting rent
+lease.leaseStartingRentEndDate.title                                                = End of annual starting rent
+lease.leaseStartingRentEndDate.heading                                              = End of annual starting rent
+lease.leaseStartingRentEndDate.p1                                                   = This date will either be:
+lease.leaseStartingRentEndDate.l1.li1                                               = the day before the first rent review
+lease.leaseStartingRentEndDate.l1.li2                                               = the end of the fifth year of the lease term, if no review happens earlier
+lease.leaseStartingRentEndDate.p2                                                   = If a lease has been surrendered, this date will typically be the effective date of the transaction.
+lease.leaseStartingRentEndDate.subheading                                           = What is the end date for starting rent?
+lease.leaseStartingRentEndDate.hint                                                 = For example, 27 3 2023
+lease.leaseStartingRentEndDate.checkYourAnswersLabel                                = End of annual starting rent
+lease.leaseStartingRentEndDate.error.required.all                                   = Enter the end date for starting rent
+lease.leaseStartingRentEndDate.error.required.two                                   = The end date for starting rent must include a {0} and {1}
+lease.leaseStartingRentEndDate.error.required                                       = The end date for starting rent must include a {0}
+lease.leaseStartingRentEndDate.error.invalid                                        = The end date for starting rent must be a real date
+lease.leaseStartingRentEndDate.error.date.range.min                                 = The end date for starting rent must be the same as or after 1 January 1900
+lease.leaseStartingRentEndDate.error.afterLeaseStartDate                            = The end date for starting rent must be after the start date as specified in the lease
+lease.leaseStartingRentEndDate.error.beforeLeaseEndDate                             = The end date for starting rent must be before the end date as specified in the lease
+lease.leaseStartingRentEndDate.change.hidden                                        = End of annual starting rent
 
 lease.doesLeaseIncludeRentFreePeriod.title                                          = Rent-free periods
 lease.doesLeaseIncludeRentFreePeriod.heading                                        = Rent-free periods
@@ -2010,17 +2010,17 @@ crossflow.relief.multipleDwellings.notAllowedPropertyType                       
 crossflow.relief.multipleDwellings.notAllowedPropertyType.inline                    = When claiming ‘33 - Multiple Dwellings Relief’, the type of property cannot be ‘03 - Non-residential’
 
 # F28-500k — bullet layout
-crossflow.relief.firstTimeBuyer.over500k.intro   = ‘32 - First Time Buyer’s Relief’ is only available when the total premium payable is £500,000 or less and the effective date of the transaction is either:
-crossflow.relief.firstTimeBuyer.over500k.option1 = between 22 November 2017 and 22 September 2022
-crossflow.relief.firstTimeBuyer.over500k.option2 = the same as or after 1 April 2025
-crossflow.relief.firstTimeBuyer.over500k.outro   = Select a different reason for claiming relief.
-crossflow.relief.firstTimeBuyer.over500k.inline  = When claiming ‘32 - First Time Buyer's Relief’, the total premium payable must be £500,000 or less and the effective date of the transaction must be between 22 November 2017 to 22 September 2022, or the same as or after 1 April 2025
+crossflow.relief.firstTimeBuyer.over500k.intro                                      = ‘32 - First Time Buyer’s Relief’ is only available when the total premium payable is £500,000 or less and the effective date of the transaction is either:
+crossflow.relief.firstTimeBuyer.over500k.option1                                    = between 22 November 2017 and 22 September 2022
+crossflow.relief.firstTimeBuyer.over500k.option2                                    = the same as or after 1 April 2025
+crossflow.relief.firstTimeBuyer.over500k.outro                                      = Select a different reason for claiming relief.
+crossflow.relief.firstTimeBuyer.over500k.inline                                     = When claiming ‘32 - First Time Buyer's Relief’, the total premium payable must be £500,000 or less and the effective date of the transaction must be between 22 November 2017 to 22 September 2022, or the same as or after 1 April 2025
 
 # F28-625k — bullet layout
-crossflow.relief.firstTimeBuyer.over625k.intro   = ‘32 - First Time Buyer’s Relief’ is only available when both:
-crossflow.relief.firstTimeBuyer.over625k.option1 = the total premium payable is £625,000 or less
-crossflow.relief.firstTimeBuyer.over625k.option2 = the effective date of the transaction is between 23 September 2022 and 31 March 2025
-crossflow.relief.firstTimeBuyer.over625k.outro   = Select a different reason for claiming relief.
+crossflow.relief.firstTimeBuyer.over625k.intro                                      = ‘32 - First Time Buyer’s Relief’ is only available when both:
+crossflow.relief.firstTimeBuyer.over625k.option1                                    = the total premium payable is £625,000 or less
+crossflow.relief.firstTimeBuyer.over625k.option2                                    = the effective date of the transaction is between 23 September 2022 and 31 March 2025
+crossflow.relief.firstTimeBuyer.over625k.outro                                      = Select a different reason for claiming relief.
 crossflow.relief.firstTimeBuyer.over625k.inline                                     = When claiming ‘32 - First Time Buyer's Relief’, the total premium payable must be £625,000 or less and the effective date of the transaction must be between 23 September 2022 and 31 March 2025
 
 crossflow.relief.preCompletion.dateTooEarly                                         = This is a same journey error. just stub data so you can get to the page this would never trigger the "Need Review" status
@@ -2029,11 +2029,11 @@ crossflow.relief.preCompletion.dateTooEarly.inline                              
 crossflow.relief.firstTimeBuyer.over500k                                            = When claiming ‘32 - First Time Buyer’s Relief’, the total premium payable must be £500,000 or less and the effective date of the transaction must be between 22 November 2017 to 22 September 2022, or the same as or after 1 April 2025
 crossflow.relief.firstTimeBuyer.over625k                                            = When claiming ‘32 - First Time Buyer’s Relief’, the total premium payable must be £625,000 or less and the effective date of the transaction must be between 23 September 2022 and 31 March 2025
 
-crossflow.land.Cf-3.heading = Update the type of property
-crossflow.land.Cf-3.body    = When the type of property is ‘04 - Additional residential property liable to higher rate’, the effective date of the transaction cannot be before 1 April 2016.
-crossflow.land.Cf-3.inline  = When the type of property is ‘04 - Additional residential property liable to higher rate’, the effective date of the transaction must be the same as or after 1 April 2016
+crossflow.land.Cf-3.heading                                                         = Update the type of property
+crossflow.land.Cf-3.body                                                            = When the type of property is ‘04 - Additional residential property liable to higher rate’, the effective date of the transaction cannot be before 1 April 2016.
+crossflow.land.Cf-3.inline                                                          = When the type of property is ‘04 - Additional residential property liable to higher rate’, the effective date of the transaction must be the same as or after 1 April 2016
 
-crossflow.land.cta.changePropertyType = Select a different type of property.
+crossflow.land.cta.changePropertyType                                               = Select a different type of property.
 
 # F23-35 — 15% rate of SDLT
 crossflow.relief.fifteenPercentRate.dateTooEarly                                    = ‘35 - Relief from 17% rate of SDLT’ is only available when the effective date of the transaction is the same as or after 6 March 2013.
@@ -2060,122 +2060,137 @@ crossflow.relief.multipleDwellings.contractDateTooLate.inline                   
 crossflow.land.heading = Update the local authority code
 
 # Transaction-section CTAs (used by TransactionSingleEntityController)
-crossflow.relief.cta.changeReliefReason   = Select a different reason for claiming relief.
-crossflow.relief.cta.changeEffectiveDate  = Select a different effective date.
-crossflow.relief.cta.changeContractDate   = Select a different date of contract.
-crossflow.relief.cta.changePropertyType   = Select a different type of property.
+crossflow.relief.cta.changeReliefReason                                             = Select a different reason for claiming relief.
+crossflow.relief.cta.changeEffectiveDate                                            = Select a different effective date.
+crossflow.relief.cta.changeContractDate                                             = Select a different date of contract.
+crossflow.relief.cta.changePropertyType                                             = Select a different type of property.
 
 # Land-section CTA (used by LandAuthorityCodeSingleEntityController for EffectiveDate targets)
-crossflow.land.cta.changeEffectiveDate    = Select a different effective date.
+crossflow.land.cta.changeEffectiveDate                                              = Select a different effective date.
 
 # === Multi-entity (Cf-7a / Cf-7b / Cf-7c) ===
 
 
-crossflow.land.Cf-7.heading   = There are {0} problems with this return
-crossflow.land.Cf-7.p1        = One or more transaction details have changed. This means you must update some local authority codes.
-crossflow.land.multiEntity.p1 = Select ‘Update’ to see each problem and what to do next.
-crossflow.land.multiEntity.p2 = You must update or remove all interests listed.
+crossflow.land.Cf-7.heading                                                         = There are {0} problems with this return
+crossflow.land.Cf-7.p1                                                              = One or more transaction details have changed. This means you must update some local authority codes.
+crossflow.land.multiEntity.p1                                                       = Select ‘Update’ to see each problem and what to do next.
+crossflow.land.multiEntity.p2                                                       = You must update or remove all interests listed.
 
 # === Single-entity headings (per Cf-* rule id) ===
 
-crossflow.land.Cf-8.heading  = Update the local authority code
-crossflow.land.Cf-9a.heading = Update the local authority code
-crossflow.land.Cf-9b.heading = Update the local authority code
-crossflow.land.Cf-9c.heading = Update the local authority code
-crossflow.land.Cf-10.heading = Update the local authority code
-crossflow.land.Cf-11.heading = Update the local authority code
-crossflow.land.Cf-12.heading = Update the local authority code
-crossflow.land.Cf-13.heading = Update the local authority code
-crossflow.land.Cf-14.heading = Update the local authority code
-crossflow.land.Cf-15.heading = Update the local authority code
-crossflow.land.Cf-16.heading = Update the postcode
+crossflow.land.Cf-8.heading                                                         = Update the local authority code
+crossflow.land.Cf-9a.heading                                                        = Update the local authority code
+crossflow.land.Cf-9b.heading                                                        = Update the local authority code
+crossflow.land.Cf-9c.heading                                                        = Update the local authority code
+crossflow.land.Cf-10.heading                                                        = Update the local authority code
+crossflow.land.Cf-11.heading                                                        = Update the local authority code
+crossflow.land.Cf-12.heading                                                        = Update the local authority code
+crossflow.land.Cf-13.heading                                                        = Update the local authority code
+crossflow.land.Cf-14.heading                                                        = Update the local authority code
+crossflow.land.Cf-15.heading                                                        = Update the local authority code
+crossflow.land.Cf-16.heading                                                        = Update the postcode
 
-crossflow.transaction.Cf-17.heading = Enter the use of the land or property
-crossflow.transaction.Cf-17.body = You have selected the type of property as either:
-crossflow.transaction.Cf-17.bullet1 = 02 - Mixed
-crossflow.transaction.Cf-17.bullet2 = 03 - Non-residential
-crossflow.transaction.Cf-17.body2 = This means you must now confirm how the land or property will be used.
-crossflow.transaction.Cf-17.cta = Continue
-crossflow.transaction.cta.enterUseOfProperty = This means you must now confirm how the land or property will be used.
+crossflow.transaction.Cf-17.heading                                                 = Enter the use of the land or property
+crossflow.transaction.Cf-17.body                                                    = You have selected the type of property as either:
+crossflow.transaction.Cf-17.bullet1                                                 = 02 - Mixed
+crossflow.transaction.Cf-17.bullet2                                                 = 03 - Non-residential
+crossflow.transaction.Cf-17.body2                                                   = This means you must now confirm how the land or property will be used.
+crossflow.transaction.Cf-17.cta                                                     = Continue
+crossflow.transaction.cta.enterUseOfProperty                                        = This means you must now confirm how the land or property will be used.
 
-crossflow.land.Cf-8.body = This local authority code is no longer recognised by SDLT when the effective date of the transaction is the same as or after 1 April 2018.
-crossflow.land.Cf-9.welsh6996_6997.body = This local authority code cannot be used when the effective date of transaction is before 1 April 2018.
-crossflow.land.Cf-9.welsh6998.body      = This local authority code cannot be used when the effective date of transaction is before 1 April 2018.
-crossflow.land.Cf-9.welsh6999.body      = This local authority code cannot be used when the effective date of transaction is before 1 April 2018.
-crossflow.land.Cf-10.body = This local authority code cannot be used when the date of contract is the same as or after 1 April 2018.
-crossflow.land.Cf-11.body = This local authority code cannot be used when the date of contract is after 17 December 2014.
-crossflow.land.Cf-12.body = This local authority code cannot be used when the effective date of the transaction is before 1 April 2015.
-crossflow.land.Cf-13.body = This local authority code cannot be used when the date of contract is the same as or after 1 May 2012.
-crossflow.land.Cf-14.body = This local authority code cannot be used when the date of contract is the same as or after 1 April 2015.
-crossflow.land.Cf-15.body = This local authority code is no longer recognised by SDLT when the effective date of the transaction is the same as or after 1 April 2015.
-crossflow.land.Cf-16.body = Areas of land or properties with a Scottish postcode are no longer recognised by SDLT when the effective date of the transaction is the same as or after 1 April 2015.
+crossflow.land.Cf-8.body                                                            = This local authority code is no longer recognised by SDLT when the effective date of the transaction is the same as or after 1 April 2018.
+crossflow.land.Cf-9.welsh6996_6997.body                                             = This local authority code cannot be used when the effective date of transaction is before 1 April 2018.
+crossflow.land.Cf-9.welsh6998.body                                                  = This local authority code cannot be used when the effective date of transaction is before 1 April 2018.
+crossflow.land.Cf-9.welsh6999.body                                                  = This local authority code cannot be used when the effective date of transaction is before 1 April 2018.
+crossflow.land.Cf-10.body                                                           = This local authority code cannot be used when the date of contract is the same as or after 1 April 2018.
+crossflow.land.Cf-11.body                                                           = This local authority code cannot be used when the date of contract is after 17 December 2014.
+crossflow.land.Cf-12.body                                                           = This local authority code cannot be used when the effective date of the transaction is before 1 April 2015.
+crossflow.land.Cf-13.body                                                           = This local authority code cannot be used when the date of contract is the same as or after 1 May 2012.
+crossflow.land.Cf-14.body                                                           = This local authority code cannot be used when the date of contract is the same as or after 1 April 2015.
+crossflow.land.Cf-15.body                                                           = This local authority code is no longer recognised by SDLT when the effective date of the transaction is the same as or after 1 April 2015.
+crossflow.land.Cf-16.body                                                           = Areas of land or properties with a Scottish postcode are no longer recognised by SDLT when the effective date of the transaction is the same as or after 1 April 2015.
 
-crossflow.land.Cf-8.inline                = Entering this local authority code means the effective date of the transaction must be before 1 April 2018
-crossflow.land.Cf-9.welsh6996_6997.inline = Entering this local authority code means the effective date of the transaction must be the same as or after 1 April 2018
-crossflow.land.Cf-9.welsh6998.inline      = Entering this local authority code means the effective date of the transaction must be the same as or after 1 April 2018
-crossflow.land.Cf-9.welsh6999.inline      = Entering this local authority code means the effective date of the transaction must be the same as or after 1 April 2018
-crossflow.land.Cf-10.inline               = Entering this local authority code means the date of contract must be before 1 April 2018
-crossflow.land.Cf-11.inline               = Entering this local authority code means the date of contract must be the same as or before 17 December 2014
-crossflow.land.Cf-12.inline               = Entering this local authority code means the effective date of the transaction must be the same as or after 1 April 2015
-crossflow.land.Cf-13.inline               = Entering this local authority code means the date of contract must be before 1 May 2012
-crossflow.land.Cf-14.inline               = Entering this local authority code means the date of contract must be before 1 April 2015
-crossflow.land.Cf-15.inline               = Entering this local authority code means the effective date of the transaction must be before 1 April 2015
-crossflow.land.Cf-16.inline               = Entering this Scottish postcode means the effective date of the transaction must be before 1 April 2015
+crossflow.land.Cf-8.inline                                                          = Entering this local authority code means the effective date of the transaction must be before 1 April 2018
+crossflow.land.Cf-9.welsh6996_6997.inline                                           = Entering this local authority code means the effective date of the transaction must be the same as or after 1 April 2018
+crossflow.land.Cf-9.welsh6998.inline                                                = Entering this local authority code means the effective date of the transaction must be the same as or after 1 April 2018
+crossflow.land.Cf-9.welsh6999.inline                                                = Entering this local authority code means the effective date of the transaction must be the same as or after 1 April 2018
+crossflow.land.Cf-10.inline                                                         = Entering this local authority code means the date of contract must be before 1 April 2018
+crossflow.land.Cf-11.inline                                                         = Entering this local authority code means the date of contract must be the same as or before 17 December 2014
+crossflow.land.Cf-12.inline                                                         = Entering this local authority code means the effective date of the transaction must be the same as or after 1 April 2015
+crossflow.land.Cf-13.inline                                                         = Entering this local authority code means the date of contract must be before 1 May 2012
+crossflow.land.Cf-14.inline                                                         = Entering this local authority code means the date of contract must be before 1 April 2015
+crossflow.land.Cf-15.inline                                                         = Entering this local authority code means the effective date of the transaction must be before 1 April 2015
+crossflow.land.Cf-16.inline                                                         = Entering this Scottish postcode means the effective date of the transaction must be before 1 April 2015
 
-crossflow.land.cta.enterDifferentCode     = Enter a different local authority code.
-crossflow.land.cta.enterDifferentPostcode = Enter a different postcode.
+crossflow.land.cta.enterDifferentCode                                               = Enter a different local authority code.
+crossflow.land.cta.enterDifferentPostcode                                           = Enter a different postcode.
 
 
 
-crossflow.lease.section = About the lease
-crossflow.lease.heading = Update the type of lease
-crossflow.lease.Cf-5a.body = The type of lease must match the type of property. The type of lease must be ‘R - Residential’ when the type of property is either:
-crossflow.lease.Cf-5a.bullet1 = ‘01 - Residential’
-crossflow.lease.Cf-5a.bullet2 = ‘04 - Additional residential property liable to higher rate’
-crossflow.lease.cta.changeLeaseType = Select ‘R - Residential’ as the type of lease.
-crossflow.lease.Cf-5a.inline = When the type of lease is ‘R - Residential’, the type of property must be ‘01 - Residential’ or ‘04 - Additional residential property liable to higher rate’
-crossflow.lease.Cf-5b.body = The type of lease must match the type of property. When the type of property is ‘02 - Mixed’, the type of lease must be ‘M - Mixed use’.
-crossflow.lease.Cf-5b.inline = When the type of lease is ‘M - Mixed use’, the type of property must be ‘02 - Mixed’
-crossflow.lease.Cf-5c.body = The type of lease must match the type of property. When the type of property is ‘03 - Non-residential’, the type of lease must be ‘N - Non-residential’.
-crossflow.lease.Cf-5c.inline = When the type of lease is ‘N - Non-residential’, the type of property must be ‘03 - Non-residential’
+crossflow.lease.section                                                             = About the lease
+crossflow.lease.heading                                                             = Update the type of lease
+crossflow.lease.Cf-5a.body                                                          = The type of lease must match the type of property. The type of lease must be ‘R - Residential’ when the type of property is either:
+crossflow.lease.Cf-5a.bullet1                                                       = ‘01 - Residential’
+crossflow.lease.Cf-5a.bullet2                                                       = ‘04 - Additional residential property liable to higher rate’
+crossflow.lease.cta.changeLeaseType                                                 = Select ‘R - Residential’ as the type of lease.
+crossflow.lease.Cf-5a.inline                                                        = When the type of lease is ‘R - Residential’, the type of property must be ‘01 - Residential’ or ‘04 - Additional residential property liable to higher rate’
+crossflow.lease.Cf-5b.body                                                          = The type of lease must match the type of property. When the type of property is ‘02 - Mixed’, the type of lease must be ‘M - Mixed use’.
+crossflow.lease.Cf-5b.inline                                                        = When the type of lease is ‘M - Mixed use’, the type of property must be ‘02 - Mixed’
+crossflow.lease.Cf-5c.body                                                          = The type of lease must match the type of property. When the type of property is ‘03 - Non-residential’, the type of lease must be ‘N - Non-residential’.
+crossflow.lease.Cf-5c.inline                                                        = When the type of lease is ‘N - Non-residential’, the type of property must be ‘03 - Non-residential’
 
-crossflow.land.Cf-6.heading        = There is a problem
-crossflow.land.Cf-6.body           = Multiple areas of land or properties with lease involvement must share the same property type.
-crossflow.land.Cf-6.p2             = Review the property type for all the interests listed and select either:
-crossflow.land.Cf-6.bullet1        = the same property type for all interests
-crossflow.land.Cf-6.bullet2        = ‘02 - Mixed’ if there are different property types
-crossflow.land.Cf-6.inline         = Areas of land or property with lease involvement must share the same property type. If there are multiple property types, select ‘02 - Mixed’ for all areas of land or property added
+crossflow.land.Cf-6.heading                                                         = There is a problem
+crossflow.land.Cf-6.body                                                            = Multiple areas of land or properties with lease involvement must share the same property type.
+crossflow.land.Cf-6.p2                                                              = Review the property type for all the interests listed and select either:
+crossflow.land.Cf-6.bullet1                                                         = the same property type for all interests
+crossflow.land.Cf-6.bullet2                                                         = ‘02 - Mixed’ if there are different property types
+crossflow.land.Cf-6.inline                                                          = Areas of land or property with lease involvement must share the same property type. If there are multiple property types, select ‘02 - Mixed’ for all areas of land or property added
 
-crossflow.land.Cf-6.column.land         = Land
-crossflow.land.Cf-6.column.propertyType = Type of property
-crossflow.land.Cf-6.column.actions      = Actions
+crossflow.land.Cf-6.column.land                                                     = Land
+crossflow.land.Cf-6.column.propertyType                                             = Type of property
+crossflow.land.Cf-6.column.actions                                                  = Actions
 
-crossflow.lease.Cf-5a.cta = Select ‘R - Residential’ as the type of lease.
-crossflow.lease.Cf-5b.cta = Select ‘M - Mixed use’ as the type of lease.
-crossflow.lease.Cf-5c.cta = Select ‘N - Non-residential’ as the type of lease.
+crossflow.lease.Cf-5a.cta                                                           = Select ‘R - Residential’ as the type of lease.
+crossflow.lease.Cf-5b.cta                                                           = Select ‘M - Mixed use’ as the type of lease.
+crossflow.lease.Cf-5c.cta                                                           = Select ‘N - Non-residential’ as the type of lease.
 
-submission.submissionComplete.title = Submission complete
-submission.submissionComplete.panel.heading = Submission complete
-submission.submissionComplete.panel.body = Your UTRN
-submission.submissionComplete.link1 = View your submitted return
-submission.submissionComplete.link2 = Print or save a copy of this page
-submission.submissionComplete.heading1 = What happens next
-submission.submissionComplete.p1 = HMRC have sent a confirmation email to {0}.
-submission.submissionComplete.p2 = You must:
-submission.submissionComplete.b1 = <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a> – this is official evidence that your return has been successfully submitted
-submission.submissionComplete.b1.linkText = save your SDLT 5 certificate (opens in new tab)
-submission.submissionComplete.b2 = send your SDLT5 to HM Land Registry when registering the land or property
-submission.submissionComplete.b3 = pay the SDLT due within 14 days of submission
-submission.submissionComplete.p3 = Submitted returns and the SDLT5 certificate are deleted from your Stamp Taxes Online account after 30 days of inactivity. To stop this return being deleted, select and view.
-submission.submissionComplete.heading2 = How to pay
-submission.submissionComplete.p4 = Your deadline for SDLT payment is {0}. You intend to pay {1} with this return. You must quote your UTRN when <a href="{2}" class="govuk-link" target="_blank" rel="noopener noreferrer">{3}</a>. Do not include any other information before or after the UTRN.
-submission.submissionComplete.p4.link = https://www.gov.uk/guidance/pay-stamp-duty-land-tax
-submission.submissionComplete.p4.linkText = making an SDLT payment (opens in new tab)
-submission.submissionComplete.details = How to amend this return
-submission.submissionComplete.details.p1 = For minor changes, like spelling mistakes, you can contact the <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
-submission.submissionComplete.details.p1.link = https://www.gov.uk/find-hmrc-contacts/stamp-duty-land-tax-general-enquiries
-submission.submissionComplete.details.p1.linkText = Stamp Taxes Helpline (opens in new tab)
-submission.submissionComplete.details.p2 = For substantial changes, like a new purchaser name, you must <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
-submission.submissionComplete.details.p2.link = https://www.gov.uk/guidance/how-to-send-a-stamp-duty-land-tax-return#write
-submission.submissionComplete.details.p2.linkText = submit a new SDLT return and write to HMRC (opens in new tab)
-submission.submissionComplete.link3 = Return to your stamp taxes online account
+submission.submissionComplete.title                                                 = Submission complete
+submission.submissionComplete.panel.heading                                         = Submission complete
+submission.submissionComplete.panel.body                                            = Your UTRN
+submission.submissionComplete.link1                                                 = View your submitted return
+submission.submissionComplete.link2                                                 = Print or save a copy of this page
+submission.submissionComplete.heading1                                              = What happens next
+submission.submissionComplete.p1                                                    = HMRC have sent a confirmation email to {0}.
+submission.submissionComplete.p2                                                    = You must:
+submission.submissionComplete.b1                                                    = <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a> – this is official evidence that your return has been successfully submitted
+submission.submissionComplete.b1.linkText                                           = save your SDLT 5 certificate (opens in new tab)
+submission.submissionComplete.b2                                                    = send your SDLT5 to HM Land Registry when registering the land or property
+submission.submissionComplete.b3                                                    = pay the SDLT due within 14 days of submission
+submission.submissionComplete.p3                                                    = Submitted returns and the SDLT5 certificate are deleted from your Stamp Taxes Online account after 30 days of inactivity. To stop this return being deleted, select and view.
+submission.submissionComplete.heading2                                              = How to pay
+submission.submissionComplete.p4                                                    = Your deadline for SDLT payment is {0}. You intend to pay {1} with this return. You must quote your UTRN when <a href="{2}" class="govuk-link" target="_blank" rel="noopener noreferrer">{3}</a>. Do not include any other information before or after the UTRN.
+submission.submissionComplete.p4.link                                               = https://www.gov.uk/guidance/pay-stamp-duty-land-tax
+submission.submissionComplete.p4.linkText                                           = making an SDLT payment (opens in new tab)
+submission.submissionComplete.details                                               = How to amend this return
+submission.submissionComplete.details.p1                                            = For minor changes, like spelling mistakes, you can contact the <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+submission.submissionComplete.details.p1.link                                       = https://www.gov.uk/find-hmrc-contacts/stamp-duty-land-tax-general-enquiries
+submission.submissionComplete.details.p1.linkText                                   = Stamp Taxes Helpline (opens in new tab)
+submission.submissionComplete.details.p2                                            = For substantial changes, like a new purchaser name, you must <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+submission.submissionComplete.details.p2.link                                       = https://www.gov.uk/guidance/how-to-send-a-stamp-duty-land-tax-return#write
+submission.submissionComplete.details.p2.linkText                                   = submit a new SDLT return and write to HMRC (opens in new tab)
+submission.submissionComplete.link3                                                 = Return to your stamp taxes online account
+
+submission.submissionAwaitingConfirmation.title                                     = Your submission is awaiting confirmation
+submission.submissionAwaitingConfirmation.heading                                   = Your submission is awaiting confirmation
+submission.submissionAwaitingConfirmation.p1                                        = HMRC is processing your return. You can view it in <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+submission.submissionAwaitingConfirmation.p1.linkText                               = Returns in progress
+submission.submissionAwaitingConfirmation.p2                                        = If your submission fails, the status will change to ‘Submission failed’. Select your return to find out why this happened and what to do next.
+submission.submissionAwaitingConfirmation.p3                                        = If your submission is successful, the status will change to ‘Submitted’ and your return will move to {0}. If you chose to receive email confirmation, HMRC will notify you when this happens. If you opted out, you need to check your {1} for a status update.
+submission.submissionAwaitingConfirmation.p3.linkText1                              = Submitted returns
+submission.submissionAwaitingConfirmation.p3.linkText2                              = Returns in progress
+submission.submissionAwaitingConfirmation.p4                                        = You must select your submitted return to see:
+submission.submissionAwaitingConfirmation.b1                                        = your UTRN
+submission.submissionAwaitingConfirmation.b2                                        = your SDLT5 certificate
+submission.submissionAwaitingConfirmation.b3                                        = what happens next
+submission.submissionAwaitingConfirmation.b4                                        = how to pay
+submission.submissionAwaitingConfirmation.link                                      = Return to your Stamp Taxes Online account
