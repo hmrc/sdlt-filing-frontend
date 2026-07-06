@@ -758,10 +758,12 @@ POST       /submit-your-return/who-are-you-submitting-this-return-for           
 GET        /submit-your-return/add-email-confirmation                                                controllers.submission.AddEmailConfirmationController.onPageLoad(mode: Mode = NormalMode)
 POST       /submit-your-return/add-email-confirmation                                                controllers.submission.AddEmailConfirmationController.onSubmit(mode: Mode = NormalMode)
 
-GET       /submit-your-return/submission-complete                                                    controllers.submission.SubmissionCompleteController.onPageLoad()
+GET        /submit-your-return/submission-complete                                                   controllers.submission.SubmissionCompleteController.onPageLoad()
+
+GET        /submit-your-return/submission-awaiting-confirmation                                      controllers.submission.SubmissionAwaitingConfirmationController.onPageLoad()
 
 GET        /update-transaction-relief                                                                controllers.transaction.TransactionSingleEntityController.onPageLoad()
-GET        /update-lease-type                                                                       controllers.lease.LeaseSingleEntityController.onPageLoad()
+GET        /update-lease-type                                                                        controllers.lease.LeaseSingleEntityController.onPageLoad()
 
 GET       /about-the-land/property-type-mismatch                                                         controllers.land.LandPropertyTypeMultiEntityController.onPageLoad()
 GET       /about-the-land/property-type-mismatch/:landId/remove                                          controllers.land.LandPropertyTypeMultiEntityController.removeLand(landId: String)

@@ -1,0 +1,73 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import config.FrontendAppConfig
+
+@this(
+        layout: templates.Layout,
+        govukButton: GovukButton,
+        h1: h1,
+        p: Paragraph,
+        link: link,
+        appConfig: FrontendAppConfig,
+        paragraphWithLink: ParagraphWithLink,
+        caption: Caption
+)
+
+@()(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = titleNoForm(messages("submission.submissionAwaitingConfirmation.title"), section = Some(messages("site.submission.caption")))) {
+
+    @caption(messages("site.submission.caption"))
+
+    @h1("submission.submissionAwaitingConfirmation.heading")
+
+    @paragraphWithLink(
+        messageKey = "submission.submissionAwaitingConfirmation.p1",
+        linkKey = appConfig.sdltManagementReturnsInProgressRedirectUrl,
+        textKey = "submission.submissionAwaitingConfirmation.p1.linkText"
+    )
+
+    @p("submission.submissionAwaitingConfirmation.p2")
+
+    @p(messages("submission.submissionAwaitingConfirmation.p3",
+        link(
+            link = appConfig.sdltManagementSubmittedReturnsRedirectUrl,
+            messageKey = "submission.submissionAwaitingConfirmation.p3.linkText1"
+        ),
+        link(
+            link = appConfig.sdltManagementReturnsInProgressRedirectUrl,
+            messageKey = "submission.submissionAwaitingConfirmation.p3.linkText2"
+        ))
+    )
+
+    @p("submission.submissionAwaitingConfirmation.p4")
+
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@messages("submission.submissionAwaitingConfirmation.b1")</li>
+        <li>@messages("submission.submissionAwaitingConfirmation.b2")</li>
+        <li>@messages("submission.submissionAwaitingConfirmation.b3")</li>
+        <li>@messages("submission.submissionAwaitingConfirmation.b4")</li>
+    </ul>
+
+    <div class="govuk-body">
+        @link(
+            link = appConfig.sdltManagementRedirectUrl,
+            messageKey = "submission.submissionAwaitingConfirmation.link"
+        )
+    </div>
+}

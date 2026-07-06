@@ -121,6 +121,12 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   def sdltManagementRedirectUrl: String =
     s"$sdltManagementHost/stamp-duty-land-tax-management"
 
+  def sdltManagementReturnsInProgressRedirectUrl: String =
+    s"$sdltManagementRedirectUrl/manage-returns/returns-in-progress"
+  
+  def sdltManagementSubmittedReturnsRedirectUrl: String =
+    s"$sdltManagementRedirectUrl/manage-returns/submitted-returns"
+
   def sdltCalculationUrl: String =
     s"${baseUrl("sdltc-frontend")}/calculate-stamp-duty-land-tax/calculate"
 }
