@@ -17,27 +17,30 @@
 @import views.html.components._
 @import views.html.helper.CSPNonce
 @import viewmodels.submission.SubmissionReceiptViewModel
+@import config.FrontendAppConfig
 
 @this(
         layout: templates.Layout,
         govukInsetText: GovukInsetText,
         govukTable: GovukTable,
+        caption: Caption,
         h1: h1,
         p: Paragraph,
-        link: link
+        link: link,
+        appConfig: FrontendAppConfig
 )
 
 @(viewModel: SubmissionReceiptViewModel)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("submission.submissionReceipt.title"), section = Some(messages("site.submission.caption")))) {
 
-    <span class="govuk-caption-l">@messages("site.submission.caption")</span>
+    @caption(messages("site.submission.caption"))
     @h1("submission.submissionReceipt.heading")
 
     @p(messages("submission.submissionReceipt.p1", viewModel.purchaserName, viewModel.submissionTime, viewModel.submissionDate))
 
     @govukInsetText(InsetText(
-        content = HtmlContent(s"${messages("submission.submissionReceipt.inset")}<br><strong>${viewModel.utrn}</strong>")
+        content = HtmlContent(s"${messages("submission.submissionReceipt.inset")}<br><strong>${viewModel.submissionReceiptNumber}</strong>")
     ))
 
     @govukTable(viewModel.table)
@@ -51,7 +54,7 @@
 
     <div class="govuk-body">
         @link(
-            link = controllers.routes.ReturnTaskListController.onPageLoad().url,
+            link = appConfig.sdltManagementRedirectUrl,
             messageKey = "submission.submissionReceipt.returnLink"
         )
     </div>

@@ -21,7 +21,7 @@ import models.prelimQuestions.TransactionType
 import play.api.i18n.{Lang, Messages}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{Table, TableRow}
-import utils.DateTimeFormats.dateTimeFormat
+import utils.DateTimeFormats.{dateTimeFormat, parseDate}
 
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -30,7 +30,7 @@ case class SubmissionReceiptViewModel(
                                         purchaserName: String,
                                         submissionTime: String,
                                         submissionDate: String,
-                                        utrn: String,
+                                        submissionReceiptNumber: String,
                                         table: Table
                                       )
 
@@ -41,19 +41,20 @@ object SubmissionReceiptViewModel {
 
   def apply(fullReturn: FullReturn)(implicit messages: Messages): Option[SubmissionReceiptViewModel] =
     for {
-      submission  <- fullReturn.submission
-      utrn        <- submission.UTRN
-      requestDate <- submission.submissionRequestDate
+      submission    <- fullReturn.submission
+      utrn          <- submission.UTRN
+      receiptNumber <- submission.submissionReceipt
+      requestDate   <- submission.submissionRequestDate
     } yield {
       implicit val lang: Lang = messages.lang
       val parsedDate = ZonedDateTime.parse(requestDate, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
 
       SubmissionReceiptViewModel(
-        purchaserName  = purchaserName(fullReturn),
-        submissionTime = parsedDate.format(timeFormatter).toLowerCase,
-        submissionDate = parsedDate.toLocalDate.format(dateTimeFormat()),
-        utrn           = utrn,
-        table          = buildTable(fullReturn, utrn)
+        purchaserName           = purchaserName(fullReturn),
+        submissionTime          = parsedDate.format(timeFormatter).toLowerCase,
+        submissionDate          = parsedDate.toLocalDate.format(dateTimeFormat()),
+        submissionReceiptNumber = receiptNumber,
+        table                   = buildTable(fullReturn, utrn)
       )
     }
 
@@ -85,7 +86,15 @@ object SubmissionReceiptViewModel {
       .flatten
       .mkString(", ")
 
+  private def formattedEffectiveDate(fullReturn: FullReturn)(implicit lang: Lang): String =
+    fullReturn.transaction
+      .flatMap(_.effectiveDate)
+      .flatMap(parseDate(_).toOption)
+      .map(_.format(dateTimeFormat()))
+      .getOrElse("")
+
   private def buildTable(fullReturn: FullReturn, utrn: String)(implicit messages: Messages): Table = {
+    implicit val lang: Lang = messages.lang
     val land = fullReturn.land.flatMap(_.headOption)
 
     val requiredRows: Seq[Seq[TableRow]] = Seq(
@@ -94,7 +103,7 @@ object SubmissionReceiptViewModel {
       row("submission.submissionReceipt.table.purchaser", purchaserName(fullReturn)),
       row("submission.submissionReceipt.table.vendor", vendorName(fullReturn)),
       row("submission.submissionReceipt.table.transactionType", transactionTypeDisplay(fullReturn)),
-      row("submission.submissionReceipt.table.effectiveDate", fullReturn.transaction.flatMap(_.effectiveDate).getOrElse(""))
+      row("submission.submissionReceipt.table.effectiveDate", formattedEffectiveDate(fullReturn))
     )
 
     val optionalRows: Seq[Seq[TableRow]] = Seq(

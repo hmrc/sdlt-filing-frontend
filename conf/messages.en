@@ -2163,7 +2163,7 @@ submission.submissionComplete.heading1                                          
 submission.submissionComplete.p1                                                    = HMRC have sent a confirmation email to {0}.
 submission.submissionComplete.p2                                                    = You must:
 submission.submissionComplete.b1                                                    = <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a> – this is official evidence that your return has been successfully submitted
-submission.submissionComplete.b1.link                                               = /stamp-duty-land-tax-filing/submit-your-return/submission-receipt-and-sdlt5
+submission.submissionComplete.b1.link                                               = /stamp-duty-land-tax-filing/submit-your-return/submission-receipt-and-SDLT5
 submission.submissionComplete.b1.linkText                                           = save your SDLT 5 certificate (opens in new tab)
 submission.submissionComplete.b2                                                    = send your SDLT5 to HM Land Registry when registering the land or property
 submission.submissionComplete.b3                                                    = pay the SDLT due within 14 days of submission
