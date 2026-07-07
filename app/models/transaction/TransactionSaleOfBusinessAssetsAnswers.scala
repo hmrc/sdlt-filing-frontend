@@ -16,7 +16,8 @@
 
 package models.transaction
 
-import models.transaction.TransactionSaleOfBusinessAssets.{Stock, Goodwill, ChattelsAndMoveables, Others}
+import models.Transaction
+import models.transaction.TransactionSaleOfBusinessAssets.{ChattelsAndMoveables, Goodwill, Others, Stock}
 import play.api.libs.json.{Format, Json}
 
 case class TransactionSaleOfBusinessAssetsAnswers (
@@ -37,6 +38,25 @@ object TransactionSaleOfBusinessAssetsAnswers {
       others = if (selected.contains(Others)) "yes" else "no"
     )
   }
+  
+  def fromTransaction(transaction: Transaction): Option[TransactionSaleOfBusinessAssetsAnswers] =
+    val fields = Seq(
+      transaction.includesStock,
+      transaction.includesGoodwill,
+      transaction.includesChattel,
+      transaction.includesOther
+    )
+
+    val hasAnyYes = fields.exists(_.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes")))
+
+    if (hasAnyYes) {
+      Some(TransactionSaleOfBusinessAssetsAnswers(
+        stock = if (transaction.includesStock.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        goodwill = if (transaction.includesGoodwill.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        chattelsAndMoveables = if (transaction.includesChattel.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        others = if (transaction.includesOther.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+      ))
+    } else None
   
   def toSet(answers: TransactionSaleOfBusinessAssetsAnswers): Set[TransactionSaleOfBusinessAssets] = {
     val allValues: Map[TransactionSaleOfBusinessAssets, String] = Map(

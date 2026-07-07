@@ -9,3 +9,16 @@
 .js-enabled .js-visible {
   display: inline-block !important;
 }
+
+.govuk-tag {
+  max-width: 200px !important;
+}
+
+@media print {
+  .govuk-back-link,
+  .govuk-footer__inline-list,
+  .hmrc-report-technical-issue,
+  .hmrc-sign-out-nav {
+    display: none !important;
+  }
+}

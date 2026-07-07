@@ -97,37 +97,11 @@ class PopulateTransactionService {
     }
 
   private def formsOfConsiderationPage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
-    val fields = Seq(
-      transaction.considerationCash,
-      transaction.considerationDebt,
-      transaction.considerationBuild,
-      transaction.considerationEmploy,
-      transaction.considerationOther,
-      transaction.considerationSharesQTD,
-      transaction.considerationSharesUNQTD,
-      transaction.considerationLand,
-      transaction.considerationServices,
-      transaction.considerationContingent
-    )
-
-    val hasAnyYes = fields.exists(_.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes")))
-
-    if (hasAnyYes) {
-      val answers = TransactionFormsOfConsiderationAnswers(
-        cash = if (transaction.considerationCash.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-        debt = if (transaction.considerationDebt.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-        buildingWorks = if (transaction.considerationBuild.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-        employment = if (transaction.considerationEmploy.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-        other = if (transaction.considerationOther.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-        sharesInAQuotedCompany = if (transaction.considerationSharesQTD.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-        sharesInAnUnquotedCompany = if (transaction.considerationSharesUNQTD.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-        otherLand = if (transaction.considerationLand.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-        services = if (transaction.considerationServices.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-        contingent = if (transaction.considerationContingent.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no"
-      )
-      userAnswers.set(TransactionFormsOfConsiderationPage, answers)
-    } else {
-      Success(userAnswers)
+    TransactionFormsOfConsiderationAnswers.fromTransaction(transaction) match {
+      case Some(answers) =>
+        userAnswers.set(TransactionFormsOfConsiderationPage, answers)
+      case _ =>
+        Success(userAnswers)
     }
   }
 
@@ -214,42 +188,21 @@ class PopulateTransactionService {
   }
 
   private def propertyUsePage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
-  val fields = Seq(
-    transaction.usedAsOffice,
-    transaction.usedAsHotel,
-    transaction.usedAsShop,
-    transaction.usedAsWarehouse,
-    transaction.usedAsFactory,
-    transaction.usedAsIndustrial,
-    transaction.usedAsOther
-  )
-
-  val hasAnyYes = fields.exists(_.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes")))
-
-  if (hasAnyYes) {
-    val answers = TransactionUseOfLandOrPropertyAnswers(
-      office             = if (transaction.usedAsOffice.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      hotel              = if (transaction.usedAsHotel.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      shop               = if (transaction.usedAsShop.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      warehouse          = if (transaction.usedAsWarehouse.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      factory            = if (transaction.usedAsFactory.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      otherIndustrialUnit = if (transaction.usedAsIndustrial.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      other              = if (transaction.usedAsOther.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no"
-    )
-    userAnswers.set(TransactionUseOfLandOrPropertyPage, answers)
-  } else {
-    Success(userAnswers)
+  TransactionUseOfLandOrPropertyAnswers.fromTransaction(transaction) match {
+    case Some(answers) =>
+      userAnswers.set(TransactionUseOfLandOrPropertyPage, answers)
+    case _ =>
+      Success(userAnswers)
   }
 }
 
   private def includedSaleBusinessPage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
-    val answers = TransactionSaleOfBusinessAssetsAnswers(
-      stock = if (transaction.includesStock.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      goodwill = if (transaction.includesGoodwill.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      chattelsAndMoveables = if (transaction.includesChattel.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-      others = if (transaction.includesOther.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
-    )
-    userAnswers.set(TransactionSaleOfBusinessAssetsPage, answers)
+    TransactionSaleOfBusinessAssetsAnswers.fromTransaction(transaction) match {
+      case Some(answers) =>
+        userAnswers.set(TransactionSaleOfBusinessAssetsPage, answers)
+      case _ =>
+        Success(userAnswers)
+    }
   }
 
 
@@ -280,13 +233,9 @@ class PopulateTransactionService {
   }
 
   private def rulingFollowedPage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
-    transaction.postTransRulingFollowed match {
-      case Some(value) if value.equalsIgnoreCase("yes") =>
-        userAnswers.set(TransactionRulingFollowedPage, TransactionRulingFollowed.Yes)
-      case Some(value) if value.equalsIgnoreCase("no") =>
-        userAnswers.set(TransactionRulingFollowedPage, TransactionRulingFollowed.No)
-      case Some(value) if value.equalsIgnoreCase("rulingNotReceived") =>
-        userAnswers.set(TransactionRulingFollowedPage, TransactionRulingFollowed.RulingNotReceived)
+    TransactionRulingFollowed.parse(transaction.postTransRulingFollowed) match {
+      case Some(transactionRulingFollowed) =>
+        userAnswers.set(TransactionRulingFollowedPage, transactionRulingFollowed)
       case _ =>
         Success(userAnswers)
     }

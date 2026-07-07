@@ -22,7 +22,7 @@
         caption: Caption,
         h1: h1,
         p: Paragraph,
-        paragraphWithLink: ParagraphWithLink
+        link: link
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -31,11 +31,10 @@
     @caption(messages("site.submission.caption"))
     @h1(messages("submission.beforeYouStart.heading"))
 
-    @paragraphWithLink(
-        messageKey = "submission.beforeYouStart.p1.prefix",
-        linkKey = "submission.beforeYouStart.p1.link",
-        textKey = "submission.beforeYouStart.p1.suffix"
-    )
+    @p(messages(
+        "submission.beforeYouStart.p1.text",
+        link(controllers.submission.routes.CompletedSdltReturnController.onPageLoad().url, "submission.beforeYouStart.p1.linkText")
+    ))
 
     @p(messages("submission.beforeYouStart.p2"))
     <ul class="govuk-list govuk-list--bullet">

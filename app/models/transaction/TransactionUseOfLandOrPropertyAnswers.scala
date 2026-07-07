@@ -17,6 +17,7 @@
 package models.transaction
 
 import TransactionUseOfLandOrProperty.*
+import models.Transaction
 import play.api.libs.json.{Format, Json}
 
 case class TransactionUseOfLandOrPropertyAnswers(
@@ -42,6 +43,31 @@ object TransactionUseOfLandOrPropertyAnswers {
       other = if(selected.contains(Other)) "yes" else "no",
     )
   }
+  
+  def fromTransaction(transaction: Transaction): Option[TransactionUseOfLandOrPropertyAnswers] =
+    val fields = Seq(
+      transaction.usedAsOffice,
+      transaction.usedAsHotel,
+      transaction.usedAsShop,
+      transaction.usedAsWarehouse,
+      transaction.usedAsFactory,
+      transaction.usedAsIndustrial,
+      transaction.usedAsOther
+    )
+
+    val hasAnyYes = fields.exists(_.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes")))
+
+    if (hasAnyYes) {
+      Some(TransactionUseOfLandOrPropertyAnswers(
+        office = if (transaction.usedAsOffice.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        hotel = if (transaction.usedAsHotel.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        shop = if (transaction.usedAsShop.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        warehouse = if (transaction.usedAsWarehouse.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        factory = if (transaction.usedAsFactory.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        otherIndustrialUnit = if (transaction.usedAsIndustrial.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        other = if (transaction.usedAsOther.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no"
+      ))
+    } else None
 
   def toSet(answers: TransactionUseOfLandOrPropertyAnswers): Set[TransactionUseOfLandOrProperty] = {
     val allValues: Map[TransactionUseOfLandOrProperty, String] = Map(

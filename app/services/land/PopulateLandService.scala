@@ -56,15 +56,11 @@ class PopulateLandService {
 
   private def typeOfPropertyPages(land: Land, userAnswers: UserAnswers): Try[UserAnswers] = {
     Try {
-      val propertyType: LandTypeOfProperty = land.propertyType match {
-        case Some("01") => LandTypeOfProperty.Residential
-        case Some("02") => LandTypeOfProperty.Mixed
-        case Some("03") => LandTypeOfProperty.NonResidential
-        case Some("04") => LandTypeOfProperty.Additional
+      land.propertyType.flatMap(LandTypeOfProperty.fromCode) match {
+        case Some(propertyType) => propertyType
         case _ =>
           throw new IllegalStateException(s"Land ${land.landID} is missing required property type")
       }
-      propertyType
     }.flatMap {
       case propertyType@(LandTypeOfProperty.Mixed | LandTypeOfProperty.NonResidential) =>
         for {
@@ -101,20 +97,11 @@ class PopulateLandService {
   }
 
   private def interestTransferredOrCreatedPage(land: Land, userAnswers: UserAnswers): Try[UserAnswers] = {
-    val interestCreatedTransferred: LandInterestTransferredOrCreated = land.interestCreatedTransferred match {
-      case Some("FGS") => LandInterestTransferredOrCreated.FGS
-      case Some("FPO") => LandInterestTransferredOrCreated.FPO
-      case Some("FTF") => LandInterestTransferredOrCreated.FTF
-      case Some("LG") => LandInterestTransferredOrCreated.LG
-      case Some("LPT") => LandInterestTransferredOrCreated.LPT
-      case Some("LT") => LandInterestTransferredOrCreated.LT
-      case Some("OT") => LandInterestTransferredOrCreated.OT
-      case _ => LandInterestTransferredOrCreated.ER
-    }
-    if (!interestCreatedTransferred.eq(LandInterestTransferredOrCreated.ER)) {
-      userAnswers.set(LandInterestTransferredOrCreatedPage, interestCreatedTransferred)
-    } else {
-      userAnswers.remove(LandInterestTransferredOrCreatedPage)
+    val interestCreatedTransferredOpt = land.interestCreatedTransferred.flatMap(LandInterestTransferredOrCreated.fromCode)
+    interestCreatedTransferredOpt match {
+      case Some(interestCreatedTransferred) =>
+        userAnswers.set(LandInterestTransferredOrCreatedPage, interestCreatedTransferred)
+      case _ => userAnswers.remove(LandInterestTransferredOrCreatedPage)
     }
   }
 

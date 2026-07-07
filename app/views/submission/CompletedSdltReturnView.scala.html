@@ -1,0 +1,118 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
+@import viewmodels.submission.SubmissionState
+@import viewmodels.submission.SubmissionState._
+@import views.html.helper.CSPNonce
+@import viewmodels.submission.summary.Summaries
+
+@this(
+        layout: templates.Layout,
+        govukButton: GovukButton,
+        govukInsetText : GovukInsetText,
+        submissionStateTag: SubmissionStateTag,
+        govukDetails: GovukDetails,
+        h1: h1,
+        p: Paragraph,
+        sdltReturnSummaryView: SdltReturnSummaryView
+)
+
+@(
+    submissionState: SubmissionState,
+    submissionDate: Option[String],
+    submissionTime: Option[String],
+    purchaserName: Option[String],
+    utrn: Option[String],
+    submissionRecieptRef: Option[String],
+    summaries: Summaries
+)(implicit request: Request[_], messages: Messages)
+
+@detailsContent = {
+    @p(messages("submission.completedSdltReturn.details.content.inProgress", submissionStateTag(InProgress)))
+    @p(messages("submission.completedSdltReturn.details.content.awaitingConfirmation", submissionStateTag(AwaitingConfirmation)))
+    @p(messages("submission.completedSdltReturn.details.content.submitted", submissionStateTag(Submitted)))
+    @p(messages("submission.completedSdltReturn.details.content.submissionFailed", submissionStateTag(SubmissionFailed)))
+}
+
+@insetContent = {
+    @submissionRecieptRef.map { submissionRef =>
+        @utrn.map { utr =>
+            @p(messages("submission.completedSdltReturn.inset.utrn", utr))
+        }
+        @p(messages("submission.completedSdltReturn.inset.submissionRef", submissionRef))
+    }
+}
+
+@defining(if (submissionState == Submitted) "submitted" else "completed") { submittedKey =>
+
+    @layout(pageTitle = titleNoForm(messages(s"submission.completedSdltReturn.$submittedKey.title"), section = Some(messages("site.submission.caption"))), showBackLink = false) {
+
+        @h1(messages(s"submission.completedSdltReturn.$submittedKey.heading"))
+
+        @p(messages("submission.completedSdltReturn.status", submissionStateTag(submissionState)))
+
+        @govukDetails(Details(
+            summary = messages("submission.completedSdltReturn.details.summary"),
+            content = HtmlContent(
+                detailsContent
+            )
+        ))
+
+        @{
+            (utrn, purchaserName, submissionTime, submissionDate) match {
+                case (Some(utr), Some(name), Some(time), Some(date)) =>
+                    p(messages("submission.completedSdltReturn.submittedTimeAndDate", utr, name, time, date))
+                case _ => ""
+            }
+        }
+
+        @submissionRecieptRef.map { _ =>
+            @govukInsetText(InsetText(
+                content = HtmlContent(insetContent)
+            ))
+        }
+
+        <p class="govuk-body">
+            <a id="print-link" class="print-link govuk-link" href="#">
+                @messages("submission.completedSdltReturn.printOrSave.link")
+            </a>
+        </p>
+
+        <p class="govuk-body">
+            <a class="govuk-link" href="#">
+                @messages("submission.completedSdltReturn.downloadPdf.link")
+            </a>
+            @messages("submission.completedSdltReturn.downloadPdf.text")
+        </p>
+
+        <p class="govuk-body">
+            <a class="govuk-link" target="_blank" rel="noopener noreferrer" href="#">
+                @messages("submission.completedSdltReturn.returnToStampTaxesOnline.link")
+            </a>
+        </p>
+
+        @sdltReturnSummaryView(summaries)
+
+        <script @CSPNonce.attr>
+            document.getElementById("print-link").addEventListener("click", function(event) {
+                event.preventDefault();
+                window.print();
+            })
+        </script>
+    }
+}

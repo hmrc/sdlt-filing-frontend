@@ -16,6 +16,7 @@
 
 package models.transaction
 
+import models.Transaction
 import models.transaction.TransactionFormsOfConsideration.{BuildingWorks, Cash, Contingent, Debt, Employment, Other, OtherLand, Services, SharesInAQuotedCompany, SharesInAnUnquotedCompany}
 import play.api.libs.json.{Format, Json}
 
@@ -50,6 +51,37 @@ object TransactionFormsOfConsiderationAnswers {
       contingent = if (selected.contains(Contingent)) "yes" else "no"
     )
   }
+  
+  def fromTransaction(transaction: Transaction): Option[TransactionFormsOfConsiderationAnswers] =
+    val fields = Seq(
+      transaction.considerationCash,
+      transaction.considerationDebt,
+      transaction.considerationBuild,
+      transaction.considerationEmploy,
+      transaction.considerationOther,
+      transaction.considerationSharesQTD,
+      transaction.considerationSharesUNQTD,
+      transaction.considerationLand,
+      transaction.considerationServices,
+      transaction.considerationContingent
+    )
+
+    val hasAnyYes = fields.exists(_.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes")))
+
+    if (hasAnyYes) {
+      Some(TransactionFormsOfConsiderationAnswers(
+        cash = if (transaction.considerationCash.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        debt = if (transaction.considerationDebt.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        buildingWorks = if (transaction.considerationBuild.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        employment = if (transaction.considerationEmploy.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        other = if (transaction.considerationOther.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        sharesInAQuotedCompany = if (transaction.considerationSharesQTD.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        sharesInAnUnquotedCompany = if (transaction.considerationSharesUNQTD.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        otherLand = if (transaction.considerationLand.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        services = if (transaction.considerationServices.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no",
+        contingent = if (transaction.considerationContingent.exists(v => v.nonEmpty && v.equalsIgnoreCase("yes"))) "yes" else "no"
+      ))
+    } else None
 
   def toSet(answers: TransactionFormsOfConsiderationAnswers): Set[TransactionFormsOfConsideration] = {
     val allValues: Map[TransactionFormsOfConsideration, String] = Map(

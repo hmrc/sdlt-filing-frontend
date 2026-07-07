@@ -407,7 +407,7 @@ object FullReturnConstants {
     contractEndDate = Some("2034-09-30"),
     contractStartDate = Some("2024-10-01"),
     firstReviewDate = Some("2029-10-01"),
-    leaseType = Some("NEW"),
+    leaseType = Some("R"),
     marketRent = Some("24000.00"),
     netPresentValue = Some("95000.00"),
     optionToRenew = Some("true"),
@@ -483,7 +483,7 @@ object FullReturnConstants {
     createDate = Some("2024-10-15T10:30:00"),
     lastUpdateDate = Some("2024-10-15T11:00:00"),
     acceptedDate = Some("2024-10-15T11:00:00"),
-    submittedDate = Some("2024-10-15T10:30:00"),
+    submittedDate = Some("2024-10-15T10:30:00Z"),
     email = Some("john.smith@email.com"),
     submissionRequestDate = Some("2024-10-15T10:15:00Z"),
     irmarkSent = Some("IRMARK-SENT-001")
