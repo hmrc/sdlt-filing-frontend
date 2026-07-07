@@ -2183,7 +2183,7 @@ submission.submissionComplete.link3                                             
 
 submission.submissionAwaitingConfirmation.title                                     = Your submission is awaiting confirmation
 submission.submissionAwaitingConfirmation.heading                                   = Your submission is awaiting confirmation
-submission.submissionAwaitingConfirmation.p1                                        = HMRC is processing your return. You can view it in <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+submission.submissionAwaitingConfirmation.p1                                        = HMRC is processing your return. You can view it in <a href="{0}" class="govuk-link">{1}</a>.
 submission.submissionAwaitingConfirmation.p1.linkText                               = Returns in progress
 submission.submissionAwaitingConfirmation.p2                                        = If your submission fails, the status will change to ‘Submission failed’. Select your return to find out why this happened and what to do next.
 submission.submissionAwaitingConfirmation.p3                                        = If your submission is successful, the status will change to ‘Submitted’ and your return will move to {0}. If you chose to receive email confirmation, HMRC will notify you when this happens. If you opted out, you need to check your {1} for a status update.
