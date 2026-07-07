@@ -2163,6 +2163,7 @@ submission.submissionComplete.heading1                                          
 submission.submissionComplete.p1                                                    = HMRC have sent a confirmation email to {0}.
 submission.submissionComplete.p2                                                    = You must:
 submission.submissionComplete.b1                                                    = <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a> – this is official evidence that your return has been successfully submitted
+submission.submissionComplete.b1.link                                               = /stamp-duty-land-tax-filing/submit-your-return/submission-receipt-and-SDLT5
 submission.submissionComplete.b1.linkText                                           = save your SDLT 5 certificate (opens in new tab)
 submission.submissionComplete.b2                                                    = send your SDLT5 to HM Land Registry when registering the land or property
 submission.submissionComplete.b3                                                    = pay the SDLT due within 14 days of submission
@@ -2209,4 +2210,20 @@ submission.submissionFailed.p4.linkText                                         
 submission.submissionFailed.link1                                                   = View your return
 submission.submissionFailed.link2                                                   = Return to your Stamp Taxes Online account
 
-
+submission.submissionReceipt.title = Submission receipt and electronic SDLT5 certificate
+submission.submissionReceipt.heading = Submission Receipt and Electronic SDLT 5 Certificate
+submission.submissionReceipt.p1 = The Stamp Duty Land Tax return for {0} was submitted to HMRC at {1} on {2}.
+submission.submissionReceipt.inset = Submission receipt reference number:
+submission.submissionReceipt.table.utrn = UTRN
+submission.submissionReceipt.table.address = Property address
+submission.submissionReceipt.table.purchaser = Purchaser name
+submission.submissionReceipt.table.vendor = Vendor name
+submission.submissionReceipt.table.transactionType = Type of transaction
+submission.submissionReceipt.table.effectiveDate = Effective date of transaction
+submission.submissionReceipt.table.agentRef = Agent reference
+submission.submissionReceipt.table.titleNumber = Title number or folio number
+submission.submissionReceipt.table.uprn = NLPG UPRN
+submission.submissionReceipt.p2 = The submission receipt reference number is a unique identification code that is calculated from the entire contents of your SDLT return. This code changes whenever you amend your return prior to submission and is included on every printed copy of your return.
+submission.submissionReceipt.p3 = This submission receipt is an SDLT5 certificate issued under section 79 of the Finance Act 2003 and evidences that a Land Transaction return has been delivered in respect of the above notified transaction.
+submission.submissionReceipt.printLink = Print a copy of this page
+submission.submissionReceipt.returnLink = Return to your Stamp Taxes Online account

@@ -762,6 +762,8 @@ GET        /submit-your-return/submission-complete                              
 
 GET        /submit-your-return/submission-awaiting-confirmation                                      controllers.submission.SubmissionAwaitingConfirmationController.onPageLoad()
 
+GET       /submit-your-return/submission-receipt-and-SDLT5                                           controllers.submission.SubmissionReceiptController.onPageLoad()
+
 GET        /update-transaction-relief                                                                controllers.transaction.TransactionSingleEntityController.onPageLoad()
 GET        /update-lease-type                                                                        controllers.lease.LeaseSingleEntityController.onPageLoad()
 
