@@ -747,10 +747,10 @@ purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel                      
 purchaser.isPurchaserActingAsTrustee.error.required                                 = Select yes if {0} is acting as a trustee
 purchaser.isPurchaserActingAsTrustee.change.hidden                                  = Is {0} acting as a trustee?
 
-confirmChangeOfMainPurchaser.title = Are you sure you want to change purchaser 1? - About the purchaser
-confirmChangeOfMainPurchaser.heading = Are you sure you want to select {0} as purchaser 1?
-confirmChangeOfMainPurchaser.error.required = Select yes if you want to select {0} as purchaser 1
-confirmChangeOfMainPurchaser.change.hidden = Are you sure you want to change purchaser 1?
+confirmChangeOfMainPurchaser.title                                                  = Are you sure you want to change purchaser 1? - About the purchaser
+confirmChangeOfMainPurchaser.heading                                                = Are you sure you want to select {0} as purchaser 1?
+confirmChangeOfMainPurchaser.error.required                                         = Select yes if you want to select {0} as purchaser 1
+confirmChangeOfMainPurchaser.change.hidden                                          = Are you sure you want to change purchaser 1?
 
 purchaser.confirmPurchaserAddress.title                                             = Confirm the purchaser’s address - About the purchaser
 purchaser.confirmPurchaserAddress.heading                                           = Confirm {0}’s address
@@ -2194,3 +2194,19 @@ submission.submissionAwaitingConfirmation.b2                                    
 submission.submissionAwaitingConfirmation.b3                                        = what happens next
 submission.submissionAwaitingConfirmation.b4                                        = how to pay
 submission.submissionAwaitingConfirmation.link                                      = Return to your Stamp Taxes Online account
+
+submission.submissionFailed.heading                                                 = Submission failed
+submission.submissionFailed.p1a                                                     = Your return could not be submitted because:
+submission.submissionFailed.p1b                                                     = Your return could not be submitted.
+submission.submissionFailed.reason                                                  = {0}
+submission.submissionFailed.p2.prefix                                               = <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a> to speak to someone about your return.
+submission.submissionFailed.p2.link                                                 = https://www.gov.uk/find-hmrc-contacts/technical-support-with-hmrc-online-services
+submission.submissionFailed.p2.linkText                                             = Contact the HMRC Online Services Helpdesk (opens in a new tab)
+submission.submissionFailed.p3                                                      = OR
+submission.submissionFailed.p4.prefix                                               = Contact the <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a> to speak to someone about your return.
+submission.submissionFailed.p4.link                                                 = https://www.gov.uk/find-hmrc-contacts/stamp-duty-land-tax-general-enquiries
+submission.submissionFailed.p4.linkText                                             = Stamp Taxes Helpline (opens in a new tab)
+submission.submissionFailed.link1                                                   = View your return
+submission.submissionFailed.link2                                                   = Return to your Stamp Taxes Online account
+
+
