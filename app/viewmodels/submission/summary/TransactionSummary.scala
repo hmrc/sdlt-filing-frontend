@@ -94,6 +94,10 @@ object TransactionSummary {
               transaction.reliefSchemeNumber.flatMap(reliefSchemeNumber => Option.when(transaction.reliefReason.contains("08"))(reliefSchemeNumber))
             ),
             getOptSummaryRow(
+              messages("transaction.transactionPartialRelief.checkYourAnswersLabel"),
+              getIsClaimingPartialReliefYesNo(transaction)
+            ),
+            getOptSummaryRow(
               messages("transaction.claimingPartialReliefAmount.checkYourAnswersLabel"),
               getOptMoneyValue(transaction.reliefAmount)
             ),
@@ -128,8 +132,17 @@ object TransactionSummary {
               )
             ),
             getOptSummaryRow(
+              messages("transaction.restrictionsCovenantsAndConditions.checkYourAnswersLabel"),
+              getOptYesNo(transaction.restrictionsAffectInterest)
+            ),
+            getOptSummaryRow(
               messages("transaction.descriptionOfRestrictions.checkYourAnswersLabel"),
               transaction.restrictionDetails
+            ),
+            getOptSummaryRow(
+              messages("transaction.isLandOrPropertyExchanged.checkYourAnswersLabel"),
+              if transaction.exchangedLandAddress1.nonEmpty then Some(messages("site.yes"))
+              else Some(messages("site.no"))
             ),
             getOptSummaryRowHtml(
               messages("transaction.address.checkYourAnswersLabel"),
@@ -192,4 +205,14 @@ object TransactionSummary {
       )
     }
   }
+
+  private def getIsClaimingPartialReliefYesNo(transaction: Transaction)(implicit messages: Messages): Option[String] =
+    (transaction.claimingRelief, transaction.reliefAmount) match {
+      case (Some(claimingRelief), Some(_)) if claimingRelief.equalsIgnoreCase("YES") =>
+        Some(messages("site.yes"))
+      case (Some(claimingRelief), None) if claimingRelief.equalsIgnoreCase("YES") =>
+        Some(messages("site.no"))
+      case _ =>
+        None
+    }
 }
