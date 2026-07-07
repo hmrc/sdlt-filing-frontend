@@ -2196,16 +2196,16 @@ submission.submissionAwaitingConfirmation.b4                                    
 submission.submissionAwaitingConfirmation.link                                      = Return to your Stamp Taxes Online account
 
 submission.submissionFailed.heading                                                 = Submission failed
-submission.submissionFailed.p1a                                                     = Your return could not be submitted because
+submission.submissionFailed.p1a                                                     = Your return could not be submitted because:
 submission.submissionFailed.p1b                                                     = Your return could not be submitted.
 submission.submissionFailed.reason                                                  = {0}
 submission.submissionFailed.p2.prefix                                               = <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a> to speak to someone about your return.
 submission.submissionFailed.p2.link                                                 = https://www.gov.uk/find-hmrc-contacts/technical-support-with-hmrc-online-services
-submission.submissionFailed.p2.linkText                                             = Contact the HMRC Online Services Helpdesk
+submission.submissionFailed.p2.linkText                                             = Contact the HMRC Online Services Helpdesk (opens in a new tab)
 submission.submissionFailed.p3                                                      = OR
 submission.submissionFailed.p4.prefix                                               = Contact the <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a> to speak to someone about your return.
 submission.submissionFailed.p4.link                                                 = https://www.gov.uk/find-hmrc-contacts/stamp-duty-land-tax-general-enquiries
-submission.submissionFailed.p4.linkText                                             = Stamp Taxes Helpline
+submission.submissionFailed.p4.linkText                                             = Stamp Taxes Helpline (opens in a new tab)
 submission.submissionFailed.link1                                                   = View your return
 submission.submissionFailed.link2                                                   = Return to your Stamp Taxes Online account
 
