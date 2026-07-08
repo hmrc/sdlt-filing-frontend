@@ -250,8 +250,15 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
         pd.replaceMainResidence mustBe Some("No")
       }
 
-      "must set non-additional property details for other property types" in {
+      "must set residential property details for property type 01" in {
         val pd = TaxCalcRequestValidator.buildRequest(userAnswersWith(freeholdReturn(propertyType = "01"))).toOption.get.propertyDetails.get
+        pd.individual mustBe "Yes"
+        pd.twoOrMoreProperties mustBe Some("No")
+        pd.replaceMainResidence mustBe None
+      }
+
+      "must set non-additional property details for other property types" in {
+        val pd = TaxCalcRequestValidator.buildRequest(userAnswersWith(freeholdReturn(propertyType = "02"))).toOption.get.propertyDetails.get
         pd.individual mustBe "No"
         pd.twoOrMoreProperties mustBe None
       }

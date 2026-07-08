@@ -106,6 +106,14 @@ object TaxCalcRequestValidator {
           sharedOwnership      = None,
           currentValue         = None
         ))
+      case LandTypeOfProperty.Residential.toString =>
+        Some(PropertyDetails(
+          individual           = "Yes",
+          twoOrMoreProperties  = Some("No"),
+          replaceMainResidence = None,
+          sharedOwnership      = None,
+          currentValue         = None
+        ))
       case _ =>
         Some(PropertyDetails(
           individual           = "No",
