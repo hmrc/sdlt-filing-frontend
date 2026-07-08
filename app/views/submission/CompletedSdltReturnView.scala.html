@@ -52,7 +52,9 @@
 @insetContent = {
     @submissionRecieptRef.map { submissionRef =>
         @utrn.map { utr =>
-            @p(messages("submission.completedSdltReturn.inset.utrn", utr))
+            @if(submissionState == Submitted) {
+                @p(messages("submission.completedSdltReturn.inset.utrn", utr))
+            }
         }
         @p(messages("submission.completedSdltReturn.inset.submissionRef", submissionRef))
     }
@@ -75,7 +77,7 @@
 
         @{
             (utrn, purchaserName, submissionTime, submissionDate) match {
-                case (Some(utr), Some(name), Some(time), Some(date)) =>
+                case (Some(utr), Some(name), Some(time), Some(date)) if (submissionState == Submitted) =>
                     p(messages("submission.completedSdltReturn.submittedTimeAndDate", utr, name, time, date))
                 case _ => ""
             }
