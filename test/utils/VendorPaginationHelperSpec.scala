@@ -26,8 +26,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 
 class VendorPaginationHelperSpec extends SpecBase {
 
-  val sortService = SortService()
-  val helper = new VendorPaginationHelper(sortService)
+  val helper = new VendorPaginationHelper()
 
   private implicit val messages: Messages = stubMessages()
 

@@ -19,8 +19,6 @@ package utils
 import base.SpecBase
 
 class SortServiceSpec extends SpecBase {
-  
-  val service = new SortService()
 
   case class TestObject(objectId: Option[String], lastUpdateDate: Option[String])
 
@@ -35,7 +33,7 @@ class SortServiceSpec extends SpecBase {
           
           val sortedObjectList = Seq(object1)
           
-          service.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, Some(mainObjectID))(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
+          SortService.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, Some(mainObjectID))(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
         }
 
       "must return the list as is when there is one item and lastUpdateDate is missing" in {
@@ -45,7 +43,7 @@ class SortServiceSpec extends SpecBase {
 
         val sortedObjectList = Seq(object1)
 
-        service.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, Some(mainObjectID))(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
+        SortService.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, Some(mainObjectID))(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
       }
 
       "must return the list as is when there is one item and mainObjectID is missing" in {
@@ -55,7 +53,7 @@ class SortServiceSpec extends SpecBase {
 
         val sortedObjectList = Seq(object1)
 
-        service.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, mainObjectId = None)(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
+        SortService.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, mainObjectId = None)(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
       }
 
       "must return the list as is when there is one item and both lastUpdateDate and mainObjectID are missing" in {
@@ -65,7 +63,7 @@ class SortServiceSpec extends SpecBase {
 
         val sortedObjectList = Seq(object1)
 
-        service.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, mainObjectId = None)(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
+        SortService.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, mainObjectId = None)(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
       }
 
       "must sort a list with multiple items" in {
@@ -80,7 +78,7 @@ class SortServiceSpec extends SpecBase {
 
         val sortedObjectList = Seq(object1, object5, object4, object3, object2)
 
-        service.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, Some(mainObjectID))(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
+        SortService.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, Some(mainObjectID))(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
       }
 
       "must sort a list with multiple items when some lastUpdateDate are missing" in {
@@ -95,7 +93,7 @@ class SortServiceSpec extends SpecBase {
 
         val sortedObjectList = Seq(object1, object5, object4, object2, object3)
 
-        service.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, Some(mainObjectID))(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
+        SortService.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, Some(mainObjectID))(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
       }
 
       "must sort a list with multiple items when mainObjectID is missing" in {
@@ -110,7 +108,7 @@ class SortServiceSpec extends SpecBase {
 
         val sortedObjectList = Seq(object5, object4, object3, object2, object1)
 
-        service.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, mainObjectId = None)(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
+        SortService.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, mainObjectId = None)(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
       }
 
       "must return the list with multiple items as is when all lastUpdateDate and mainObjectID are missing" in {
@@ -125,7 +123,7 @@ class SortServiceSpec extends SpecBase {
 
         val sortedObjectList = Seq(object4, object2, object1, object5, object3)
 
-        service.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, mainObjectId = None)(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
+        SortService.sortByMainObjectLastUpdateDate[TestObject](list = seqOfObjects, mainObjectId = None)(_.lastUpdateDate, _.objectId) mustBe sortedObjectList
       }
     }
   }

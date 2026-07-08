@@ -24,16 +24,17 @@ import models.{FullReturn, Vendor}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
-import utils.FullName
+import utils.{FullName, SortService}
 import viewmodels.govuk.summarylist.*
 import viewmodels.submission.summary.SummaryUtil.*
 
 object VendorSummary {
 
   def getSummaryCards(fullReturn: FullReturn)(implicit messages: Messages): Option[Seq[SummaryList]] = {
-    val vendorsOpt: Option[Seq[Vendor]] = fullReturn.vendor
-    vendorsOpt.map { vendors =>
-      vendors.map { vendor =>
+    val mainVendorId = fullReturn.returnInfo.flatMap(_.mainVendorID)
+    fullReturn.vendor.map { vendors =>
+      val sortedVendors = SortService.sortByMainObjectLastUpdateDate[Vendor](vendors, mainVendorId)(_.lastUpdateDate, _.vendorID).filter(_.vendorID.isDefined)
+      sortedVendors.map { vendor =>
         getSummaryCard(vendor)
       }
     }.map(_.flatMap(_.toSeq)).filter(_.nonEmpty)

@@ -23,14 +23,16 @@ object SubmissionState {
   case object AwaitingConfirmation extends SubmissionState
   case object Submitted extends SubmissionState
   case object SubmissionFailed extends SubmissionState
+  case object ReSubmit extends SubmissionState
 
   def parse(status: Option[String]): Option[SubmissionState] =
     status match {
-      case Some(s) if s.equalsIgnoreCase("STARTED") => Some(InProgress)
+      case Some(s) if s.equalsIgnoreCase("STARTED") => Some(ReSubmit)
       case Some(s) if s.equalsIgnoreCase("ACCEPTED") => Some(AwaitingConfirmation)
-      case Some(s) if s.equalsIgnoreCase("SUBMITTED") => Some(Submitted)
-      case Some(s) if s.equalsIgnoreCase("FAILED") => Some(SubmissionFailed)
-      case _ => None
+      case Some(s) if s.equalsIgnoreCase("SUBMITTED") || s.equalsIgnoreCase("SUBMITTED_NO_RECEIPT") => Some(Submitted)
+      case Some(s) if s.equalsIgnoreCase("DEPARTMENTAL_ERROR") || s.equalsIgnoreCase("FATAL_ERROR") => Some(SubmissionFailed)
+      case None => Some(InProgress)
+      case Some(_) => None
     }
 }
 

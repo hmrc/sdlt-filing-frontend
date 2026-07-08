@@ -45,7 +45,7 @@ class CompletedSdltReturnControllerSpec extends SpecBase {
     }
 
     "must return OK and the correct view for a GET for a completed return" in {
-      val submission = completeSubmission.copy(submissionStatus = Some("started"), submittedDate = None, submissionReceipt = Some("RECEIPT-001"), UTRN = None)
+      val submission = completeSubmission.copy(submissionStatus = None, submittedDate = None, submissionReceipt = Some("RECEIPT-001"), UTRN = None)
       val application = applicationBuilder(
         userAnswers = Some(emptyUserAnswers.copy(fullReturn = Some(completeFullReturn.copy(submission = Some(submission)))))
       ).build()
@@ -64,7 +64,7 @@ class CompletedSdltReturnControllerSpec extends SpecBase {
     }
 
     "must return OK and the correct view for a GET for a completed return missing submission receipt reference" in {
-      val submission = completeSubmission.copy(submissionStatus = Some("started"), submittedDate = None, submissionReceipt = None, UTRN = None)
+      val submission = completeSubmission.copy(submissionStatus = None, submittedDate = None, submissionReceipt = None, UTRN = None)
       val application = applicationBuilder(
         userAnswers = Some(emptyUserAnswers.copy(fullReturn = Some(completeFullReturn.copy(submission = Some(submission)))))
       ).build()
@@ -108,8 +108,8 @@ class CompletedSdltReturnControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to return task list when submission status is missing" in {
-      val submission = completeSubmission.copy(submissionStatus = None)
+    "must redirect to return task list when submission status can't be parsed" in {
+      val submission = completeSubmission.copy(submissionStatus = Some("unexpected"))
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(fullReturn = Some(completeFullReturn.copy(submission = Some(submission)))))).build()
 
       running(application) {

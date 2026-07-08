@@ -20,6 +20,7 @@
 @import viewmodels.submission.SubmissionState._
 @import views.html.helper.CSPNonce
 @import viewmodels.submission.summary.Summaries
+@import config.FrontendAppConfig
 
 @this(
         layout: templates.Layout,
@@ -29,7 +30,8 @@
         govukDetails: GovukDetails,
         h1: h1,
         p: Paragraph,
-        sdltReturnSummaryView: SdltReturnSummaryView
+        sdltReturnSummaryView: SdltReturnSummaryView,
+        appConfig: FrontendAppConfig
 )
 
 @(
@@ -103,7 +105,7 @@
         </p>
 
         <p class="govuk-body">
-            <a class="govuk-link" target="_blank" rel="noopener noreferrer" href="#">
+            <a class="govuk-link" href="@appConfig.sdltManagementRedirectUrl">
                 @messages("submission.completedSdltReturn.returnToStampTaxesOnline.link")
             </a>
         </p>

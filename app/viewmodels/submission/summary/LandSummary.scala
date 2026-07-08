@@ -24,14 +24,17 @@ import models.{FullReturn, Land}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import utils.SortService
 import viewmodels.govuk.summarylist.*
 import viewmodels.submission.summary.SummaryUtil.*
 
 object LandSummary {
 
   def getSummaryCards(fullReturn: FullReturn)(implicit messages: Messages): Option[Seq[SummaryList]] = {
+    val mainLandId = fullReturn.returnInfo.flatMap(_.mainLandID)
     fullReturn.land.map { lands =>
-      lands.map { land =>
+      val sortedLands = SortService.sortByMainObjectLastUpdateDate[Land](lands, mainLandId)(_.lastUpdateDate, _.landID).filter(_.landID.isDefined)
+      sortedLands.map { land =>
         getSummaryCard(land)
       }
     }.map(_.flatMap(_.toSeq)).filter(_.nonEmpty)
@@ -70,6 +73,11 @@ object LandSummary {
           getOptSummaryRow(
             messages("land.localAuthorityCode.checkYourAnswersLabel"),
             land.localAuthorityNumber
+          ),
+          getOptSummaryRow(
+            messages("land.landRegisteredHmRegistry.checkYourAnswersLabel"),
+            if land.titleNumber.nonEmpty then Some(messages("site.yes"))
+            else Some(messages("site.no"))
           ),
           getOptSummaryRow(
             messages("land.titleNumber.checkYourAnswersLabel"),

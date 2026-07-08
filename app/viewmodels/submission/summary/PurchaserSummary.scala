@@ -20,21 +20,26 @@ import models.address.Address
 import models.address.Address.toHtml
 import models.purchaser.PurchaserTypeOfCompanyAnswers
 import models.{CompanyDetails, FullReturn, Purchaser}
-import play.api.i18n.Messages
+import play.api.i18n.{Lang, Messages}
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
-import utils.FullName
+import utils.DateTimeFormats.dateTimeFormat
+import utils.{FullName, SortService}
 import viewmodels.govuk.summarylist.*
 import viewmodels.submission.summary.SummaryUtil.*
+
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import scala.util.Try
 
 object PurchaserSummary {
 
   def getSummaryCards(fullReturn: FullReturn)(implicit messages: Messages): Option[Seq[SummaryList]] = {
     val mainPurchaserId = fullReturn.returnInfo.flatMap(_.mainPurchaserID)
-    val purchasersOpt: Option[Seq[Purchaser]] = fullReturn.purchaser
-    purchasersOpt.map { purchasers =>
-      purchasers.map { purchaser =>
+    fullReturn.purchaser.map { purchasers =>
+      val sortedPurchasers = SortService.sortByMainObjectLastUpdateDate[Purchaser](purchasers, mainPurchaserId)(_.lastUpdateDate, _.purchaserID).filter(_.purchaserID.isDefined)
+      sortedPurchasers.map { purchaser =>
         val isFirstPurchaser = mainPurchaserId.contains(purchaser.purchaserID.getOrElse(""))
         getSummaryCard(purchaser, fullReturn.companyDetails, isFirstPurchaser)
       }
@@ -42,6 +47,7 @@ object PurchaserSummary {
   }
 
   private def getSummaryCard(purchaser: Purchaser, companyDetails: Option[CompanyDetails], isFirstPurchaser: Boolean)(implicit messages: Messages): Option[SummaryList] = {
+    implicit val lang: Lang = messages.lang
     val firstPurchaserKeySuffix = if isFirstPurchaser then ".first" else ""
     val purchaserNameOpt = purchaser.isCompany match {
       case Some(isCompany) if isCompany.equalsIgnoreCase("YES") => purchaser.companyName
@@ -58,10 +64,6 @@ object PurchaserSummary {
               if isCompany.equalsIgnoreCase("YES") then messages(s"purchaser.whoIsMakingThePurchase.Company.checkYourAnswersLabel")
               else messages(s"purchaser.whoIsMakingThePurchase.Individual.checkYourAnswersLabel")
             )
-          ),
-          getOptSummaryRow(
-            messages("purchaser.nameOfThePurchaser.checkYourAnswersLabel", purchaserName),
-            Some(purchaserName)
           ),
           getOptSummaryRowHtml(
             messages("purchaser.checkYourAnswers.purchaserAddress.label"),
@@ -86,12 +88,20 @@ object PurchaserSummary {
             purchaser.nino
           ),
           getOptSummaryRow(
+            messages("purchaser.dateOfBirth.checkYourAnswersLabel"),
+            purchaser.dateOfBirth.flatMap(dob =>
+              Try(
+                LocalDate.parse(dob, DateTimeFormatter.ofPattern("dd/MM/yyyy")).format(dateTimeFormat())
+              ).toOption
+            )
+          ),
+          getOptSummaryRow(
             messages("purchaser.corporationTaxUTR.checkYourAnswersLabel"),
-            companyDetails.flatMap(_.UTR)
+            companyDetails.flatMap(_.UTR).filter(_ => isFirstPurchaser)
           ),
           getOptSummaryRow(
             messages("purchaser.registrationNumber.checkYourAnswersLabel"),
-            companyDetails.flatMap(_.VATReference)
+            companyDetails.flatMap(_.VATReference).filter(_ => isFirstPurchaser)
           ),
           getOptSummaryRowHtml(
             messages("purchaser.formOfIdIndividual.checkYourAnswersLabel", purchaserName),
@@ -103,7 +113,7 @@ object PurchaserSummary {
           ),
           getOptSummaryRowHtml(
             messages("purchaser.purchaserTypeOfCompany.checkYourAnswersLabel"),
-            getCompanyTypeRow(companyDetails)
+            getCompanyTypeRow(companyDetails).filter(_ => isFirstPurchaser)
           ),
           getOptSummaryRow(
             messages("purchaser.isPurchaserActingAsTrustee.checkYourAnswersLabel", purchaserName),
@@ -117,7 +127,7 @@ object PurchaserSummary {
       ).withCard(
         messages(
           s"submission.completedSdltReturn.purchaser.header$firstPurchaserKeySuffix",
-          FullName.fullName(purchaser.forename1, purchaser.forename2, purchaser.surname.getOrElse(""))
+          purchaserName
         )
       )
     }
