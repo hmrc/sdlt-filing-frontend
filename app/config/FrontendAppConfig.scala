@@ -129,4 +129,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   def sdltCalculationUrl: String =
     s"${baseUrl("sdltc-frontend")}/calculate-stamp-duty-land-tax/calculate"
+  
+  lazy val businessTaxAccountHost: String = configuration.get[String](s"business-tax-account.host")
+  
+  def businessTaxAccountRedirectUrl: String =
+    s"$businessTaxAccountHost/business-account"
 }

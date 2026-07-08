@@ -762,13 +762,15 @@ GET        /submit-your-return/submission-complete                              
 
 GET        /submit-your-return/submission-awaiting-confirmation                                      controllers.submission.SubmissionAwaitingConfirmationController.onPageLoad()
 
-GET       /submit-your-return/submission-receipt-and-SDLT5                                           controllers.submission.SubmissionReceiptController.onPageLoad()
+GET        /submit-your-return/submission-receipt-and-SDLT5                                          controllers.submission.SubmissionReceiptController.onPageLoad()
+
+GET        /submit-your-return/account-not-activated                                                 controllers.submission.SubmissionAccountNotActivatedController.onPageLoad()
 
 GET        /update-transaction-relief                                                                controllers.transaction.TransactionSingleEntityController.onPageLoad()
 GET        /update-lease-type                                                                        controllers.lease.LeaseSingleEntityController.onPageLoad()
 
-GET       /about-the-land/property-type-mismatch                                                     controllers.land.LandPropertyTypeMultiEntityController.onPageLoad()
-GET       /about-the-land/property-type-mismatch/:landId/remove                                      controllers.land.LandPropertyTypeMultiEntityController.removeLand(landId: String)
-GET       /about-the-land/property-type-mismatch/:landId/update                                      controllers.land.LandPropertyTypeMultiEntityController.updateLand(landId: String)
+GET        /about-the-land/property-type-mismatch                                                    controllers.land.LandPropertyTypeMultiEntityController.onPageLoad()
+GET        /about-the-land/property-type-mismatch/:landId/remove                                     controllers.land.LandPropertyTypeMultiEntityController.removeLand(landId: String)
+GET        /about-the-land/property-type-mismatch/:landId/update                                     controllers.land.LandPropertyTypeMultiEntityController.updateLand(landId: String)
 
 GET        /submit-your-return/submission-failed                                                     controllers.submission.SubmissionFailedController.onPageLoad()
