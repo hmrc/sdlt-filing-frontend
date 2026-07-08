@@ -47,8 +47,8 @@ class LandSummarySpec extends SpecBase {
       "must return a sequence of summary lists for multiple lands" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-        val land2 = Land(address1 = Some("Address 2"))
-        val land3 = Land(address1 = Some("Address 3"))
+        val land2 = Land(address1 = Some("Address 2"), landID = Some("LND002"))
+        val land3 = Land(address1 = Some("Address 3"), landID = Some("LND003"))
 
         running(application) {
           implicit val msgs: Messages = messages(application)

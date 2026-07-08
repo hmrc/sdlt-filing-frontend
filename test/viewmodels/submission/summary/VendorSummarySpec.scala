@@ -47,8 +47,8 @@ class VendorSummarySpec extends SpecBase {
       "must return a sequence of summary lists for multiple vendors" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-        val vendor2 = Vendor(name = Some("Name 2"))
-        val vendor3 = Vendor(name = Some("Name 3"))
+        val vendor2 = Vendor(name = Some("Name 2"), vendorID = Some("VEN002"))
+        val vendor3 = Vendor(name = Some("Name 3"), vendorID = Some("VEN003"))
 
         running(application) {
           implicit val msgs: Messages = messages(application)

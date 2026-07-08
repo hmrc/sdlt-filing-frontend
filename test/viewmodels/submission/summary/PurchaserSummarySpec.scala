@@ -47,8 +47,8 @@ class PurchaserSummarySpec extends SpecBase {
       "must return a sequence of summary lists for multiple purchasers" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-        val purchaser2 = Purchaser(isCompany = Some("YES"), companyName = Some("Company name"))
-        val purchaser3 = Purchaser(isCompany = Some("NO"), surname = Some("Surname"))
+        val purchaser2 = Purchaser(isCompany = Some("YES"), companyName = Some("Company name"), purchaserID = Some("PUR002"))
+        val purchaser3 = Purchaser(isCompany = Some("NO"), surname = Some("Surname"), purchaserID = Some("PUR003"))
 
         running(application) {
           implicit val msgs: Messages = messages(application)
