@@ -38,6 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ReturnTaskListController @Inject()(
                                           override val messagesApi: MessagesApi,
                                           identify: IdentifierAction,
+                                          activatedIdentify: ActivatedIdentifierAction,
                                           fullReturnService: FullReturnService,
                                           getData: DataRetrievalAction,
                                           val controllerComponents: MessagesControllerComponents,
@@ -85,7 +86,7 @@ class ReturnTaskListController @Inject()(
       }
   }
 
-  def downloadPdf: Action[AnyContent] = (identify andThen getData).async {
+  def downloadPdf: Action[AnyContent] = (activatedIdentify andThen getData).async {
     implicit request =>
       request.userAnswers.flatMap(_.fullReturn) match {
         case None =>

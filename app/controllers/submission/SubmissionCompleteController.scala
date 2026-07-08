@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SubmissionCompleteController @Inject()(
                                        override val messagesApi: MessagesApi,
-                                       identify: IdentifierAction,
+                                       activatedIdentify: ActivatedIdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        val controllerComponents: MessagesControllerComponents,
@@ -43,7 +43,7 @@ class SubmissionCompleteController @Inject()(
                                        view: SubmissionCompleteView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (activatedIdentify andThen getData andThen requireData).async {
     implicit request =>
 
       val effectiveReturnId = request.userAnswers.returnId

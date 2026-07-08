@@ -27,14 +27,14 @@ import javax.inject.Inject
 
 class SubmissionReceiptController @Inject()(
                                               override val messagesApi: MessagesApi,
-                                              identify: IdentifierAction,
+                                              activatedIdentify: ActivatedIdentifierAction,
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction,
                                               val controllerComponents: MessagesControllerComponents,
                                               view: SubmissionReceiptView
                                             ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad: Action[AnyContent] = (activatedIdentify andThen getData andThen requireData) { implicit request =>
     implicit val messages = messagesApi.preferred(request)
 
     val maybeViewModel = for {
