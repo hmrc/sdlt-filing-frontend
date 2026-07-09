@@ -51,6 +51,18 @@ object LandInterestTransferredOrCreated extends Enumerable.Implicits {
         hint    = if (messages.isDefinedAt(hintKey)) Some(Hint(content = Text(messages(hintKey)))) else None
       )
   }
+  
+  def fromCode(code: String): Option[LandInterestTransferredOrCreated] =
+    code match {
+      case "FGS" => Some(LandInterestTransferredOrCreated.FGS)
+      case "FPO" => Some(LandInterestTransferredOrCreated.FPO)
+      case "FTF" => Some(LandInterestTransferredOrCreated.FTF)
+      case "LG" => Some(LandInterestTransferredOrCreated.LG)
+      case "LPT" => Some(LandInterestTransferredOrCreated.LPT)
+      case "LT" => Some(LandInterestTransferredOrCreated.LT)
+      case "OT" => Some(LandInterestTransferredOrCreated.OT)
+      case _ => None
+    }
 
   implicit val enumerable: Enumerable[LandInterestTransferredOrCreated] =
     Enumerable(values.map(v => v.toString -> v): _*)

@@ -16,7 +16,8 @@
 
 package viewmodels.govuk
 
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Content
+import uk.gov.hmrc.govukfrontend.views.Aliases.CardTitle
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Content, HtmlContent}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.*
 
 object summarylist extends SummaryListFluency
@@ -39,6 +40,9 @@ trait SummaryListFluency {
 
     def withAttribute(attribute: (String, String)): SummaryList =
       list.copy(attributes = list.attributes + attribute)
+      
+    def withCard(cardTitle: String): SummaryList =
+      list.copy(card = Some(Card(Some(CardTitle(HtmlContent(cardTitle))))))
   }
 
   object SummaryListRowViewModel {

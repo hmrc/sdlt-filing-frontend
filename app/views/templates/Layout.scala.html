@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
+@import views.html.helper.CSPNonce
 
 @this(
         appConfig: FrontendAppConfig,
@@ -32,20 +33,20 @@
 @(pageTitle: String, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, showHmrcBanner: Boolean = false)(contentBlock: Html)(implicit rh: RequestHeader, messages: Messages)
 
 @head = {
-
-@if(timeout) {
-    @hmrcTimeoutDialog(TimeoutDialog(
-        timeout = Some(appConfig.timeout),
-        countdown = Some(appConfig.countdown),
-        keepAliveUrl = Some(routes.KeepAliveController.keepAlive().url),
-        keepAliveButtonText = Some(messages("site.timeout.keepAlive")),
-        signOutUrl = Some(controllers.auth.routes.AuthController.signOut().url),
-        signOutButtonText = Some(messages("site.timeout.signOut")),
-        title = Some(messages("site.timeout.title")),
-        message = Some(messages("site.timeout.message")),
-        language = Some(messages.lang.code)
-    ))
-}
+    <link href='@controllers.routes.Assets.versioned("stylesheets/application.css")' media="all" rel="stylesheet" type="text/css" @{CSPNonce.attr} />
+    @if(timeout) {
+        @hmrcTimeoutDialog(TimeoutDialog(
+            timeout = Some(appConfig.timeout),
+            countdown = Some(appConfig.countdown),
+            keepAliveUrl = Some(routes.KeepAliveController.keepAlive().url),
+            keepAliveButtonText = Some(messages("site.timeout.keepAlive")),
+            signOutUrl = Some(controllers.auth.routes.AuthController.signOut().url),
+            signOutButtonText = Some(messages("site.timeout.signOut")),
+            title = Some(messages("site.timeout.title")),
+            message = Some(messages("site.timeout.message")),
+            language = Some(messages.lang.code)
+        ))
+    }
 }
 
 @content = {

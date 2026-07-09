@@ -1,0 +1,79 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
+@import viewmodels.submission.summary.Summaries
+
+@this(
+        h2: h2,
+        govukSummaryList: GovukSummaryList
+)
+
+@(
+    summaries: Summaries
+)(implicit request: Request[_], messages: Messages)
+
+@summaries.purchaserSummaryCards.map { cards =>
+    @h2(messages("submission.completedSdltReturn.purchaser.h2"))
+    @cards.map { card =>
+        @govukSummaryList(card)
+    }
+}
+
+@summaries.purchaserAgentSummaryCard.map { card =>
+    @h2(messages("submission.completedSdltReturn.purchaserAgent.h2"))
+    @govukSummaryList(card)
+}
+
+@summaries.vendorSummaryCards.map { cards =>
+    @h2(messages("submission.completedSdltReturn.vendor.h2"))
+    @cards.map { card =>
+        @govukSummaryList(card)
+    }
+}
+
+@summaries.vendorAgentSummaryCard.map { card =>
+    @h2(messages("submission.completedSdltReturn.vendorAgent.h2"))
+    @govukSummaryList(card)
+}
+
+@summaries.landSummaryCards.map { cards =>
+    @h2(messages("submission.completedSdltReturn.land.h2"))
+    @cards.map { card =>
+        @govukSummaryList(card)
+    }
+}
+
+@summaries.ukResidencySummaryCard.map { card =>
+    @h2(messages("submission.completedSdltReturn.ukResidency.h2"))
+    @govukSummaryList(card)
+}
+
+@summaries.transactionSummaryCard.map { card =>
+    @h2(messages("submission.completedSdltReturn.transaction.h2"))
+    @govukSummaryList(card)
+}
+
+@summaries.leaseSummaryCard.map { card =>
+    @h2(messages("submission.completedSdltReturn.lease.h2"))
+    @govukSummaryList(card)
+}
+
+@summaries.taxCalcSummaryCard.map { card =>
+    @h2(messages("submission.completedSdltReturn.taxCalc.h2"))
+    @govukSummaryList(card)
+}

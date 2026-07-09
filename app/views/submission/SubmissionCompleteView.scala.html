@@ -65,7 +65,7 @@
 
     <div class="govuk-body">
         @link(
-            link = "#", // TODO DTR-5734: The link should redirect to completed-return
+            link = controllers.submission.routes.CompletedSdltReturnController.onPageLoad().url,
             messageKey = "submission.submissionComplete.link1"
         )
     </div>

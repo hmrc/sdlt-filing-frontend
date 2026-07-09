@@ -1116,6 +1116,9 @@ ukResidency.closeCompany.checkYourAnswersLabel                                  
 ukResidency.closeCompany.error.required                                             = Select yes if any of the purchasers are a UK resident close company controlled directly or non-directly by non-UK residents
 ukResidency.closeCompany.change.hidden                                              = Are any of the purchasers a UK resident close company controlled directly or non-directly by non-UK residents?
 
+ukResidency.ukResident                                                              = UK resident
+ukResidency.nonUkResident                                                           = Non-UK resident
+
 land.removeLand.title                                                               = Are you sure you want to remove the land or property?
 land.removeLand.heading                                                             = Are you sure you want to remove {0}?
 land.removeLand.error.required                                                      = Select yes if you want to remove {0}
@@ -1959,9 +1962,8 @@ lease.netPresentValue.change.hidden                                             
 
 submission.beforeYouStart.title                                                     = Before you start
 submission.beforeYouStart.heading                                                   = Your return is ready for submission
-submission.beforeYouStart.p1.prefix                                                 = You have now completed all sections of your SDLT return. You can <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>
-submission.beforeYouStart.p1.link                                                   = //TODO DTR-5734 update to completed return page once complete
-submission.beforeYouStart.p1.suffix                                                 = view and print this return for your client’s approval before submitting (opens in new tab).
+submission.beforeYouStart.p1.text                                                   = You have now completed all sections of your SDLT return. You can {0}.
+submission.beforeYouStart.p1.linkText                                               = view and print this return for your client’s approval before submitting (opens in new tab)
 submission.beforeYouStart.p2                                                        = Once your return is submitted, you will receive:
 submission.beforeYouStart.li1                                                       = a Unique Transaction Reference Number (UTRN)
 submission.beforeYouStart.li2                                                       = an SDLT 5 certificate (the submission receipt)
@@ -2234,3 +2236,47 @@ submission.submissionAccountNotActivated.p1                                     
 submission.submissionAccountNotActivated.p2                                         = <a href="{0}" class="govuk-link">{1}</a> to find out how to activate your account.
 submission.submissionAccountNotActivated.p2.linkText                                = Visit your Business tax account
 submission.submissionAccountNotActivated.link                                       = Return to your Stamp Taxes Online account
+
+submission.state.inProgress                                                         = In progress
+submission.state.awaitingConfirmation                                               = Awaiting confirmation
+submission.state.submitted                                                          = Submitted
+submission.state.submissionFailed                                                   = Submission failed
+
+submission.completedSdltReturn.submitted.title                                      = Your submitted SDLT return
+submission.completedSdltReturn.completed.title                                      = Your completed SDLT return
+submission.completedSdltReturn.submitted.heading                                    = Your submitted SDLT return
+submission.completedSdltReturn.completed.heading                                    = Your completed SDLT return
+submission.completedSdltReturn.status                                               = Status: {0}
+submission.completedSdltReturn.details.summary                                      = About your status
+submission.completedSdltReturn.details.content.inProgress                           = {0}: this return has been created but not sent to HMRC.
+submission.completedSdltReturn.details.content.awaitingConfirmation                 = {0}: this return has been sent to HMRC and is now being processed.
+submission.completedSdltReturn.details.content.submitted                            = {0}: this return has been successfully submitted to HMRC.
+submission.completedSdltReturn.details.content.submissionFailed                     = {0}: this return was sent to HMRC but could not be submitted due to an error.
+submission.completedSdltReturn.submittedTimeAndDate                                 = The Stamp Duty Land Tax return: {0} for {1} was submitted to HMRC at {2} on {3}.
+submission.completedSdltReturn.inset.utrn                                           = UTRN: <br><strong>{0}</strong>
+submission.completedSdltReturn.inset.submissionRef                                  = Submission receipt reference number: <br><strong>{0}</strong>
+submission.completedSdltReturn.printOrSave.link                                     = Print or save a copy of this page
+submission.completedSdltReturn.downloadPdf.link                                     = View a PDF version of this return
+submission.completedSdltReturn.downloadPdf.text                                     = - this version is in a similar format to the paper return but does not include ‘About UK residency’.
+submission.completedSdltReturn.returnToStampTaxesOnline.link                        = Return to your Stamp Taxes Online account
+submission.completedSdltReturn.purchaser.h2                                         = About the purchaser
+submission.completedSdltReturn.purchaser.header.first                               = Purchaser name: {0} (purchaser 1)
+submission.completedSdltReturn.purchaser.header                                     = Purchaser name: {0}
+submission.completedSdltReturn.purchaserAgent.h2                                    = About the purchaser’s agent
+submission.completedSdltReturn.purchaserAgent.header                                = Agent name: {0}
+submission.completedSdltReturn.vendor.h2                                            = About the vendor
+submission.completedSdltReturn.vendor.header                                        = Vendor name: {0}
+submission.completedSdltReturn.vendorAgent.h2                                       = About the vendor’s agent
+submission.completedSdltReturn.vendorAgent.header                                   = Agent name: {0}
+submission.completedSdltReturn.land.h2                                              = About the land
+submission.completedSdltReturn.land.header                                          = Property address: {0}
+submission.completedSdltReturn.ukResidency.h2                                       = About UK residency
+submission.completedSdltReturn.ukResidency.header                                   = Residency status: {0}
+submission.completedSdltReturn.transaction.h2                                       = About the transaction
+submission.completedSdltReturn.transaction.header                                   = Transaction type: {0}
+submission.completedSdltReturn.lease.h2                                             = About the lease
+submission.completedSdltReturn.lease.header                                         = Type of lease: {0}
+submission.completedSdltReturn.taxCalc.h2                                           = Tax calculation
+submission.completedSdltReturn.taxCalc.header                                       = Self-assessed SDLT due: £{0}
+
+submission.completedSdltReturn.summary.purchaser.name                               = Purchaser name

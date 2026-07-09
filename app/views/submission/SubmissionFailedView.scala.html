@@ -59,7 +59,7 @@
 
     <div class ="govuk-body">
         @link(
-            link = "#", // TODO DTR-5737: The link should redirect to submission receipt and electronic SDLT 5 certificate
+            link = controllers.submission.routes.CompletedSdltReturnController.onPageLoad().url,
             messageKey = "submission.submissionFailed.link1"
         )
     </div>

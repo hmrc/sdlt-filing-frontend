@@ -766,6 +766,8 @@ GET        /submit-your-return/submission-receipt-and-SDLT5                     
 
 GET        /submit-your-return/account-not-activated                                                 controllers.submission.SubmissionAccountNotActivatedController.onPageLoad()
 
+GET       /submit-your-return/your-completed-SDLT-return                                            controllers.submission.CompletedSdltReturnController.onPageLoad()
+
 GET        /update-transaction-relief                                                                controllers.transaction.TransactionSingleEntityController.onPageLoad()
 GET        /update-lease-type                                                                        controllers.lease.LeaseSingleEntityController.onPageLoad()
 

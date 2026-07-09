@@ -48,6 +48,18 @@ object TransactionRulingFollowed extends Enumerable.Implicits {
         id      = Some(s"value_$index")
       )
   }
+  
+  def parse(s: Option[String]): Option[TransactionRulingFollowed] =
+    s match {
+      case Some(value) if value.equalsIgnoreCase("yes") =>
+        Some(TransactionRulingFollowed.Yes)
+      case Some(value) if value.equalsIgnoreCase("no") =>
+        Some(TransactionRulingFollowed.No)
+      case Some(value) if value.equalsIgnoreCase("rulingNotReceived") =>
+        Some(TransactionRulingFollowed.RulingNotReceived)
+      case _ =>
+        None
+    }
 
   implicit val enumerable: Enumerable[TransactionRulingFollowed] =
     Enumerable(values.map(v => v.toString -> v): _*)

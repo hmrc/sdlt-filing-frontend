@@ -44,6 +44,15 @@ object LandTypeOfProperty extends Enumerable.Implicits {
         hint    = Some(Hint(content = Text(messages(s"land.landTypeOfProperty.${value.toString}.hintText"))))
       )
   }
+  
+  def fromCode(code: String): Option[LandTypeOfProperty] =
+    code match {
+      case "01" => Some(Residential)
+      case "02" => Some(Mixed)
+      case "03" => Some(NonResidential)
+      case "04" => Some(Additional)
+      case _ => None
+    }
 
   implicit val enumerable: Enumerable[LandTypeOfProperty] =
     Enumerable(values.map(v => v.toString -> v): _*)

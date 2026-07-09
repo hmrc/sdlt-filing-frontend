@@ -1,0 +1,57 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package viewmodels.submission.summary
+
+import play.api.i18n.Messages
+import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
+import viewmodels.govuk.all.{SummaryListRowViewModel, ValueViewModel}
+
+object SummaryUtil {
+  def getOptSummaryRow(key: String, valueOpt: Option[String]): Option[SummaryListRow] =
+    valueOpt.map { value =>
+      SummaryListRowViewModel(
+        key = Key(HtmlContent(key)),
+        value = ValueViewModel(HtmlContent(HtmlFormat.escape(value).toString))
+      )
+    }
+
+  def getOptSummaryRowHtml(key: String, valueOpt: Option[HtmlContent]): Option[SummaryListRow] =
+    valueOpt.map { value =>
+      SummaryListRowViewModel(
+        key = Key(HtmlContent(key)),
+        value = ValueViewModel(value)
+      )
+    }
+
+  def getOptYesNo(value: Option[String])(implicit messages: Messages): Option[String] =
+    value match {
+      case Some(s) if s.equalsIgnoreCase("YES") =>
+        Some(messages("site.yes"))
+      case Some(s) if s.equalsIgnoreCase("NO") =>
+        Some(messages("site.no"))
+      case _ =>
+        None
+    }
+    
+  def getOptMoneyValue(value: Option[String]): Option[String] =
+    value match {
+      case Some(s) => Some(s"£$s")
+      case _ => None
+    }
+}

@@ -25,8 +25,7 @@ import play.api.test.Helpers.stubMessages
 class LandPaginationHelperSpec extends SpecBase {
   private implicit val messages: Messages = stubMessages()
 
-  val sortService = new SortService()
-  val helper = new LandPaginationHelper(sortService)
+  val helper = new LandPaginationHelper()
 
   private def createLand(landId: String, address: Option[String] = None, landResourceRef: Option[String] = None): Land = {
     Land(

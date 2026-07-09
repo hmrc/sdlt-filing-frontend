@@ -16,7 +16,8 @@
 
 package models.purchaser
 
-import models.purchaser.PurchaserTypeOfCompany._
+import models.CompanyDetails
+import models.purchaser.PurchaserTypeOfCompany.*
 import play.api.libs.json.{Format, Json}
 
 
@@ -85,4 +86,22 @@ object PurchaserTypeOfCompanyAnswers {
     }.toSet
   }
 
+  def fromCompanyDetails(companyDetails: CompanyDetails): PurchaserTypeOfCompanyAnswers =
+    PurchaserTypeOfCompanyAnswers(
+      companyDetails.companyTypeBank.getOrElse("no"),
+      companyDetails.companyTypeBuildsoc.getOrElse("no"),
+      companyDetails.companyTypeCentgov.getOrElse("no"),
+      companyDetails.companyTypeIndividual.getOrElse("no"),
+      companyDetails.companyTypeInsurance.getOrElse("no"),
+      companyDetails.companyTypeLocalauth.getOrElse("no"),
+      companyDetails.companyTypePartnership.getOrElse("no"),
+      companyDetails.companyTypeProperty.getOrElse("no"),
+      companyDetails.companyTypePubliccorp.getOrElse("no"),
+      companyDetails.companyTypeOthercompany.getOrElse("no"),
+      companyDetails.companyTypeOtherfinancial.getOrElse("no"),
+      companyDetails.companyTypeOthercharity.getOrElse("no"),
+      companyDetails.companyTypePensionfund.getOrElse("no"),
+      companyDetails.companyTypeBuilder.getOrElse("no"),
+      companyDetails.companyTypeSoletrader.getOrElse("no")
+    )
 }
