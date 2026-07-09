@@ -37,7 +37,7 @@ class WhoAreYouSubmittingForController @Inject()(
                                                   override val messagesApi: MessagesApi,
                                                   sessionRepository: SessionRepository,
                                                   navigator: Navigator,
-                                                  identify: IdentifierAction,
+                                                  activatedIdentify: ActivatedIdentifierAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
                                                   formProvider: WhoAreYouSubmittingForFormProvider,
@@ -47,7 +47,7 @@ class WhoAreYouSubmittingForController @Inject()(
 
   val form: Form[WhoAreYouSubmittingFor] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(WhoAreYouSubmittingForPage) match {
@@ -58,7 +58,7 @@ class WhoAreYouSubmittingForController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData).async {
     implicit request =>
 
       form.bindFromRequest().fold(

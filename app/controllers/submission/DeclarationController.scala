@@ -30,14 +30,14 @@ import scala.concurrent.Future
 @Singleton
 class DeclarationController @Inject()(
                                        override val messagesApi: MessagesApi,
-                                       identify: IdentifierAction,
+                                       activatedIdentify: ActivatedIdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: DeclarationView
                                      ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData) {
     implicit request =>
 
       request.userAnswers.get(WhoAreYouSubmittingForPage) match {
@@ -49,7 +49,7 @@ class DeclarationController @Inject()(
 
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData).async {
     implicit request =>
 
       request.userAnswers.get(WhoAreYouSubmittingForPage) match {

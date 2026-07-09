@@ -26,14 +26,14 @@ import javax.inject.Inject
 
 class SubmissionFailedController @Inject()(
                                        override val messagesApi: MessagesApi,
-                                       identify: IdentifierAction,
+                                       activatedIdentify: ActivatedIdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: SubmissionFailedView
                                      ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = (activatedIdentify andThen getData andThen requireData) {
     implicit request =>
       val maybeErrorMessage =
         for {
