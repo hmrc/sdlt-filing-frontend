@@ -295,18 +295,6 @@ class LandTaskListSpec extends SpecBase {
           result.status mustBe TLNotStarted
         }
       }
-
-      "must show cannot start status when preliminary section is incomplete" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-
-          val result = LandTaskList.buildLandRow(emptyFullReturn, noFailuresStatus)
-
-          result.status mustBe TLCannotStart
-        }
-      }
     }
 
     ".buildLandRow with cross-flow failures" - {

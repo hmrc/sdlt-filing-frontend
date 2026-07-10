@@ -67,9 +67,7 @@ object UkResidencyTaskList {
       tagId = "ukResidencyQuestionRow",
       checks = _ => Seq(isResidencyComplete(fullReturn)),
       prerequisites = _ =>
-        Seq(
-          PrelimTaskList.buildPrelimRow(fullReturn)
-        )
+        Seq()
     )
   }
 

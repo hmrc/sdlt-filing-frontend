@@ -72,7 +72,7 @@ object LandTaskList {
       tagId         = "landQuestionDetailRow",
       checks        = _ => Seq(isLandComplete(fullReturn)),
       invalid       = _ => status.hasFailures,
-      prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
+      prerequisites = _ => Seq()
     )
   }
   

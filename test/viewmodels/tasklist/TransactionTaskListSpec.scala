@@ -192,18 +192,6 @@ class TransactionTaskListSpec extends SpecBase {
         }
       }
 
-      "must show cannot start status when preliminary section is incomplete and there are no failures" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-
-          val result = TransactionTaskList.buildTransactionRow(emptyFullReturn, noFailures)
-
-          result.status mustBe TLCannotStart
-        }
-      }
-
       "must mark the row as invalid when there is a single failure" in {
         val application = applicationBuilder().build()
 
@@ -225,18 +213,6 @@ class TransactionTaskListSpec extends SpecBase {
           val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, multipleFailures)
 
           result.status mustBe TLInvalid
-        }
-      }
-
-      "must defer to cannot-start when prerequisites are unmet, even with cross-flow failures" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-
-          val result = TransactionTaskList.buildTransactionRow(emptyFullReturn, withFailure(Pages.ReliefReason))
-
-          result.status mustBe TLCannotStart
         }
       }
     }

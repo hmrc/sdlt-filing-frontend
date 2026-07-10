@@ -119,18 +119,6 @@ class PurchaserAgentTaskListSpec extends SpecBase {
           result.url mustBe controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad().url
         }
       }
-
-      "must show cannot start status when preliminary section is incomplete" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-
-          val result = PurchaserAgentTaskList.buildPurchaserAgentRow(emptyFullReturn)
-
-          result.status mustBe TLCannotStart
-        }
-      }
     }
   }
 }

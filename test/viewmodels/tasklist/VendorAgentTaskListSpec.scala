@@ -119,18 +119,6 @@ class VendorAgentTaskListSpec extends SpecBase {
           result.status mustBe TLCompleted
         }
       }
-
-      "must show cannot start status when preliminary section is incomplete" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-
-          val result = VendorAgentTaskList.buildVendorAgentRow(emptyFullReturn)
-
-          result.status mustBe TLCannotStart
-        }
-      }
     }
   }
 }

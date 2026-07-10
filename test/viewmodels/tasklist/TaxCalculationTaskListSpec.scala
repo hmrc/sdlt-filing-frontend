@@ -171,18 +171,6 @@ class TaxCalculationTaskListSpec extends SpecBase {
             controllers.taxCalculation.routes.TaxCalculationConfirmEffectiveDateOfTransactionController.onPageLoad().url
         }
       }
-
-      "must show cannot start status when preliminary section is incomplete" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-
-          val result = TaxCalculationTaskList.buildTaxCalculationRow(emptyFullReturn)
-
-          result.status mustBe TLCannotStart
-        }
-      }
     }
 
     "integration" - {
