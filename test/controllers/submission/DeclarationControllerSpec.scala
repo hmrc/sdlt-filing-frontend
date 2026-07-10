@@ -17,14 +17,21 @@
 package controllers.submission
 
 import base.SpecBase
+import models.UserAnswers
 import models.submission.WhoAreYouSubmittingFor
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{never, verify}
+import org.scalatestplus.mockito.MockitoSugar
+import pages.submission.WhoAreYouSubmittingForPage
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import pages.submission.WhoAreYouSubmittingForPage
+import services.submission.ChrisSubmissionService
 
-class DeclarationControllerSpec extends SpecBase {
+class DeclarationControllerSpec extends SpecBase with MockitoSugar {
 
-  lazy val declarationRoute = controllers.submission.routes.DeclarationController.onPageLoad().url
+  lazy val declarationRoute: String = controllers.submission.routes.DeclarationController.onPageLoad().url
+  lazy val submitRoute: String      = controllers.submission.routes.DeclarationController.onSubmit().url
 
   "Declaration Controller" - {
 
@@ -71,7 +78,7 @@ class DeclarationControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
 
-        contentAsString(result)  must include (messages(application)("submission.declaration.purchasers.authorised.bullet1"))
+        contentAsString(result) must include(messages(application)("submission.declaration.purchasers.authorised.bullet1"))
       }
     }
 
@@ -105,11 +112,14 @@ class DeclarationControllerSpec extends SpecBase {
 
     "must redirect to JourneyRecoveryController page when empty userAnswers for POST" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val mockChrisSubmissionService = mock[ChrisSubmissionService]
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[ChrisSubmissionService].toInstance(mockChrisSubmissionService))
+        .build()
 
       running(application) {
-        val request =
-          FakeRequest(POST, declarationRoute)
+        val request = FakeRequest(POST, submitRoute)
 
         val result = route(application, request).value
 
@@ -117,25 +127,31 @@ class DeclarationControllerSpec extends SpecBase {
 
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
 
+        verify(mockChrisSubmissionService, never).submitInBackground(any[UserAnswers])(any(), any())
       }
     }
 
-    "must redirect to ds-4 page post selection of myself value" in {
+    "must submit in the background and redirect to the loading screen when WhoAreYouSubmittingFor is set for POST" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.Myself).success.value)).build()
+      val mockChrisSubmissionService = mock[ChrisSubmissionService]
+
+      val answers = emptyUserAnswers.set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.Myself).success.value
+
+      val application = applicationBuilder(userAnswers = Some(answers))
+        .overrides(bind[ChrisSubmissionService].toInstance(mockChrisSubmissionService))
+        .build()
 
       running(application) {
-        val request =
-          FakeRequest(POST, declarationRoute)
+        val request = FakeRequest(POST, submitRoute)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.submission.routes.DeclarationController.onPageLoad().url //TODO Sprint17 make changes for ds-4 routing
+        redirectLocation(result).value mustEqual controllers.submission.routes.LoadingScreenController.show.url
 
+        verify(mockChrisSubmissionService).submitInBackground(any[UserAnswers])(any(), any())
       }
     }
-
   }
 }

@@ -21,7 +21,10 @@ import models.Mode
 import pages.submission.WhoAreYouSubmittingForPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.submission.ChrisSubmissionService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.submission.DeclarationView
 
 import javax.inject.{Inject, Singleton}
@@ -33,6 +36,7 @@ class DeclarationController @Inject()(
                                        activatedIdentify: ActivatedIdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
+                                       chrisSubmissionService: ChrisSubmissionService,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: DeclarationView
                                      ) extends FrontendBaseController with I18nSupport {
@@ -51,10 +55,14 @@ class DeclarationController @Inject()(
 
   def onSubmit(): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData).async {
     implicit request =>
+      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
       request.userAnswers.get(WhoAreYouSubmittingForPage) match {
 
-        case Some(_) => Future.successful(Redirect(controllers.submission.routes.DeclarationController.onPageLoad())) // TODO sprint 17 - route to DS-4
+        case Some(_) =>
+          chrisSubmissionService.submitInBackground(request.userAnswers)
+          Future.successful(Redirect(controllers.submission.routes.LoadingScreenController.show))
+
         case None =>
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }

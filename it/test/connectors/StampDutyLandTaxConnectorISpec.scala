@@ -4309,5 +4309,286 @@ class StampDutyLandTaxConnectorISpec
         result mustBe a[Throwable]
       }
     }
+
+    "submit()" - {
+
+      val submitRequest: submission.SubmitRequest = submission.SubmitRequest(
+        email = None,
+        fullReturn = FullReturn(
+          stornId = "STORN123456",
+          returnResourceRef = "submitted",
+          sdltOrganisation = Some(SdltOrganisation(
+            doNotDisplayWelcomePage = Some("no"), storn = Some("STORN123456"), version = Some("10")
+          )),
+          returnInfo = Some(ReturnInfo(
+            returnID = Some("382966898"), storn = Some("STORN123456"), purchaserCounter = Some("1"),
+            vendorCounter = Some("1"), landCounter = Some("1"), purgeDate = Some("2026-09-07 10:16:28"),
+            version = Some("26"), mainPurchaserID = Some("382966899"), mainVendorID = Some("382966907"),
+            mainLandID = Some("382966901"), landCertForEachProp = Some("YES"),
+            returnResourceRef = Some("submitted"), status = Some("STARTED")
+          )),
+          purchaser = Some(Seq(Purchaser(
+            purchaserID = Some("382966899"), returnID = Some("382966898"), isCompany = Some("NO"),
+            isTrustee = Some("YES"), isConnectedToVendor = Some("YES"), isRepresentedByAgent = Some("NO"),
+            title = Some("MR"), surname = Some("Jon"), forename1 = Some("Bone"), forename2 = Some("Jones"),
+            houseNumber = Some("4"), address1 = Some("4 Purchaser Street"), address2 = Some("PurchaserTown"),
+            address3 = Some("TestCounty"), address4 = Some("Address 4"), postcode = Some("AA00 0BB"),
+            phone = Some("01234566"), purchaserResourceRef = Some("1"), createDate = Some("2026-06-09 10:06:49"),
+            lastUpdateDate = Some("2026-06-09 10:09:31"), isUkCompany = Some("NO"),
+            registrationNumber = Some("123"), placeOfRegistration = Some("Germany")
+          ))),
+          companyDetails = Some(CompanyDetails(
+            companyDetailsID = Some("382966900"), returnID = Some("382966898"), purchaserID = Some("382966899"),
+            companyTypeBank = Some("no"), companyTypeBuilder = Some("yes"), companyTypeBuildsoc = Some("no"),
+            companyTypeCentgov = Some("no"), companyTypeIndividual = Some("no"), companyTypeInsurance = Some("no"),
+            companyTypeLocalauth = Some("no"), companyTypeOthercharity = Some("no"),
+            companyTypeOtherfinancial = Some("no"), companyTypePartnership = Some("yes"),
+            companyTypeProperty = Some("no"), companyTypePubliccorp = Some("no"),
+            companyTypeSoletrader = Some("yes"), companyTypePensionfund = Some("no")
+          )),
+          vendor = Some(Seq(Vendor(
+            vendorID = Some("382966907"), returnID = Some("382966898"), title = Some("Mr"),
+            forename1 = Some("John"), forename2 = Some("James"), name = Some("Smith"), houseNumber = Some("1"),
+            address1 = Some("1 Test Lane"), address2 = Some("TestTown"), address3 = Some("TestCounty"),
+            postcode = Some("AA00 0AA"), isRepresentedByAgent = Some("YES"), vendorResourceRef = Some("1"),
+            lastUpdateDate = Some("2026-06-09 10:11:28")
+          ))),
+          land = Some(Seq(Land(
+            landID = Some("382966901"), returnID = Some("382966898"), propertyType = Some("01"),
+            interestCreatedTransferred = Some("FPO"), houseNumber = Some("1"), address1 = Some("1 Test Lane"),
+            address2 = Some("TestTown"), address3 = Some("TestCounty"), postcode = Some("AA00 0AA"),
+            landArea = Some("3805.000"), areaUnit = Some("SquareMetres"), localAuthorityNumber = Some("1210"),
+            mineralRights = Some("yes"), NLPGUPRN = Some("10012345678"), willSendPlanByPost = Some("yes"),
+            titleNumber = Some("1234"), landResourceRef = Some("1"), lastUpdateDate = Some("2026-06-09 10:13:11")
+          ))),
+          transaction = Some(Transaction(
+            transactionID = Some("382966902"), returnID = Some("382966898"), claimingRelief = Some("yes"),
+            reliefAmount = Some("123.00"), reliefReason = Some("08"), reliefSchemeNumber = Some("123456"),
+            isLinked = Some("yes"), totalConsiderationLinked = Some("1,234.00"), totalConsideration = Some("100.00"),
+            considerationBuild = Some("yes"), considerationCash = Some("yes"), considerationContingent = Some("no"),
+            considerationDebt = Some("no"), considerationEmploy = Some("yes"), considerationOther = Some("no"),
+            considerationLand = Some("no"), considerationServices = Some("no"), considerationSharesQTD = Some("no"),
+            considerationSharesUNQTD = Some("no"), considerationVAT = Some("10.00"), includesChattel = Some("yes"),
+            includesGoodwill = Some("yes"), includesOther = Some("no"), includesStock = Some("yes"),
+            usedAsFactory = Some("no"), usedAsHotel = Some("no"), usedAsIndustrial = Some("no"),
+            usedAsOffice = Some("no"), usedAsOther = Some("no"), usedAsShop = Some("no"),
+            usedAsWarehouse = Some("no"), contractDate = Some("01/01/2024"), isDependantOnFutureEvent = Some("yes"),
+            transactionDescription = Some("A"), newTransactionDescription = Some("A"),
+            effectiveDate = Some("01/02/2024"), isLandExchanged = Some("yes"), exchangedLandHouseNumber = Some("1"),
+            exchangedLandAddress1 = Some("1 Test Lane"), exchangedLandAddress2 = Some("TestTown"),
+            exchangedLandAddress3 = Some("TestCounty"), exchangedLandPostcode = Some("AA00 0AA"),
+            agreedToDeferPayment = Some("yes"), postTransRulingApplied = Some("yes"),
+            isPursuantToPreviousOption = Some("yes"), restrictionsAffectInterest = Some("yes"),
+            restrictionDetails = Some("Some restriction details"), postTransRulingFollowed = Some("yes"),
+            isPartOfSaleOfBusiness = Some("yes"), totalConsiderationBusiness = Some("123.00")
+          )),
+          returnAgent = Some(Seq(ReturnAgent(
+            returnAgentID = Some("382966906"), returnID = Some("382966898"), agentType = Some("VENDOR"),
+            name = Some("Jones & Co"), houseNumber = Some("56"), address1 = Some("56 Agent Lane"),
+            address2 = Some("TestTown"), address3 = Some("TestCounty"), postcode = Some("AA00 1AA"),
+            phone = Some("016345435"), reference = Some("123456"), isAuthorised = Some("no")
+          ))),
+          lease = Some(Lease(
+            leaseID = Some("382966903"), returnID = Some("382966898"), isAnnualRentOver1000 = Some("yes"),
+            contractEndDate = Some("01/05/2027"), contractStartDate = Some("01/05/2020"), leaseType = Some("R"),
+            netPresentValue = Some("12.00"), totalPremiumPayable = Some("456.00"), rentFreePeriod = Some("5"),
+            startingRent = Some("567.00"), startingRentEndDate = Some("01/05/2022"), laterRentKnown = Some("yes"),
+            VATAmount = Some("123.00")
+          )),
+          taxCalculation = Some(TaxCalculation(
+            taxCalculationID = Some("382966905"), returnID = Some("382966898"), amountPaid = Some("345.00"),
+            includesPenalty = Some("yes"), taxDue = Some("1,234.00"), calcPenaltyDue = Some("200")
+          )),
+          submission = Some(Submission(
+            submissionID = Some("SUB001"), returnID = Some("382966898"), storn = Some("STORN123456"),
+            submissionStatus = Some("SUBMITTED"), govtalkMessageClass = Some("HMRC-STAMP-SDLT"),
+            UTRN = Some("23456789MCe"), irmarkReceived = Some("IRMARK-RCV-001"),
+            submissionReceipt = Some("RECEIPT-001"), numPolls = Some("3"),
+            createDate = Some("2024-10-15T10:30:00"), lastUpdateDate = Some("2024-10-15T11:00:00"),
+            acceptedDate = Some("2024-10-15T11:00:00"), submittedDate = Some("2024-10-15T10:30:00"),
+            email = Some("john.smith@email.com"), submissionRequestDate = Some("2024-10-15T10:15:00Z"),
+            irmarkSent = Some("IRMARK-SENT-001")
+          )),
+          residency = Some(Residency(
+            residencyID = Some("382966904"), isNonUkResidents = Some("yes"),
+            isCloseCompany = Some("yes"), isCrownRelief = Some("yes")
+          ))
+        )
+      )
+
+      val submissionResponseJson: JsValue = Json.obj(
+        "_type"    -> "acknowledged",
+        "returnId" -> "382966898"
+      )
+
+      "must return a SubmissionResponse when the stub returns 200 OK with a parseable body" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(submissionResponseJson.toString())
+            )
+        )
+
+        val result = connector.submit(submitRequest).futureValue
+
+        result mustBe a[submission.SubmissionResponse]
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+        )
+      }
+
+      "must return a SubmissionResponse when the stub returns 202 Accepted with a parseable body" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+            .willReturn(
+              aResponse()
+                .withStatus(202)
+                .withHeader("Content-Type", "application/json")
+                .withBody(submissionResponseJson.toString())
+            )
+        )
+
+        val result = connector.submit(submitRequest).futureValue
+
+        result mustBe a[submission.SubmissionResponse]
+      }
+
+      "must return a SubmissionResponse when the stub returns 400 Bad Request with a parseable body" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+            .willReturn(
+              aResponse()
+                .withStatus(400)
+                .withHeader("Content-Type", "application/json")
+                .withBody(submissionResponseJson.toString())
+            )
+        )
+
+        val result = connector.submit(submitRequest).futureValue
+
+        result mustBe a[submission.SubmissionResponse]
+      }
+
+      "must fail with a RuntimeException when a 200 OK body cannot be parsed as SubmissionResponse" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody("{}")
+            )
+        )
+
+        val result = connector.submit(submitRequest).failed.futureValue
+
+        result mustBe a[RuntimeException]
+        result.getMessage must include("Unparseable submission response")
+      }
+
+      "must throw UpstreamErrorResponse when the stub returns 404 Not Found" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+            .willReturn(
+              aResponse()
+                .withStatus(404)
+                .withBody("Not Found")
+            )
+        )
+
+        val result = connector.submit(submitRequest).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 404
+      }
+
+      "must throw UpstreamErrorResponse when the stub returns 500 Internal Server Error" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+            .willReturn(
+              aResponse()
+                .withStatus(500)
+                .withBody("Internal Server Error")
+            )
+        )
+
+        val result = connector.submit(submitRequest).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must throw UpstreamErrorResponse when the stub returns 503 Service Unavailable" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+            .willReturn(
+              aResponse()
+                .withStatus(503)
+                .withBody("Service Unavailable")
+            )
+        )
+
+        val result = connector.submit(submitRequest).failed.futureValue
+
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 503
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(submissionResponseJson.toString())
+            )
+        )
+
+        connector.submit(submitRequest).futureValue
+
+        server.verify(
+          1,
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+        )
+      }
+
+      "must include correct headers in the request" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+            .willReturn(
+              aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody(submissionResponseJson.toString())
+            )
+        )
+
+        connector.submit(submitRequest).futureValue
+
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+            .withHeader("Content-Type", containing("application/json"))
+        )
+      }
+
+      "must handle connection errors when service is unavailable" in {
+        server.stubFor(
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+            .willReturn(
+              aResponse()
+                .withFault(com.github.tomakehurst.wiremock.http.Fault.CONNECTION_RESET_BY_PEER)
+            )
+        )
+
+        val result = connector.submit(submitRequest).failed.futureValue
+
+        result mustBe a[Throwable]
+      }
+    }
   }
 }
