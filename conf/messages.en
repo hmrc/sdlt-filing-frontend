@@ -2280,3 +2280,8 @@ submission.completedSdltReturn.taxCalc.h2                                       
 submission.completedSdltReturn.taxCalc.header                                       = Self-assessed SDLT due: £{0}
 
 submission.completedSdltReturn.summary.purchaser.name                               = Purchaser name
+
+submission.loading.title = Your return is being submitted to HMRC - Submit your return
+submission.loading.heading = Your return is being submitted to HMRC
+submission.loading.paragraph = This may take a few minutes, do not close or refresh this tab until submission is complete.
+submission.loading.continue = Check submission status

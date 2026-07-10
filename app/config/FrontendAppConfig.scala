@@ -24,6 +24,8 @@ import play.api.mvc.RequestHeader
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration) {
 
+  lazy val confirmingSubmissionQueryTimeSeconds: Int = configuration.get[Int]("confirming-submission.query-time-seconds")
+
   val host: String    = configuration.get[String]("host")
   val sdltLookupHost: String    = configuration.get[String]("sdlt-address-lookup-host")
   val appName: String = configuration.get[String]("appName")

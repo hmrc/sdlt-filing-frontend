@@ -1,7 +1,8 @@
-/*
-    Styling in this and other .scss files will be compiled by the sbt-sass-compiler plugin: https://github.com/hmrc/sbt-sass-compiler
-    If you encounter any issue with Sass compilation using the plugin, please reach out to the PlatUI team.
- */
+$govuk-assets-path: "/stamp-duty-land-tax-filing/assets/lib/govuk-frontend/dist/govuk/assets/";
+$hmrc-assets-path: "/stamp-duty-land-tax-filing/assets/lib/hmrc-frontend/hmrc/";
+
+@import "lib/govuk-frontend/dist/govuk/index";
+@import "lib/hmrc-frontend/hmrc/all";
 
 .js-visible {
   display: none !important;
@@ -21,4 +22,31 @@
   .hmrc-sign-out-nav {
     display: none !important;
   }
+}
+
+.hods-loading-spinner__spinner {
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 30px;
+  border: 12px solid #DEE0E2;
+  border-radius: 50%;
+  border-top-color: #005EA5;
+  width: 80px;
+  height: 80px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0%   { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.hods-loading-spinner__content {
+  padding-top: 20px;
 }

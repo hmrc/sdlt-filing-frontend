@@ -29,13 +29,16 @@ import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, StringContextOps, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, StringContextOps, UpstreamErrorResponse}
+import play.api.libs.json.{JsSuccess, JsError}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import models.transaction.*
 import models.lease.*
+import models.submission.{SubmissionResponse, SubmitRequest}
 import models.taxCalculation.*
+import play.api.http.Status._
 
 class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
                                           val config: FrontendAppConfig)
@@ -557,6 +560,33 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       }
       .recover {
         case e => throw logResponse(e, "[StampDutyLandTaxConnector][deleteLease]")
+      }
+  }
+
+  def submit(submitRequest: SubmitRequest)(implicit hc: HeaderCarrier,
+                                           request: Request[_]): Future[SubmissionResponse] = {
+    http.post(url"$activeBase/filing/submit")
+      .withBody(Json.toJson(submitRequest))
+      .execute[HttpResponse]
+      .flatMap { resp =>
+        resp.status match {
+          case OK | ACCEPTED | BAD_REQUEST =>
+            resp.json.validate[SubmissionResponse] match {
+              case JsSuccess(submissionResponse, _) =>
+                logger.info(s"[StampDutyLandTaxConnector][submit] submit request: $submitRequest, response: $submissionResponse")
+                Future.successful(submissionResponse)
+              case JsError(errs) =>
+                logger.error(s"[StampDutyLandTaxConnector][submit] could not parse SubmissionResponse: $errs")
+                Future.failed(new RuntimeException(s"Unparseable submission response: $errs"))
+            }
+          case _ =>
+            val error = UpstreamErrorResponse(resp.body, resp.status)
+            logResponse(error, "[StampDutyLandTaxConnector][submit]")
+            Future.failed(error)
+        }
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][submit]")
       }
   }
   

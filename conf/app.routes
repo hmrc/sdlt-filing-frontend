@@ -776,3 +776,7 @@ GET        /about-the-land/property-type-mismatch/:landId/remove                
 GET        /about-the-land/property-type-mismatch/:landId/update                                     controllers.land.LandPropertyTypeMultiEntityController.updateLand(landId: String)
 
 GET        /submit-your-return/submission-failed                                                     controllers.submission.SubmissionFailedController.onPageLoad()
+
+GET       /submit-your-return/return-is-being-submitted                                                                      controllers.submission.LoadingScreenController.show
+GET       /submit-your-return/return-is-being-submitted/query                                                              controllers.submission.LoadingScreenController.query
+
