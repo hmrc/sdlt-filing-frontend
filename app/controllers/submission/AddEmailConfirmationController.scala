@@ -71,7 +71,7 @@ class AddEmailConfirmationController @Inject()(
             if (value) {
               Redirect(navigator.nextPage(AddEmailConfirmationPage, mode, updatedAnswers))
             } else {
-              Redirect(controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad())
+              Redirect(controllers.submission.routes.Sdlt5CertificateForEachLandOrPropertyController.onPageLoad())
             }
           }
       )
