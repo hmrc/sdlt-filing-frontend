@@ -59,7 +59,7 @@ object VendorTaskList {
       },
       tagId = "vendorQuestionDetailRow",
       checks = scheme => Seq(isVendorComplete(fullReturn)),
-      prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
+      prerequisites = _ => Seq()
     )
   }
 

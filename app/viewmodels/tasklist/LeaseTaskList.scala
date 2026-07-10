@@ -66,7 +66,7 @@ object LeaseTaskList {
       tagId         = "leaseQuestionDetailRow",
       checks        = scheme => Seq(isLeaseComplete(fullReturn)),
       invalid       = _ => status.hasFailures,
-      prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
+      prerequisites = _ => Seq()
     )
   }
 

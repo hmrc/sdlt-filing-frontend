@@ -69,7 +69,7 @@ object VendorAgentTaskList {
       url = _ => _ => {url},
       tagId = "vendorAgentQuestionDetailRow",
       checks = scheme => Seq(isVendorAgentComplete(fullReturn)),
-      prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
+      prerequisites = _ => Seq()
     )
   }
 

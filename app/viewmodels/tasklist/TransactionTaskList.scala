@@ -60,7 +60,7 @@ object TransactionTaskList {
       tagId         = "transactionQuestionDetailRow",
       checks        = _ => Seq(isTransactionComplete(fullReturn)),
       invalid       = _ => status.hasFailures,
-      prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
+      prerequisites = _ => Seq()
     )
   }
 

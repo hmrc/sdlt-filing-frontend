@@ -70,7 +70,7 @@ object PurchaserAgentTaskList {
       },
       tagId = "purchaserAgentQuestionDetailRow",
       checks = scheme => Seq(isPurchaserAgentComplete(fullReturn)),
-      prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
+      prerequisites = _ => Seq()
     )
   }
 

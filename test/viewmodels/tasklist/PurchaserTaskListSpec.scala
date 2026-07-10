@@ -201,18 +201,6 @@ class PurchaserTaskListSpec extends SpecBase {
           result.status mustBe TLNotStarted
         }
       }
-
-      "must show cannot start status when preliminary section is incomplete" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-
-          val result = PurchaserTaskList.buildPurchaserRow(emptyFullReturn)
-
-          result.status mustBe TLCannotStart
-        }
-      }
     }
 
     "integration" - {

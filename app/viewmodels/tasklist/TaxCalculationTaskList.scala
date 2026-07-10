@@ -55,7 +55,7 @@ object TaxCalculationTaskList {
       },
       tagId = "taxCalculationQuestionDetailRow",
       checks = scheme => Seq(isTaxCalculationComplete(fullReturn)),
-      prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
+      prerequisites = _ => Seq()
     )
   }
 

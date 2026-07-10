@@ -223,18 +223,6 @@ class LeaseTaskListSpec extends SpecBase {
           result.status mustBe TLNotStarted
         }
       }
-
-      "must show cannot start status when prerequisites are not met" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-
-          val result = LeaseTaskList.buildLeaseRow(emptyFullReturn, noFailures)
-
-          result.status mustBe TLCannotStart
-        }
-      }
     }
 
     "integration" - {
