@@ -19,7 +19,7 @@ package controllers.submission
 import base.SpecBase
 import controllers.routes
 import forms.submission.Sdlt5CertificateForEachLandOrPropertyFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{FullReturn, Land, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -44,11 +44,19 @@ class Sdlt5CertificateForEachLandOrPropertyControllerSpec extends SpecBase with 
   val formProvider = new Sdlt5CertificateForEachLandOrPropertyFormProvider()
   val form = formProvider()
 
+  private val multipleLandFullReturn = FullReturn(
+    stornId = "TESTSTORN",
+    returnResourceRef = "REF001",
+    land = Some(Seq(Land(), Land()))
+  )
+
+  val multipleLandUserAnswers: UserAnswers = emptyUserAnswers.copy(fullReturn = Some(multipleLandFullReturn))
+
   "Sdlt5CertificateForEachLandOrProperty Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET when there is more than one land or property" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(multipleLandUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, sdlt5CertificateForEachLandOrPropertyRoute)
@@ -62,9 +70,23 @@ class Sdlt5CertificateForEachLandOrPropertyControllerSpec extends SpecBase with 
       }
     }
 
+    "must redirect to WhoAreYouSubmittingForController for a GET when there is one or no land or property" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, sdlt5CertificateForEachLandOrPropertyRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad().url
+      }
+    }
+
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
+      val userAnswers = multipleLandUserAnswers
         .set(Sdlt5CertificateForEachLandOrPropertyPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -88,7 +110,7 @@ class Sdlt5CertificateForEachLandOrPropertyControllerSpec extends SpecBase with 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(multipleLandUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
@@ -107,9 +129,25 @@ class Sdlt5CertificateForEachLandOrPropertyControllerSpec extends SpecBase with 
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "must redirect to WhoAreYouSubmittingForController for a POST when there is one or no land or property" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, sdlt5CertificateForEachLandOrPropertyRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad().url
+      }
+    }
+
+    "must return a Bad Request and errors when invalid data is submitted" in {
+
+      val application = applicationBuilder(userAnswers = Some(multipleLandUserAnswers)).build()
 
       running(application) {
         val request =
@@ -129,7 +167,7 @@ class Sdlt5CertificateForEachLandOrPropertyControllerSpec extends SpecBase with 
 
     "must return a Bad Request and errors when empty data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(multipleLandUserAnswers)).build()
 
       running(application) {
         val request =

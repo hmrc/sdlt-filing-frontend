@@ -48,26 +48,37 @@ class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(Sdlt5CertificateForEachLandOrPropertyPage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
+      val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)
 
-      Ok(view(preparedForm, mode))
+      if (landList.length > 1) {
+        val preparedForm = request.userAnswers.get(Sdlt5CertificateForEachLandOrPropertyPage) match {
+          case None        => form
+          case Some(value) => form.fill(value)
+        }
+        Ok(view(preparedForm, mode))
+      } else {
+        Redirect(controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad())
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData).async {
     implicit request =>
 
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+      val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)
 
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(Sdlt5CertificateForEachLandOrPropertyPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(Sdlt5CertificateForEachLandOrPropertyPage, mode, updatedAnswers))
-      )
+      if (landList.length > 1) {
+        form.bindFromRequest().fold(
+          formWithErrors =>
+            Future.successful(BadRequest(view(formWithErrors, mode))),
+
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(Sdlt5CertificateForEachLandOrPropertyPage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(Sdlt5CertificateForEachLandOrPropertyPage, mode, updatedAnswers))
+        )
+      } else {
+        Future.successful(Redirect(controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad()))
+      }
   }
 }

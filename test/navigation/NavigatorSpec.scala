@@ -25,7 +25,7 @@ import pages.lease.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 import pages.purchaser.*
 import pages.purchaserAgent.*
-import pages.submission.{AddEmailConfirmationPage, EmailConfirmationPage, Sdlt5CertificateForEachLandOrPropertyPage}
+import pages.submission.{AddEmailConfirmationPage, EmailConfirmationPage, Sdlt5CertificateForEachLandOrPropertyPage, WhoAreYouSubmittingForPage}
 import pages.taxCalculation.ConfirmEffectiveDateOfTransactionPage
 import pages.taxCalculation.freeholdSelfAssessed.*
 import pages.taxCalculation.freeholdTaxCalculated.*
@@ -506,6 +506,11 @@ class NavigatorSpec extends SpecBase {
         "go from Sdlt5CertificateForEachLandOrPropertyPage to WhoAreYouSubmittingForPage" in {
           navigator.nextPage(Sdlt5CertificateForEachLandOrPropertyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
             controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad()
+        }
+
+        "go from WhoAreYouSubmittingForPage to DeclarationController" in {
+          navigator.nextPage(WhoAreYouSubmittingForPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
+            controllers.submission.routes.DeclarationController.onPageLoad()
         }
       }
 
