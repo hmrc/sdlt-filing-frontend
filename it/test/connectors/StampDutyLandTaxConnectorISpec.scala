@@ -4423,7 +4423,7 @@ class StampDutyLandTaxConnectorISpec
 
       "must return a SubmissionResponse when the stub returns 200 OK with a parseable body" in {
         server.stubFor(
-          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/chris/submission"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -4437,13 +4437,13 @@ class StampDutyLandTaxConnectorISpec
         result mustBe a[submission.SubmissionResponse]
 
         server.verify(
-          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/chris/submission"))
         )
       }
 
       "must return a SubmissionResponse when the stub returns 202 Accepted with a parseable body" in {
         server.stubFor(
-          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/chris/submission"))
             .willReturn(
               aResponse()
                 .withStatus(202)
@@ -4459,7 +4459,7 @@ class StampDutyLandTaxConnectorISpec
 
       "must return a SubmissionResponse when the stub returns 400 Bad Request with a parseable body" in {
         server.stubFor(
-          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/chris/submission"))
             .willReturn(
               aResponse()
                 .withStatus(400)
@@ -4475,7 +4475,7 @@ class StampDutyLandTaxConnectorISpec
 
       "must fail with a RuntimeException when a 200 OK body cannot be parsed as SubmissionResponse" in {
         server.stubFor(
-          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/chris/submission"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -4492,7 +4492,7 @@ class StampDutyLandTaxConnectorISpec
 
       "must throw UpstreamErrorResponse when the stub returns 404 Not Found" in {
         server.stubFor(
-          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/chris/submission"))
             .willReturn(
               aResponse()
                 .withStatus(404)
@@ -4508,7 +4508,7 @@ class StampDutyLandTaxConnectorISpec
 
       "must throw UpstreamErrorResponse when the stub returns 500 Internal Server Error" in {
         server.stubFor(
-          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/chris/submission"))
             .willReturn(
               aResponse()
                 .withStatus(500)
@@ -4524,7 +4524,7 @@ class StampDutyLandTaxConnectorISpec
 
       "must throw UpstreamErrorResponse when the stub returns 503 Service Unavailable" in {
         server.stubFor(
-          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/chris/submission"))
             .willReturn(
               aResponse()
                 .withStatus(503)
@@ -4540,7 +4540,7 @@ class StampDutyLandTaxConnectorISpec
 
       "must make POST request to correct endpoint" in {
         server.stubFor(
-          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/chris/submission"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -4553,13 +4553,13 @@ class StampDutyLandTaxConnectorISpec
 
         server.verify(
           1,
-          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/chris/submission"))
         )
       }
 
       "must include correct headers in the request" in {
         server.stubFor(
-          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/chris/submission"))
             .willReturn(
               aResponse()
                 .withStatus(200)
@@ -4571,14 +4571,14 @@ class StampDutyLandTaxConnectorISpec
         connector.submit(submitRequest).futureValue
 
         server.verify(
-          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/chris/submission"))
             .withHeader("Content-Type", containing("application/json"))
         )
       }
 
       "must handle connection errors when service is unavailable" in {
         server.stubFor(
-          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/submit"))
+          post(urlPathEqualTo("/stamp-duty-land-tax-stub/filing/chris/submission"))
             .willReturn(
               aResponse()
                 .withFault(com.github.tomakehurst.wiremock.http.Fault.CONNECTION_RESET_BY_PEER)
