@@ -565,7 +565,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
 
   def submit(submitRequest: SubmitRequest)(implicit hc: HeaderCarrier,
                                            request: Request[_]): Future[SubmissionResponse] = {
-    http.post(url"$activeBase/filing/submit")
+    http.post(url"$activeBase/filing/chris/submission")
       .withBody(Json.toJson(submitRequest))
       .execute[HttpResponse]
       .flatMap { resp =>
