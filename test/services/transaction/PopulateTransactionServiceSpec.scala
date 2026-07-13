@@ -980,7 +980,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
             line2    = Some("Exchange Town"),
             line3    = None,
             line4    = None,
-            line5    = Some("EX1 1EX"),
+            line5    = None,
             postcode = Some("EX1 1EX")
           ))
         }
