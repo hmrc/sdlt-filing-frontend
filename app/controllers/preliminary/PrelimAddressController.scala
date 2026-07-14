@@ -44,7 +44,7 @@ class PrelimAddressController @Inject() (
   def redirectToAddressLookup(mode: Mode, changeRoute: Option[String] = None): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val journeyId = prelimQuestionsAddress
-      val addressConfig = MandatoryFieldsConfigModel(addressLine1 = Some(true), town = Some(true), postcode = Some(true))
+      val addressConfig = MandatoryFieldsConfigModel(addressLine1 = Some(true), town = Some(true))
 
       if(changeRoute.isDefined) {
         addressLookupService.getJourneyUrl(journeyId,
