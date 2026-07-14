@@ -64,7 +64,7 @@ class TaskListRowBuilderSpec extends SpecBase {
         builder.isComplete(fullReturnComplete) mustBe false
       }
 
-      "must return true when no checks are provided" in {
+      "must return false when no checks are provided" in {
         val builder = TaskListRowBuilder(
           messageKey = _ => "test.key",
           url = _ => _ => "/test",
@@ -73,7 +73,7 @@ class TaskListRowBuilderSpec extends SpecBase {
           prerequisites = _ => Seq()
         )
 
-        builder.isComplete(fullReturnComplete) mustBe true
+        builder.isComplete(fullReturnComplete) mustBe false
       }
 
       "must evaluate checks based on FullReturn data" in {
@@ -87,6 +87,32 @@ class TaskListRowBuilderSpec extends SpecBase {
 
         builder.isComplete(fullReturnComplete) mustBe true
         builder.isComplete(fullReturnIncomplete) mustBe false
+      }
+    }
+    
+    "notStarted" - {
+      "must return true when started is false" in {
+        val builder = TaskListRowBuilder(
+          messageKey = _ => "test.key",
+          url = _ => _ => "/test",
+          tagId = "testId",
+          checks = _ => Seq(),
+          started = _ => false,
+          prerequisites = _ => Seq()
+        )
+        builder.notStarted(fullReturnComplete) mustBe true
+      }
+      
+      "must return false when started is true" in {
+        val builder = TaskListRowBuilder(
+          messageKey = _ => "test.key",
+          url = _ => _ => "/test",
+          tagId = "testId",
+          checks = _ => Seq(),
+          started = _ => true,
+          prerequisites = _ => Seq()
+        )
+        builder.notStarted(fullReturnComplete) mustBe false
       }
     }
 

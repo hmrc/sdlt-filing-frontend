@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import models.FullReturn
 import play.api.i18n.Messages
 import services.crossflow.{ReturnSection, SectionStatus}
+import utils.LeaseHelper
 
 import javax.inject.Singleton
 
@@ -39,10 +40,52 @@ object LeaseTaskList {
       )
     )
 
-  def isLeaseComplete(fullReturn: FullReturn): Boolean = {
-    fullReturn.lease.exists(_.leaseType.isDefined)
-    //TODO ADD ALL REQUIRED FIELDS FOR LEASE
+  def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
+    
+    val generalLeaseFields = Seq(
+      fullReturn.lease.exists(_.leaseType.isDefined),
+      fullReturn.lease.exists(_.contractStartDate.isDefined),
+      fullReturn.lease.exists(_.contractEndDate.isDefined),
+      fullReturn.lease.exists(_.rentFreePeriod.isDefined),
+      fullReturn.lease.exists(_.startingRent.isDefined),
+      fullReturn.lease.exists(_.startingRentEndDate.isDefined),
+      fullReturn.lease.exists(_.laterRentKnown.isDefined)
+    )
+
+    // if transaction type is Grand of Lease
+    val isTransactionTypeGrandOfLease = fullReturn.transaction.exists(_.transactionDescription.contains("L"))
+    
+    val grantOfLeaseFields = Seq(
+      fullReturn.lease.exists(_.totalPremiumPayable.isDefined),
+      fullReturn.lease.exists(_.isAnnualRentOver1000.isDefined),
+      fullReturn.lease.exists(_.netPresentValue.isDefined)
+    )
+
+    if (isTransactionTypeGrandOfLease) {
+      generalLeaseFields ++ grantOfLeaseFields
+    } else {
+      generalLeaseFields
+    }
   }
+
+  def isLeaseComplete(fullReturn: FullReturn): Boolean = {
+    mandatoryFieldsDefined(fullReturn).forall(identity)
+  }
+
+  private def isLeaseRequired(fullReturn: FullReturn): Boolean = {
+    LeaseHelper.isLeaseDefined(fullReturn)
+  }
+
+  private def isLeaseStarted(fullReturn: FullReturn): Boolean =
+    fullReturn.lease.exists { lease =>
+      lease.leaseType.isDefined ||
+        lease.contractStartDate.isDefined ||
+        lease.contractEndDate.isDefined ||
+        lease.rentFreePeriod.isDefined ||
+        lease.startingRent.isDefined ||
+        lease.startingRentEndDate.isDefined ||
+        lease.laterRentKnown.isDefined
+    }
 
   def leaseRowBuilder(fullReturn: FullReturn, status: SectionStatus)
                      (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
@@ -64,7 +107,8 @@ object LeaseTaskList {
       messageKey    = _ => "tasklist.leaseQuestion.details",
       url           = _ => _ => url,
       tagId         = "leaseQuestionDetailRow",
-      checks        = scheme => Seq(isLeaseComplete(fullReturn)),
+      checks        = _ => mandatoryFieldsDefined(fullReturn),
+      started       = _ => if (isLeaseRequired(fullReturn)) isLeaseStarted(fullReturn) else false,
       invalid       = _ => status.hasFailures,
       prerequisites = _ => Seq()
     )

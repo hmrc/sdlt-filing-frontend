@@ -19,19 +19,50 @@ package viewmodels.tasklist
 import base.SpecBase
 import config.FrontendAppConfig
 import constants.FullReturnConstants.*
+import models.{Purchaser, Residency}
+import org.scalatest.prop.TableDrivenPropertyChecks.*
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
+import viewmodels.tasklist.UkResidencyTaskList.mandatoryFieldsDefined
 
 class UkResidencyTaskListSpec extends SpecBase {
 
   private val fullReturnComplete = completeFullReturn
-  private val fullReturnIncompleteResidency = fullReturnComplete.copy(
-    residency = Some(completeResidency.copy(isNonUkResidents = None)))
+  private val fullReturnSomeMandatoryFieldsPresent = fullReturnComplete.copy(
+    residency = Some(completeResidency.copy(
+      isNonUkResidents = Some("YES"),
+      isCloseCompany = Some("YES"),
+      isCrownRelief = Some("YES")
+    )),
+    purchaser = Some(Seq(completePurchaser1.copy(
+      isCompany = Some("YES")
+    ))))
+  private val fullReturnSomeMandatoryFieldsMissing = fullReturnComplete.copy(
+    residency = Some(completeResidency.copy(
+      isNonUkResidents = Some("YES"),
+      isCloseCompany = Some("YES"),
+      isCrownRelief = None
+    )),
+    purchaser = Some(Seq(completePurchaser1.copy(
+      isCompany = Some("YES")
+    )))
+  )
+  private val fullReturnAllMandatoryFieldsMissing = fullReturnComplete.copy(
+    residency = Some(completeResidency.copy(
+      isNonUkResidents = None,
+      isCloseCompany = None,
+      isCrownRelief = None
+    )),
+    purchaser = Some(Seq(completePurchaser1.copy(
+      isCompany = Some("YES")
+    ))))
+
   private val fullReturnMissingResidency = fullReturnComplete.copy(residency = None)
 
   "UkResidencyTaskList" - {
 
     ".build" - {
+
       "must return TaskListSection with correct heading when uk residency is present" in {
         val application = applicationBuilder().build()
 
@@ -62,40 +93,132 @@ class UkResidencyTaskListSpec extends SpecBase {
       }
     }
 
+    ".mandatoryFieldsDefined" - {
+
+      "return correct sequence when isCompany is YES and isNonUkResidents is YES" in {
+        val cases = Table(
+          ("isCloseCompanyDefined", "isCrownReliefDefined", "expected"),
+          (true, true, Seq(true, true)),
+          (true, false, Seq(true, false)),
+          (false, true, Seq(false, true)),
+          (false, false, Seq(false, false))
+        )
+
+        forAll(cases) { (isCloseCompanyDefined: Boolean, isCrownReliefDefined: Boolean, expected: Seq[Boolean]) =>
+          val fullReturn = completeFullReturn.copy(
+            purchaser = Some(Seq(Purchaser(isCompany = Some("YES")))),
+            residency = Some(
+              Residency(
+                isNonUkResidents = Some("YES"),
+                isCloseCompany = if (isCloseCompanyDefined) Some("YES") else None,
+                isCrownRelief = if (isCrownReliefDefined) Some("YES") else None
+              )
+            )
+          )
+
+          mandatoryFieldsDefined(fullReturn) mustBe expected
+        }
+      }
+
+      "return correct sequence when isCompany is YES and isNonUkResidents is NO" in {
+        val cases = Table(
+          ("isCloseCompanyDefined", "expected"),
+          (true, Seq(true)),
+          (false, Seq(false))
+        )
+
+        forAll(cases) { (isCloseCompanyDefined: Boolean, expected: Seq[Boolean]) =>
+          val fullReturn = completeFullReturn.copy(
+            purchaser = Some(Seq(Purchaser(isCompany = Some("YES")))),
+            residency = Some(
+              Residency(
+                isNonUkResidents = Some("NO"),
+                isCloseCompany = if (isCloseCompanyDefined) Some("YES") else None,
+                isCrownRelief = None // irrelevant
+              )
+            )
+          )
+
+          mandatoryFieldsDefined(fullReturn) mustBe expected
+        }
+      }
+
+      "return correct sequence when isCompany is NO and isNonUkResidents is YES" in {
+        val cases = Table(
+          ("isCrownReliefDefined", "expected"),
+          (true, Seq(true)),
+          (false, Seq(false))
+        )
+
+        forAll(cases) { (isCrownReliefDefined: Boolean, expected: Seq[Boolean]) =>
+          val fullReturn = completeFullReturn.copy(
+            purchaser = Some(Seq(Purchaser(isCompany = Some("NO")))),
+            residency = Some(
+              Residency(
+                isNonUkResidents = Some("YES"),
+                isCloseCompany = None, // irrelevant
+                isCrownRelief = if (isCrownReliefDefined) Some("YES") else None
+              )
+            )
+          )
+
+          mandatoryFieldsDefined(fullReturn) mustBe expected
+        }
+      }
+
+      "return correct sequence when isCompany is NO and isNonUkResidents is NO" in {
+        val cases = Table(
+          ("isNonUkResidentsDefined", "expected"),
+          (true, Seq(true)),
+          (false, Seq(false))
+        )
+
+        forAll(cases) { (isNonUkResidentsDefined: Boolean, expected: Seq[Boolean]) =>
+          val residency =
+            if (isNonUkResidentsDefined)
+              Some(Residency(isNonUkResidents = Some("NO"), isCloseCompany = None, isCrownRelief = None))
+            else
+              Some(Residency(isNonUkResidents = None, isCloseCompany = None, isCrownRelief = None))
+
+          val fullReturn = completeFullReturn.copy(
+            purchaser = Some(Seq(Purchaser(isCompany = Some("NO")))),
+            residency = residency
+          )
+
+          mandatoryFieldsDefined(fullReturn) mustBe expected
+        }
+      }
+    }
+
     ".isResidencyComplete" - {
 
       "must return true if residency exists and mandatory fields defined" in {
-          val result = UkResidencyTaskList.isResidencyComplete(fullReturnComplete)
+        val result = UkResidencyTaskList.isResidencyComplete(fullReturnSomeMandatoryFieldsPresent)
 
-          result mustBe true
+        result mustBe true
       }
 
-      "must return false if residency exists but isNonUkResidents is missing" in {
-          val result = UkResidencyTaskList.isResidencyComplete(fullReturnComplete
-            .copy(residency = Some(completeResidency
-            .copy(isNonUkResidents = None))))
+      "must return false if residency exists and some mandatory fields not defined" in {
+        val result = UkResidencyTaskList.isResidencyComplete(fullReturnSomeMandatoryFieldsMissing)
 
-          result mustBe false
+        result mustBe false
       }
 
-      "must return false if residency exists but isCloseCompany is missing" in {
-          val result = UkResidencyTaskList.isResidencyComplete(fullReturnComplete
-            .copy(residency = Some(completeResidency
-              .copy(isCloseCompany = None))))
+      "must return false if residency exists and all mandatory fields not defined" in {
+        val result = UkResidencyTaskList.isResidencyComplete(fullReturnAllMandatoryFieldsMissing)
 
-          result mustBe false
+        result mustBe false
       }
 
-      "must return false if residency exists but isCrownRelief is missing" in {
-          val result = UkResidencyTaskList.isResidencyComplete(fullReturnComplete
-            .copy(residency = Some(completeResidency
-              .copy(isCrownRelief = None))))
+      "must return false if residency does not exist" in {
+        val result = UkResidencyTaskList.isResidencyComplete(fullReturnMissingResidency)
 
-          result mustBe false
+        result mustBe false
       }
     }
 
     ".buildUkResidencyRow" - {
+
       "must return TaskListSectionRow with correct tag id and link text" in {
         val application = applicationBuilder().build()
 
@@ -123,19 +246,35 @@ class UkResidencyTaskListSpec extends SpecBase {
         }
       }
 
-      "must have Uk Residency Before You Start url when Uk Residency is incomplete" in {
+      "must have Uk Residency Before You Start url and show 'Not yet started' status when all mandatory fields are missing" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = UkResidencyTaskList.buildUkResidencyRow(fullReturnIncompleteResidency)
+          val result = UkResidencyTaskList.buildUkResidencyRow(fullReturnAllMandatoryFieldsMissing)
 
           result.url mustBe controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad().url
+
+          result.status mustBe TLNotStarted
         }
       }
 
-      "must have  Uk Residency Check your answers url when  Uk Residency is complete" in {
+      "must have Uk Residency Before You Start url and show 'In progress' status when some mandatory fields are missing" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = UkResidencyTaskList.buildUkResidencyRow(fullReturnSomeMandatoryFieldsMissing)
+
+          result.url mustBe controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad().url
+
+          result.status mustBe TLInProgress
+        }
+      }
+
+      "must have  Uk Residency Check your answers url and show 'Complete' status when all mandatory fields are present" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -144,10 +283,12 @@ class UkResidencyTaskListSpec extends SpecBase {
           val result = UkResidencyTaskList.buildUkResidencyRow(fullReturnComplete)
 
           result.url mustBe controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
+
+          result.status mustBe TLCompleted
         }
       }
 
-      "must show completed status when Uk Residency is present" in {
+      "must show 'Complete' status when Uk Residency is present" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -159,7 +300,7 @@ class UkResidencyTaskListSpec extends SpecBase {
         }
       }
 
-      "must show not started status when Uk Residency is absent" in {
+      "must show 'Not yet started' status when Uk Residency is absent" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -173,6 +314,7 @@ class UkResidencyTaskListSpec extends SpecBase {
     }
 
     "integration" - {
+
       "must build complete TaskListSection with completed row when Uk Residency present" in {
         val application = applicationBuilder().build()
 

@@ -21,7 +21,7 @@ import models.*
 object FullReturnConstants {
 
   val completeSdltOrganisation: SdltOrganisation = SdltOrganisation(
-    isReturnUser = Some("true"),
+    isReturnUser = Some("YES"),
     doNotDisplayWelcomePage = Some("false"),
     storn = Some("STORN123456"),
     version = Some("1.0")
@@ -38,10 +38,10 @@ object FullReturnConstants {
     mainPurchaserID = Some("PUR001"),
     mainVendorID = Some("VEN001"),
     mainLandID = Some("LND001"),
-    IRMarkGenerated = Some("true"),
+    IRMarkGenerated = Some("YES"),
     landCertForEachProp = Some("false"),
     returnResourceRef = Some("RRF-2024-001"),
-    declaration = Some("true"),
+    declaration = Some("YES"),
     status = Some("SUBMITTED")
   )
 
@@ -49,9 +49,9 @@ object FullReturnConstants {
     purchaserID = Some("PUR001"),
     returnID = Some("RET123456789"),
     isCompany = Some("NO"),
-    isTrustee = Some("false"),
-    isConnectedToVendor = Some("false"),
-    isRepresentedByAgent = Some("true"),
+    isTrustee = Some("NO"),
+    isConnectedToVendor = Some("NO"),
+    isRepresentedByAgent = Some("NO"),
     title = Some("Mr"),
     surname = Some("Smith"),
     forename1 = Some("John"),
@@ -70,8 +70,8 @@ object FullReturnConstants {
     lMigrated = Some("N"),
     createDate = Some("2024-10-01"),
     lastUpdateDate = Some("2024-10-15 11:00:00"),
-    isUkCompany = Some("false"),
-    hasNino = Some("true"),
+    isUkCompany = Some("NO"),
+    hasNino = Some("YES"),
     dateOfBirth = Some("15/05/1985"),
     registrationNumber = None,
     placeOfRegistration = None
@@ -81,9 +81,9 @@ object FullReturnConstants {
     purchaserID = Some("PUR002"),
     returnID = Some("RET123456789"),
     isCompany = Some("NO"),
-    isTrustee = Some("false"),
-    isConnectedToVendor = Some("false"),
-    isRepresentedByAgent = Some("true"),
+    isTrustee = Some("NO"),
+    isConnectedToVendor = Some("NO"),
+    isRepresentedByAgent = Some("YES"),
     title = Some("Mrs"),
     surname = Some("Smith"),
     forename1 = Some("Sarah"),
@@ -102,8 +102,8 @@ object FullReturnConstants {
     lMigrated = Some("N"),
     createDate = Some("2024-10-01"),
     lastUpdateDate = Some("2024-10-15 11:00:00"),
-    isUkCompany = Some("false"),
-    hasNino = Some("true"),
+    isUkCompany = Some("NO"),
+    hasNino = Some("YES"),
     dateOfBirth = Some("22/08/1987"),
     registrationNumber = None,
     placeOfRegistration = None
@@ -113,9 +113,9 @@ object FullReturnConstants {
     purchaserID = Some("PUR002"),
     returnID = Some("RET123456789"),
     isCompany = Some("YES"),
-    isTrustee = Some("false"),
-    isConnectedToVendor = Some("false"),
-    isRepresentedByAgent = Some("true"),
+    isTrustee = Some("NO"),
+    isConnectedToVendor = Some("NO"),
+    isRepresentedByAgent = Some("YES"),
     title = Some("Mrs"),
     surname = Some("Smith"),
     forename1 = Some("Sarah"),
@@ -134,8 +134,8 @@ object FullReturnConstants {
     lMigrated = Some("N"),
     createDate = Some("2024-10-01"),
     lastUpdateDate = Some("2024-10-15 11:00:00"),
-    isUkCompany = Some("false"),
-    hasNino = Some("true"),
+    isUkCompany = Some("NO"),
+    hasNino = Some("YES"),
     dateOfBirth = Some("22/08/1987"),
     registrationNumber = None,
     placeOfRegistration = None
@@ -147,21 +147,21 @@ object FullReturnConstants {
     purchaserID = Some("PUR001"),
     UTR = Some("1234567890"),
     VATReference = Some("GB123456789"),
-    companyTypeBank = Some("false"),
-    companyTypeBuilder = Some("false"),
-    companyTypeBuildsoc = Some("false"),
-    companyTypeCentgov = Some("false"),
-    companyTypeIndividual = Some("true"),
-    companyTypeInsurance = Some("false"),
-    companyTypeLocalauth = Some("false"),
-    companyTypeOthercharity = Some("false"),
-    companyTypeOthercompany = Some("false"),
-    companyTypeOtherfinancial = Some("false"),
-    companyTypePartnership = Some("false"),
-    companyTypeProperty = Some("false"),
-    companyTypePubliccorp = Some("false"),
-    companyTypeSoletrader = Some("false"),
-    companyTypePensionfund = Some("false")
+    companyTypeBank = Some("NO"),
+    companyTypeBuilder = Some("NO"),
+    companyTypeBuildsoc = Some("NO"),
+    companyTypeCentgov = Some("NO"),
+    companyTypeIndividual = Some("YES"),
+    companyTypeInsurance = Some("NO"),
+    companyTypeLocalauth = Some("NO"),
+    companyTypeOthercharity = Some("NO"),
+    companyTypeOthercompany = Some("NO"),
+    companyTypeOtherfinancial = Some("NO"),
+    companyTypePartnership = Some("NO"),
+    companyTypeProperty = Some("NO"),
+    companyTypePubliccorp = Some("NO"),
+    companyTypeSoletrader = Some("NO"),
+    companyTypePensionfund = Some("NO")
   )
 
   val completeVendor: Vendor = Vendor(
@@ -250,9 +250,9 @@ object FullReturnConstants {
     landArea = Some("250.5"),
     areaUnit = Some("SquareMetres"),
     localAuthorityNumber = Some("5900"),
-    mineralRights = Some("false"),
+    mineralRights = Some("NO"),
     NLPGUPRN = Some("10012345678"),
-    willSendPlanByPost = Some("false"),
+    willSendPlanByPost = Some("NO"),
     titleNumber = Some("TGL123456"),
     landResourceRef = Some("LND-REF-001"),
     nextLandID = None,
@@ -273,9 +273,9 @@ object FullReturnConstants {
     landArea = Some("250.5"),
     areaUnit = Some("SQMETRE"),
     localAuthorityNumber = Some("5900"),
-    mineralRights = Some("false"),
+    mineralRights = Some("NO"),
     NLPGUPRN = Some("10012345678"),
-    willSendPlanByPost = Some("false"),
+    willSendPlanByPost = Some("NO"),
     titleNumber = Some("TGL123456"),
     landResourceRef = Some("LND-REF-001"),
     nextLandID = None,
@@ -296,9 +296,9 @@ object FullReturnConstants {
     landArea = Some("250.5"),
     areaUnit = Some("SQMETRE"),
     localAuthorityNumber = Some("5900"),
-    mineralRights = Some("false"),
+    mineralRights = Some("NO"),
     NLPGUPRN = Some("10012345678"),
-    willSendPlanByPost = Some("false"),
+    willSendPlanByPost = Some("NO"),
     titleNumber = Some("TGL123456"),
     landResourceRef = Some("LND-REF-001"),
     nextLandID = None,
@@ -308,55 +308,55 @@ object FullReturnConstants {
   val completeTransaction: Transaction = Transaction(
     transactionID = Some("TXN001"),
     returnID = Some("RET123456789"),
-    claimingRelief = Some("false"),
+    claimingRelief = Some("NO"),
     reliefAmount = None,
     reliefReason = None,
     reliefSchemeNumber = None,
-    isLinked = Some("false"),
+    isLinked = Some("NO"),
     totalConsiderationLinked = None,
     totalConsideration = Some("500000.00"),
-    considerationBuild = None,
-    considerationCash = Some("500000.00"),
-    considerationContingent = None,
-    considerationDebt = None,
-    considerationEmploy = None,
-    considerationOther = None,
-    considerationLand = None,
-    considerationServices = None,
-    considerationSharesQTD = None,
-    considerationSharesUNQTD = None,
+    considerationBuild = Some("YES"),
+    considerationCash = Some("NO"),
+    considerationContingent = Some("NO"),
+    considerationDebt = Some("NO"),
+    considerationEmploy = Some("NO"),
+    considerationOther = Some("YES"),
+    considerationLand = Some("NO"),
+    considerationServices = Some("NO"),
+    considerationSharesQTD = Some("NO"),
+    considerationSharesUNQTD = Some("NO"),
     considerationVAT = None,
-    includesChattel = Some("false"),
-    includesGoodwill = Some("false"),
-    includesOther = Some("false"),
-    includesStock = Some("false"),
-    usedAsFactory = Some("false"),
-    usedAsHotel = Some("false"),
-    usedAsIndustrial = Some("false"),
-    usedAsOffice = Some("false"),
-    usedAsOther = Some("false"),
-    usedAsShop = Some("false"),
-    usedAsWarehouse = Some("false"),
+    includesChattel = Some("NO"),
+    includesGoodwill = Some("NO"),
+    includesOther = Some("NO"),
+    includesStock = Some("NO"),
+    usedAsFactory = Some("NO"),
+    usedAsHotel = Some("NO"),
+    usedAsIndustrial = Some("YES"),
+    usedAsOffice = Some("NO"),
+    usedAsOther = Some("NO"),
+    usedAsShop = Some("NO"),
+    usedAsWarehouse = Some("NO"),
     contractDate = Some("15/09/2024"),
-    isDependantOnFutureEvent = Some("false"),
+    isDependantOnFutureEvent = Some("NO"),
     transactionDescription = Some("F"),
     newTransactionDescription = None,
     effectiveDate = Some("01/10/2024"),
-    isLandExchanged = Some("false"),
+    isLandExchanged = Some("NO"),
     exchangedLandHouseNumber = None,
     exchangedLandAddress1 = None,
     exchangedLandAddress2 = None,
     exchangedLandAddress3 = None,
     exchangedLandAddress4 = None,
     exchangedLandPostcode = None,
-    agreedToDeferPayment = Some("false"),
-    postTransRulingApplied = Some("false"),
-    isPursuantToPreviousOption = Some("false"),
-    restrictionsAffectInterest = Some("false"),
+    agreedToDeferPayment = Some("NO"),
+    postTransRulingApplied = Some("NO"),
+    isPursuantToPreviousOption = Some("NO"),
+    restrictionsAffectInterest = Some("NO"),
     restrictionDetails = None,
-    postTransRulingFollowed = Some("false"),
-    isPartOfSaleOfBusiness = Some("false"),
-    totalConsiderationBusiness = None
+    postTransRulingFollowed = Some("NO"),
+    isPartOfSaleOfBusiness = Some("NO"),
+    totalConsiderationBusiness = Some("1000.00")
   )
 
   val completeReturnAgent: ReturnAgent = ReturnAgent(
@@ -374,11 +374,13 @@ object FullReturnConstants {
     email = Some("info@smithpartners.co.uk"),
     DXAddress = Some("DX 123 London"),
     reference = Some("SP/2024/001"),
-    isAuthorised = Some("true")
+    isAuthorised = Some("YES")
   )
 
   val completeReturnAgentVendor: ReturnAgent = completeReturnAgent.copy(
-    agentType = Some("VENDOR")
+    agentType = Some("VENDOR"),
+    name = Some("Smith & Partners LLP"),
+    address1 = Some("Fleet Street")
   )
 
   val completeAgent: Seq[Agent] = Seq(Agent(
@@ -400,7 +402,7 @@ object FullReturnConstants {
   val completeLease: Lease = Lease(
     leaseID = Some("LSE001"),
     returnID = Some("RET123456789"),
-    isAnnualRentOver1000 = Some("true"),
+    isAnnualRentOver1000 = None,
     breakClauseType = Some("TENANT"),
     breakClauseDate = Some("2029-10-01"),
     leaseContReservedRent = Some("24000.00"),
@@ -410,7 +412,7 @@ object FullReturnConstants {
     leaseType = Some("R"),
     marketRent = Some("24000.00"),
     netPresentValue = Some("95000.00"),
-    optionToRenew = Some("true"),
+    optionToRenew = Some("YES"),
     totalPremiumPayable = Some("50000.00"),
     rentChargeDate = Some("01/10/2024"),
     rentFreePeriod = Some("3 months"),
@@ -420,8 +422,8 @@ object FullReturnConstants {
     serviceChargeFrequency = Some("ANNUAL"),
     startingRent = Some("24000.00"),
     startingRentEndDate = Some("30/09/2025"),
-    laterRentKnown = Some("true"),
-    termsSurrendered = Some("false"),
+    laterRentKnown = Some("YES"),
+    termsSurrendered = Some("NO"),
     considToLndlrdBuild = None,
     considToLndlrdContin = None,
     considToLndlrdDebt = None,
@@ -440,7 +442,7 @@ object FullReturnConstants {
     considToTenantSharesQTD = None,
     considToTenantSharesUNQTD = None,
     turnoverRent = None,
-    unasertainableRent = Some("false"),
+    unasertainableRent = Some("NO"),
     VATAmount = Some("10000.00")
   )
 
@@ -453,7 +455,7 @@ object FullReturnConstants {
     taxCalculationID = Some("TC001"),
     returnID = Some("RET123456789"),
     amountPaid = Some("15000.00"),
-    includesPenalty = Some("false"),
+    includesPenalty = Some("YES"),
     taxDue = Some("15000.00"),
     taxDuePremium = Some("2000.00"),
     taxDueNPV = Some("1897.00"),
@@ -464,7 +466,7 @@ object FullReturnConstants {
     calcTotalTaxPenaltyDue = Some("15000.00"),
     calcTotalNPVTax = None,
     calcTotalPremiumTax = Some("15000.00"),
-    honestyDeclaration = Some("true")
+    honestyDeclaration = Some("YES")
   )
 
   val completeSubmission: Submission = Submission(
@@ -522,9 +524,9 @@ object FullReturnConstants {
 
   val completeResidency: Residency = Residency(
     residencyID = Some("RES001"),
-    isNonUkResidents = Some("false"),
-    isCloseCompany = Some("false"),
-    isCrownRelief = Some("false")
+    isNonUkResidents = Some("YES"),
+    isCloseCompany = Some("NO"),
+    isCrownRelief = Some("NO")
   )
 
   val completeFullReturn: FullReturn = FullReturn(

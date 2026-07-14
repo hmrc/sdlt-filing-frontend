@@ -28,11 +28,78 @@ class LeaseTaskListSpec extends SpecBase {
   private val fullReturnComplete        = completeFullReturn
   private val fullReturnIncompleteLease = fullReturnComplete.copy(
     lease = Some(completeLease.copy(leaseType = None)))
-  private val fullReturnMissingLease    = fullReturnComplete.copy(lease = None)
-
+  private val fullReturnNotGrantOfLease = fullReturnComplete.copy(
+    lease = Some(completeLease.copy(
+      leaseType = Some("A"),
+      contractStartDate = Some("02-02-2026"),
+      contractEndDate = Some("07-07-2000"),
+      rentFreePeriod = Some("3 months"),
+      startingRent = Some("12345.00"),
+      startingRentEndDate = Some("01-08-2024"),
+      laterRentKnown = Some("NO")
+    )))
+  private val fullReturnSomeMandatoryFieldsMissing = fullReturnComplete.copy(
+    lease = Some(completeLease.copy(
+      leaseType = None,
+      contractStartDate = Some("02-02-2026"),
+      contractEndDate = None,
+      rentFreePeriod = Some("3 months"),
+      startingRent = None,
+      startingRentEndDate = Some("01-08-2024"),
+      laterRentKnown = None
+    )))
+  private val fullReturnAllMandatoryFieldsMissing = fullReturnComplete.copy(
+    lease = Some(completeLease.copy(
+      leaseType = None,
+      contractStartDate = None,
+      contractEndDate = None,
+      rentFreePeriod = None,
+      startingRent = None,
+      startingRentEndDate = None,
+      laterRentKnown = None
+    )))
+  private val fullReturnGrantOfLease = fullReturnComplete.copy(
+    lease = Some(completeLease.copy(
+      leaseType = Some("L"),
+      contractStartDate = Some("02-02-2026"),
+      contractEndDate = Some("07-07-2000"),
+      rentFreePeriod = Some("3 months"),
+      startingRent = Some("12345.00"),
+      startingRentEndDate = Some("01-08-2024"),
+      laterRentKnown = Some("NO"),
+      totalPremiumPayable = Some("12345.00"),
+      netPresentValue = Some("12345.00"),
+      isAnnualRentOver1000 = Some("YES")
+    )))
+  private val fullReturnGOTSomeMandatoryFieldsMissing = fullReturnComplete.copy(
+    lease = Some(completeLease.copy(
+      leaseType = Some("L"),
+      contractStartDate = None,
+      contractEndDate = Some("07-07-2000"),
+      rentFreePeriod = None,
+      startingRent = Some("12345.00"),
+      startingRentEndDate = Some("01-08-2024"),
+      laterRentKnown = Some("NO"),
+      totalPremiumPayable = None,
+      netPresentValue = Some("12345.00"),
+      isAnnualRentOver1000 = None
+    )))
+  private val fullReturnGOLAllMandatoryFieldsMissing = fullReturnComplete.copy(
+    lease = Some(completeLease.copy(
+      leaseType = None,
+      contractStartDate = None,
+      contractEndDate = None,
+      rentFreePeriod = None,
+      startingRent = None,
+      startingRentEndDate = None,
+      laterRentKnown = None,
+      totalPremiumPayable = None,
+      netPresentValue = None,
+      isAnnualRentOver1000 = None
+    )))
+  private val fullReturnMissingLease = fullReturnComplete.copy(lease = None)
   private val noFailures: SectionStatus =
     SectionStatus(ReturnSection.Lease, hasFailures = false, ruleIds = Nil, messageKeys = Nil, targets = Nil)
-
   private val cf5aFailureStatus: SectionStatus = SectionStatus(
     section     = ReturnSection.Lease,
     hasFailures = true,
@@ -102,24 +169,75 @@ class LeaseTaskListSpec extends SpecBase {
       }
     }
 
-    ".isLeaseComplete" - {
-
-      "must return true if lease exists and leaseType is defined" in {
-        val result = LeaseTaskList.isLeaseComplete(fullReturnComplete)
-        result mustBe true
+    ".mandatoryFieldsDefined" - {
+      "must return a sequence of true if lease exists and mandatory fields are defined" in {
+        val result = LeaseTaskList.mandatoryFieldsDefined(fullReturnNotGrantOfLease)
+        result mustBe Seq(true, true, true, true, true, true, true)
       }
 
-      "must return false if lease exists but leaseType is missing" in {
-        val result = LeaseTaskList.isLeaseComplete(
-          fullReturnComplete.copy(lease = Some(completeLease.copy(leaseType = None)))
-        )
+      "must return a sequence of true and false if lease exists but some mandatory field are missing" in {
+        val result = LeaseTaskList.mandatoryFieldsDefined(fullReturnSomeMandatoryFieldsMissing)
+        result mustBe Seq(false, true, false, true, false, true, false)
+      }
 
-        result mustBe false
+      "must return a sequence of false if lease exists but all mandatory fields are missing" in {
+        val result = LeaseTaskList.mandatoryFieldsDefined(fullReturnAllMandatoryFieldsMissing)
+        result mustBe Seq(false, false, false, false, false, false, false)
       }
 
       "must return false if lease is absent" in {
-        val result = LeaseTaskList.isLeaseComplete(fullReturnMissingLease)
-        result mustBe false
+        val result = LeaseTaskList.mandatoryFieldsDefined(emptyFullReturn)
+        result mustBe Seq(false, false, false, false, false, false, false)
+      }
+    }
+
+    ".isLeaseComplete" - {
+
+      "when the lease is not grant of lease" - {
+
+        "must return true if lease exists and mandatory fields are defined" in {
+          val result = LeaseTaskList.isLeaseComplete(fullReturnNotGrantOfLease)
+          result mustBe true
+        }
+
+        "must return false if lease exists but some mandatory field are missing" in {
+          val result = LeaseTaskList.isLeaseComplete(fullReturnSomeMandatoryFieldsMissing)
+          result mustBe false
+        }
+
+        "must return false if lease exists but all mandatory fields are missing" in {
+          val result = LeaseTaskList.isLeaseComplete(fullReturnAllMandatoryFieldsMissing)
+
+          result mustBe false
+        }
+
+        "must return false if lease is absent" in {
+          val result = LeaseTaskList.isLeaseComplete(emptyFullReturn)
+          result mustBe false
+        }
+      }
+
+      "when the lease is grant of lease" - {
+
+        "must return true if lease exists and mandatory fields are defined" in {
+          val result = LeaseTaskList.isLeaseComplete(fullReturnGrantOfLease)
+          result mustBe true
+        }
+
+        "must return false if lease exists but some mandatory field are missing" in {
+          val result = LeaseTaskList.isLeaseComplete(fullReturnGOTSomeMandatoryFieldsMissing)
+          result mustBe false
+        }
+
+        "must return false if lease exists but all mandatory fields are missing" in {
+          val result = LeaseTaskList.isLeaseComplete(fullReturnGOLAllMandatoryFieldsMissing)
+          result mustBe false
+        }
+
+        "must return false if lease is absent" in {
+          val result = LeaseTaskList.isLeaseComplete(emptyFullReturn)
+          result mustBe false
+        }
       }
     }
 
@@ -151,30 +269,96 @@ class LeaseTaskListSpec extends SpecBase {
         }
       }
 
-      "must have Lease Before You Start url when lease is incomplete" in {
-        val application = applicationBuilder().build()
+      "when the lease is not grant of lease" - {
 
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+        "must have Lease Before You Start url and show 'Not yet started' status when all mandatory fields are missing" in {
+          val application = applicationBuilder().build()
 
-          val result = LeaseTaskList.buildLeaseRow(fullReturnIncompleteLease, noFailures)
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          result.url mustBe controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
+            val result = LeaseTaskList.buildLeaseRow(fullReturnAllMandatoryFieldsMissing, noFailures)
+
+            result.url mustBe controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
+            
+            result.status mustBe TLNotStarted
+          }
+        }
+
+        "must have Lease Before You Start url and show 'In progress' status when some mandatory fields are missing" in {
+          val application = applicationBuilder().build()
+
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+            val result = LeaseTaskList.buildLeaseRow(fullReturnSomeMandatoryFieldsMissing, noFailures)
+
+            result.url mustBe controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
+            
+            result.status mustBe TLInProgress
+          }
+        }
+
+        "must have Lease Check your answers url and show 'Complete' status when all mandatory fields are present" in {
+          val application = applicationBuilder().build()
+
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+            val result = LeaseTaskList.buildLeaseRow(fullReturnNotGrantOfLease, noFailures)
+
+            result.url mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad().url
+            
+            result.status mustBe TLCompleted
+          }
         }
       }
 
-      "must have Lease Check your answers url when lease is complete" in {
-        val application = applicationBuilder().build()
+      "when the lease is grant of lease" - {
 
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+        "must have Lease Before You Start url and show 'Not yet started' status when all mandatory fields are missing" in {
+          val application = applicationBuilder().build()
 
-          val result = LeaseTaskList.buildLeaseRow(fullReturnComplete, noFailures)
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          result.url mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad().url
+            val result = LeaseTaskList.buildLeaseRow(fullReturnGOLAllMandatoryFieldsMissing, noFailures)
+
+            result.url mustBe controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
+            
+            result.status mustBe TLNotStarted
+          }
+        }
+
+        "must have Lease Before You Start url and show 'In progress' status when some mandatory fields are missing" in {
+          val application = applicationBuilder().build()
+
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+            val result = LeaseTaskList.buildLeaseRow(fullReturnGOTSomeMandatoryFieldsMissing, noFailures)
+
+            result.url mustBe controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
+            
+            result.status mustBe TLInProgress
+          }
+        }
+
+        "must have Lease Check your answers url and show 'Complete' status when all mandatory fields are present" in {
+          val application = applicationBuilder().build()
+
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+            val result = LeaseTaskList.buildLeaseRow(fullReturnGrantOfLease, noFailures)
+
+            result.url mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad().url
+            
+            result.status mustBe TLCompleted
+          }
         }
       }
-
+      
       "must have Lease Single Entity url when cross-flow reports failures" in {
         val application = applicationBuilder().build()
 
@@ -200,7 +384,7 @@ class LeaseTaskListSpec extends SpecBase {
         }
       }
 
-      "must show completed status when lease is present" in {
+      "must show 'Complete' status when lease is present" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -212,7 +396,7 @@ class LeaseTaskListSpec extends SpecBase {
         }
       }
 
-      "must show not started status when lease is absent but prerequisites are complete" in {
+      "must show 'Not yet started' status when lease is absent but prerequisites are complete" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -226,7 +410,7 @@ class LeaseTaskListSpec extends SpecBase {
     }
 
     "integration" - {
-      "must build complete TaskListSection with completed row when lease present and no failures" in {
+      "must build complete TaskListSection with 'Complete' row when lease present and no failures" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -243,7 +427,7 @@ class LeaseTaskListSpec extends SpecBase {
         }
       }
 
-      "must build complete TaskListSection with not started row when lease absent but prerequisites complete" in {
+      "must build complete TaskListSection with 'Not yet started' row when lease absent but prerequisites complete" in {
         val application = applicationBuilder().build()
 
         running(application) {

@@ -42,12 +42,17 @@ object PurchaserAgentTaskList {
   def isPurchaserAgentStarted(fullReturn: FullReturn): Boolean = {
     purchaserAgents(fullReturn).nonEmpty
   }
+
+  def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
+    Seq(
+      purchaserAgents(fullReturn).exists(_.name.isDefined),
+      purchaserAgents(fullReturn).exists(_.address1.isDefined),
+      purchaserAgents(fullReturn).exists(_.isAuthorised.isDefined)
+    )
+  }
+
   def isPurchaserAgentComplete(fullReturn: FullReturn): Boolean = {
-    purchaserAgents(fullReturn).nonEmpty &&
-      purchaserAgents(fullReturn).forall( agent =>
-        agent.name.isDefined
-        //TODO ADD ALL MANDATORY CONDITIONS FOR PURCHASER AGENT
-      )
+    mandatoryFieldsDefined(fullReturn).forall(identity)
   }
 
   def purchaserAgentRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
@@ -69,7 +74,7 @@ object PurchaserAgentTaskList {
         url
       },
       tagId = "purchaserAgentQuestionDetailRow",
-      checks = scheme => Seq(isPurchaserAgentComplete(fullReturn)),
+      checks = scheme => mandatoryFieldsDefined(fullReturn),
       prerequisites = _ => Seq()
     )
   }

@@ -18,6 +18,7 @@ package viewmodels.tasklist
 
 import config.FrontendAppConfig
 import models.FullReturn
+import models.land.LandTypeOfProperty
 import play.api.i18n.Messages
 import services.crossflow.{ReturnSection, SectionStatus}
 
@@ -36,9 +37,82 @@ object TransactionTaskList {
       rows    = Seq(buildTransactionRow(fullReturn, status))
     )
 
+  def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
+
+    // All transaction types
+    val generalTransactionFields = Seq(
+      fullReturn.transaction.exists(_.transactionDescription.isDefined),
+      fullReturn.transaction.exists(_.effectiveDate.isDefined),
+      fullReturn.transaction.exists(_.isDependantOnFutureEvent.isDefined),
+      fullReturn.transaction.exists(_.agreedToDeferPayment.isDefined),
+      fullReturn.transaction.exists(_.isPartOfSaleOfBusiness.isDefined),
+      fullReturn.transaction.exists(_.postTransRulingApplied.isDefined),
+      fullReturn.transaction.exists(_.restrictionsAffectInterest.isDefined),
+      fullReturn.transaction.exists(_.isLandExchanged.isDefined),
+      fullReturn.transaction.exists(_.isPursuantToPreviousOption.isDefined)
+    )
+
+    // if property type is non-residential or mixed
+    val isPropertyTypeMixedOrNonResidential: Boolean = {
+      val mainLandId = fullReturn.returnInfo.flatMap(_.mainLandID)
+      val typeOfProperty = fullReturn.land.flatMap(_.find(l => l.landID == mainLandId)).flatMap(_.propertyType)
+
+      typeOfProperty match {
+        case Some(LandTypeOfProperty.Mixed.toString | LandTypeOfProperty.NonResidential.toString) => true
+        case _ => false
+      }
+    }
+
+    val isAnyUseOfLandYes = fullReturn.transaction.exists {
+      use =>
+        List(
+          use.usedAsFactory,
+          use.usedAsHotel,
+          use.usedAsIndustrial,
+          use.usedAsOffice,
+          use.usedAsOther,
+          use.usedAsShop,
+          use.usedAsWarehouse,
+        ).exists(_.exists(_.equalsIgnoreCase("yes")))
+    }
+
+    // if transaction type is not Grand of Lease
+    val isTransactionTypeNotGrandOfLease = fullReturn.transaction.exists(!_.transactionDescription.contains("L"))
+
+    val isTotalConsiderationDefined = fullReturn.transaction.exists(_.totalConsideration.isDefined)
+
+    val isAnyFormsOfConsiderationDefined = {
+      fullReturn.transaction.exists {
+        form =>
+          List(
+            form.considerationCash,
+            form.considerationDebt,
+            form.considerationBuild,
+            form.considerationEmploy,
+            form.considerationOther,
+            form.considerationSharesQTD,
+            form.considerationSharesUNQTD,
+            form.considerationLand,
+            form.considerationServices,
+            form.considerationContingent
+          ).exists(_.exists(_.equalsIgnoreCase("yes")))
+      }
+    }
+
+    (isPropertyTypeMixedOrNonResidential, isTransactionTypeNotGrandOfLease) match {
+        case (true, true) =>
+          generalTransactionFields ++ Seq(isAnyUseOfLandYes) ++  Seq(isTotalConsiderationDefined, isAnyFormsOfConsiderationDefined)
+        case (true, false) =>
+          generalTransactionFields ++ Seq(isAnyUseOfLandYes)
+        case (false, true) =>
+          generalTransactionFields ++ Seq(isTotalConsiderationDefined, isAnyFormsOfConsiderationDefined)
+        case (false, false) =>
+          generalTransactionFields
+      }
+    }
+
   def isTransactionComplete(fullReturn: FullReturn): Boolean = {
-    fullReturn.transaction.exists(_.effectiveDate.isDefined)
-    //TODO ADD ALL REQUIRED FIELDS FOR TRANSACTION
+    mandatoryFieldsDefined(fullReturn).forall(identity)
   }
 
   def transactionRowBuilder(fullReturn: FullReturn, status: SectionStatus)
@@ -58,7 +132,7 @@ object TransactionTaskList {
       messageKey    = _ => "tasklist.transactionQuestion.details",
       url           = _ => _ => url,
       tagId         = "transactionQuestionDetailRow",
-      checks        = _ => Seq(isTransactionComplete(fullReturn)),
+      checks        = _ => mandatoryFieldsDefined(fullReturn),
       invalid       = _ => status.hasFailures,
       prerequisites = _ => Seq()
     )
