@@ -259,7 +259,7 @@ class PopulateTransactionService {
           withIsLandOrPropertyExchanged <- userAnswers.set(IsLandOrPropertyExchangedPage, true)
           finalAnswers <- withIsLandOrPropertyExchanged.set(TransactionAddressPage,
             Address(line1 = landAddress1, line2 = transaction.exchangedLandAddress2, line3 = transaction.exchangedLandAddress3,
-              line4 = transaction.exchangedLandAddress4, line5 = transaction.exchangedLandPostcode, postcode = transaction.exchangedLandPostcode))
+              line4 = transaction.exchangedLandAddress4, postcode = transaction.exchangedLandPostcode))
         } yield finalAnswers
       case _ =>
         userAnswers.set(IsLandOrPropertyExchangedPage, false)
