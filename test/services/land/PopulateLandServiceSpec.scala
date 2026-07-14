@@ -38,7 +38,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
             landID = Some("LDN001"),
             returnID = Some("RET123456789"),
             propertyType = Some("02"), // Mixed
-            interestCreatedTransferred = Some("FGS"),
+            interestCreatedTransferred = Some("FG"),
             houseNumber = Some("123"),
             address1 = Some("Baker Street"),
             address2 = Some("Marylebone"),
@@ -67,7 +67,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
 
           updatedAnswers.get(LandOverviewPage) mustBe Some("LDN001")
           updatedAnswers.get(LandTypeOfPropertyPage) mustBe Some(LandTypeOfProperty.Mixed)
-          updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FGS)
+          updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FG)
           updatedAnswers.get(LandAddressPage) mustBe Some(Address(
             line1 = "Baker Street",
             line2 = Some("Marylebone"),
@@ -96,7 +96,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
             landID = Some("LDN001"),
             returnID = Some("RET123456789"),
             propertyType = Some("02"), // Mixed
-            interestCreatedTransferred = Some("FGS"),
+            interestCreatedTransferred = Some("FG"),
             houseNumber = Some("123"),
             address1 = Some("Baker Street"),
             address2 = Some("Marylebone"),
@@ -125,7 +125,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
 
           updatedAnswers.get(LandOverviewPage) mustBe Some("LDN001")
           updatedAnswers.get(LandTypeOfPropertyPage) mustBe Some(LandTypeOfProperty.Mixed)
-          updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FGS)
+          updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FG)
           updatedAnswers.get(LandAddressPage) mustBe Some(Address(
             line1 = "Baker Street",
             line2 = Some("Marylebone"),
@@ -154,7 +154,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
             landID = Some("LDN001"),
             returnID = Some("RET123456789"),
             propertyType = Some("03"), // NonResidential
-            interestCreatedTransferred = Some("FGS"),
+            interestCreatedTransferred = Some("FG"),
             houseNumber = Some("123"),
             address1 = Some("Baker Street"),
             address2 = Some("Marylebone"),
@@ -183,7 +183,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
 
           updatedAnswers.get(LandOverviewPage) mustBe Some("LDN001")
           updatedAnswers.get(LandTypeOfPropertyPage) mustBe Some(LandTypeOfProperty.NonResidential)
-          updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FGS)
+          updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FG)
           updatedAnswers.get(LandAddressPage) mustBe Some(Address(
             line1 = "Baker Street",
             line2 = Some("Marylebone"),
@@ -213,7 +213,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
             landID = Some("LDN001"),
             returnID = Some("RET123456789"),
             propertyType = Some("03"), // NonResidential
-            interestCreatedTransferred = Some("FGS"),
+            interestCreatedTransferred = Some("FG"),
             houseNumber = Some("123"),
             address1 = Some("Baker Street"),
             address2 = Some("Marylebone"),
@@ -242,7 +242,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
 
           updatedAnswers.get(LandOverviewPage) mustBe Some("LDN001")
           updatedAnswers.get(LandTypeOfPropertyPage) mustBe Some(LandTypeOfProperty.NonResidential)
-          updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FGS)
+          updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FG)
           updatedAnswers.get(LandAddressPage) mustBe Some(Address(
             line1 = "Baker Street",
             line2 = Some("Marylebone"),
@@ -270,7 +270,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
           landID = Some("LDN001"),
           returnID = Some("RET123456789"),
           propertyType = Some("01"), // Residential
-          interestCreatedTransferred = Some("FGS"),
+          interestCreatedTransferred = Some("FG"),
           houseNumber = Some("123"),
           address1 = Some("Baker Street"),
           address2 = Some("Marylebone"),
@@ -299,7 +299,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
 
         updatedAnswers.get(LandOverviewPage) mustBe Some("LDN001")
         updatedAnswers.get(LandTypeOfPropertyPage) mustBe Some(LandTypeOfProperty.Residential)
-        updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FGS)
+        updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FG)
         updatedAnswers.get(LandAddressPage) mustBe Some(Address(
           line1 = "Baker Street",
           line2 = Some("Marylebone"),
@@ -328,7 +328,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
           landID = Some("LDN001"),
           returnID = Some("RET123456789"),
           propertyType = Some("04"), // Additional
-          interestCreatedTransferred = Some("FGS"),
+          interestCreatedTransferred = Some("FG"),
           houseNumber = Some("123"),
           address1 = Some("Baker Street"),
           address2 = Some("Marylebone"),
@@ -357,7 +357,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
 
         updatedAnswers.get(LandOverviewPage) mustBe Some("LDN001")
         updatedAnswers.get(LandTypeOfPropertyPage) mustBe Some(LandTypeOfProperty.Additional)
-        updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FGS)
+        updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FG)
         updatedAnswers.get(LandAddressPage) mustBe Some(Address(
           line1 = "Baker Street",
           line2 = Some("Marylebone"),
@@ -386,7 +386,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
           landID = Some("LDN001"),
           returnID = Some("RET123456789"),
           propertyType = Some("04"), // Additional
-          interestCreatedTransferred = Some("FGS"),
+          interestCreatedTransferred = Some("FG"),
           houseNumber = Some("123"),
           address1 = Some("Baker Street"),
           address2 = Some("Marylebone"),
@@ -415,7 +415,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
 
         updatedAnswers.get(LandOverviewPage) mustBe Some("LDN001")
         updatedAnswers.get(LandTypeOfPropertyPage) mustBe Some(LandTypeOfProperty.Additional)
-        updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FGS)
+        updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FG)
         updatedAnswers.get(LandAddressPage) mustBe Some(Address(
           line1 = "Baker Street",
           line2 = Some("Marylebone"),
@@ -444,7 +444,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
           landID = Some("LDN001"),
           returnID = Some("RET123456789"),
           propertyType = Some("04"), // Additional
-          interestCreatedTransferred = Some("FGS"),
+          interestCreatedTransferred = Some("FG"),
           houseNumber = Some("123"),
           address1 = Some("Baker Street"),
           address2 = Some("Marylebone"),
@@ -473,7 +473,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
 
         updatedAnswers.get(LandOverviewPage) mustBe Some("LDN001")
         updatedAnswers.get(LandTypeOfPropertyPage) mustBe Some(LandTypeOfProperty.Additional)
-        updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FGS)
+        updatedAnswers.get(LandInterestTransferredOrCreatedPage) mustBe Some(LandInterestTransferredOrCreated.FG)
         updatedAnswers.get(LandAddressPage) mustBe Some(Address(
           line1 = "Baker Street",
           line2 = Some("Marylebone"),
@@ -499,11 +499,11 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
     "must populate landInterestTransferredOrCreated correctly" - {
       val cases = Table(
         ("typeOfInterestTransferredOrCreated", "value"),
-        ("FGS", LandInterestTransferredOrCreated.FGS),
-        ("FPO", LandInterestTransferredOrCreated.FPO),
-        ("FTF", LandInterestTransferredOrCreated.FTF),
+        ("FG", LandInterestTransferredOrCreated.FG),
+        ("FP", LandInterestTransferredOrCreated.FP),
+        ("FT", LandInterestTransferredOrCreated.FT),
         ("LG", LandInterestTransferredOrCreated.LG),
-        ("LPT", LandInterestTransferredOrCreated.LPT),
+        ("LP", LandInterestTransferredOrCreated.LP),
         ("LT", LandInterestTransferredOrCreated.LT),
         ("OT", LandInterestTransferredOrCreated.OT)
       )
@@ -561,7 +561,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
             landID = Some("LDN001"),
             returnID = Some("RET123456789"),
             propertyType = Some("02"), // Mixed
-            interestCreatedTransferred = Some("FPO"),
+            interestCreatedTransferred = Some("FP"),
             houseNumber = Some("123"),
             address1 = Some("Baker Street"),
             address2 = Some("Marylebone"),
@@ -607,7 +607,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
             landID = Some("LDN001"),
             returnID = Some("RET123456789"),
             propertyType = Some("02"), // Mixed
-            interestCreatedTransferred = Some("FPO"),
+            interestCreatedTransferred = Some("FP"),
             houseNumber = Some("123"),
             address1 = Some("Baker Street"),
             address2 = Some("Marylebone"),
@@ -653,7 +653,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
             landID = Some("LDN001"),
             returnID = Some("RET123456789"),
             propertyType = Some("02"), // Mixed
-            interestCreatedTransferred = Some("FPO"),
+            interestCreatedTransferred = Some("FP"),
             houseNumber = Some("123"),
             address1 = Some("Baker Street"),
             address2 = Some("Marylebone"),
@@ -690,7 +690,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
         landID = Some("LDN001"),
         returnID = Some("RET123456789"),
         propertyType = Some("04"), // Additional
-        interestCreatedTransferred = Some("FGS"),
+        interestCreatedTransferred = Some("FG"),
         houseNumber = Some("123"),
         address1 = None,
         address2 = Some("Marylebone"),
@@ -722,7 +722,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
         landID = Some("LDN001"),
         returnID = Some("RET123456789"),
         propertyType = None,
-        interestCreatedTransferred = Some("FGS"),
+        interestCreatedTransferred = Some("FG"),
         houseNumber = Some("123"),
         address1 = Some("Baker Street"),
         address2 = Some("Marylebone"),
@@ -754,7 +754,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
         landID = Some("LDN001"),
         returnID = Some("RET123456789"),
         propertyType = Some("04"), // Additional
-        interestCreatedTransferred = Some("FGS"),
+        interestCreatedTransferred = Some("FG"),
         houseNumber = Some("123"),
         address1 = Some("Baker Street"),
         address2 = Some("Marylebone"),
@@ -786,7 +786,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
         landID = None,
         returnID = Some("RET123456789"),
         propertyType = Some("04"), // Additional
-        interestCreatedTransferred = Some("FGS"),
+        interestCreatedTransferred = Some("FG"),
         houseNumber = Some("123"),
         address1 = Some("Baker Street"),
         address2 = Some("Marylebone"),

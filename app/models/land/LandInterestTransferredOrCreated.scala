@@ -26,17 +26,17 @@ sealed trait LandInterestTransferredOrCreated
 
 object LandInterestTransferredOrCreated extends Enumerable.Implicits {
 
-  case object FGS extends WithName("FGS") with LandInterestTransferredOrCreated
-  case object FPO extends WithName("FPO") with LandInterestTransferredOrCreated
-  case object FTF extends WithName("FTF") with LandInterestTransferredOrCreated
+  case object FG extends WithName("FG") with LandInterestTransferredOrCreated
+  case object FP extends WithName("FP") with LandInterestTransferredOrCreated
+  case object FT extends WithName("FT") with LandInterestTransferredOrCreated
   case object LG extends WithName("LG") with LandInterestTransferredOrCreated
-  case object LPT extends WithName("LPT") with LandInterestTransferredOrCreated
+  case object LP extends WithName("LP") with LandInterestTransferredOrCreated
   case object LT extends WithName("LT") with LandInterestTransferredOrCreated
   case object OT extends WithName("OT") with LandInterestTransferredOrCreated
   case object ER extends WithName("ER") with LandInterestTransferredOrCreated
 
   val values: Seq[LandInterestTransferredOrCreated] = Seq(
-    FGS, FPO, FTF, LG, LPT, LT, OT
+    FG, FP, FT, LG, LP, LT, OT
   )
 
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {
@@ -54,11 +54,11 @@ object LandInterestTransferredOrCreated extends Enumerable.Implicits {
   
   def fromCode(code: String): Option[LandInterestTransferredOrCreated] =
     code match {
-      case "FGS" => Some(LandInterestTransferredOrCreated.FGS)
-      case "FPO" => Some(LandInterestTransferredOrCreated.FPO)
-      case "FTF" => Some(LandInterestTransferredOrCreated.FTF)
+      case "FG" => Some(LandInterestTransferredOrCreated.FG)
+      case "FP" => Some(LandInterestTransferredOrCreated.FP)
+      case "FT" => Some(LandInterestTransferredOrCreated.FT)
       case "LG" => Some(LandInterestTransferredOrCreated.LG)
-      case "LPT" => Some(LandInterestTransferredOrCreated.LPT)
+      case "LP" => Some(LandInterestTransferredOrCreated.LP)
       case "LT" => Some(LandInterestTransferredOrCreated.LT)
       case "OT" => Some(LandInterestTransferredOrCreated.OT)
       case _ => None
