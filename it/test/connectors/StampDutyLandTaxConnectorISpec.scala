@@ -4355,7 +4355,7 @@ class StampDutyLandTaxConnectorISpec
           ))),
           land = Some(Seq(Land(
             landID = Some("382966901"), returnID = Some("382966898"), propertyType = Some("01"),
-            interestCreatedTransferred = Some("FPO"), houseNumber = Some("1"), address1 = Some("1 Test Lane"),
+            interestCreatedTransferred = Some("FP"), houseNumber = Some("1"), address1 = Some("1 Test Lane"),
             address2 = Some("TestTown"), address3 = Some("TestCounty"), postcode = Some("AA00 0AA"),
             landArea = Some("3805.000"), areaUnit = Some("SquareMetres"), localAuthorityNumber = Some("1210"),
             mineralRights = Some("yes"), NLPGUPRN = Some("10012345678"), willSendPlanByPost = Some("yes"),

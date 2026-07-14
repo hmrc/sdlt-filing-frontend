@@ -211,7 +211,7 @@ class CrossFlowValidationServiceSpec extends SpecBase with Matchers {
         "landCurrent" -> Json.obj(
           "landId"                           -> "SESSION-LAND",
           "propertyType"                     -> "03",
-          "landInterestTransferredOrCreated" -> "FGS",
+          "landInterestTransferredOrCreated" -> "FG",
           "landAddress" -> Json.obj(
             "houseNumber"      -> JsNull,
             "line1"            -> "1 Test Street",
@@ -587,7 +587,7 @@ class CrossFlowValidationServiceSpec extends SpecBase with Matchers {
         "landCurrent" -> Json.obj(
           "landId"                           -> "SESSION-LAND",
           "propertyType"                     -> "03",
-          "landInterestTransferredOrCreated" -> "FGS",
+          "landInterestTransferredOrCreated" -> "FG",
           "landAddress" -> Json.obj(
             "houseNumber"      -> JsNull,
             "line1"            -> "1 Test Street",
@@ -667,7 +667,7 @@ class CrossFlowValidationServiceSpec extends SpecBase with Matchers {
         "landCurrent" -> Json.obj(
           "landId"                           -> "SESSION-ONLY",
           "propertyType"                     -> "03",
-          "landInterestTransferredOrCreated" -> "FGS",
+          "landInterestTransferredOrCreated" -> "FG",
           "landAddress" -> Json.obj(
             "houseNumber"      -> JsNull,
             "line1"            -> "1 Test Street",

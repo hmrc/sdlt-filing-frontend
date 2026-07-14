@@ -218,7 +218,7 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
       }
 
       "must write interest created or transferred as 2 character string" in {
-        val r = withLand(Land(interestCreatedTransferred = Some("FGS")))
+        val r = withLand(Land(interestCreatedTransferred = Some("FG")))
         val result = fill(r)
         readField(result, "land_estateOrInterestTransfered") mustBe Some("FG")
       }
