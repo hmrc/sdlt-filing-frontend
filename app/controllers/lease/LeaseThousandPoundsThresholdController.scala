@@ -18,6 +18,7 @@ package controllers.lease
 
 import controllers.actions.*
 import forms.lease.LeaseThousandPoundsThresholdFormProvider
+import models.prelimQuestions.TransactionType
 import models.Mode
 import navigation.Navigator
 import pages.lease.LeaseThousandPoundsThresholdPage
@@ -50,16 +51,19 @@ class LeaseThousandPoundsThresholdController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-
-      leaseService.leaseFlowValidationCheck(request.userAnswers) match {
-        case Some(redirect) => Redirect(redirect)
-        case None =>
-          val preparedForm = request.userAnswers.get(LeaseThousandPoundsThresholdPage) match {
-            case None => form
-            case Some(value) => form.fill(value)
+    if (leaseService.transactionType(request.userAnswers).contains(TransactionType.GrantOfLease)) {
+          leaseService.leaseFlowValidationCheck(request.userAnswers) match {
+            case Some(redirect) => Redirect(redirect)
+            case None =>
+              val preparedForm = request.userAnswers.get(LeaseThousandPoundsThresholdPage) match {
+                case None => form
+                case Some(value) => form.fill(value)
+              }
+              Ok(view(preparedForm, mode))
           }
-          Ok(view(preparedForm, mode))
-      }
+        } else {
+          Redirect(controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(mode))
+        }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

@@ -203,13 +203,12 @@ class PopulateLeaseServiceSpec extends SpecBase with MockitoSugar {
         result.get.get(LeaseThousandPoundsThresholdPage) mustBe Some(false)
       }
 
-      "must return a Failure when leaseThousandPoundsThreshold is missing" in {
+      "must return None when leaseThousandPoundsThreshold is missing" in {
 
         val lease = leaseComplete.copy(isAnnualRentOver1000 = None)
         val result = service.populateLeaseInSession(lease, emptyUserAnswers)
 
-        result.isFailure mustBe true
-        result.failed.get.getMessage mustBe "Lease is missing required is annual rent over 1000"
+        result.isFailure mustBe false
       }
 
       "must populate annualRentVatPages when a valid answers are provided" in {

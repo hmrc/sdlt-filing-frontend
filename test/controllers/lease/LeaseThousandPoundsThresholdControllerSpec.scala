@@ -20,6 +20,7 @@ import base.SpecBase
 import constants.FullReturnConstants.{completeFullReturn, completeTransaction}
 import controllers.routes
 import forms.lease.LeaseThousandPoundsThresholdFormProvider
+import models.prelimQuestions.TransactionType
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -32,6 +33,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
+import services.lease.LeaseService
 import views.html.lease.LeaseThousandPoundsThresholdView
 
 import scala.concurrent.Future
@@ -52,8 +54,7 @@ class LeaseThousandPoundsThresholdControllerSpec extends SpecBase with MockitoSu
 
   val userAnswersConveyanceTransfer: UserAnswers = emptyUserAnswers.copy(
     fullReturn = Some(completeFullReturn.copy(
-      transaction = Some(completeTransaction.copy(
-        transactionDescription = Some("F"))))))
+      transaction = Some(completeTransaction))))
 
 
   "LeaseThousandPoundsThreshold Controller" - {
@@ -168,20 +169,7 @@ class LeaseThousandPoundsThresholdControllerSpec extends SpecBase with MockitoSu
       }
     }
 
-    "must redirect to return task list when transaction type is not 'A' or 'L' and return Id is present" in {
-      val application = applicationBuilder(userAnswers = Some(userAnswersConveyanceTransfer.copy(returnId = Some("123456")))).build()
-
-      running(application) {
-        val request = FakeRequest(GET, leaseThousandPoundsThresholdRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
-      }
-    }
-
-    "must redirect to Journey recovery when transaction type is not 'A' or 'L' and return Id is not present" in {
+    "must redirect to LeaseIsVatPayableController when transaction type is not 'L'" in {
       val application = applicationBuilder(userAnswers = Some(userAnswersConveyanceTransfer)).build()
 
       running(application) {
@@ -190,7 +178,64 @@ class LeaseThousandPoundsThresholdControllerSpec extends SpecBase with MockitoSu
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to LeaseIsVatPayableController when transaction type is missing" in {
+      val userAnswersNoTransaction = emptyUserAnswers.copy(
+        fullReturn = Some(completeFullReturn.copy(
+          transaction = Some(completeTransaction.copy(
+            transactionDescription = None)))))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersNoTransaction)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, leaseThousandPoundsThresholdRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to LeaseIsVatPayableController when transaction type is not L" in {
+      val userAnswersNoTransaction = emptyUserAnswers.copy(
+        fullReturn = Some(completeFullReturn.copy(
+          transaction = Some(completeTransaction.copy(
+            transactionDescription = Some("A"))))))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersNoTransaction)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, leaseThousandPoundsThresholdRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to lease flow validation redirect when leaseFlowValidationCheck returns Some" in {
+      val mockLeaseService = mock[LeaseService]
+      val validationRedirect = Call("GET", "/validation-redirect")
+
+      when(mockLeaseService.transactionType(any())).thenReturn(Some(TransactionType.GrantOfLease))
+      when(mockLeaseService.leaseFlowValidationCheck(any())).thenReturn(Some(validationRedirect))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersGrantOfLease))
+        .overrides(bind[LeaseService].toInstance(mockLeaseService))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, leaseThousandPoundsThresholdRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual validationRedirect.url
       }
     }
   }

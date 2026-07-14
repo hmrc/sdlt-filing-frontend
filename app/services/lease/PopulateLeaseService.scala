@@ -110,7 +110,7 @@ class PopulateLeaseService {
     lease.isAnnualRentOver1000 match {
       case Some(str) if str.equalsIgnoreCase("yes") => userAnswers.set(LeaseThousandPoundsThresholdPage, true)
       case Some(str) if str.equalsIgnoreCase("no") => userAnswers.set(LeaseThousandPoundsThresholdPage, false)
-      case _ => Failure(new IllegalStateException("Lease is missing required is annual rent over 1000"))
+      case _ => Success(userAnswers)
   }
 
   private def annualRentVatPages(lease: Lease, userAnswers: UserAnswers): Try[UserAnswers] =
