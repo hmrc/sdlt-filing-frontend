@@ -2003,6 +2003,10 @@ submission.addEmailConfirmation.heading                                         
 submission.addEmailConfirmation.hint                                                = If you select no, you will only be notified in the service if your return is approved immediately
 submission.addEmailConfirmation.error.required                                      = Select yes if you would like an email confirmation once your return has been submitted
 
+submission.sdlt5CertificateForEachLandOrProperty.title                              = Do you want an SDLT5 certificate for each area of land or property? - Submit your return
+submission.sdlt5CertificateForEachLandOrProperty.heading                            = Would you like an SDLT5 certificate for each area of land or property?
+submission.sdlt5CertificateForEachLandOrProperty.error.required                     = Select yes if you want an SDLT5 certificate for each area of land or property
+
 # ---- Cross-flow validation errors ----
 crossflow.relief.heading                                                            = Update the reason for claiming relief
 crossflow.relief.firstTimeBuyer.notResidential                                      = ‘32 - First Time Buyer’s Relief’ is only available when the property type is ‘01 - Residential’.

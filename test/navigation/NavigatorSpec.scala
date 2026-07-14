@@ -25,7 +25,7 @@ import pages.lease.*
 import pages.preliminary.{PurchaserIsIndividualPage, PurchaserSurnameOrCompanyNamePage, TransactionTypePage}
 import pages.purchaser.*
 import pages.purchaserAgent.*
-import pages.submission.{AddEmailConfirmationPage, EmailConfirmationPage}
+import pages.submission.{AddEmailConfirmationPage, EmailConfirmationPage, Sdlt5CertificateForEachLandOrPropertyPage, WhoAreYouSubmittingForPage}
 import pages.taxCalculation.ConfirmEffectiveDateOfTransactionPage
 import pages.taxCalculation.freeholdSelfAssessed.*
 import pages.taxCalculation.freeholdTaxCalculated.*
@@ -493,14 +493,24 @@ class NavigatorSpec extends SpecBase {
       }
 
       "submission routes" - {
-        "go from EmailConfirmationPage to WhoAreYouSubmittingForPage" in {
+        "go from EmailConfirmationPage to Sdlt5CertificateForEachLandOrPropertyPage" in {
           navigator.nextPage(EmailConfirmationPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
-            controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad()
+            controllers.submission.routes.Sdlt5CertificateForEachLandOrPropertyController.onPageLoad()
         }
 
         "go from AddEmailConfirmationPage to EmailConfirmationPage" in {
           navigator.nextPage(AddEmailConfirmationPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
             controllers.submission.routes.EmailConfirmationController.onPageLoad()
+        }
+
+        "go from Sdlt5CertificateForEachLandOrPropertyPage to WhoAreYouSubmittingForPage" in {
+          navigator.nextPage(Sdlt5CertificateForEachLandOrPropertyPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
+            controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad()
+        }
+
+        "go from WhoAreYouSubmittingForPage to DeclarationController" in {
+          navigator.nextPage(WhoAreYouSubmittingForPage, NormalMode, UserAnswers("id", storn = "TESTSTORN")) mustBe
+            controllers.submission.routes.DeclarationController.onPageLoad()
         }
       }
 

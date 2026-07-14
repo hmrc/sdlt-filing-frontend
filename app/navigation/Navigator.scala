@@ -416,7 +416,8 @@ class Navigator @Inject()() {
   }
 
   private def isSubmissionSection(page: Page): Boolean = page match {
-    case WhoAreYouSubmittingForPage | EmailConfirmationPage | AddEmailConfirmationPage => true
+    case WhoAreYouSubmittingForPage | EmailConfirmationPage | AddEmailConfirmationPage |
+         Sdlt5CertificateForEachLandOrPropertyPage => true
     case _ => false
   }
 
@@ -424,6 +425,8 @@ class Navigator @Inject()() {
     case AddEmailConfirmationPage =>
       _ => controllers.submission.routes.EmailConfirmationController.onPageLoad()
     case EmailConfirmationPage =>
+      _ => controllers.submission.routes.Sdlt5CertificateForEachLandOrPropertyController.onPageLoad()
+    case Sdlt5CertificateForEachLandOrPropertyPage =>
       _ => controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad()
     case WhoAreYouSubmittingForPage =>
       _ => controllers.submission.routes.DeclarationController.onPageLoad()
