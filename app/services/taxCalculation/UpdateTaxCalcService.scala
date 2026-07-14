@@ -48,8 +48,8 @@ class UpdateTaxCalcService {
             calcTotalTaxPenaltyDue = fullReturn.taxCalculation.flatMap(_.calcTotalTaxPenaltyDue),
             calcTotalNpvTax = fullReturn.taxCalculation.flatMap(_.calcTotalNPVTax),
             calcTotalPremiumTax = fullReturn.taxCalculation.flatMap(_.calcTotalPremiumTax),
-            taxDuePremium = fullReturn.taxCalculation.flatMap(_.taxDuePremium),
-            taxDueNpv = fullReturn.taxCalculation.flatMap(_.taxDueNPV),
+            taxDuePremium = None,
+            taxDueNpv = None,
             honestyDeclaration = fullReturn.taxCalculation.flatMap(_.honestyDeclaration)
           )
         )
