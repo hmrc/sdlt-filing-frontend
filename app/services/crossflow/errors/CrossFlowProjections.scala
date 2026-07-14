@@ -120,7 +120,7 @@ object CrossFlowProjections:
       landID = lsq.landId,
       propertyType = lsq.propertyType,
       localAuthorityNumber = Some(lsq.localAuthorityCode),
-      postcode = Some(lsq.landAddress.postcode)
+      postcode = lsq.landAddress.postcode
     )
   
   val scottishCodePattern: scala.util.matching.Regex = "^9[0-9]{3}$".r

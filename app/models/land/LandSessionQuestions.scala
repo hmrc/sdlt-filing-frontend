@@ -45,7 +45,7 @@ case class LandSessionAddress(
                                          line3: Option[String],
                                          line4: Option[String],
                                          line5: Option[String],
-                                         postcode: String,
+                                         postcode: Option[String],
                                          country: Option[LandSessionCountry],
                                          addressValidated: Boolean
                                        )

@@ -67,7 +67,7 @@ class LandSessionQuestionsSpec extends AnyFreeSpec with Matchers with EitherValu
           "line3"            -> JsNull,
           "line4"            -> JsNull,
           "line5"            -> JsNull,
-          "postcode"         -> "AB1 2CD",
+          "postcode"         -> JsNull,
           "country"          -> JsNull,
           "addressValidated" -> false
         ),
@@ -106,7 +106,7 @@ class LandSessionQuestionsSpec extends AnyFreeSpec with Matchers with EitherValu
             line3            = Some("Test Town"),
             line4            = Some("Test County"),
             line5            = Some("Test Region"),
-            postcode         = "AB1 2CD",
+            postcode         = Some("AB1 2CD"),
             country          = Some(LandSessionCountry(code = Some("GB"), name = Some("UK"))),
             addressValidated = true
           ),
@@ -138,7 +138,7 @@ class LandSessionQuestionsSpec extends AnyFreeSpec with Matchers with EitherValu
             line3            = None,
             line4            = None,
             line5            = None,
-            postcode         = "AB1 2CD",
+            postcode         = None,
             country          = None,
             addressValidated = false
           ),
