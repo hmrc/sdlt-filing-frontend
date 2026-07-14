@@ -47,9 +47,7 @@ class VendorAddressController @Inject()(
     (identify andThen getData andThen requireData).async { implicit request =>
       val journeyId = vendorQuestionsAddress
       val addressConfig = MandatoryFieldsConfigModel(
-        addressLine1 = Some(true),
-        town = Some(true),
-        postcode = Some(true)
+        addressLine1 = Some(true)
       )
 
       sessionRepository.get(request.userAnswers.id).flatMap {
