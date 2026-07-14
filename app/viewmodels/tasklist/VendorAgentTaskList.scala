@@ -43,12 +43,15 @@ object VendorAgentTaskList {
     vendorAgents(fullReturn).nonEmpty
   }
 
+  def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
+    Seq(
+      vendorAgents(fullReturn).exists(_.name.isDefined),
+      vendorAgents(fullReturn).exists(_.address1.isDefined)
+    )
+  }
+  
   def isVendorAgentComplete(fullReturn: FullReturn): Boolean = {
-    vendorAgents(fullReturn).nonEmpty &&
-      vendorAgents(fullReturn).forall( agent =>
-        agent.name.isDefined
-        //TODO ADD ALL MANDATORY CONDITIONS FOR VENDOR AGENT
-      )
+    mandatoryFieldsDefined(fullReturn).forall(identity)
   }
 
   def vendorAgentRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
@@ -68,7 +71,7 @@ object VendorAgentTaskList {
       messageKey = _ => "tasklist.vendorAgentQuestion.details",
       url = _ => _ => {url},
       tagId = "vendorAgentQuestionDetailRow",
-      checks = scheme => Seq(isVendorAgentComplete(fullReturn)),
+      checks = scheme => mandatoryFieldsDefined(fullReturn),
       prerequisites = _ => Seq()
     )
   }

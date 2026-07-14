@@ -522,6 +522,7 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
               Land(landID = Some("LND003")),
               Land(landID = Some("LND004"))
             )),
+            companyDetails = None,
             returnInfo = Some(ReturnInfo(mainLandID = Some("LND001")))
           )).futureValue
           verify(pdf4, never).fillPdf(any[Option[Land]], any[FullReturn](), any[Boolean], any[PdfVariant], any[Boolean])

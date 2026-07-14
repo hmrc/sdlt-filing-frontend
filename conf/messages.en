@@ -136,6 +136,7 @@ tasklist.leaseQuestion.details                                                  
 tasklist.submissionQuestion.heading                                                 = Submit your return
 tasklist.submissionQuestion.details                                                 = Submit your return
 tasklist.submissionQuestion.hint                                                    = You must complete all previous sections before starting
+tasklist.taxCalculationQuestion.hint                                                = You must complete all previous sections before starting
 tasklist.inProgress                                                                 = In Progress
 tasklist.cannotStartYet                                                             = Cannot start yet
 tasklist.failed                                                                     = Failed
@@ -144,7 +145,7 @@ tasklist.transactionQuestion.details                                            
 tasklist.transactionQuestion.heading                                                = Transaction Questions
 tasklist.taxCalculationQuestion.details                                             = Tax Calculation Questions
 tasklist.taxCalculationQuestion.heading                                             = Tax Calculation Questions
-tasklist.invalid                                                                    = Needs review
+tasklist.invalid                                                                    = There is a problem
 
 # Check Your Answers
 site.checkYourAnswers.heading                                                       = Check your answers

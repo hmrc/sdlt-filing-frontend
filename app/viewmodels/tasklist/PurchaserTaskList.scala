@@ -34,10 +34,52 @@ object PurchaserTaskList {
         buildPurchaserRow(fullReturn)
       )
     )
+
+  def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
+    val mainPurchaserID: Option[String] = fullReturn.returnInfo.flatMap(_.mainPurchaserID)
+    val mainPurchaser = fullReturn.purchaser.flatMap(_.find(purchaser => mainPurchaserID.equals(purchaser.purchaserID)))
+
+    val isPurchaserCompany = mainPurchaser.exists(_.isCompany.exists(_.equalsIgnoreCase("yes")))
+    val isCompanyDetailsDefined = fullReturn.companyDetails.isDefined
+
+    // common purchaser fields
+    val commonFieldsDefined = Seq(
+      mainPurchaser.exists(_.isCompany.isDefined),
+      mainPurchaser.exists(_.address1.isDefined),
+      mainPurchaser.exists(_.isTrustee.isDefined),
+      mainPurchaser.exists(_.isConnectedToVendor.isDefined)
+    )
+
+    // purchaser company fields
+    val companyFieldsDefined = Seq(
+      mainPurchaser.exists(_.companyName.isDefined),
+      fullReturn.companyDetails.exists(x => x.VATReference.isDefined || x.UTR.isDefined) ||
+        mainPurchaser.exists(x => x.registrationNumber.isDefined && x.placeOfRegistration.isDefined)
+    )
+
+    // purchaser individual fields
+    val isNinoDefined = mainPurchaser.exists(_.nino.isDefined)
+    val isDOBDefined = mainPurchaser.exists(_.dateOfBirth.isDefined)
+    val isRegDefined = mainPurchaser.exists(x => x.registrationNumber.isDefined && x.placeOfRegistration.isDefined)
+
+    val individualFieldsDefined = Seq(
+      mainPurchaser.exists(_.surname.isDefined)
+    ) ++ (
+      if (isNinoDefined) {
+        Seq(isNinoDefined, isDOBDefined)
+      } else {
+        Seq(isRegDefined)
+      })
+
+    (isPurchaserCompany, isCompanyDetailsDefined) match {
+      case (true, true) => commonFieldsDefined ++ companyFieldsDefined
+      case (true, false) => commonFieldsDefined ++ Seq(isCompanyDetailsDefined)
+      case (false, _) => commonFieldsDefined ++ individualFieldsDefined
+    }
+  }
     
   def isPurchaserComplete(fullReturn: FullReturn): Boolean = {
-    fullReturn.purchaser.exists(_.nonEmpty)
-    //TODO ADD ALL REQUIRED FIELDS FOR PURCHASER
+    mandatoryFieldsDefined(fullReturn).forall(identity)
   }
 
   def purchaserRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
@@ -61,7 +103,7 @@ object PurchaserTaskList {
         url
       },
       tagId = "purchaserQuestionDetailRow",
-      checks = scheme => Seq(isPurchaserComplete(fullReturn)),
+      checks = scheme => mandatoryFieldsDefined(fullReturn),
       prerequisites = _ => Seq()
     )
   }
