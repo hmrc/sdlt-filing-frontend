@@ -166,9 +166,7 @@ class PopulatePurchaserService {
           PurchaserFormOfIdIndividual(reg, placeOfReg))
       } yield finalAnswers
       case _ =>
-        for {
-          finalAnswers <- previousPages.set(DoesPurchaserHaveNIPage, false)
-        } yield finalAnswers
+        Try(previousPages)
     }
   }
 
