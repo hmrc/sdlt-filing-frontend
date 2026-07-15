@@ -293,6 +293,19 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
       "must be No when relief reason is not 32" in {
         TaxCalcRequestValidator.buildRequest(userAnswersWith(freeholdReturn())).toOption.get.firstTimeBuyer mustBe Some("No")
       }
+
+      "must be No when relief reason is 32 but the return has multiple lands" in {
+        val base = freeholdReturn(claimingRelief = Some("yes"), reliefReason = Some("32"))
+        val multiLand = base.copy(land = base.land.map(_ :+ Land(landID = Some("L2"), propertyType = Some("02"), interestCreatedTransferred = Some("FPF"))))
+        TaxCalcRequestValidator.buildRequest(userAnswersWith(multiLand)).toOption.get.firstTimeBuyer mustBe Some("No")
+      }
+
+      "must be Yes when relief reason is 32 and the return has a single land" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          freeholdReturn(claimingRelief = Some("yes"), reliefReason = Some("32"))
+        )).toOption.get
+        request.firstTimeBuyer mustBe Some("Yes")
+      }
     }
 
     "tax relief" - {

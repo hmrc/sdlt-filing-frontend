@@ -62,7 +62,7 @@ object TaxCalcRequestValidator {
       propertyDetails     = buildPropertyDetails(propertyCode),
       leaseDetails        = leaseDetails,
       relevantRentDetails = fullReturn.lease.map(buildRelevantRentDetails),
-      firstTimeBuyer      = Some(if (transaction.reliefReason.contains(FIRST_TIME_BUYER_RELIEF)) "Yes" else "No"),
+      firstTimeBuyer      = Some(if (transaction.reliefReason.contains(FIRST_TIME_BUYER_RELIEF) && !fullReturn.land.exists(_.size > 1)) "Yes" else "No"),
       isLinked            = Some(isLinkedRaw.toUpperCase == YES),
       interestTransferred = Some(interestCode),
       taxReliefDetails    = taxReliefDetails,
