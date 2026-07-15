@@ -118,6 +118,24 @@ class LoadingScreenControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
+      redirectScenarios.foreach { case (statusValue, description, expectedCall) =>
+        s"must redirect to $description when the submission status is $statusValue in lower case" in {
+
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some("ret-123"))))
+            .overrides(bind[StampDutyLandTaxConnector].toInstance(connectorReturning(Some(statusValue.toLowerCase))))
+            .build()
+
+          running(application) {
+            val request = FakeRequest(GET, controllers.submission.routes.LoadingScreenController.show.url)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustEqual expectedCall().url
+          }
+        }
+      }
+
       "must return OK and the loading screen view when the connector fails" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some("ret-123"))))
