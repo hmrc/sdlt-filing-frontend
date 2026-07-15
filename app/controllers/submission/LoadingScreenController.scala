@@ -91,7 +91,7 @@ class LoadingScreenController @Inject()(
     returnId match {
       case Some(ref) =>
         connector.getFullReturn(GetReturnByRefRequest(ref, storn))
-          .map(_.submission.flatMap(_.submissionStatus))
+          .map(_.submission.flatMap(_.submissionStatus).map(_.toUpperCase))
           .recover { case _ => None }
       case None =>
         Future.successful(None)
