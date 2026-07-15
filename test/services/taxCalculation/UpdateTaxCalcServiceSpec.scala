@@ -56,6 +56,8 @@ class UpdateTaxCalcServiceSpec extends SpecBase with MockitoSugar with BeforeAnd
         result.amountPaid mustEqual FullReturnConstants.completeTaxCalculation.amountPaid
         result.includesPenalty mustEqual FullReturnConstants.completeTaxCalculation.includesPenalty
         result.taxDue mustEqual None
+        result.taxDuePremium mustEqual None
+        result.taxDueNpv mustEqual None
       }
 
       "must fail when fullReturn does not exist" in {
