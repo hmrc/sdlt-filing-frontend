@@ -39,9 +39,9 @@ object CreateResidencyRequest {
           stornId           = fullReturn.stornId,
           returnResourceRef = fullReturn.returnResourceRef,
           residency = ResidencyPayload(
-            isNonUkResidents = if (userAnswers.get(NonUkResidentPurchaserPage).contains(true)) "YES" else "NO",
-            isCompany        = if (userAnswers.get(CloseCompanyPage).contains(true)) "YES" else "NO",
-            isCrownRelief    = if (userAnswers.get(CrownEmploymentReliefPage).contains(true)) "YES" else "NO"
+            isNonUkResidents = if (userAnswers.get(NonUkResidentPurchaserPage).contains(true)) "yes" else "no",
+            isCompany        = if (userAnswers.get(CloseCompanyPage).contains(true)) "yes" else "no",
+            isCrownRelief    = if (userAnswers.get(CrownEmploymentReliefPage).contains(true)) "yes" else "no"
           )
         ))
       case None => Future.failed(new NoSuchElementException("Full return not found"))
@@ -72,9 +72,9 @@ object UpdateResidencyRequest {
           stornId           = fullReturn.stornId,
           returnResourceRef = fullReturn.returnResourceRef,
           residency = ResidencyPayload(
-            isNonUkResidents = if (userAnswers.get(NonUkResidentPurchaserPage).contains(true)) "YES" else "NO",
-            isCompany        = if (userAnswers.get(CloseCompanyPage).contains(true)) "YES" else "NO",
-            isCrownRelief    = if (userAnswers.get(CrownEmploymentReliefPage).contains(true)) "YES" else "NO"
+            isNonUkResidents = if (userAnswers.get(NonUkResidentPurchaserPage).contains(true)) "yes" else "no",
+            isCompany        = if (userAnswers.get(CloseCompanyPage).contains(true)) "yes" else "no",
+            isCrownRelief    = if (userAnswers.get(CrownEmploymentReliefPage).contains(true)) "yes" else "no"
           )
         ))
       case None => Future.failed(new NoSuchElementException("Full return not found"))
