@@ -69,7 +69,7 @@ class VendorSessionQuestionsSpec extends AnyFreeSpec with Matchers with EitherVa
         "line3" -> JsNull,
         "line4" -> JsNull,
         "line5" -> JsNull ,
-        "postcode" -> "CR7 8LU",
+        "postcode" -> JsNull,
         "country" -> JsNull,
         "addressValidated" -> JsNull
       ),
@@ -100,7 +100,7 @@ class VendorSessionQuestionsSpec extends AnyFreeSpec with Matchers with EitherVa
               line3 = Some("Street 3"),
               line4 = Some("Street 4"),
               line5 = Some("Street 5"),
-              postcode = "CR7 8LU",
+              postcode = Some("CR7 8LU"),
               country = Some(VendorSessionCountry(
                 code = Some("GB"),
                 name = Some("UK")
@@ -127,7 +127,7 @@ class VendorSessionQuestionsSpec extends AnyFreeSpec with Matchers with EitherVa
               line3 = None,
               line4 = None,
               line5 = None,
-              postcode = "CR7 8LU",
+              postcode = None,
               country = None,
               addressValidated = None
             )

@@ -45,7 +45,7 @@ case class VendorSessionAddress(
                                  line3: Option[String] = None,
                                  line4: Option[String] = None,
                                  line5: Option[String] = None,
-                                 postcode: String,
+                                 postcode: Option[String],
                                  country: Option[VendorSessionCountry],
                                  addressValidated: Option[Boolean] = None
                                )
