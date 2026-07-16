@@ -353,7 +353,11 @@ class Navigator @Inject()() {
 
   private def beforeTaxCalculationFlowRoutes(page: Page): UserAnswers => Call = page match {
     case ConfirmEffectiveDateOfTransactionPage => userAnswers =>
-      if (userAnswers.fullReturn.flatMap(_.taxCalculation).exists(_.taxDue.nonEmpty)) {
+      val hasTaxDue        = userAnswers.fullReturn.flatMap(_.taxCalculation).exists(_.taxDue.nonEmpty)
+      val hasTaxDuePremium = userAnswers.fullReturn.flatMap(_.taxCalculation).exists(_.taxDuePremium.nonEmpty)
+      val hasTaxDueNpv     = userAnswers.fullReturn.flatMap(_.taxCalculation).exists(_.taxDueNPV.nonEmpty)
+      
+      if (hasTaxDue || (hasTaxDuePremium && hasTaxDueNpv)) {
         controllers.taxCalculation.routes.TaxCalculationCheckYourAnswersController.onPageLoad()
       } else {
         controllers.taxCalculation.routes.TaxCalculationBeforeYouStartController.onPageLoad()
