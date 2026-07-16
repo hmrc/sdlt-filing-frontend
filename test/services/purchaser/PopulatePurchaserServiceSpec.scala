@@ -621,7 +621,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
 
           val updatedAnswers = result.get
 
-          updatedAnswers.get(DoesPurchaserHaveNIPage) mustBe Some(false)
+          updatedAnswers.get(DoesPurchaserHaveNIPage).isDefined mustBe false
           updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(false)
           updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(false)
         }
