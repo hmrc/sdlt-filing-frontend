@@ -2011,6 +2011,8 @@ submission.sdlt5CertificateForEachLandOrProperty.error.required                 
 crossflow.relief.heading                                                            = Update the reason for claiming relief
 crossflow.relief.firstTimeBuyer.notResidential                                      = ‘32 - First Time Buyer’s Relief’ is only available when the property type is ‘01 - Residential’.
 crossflow.relief.firstTimeBuyer.notResidential.inline                               = When claiming ‘32 - First Time Buyer’s Relief’, the type of property must be ‘01 - Residential’
+crossflow.relief.firstTimeBuyer.multipleLands                                       = ‘32 - First Time Buyer’s Relief’ is only available when the return includes a single property.
+crossflow.relief.firstTimeBuyer.multipleLands.inline                                = When claiming ‘32 - First Time Buyer’s Relief’, the return must include a single property
 
 crossflow.relief.multipleDwellings.notAllowedPropertyType                           = ‘33 - Multiple Dwellings Relief’ is not available when the property type is ‘03 - Non-residential’.
 crossflow.relief.multipleDwellings.notAllowedPropertyType.inline                    = When claiming ‘33 - Multiple Dwellings Relief’, the type of property cannot be ‘03 - Non-residential’

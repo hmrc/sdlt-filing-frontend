@@ -146,6 +146,52 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
     }
   }
 
+  "FirstTimeBuyerReliefMultipleLands" - {
+
+    "must fire when relief is claimed for code 32 and the return has more than one land" in {
+      val ua = answersWith(
+        reliefReason    = Some(ReasonForRelief.FirstTimeBuyer),
+        propertyType    = Some("01"),
+        additionalLands = Seq(Land(landID = Some("LND002"), propertyType = Some("02")))
+      )
+
+      FirstTimeBuyerReliefMultipleLands.validate(ua).map(_.ruleId) mustBe Some("F23-32-multipleLands")
+    }
+
+    "must pass when the return has a single land" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), propertyType = Some("01"))
+
+      FirstTimeBuyerReliefMultipleLands.validate(ua) mustBe None
+    }
+
+    "must pass when no land has been added yet (incomplete, not in error)" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), propertyType = None)
+
+      FirstTimeBuyerReliefMultipleLands.validate(ua) mustBe None
+    }
+
+    "must not apply when relief is not being claimed" in {
+      val ua = answersWith(
+        claimingRelief  = Some("NO"),
+        reliefReason    = Some(ReasonForRelief.FirstTimeBuyer),
+        propertyType    = Some("01"),
+        additionalLands = Seq(Land(landID = Some("LND002")))
+      )
+
+      FirstTimeBuyerReliefMultipleLands.validate(ua) mustBe None
+    }
+
+    "must not apply when a different relief reason is selected" in {
+      val ua = answersWith(
+        reliefReason    = Some(ReasonForRelief.MultipleDwellings),
+        propertyType    = Some("01"),
+        additionalLands = Seq(Land(landID = Some("LND002")))
+      )
+
+      FirstTimeBuyerReliefMultipleLands.validate(ua) mustBe None
+    }
+  }
+
   "MultipleDwellingsRelief" - {
 
     "must fire when property type is non-residential (03)" in {

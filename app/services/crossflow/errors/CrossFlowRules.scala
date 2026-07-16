@@ -46,6 +46,18 @@ object FirstTimeBuyerRelief extends GuardRule:
   protected override def inlineErrorKey             = "crossflow.relief.firstTimeBuyer.notResidential.inline"
 
 
+object FirstTimeBuyerReliefMultipleLands extends GuardRule:
+  val id      = "F23-32-multipleLands"
+  val affects: ReturnSection        = ReturnSection.Transaction
+  val inputs:  Set[ReturnSection]   = Set(ReturnSection.Transaction, ReturnSection.Land)
+  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget)
+
+  protected def appliesTo(ua: UserAnswers): Boolean = isClaimingRelief(ua) && isReason(ua, "32")
+  protected def isValid(ua: UserAnswers):   Boolean = landCount(ua) <= 1
+  protected def messageKey                          = "crossflow.relief.firstTimeBuyer.multipleLands"
+  protected override def inlineErrorKey             = "crossflow.relief.firstTimeBuyer.multipleLands.inline"
+
+
 /** Property type must be 01 / 02 / 04. The date side of code 33 is owned by F25. */
 object MultipleDwellingsRelief extends GuardRule:
   val id      = "F23-33"
@@ -613,6 +625,7 @@ object Cf6_MultiLandPropertyTypeMismatch extends LandGuardRule:
 object F23Rules:
   val all: Set[CrossFlowRule] = Set(
     FirstTimeBuyerRelief,
+    FirstTimeBuyerReliefMultipleLands,
     MultipleDwellingsRelief,
     PreCompletionRelief,
     FifteenPercentRateRelief,
