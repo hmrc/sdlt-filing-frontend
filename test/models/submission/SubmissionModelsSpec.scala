@@ -17,7 +17,7 @@
 package models.submission
 
 import models.FullReturn
-import models.submission.SubmissionResponse.{Accepted, Acknowledge, Rejected}
+import models.submission.SubmissionResponse.{Acknowledged, Failed, Rejected, Retryable, Submitted}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{EitherValues, OptionValues}
@@ -168,11 +168,18 @@ class SubmissionModelsSpec extends AnyFreeSpec with Matchers with EitherValues w
 
   "SubmissionResponse" - {
 
-    val accepted    = Accepted(returnId = "382966898", utrn = "23456789MCe")
-    val acknowledge = Acknowledge(returnId = "382966898")
-    val rejected    = Rejected(
-      returnId = "382966898",
+    val returnId = "382966898"
+
+    val submitted    = Submitted(returnId = returnId, utrn = "23456789MCe", receipt = true)
+    val acknowledged = Acknowledged(returnId = returnId)
+    val retryable    = Retryable(returnId = returnId)
+    val rejected     = Rejected(
+      returnId = returnId,
       errors = Seq(SubmissionError(code = Some("1000"), message = "Invalid return", location = Some("/purchaser/0")))
+    )
+    val failed       = Failed(
+      returnId = returnId,
+      errors = Seq(SubmissionError(code = Some("9999"), message = "Fatal error at ChRIS", location = None))
     )
 
     ".format (writes)" - {
@@ -181,42 +188,64 @@ class SubmissionModelsSpec extends AnyFreeSpec with Matchers with EitherValues w
         implicitly[Format[SubmissionResponse]]
       }
 
-      "must serialize Accepted with the accepted discriminator" in {
-        val json = Json.toJson[SubmissionResponse](accepted)
+      "must serialize Submitted with the submitted discriminator" in {
+        val json = Json.toJson[SubmissionResponse](submitted)
 
-        (json \ "_type").as[String] mustBe "accepted"
+        (json \ "_type").as[String]    mustBe "submitted"
         (json \ "returnId").as[String] mustBe "382966898"
-        (json \ "utrn").as[String] mustBe "23456789MCe"
+        (json \ "utrn").as[String]     mustBe "23456789MCe"
+        (json \ "receipt").as[Boolean] mustBe true
       }
 
-      "must serialize Acknowledge with the acknowledged discriminator" in {
-        val json = Json.toJson[SubmissionResponse](acknowledge)
+      "must serialize Acknowledged with the acknowledged discriminator" in {
+        val json = Json.toJson[SubmissionResponse](acknowledged)
 
-        (json \ "_type").as[String] mustBe "acknowledged"
+        (json \ "_type").as[String]    mustBe "acknowledged"
+        (json \ "returnId").as[String] mustBe "382966898"
+      }
+
+      "must serialize Retryable with the retryable discriminator" in {
+        val json = Json.toJson[SubmissionResponse](retryable)
+
+        (json \ "_type").as[String]    mustBe "retryable"
         (json \ "returnId").as[String] mustBe "382966898"
       }
 
       "must serialize Rejected with the rejected discriminator" in {
         val json = Json.toJson[SubmissionResponse](rejected)
 
-        (json \ "_type").as[String] mustBe "rejected"
-        (json \ "returnId").as[String] mustBe "382966898"
+        (json \ "_type").as[String]              mustBe "rejected"
+        (json \ "returnId").as[String]           mustBe "382966898"
         (json \ "errors" \ 0 \ "message").as[String] mustBe "Invalid return"
+      }
+
+      "must serialize Failed with the failed discriminator" in {
+        val json = Json.toJson[SubmissionResponse](failed)
+
+        (json \ "_type").as[String]              mustBe "failed"
+        (json \ "returnId").as[String]           mustBe "382966898"
+        (json \ "errors" \ 0 \ "message").as[String] mustBe "Fatal error at ChRIS"
       }
     }
 
     ".format (reads)" - {
 
-      "must read an accepted payload into Accepted" in {
-        val json = Json.obj("_type" -> "accepted", "returnId" -> "382966898", "utrn" -> "23456789MCe")
+      "must read a submitted payload into Submitted" in {
+        val json = Json.obj("_type" -> "submitted", "returnId" -> "382966898", "utrn" -> "23456789MCe", "receipt" -> true)
 
-        json.as[SubmissionResponse] mustBe accepted
+        json.as[SubmissionResponse] mustBe submitted
       }
 
-      "must read an acknowledged payload into Acknowledge" in {
+      "must read an acknowledged payload into Acknowledged" in {
         val json = Json.obj("_type" -> "acknowledged", "returnId" -> "382966898")
 
-        json.as[SubmissionResponse] mustBe acknowledge
+        json.as[SubmissionResponse] mustBe acknowledged
+      }
+
+      "must read a retryable payload into Retryable" in {
+        val json = Json.obj("_type" -> "retryable", "returnId" -> "382966898")
+
+        json.as[SubmissionResponse] mustBe retryable
       }
 
       "must read a rejected payload into Rejected" in {
@@ -227,6 +256,16 @@ class SubmissionModelsSpec extends AnyFreeSpec with Matchers with EitherValues w
         )
 
         json.as[SubmissionResponse] mustBe rejected
+      }
+
+      "must read a failed payload into Failed" in {
+        val json = Json.obj(
+          "_type"    -> "failed",
+          "returnId" -> "382966898",
+          "errors"   -> Json.arr(Json.obj("code" -> "9999", "message" -> "Fatal error at ChRIS"))
+        )
+
+        json.as[SubmissionResponse] mustBe failed
       }
 
       "must fail with a JsError when the _type is unknown" in {
@@ -244,44 +283,59 @@ class SubmissionModelsSpec extends AnyFreeSpec with Matchers with EitherValues w
       }
 
       "must fail with a JsError when a matched variant is missing required fields" in {
-        // discriminator says accepted, but utrn is absent
-        Json.obj("_type" -> "accepted", "returnId" -> "382966898").validate[SubmissionResponse] mustBe a[JsError]
+        // discriminator says submitted, but utrn and receipt are absent
+        Json.obj("_type" -> "submitted", "returnId" -> "382966898").validate[SubmissionResponse] mustBe a[JsError]
       }
     }
 
     "round-trip" - {
 
-      "must round-trip Accepted" in {
-        Json.toJson[SubmissionResponse](accepted).as[SubmissionResponse] mustBe accepted
+      "must round-trip Submitted" in {
+        Json.toJson[SubmissionResponse](submitted).as[SubmissionResponse] mustBe submitted
       }
 
-      "must round-trip Acknowledge" in {
-        Json.toJson[SubmissionResponse](acknowledge).as[SubmissionResponse] mustBe acknowledge
+      "must round-trip Acknowledged" in {
+        Json.toJson[SubmissionResponse](acknowledged).as[SubmissionResponse] mustBe acknowledged
+      }
+
+      "must round-trip Retryable" in {
+        Json.toJson[SubmissionResponse](retryable).as[SubmissionResponse] mustBe retryable
       }
 
       "must round-trip Rejected" in {
         Json.toJson[SubmissionResponse](rejected).as[SubmissionResponse] mustBe rejected
+      }
+
+      "must round-trip Failed" in {
+        Json.toJson[SubmissionResponse](failed).as[SubmissionResponse] mustBe failed
       }
     }
 
     "trait" - {
 
       "must expose returnId for each variant" in {
-        (accepted: SubmissionResponse).returnId mustBe "382966898"
-        (acknowledge: SubmissionResponse).returnId mustBe "382966898"
-        (rejected: SubmissionResponse).returnId mustBe "382966898"
+        (submitted: SubmissionResponse).returnId    mustBe "382966898"
+        (acknowledged: SubmissionResponse).returnId mustBe "382966898"
+        (retryable: SubmissionResponse).returnId    mustBe "382966898"
+        (rejected: SubmissionResponse).returnId     mustBe "382966898"
+        (failed: SubmissionResponse).returnId       mustBe "382966898"
       }
     }
 
     "case classes" - {
 
-      "must create Accepted with fields" in {
-        accepted.returnId mustBe "382966898"
-        accepted.utrn mustBe "23456789MCe"
+      "must create Submitted with fields" in {
+        submitted.returnId mustBe "382966898"
+        submitted.utrn     mustBe "23456789MCe"
+        submitted.receipt  mustBe true
       }
 
-      "must create Acknowledge with fields" in {
-        acknowledge.returnId mustBe "382966898"
+      "must create Acknowledged with fields" in {
+        acknowledged.returnId mustBe "382966898"
+      }
+
+      "must create Retryable with fields" in {
+        retryable.returnId mustBe "382966898"
       }
 
       "must create Rejected with fields" in {
@@ -290,14 +344,23 @@ class SubmissionModelsSpec extends AnyFreeSpec with Matchers with EitherValues w
         rejected.errors.head.message mustBe "Invalid return"
       }
 
+      "must create Failed with fields" in {
+        failed.returnId mustBe "382966898"
+        failed.errors must have size 1
+        failed.errors.head.message mustBe "Fatal error at ChRIS"
+      }
+
       "must support equality" in {
-        accepted mustEqual accepted.copy()
-        acknowledge mustEqual acknowledge.copy()
+        submitted mustEqual submitted.copy()
+        acknowledged mustEqual acknowledged.copy()
+        retryable mustEqual retryable.copy()
         rejected mustEqual rejected.copy()
+        failed mustEqual failed.copy()
       }
 
       "must not be equal when fields differ" in {
-        accepted must not equal accepted.copy(utrn = "different")
+        submitted must not equal submitted.copy(utrn = "different")
+        rejected must not equal rejected.copy(errors = Nil)
       }
     }
   }

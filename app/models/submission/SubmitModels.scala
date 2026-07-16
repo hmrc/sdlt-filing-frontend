@@ -39,28 +39,37 @@ final case class SubmissionError(
 object SubmissionError:
   given Format[SubmissionError] = Json.format[SubmissionError]
 
+
 sealed trait SubmissionResponse:
   def returnId: String
 
 object SubmissionResponse:
-  final case class Accepted(returnId: String, utrn: String) extends SubmissionResponse
-  final case class Acknowledge(returnId: String) extends SubmissionResponse
-  final case class Rejected(returnId: String, errors: Seq[SubmissionError]) extends SubmissionResponse
+  final case class Submitted(returnId: String, utrn: String, receipt: Boolean) extends SubmissionResponse
+  final case class Acknowledged(returnId: String)                              extends SubmissionResponse
+  final case class Retryable(returnId: String)                                 extends SubmissionResponse
+  final case class Rejected(returnId: String, errors: Seq[SubmissionError])    extends SubmissionResponse
+  final case class Failed(returnId: String, errors: Seq[SubmissionError])      extends SubmissionResponse
 
-  private val acceptedFormat: OFormat[Accepted]       = Json.format[Accepted]
-  private val acknowledgeFormat: OFormat[Acknowledge] = Json.format[Acknowledge]
-  private val rejectedFormat: OFormat[Rejected]       = Json.format[Rejected]
+  private val submittedFormat:    OFormat[Submitted]    = Json.format[Submitted]
+  private val acknowledgedFormat: OFormat[Acknowledged] = Json.format[Acknowledged]
+  private val retryableFormat:    OFormat[Retryable]    = Json.format[Retryable]
+  private val rejectedFormat:     OFormat[Rejected]     = Json.format[Rejected]
+  private val failedFormat:       OFormat[Failed]       = Json.format[Failed]
 
   given Format[SubmissionResponse] = new Format[SubmissionResponse]:
     def reads(json: JsValue): JsResult[SubmissionResponse] =
       (json \ "_type").asOpt[String] match
-        case Some("accepted")     => acceptedFormat.reads(json)
-        case Some("acknowledged") => acknowledgeFormat.reads(json)
+        case Some("submitted")    => submittedFormat.reads(json)
+        case Some("acknowledged") => acknowledgedFormat.reads(json)
+        case Some("retryable")    => retryableFormat.reads(json)
         case Some("rejected")     => rejectedFormat.reads(json)
+        case Some("failed")       => failedFormat.reads(json)
         case Some(other)          => JsError(s"unknown SubmissionResponse _type: $other")
         case None                 => JsError("missing _type discriminator on SubmissionResponse")
 
     def writes(value: SubmissionResponse): JsValue = value match
-      case a: Accepted    => acceptedFormat.writes(a) ++ Json.obj("_type" -> "accepted")
-      case a: Acknowledge => acknowledgeFormat.writes(a) ++ Json.obj("_type" -> "acknowledged")
-      case r: Rejected    => rejectedFormat.writes(r) ++ Json.obj("_type" -> "rejected")
+      case s: Submitted    => submittedFormat.writes(s)    ++ Json.obj("_type" -> "submitted")
+      case a: Acknowledged => acknowledgedFormat.writes(a) ++ Json.obj("_type" -> "acknowledged")
+      case r: Retryable    => retryableFormat.writes(r)    ++ Json.obj("_type" -> "retryable")
+      case r: Rejected     => rejectedFormat.writes(r)     ++ Json.obj("_type" -> "rejected")
+      case f: Failed       => failedFormat.writes(f)       ++ Json.obj("_type" -> "failed")
