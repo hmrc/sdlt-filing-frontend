@@ -35,7 +35,7 @@ import scala.util.{Failure, Success}
 class ChrisSubmissionService @Inject()(connector: StampDutyLandTaxConnector,
                                        sessionRepository: SessionRepository)
                                       (implicit ec: ExecutionContext) extends Logging {
-  
+
   def submit(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[SubmissionResponse] =
     userAnswers.fullReturn match {
       case None =>
@@ -69,16 +69,25 @@ class ChrisSubmissionService @Inject()(connector: StampDutyLandTaxConnector,
     submit(userAnswers).onComplete {
       case Success(response) =>
         logger.info(s"[ChrisSubmissionService][submitInBackground] completed: $response")
+        response match {
+          case _: SubmissionResponse.Submitted | _: SubmissionResponse.Acknowledged =>
+            ()
+          case _: SubmissionResponse.Rejected | _: SubmissionResponse.Failed | _: SubmissionResponse.Retryable =>
+            flagSubmissionFailed(userAnswers)
+        }
+
       case Failure(e) =>
         logger.error("[ChrisSubmissionService][submitInBackground] submit failed", e)
-        val updated = userAnswers.set(SubmissionFailedPage, true)
-        updated.fold(
-          errs => logger.error(s"[ChrisSubmissionService] could not set SubmissionFailedPage: $errs"),
-          ua   => sessionRepository.set(ua).recover {
-            case re => logger.error("[ChrisSubmissionService] failed to persist SubmissionFailedPage", re)
-          }
-        )
+        flagSubmissionFailed(userAnswers)
     }
+
+  private def flagSubmissionFailed(userAnswers: UserAnswers): Unit =
+    userAnswers.set(SubmissionFailedPage, true).fold(
+      errs => logger.error(s"[ChrisSubmissionService] could not set SubmissionFailedPage: $errs"),
+      ua   => sessionRepository.set(ua).recover {
+        case re => logger.error("[ChrisSubmissionService] failed to persist SubmissionFailedPage", re)
+      }
+    )
 
   private def updateMainVendor(userAnswers: UserAnswers, fullReturn: FullReturn, mainVendorId: Option[String])
                               (implicit hc: HeaderCarrier, request: Request[_]): Future[Unit] =
