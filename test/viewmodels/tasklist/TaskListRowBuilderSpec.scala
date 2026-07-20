@@ -310,6 +310,21 @@ class TaskListRowBuilderSpec extends SpecBase {
         result.status mustBe TLCompleted
       }
 
+      "must return Invalid status when all checks are true and invalid is true" in {
+        val builder = TaskListRowBuilder(
+          messageKey = _ => "test.key",
+          url = _ => _ => "/test",
+          tagId = "testId",
+          checks = _ => Seq(true, true),
+          prerequisites = _ => Seq(),
+          invalid = _ => true
+        )
+
+        val result = builder.build(fullReturnComplete)
+
+        result.status mustBe TLInvalid
+      }
+
       "must return InProgress status when some checks are true" in {
         val builder = TaskListRowBuilder(
           messageKey = _ => "test.key",

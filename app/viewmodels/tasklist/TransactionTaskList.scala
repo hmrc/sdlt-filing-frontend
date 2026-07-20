@@ -49,9 +49,9 @@ object TransactionTaskList {
     val errorUrl = controllers.transaction.routes.TransactionSingleEntityController.onPageLoad().url
     
     val url =
-      if (status.hasFailures)                        errorUrl
-      else if (isTransactionComplete(fullReturn))                       cyaUrl
-      else                                                startUrl
+      if isTransactionComplete(fullReturn) && status.hasFailures then errorUrl
+      else if isTransactionComplete(fullReturn) then cyaUrl
+      else startUrl
 
     TaskListRowBuilder(
       canEdit       = _ => true,

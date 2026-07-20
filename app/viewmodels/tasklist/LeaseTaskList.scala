@@ -52,9 +52,9 @@ object LeaseTaskList {
     val errorUrl = controllers.lease.routes.LeaseSingleEntityController.onPageLoad().url
 
     val url =
-      if (status.hasFailures)            errorUrl
-      else if (isLeaseComplete(fullReturn)) cyaUrl
-      else                                 startUrl
+      if isLeaseComplete(fullReturn) &&status.hasFailures then errorUrl
+      else if isLeaseComplete(fullReturn) then cyaUrl
+      else startUrl
 
     TaskListRowBuilder(
       canEdit = {

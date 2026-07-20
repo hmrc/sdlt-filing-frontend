@@ -187,7 +187,7 @@ class LeaseTaskListSpec extends SpecBase {
         }
       }
 
-      "must route to Lease Single Entity url even when the lease is incomplete and there are failures" in {
+      "must route to before you start controller when the lease is incomplete and there are failures" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -196,7 +196,7 @@ class LeaseTaskListSpec extends SpecBase {
           // Failures take precedence over completion/start routing
           val result = LeaseTaskList.buildLeaseRow(fullReturnIncompleteLease, cf5aFailureStatus)
 
-          result.url mustBe controllers.lease.routes.LeaseSingleEntityController.onPageLoad().url
+          result.url mustBe controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
         }
       }
 

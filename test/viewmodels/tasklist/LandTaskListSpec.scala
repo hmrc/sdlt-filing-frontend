@@ -323,7 +323,7 @@ class LandTaskListSpec extends SpecBase {
         }
       }
 
-      "must route to the multi-entity controller for multiple lands" in {
+      "must route to the multi-entity controller for complete multiple lands" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -347,7 +347,7 @@ class LandTaskListSpec extends SpecBase {
         }
       }
 
-      "must route to the multi-entity controller even when land is absent" in {
+      "must route to the before you start controller even when land is absent" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -355,7 +355,7 @@ class LandTaskListSpec extends SpecBase {
 
           val result = LandTaskList.buildLandRow(fullReturnMissingLand, withFailuresStatus)
 
-          result.url mustBe controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad().url
+          result.url mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
         }
       }
 

@@ -49,13 +49,12 @@ case class TaskListRowBuilder(messageKey: FullReturn => String,
   def build(fullReturn: FullReturn): TaskListSectionRow = {
     val preCheck: Boolean = prerequisitesMet(fullReturn)
     val status = preCheck match {
-      case true if invalid(fullReturn)          => TLInvalid
-      case true if error(fullReturn)            => TLFailed
-      case true if isComplete(fullReturn)       => TLCompleted
+      case true if error(fullReturn) => TLFailed
+      case true if isComplete(fullReturn) => if (invalid(fullReturn)) TLInvalid else TLCompleted
       case true if checks(fullReturn).contains(true) => TLInProgress
-      case true if isOptional                   => TLOptional
-      case true                                 => TLNotStarted
-      case _                                    => TLCannotStart
+      case true if isOptional => TLOptional
+      case true => TLNotStarted
+      case _ => TLCannotStart
     }
 
     TaskListSectionRow(messageKey(fullReturn), url(fullReturn)(status), tagId, status, canEdit(status), hint(fullReturn))
