@@ -38,12 +38,12 @@ class VendorAgentOverviewControllerSpec extends SpecBase with MockitoSugar {
 
   private val userAnswersWithAgent = emptyUserAnswers.copy(
     returnId = Some(completeFullReturn.returnResourceRef),
-    fullReturn = Some(completeFullReturn.copy(returnAgent = Some(Seq(completeReturnAgentVendor))))
+    fullReturn = Some(completeFullReturn.copy(submission = None, returnAgent = Some(Seq(completeReturnAgentVendor))))
   )
 
   private val userAnswersWithoutAgent = emptyUserAnswers.copy(
     returnId = Some(completeFullReturn.returnResourceRef),
-    fullReturn = Some(completeFullReturn.copy(returnAgent = None))
+    fullReturn = Some(completeFullReturn.copy(submission = None, returnAgent = None))
   )
 
   lazy val onPageLoadRoute = routes.VendorAgentOverviewController.onPageLoad().url

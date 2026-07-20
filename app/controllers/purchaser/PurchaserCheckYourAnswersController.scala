@@ -42,6 +42,7 @@ class PurchaserCheckYourAnswersController @Inject()(
                                                      identify: IdentifierAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
+                                                     statusCheck: CheckSubmissionStatusAction,
                                                      sessionRepository: SessionRepository,
                                                      backendConnector: StampDutyLandTaxConnector,
                                                      purchaserService: PurchaserService,
@@ -51,7 +52,7 @@ class PurchaserCheckYourAnswersController @Inject()(
                                                      checkAnswersService: CheckAnswersService
                                                    )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
   
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sessionRepository.get(request.userAnswers.id).map {
         case Some(userAnswers) if userAnswers.returnId.isEmpty =>
@@ -93,7 +94,7 @@ class PurchaserCheckYourAnswersController @Inject()(
       }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sessionRepository.get(request.userAnswers.id).flatMap {
         case Some(userAnswers) if userAnswers.returnId.isDefined =>

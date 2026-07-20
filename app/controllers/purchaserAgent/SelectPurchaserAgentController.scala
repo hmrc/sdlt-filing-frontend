@@ -38,6 +38,7 @@ class SelectPurchaserAgentController @Inject()(
                                                 identify: IdentifierAction,
                                                 getData: DataRetrievalAction,
                                                 requireData: DataRequiredAction,
+                                                statusCheck: CheckSubmissionStatusAction,
                                                 formProvider: SelectPurchaserAgentFormProvider,
                                                 purchaserService: PurchaserService,
                                                 purchaserAgentService: PurchaserAgentService,
@@ -45,7 +46,7 @@ class SelectPurchaserAgentController @Inject()(
                                                 view: SelectPurchaserAgentView
                                               ) extends FrontendBaseController with I18nSupport with Logging {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       val maybeMainPurchaserName = purchaserService.mainPurchaserName(request.userAnswers).map(_.fullName)
@@ -79,7 +80,7 @@ class SelectPurchaserAgentController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       val maybeMainPurchaserName = purchaserService.mainPurchaserName(request.userAnswers).map(_.fullName)

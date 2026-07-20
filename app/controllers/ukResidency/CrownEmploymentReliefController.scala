@@ -40,6 +40,7 @@ class CrownEmploymentReliefController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         statusCheck: CheckSubmissionStatusAction,
                                          formProvider: CrownEmploymentReliefFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: CrownEmploymentReliefView
@@ -47,7 +48,7 @@ class CrownEmploymentReliefController @Inject()(
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
       request.userAnswers.fullReturn match {
         case Some(fullReturn) if isResidentialProperty(fullReturn) =>
@@ -66,7 +67,7 @@ class CrownEmploymentReliefController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       form.bindFromRequest().fold(

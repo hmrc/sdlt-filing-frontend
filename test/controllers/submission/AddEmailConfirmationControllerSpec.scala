@@ -17,9 +17,10 @@
 package controllers.submission
 
 import base.SpecBase
+import constants.FullReturnConstants.completeFullReturn
 import controllers.routes
 import forms.submission.AddEmailConfirmationFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, Submission, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -40,6 +41,8 @@ class AddEmailConfirmationControllerSpec extends SpecBase with MockitoSugar {
 
   lazy val addEmailConfirmationRoute = controllers.submission.routes.AddEmailConfirmationController.onPageLoad().url
 
+  val testFullReturn = completeFullReturn.copy(submission = Some(Submission(None)))
+
   val formProvider = new AddEmailConfirmationFormProvider()
   val form = formProvider()
 
@@ -47,7 +50,7 @@ class AddEmailConfirmationControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(fullReturn = Some(testFullReturn)))).build()
 
       running(application) {
         val request = FakeRequest(GET, addEmailConfirmationRoute)
@@ -63,7 +66,7 @@ class AddEmailConfirmationControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN").set(AddEmailConfirmationPage, true).success.value
+      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(testFullReturn)).set(AddEmailConfirmationPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 

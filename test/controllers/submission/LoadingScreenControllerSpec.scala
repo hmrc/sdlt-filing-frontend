@@ -18,6 +18,7 @@ package controllers.submission
 
 import base.SpecBase
 import connectors.StampDutyLandTaxConnector
+import constants.FullReturnConstants.completeFullReturn
 import models.{FullReturn, GetReturnByRefRequest, Submission}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -55,13 +56,16 @@ class LoadingScreenControllerSpec extends SpecBase with MockitoSugar {
     connector
   }
 
+  val testFullReturn = completeFullReturn.copy(submission = Some(Submission(None)))
+  val testUserAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn))
+
   "LoadingScreen Controller" - {
 
     "show" - {
 
       "must return OK and the correct view for a GET when there is no returnId" in {
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
 
         running(application) {
           val request = FakeRequest(GET, controllers.submission.routes.LoadingScreenController.show.url)
@@ -78,7 +82,7 @@ class LoadingScreenControllerSpec extends SpecBase with MockitoSugar {
 
       "must return OK and the loading screen view when the status is still in progress" in {
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some("ret-123"))))
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers.copy(returnId = Some("ret-123"))))
           .overrides(bind[StampDutyLandTaxConnector].toInstance(connectorReturning(Some("PENDING"))))
           .build()
 
@@ -103,7 +107,7 @@ class LoadingScreenControllerSpec extends SpecBase with MockitoSugar {
       redirectScenarios.foreach { case (statusValue, description, expectedCall) =>
         s"must redirect to $description when the submission status is $statusValue" in {
 
-          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some("ret-123"))))
+          val application = applicationBuilder(userAnswers = Some(testUserAnswers.copy(returnId = Some("ret-123"))))
             .overrides(bind[StampDutyLandTaxConnector].toInstance(connectorReturning(Some(statusValue))))
             .build()
 
@@ -138,7 +142,7 @@ class LoadingScreenControllerSpec extends SpecBase with MockitoSugar {
 
       "must return OK and the loading screen view when the connector fails" in {
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some("ret-123"))))
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers.copy(returnId = Some("ret-123"))))
           .overrides(bind[StampDutyLandTaxConnector].toInstance(failingConnector))
           .build()
 
@@ -153,7 +157,7 @@ class LoadingScreenControllerSpec extends SpecBase with MockitoSugar {
 
       "must return INTERNAL_SERVER_ERROR when SubmissionFailedPage is set" in {
 
-        val answers     = emptyUserAnswers.set(SubmissionFailedPage, true).success.value
+        val answers     = testUserAnswers.set(SubmissionFailedPage, true).success.value
         val application = applicationBuilder(userAnswers = Some(answers)).build()
 
         running(application) {

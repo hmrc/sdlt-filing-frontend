@@ -49,11 +49,13 @@ class LeaseThousandPoundsThresholdControllerSpec extends SpecBase with MockitoSu
 
   val userAnswersGrantOfLease: UserAnswers = emptyUserAnswers.copy(
     fullReturn = Some(completeFullReturn.copy(
+      submission = None,
       transaction = Some(completeTransaction.copy(
         transactionDescription = Some("L"))))))
 
   val userAnswersConveyanceTransfer: UserAnswers = emptyUserAnswers.copy(
     fullReturn = Some(completeFullReturn.copy(
+      submission = None,
       transaction = Some(completeTransaction))))
 
 
@@ -185,6 +187,7 @@ class LeaseThousandPoundsThresholdControllerSpec extends SpecBase with MockitoSu
     "must redirect to LeaseIsVatPayableController when transaction type is missing" in {
       val userAnswersNoTransaction = emptyUserAnswers.copy(
         fullReturn = Some(completeFullReturn.copy(
+          submission = None,
           transaction = Some(completeTransaction.copy(
             transactionDescription = None)))))
 
@@ -203,6 +206,7 @@ class LeaseThousandPoundsThresholdControllerSpec extends SpecBase with MockitoSu
     "must redirect to LeaseIsVatPayableController when transaction type is not L" in {
       val userAnswersNoTransaction = emptyUserAnswers.copy(
         fullReturn = Some(completeFullReturn.copy(
+          submission = None,
           transaction = Some(completeTransaction.copy(
             transactionDescription = Some("A"))))))
 

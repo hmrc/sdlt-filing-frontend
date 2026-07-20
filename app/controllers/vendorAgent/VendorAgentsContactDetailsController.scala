@@ -40,6 +40,7 @@ class VendorAgentsContactDetailsController @Inject()(
                                       identify: IdentifierAction,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
+                                      statusCheck: CheckSubmissionStatusAction,
                                       formProvider: VendorAgentsContactDetailsFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
                                       agentChecksService: AgentChecksService,
@@ -48,7 +49,7 @@ class VendorAgentsContactDetailsController @Inject()(
 
   
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       val maybeAgentName: Option[String] = request.userAnswers.get(AgentNamePage)
@@ -74,7 +75,7 @@ class VendorAgentsContactDetailsController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       request.userAnswers.get(AgentNamePage) match {

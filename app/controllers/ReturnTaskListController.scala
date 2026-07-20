@@ -61,27 +61,33 @@ class ReturnTaskListController @Inject()(
           userAnswers  = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = request.storn)
           _           <- sessionRepository.set(userAnswers)
         } yield {
-          val statuses = crossFlowService.sectionStatuses(userAnswers)
-          val transactionStatus = statuses.getOrElse(ReturnSection.Transaction,
-            SectionStatus(ReturnSection.Transaction, false, Nil, Nil, Nil))
-          val landStatus = statuses.getOrElse(ReturnSection.Land,
-            SectionStatus(ReturnSection.Land, false, Nil, Nil, Nil))
-          val leaseStatus = statuses.getOrElse(ReturnSection.Lease,
-            SectionStatus(ReturnSection.Lease, false, Nil, Nil, Nil))
+          val maybeSubmissionObject = userAnswers.fullReturn.flatMap(_.submission)
 
-          val sections = List(
-            Some(VendorTaskList.build(fullReturn)),
-            Some(VendorAgentTaskList.build(fullReturn)),
-            Some(PurchaserTaskList.build(fullReturn)),
-            Some(PurchaserAgentTaskList.build(fullReturn)),
-            Some(LandTaskList.build(fullReturn, landStatus)),
-            if (PropertyTypeHelper.isResidentialProperty(fullReturn)) Some(UkResidencyTaskList.build(fullReturn)) else None,
-            Some(TransactionTaskList.build(fullReturn, transactionStatus)),
-            if (LeaseHelper.isLeaseDefined(fullReturn)) Some(LeaseTaskList.build(fullReturn, leaseStatus)) else None,
-            Some(TaxCalculationTaskList.build(fullReturn)),
-            Some(SubmissionTaskList.build(fullReturn))
-          ).flatten
-          Ok(view(sections: _*))
+          if(maybeSubmissionObject.isDefined) {
+            Redirect(controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad())
+          } else {
+            val statuses = crossFlowService.sectionStatuses(userAnswers)
+            val transactionStatus = statuses.getOrElse(ReturnSection.Transaction,
+              SectionStatus(ReturnSection.Transaction, false, Nil, Nil, Nil))
+            val landStatus = statuses.getOrElse(ReturnSection.Land,
+              SectionStatus(ReturnSection.Land, false, Nil, Nil, Nil))
+            val leaseStatus = statuses.getOrElse(ReturnSection.Lease,
+              SectionStatus(ReturnSection.Lease, false, Nil, Nil, Nil))
+
+            val sections = List(
+              Some(VendorTaskList.build(fullReturn)),
+              Some(VendorAgentTaskList.build(fullReturn)),
+              Some(PurchaserTaskList.build(fullReturn)),
+              Some(PurchaserAgentTaskList.build(fullReturn)),
+              Some(LandTaskList.build(fullReturn, landStatus)),
+              if (PropertyTypeHelper.isResidentialProperty(fullReturn)) Some(UkResidencyTaskList.build(fullReturn)) else None,
+              Some(TransactionTaskList.build(fullReturn, transactionStatus)),
+              if (LeaseHelper.isLeaseDefined(fullReturn)) Some(LeaseTaskList.build(fullReturn, leaseStatus)) else None,
+              Some(TaxCalculationTaskList.build(fullReturn)),
+              Some(SubmissionTaskList.build(fullReturn))
+            ).flatten
+            Ok(view(sections: _*))
+          }
         }
       }
   }

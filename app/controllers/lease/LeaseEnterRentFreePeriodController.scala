@@ -40,6 +40,7 @@ class LeaseEnterRentFreePeriodController @Inject()(
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
+                                        statusCheck: CheckSubmissionStatusAction,
                                         formProvider: LeaseEnterRentFreePeriodFormProvider,
                                         leaseService: LeaseService,
                                         val controllerComponents: MessagesControllerComponents,
@@ -48,7 +49,7 @@ class LeaseEnterRentFreePeriodController @Inject()(
 
   val form: Form[Int] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
       
       leaseService.leaseFlowValidationCheck(request.userAnswers) match {
@@ -62,7 +63,7 @@ class LeaseEnterRentFreePeriodController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       form.bindFromRequest().fold(

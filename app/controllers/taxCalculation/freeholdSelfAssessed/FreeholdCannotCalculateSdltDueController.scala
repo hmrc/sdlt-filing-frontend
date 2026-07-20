@@ -35,6 +35,7 @@ class FreeholdCannotCalculateSdltDueController @Inject()(
                                                    identify: IdentifierAction,
                                                    getData: DataRetrievalAction,
                                                    requireData: DataRequiredAction,
+                                                   statusCheck: CheckSubmissionStatusAction,
                                                    sdltCalculationService: SdltCalculationService,
                                                    val controllerComponents: MessagesControllerComponents,
                                                    view: CannotCalculateSdltDueView
@@ -44,7 +45,7 @@ class FreeholdCannotCalculateSdltDueController @Inject()(
 
   private lazy val continueUrl: String = routes.FreeholdSelfAssessedSdltSelfAssessmentController.onPageLoad(NormalMode).url
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
       sdltCalculationService.whenInFlow(FreeholdSelfAssessed) {
         val reasons = getCannotCalculateReason(request.userAnswers)

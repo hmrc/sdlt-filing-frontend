@@ -57,7 +57,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
           "vendorAgentsAddReference" -> true
         )
         ),
-      fullReturn = Some(completeFullReturn.copy(returnAgent = None))
+      fullReturn = Some(completeFullReturn.copy(submission = None, returnAgent = None))
     )
 
   val userAnswersWithAgentReferenceUnknown: UserAnswers =
@@ -68,7 +68,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
           "vendorAgentName" -> "test",
           "vendorAgentsAddReference" -> false
         )),
-      fullReturn = Some(completeFullReturn.copy(returnAgent = None, vendor = None))
+      fullReturn = Some(completeFullReturn.copy(submission = None, returnAgent = None, vendor = None))
     )
 
   val userAnswersWithoutAgentReferenceEmptyAnswer: UserAnswers =
@@ -80,7 +80,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
           "vendorAgentName" -> "test",
         ),
       ),
-      fullReturn = Some(completeFullReturn.copy(returnAgent = None, vendor = None))
+      fullReturn = Some(completeFullReturn.copy(submission = None, returnAgent = None, vendor = None))
     )
 
   val userAnswersWithoutAgentName: UserAnswers =
@@ -91,7 +91,7 @@ class VendorAgentsReferenceControllerSpec extends SpecBase with MockitoSugar {
           "whoIsTheVendor" -> "Company",
           "representedByAgent" -> true
         )),
-      fullReturn = Some(completeFullReturn.copy(returnAgent = None, vendor = None))
+      fullReturn = Some(completeFullReturn.copy(submission = None, returnAgent = None, vendor = None))
     )
 
   val agentsName: String = userAnswersWithAgentReferenceKnown.get(AgentNamePage).get

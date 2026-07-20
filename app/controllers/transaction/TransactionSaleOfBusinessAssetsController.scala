@@ -39,6 +39,7 @@ class TransactionSaleOfBusinessAssetsController @Inject()(
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
+                                        statusCheck: CheckSubmissionStatusAction,
                                         formProvider: TransactionSaleOfBusinessAssetsFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: TransactionSaleOfBusinessAssetsView
@@ -46,7 +47,7 @@ class TransactionSaleOfBusinessAssetsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(TransactionSaleOfBusinessAssetsPage) match {
@@ -57,7 +58,7 @@ class TransactionSaleOfBusinessAssetsController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       form.bindFromRequest().fold(

@@ -40,6 +40,7 @@ class LandMineralsOrMineralRightsController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         statusCheck: CheckSubmissionStatusAction,
                                          formProvider: LandMineralsOrMineralRightsFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: LandMineralsOrMineralRightsView
@@ -47,7 +48,7 @@ class LandMineralsOrMineralRightsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       request.userAnswers.get(LandTypeOfPropertyPage) match {
@@ -64,7 +65,7 @@ class LandMineralsOrMineralRightsController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       request.userAnswers.get(LandTypeOfPropertyPage) match {

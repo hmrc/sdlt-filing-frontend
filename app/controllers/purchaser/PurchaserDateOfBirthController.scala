@@ -40,13 +40,14 @@ class PurchaserDateOfBirthController @Inject()(
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
+                                        statusCheck: CheckSubmissionStatusAction,
                                         formProvider: PurchaserDateOfBirthFormProvider,
                                         purchaserService: PurchaserService,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: PurchaserDateOfBirthView
                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
      request.userAnswers.get(NameOfPurchaserPage) match {
@@ -71,7 +72,7 @@ class PurchaserDateOfBirthController @Inject()(
      }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       request.userAnswers.get(NameOfPurchaserPage) match {

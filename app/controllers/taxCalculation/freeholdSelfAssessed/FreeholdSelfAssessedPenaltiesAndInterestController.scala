@@ -16,7 +16,7 @@
 
 package controllers.taxCalculation.freeholdSelfAssessed
 
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{CheckSubmissionStatusAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.taxCalculation.PenaltiesAndInterestFormProvider
 import models.Mode
 import models.taxCalculation.TaxCalculationFlow.FreeholdSelfAssessed
@@ -39,6 +39,7 @@ class FreeholdSelfAssessedPenaltiesAndInterestController @Inject()(
                                                                     identify: IdentifierAction,
                                                                     getData: DataRetrievalAction,
                                                                     requireData: DataRequiredAction,
+                                                                    statusCheck: CheckSubmissionStatusAction,
                                                                     formProvider: PenaltiesAndInterestFormProvider,
                                                                     val controllerComponents: MessagesControllerComponents,
                                                                     sdltCalculationService: SdltCalculationService,
@@ -54,7 +55,7 @@ class FreeholdSelfAssessedPenaltiesAndInterestController @Inject()(
     controllers.taxCalculation.freeholdSelfAssessed.routes.FreeholdSelfAssessedPenaltiesAndInterestController.onSubmit(mode)
   private val sectionKey: String = "taxCalculation.penaltiesAndInterest.freehold-tax-not-calculated.title"
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
       sdltCalculationService.whenInFlow(FreeholdSelfAssessed) {
         val preparedForm = request.userAnswers.get(FreeholdSelfAssessedPenaltiesAndInterestPage).fold(form)(form.fill)
@@ -62,7 +63,7 @@ class FreeholdSelfAssessedPenaltiesAndInterestController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(FreeholdSelfAssessed) {
         form

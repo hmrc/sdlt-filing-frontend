@@ -35,6 +35,7 @@ class LeaseholdCannotCalculateSdltDueController @Inject()(
                                                           identify: IdentifierAction,
                                                           getData: DataRetrievalAction,
                                                           requireData: DataRequiredAction,
+                                                          statusCheck: CheckSubmissionStatusAction,
                                                           sdltCalculationService: SdltCalculationService,
                                                           val controllerComponents: MessagesControllerComponents,
                                                           view: CannotCalculateSdltDueView
@@ -44,7 +45,7 @@ class LeaseholdCannotCalculateSdltDueController @Inject()(
 
   private lazy val continueUrl: String = routes.LeaseholdSelfAssessedPremiumPayableTaxController.onPageLoad(NormalMode).url
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
       sdltCalculationService.whenInFlow(LeaseholdSelfAssessed) {
         val reasons = getCannotCalculateReason(request.userAnswers)

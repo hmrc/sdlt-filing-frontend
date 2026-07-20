@@ -45,7 +45,7 @@ class VendorAgentsAddReferenceControllerSpec extends SpecBase with MockitoSugar 
   lazy val vendorAgentsAddReferenceRouteGet: String = controllers.vendorAgent.routes.VendorAgentsAddReferenceController.onPageLoad(NormalMode).url
   lazy val vendorAgentsAddReferenceRoutePost: String = controllers.vendorAgent.routes.VendorAgentsAddReferenceController.onSubmit(NormalMode).url
 
-  val fullReturnWithNonVendorAgent: FullReturn = FullReturnConstants.completeFullReturn.copy(returnAgent = None)
+  val fullReturnWithNonVendorAgent: FullReturn = FullReturnConstants.completeFullReturn.copy(returnAgent = None, submission = None)
   val userAnswersWithName: UserAnswers = emptyUserAnswers.copy(
     data = Json.obj(
       "vendorAgentCurrent" -> Json.obj(
@@ -60,7 +60,7 @@ class VendorAgentsAddReferenceControllerSpec extends SpecBase with MockitoSugar 
     )
   )
   val fullReturnWithExistingVendorAgent: FullReturn =
-    FullReturnConstants.completeFullReturn.copy(returnAgent = Some(Seq(ReturnAgent(agentType = Some("VENDOR")))))
+    FullReturnConstants.completeFullReturn.copy(submission = None, returnAgent = Some(Seq(ReturnAgent(agentType = Some("VENDOR")))))
   val userAnswersWithExistingVendorAgent: UserAnswers = userAnswersWithName.copy(fullReturn = Some(fullReturnWithExistingVendorAgent))
 
   val agentName = "test"

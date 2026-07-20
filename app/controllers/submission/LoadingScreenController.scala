@@ -18,7 +18,7 @@ package controllers.submission
 
 import com.google.inject.Inject
 import connectors.StampDutyLandTaxConnector
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, ResubmissionCheckAction}
 import models.GetReturnByRefRequest
 import pages.submission.SubmissionFailedPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -35,6 +35,7 @@ class LoadingScreenController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         resubmissionCheck: ResubmissionCheckAction,
                                          connector: StampDutyLandTaxConnector,
                                          view: LoadingScreenView,
                                          val controllerComponents: MessagesControllerComponents
@@ -51,7 +52,7 @@ class LoadingScreenController @Inject()(
   private def isInProgress(status: Option[String]): Boolean =
     !status.exists(TerminalStatuses.contains)
 
-  def show: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def show: Action[AnyContent] = (identify andThen getData andThen requireData andThen resubmissionCheck).async {
     implicit request =>
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 

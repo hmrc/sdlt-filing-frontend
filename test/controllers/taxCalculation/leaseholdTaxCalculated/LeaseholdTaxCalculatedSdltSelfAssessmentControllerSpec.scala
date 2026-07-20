@@ -45,7 +45,7 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentControllerSpec extends SpecBase wi
 
   private val leaseholdAnswers: UserAnswers =
     emptyUserAnswers
-      .copy(fullReturn = Some(completeFullReturn))
+      .copy(fullReturn = Some(completeFullReturn.copy(submission = None)))
       .set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdTaxCalculated).success.value
 
   private val wrongFlowAnswers: UserAnswers =

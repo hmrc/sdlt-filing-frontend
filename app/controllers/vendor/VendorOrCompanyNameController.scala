@@ -39,12 +39,13 @@ class VendorOrCompanyNameController @Inject()(
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
+                                        statusCheck: CheckSubmissionStatusAction,
                                         formProvider: VendorOrCompanyNameFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: VendorOrCompanyNameView
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
   
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
       
       val vendorOrCompany: String = request.userAnswers.get(WhoIsTheVendorPage) match {
@@ -62,7 +63,7 @@ class VendorOrCompanyNameController @Inject()(
       Ok(view(preparedForm, mode, vendorOrCompany))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       val vendorOrCompany: String = request.userAnswers.get(WhoIsTheVendorPage) match {

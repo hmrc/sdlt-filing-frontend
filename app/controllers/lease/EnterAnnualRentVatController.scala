@@ -42,6 +42,7 @@ class EnterAnnualRentVatController @Inject()(
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
+                                        statusCheck: CheckSubmissionStatusAction,
                                         formProvider: EnterAnnualRentVatFormProvider,
                                         leaseService: LeaseService,
                                         val controllerComponents: MessagesControllerComponents,
@@ -50,7 +51,7 @@ class EnterAnnualRentVatController @Inject()(
 
   val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
       leaseService.leaseFlowValidationCheck(request.userAnswers) match {
         case Some(redirect) => Redirect(redirect)
@@ -63,7 +64,7 @@ class EnterAnnualRentVatController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       form.bindFromRequest().fold(

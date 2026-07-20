@@ -39,6 +39,7 @@ class ChangePurchaserOneController @Inject()(
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
+                                       statusCheck: CheckSubmissionStatusAction,
                                        formProvider: ChangePurchaserOneFormProvider,
                                        purchaserService: PurchaserService,
                                        val controllerComponents: MessagesControllerComponents,
@@ -47,7 +48,7 @@ class ChangePurchaserOneController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
       val (maybePurchaserOne, otherPurchasers, otherPurchasersWithNames) = purchaserService.splitPurchasers(request.userAnswers)
       maybePurchaserOne match {
@@ -65,7 +66,7 @@ class ChangePurchaserOneController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       val (maybePurchaserOne, otherPurchasers, otherPurchasersWithNames) = purchaserService.splitPurchasers(request.userAnswers)

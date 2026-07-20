@@ -39,6 +39,7 @@ class VendorAgentsReferenceController @Inject()(
                                                  identify: IdentifierAction,
                                                  getData: DataRetrievalAction,
                                                  requireData: DataRequiredAction,
+                                                 statusCheck: CheckSubmissionStatusAction,
                                                  formProvider: VendorAgentsReferenceFormProvider,
                                                  val controllerComponents: MessagesControllerComponents,
                                                  agentChecksService: AgentChecksService,
@@ -46,7 +47,7 @@ class VendorAgentsReferenceController @Inject()(
                                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       val userAnswers = request.userAnswers
@@ -71,7 +72,7 @@ class VendorAgentsReferenceController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       val userAnswers = request.userAnswers

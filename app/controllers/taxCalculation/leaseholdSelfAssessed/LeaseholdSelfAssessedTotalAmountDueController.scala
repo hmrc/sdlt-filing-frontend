@@ -44,6 +44,7 @@ class LeaseholdSelfAssessedTotalAmountDueController @Inject()(
                                                                identify: IdentifierAction,
                                                                getData: DataRetrievalAction,
                                                                requireData: DataRequiredAction,
+                                                               statusCheck: CheckSubmissionStatusAction,
                                                                sdltCalculationService: SdltCalculationService,
                                                                sessionRepository: SessionRepository,
                                                                navigator: Navigator,
@@ -60,7 +61,7 @@ class LeaseholdSelfAssessedTotalAmountDueController @Inject()(
 
   private val sectionKey: String = "site.taxCalculation.leaseholdSelfAssessed.caption"
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(LeaseholdSelfAssessed) {
         Future.successful(constructViewModel(request.userAnswers)).map {
@@ -75,7 +76,7 @@ class LeaseholdSelfAssessedTotalAmountDueController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(LeaseholdSelfAssessed) {
         constructViewModel(request.userAnswers) match {

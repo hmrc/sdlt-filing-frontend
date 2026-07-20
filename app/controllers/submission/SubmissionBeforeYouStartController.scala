@@ -29,11 +29,12 @@ class SubmissionBeforeYouStartController @Inject()(
                                        activatedIdentify: ActivatedIdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
+                                       resubmissionCheck: ResubmissionCheckAction,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: SubmissionBeforeYouStartView
                                      ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (activatedIdentify andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck) {
     implicit request =>
       Ok(view())
   }

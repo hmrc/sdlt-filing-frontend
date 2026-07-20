@@ -39,6 +39,7 @@ class TransactionVatIncludedController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         statusCheck: CheckSubmissionStatusAction,
                                          formProvider: TransactionVatIncludedFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: TransactionVatIncludedView
@@ -46,7 +47,7 @@ class TransactionVatIncludedController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(TransactionVatIncludedPage) match {
@@ -57,7 +58,7 @@ class TransactionVatIncludedController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       form.bindFromRequest().fold(

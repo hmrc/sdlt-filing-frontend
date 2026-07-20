@@ -44,6 +44,7 @@ class FreeholdSelfAssessedTotalAmountDueController @Inject()(
                                                               identify: IdentifierAction,
                                                               getData: DataRetrievalAction,
                                                               requireData: DataRequiredAction,
+                                                              statusCheck: CheckSubmissionStatusAction,
                                                               sdltCalculationService: SdltCalculationService,
                                                               sessionRepository: SessionRepository,
                                                               navigator: Navigator,
@@ -60,7 +61,7 @@ class FreeholdSelfAssessedTotalAmountDueController @Inject()(
 
   private val sectionKey: String = "site.taxCalculation.freeholdSelfAssessed.section"
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(FreeholdSelfAssessed) {
         Future.successful(constructViewModel(request.userAnswers)).map {
@@ -78,7 +79,7 @@ class FreeholdSelfAssessedTotalAmountDueController @Inject()(
 
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(FreeholdSelfAssessed) {
         constructViewModel(request.userAnswers) match {

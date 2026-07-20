@@ -17,7 +17,7 @@
 package controllers.purchaserAgent
 
 import com.google.inject.Inject
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{CheckSubmissionStatusAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.routes
 import models.{Mode, NormalMode}
 import models.address.AddressLookupJourneyIdentifier.purchaserAgentQuestionsAddress
@@ -38,6 +38,7 @@ class PurchaserAgentAddressController @Inject()(
                                                  identify: IdentifierAction,
                                                  getData: DataRetrievalAction,
                                                  requireData: DataRequiredAction,
+                                                 statusCheck: CheckSubmissionStatusAction,
                                                  addressLookupService: AddressLookupService,
                                                  sessionRepository: SessionRepository
                                                )(implicit ec: ExecutionContext)
@@ -45,7 +46,7 @@ class PurchaserAgentAddressController @Inject()(
     with I18nSupport {
 
   def redirectToAddressLookupPurchaserAgent(mode: Mode, changeRoute: Option[String] = None): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
       val journeyId = purchaserAgentQuestionsAddress
       val addressConfig = MandatoryFieldsConfigModel(
         addressLine1 = Some(true),
@@ -83,7 +84,7 @@ class PurchaserAgentAddressController @Inject()(
     }
 
 
-  def addressLookupCallbackPurchaserAgent(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def addressLookupCallbackPurchaserAgent(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       for {
         address <- addressLookupService.getAddressById(id)
@@ -95,7 +96,7 @@ class PurchaserAgentAddressController @Inject()(
       }
   }
 
-  def addressLookupCallbackChangePurchaserAgent(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def addressLookupCallbackChangePurchaserAgent(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       for {
         address <- addressLookupService.getAddressById(id)

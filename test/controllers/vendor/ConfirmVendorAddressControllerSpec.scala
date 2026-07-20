@@ -106,7 +106,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
       "must return OK and the correct view for a GET" in {
         val userAnswers = uaWithVendorName(testVendorName)
-          .copy(fullReturn = Some(completeFullReturn))
+          .copy(fullReturn = Some(completeFullReturn.copy(submission = None)))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -135,7 +135,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
       "must return OK and the correct view for a GET where there are multiple vendors" in {
         val userAnswers = uaWithVendorName(testVendorName)
-          .copy(fullReturn = Some(completeFullReturnMultipleVendors))
+          .copy(fullReturn = Some(completeFullReturnMultipleVendors.copy(submission = None)))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -164,7 +164,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
       "must populate the view correctly on a GET when the question has previously been answered" in {
         val userAnswers = uaWithVendorName(testVendorName, _.set(ConfirmVendorAddressPage, true).get)
-          .copy(fullReturn = Some(completeFullReturn))
+          .copy(fullReturn = Some(completeFullReturn.copy(submission = None)))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -193,7 +193,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
     }
 
     "must redirect to vendor name page when no VendorOrCompanyNamePage is present" in {
-      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(completeFullReturn))
+      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(completeFullReturn.copy(submission = None)))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .build()
@@ -231,7 +231,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
       "must redirect to the next page when user selects Yes and Address line 1 is present" in {
         val userAnswers = uaWithVendorName(testVendorName)
-          .copy(fullReturn = Some(completeFullReturn))
+          .copy(fullReturn = Some(completeFullReturn.copy(submission = None)))
 
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
@@ -254,7 +254,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
       }
 
       "must redirect to vendor name page when no VendorOrCompanyNamePage is present for a POST" in {
-        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(completeFullReturn))
+        val userAnswers = emptyUserAnswers.copy(fullReturn = Some(completeFullReturn.copy(submission = None)))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .build()
@@ -290,7 +290,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
         )
 
         val userAnswers = uaWithVendorName(testVendorName)
-          .copy(fullReturn = Some(completeFullReturn.copy(vendor = Some(Seq(noAddressLine1Vendor)))))
+          .copy(fullReturn = Some(completeFullReturn.copy(submission = None, vendor = Some(Seq(noAddressLine1Vendor)))))
 
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
@@ -314,7 +314,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
       "must redirect to Address Lookup when user selects No" in {
         val userAnswers = uaWithVendorName(testVendorName)
-          .copy(fullReturn = Some(completeFullReturn))
+          .copy(fullReturn = Some(completeFullReturn.copy(submission = None)))
 
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
@@ -336,7 +336,7 @@ class ConfirmVendorAddressControllerSpec extends SpecBase with MockitoSugar with
 
       "must return a Bad Request and errors when invalid data is submitted" in {
         val userAnswers = uaWithVendorName(testVendorName)
-          .copy(fullReturn = Some(completeFullReturn))
+          .copy(fullReturn = Some(completeFullReturn.copy(submission = None)))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .build()

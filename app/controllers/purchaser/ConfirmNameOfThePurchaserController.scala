@@ -40,13 +40,14 @@ class ConfirmNameOfThePurchaserController @Inject()(
                                                      getData: DataRetrievalAction,
                                                      navigator: Navigator,
                                                      requireData: DataRequiredAction,
+                                                     statusCheck: CheckSubmissionStatusAction,
                                                      formProvider: ConfirmNameOfThePurchaserFormProvider,
                                                      val controllerComponents: MessagesControllerComponents,
                                                      purchaserService: PurchaserService,
                                                      view: ConfirmNameOfThePurchaserView
                                                    )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       val mainPurchaserOpt: Option[Purchaser] = purchaserService.getMainPurchaser(request.userAnswers)
 
@@ -67,7 +68,7 @@ class ConfirmNameOfThePurchaserController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       val mainPurchaserOpt: Option[Purchaser] = purchaserService.getMainPurchaser(request.userAnswers)
 

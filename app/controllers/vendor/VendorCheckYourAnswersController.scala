@@ -17,7 +17,7 @@
 package controllers.vendor
 
 import com.google.inject.Inject
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{CheckSubmissionStatusAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.UserAnswers
 import models.vendor.VendorSessionQuestions
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -28,7 +28,7 @@ import repositories.SessionRepository
 import services.checkAnswers.CheckAnswersService
 import services.vendor.VendorCreateOrUpdateService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.vendor.{VendorOrCompanyNameSummary, VendorAddressSummary, WhoIsTheVendorSummary}
+import viewmodels.checkAnswers.vendor.{VendorAddressSummary, VendorOrCompanyNameSummary, WhoIsTheVendorSummary}
 import views.html.vendor.VendorCheckYourAnswersView
 
 import javax.inject.Singleton
@@ -40,6 +40,7 @@ class VendorCheckYourAnswersController @Inject()(
                                                   identify: IdentifierAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
+                                                  statusCheck: CheckSubmissionStatusAction,
                                                   sessionRepository: SessionRepository,
                                                   vendorCreateOrUpdateService: VendorCreateOrUpdateService,
                                                   val controllerComponents: MessagesControllerComponents,
@@ -47,7 +48,7 @@ class VendorCheckYourAnswersController @Inject()(
                                                   checkAnswersService: CheckAnswersService
                                                 )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       for {
@@ -82,7 +83,7 @@ class VendorCheckYourAnswersController @Inject()(
 
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sessionRepository.get(request.userAnswers.id).flatMap {
         case Some(userAnswers) if userAnswers.returnId.isDefined =>

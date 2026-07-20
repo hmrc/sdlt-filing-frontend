@@ -41,6 +41,7 @@ class VendorOverviewController @Inject()(
                                           identify: IdentifierAction,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
+                                          statusCheck: CheckSubmissionStatusAction,
                                           fullReturnService: FullReturnService,
                                           sessionRepository: SessionRepository,
                                           view: VendorOverview,
@@ -53,7 +54,7 @@ class VendorOverviewController @Inject()(
   val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode, paginationIndex: Int = 1): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
 
       val postAction: Call = controllers.vendor.routes.VendorBeforeYouStartController.onPageLoad()
       val effectiveReturnId = request.userAnswers.returnId
@@ -94,7 +95,7 @@ class VendorOverviewController @Inject()(
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
 
       val postAction: Call = controllers.vendor.routes.WhoIsTheVendorController.onPageLoad(NormalMode)
       val vendorList = request.userAnswers.fullReturn.flatMap(_.vendor).getOrElse(Seq.empty)
@@ -125,7 +126,7 @@ class VendorOverviewController @Inject()(
     }
 
   def changeVendor(vendorId: String): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
       val maybeVendor = request.userAnswers.fullReturn
         .flatMap(_.vendor)
         .flatMap(_.find(_.vendorResourceRef.contains(vendorId)))
@@ -143,7 +144,7 @@ class VendorOverviewController @Inject()(
     }
 
   def removeVendor(vendorId: String): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
       for {
         updatedAnswers <- Future.fromTry(request.userAnswers.set(VendorOverviewRemovePage, vendorId))
         _ <- sessionRepository.set(updatedAnswers)

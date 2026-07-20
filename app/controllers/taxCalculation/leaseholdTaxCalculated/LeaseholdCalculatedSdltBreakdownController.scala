@@ -16,7 +16,7 @@
 
 package controllers.taxCalculation.leaseholdTaxCalculated
 
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{CheckSubmissionStatusAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.taxCalculation.TaxCalculationErrorRecovery
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -37,13 +37,14 @@ class LeaseholdCalculatedSdltBreakdownController @Inject()(
                                                   sdltCalculationService: SdltCalculationService,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
+                                                  statusCheck: CheckSubmissionStatusAction,
                                                   identify: IdentifierAction
                                               )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging with TaxCalculationErrorRecovery {
 
   private val breakdownUrl: String = controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdCalculatedSdltBreakdownController.onPageLoad().url
   private val titleKey: String = "taxCalculation.calculation.leasehold.title"
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
       sdltCalculationService.calculateStampDutyLandTax(request.userAnswers)
         .map {
           case Right(Calculated(result)) =>

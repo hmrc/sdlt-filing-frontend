@@ -48,7 +48,7 @@ class AgentNameControllerSpec extends SpecBase with MockitoSugar {
   "AgentName Controller" - {
 
     "must return OK and the correct view for a GET when no return agent or vendors" in {
-      val fullReturn = completeFullReturn.copy(returnAgent = None, vendor = None)
+      val fullReturn = completeFullReturn.copy(returnAgent = None, vendor = None, submission = None)
 
       val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
 
@@ -67,7 +67,7 @@ class AgentNameControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must return OK and the correct view for a GET when return agent exists and no vendors" in {
-      val fullReturn = completeFullReturn.copy(vendor = None)
+      val fullReturn = completeFullReturn.copy(vendor = None, submission = None)
 
       val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
 
@@ -86,6 +86,7 @@ class AgentNameControllerSpec extends SpecBase with MockitoSugar {
 
     "must redirect to overview when agent is type VENDOR and main vendor is represented by agent" in {
       val fullReturn = completeFullReturn.copy(
+        submission = None,
         returnInfo = Some(ReturnInfo(mainVendorID = Some("123"))),
         returnAgent = Some(Seq(ReturnAgent(agentType = Some("VENDOR")))),
         vendor = Some(Seq(Vendor(vendorID = Some("123"), isRepresentedByAgent = Some("true"))))
@@ -123,7 +124,7 @@ class AgentNameControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn.copy(vendor = None)))
+      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn.copy(submission = None, vendor = None)))
         .set(AgentNamePage, "answer").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()

@@ -46,16 +46,19 @@ class EnterAnnualRentVatControllerSpec extends SpecBase with MockitoSugar {
 
   val userAnswersGrantOfLease: UserAnswers = emptyUserAnswers.copy(
     fullReturn = Some(completeFullReturn.copy(
+      submission = None,
       transaction = Some(completeTransaction.copy(
         transactionDescription = Some("L"))))))
 
   val userAnswersConveyanceLeaseInvolvement: UserAnswers = emptyUserAnswers.copy(
     fullReturn = Some(completeFullReturn.copy(
+      submission = None,
       transaction = Some(completeTransaction.copy(
         transactionDescription = Some("A"))))))
 
   val userAnswersTransactionTypeO: UserAnswers = emptyUserAnswers.copy(
     fullReturn = Some(completeFullReturn.copy(
+      submission = None,
       transaction = Some(completeTransaction.copy(
         transactionDescription = Some("O"))))))
 

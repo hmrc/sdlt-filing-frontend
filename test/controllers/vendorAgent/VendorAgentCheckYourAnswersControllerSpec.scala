@@ -42,7 +42,7 @@ class VendorAgentCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
 
   private val userAnswersWithCompleteAnswersAndReturnAgentId = emptyUserAnswers
     .copy(
-      fullReturn = Some(completeFullReturn),
+      fullReturn = Some(completeFullReturn.copy(submission = None)),
       data = Json.obj(
         "vendorAgentCurrent" -> Json.obj(
           "returnAgentId" -> "RA-001"
@@ -64,7 +64,7 @@ class VendorAgentCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
 
   private val userAnswersWithCompleteAnswers = emptyUserAnswers
     .copy(
-      fullReturn = Some(completeFullReturn),
+      fullReturn = Some(completeFullReturn.copy(submission = None)),
     )
     .set(AgentNamePage, "Agent name").success.value
     .set(VendorAgentAddressPage, Address(
@@ -128,7 +128,7 @@ class VendorAgentCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
       "must redirect to Vendor agent before you start when vendorAgentCurrent data is missing" in {
 
         val userAnswersWithOtherData = emptyUserAnswers.copy(
-          fullReturn = Some(completeFullReturn),
+          fullReturn = Some(completeFullReturn.copy(submission = None)),
           data = Json.obj("someOtherData" -> "value")
         )
 
@@ -151,7 +151,7 @@ class VendorAgentCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
       "must redirect to the appropriate page when UserAnswers is incomplete" in {
 
         val userAnswersWithVendorAgentDataButNoName = emptyUserAnswers.copy(
-          fullReturn = Some(completeFullReturn),
+          fullReturn = Some(completeFullReturn.copy(submission = None)),
           data = Json.obj(
             "vendorAgentCurrent" -> Json.obj(
               "someField" -> "someValue"
@@ -327,7 +327,7 @@ class VendorAgentCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
       "must redirect to journey recovery for a POST if session data is not found" in {
 
         val userAnswers = emptyUserAnswers
-          .copy(fullReturn = Some(completeFullReturn))
+          .copy(fullReturn = Some(completeFullReturn.copy(submission = None)))
           .set(AgentNamePage, "Agent name").success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
@@ -349,7 +349,7 @@ class VendorAgentCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
       "must redirect back to check your answers for a POST if questions are not validated" in {
 
         val userAnswers = emptyUserAnswers
-          .copy(fullReturn = Some(completeFullReturn))
+          .copy(fullReturn = Some(completeFullReturn.copy(submission = None)))
           .set(AgentNamePage, "Agent name").success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))

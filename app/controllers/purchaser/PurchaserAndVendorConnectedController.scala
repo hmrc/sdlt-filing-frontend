@@ -38,12 +38,13 @@ class PurchaserAndVendorConnectedController @Inject()(
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
+                                       statusCheck: CheckSubmissionStatusAction,
                                        formProvider: PurchaserAndVendorConnectedFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: PurchaserAndVendorConnectedView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
       val purchaserName: Option[String] = request.userAnswers.get(NameOfPurchaserPage).map(_.fullName)
       purchaserName match {
@@ -61,7 +62,7 @@ class PurchaserAndVendorConnectedController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       val purchaserName: Option[String] = request.userAnswers.get(NameOfPurchaserPage).map(_.fullName)
       purchaserName match {

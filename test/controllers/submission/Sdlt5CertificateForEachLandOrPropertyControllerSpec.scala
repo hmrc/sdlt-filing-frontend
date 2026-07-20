@@ -17,9 +17,10 @@
 package controllers.submission
 
 import base.SpecBase
+import constants.FullReturnConstants.completeFullReturn
 import controllers.routes
 import forms.submission.Sdlt5CertificateForEachLandOrPropertyFormProvider
-import models.{FullReturn, Land, NormalMode, UserAnswers}
+import models.{FullReturn, Land, NormalMode, Submission, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -47,8 +48,12 @@ class Sdlt5CertificateForEachLandOrPropertyControllerSpec extends SpecBase with 
   private val multipleLandFullReturn = FullReturn(
     stornId = "TESTSTORN",
     returnResourceRef = "REF001",
-    land = Some(Seq(Land(), Land()))
+    land = Some(Seq(Land(), Land())),
+    submission = Some(Submission(None))
   )
+
+  val testFullReturn = completeFullReturn.copy(submission = Some(Submission(None)))
+  val testUserAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn))
 
   val multipleLandUserAnswers: UserAnswers = emptyUserAnswers.copy(fullReturn = Some(multipleLandFullReturn))
 
@@ -72,7 +77,7 @@ class Sdlt5CertificateForEachLandOrPropertyControllerSpec extends SpecBase with 
 
     "must redirect to WhoAreYouSubmittingForController for a GET when there is one or no land or property" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, sdlt5CertificateForEachLandOrPropertyRoute)

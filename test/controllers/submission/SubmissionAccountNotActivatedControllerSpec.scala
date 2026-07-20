@@ -17,17 +17,22 @@
 package controllers.submission
 
 import base.SpecBase
+import constants.FullReturnConstants.completeFullReturn
+import models.Submission
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import views.html.submission.SubmissionAccountNotActivatedView
 
 class SubmissionAccountNotActivatedControllerSpec extends SpecBase {
 
+  val testFullReturn = completeFullReturn.copy(submission = Some(Submission(None)))
+  val testUserAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn))
+
   "SubmissionAccountNotActivated Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.submission.routes.SubmissionAccountNotActivatedController.onPageLoad().url)

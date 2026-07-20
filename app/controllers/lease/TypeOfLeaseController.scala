@@ -41,6 +41,7 @@ class TypeOfLeaseController @Inject()(
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
+                                       statusCheck: CheckSubmissionStatusAction,
                                        formProvider: TypeOfLeaseFormProvider,
                                        crossFlow: CrossFlowValidationService,
                                        val controllerComponents: MessagesControllerComponents,
@@ -50,7 +51,7 @@ class TypeOfLeaseController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       leaseService.leaseFlowValidationCheck(request.userAnswers) match {
@@ -64,7 +65,7 @@ class TypeOfLeaseController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       CrossFlowFormSupport.bindFromRequestWithCrossFlow(form, Pages.LeaseType, crossFlow) { value =>

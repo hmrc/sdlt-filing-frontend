@@ -36,6 +36,7 @@ class FreeholdCalculatedSdltBreakdownController @Inject()(
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
+                                       statusCheck: CheckSubmissionStatusAction,
                                        sdltCalculationService: SdltCalculationService,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: CalculatedSdltBreakdownView
@@ -44,7 +45,7 @@ class FreeholdCalculatedSdltBreakdownController @Inject()(
   private val breakdownUrl: String = controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdCalculatedSdltBreakdownController.onPageLoad().url
   private val titleKey: String = "taxCalculation.calculation.freehold.title"
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sdltCalculationService
         .calculateStampDutyLandTax(request.userAnswers)

@@ -43,6 +43,7 @@ class LeaseIsVatPayableController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         statusCheck: CheckSubmissionStatusAction,
                                          formProvider: LeaseIsVatPayableFormProvider,
                                          leaseService: LeaseService,
                                          val controllerComponents: MessagesControllerComponents,
@@ -51,7 +52,7 @@ class LeaseIsVatPayableController @Inject()(
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       leaseService.leaseFlowValidationCheck(request.userAnswers) match {
@@ -66,7 +67,7 @@ class LeaseIsVatPayableController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       form.bindFromRequest().fold(

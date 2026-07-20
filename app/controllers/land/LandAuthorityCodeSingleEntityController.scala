@@ -36,6 +36,7 @@ class LandAuthorityCodeSingleEntityController @Inject() (
                                                           identify:                 IdentifierAction,
                                                           getData:                  DataRetrievalAction,
                                                           requireData:              DataRequiredAction,
+                                                          statusCheck:               CheckSubmissionStatusAction,
                                                           sessionRepository:        SessionRepository,
                                                           populateLandService:      PopulateLandService,
                                                           crossFlow:                CrossFlowValidationService,
@@ -43,7 +44,7 @@ class LandAuthorityCodeSingleEntityController @Inject() (
                                                           view:                     LandAuthorityCodeSingleEntityView
                                                         )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(landId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(landId: String): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       val maybeLand = request.userAnswers.fullReturn

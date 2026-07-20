@@ -42,6 +42,7 @@ class LandOverviewController @Inject() (
                                          identify:                 IdentifierAction,
                                          getData:                  DataRetrievalAction,
                                          requireData:              DataRequiredAction,
+                                         statusCheck:              CheckSubmissionStatusAction,
                                          fullReturnService:        FullReturnService,
                                          formProvider:             LandOverviewFormProvider,
                                          populateLandService:      PopulateLandService,
@@ -53,7 +54,7 @@ class LandOverviewController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode, paginationIndex: Int = 1): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode, paginationIndex: Int = 1): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       val postAction: Call = controllers.land.routes.LandBeforeYouStartController.onPageLoad()
@@ -110,7 +111,7 @@ class LandOverviewController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       val postAction: Call = controllers.land.routes.ConfirmLandOrPropertyAddressController.onPageLoad(NormalMode)

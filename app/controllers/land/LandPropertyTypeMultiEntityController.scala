@@ -37,6 +37,7 @@ class LandPropertyTypeMultiEntityController @Inject() (
                                                         identify:                  IdentifierAction,
                                                         getData:                   DataRetrievalAction,
                                                         requireData:               DataRequiredAction,
+                                                        statusCheck:               CheckSubmissionStatusAction,
                                                         sessionRepository:         SessionRepository,
                                                         crossFlow:                 CrossFlowValidationService,
                                                         landService:               LandService,
@@ -45,7 +46,7 @@ class LandPropertyTypeMultiEntityController @Inject() (
                                                         view:                      LandPropertyTypeMultiEntityView
                                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
   
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       
       val nonCf6 = crossFlow.landFailuresExcluding(Set("Cf-6"), request.userAnswers)
@@ -83,7 +84,7 @@ class LandPropertyTypeMultiEntityController @Inject() (
   }
 
   def removeLand(landId: String): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
       for {
         updatedAnswers <- Future.fromTry(request.userAnswers.set(LandOverviewRemovePage, landId))
         _              <- sessionRepository.set(updatedAnswers)
@@ -91,7 +92,7 @@ class LandPropertyTypeMultiEntityController @Inject() (
     }
 
   def updateLand(landId: String): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
 
       val maybeLand = request.userAnswers.fullReturn
         .flatMap(_.land)

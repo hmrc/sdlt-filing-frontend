@@ -16,7 +16,7 @@
 
 package controllers.taxCalculation.leaseholdTaxCalculated
 
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{CheckSubmissionStatusAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.taxCalculation.PenaltiesAndInterestFormProvider
 import models.Mode
 import models.taxCalculation.TaxCalculationFlow.LeaseholdTaxCalculated
@@ -39,6 +39,7 @@ class LeaseholdSdltCalculatedPenaltiesAndInterestController @Inject()(
                                                                        identify: IdentifierAction,
                                                                        getData: DataRetrievalAction,
                                                                        requireData: DataRequiredAction,
+                                                                       statusCheck: CheckSubmissionStatusAction,
                                                                        formProvider: PenaltiesAndInterestFormProvider,
                                                                        val controllerComponents: MessagesControllerComponents,
                                                                        sdltCalculationService: SdltCalculationService,
@@ -53,7 +54,7 @@ class LeaseholdSdltCalculatedPenaltiesAndInterestController @Inject()(
     controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdSdltCalculatedPenaltiesAndInterestController.onSubmit(mode)
   private val sectionKey: String = "taxCalculation.penaltiesAndInterest.leasehold-tax-calculated.title"
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
       sdltCalculationService.whenInFlow(LeaseholdTaxCalculated) {
         val preparedForm = request.userAnswers.get(LeaseholdTaxCalculatedPenaltiesAndInterestPage).fold(form)(form.fill)
@@ -61,7 +62,7 @@ class LeaseholdSdltCalculatedPenaltiesAndInterestController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(LeaseholdTaxCalculated) {
         form

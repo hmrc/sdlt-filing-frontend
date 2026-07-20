@@ -77,7 +77,7 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
         val userAnswers = emptyUserAnswers.set(PurchaserAgentOverviewPage, agentId)
           .success
           .value
-          .copy(storn = testStorn, fullReturn = Some(completeFullReturn))
+          .copy(storn = testStorn, fullReturn = Some(completeFullReturn.copy(submission = None)))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -103,7 +103,7 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
           .success
           .value
           .set(RemovePurchaserAgentPage, true).success.value
-          .copy(storn = testStorn, fullReturn = Some(completeFullReturn))
+          .copy(storn = testStorn, fullReturn = Some(completeFullReturn.copy(submission = None)))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -174,7 +174,7 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
         val userAnswers = emptyUserAnswers.set(PurchaserAgentOverviewPage, agentId)
           .success
           .value
-          .copy(storn = testStorn, fullReturn = Some(completeFullReturn))
+          .copy(storn = testStorn, fullReturn = Some(completeFullReturn.copy(submission = None)))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -257,7 +257,7 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
         val userAnswers = emptyUserAnswers.set(PurchaserAgentOverviewPage, agentId)
           .success
           .value
-          .copy(storn = testStorn, fullReturn = Some(completeFullReturn))
+          .copy(storn = testStorn, fullReturn = Some(completeFullReturn.copy(submission = None)))
 
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
 

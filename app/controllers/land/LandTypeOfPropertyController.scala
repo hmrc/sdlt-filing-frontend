@@ -41,6 +41,7 @@ class LandTypeOfPropertyController @Inject()(
                                               identify:                  IdentifierAction,
                                               getData:                   DataRetrievalAction,
                                               requireData:               DataRequiredAction,
+                                              statusCheck:               CheckSubmissionStatusAction,
                                               formProvider:              LandTypeOfPropertyFormProvider,
                                               crossFlow:                 CrossFlowValidationService,
                                               val controllerComponents:  MessagesControllerComponents,
@@ -49,7 +50,7 @@ class LandTypeOfPropertyController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(LandTypeOfPropertyPage) match {
@@ -60,7 +61,7 @@ class LandTypeOfPropertyController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       CrossFlowFormSupport.bindFromRequestWithCrossFlow(form, Pages.LandPropertyType, crossFlow) { value =>

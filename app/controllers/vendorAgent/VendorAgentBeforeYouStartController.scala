@@ -39,6 +39,7 @@ class VendorAgentBeforeYouStartController @Inject()(
                                                      identify: IdentifierAction,
                                                      getData: DataRetrievalAction,
                                                      requireData: DataRequiredAction,
+                                                     statusCheck: CheckSubmissionStatusAction,
                                                      formProvider: VendorAgentBeforeYouStartFormProvider,
                                                      val controllerComponents: MessagesControllerComponents,
                                                      view: VendorAgentBeforeYouStartView
@@ -46,7 +47,7 @@ class VendorAgentBeforeYouStartController @Inject()(
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       val userAnswers = request.userAnswers
@@ -67,7 +68,7 @@ class VendorAgentBeforeYouStartController @Inject()(
       }
   }
   
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       form.bindFromRequest().fold(

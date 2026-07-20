@@ -37,12 +37,13 @@ class LeaseholdCalculatedSdltDueController @Inject()(
                                                     identify: IdentifierAction,
                                                     getData: DataRetrievalAction,
                                                     requireData: DataRequiredAction,
+                                                    statusCheck: CheckSubmissionStatusAction,
                                                     sdltCalculationService: SdltCalculationService,
                                                     val controllerComponents: MessagesControllerComponents,
                                                     view: LeaseholdCalculatedSdltDueView
                                                   )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging with TaxCalculationErrorRecovery {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(LeaseholdTaxCalculated) {
         sdltCalculationService

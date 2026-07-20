@@ -61,6 +61,7 @@ class VendorAgentsContactDetailsControllerSpec extends SpecBase with MockitoSuga
   val fullReturnWithNonVendorAgent: FullReturn = FullReturnConstants.completeFullReturn.copy(
     returnAgent = None,
     vendor = None,
+    submission = None
   )
 
   "VendorAgentsContactDetails Controller" - {

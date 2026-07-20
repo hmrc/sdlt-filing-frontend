@@ -65,7 +65,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
     "onPageLoad" - {
 
       "must return OK and the correct view when session has data" in {
-        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn), data = ukResidencyData())
+        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn.copy(submission = None)), data = ukResidencyData())
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -83,7 +83,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
       }
 
       "must pre-populate from fullReturn.residency and render CYA when session data is empty but residency exists" in {
-        val userAnswers = emptyUserAnswers.copy(returnId = Some("12345"), fullReturn = Some(completeFullReturn))
+        val userAnswers = emptyUserAnswers.copy(returnId = Some("12345"), fullReturn = Some(completeFullReturn.copy(submission = None)))
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
@@ -102,7 +102,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
       }
 
       "must redirect to UkResidencyBeforeYouStart when session data is empty and no residency exists in fullReturn" in {
-        val userAnswers = emptyUserAnswers.copy(returnId = Some("12345"), fullReturn = Some(completeFullReturn.copy(residency = None)))
+        val userAnswers = emptyUserAnswers.copy(returnId = Some("12345"), fullReturn = Some(completeFullReturn.copy(residency = None, submission = None)))
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -120,7 +120,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
       }
 
       "must redirect to ReturnTaskList when returnId is not set" in {
-        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn), data = ukResidencyData())
+        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn.copy(submission = None)), data = ukResidencyData())
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -150,7 +150,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
       }
 
       "must return OK when property type is Additional" in {
-        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn.copy(land = Some(Seq(completeLandAdditional)))), data = ukResidencyData())
+        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn.copy(submission = None, land = Some(Seq(completeLandAdditional)))), data = ukResidencyData())
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -186,7 +186,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
       }
 
       "must redirect to ReturnTaskList when property type is NonResidential" in {
-        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn.copy(land = Some(Seq(completeLandNonResidential)))), data = ukResidencyData())
+        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn.copy(submission = None, land = Some(Seq(completeLandNonResidential)))), data = ukResidencyData())
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -204,7 +204,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
       }
 
       "must include crown employment relief row when CrownEmploymentReliefPage is answered" in {
-        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn), data = ukResidencyData(crownEmployment = true))
+        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn.copy(submission = None)), data = ukResidencyData(crownEmployment = true))
           .set(NonUkResidentPurchaserPage, true).success.value
           .set(CrownEmploymentReliefPage, true).success.value
 
@@ -225,7 +225,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
 
       "must not include crown employment relief row when CrownEmploymentReliefPage has not been answered" in {
         val dataWithoutCrownRelief = Json.obj("ukResidencyCurrent" -> Json.obj("nonUkResidentPurchaser" -> false))
-        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn), data = dataWithoutCrownRelief)
+        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn.copy(submission = None)), data = dataWithoutCrownRelief)
           .set(NonUkResidentPurchaserPage, false).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -244,7 +244,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
       }
 
       "must always include non-UK resident purchaser row" in {
-        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn), data = ukResidencyData(nonUkResident = false))
+        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn.copy(submission = None)), data = ukResidencyData(nonUkResident = false))
           .set(NonUkResidentPurchaserPage, false).success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
@@ -264,6 +264,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
 
       "must include close company row when close company answer is present" in {
         val fullReturnWithCompany = completeFullReturn.copy(
+          submission = None,
           purchaser = Some(Seq(constants.FullReturnConstants.completePurchaser3))
         )
 
@@ -292,7 +293,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
 
       "must not include close company row when close company page has not been answered" in {
         val dataWithoutCloseCompany = Json.obj("ukResidencyCurrent" -> Json.obj("nonUkResidentPurchaser" -> false))
-        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn), data = dataWithoutCloseCompany)
+        val userAnswers = UserAnswers(id = userAnswersId, storn = "TESTSTORN", returnId = Some("12345"), fullReturn = Some(completeFullReturn.copy(submission = None)), data = dataWithoutCloseCompany)
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -317,7 +318,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           id = userAnswersId,
           storn = "TESTSTORN",
           returnId = Some("12345"),
-          fullReturn = Some(completeFullReturn.copy(residency = None)),
+          fullReturn = Some(completeFullReturn.copy(residency = None, submission = None)),
           data = ukResidencyData(nonUkResident = true, crownEmployment = true)
         ).set(NonUkResidentPurchaserPage, true).success.value
           .set(CrownEmploymentReliefPage, true).success.value
@@ -346,7 +347,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           id = userAnswersId,
           storn = "TESTSTORN",
           returnId = Some("12345"),
-          fullReturn = Some(completeFullReturn.copy(residency = None)),
+          fullReturn = Some(completeFullReturn.copy(residency = None, submission = None)),
           data = ukResidencyData()
         ).set(NonUkResidentPurchaserPage, true).success.value
 
@@ -375,7 +376,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
             id = userAnswersId,
             storn = "TESTSTORN",
             returnId = Some("12345"),
-            fullReturn = Some(completeFullReturn.copy(residency = Some(Residency(residencyID = Some("234"))))),
+            fullReturn = Some(completeFullReturn.copy(submission = None, residency = Some(Residency(residencyID = Some("234"))))),
             data = ukResidencyData(nonUkResident = true, crownEmployment = true)
           ))))
 
@@ -389,7 +390,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           id = userAnswersId,
           storn = "TESTSTORN",
           returnId = Some("12345"),
-          fullReturn = Some(completeFullReturn.copy(residency = Some(Residency(residencyID = Some("234"))))),
+          fullReturn = Some(completeFullReturn.copy(submission = None, residency = Some(Residency(residencyID = Some("234"))))),
           data = ukResidencyData(nonUkResident = true, crownEmployment = true)
         )))
           .overrides(
@@ -416,7 +417,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
             id = userAnswersId,
             storn = "TESTSTORN",
             returnId = Some("12345"),
-            fullReturn = Some(completeFullReturn.copy(residency = None)),
+            fullReturn = Some(completeFullReturn.copy(submission = None, residency = None)),
             data = ukResidencyData(nonUkResident = true, crownEmployment = true)
           ))))
 
@@ -433,7 +434,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           id = userAnswersId,
           storn = "TESTSTORN",
           returnId = Some("12345"),
-          fullReturn = Some(completeFullReturn.copy(residency = None)),
+          fullReturn = Some(completeFullReturn.copy(submission = None, residency = None)),
           data = ukResidencyData(nonUkResident = true, crownEmployment = true)
         )))
           .overrides(
@@ -457,7 +458,7 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
           id         = userAnswersId,
           storn      = "TESTSTORN",
           returnId   = Some("12345"),
-          fullReturn = Some(completeFullReturn.copy(residency = None)),
+          fullReturn = Some(completeFullReturn.copy(submission = None, residency = None)),
           data       = Json.obj()
         )
 

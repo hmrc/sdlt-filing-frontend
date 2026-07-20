@@ -39,6 +39,7 @@ class ChangeTypeOfTransactionController @Inject()(
                                                    identify: IdentifierAction,
                                                    getData: DataRetrievalAction,
                                                    requireData: DataRequiredAction,
+                                                   statusCheck: CheckSubmissionStatusAction,
                                                    formProvider: ChangeTypeOfTransactionFormProvider,
                                                    val controllerComponents: MessagesControllerComponents,
                                                    view: ChangeTypeOfTransactionView
@@ -46,7 +47,7 @@ class ChangeTypeOfTransactionController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       val transactionTypeString: Option[String] = request.userAnswers.fullReturn.flatMap(_.transaction).flatMap(_.transactionDescription)
@@ -67,7 +68,7 @@ class ChangeTypeOfTransactionController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       val transactionTypeString: Option[String] = request.userAnswers.fullReturn.flatMap(_.transaction).flatMap(_.transactionDescription)
       val transactionType: Option[TransactionType] = TransactionType.parse(transactionTypeString)

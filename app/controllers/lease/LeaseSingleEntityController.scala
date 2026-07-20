@@ -38,6 +38,7 @@ class LeaseSingleEntityController @Inject() (
                                               identify:                  IdentifierAction,
                                               getData:                   DataRetrievalAction,
                                               requireData:               DataRequiredAction,
+                                              statusCheck: CheckSubmissionStatusAction,
                                               sessionRepository:         SessionRepository,
                                               populateLeaseService:      PopulateLeaseService,
                                               crossFlow:                 CrossFlowValidationService,
@@ -46,7 +47,7 @@ class LeaseSingleEntityController @Inject() (
                                             )(implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport with LoggingUtil {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       populateFromLease(request.userAnswers)
   }

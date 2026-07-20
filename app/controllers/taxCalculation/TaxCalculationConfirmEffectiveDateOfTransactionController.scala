@@ -16,7 +16,7 @@
 
 package controllers.taxCalculation
 
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{CheckSubmissionStatusAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -31,13 +31,14 @@ class TaxCalculationConfirmEffectiveDateOfTransactionController @Inject()(
                                                                            identify: IdentifierAction,
                                                                            getData: DataRetrievalAction,
                                                                            requireData: DataRequiredAction,
+                                                                           statusCheck: CheckSubmissionStatusAction,
                                                                            view: TaxCalculationConfirmEffectiveDateOfTransactionView,
                                                                            val controllerComponents: MessagesControllerComponents
                                                                          ) extends FrontendBaseController with I18nSupport with Logging {
 
   // TODO: DTR-5128 :: navigate to [Tc-2 Eff date] / change when this would be available/implemented
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData)  {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck)  {
     implicit request =>
       Ok(view())
   }

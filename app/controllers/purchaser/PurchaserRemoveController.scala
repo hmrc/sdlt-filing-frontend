@@ -37,6 +37,7 @@ class PurchaserRemoveController @Inject()(
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
+                                       statusCheck: CheckSubmissionStatusAction,
                                        formProvider: PurchaserRemoveFormProvider,
                                        purchaserRemoveService: PurchaserRemoveService,
                                        purchaserService: PurchaserService,
@@ -47,7 +48,7 @@ class PurchaserRemoveController @Inject()(
  
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData) { implicit request =>
+    (identify andThen getData andThen requireData andThen statusCheck) { implicit request =>
 
       val purchaserName: String = request.userAnswers.get(PurchaserOverviewRemovePage).flatMap { purchaserRefs =>
         val allPurchasers: Seq[Purchaser] = purchaserService.allPurchasers(request.userAnswers)
@@ -68,7 +69,7 @@ class PurchaserRemoveController @Inject()(
       }
     }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       val purchaserName: String = request.userAnswers.get(PurchaserOverviewRemovePage).flatMap { purchaserRefs =>
         val allPurchasers: Seq[Purchaser] = purchaserService.allPurchasers(request.userAnswers)
