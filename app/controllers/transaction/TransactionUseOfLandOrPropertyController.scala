@@ -40,6 +40,7 @@ class TransactionUseOfLandOrPropertyController @Inject()(
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
+                                        statusCheck: CheckSubmissionStatusAction,
                                         formProvider: TransactionUseOfLandOrPropertyFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: TransactionUseOfLandOrPropertyView
@@ -47,7 +48,7 @@ class TransactionUseOfLandOrPropertyController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       val mainLandId = request.userAnswers.fullReturn.flatMap(_.returnInfo).flatMap(_.mainLandID)
@@ -66,7 +67,7 @@ class TransactionUseOfLandOrPropertyController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       form.bindFromRequest().fold(

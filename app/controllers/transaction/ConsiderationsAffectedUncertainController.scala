@@ -38,6 +38,7 @@ class ConsiderationsAffectedUncertainController @Inject()(
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
+                                       statusCheck: CheckSubmissionStatusAction,
                                        formProvider: ConsiderationsAffectedUncertainFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: ConsiderationsAffectedUncertainView
@@ -45,7 +46,7 @@ class ConsiderationsAffectedUncertainController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(ConsiderationsAffectedUncertainPage) match {
@@ -56,7 +57,7 @@ class ConsiderationsAffectedUncertainController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       form.bindFromRequest().fold(

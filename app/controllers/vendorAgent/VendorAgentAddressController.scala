@@ -16,7 +16,7 @@
 
 package controllers.vendorAgent
 
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{CheckSubmissionStatusAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.routes
 import models.{Mode, NormalMode}
 import models.address.AddressLookupJourneyIdentifier.vendorAgentQuestionsAddress
@@ -37,13 +37,14 @@ class VendorAgentAddressController @Inject()(
                                               identify: IdentifierAction,
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction,
+                                              statusCheck: CheckSubmissionStatusAction,
                                               val controllerComponents: MessagesControllerComponents,
                                               addressLookupService: AddressLookupService,
                                               sessionRepository: SessionRepository
                                             )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def redirectToAddressLookupVendorAgent(mode: Mode, changeRoute: Option[String] = None): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
       val journeyId = vendorAgentQuestionsAddress
       val addressConfig = MandatoryFieldsConfigModel(
         addressLine1 = Some(true),
@@ -80,7 +81,7 @@ class VendorAgentAddressController @Inject()(
       }
     }
 
-  def addressLookupCallbackVendorAgent(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def addressLookupCallbackVendorAgent(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       for {
         address <- addressLookupService.getAddressById(id)
@@ -93,7 +94,7 @@ class VendorAgentAddressController @Inject()(
       }
   }
 
-  def addressLookupCallbackChangeVendorAgent(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def addressLookupCallbackChangeVendorAgent(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       for {
         address <- addressLookupService.getAddressById(id)

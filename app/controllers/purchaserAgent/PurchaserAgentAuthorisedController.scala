@@ -38,12 +38,13 @@ class PurchaserAgentAuthorisedController @Inject()(
                                                     identify: IdentifierAction,
                                                     getData: DataRetrievalAction,
                                                     requireData: DataRequiredAction,
+                                                    statusCheck: CheckSubmissionStatusAction,
                                                     formProvider: PurchaserAgentAuthorisedFormProvider,
                                                     val controllerComponents: MessagesControllerComponents,
                                                     view: PurchaserAgentAuthorisedView
                                                   )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
   
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       request.userAnswers.get(PurchaserAgentNamePage) match {
@@ -61,7 +62,7 @@ class PurchaserAgentAuthorisedController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       request.userAnswers.get(PurchaserAgentNamePage) match {

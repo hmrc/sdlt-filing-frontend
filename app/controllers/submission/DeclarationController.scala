@@ -36,12 +36,13 @@ class DeclarationController @Inject()(
                                        activatedIdentify: ActivatedIdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
+                                       resubmissionCheck: ResubmissionCheckAction,
                                        chrisSubmissionService: ChrisSubmissionService,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: DeclarationView
                                      ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck) {
     implicit request =>
 
       request.userAnswers.get(WhoAreYouSubmittingForPage) match {

@@ -45,6 +45,7 @@ class ConfirmTypeOfTransactionControllerSpec extends SpecBase with MockitoSugar 
 
   val fullReturnWithTransactionType: FullReturn =
     completeFullReturn.copy(
+      submission = None,
       transaction = Some(completeTransaction.copy(
         transactionDescription = Some("F"))))
 
@@ -52,6 +53,7 @@ class ConfirmTypeOfTransactionControllerSpec extends SpecBase with MockitoSugar 
 
   val fullReturnWithoutTransactionType: FullReturn =
     completeFullReturn.copy(
+      submission = None,
       transaction = Some(completeTransaction.copy(
         transactionDescription = None)))
 

@@ -45,13 +45,14 @@ class TaxCalculationBeforeYouStartController @Inject()(
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
+                                       statusCheck: CheckSubmissionStatusAction,
                                        sdltCalculationService: SdltCalculationService,
                                        sessionRepository: SessionRepository,
                                        cannotCalculateView: CannotCalculateSdltDueView,
                                        val controllerComponents: MessagesControllerComponents,
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       (for {
         calc <- sdltCalculationService.calculateStampDutyLandTax(request.userAnswers)

@@ -52,7 +52,8 @@ class TransactionUseOfLandOrPropertyControllerSpec extends SpecBase with Mockito
         FullReturnConstants.completeFullReturn.copy(
           land = Some(Seq(
             FullReturnConstants.completeLand.copy(propertyType = Some(LandTypeOfProperty.Mixed.toString))
-          ))
+          )),
+          submission = None
         )
       )
     )
@@ -63,7 +64,8 @@ class TransactionUseOfLandOrPropertyControllerSpec extends SpecBase with Mockito
         FullReturnConstants.completeFullReturn.copy(
           land = Some(Seq(
             FullReturnConstants.completeLand.copy(propertyType = Some(LandTypeOfProperty.NonResidential.toString))
-          ))
+          )),
+          submission = None
         )
       )
     )
@@ -74,7 +76,8 @@ class TransactionUseOfLandOrPropertyControllerSpec extends SpecBase with Mockito
         FullReturnConstants.completeFullReturn.copy(
           land = Some(Seq(
             FullReturnConstants.completeLand.copy(propertyType = Some(LandTypeOfProperty.Residential.toString))
-          ))
+          )),
+          submission = None
         )
       )
     )

@@ -29,11 +29,12 @@ class SubmissionAccountNotActivatedController @Inject()(
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
+                                       resubmissionCheck: ResubmissionCheckAction,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: SubmissionAccountNotActivatedView
                                      ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen resubmissionCheck) {
     implicit request =>
       Ok(view())
   }

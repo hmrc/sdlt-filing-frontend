@@ -42,6 +42,7 @@ class VendorAgentsAddReferenceController @Inject()(
                                                     identify: IdentifierAction,
                                                     getData: DataRetrievalAction,
                                                     requireData: DataRequiredAction,
+                                                    statusCheck: CheckSubmissionStatusAction,
                                                     formProvider: VendorAgentsAddReferenceFormProvider,
                                                     agentChecksService: AgentChecksService,
                                                     val controllerComponents: MessagesControllerComponents,
@@ -50,7 +51,7 @@ class VendorAgentsAddReferenceController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       request.userAnswers.get(AgentNamePage) match {
@@ -68,7 +69,7 @@ class VendorAgentsAddReferenceController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       request.userAnswers.get(AgentNamePage) match {

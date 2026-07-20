@@ -41,6 +41,7 @@ class PurchaserOverviewController @Inject()(val controllerComponents: MessagesCo
                                             identify: IdentifierAction,
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
+                                            statusCheck: CheckSubmissionStatusAction,
                                             fullReturnService: FullReturnService,
                                             sessionRepository: SessionRepository,
                                             view: PurchaserOverview,
@@ -54,7 +55,7 @@ class PurchaserOverviewController @Inject()(val controllerComponents: MessagesCo
   val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode, paginationIndex: Int = 1): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
 
       val postAction: Call = controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad()
       val effectiveReturnId = request.userAnswers.returnId
@@ -101,7 +102,7 @@ class PurchaserOverviewController @Inject()(val controllerComponents: MessagesCo
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
 
       val postAction: Call = controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode)
       val vendorList = request.userAnswers.fullReturn.flatMap(_.vendor).getOrElse(Seq.empty)
@@ -134,7 +135,7 @@ class PurchaserOverviewController @Inject()(val controllerComponents: MessagesCo
     }
 
   def changePurchaser(purchaserId: String): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
       val maybePurchaser = request.userAnswers.fullReturn
         .flatMap(_.purchaser)
         .flatMap(_.find(_.purchaserID.contains(purchaserId)))
@@ -154,7 +155,7 @@ class PurchaserOverviewController @Inject()(val controllerComponents: MessagesCo
     }
 
   def removePurchaser(purchaserId: String): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
       val maybeCompanyDetailsId: Option[String] = request.userAnswers.fullReturn.flatMap(_.companyDetails.flatMap(_.companyDetailsID))
       for {
         updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserOverviewRemovePage, PurchaserAndCompanyId(purchaserId, maybeCompanyDetailsId)))

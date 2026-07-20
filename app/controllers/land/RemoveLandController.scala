@@ -36,13 +36,14 @@ class RemoveLandController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         statusCheck: CheckSubmissionStatusAction,
                                          formProvider: RemoveLandFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          backendConnector: StampDutyLandTaxConnector,
                                          view: RemoveLandView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       request.userAnswers.get(LandOverviewRemovePage).map { removeLandId =>
@@ -69,7 +70,7 @@ class RemoveLandController @Inject()(
       )
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       request.userAnswers.get(LandOverviewRemovePage).map { removeLandId =>

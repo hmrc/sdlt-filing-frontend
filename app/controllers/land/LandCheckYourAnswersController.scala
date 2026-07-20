@@ -44,6 +44,7 @@ class LandCheckYourAnswersController @Inject() (
                                                  identify:                 IdentifierAction,
                                                  getData:                  DataRetrievalAction,
                                                  requireData:              DataRequiredAction,
+                                                 statusCheck:              CheckSubmissionStatusAction,
                                                  sessionRepository:        SessionRepository,
                                                  backendConnector:         StampDutyLandTaxConnector,
                                                  checkAnswersService:      CheckAnswersService,
@@ -53,7 +54,7 @@ class LandCheckYourAnswersController @Inject() (
                                                  updateTaxCalcService: UpdateTaxCalcService
                                                )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck andThen statusCheck).async {
     implicit request =>
       for {
         result <- sessionRepository.get(request.userAnswers.id)
@@ -110,7 +111,7 @@ class LandCheckYourAnswersController @Inject() (
       controllers.land.routes.LocalAuthorityCodeController.onPageLoad(CheckMode)
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
 
     sessionRepository.get(request.userAnswers.id).flatMap {
       case Some(userAnswers) =>

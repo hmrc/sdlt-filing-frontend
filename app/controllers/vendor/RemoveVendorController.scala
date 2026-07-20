@@ -37,13 +37,14 @@ class RemoveVendorController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         statusCheck: CheckSubmissionStatusAction,
                                          formProvider: RemoveVendorFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: RemoveVendorView,
                                          backendConnector: StampDutyLandTaxConnector
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
   
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
       request.userAnswers.get(VendorOverviewRemovePage).map { vendorResourceRef =>
 
@@ -60,7 +61,7 @@ class RemoveVendorController @Inject()(
       )
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       request.userAnswers.get(VendorOverviewRemovePage).map { vendorResourceRef =>
 

@@ -48,16 +48,19 @@ class LeaseIsVatPayableControllerSpec extends SpecBase with MockitoSugar {
 
   val userAnswersGrantOfLease: UserAnswers = emptyUserAnswers.copy(
     fullReturn = Some(completeFullReturn.copy(
+      submission = None,
       transaction = Some(completeTransaction.copy(
         transactionDescription = Some("L"))))))
 
   val userAnswersConveyanceTransferLease: UserAnswers = emptyUserAnswers.copy(
     fullReturn = Some(completeFullReturn.copy(
+      submission = None,
       transaction = Some(completeTransaction.copy(
         transactionDescription = Some("A"))))))
 
   val userAnswersOtherTransaction: UserAnswers = emptyUserAnswers.copy(
     fullReturn = Some(completeFullReturn.copy(
+      submission = None,
       transaction = Some(completeTransaction.copy(
         transactionDescription = Some("O"))))))
 

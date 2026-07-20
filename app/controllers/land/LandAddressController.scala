@@ -16,7 +16,7 @@
 
 package controllers.land
 
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{CheckSubmissionStatusAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.routes
 import models.address.AddressLookupJourneyIdentifier.landQuestionsAddress
 import models.address.MandatoryFieldsConfigModel
@@ -37,13 +37,14 @@ class LandAddressController @Inject()(
                                               identify: IdentifierAction,
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction,
+                                              statusCheck: CheckSubmissionStatusAction,
                                               val controllerComponents: MessagesControllerComponents,
                                               addressLookupService: AddressLookupService,
                                               sessionRepository: SessionRepository
                                             )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def redirectToAddressLookupLand(mode: Mode, changeRoute: Option[String] = None): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
       val journeyId = landQuestionsAddress
       val addressConfig = MandatoryFieldsConfigModel(
         addressLine1 = Some(true),
@@ -71,7 +72,7 @@ class LandAddressController @Inject()(
       }
     }
 
-  def addressLookupCallbackLand(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def addressLookupCallbackLand(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       for {
         address <- addressLookupService.getAddressById(id)
@@ -84,7 +85,7 @@ class LandAddressController @Inject()(
       }
   }
 
-  def addressLookupCallbackChangeLand(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def addressLookupCallbackChangeLand(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       for {
         address <- addressLookupService.getAddressById(id)

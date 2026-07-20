@@ -49,11 +49,13 @@ class DoesLeaseIncludeRentFreePeriodControllerSpec extends SpecBase with Mockito
 
   val userAnswersGrantOfLease: UserAnswers = emptyUserAnswers.copy(
     fullReturn = Some(completeFullReturn.copy(
+      submission = None,
       transaction = Some(completeTransaction.copy(
         transactionDescription = Some("L"))))))
 
   val userAnswersConveyanceTransfer: UserAnswers = emptyUserAnswers.copy(
     fullReturn = Some(completeFullReturn.copy(
+      submission = None,
       transaction = Some(completeTransaction.copy(
         transactionDescription = Some("F"))))))
 

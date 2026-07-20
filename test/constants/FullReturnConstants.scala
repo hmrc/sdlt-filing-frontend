@@ -489,6 +489,28 @@ object FullReturnConstants {
     irmarkSent = Some("IRMARK-SENT-001")
   )
 
+  val submissionNoStatus: Submission = Submission(
+    submissionID = Some("SUB001"),
+    returnID = Some("RET123456789"),
+    storn = Some("STORN123456"),
+    submissionStatus = None,
+    govtalkMessageClass = Some("HMRC-STAMP-SDLT"),
+    UTRN = Some("UTRN123456789012"),
+    irmarkReceived = None,
+    submissionReceipt = None,
+    govtalkErrorCode = None,
+    govtalkErrorType = None,
+    govtalkErrorMessage = None,
+    numPolls = Some("3"),
+    createDate = Some("2024-10-15T10:30:00"),
+    lastUpdateDate = Some("2024-10-15T11:00:00"),
+    acceptedDate = None,
+    submittedDate = None,
+    email = None,
+    submissionRequestDate = None,
+    irmarkSent = None
+  )
+
   val completeSubmissionErrorDetails: SubmissionErrorDetails = SubmissionErrorDetails(
     errorDetailID = None,
     returnID = Some("RET123456789"),

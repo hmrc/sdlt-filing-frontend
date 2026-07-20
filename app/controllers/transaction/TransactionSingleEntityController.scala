@@ -37,6 +37,7 @@ class TransactionSingleEntityController @Inject() (
                                                     identify:                    IdentifierAction,
                                                     getData:                     DataRetrievalAction,
                                                     requireData:                 DataRequiredAction,
+                                                    statusCheck: CheckSubmissionStatusAction,
                                                     sessionRepository:           SessionRepository,
                                                     populateTransactionService:  PopulateTransactionService,
                                                     crossFlow:                   CrossFlowValidationService,
@@ -44,7 +45,7 @@ class TransactionSingleEntityController @Inject() (
                                                     view:                        TransactionReliefSingleEntityView
                                                   )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       populateFromTransaction(request.userAnswers)
   }

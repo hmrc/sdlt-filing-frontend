@@ -39,6 +39,7 @@ class ConfirmLandOrPropertyAddressController @Inject()(
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
+                                       statusCheck: CheckSubmissionStatusAction,
                                        formProvider: ConfirmLandOrPropertyAddressFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: ConfirmLandOrPropertyAddressView
@@ -46,7 +47,7 @@ class ConfirmLandOrPropertyAddressController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       val address1 = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.address1.isDefined).flatMap(_.address1)))
@@ -73,7 +74,7 @@ class ConfirmLandOrPropertyAddressController @Inject()(
 
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       val address1 = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.address1.isDefined).flatMap(_.address1)))
       val address2 = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.address2.isDefined).flatMap(_.address2)))

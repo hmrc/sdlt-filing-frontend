@@ -39,6 +39,7 @@ class ConfirmTypeOfTransactionController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         statusCheck: CheckSubmissionStatusAction,
                                          formProvider: ConfirmTypeOfTransactionFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: ConfirmTypeOfTransactionView
@@ -46,7 +47,7 @@ class ConfirmTypeOfTransactionController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       val transactionTypeString: Option[String] = request.userAnswers.fullReturn.flatMap(_.transaction).flatMap(_.transactionDescription)
@@ -62,7 +63,7 @@ class ConfirmTypeOfTransactionController @Inject()(
       }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       val transactionTypeString: Option[String] = request.userAnswers.fullReturn.flatMap(_.transaction).flatMap(_.transactionDescription)

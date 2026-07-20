@@ -40,13 +40,14 @@ class PurchaserTypeOfCompanyController @Inject()(
                                                   identify: IdentifierAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
+                                                  statusCheck: CheckSubmissionStatusAction,
                                                   formProvider: PurchaserTypeOfCompanyFormProvider,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   view: PurchaserTypeOfCompanyView,
                                                   purchaserService: PurchaserService
                                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
       purchaserService.continueIfAddingMainPurchaserWithPurchaserTypeCheck(
         purchaserType = WhoIsMakingThePurchase.Company,
@@ -68,7 +69,7 @@ class PurchaserTypeOfCompanyController @Inject()(
       )
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       request.userAnswers.get(NameOfPurchaserPage) match {
         case None =>

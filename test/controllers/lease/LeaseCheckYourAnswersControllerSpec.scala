@@ -137,6 +137,7 @@ class LeaseCheckYourAnswersControllerSpec
         version = Some("1")
       )),
       lease = Some(incompleteLease),
+      submission = None,
       transaction = Some(completeTransaction.copy(
         transactionDescription = Some("L")))))
   )
@@ -151,6 +152,7 @@ class LeaseCheckYourAnswersControllerSpec
         version = Some("1")
       )),
       lease = Some(incompleteLease),
+      submission = None,
       transaction = Some(completeTransaction.copy(
         transactionDescription = Some("A")))))
   )
@@ -165,6 +167,7 @@ class LeaseCheckYourAnswersControllerSpec
         version = Some("1")
       )),
       lease = Some(incompleteLease),
+      submission = None,
       transaction = Some(completeTransaction.copy(
         transactionDescription = Some("L")))))
   )
@@ -179,6 +182,7 @@ class LeaseCheckYourAnswersControllerSpec
         version = Some("1")
       )),
       lease = None,
+      submission = None,
       transaction = Some(completeTransaction.copy(
         transactionDescription = Some("L")))))
   )
@@ -189,6 +193,7 @@ class LeaseCheckYourAnswersControllerSpec
     storn = "TESTSTORN",
     data = Json.obj("key" -> "value"),
     fullReturn = Some(completeFullReturn.copy(
+      submission = None,
       transaction = Some(completeTransaction.copy(
         transactionDescription = Some("L")))))
   )
@@ -202,6 +207,7 @@ class LeaseCheckYourAnswersControllerSpec
         stornId = "TESTSTORN",
         returnResourceRef = "AB2346",
         lease = Some(Lease()),
+        submission = None,
         transaction = Some(completeTransaction.copy(
           transactionDescription = Some("L"))
         )

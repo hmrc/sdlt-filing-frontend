@@ -40,6 +40,7 @@ class PurchaserFormOfIdIndividualController @Inject()(
                                                        identify: IdentifierAction,
                                                        getData: DataRetrievalAction,
                                                        requireData: DataRequiredAction,
+                                                       statusCheck: CheckSubmissionStatusAction,
                                                        formProvider: PurchaserFormOfIdIndividualFormProvider,
                                                        purchaserService: PurchaserService,
                                                        val controllerComponents: MessagesControllerComponents,
@@ -47,7 +48,7 @@ class PurchaserFormOfIdIndividualController @Inject()(
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
   
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
       
       val maybePurchaserName: Option[String] = request.userAnswers.get(NameOfPurchaserPage).map(_.fullName)
@@ -74,7 +75,7 @@ class PurchaserFormOfIdIndividualController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       val maybePurchaserName: Option[String] = request.userAnswers.get(NameOfPurchaserPage).map(_.fullName)

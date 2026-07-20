@@ -37,6 +37,7 @@ class EmailConfirmationController @Inject()(
                                         activatedIdentify: ActivatedIdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
+                                        resubmissionCheck: ResubmissionCheckAction,
                                         formProvider: EmailConfirmationFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: EmailConfirmationView
@@ -44,7 +45,7 @@ class EmailConfirmationController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(EmailConfirmationPage) match {

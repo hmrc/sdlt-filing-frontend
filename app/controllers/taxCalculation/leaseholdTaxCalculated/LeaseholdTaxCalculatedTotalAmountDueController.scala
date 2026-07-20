@@ -47,6 +47,7 @@ class LeaseholdTaxCalculatedTotalAmountDueController @Inject()(
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
+                                       statusCheck: CheckSubmissionStatusAction,
                                        sdltCalculationService: SdltCalculationService,
                                        sessionRepository: SessionRepository,
                                        navigator: Navigator,
@@ -63,7 +64,7 @@ class LeaseholdTaxCalculatedTotalAmountDueController @Inject()(
 
   private val sectionKey: String = "site.taxCalculation.leaseholdSdltCalculated.section"
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(LeaseholdTaxCalculated) {
         withCalculatedResult { result =>
@@ -80,7 +81,7 @@ class LeaseholdTaxCalculatedTotalAmountDueController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(LeaseholdTaxCalculated) {
         withCalculatedResult { result =>

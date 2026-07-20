@@ -37,6 +37,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
   val testReturnId = "123456"
   val testStorn = "TESTSTORN"
   val testGetReturnByRefRequest: GetReturnByRefRequest = GetReturnByRefRequest(returnResourceRef = testReturnId, storn = testStorn)
+  val testFullReturn = completeFullReturn.copy(submission = None)
 
   "ReturnTaskList Controller" - {
 
@@ -70,7 +71,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository = mock[SessionRepository]
 
         when(mockFullReturnService.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -97,7 +98,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository = mock[SessionRepository]
 
         when(mockFullReturnService.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -128,7 +129,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository = mock[SessionRepository]
 
         when(mockFullReturnService.getFullReturn(eqTo(expectedRequest))(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -154,7 +155,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository = mock[SessionRepository]
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -206,7 +207,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository = mock[SessionRepository]
 
         when(mockFullReturnService.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -237,7 +238,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository = mock[SessionRepository]
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -268,7 +269,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val testUserId = "id"
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -298,7 +299,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository = mock[SessionRepository]
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -318,7 +319,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
           verify(mockSessionRepository, times(1)).set(argThat[UserAnswers] { userAnswers =>
             userAnswers.fullReturn.isDefined &&
-              userAnswers.fullReturn.get == completeFullReturn
+              userAnswers.fullReturn.get == testFullReturn
           })
         }
       }
@@ -389,7 +390,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val expectedRequest = GetReturnByRefRequest(returnResourceRef = customReturnId, storn = testStorn)
 
         when(mockFullReturnService.getFullReturn(eqTo(expectedRequest))(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -415,7 +416,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository = mock[SessionRepository]
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -442,7 +443,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository = mock[SessionRepository]
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -531,7 +532,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
           .thenAnswer(_ => {
             serviceCallTime = System.nanoTime()
-            Future.successful(completeFullReturn)
+            Future.successful(testFullReturn)
           })
 
         when(mockSessionRepository.set(any[UserAnswers]))
@@ -561,7 +562,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository = mock[SessionRepository]
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -590,7 +591,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           val expectedRequest = GetReturnByRefRequest(returnResourceRef = returnId, storn = testStorn)
 
           when(mockFullReturnService.getFullReturn(eqTo(expectedRequest))(any(), any()))
-            .thenReturn(Future.successful(completeFullReturn))
+            .thenReturn(Future.successful(testFullReturn))
 
           when(mockSessionRepository.set(any[UserAnswers]))
             .thenReturn(Future.successful(true))
@@ -638,7 +639,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository = mock[SessionRepository]
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -665,7 +666,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository = mock[SessionRepository]
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -692,7 +693,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository = mock[SessionRepository]
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -725,7 +726,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
       "must handle FullReturn with no purchasers" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
-        val fullReturnWithNoPurchasers = completeFullReturn.copy(purchaser = None)
+        val fullReturnWithNoPurchasers = testFullReturn.copy(purchaser = None)
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
           .thenReturn(Future.successful(fullReturnWithNoPurchasers))
@@ -753,7 +754,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
       "must handle FullReturn with empty purchaser sequence" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
-        val fullReturnWithEmptyPurchasers = completeFullReturn.copy(purchaser = Some(Seq.empty))
+        val fullReturnWithEmptyPurchasers = testFullReturn.copy(purchaser = Some(Seq.empty))
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
           .thenReturn(Future.successful(fullReturnWithEmptyPurchasers))
@@ -781,7 +782,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
       "must handle FullReturn with no return agents" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
-        val fullReturnWithNoAgents = completeFullReturn.copy(returnAgent = None)
+        val fullReturnWithNoAgents = testFullReturn.copy(returnAgent = None)
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
           .thenReturn(Future.successful(fullReturnWithNoAgents))
@@ -809,7 +810,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
       "must handle FullReturn with empty return agent sequence" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
-        val fullReturnWithEmptyAgents = completeFullReturn.copy(returnAgent = Some(Seq.empty))
+        val fullReturnWithEmptyAgents = testFullReturn.copy(returnAgent = Some(Seq.empty))
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
           .thenReturn(Future.successful(fullReturnWithEmptyAgents))
@@ -838,7 +839,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
         val vendorAgent = ReturnAgent(agentType = Some("Vendor"))
-        val fullReturnWithVendorAgent = completeFullReturn.copy(returnAgent = Some(Seq(vendorAgent)))
+        val fullReturnWithVendorAgent = testFullReturn.copy(returnAgent = Some(Seq(vendorAgent)))
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
           .thenReturn(Future.successful(fullReturnWithVendorAgent))
@@ -868,7 +869,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository = mock[SessionRepository]
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -895,7 +896,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository = mock[SessionRepository]
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -934,7 +935,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         }
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -969,7 +970,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         }
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -1011,7 +1012,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         }
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -1046,7 +1047,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         }
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -1088,7 +1089,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         }
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -1122,7 +1123,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         }
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -1172,7 +1173,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         }
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(completeFullReturn))
+          .thenReturn(Future.successful(testFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))

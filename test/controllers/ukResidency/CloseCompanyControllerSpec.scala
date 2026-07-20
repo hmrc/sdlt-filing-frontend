@@ -46,7 +46,7 @@ class CloseCompanyControllerSpec extends SpecBase with MockitoSugar {
   lazy val closeCompanyCheckRoute: String =
     controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode).url
 
-  private lazy val fullReturnComplete = FullReturnConstants.completeFullReturn
+  private lazy val fullReturnComplete = FullReturnConstants.completeFullReturn.copy(submission = None)
   private lazy val testStorn          = "TESTSTORN"
 
   val userAnswersResidentialIndividual: UserAnswers =

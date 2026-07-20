@@ -40,6 +40,7 @@ class EnterPurchaserPhoneNumberController @Inject()(
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
+                                        statusCheck: CheckSubmissionStatusAction,
                                         formProvider: EnterPurchaserPhoneNumberFormProvider,
                                         purchaserService: PurchaserService,
                                         val controllerComponents: MessagesControllerComponents,
@@ -47,7 +48,7 @@ class EnterPurchaserPhoneNumberController @Inject()(
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
   
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       request.userAnswers.get(NameOfPurchaserPage) match {
@@ -72,7 +73,7 @@ class EnterPurchaserPhoneNumberController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       request.userAnswers.get(NameOfPurchaserPage) match {

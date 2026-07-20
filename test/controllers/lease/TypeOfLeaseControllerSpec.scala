@@ -52,11 +52,13 @@ class TypeOfLeaseControllerSpec extends SpecBase with MockitoSugar {
 
   val userAnswersGrantOfLease: UserAnswers = emptyUserAnswers.copy(
     fullReturn = Some(completeFullReturn.copy(
+      submission = None,
       transaction = Some(completeTransaction.copy(
         transactionDescription = Some("L"))))))
 
   val userAnswersConveyanceTransfer: UserAnswers = emptyUserAnswers.copy(
     fullReturn = Some(completeFullReturn.copy(
+      submission = None,
       transaction = Some(completeTransaction.copy(
         transactionDescription = Some("F"))))))
 

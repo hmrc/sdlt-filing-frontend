@@ -38,6 +38,7 @@ class WhoIsTheVendorController @Inject()(
                                           identify: IdentifierAction,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
+                                          statusCheck: CheckSubmissionStatusAction,
                                           formProvider: WhoIsTheVendorFormProvider,
                                           val controllerComponents: MessagesControllerComponents,
                                           view: WhoIsTheVendorView
@@ -45,7 +46,7 @@ class WhoIsTheVendorController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(WhoIsTheVendorPage) match {
@@ -56,7 +57,7 @@ class WhoIsTheVendorController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       form.bindFromRequest().fold(

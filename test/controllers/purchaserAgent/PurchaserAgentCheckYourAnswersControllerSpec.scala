@@ -44,7 +44,7 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
 
   private val userAnswersWithCompleteAnswersAndReturnAgentId = emptyUserAnswers
     .copy(
-      fullReturn = Some(completeFullReturn),
+      fullReturn = Some(completeFullReturn.copy(submission = None)),
       data = Json.obj(
         "purchaserAgentCurrent" -> Json.obj(
           "returnAgentId" -> "RA-001"
@@ -67,7 +67,7 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
 
   private val userAnswersWithCompleteAnswers = emptyUserAnswers
     .copy(
-      fullReturn = Some(completeFullReturn),
+      fullReturn = Some(completeFullReturn.copy(submission = None)),
     )
     .set(PurchaserAgentNamePage, "Agent name").success.value
     .set(PurchaserAgentAddressPage, Address(
@@ -357,7 +357,7 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
       "must redirect to journey recovery for a POST if session data is not found" in {
 
         val userAnswers = emptyUserAnswers
-          .copy(fullReturn = Some(completeFullReturn))
+          .copy(fullReturn = Some(completeFullReturn.copy(submission = None)))
           .set(PurchaserAgentNamePage, "Agent name").success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
@@ -379,7 +379,7 @@ class PurchaserAgentCheckYourAnswersControllerSpec extends SpecBase with Summary
       "must redirect back to check your answers for a POST if questions are not validated" in {
 
         val userAnswers = emptyUserAnswers
-          .copy(fullReturn = Some(completeFullReturn))
+          .copy(fullReturn = Some(completeFullReturn.copy(submission = None)))
           .set(PurchaserAgentNamePage, "Agent name").success.value
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))

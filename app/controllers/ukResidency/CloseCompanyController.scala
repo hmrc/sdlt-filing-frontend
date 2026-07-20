@@ -40,6 +40,7 @@ class CloseCompanyController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         statusCheck: CheckSubmissionStatusAction,
                                          formProvider: CloseCompanyFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: CloseCompanyView
@@ -47,7 +48,7 @@ class CloseCompanyController @Inject()(
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       request.userAnswers.fullReturn match {
         case Some(fullReturn) if isResidentialProperty(fullReturn) =>
@@ -72,7 +73,7 @@ class CloseCompanyController @Inject()(
           Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       }
   }
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       form.bindFromRequest().fold(

@@ -47,6 +47,7 @@ class FreeholdTaxCalculatedTotalAmountDueController @Inject()(
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
+                                       statusCheck: CheckSubmissionStatusAction,
                                        sdltCalculationService: SdltCalculationService,
                                        sessionRepository: SessionRepository,
                                        navigator: Navigator,
@@ -63,7 +64,7 @@ class FreeholdTaxCalculatedTotalAmountDueController @Inject()(
 
   private val sectionKey: String = "site.taxCalculation.freeholdSdltCalculated.section"
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(FreeholdTaxCalculated) {
         withCalculatedResult { result =>
@@ -80,7 +81,7 @@ class FreeholdTaxCalculatedTotalAmountDueController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(FreeholdTaxCalculated) {
         withCalculatedResult { result =>

@@ -40,6 +40,7 @@ class WhoAreYouSubmittingForController @Inject()(
                                                   activatedIdentify: ActivatedIdentifierAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
+                                                  resubmissionCheck: ResubmissionCheckAction,
                                                   formProvider: WhoAreYouSubmittingForFormProvider,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   view: WhoAreYouSubmittingForView
@@ -47,7 +48,7 @@ class WhoAreYouSubmittingForController @Inject()(
 
   val form: Form[WhoAreYouSubmittingFor] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(WhoAreYouSubmittingForPage) match {

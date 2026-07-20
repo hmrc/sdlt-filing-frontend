@@ -40,13 +40,14 @@ class RegistrationNumberController @Inject()(
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
+                                        statusCheck: CheckSubmissionStatusAction,
                                         formProvider: RegistrationNumberFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: RegistrationNumberView,
                                         purchaserService: PurchaserService
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
       val purchaserFullName: Option[String] = request.userAnswers.get(NameOfPurchaserPage).map(_.fullName)
        val isPurchaserVATRegistered: Option[PurchaserConfirmIdentity] = request.userAnswers.get(PurchaserConfirmIdentityPage)
@@ -70,7 +71,7 @@ class RegistrationNumberController @Inject()(
       )
   }
   
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       val purchaserFullName: Option[String] = request.userAnswers.get(NameOfPurchaserPage).map(_.fullName)

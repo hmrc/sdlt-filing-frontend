@@ -16,7 +16,7 @@
 
 package controllers.preliminary
 
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{CheckSubmissionStatusAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.routes
 import models.address.AddressLookupJourneyIdentifier.prelimQuestionsAddress
 import models.address.MandatoryFieldsConfigModel
@@ -36,12 +36,13 @@ class PrelimAddressController @Inject() (
                                   identify: IdentifierAction,
                                   getData: DataRetrievalAction,
                                   requireData: DataRequiredAction,
+                                  statusCheck: CheckSubmissionStatusAction,
                                   addressLookupService: AddressLookupService
                                 )(implicit ec: ExecutionContext)
   extends FrontendBaseController
     with I18nSupport {
 
-  def redirectToAddressLookup(mode: Mode, changeRoute: Option[String] = None): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def redirectToAddressLookup(mode: Mode, changeRoute: Option[String] = None): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       val journeyId = prelimQuestionsAddress
       val addressConfig = MandatoryFieldsConfigModel(addressLine1 = Some(true), town = Some(true))
@@ -59,7 +60,7 @@ class PrelimAddressController @Inject() (
       }
   }
 
-  def addressLookupCallback(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def addressLookupCallback(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
         for {
           address <- addressLookupService.getAddressById(id)
@@ -67,7 +68,7 @@ class PrelimAddressController @Inject() (
         } yield if(updated) Redirect(controllers.preliminary.routes.TransactionTypeController.onPageLoad(NormalMode)) else Redirect(routes.JourneyRecoveryController.onPageLoad())
   }
 
-  def addressLookupCallbackChange(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def addressLookupCallbackChange(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       for {
         address <- addressLookupService.getAddressById(id)

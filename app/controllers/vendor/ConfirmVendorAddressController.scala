@@ -39,6 +39,7 @@ class ConfirmVendorAddressController @Inject()(
                                           identify: IdentifierAction,
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
+                                          statusCheck: CheckSubmissionStatusAction,
                                           formProvider: ConfirmVendorAddressFormProvider,
                                           val controllerComponents: MessagesControllerComponents,
                                           view: ConfirmVendorAddressView
@@ -46,7 +47,7 @@ class ConfirmVendorAddressController @Inject()(
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
       val userAnswers = request.userAnswers
 
@@ -82,7 +83,7 @@ class ConfirmVendorAddressController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
       val userAnswers = request.userAnswers
 

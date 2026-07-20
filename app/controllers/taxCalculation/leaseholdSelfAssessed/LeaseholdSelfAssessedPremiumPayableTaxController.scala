@@ -17,7 +17,7 @@
 package controllers.taxCalculation.leaseholdSelfAssessed
 
 import config.CurrencyFormatter.StringToCurrency
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{CheckSubmissionStatusAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.taxCalculation.leaseholdSelfAssessed.LeaseholdSelfAssessedPremiumPayableTaxFormProvider
 import navigation.Navigator
 import play.api.data.Form
@@ -45,11 +45,12 @@ class LeaseholdSelfAssessedPremiumPayableTaxController @Inject()(
                                                                   sessionRepository: SessionRepository,
                                                                   getData: DataRetrievalAction,
                                                                   requireData: DataRequiredAction,
+                                                                  statusCheck: CheckSubmissionStatusAction,
                                                                   identify: IdentifierAction
                                         )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
   val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) { implicit request =>
     sdltCalculationService.whenInFlow(LeaseholdSelfAssessed) {
       val premiumPayable = request.userAnswers.fullReturn.flatMap(_.lease.flatMap(_.totalPremiumPayable.map(_.toCurrency)))
 
@@ -67,7 +68,7 @@ class LeaseholdSelfAssessedPremiumPayableTaxController @Inject()(
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
     sdltCalculationService.whenInFlowAsync(LeaseholdSelfAssessed) {
       val premiumPayable = request.userAnswers.fullReturn.flatMap(_.lease.flatMap(_.totalPremiumPayable.map(_.toCurrency)))
 

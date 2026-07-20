@@ -342,7 +342,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
       "must redirect to journey recovery for a POST if session data is not found" in {
 
         val userAnswers = emptyUserAnswers
-          .copy(fullReturn = Some(completeFullReturn))
+          .copy(fullReturn = Some(completeFullReturn.copy(submission = None)))
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
 

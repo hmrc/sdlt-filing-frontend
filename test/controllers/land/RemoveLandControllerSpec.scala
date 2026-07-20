@@ -366,7 +366,8 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
         )
 
         val fullReturnWithLand = completeFullReturn.copy(
-          land = Some(Seq(testLand))
+          land = Some(Seq(testLand)),
+          submission = None
         )
 
         val landId = testLand.landID.value

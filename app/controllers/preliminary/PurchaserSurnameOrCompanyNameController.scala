@@ -38,13 +38,14 @@ class PurchaserSurnameOrCompanyNameController @Inject()(
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
+                                        statusCheck: CheckSubmissionStatusAction,
                                         formProvider: PurchaserSurnameOrCompanyNameFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: PurchaserSurnameOrCompanyNameView
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
       val individualOrCompany: String = request.userAnswers.get(PurchaserIsIndividualPage) match {
         case Some(value) => if(value.toString == "Individual") "Individual" else "Company"
@@ -61,7 +62,7 @@ class PurchaserSurnameOrCompanyNameController @Inject()(
       Ok(view(preparedForm, mode, individualOrCompany))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       val individualOrCompany: String = request.userAnswers.get(PurchaserIsIndividualPage) match {

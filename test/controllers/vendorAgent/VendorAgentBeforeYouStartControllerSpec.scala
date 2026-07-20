@@ -60,8 +60,8 @@ class VendorAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSugar
       name = Some("Smith & Partners LLP")
     )
 
-    val fullReturn: FullReturn = completeFullReturn.copy(returnAgent = Some(Seq(returnAgent)))
-    val fullReturnWithAgentType: FullReturn = completeFullReturn.copy(returnAgent = Some(Seq(returnAgentWithAgentType)))
+    val fullReturn: FullReturn = completeFullReturn.copy(submission = None, returnAgent = Some(Seq(returnAgent)))
+    val fullReturnWithAgentType: FullReturn = completeFullReturn.copy(submission = None, returnAgent = Some(Seq(returnAgentWithAgentType)))
 
 
     val userAnswersWithIndividualPurchaser: UserAnswers =

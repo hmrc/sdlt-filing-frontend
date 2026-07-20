@@ -40,13 +40,14 @@ class PurchaserPartnershipUtrController @Inject()(
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
+                                        statusCheck: CheckSubmissionStatusAction,
                                         formProvider: PurchaserPartnershipUtrFormProvider,
                                         purchaserService: PurchaserService,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: PurchaserPartnershipUtrView
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       val purchaserNameOpt: Option[String] = request.userAnswers.get(NameOfPurchaserPage).map(_.fullName)
@@ -75,7 +76,7 @@ class PurchaserPartnershipUtrController @Inject()(
       )
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       val purchaserName: Option[String] = request.userAnswers.get(NameOfPurchaserPage).map(_.fullName)

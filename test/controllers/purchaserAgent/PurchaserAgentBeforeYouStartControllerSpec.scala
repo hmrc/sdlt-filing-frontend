@@ -46,7 +46,7 @@ class PurchaserAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSu
 
   "PurchaserAgentBeforeYouStart Controller" - {
 
-    val fullReturn: FullReturn = completeFullReturn.copy(returnAgent = None)
+    val fullReturn: FullReturn = completeFullReturn.copy(returnAgent = None, submission = None)
 
     val userAnswersWithIndividualPurchaser: UserAnswers =
       UserAnswers(userAnswersId, storn = "test-storn")
@@ -88,7 +88,7 @@ class PurchaserAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSu
 
     "must redirect to the next page when valid data and Yes has been selected is submitted" in {
 
-      val fullReturn: FullReturn = completeFullReturn.copy(returnAgent = None)
+      val fullReturn: FullReturn = completeFullReturn.copy(returnAgent = None, submission = None)
 
       val userAnswersWithIndividualPurchaser: UserAnswers =
         UserAnswers(userAnswersId, storn = "test-storn")
@@ -120,7 +120,7 @@ class PurchaserAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSu
 
     "must redirect to the next page when valid data and NO has been selected is submitted" in {
 
-      val fullReturn: FullReturn = completeFullReturn.copy(returnAgent = None)
+      val fullReturn: FullReturn = completeFullReturn.copy(returnAgent = None, submission = None)
 
       val userAnswersWithIndividualPurchaser: UserAnswers =
         UserAnswers(userAnswersId, storn = "test-storn")

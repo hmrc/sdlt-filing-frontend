@@ -41,6 +41,7 @@ class LeaseThousandPoundsThresholdController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         statusCheck: CheckSubmissionStatusAction,
                                          formProvider: LeaseThousandPoundsThresholdFormProvider,
                                          leaseService: LeaseService,
                                          val controllerComponents: MessagesControllerComponents,
@@ -49,7 +50,7 @@ class LeaseThousandPoundsThresholdController @Inject()(
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
     if (leaseService.transactionType(request.userAnswers).contains(TransactionType.GrantOfLease)) {
           leaseService.leaseFlowValidationCheck(request.userAnswers) match {
@@ -66,7 +67,7 @@ class LeaseThousandPoundsThresholdController @Inject()(
         }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       form.bindFromRequest().fold(

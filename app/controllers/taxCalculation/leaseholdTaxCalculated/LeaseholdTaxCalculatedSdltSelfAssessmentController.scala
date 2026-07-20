@@ -16,7 +16,7 @@
 
 package controllers.taxCalculation.leaseholdTaxCalculated
 
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{CheckSubmissionStatusAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.taxCalculation.TaxCalculationErrorRecovery
 import forms.taxCalculation.SdltSelfAssessmentFormProvider
 import models.Mode
@@ -42,6 +42,7 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentController @Inject()(
                                                                    identify: IdentifierAction,
                                                                    getData: DataRetrievalAction,
                                                                    requireData: DataRequiredAction,
+                                                                   statusCheck: CheckSubmissionStatusAction,
                                                                    sdltCalculationService: SdltCalculationService,
                                                                    sessionRepository: SessionRepository,
                                                                    navigator: Navigator,
@@ -58,7 +59,7 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentController @Inject()(
   private def postAction(mode: Mode): Call =
     routes.LeaseholdTaxCalculatedSdltSelfAssessmentController.onSubmit(mode)
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(LeaseholdTaxCalculated) {
         sdltCalculationService.calculateStampDutyLandTax(request.userAnswers).map {
@@ -80,7 +81,7 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(LeaseholdTaxCalculated) {
         form.bindFromRequest().fold(

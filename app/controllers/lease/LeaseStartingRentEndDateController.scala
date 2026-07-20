@@ -39,6 +39,7 @@ class LeaseStartingRentEndDateController @Inject()(
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
+                                        statusCheck: CheckSubmissionStatusAction,
                                         formProvider: LeaseStartingRentEndDateFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         leaseDatesService: LeaseDatesService,
@@ -46,7 +47,7 @@ class LeaseStartingRentEndDateController @Inject()(
                                         view: LeaseStartingRentEndDateView
                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       leaseService.leaseFlowValidationCheck(request.userAnswers) match {
@@ -61,7 +62,7 @@ class LeaseStartingRentEndDateController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       val form = formProvider()

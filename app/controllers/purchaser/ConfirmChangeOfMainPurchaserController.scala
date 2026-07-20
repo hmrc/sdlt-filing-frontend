@@ -34,6 +34,7 @@ class ConfirmChangeOfMainPurchaserController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         statusCheck: CheckSubmissionStatusAction,
                                          formProvider: ConfirmChangeOfMainPurchaserFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: ConfirmChangeOfMainPurchaserView,
@@ -41,7 +42,7 @@ class ConfirmChangeOfMainPurchaserController @Inject()(
                                          purchaserService: PurchaserService
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       val newMainPurchaserId: Option[String] = request.userAnswers.get(ChangePurchaserOnePage)
@@ -60,7 +61,7 @@ class ConfirmChangeOfMainPurchaserController @Inject()(
       }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       val newMainPurchaserId: Option[String] = request.userAnswers.get(ChangePurchaserOnePage)

@@ -43,6 +43,7 @@ class PurchaserAgentOverviewController @Inject()(
                                                   identify: IdentifierAction,
                                                   getData: DataRetrievalAction,
                                                   requireData: DataRequiredAction,
+                                                  statusCheck: CheckSubmissionStatusAction,
                                                   fullReturnService: FullReturnService,
                                                   sessionRepository: SessionRepository,
                                                   purchaserAgentService: PurchaserAgentService,
@@ -54,7 +55,7 @@ class PurchaserAgentOverviewController @Inject()(
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
 
       val effectiveReturnId = request.userAnswers.returnId
 
@@ -80,7 +81,7 @@ class PurchaserAgentOverviewController @Inject()(
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
 
       val maybeAgent: Option[ReturnAgent] =
         request.userAnswers.fullReturn.flatMap(_.returnAgent)
@@ -103,7 +104,7 @@ class PurchaserAgentOverviewController @Inject()(
     }
 
   def changePurchaserAgent(returnAgentId: String): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
 
       val maybeAgent: Option[ReturnAgent] = request.userAnswers.fullReturn
         .flatMap(_.returnAgent)
@@ -123,7 +124,7 @@ class PurchaserAgentOverviewController @Inject()(
     }
 
   def removePurchaserAgent(returnAgentId: String): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
 
       val maybeAgent: Option[ReturnAgent] = request.userAnswers.fullReturn
         .flatMap(_.returnAgent)

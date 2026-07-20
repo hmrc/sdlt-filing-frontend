@@ -42,6 +42,7 @@ class LandSelectMeasurementUnitController @Inject()(
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
+                                       statusCheck: CheckSubmissionStatusAction,
                                        formProvider: LandSelectMeasurementUnitFormProvider,
                                        landService: LandService,
                                        val controllerComponents: MessagesControllerComponents,
@@ -50,7 +51,7 @@ class LandSelectMeasurementUnitController @Inject()(
 
   val form: Form[LandSelectMeasurementUnit] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(LandSelectMeasurementUnitPage) match {
@@ -61,7 +62,7 @@ class LandSelectMeasurementUnitController @Inject()(
       landService.propertyTypeCheck(request.userAnswers, Ok(view(preparedForm, mode)))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
         form.bindFromRequest().fold(

@@ -17,10 +17,11 @@
 package controllers.submission
 
 import base.SpecBase
+import constants.FullReturnConstants.completeFullReturn
 import controllers.routes
 import forms.submission.WhoAreYouSubmittingForFormProvider
 import models.submission.WhoAreYouSubmittingFor
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, Submission, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -44,11 +45,14 @@ class WhoAreYouSubmittingForControllerSpec extends SpecBase with MockitoSugar {
   val formProvider = new WhoAreYouSubmittingForFormProvider()
   val form         = formProvider()
 
+  val testFullReturn = completeFullReturn.copy(submission = Some(Submission(None)))
+  val testUserAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn))
+
   "WhoAreYouSubmittingFor Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, whoAreYouSubmittingForRoute)
@@ -64,7 +68,7 @@ class WhoAreYouSubmittingForControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN").set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.values.head).success.value
+      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(testFullReturn)).set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.values.head).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 

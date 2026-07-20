@@ -16,7 +16,7 @@
 
 package controllers.taxCalculation.freeholdTaxCalculated
 
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{CheckSubmissionStatusAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.taxCalculation.TaxCalculationErrorRecovery
 import forms.taxCalculation.SdltSelfAssessmentFormProvider
 import models.Mode
@@ -42,6 +42,7 @@ class FreeholdTaxCalculatedSdltSelfAssessmentController @Inject()(
                                                                    identify: IdentifierAction,
                                                                    getData: DataRetrievalAction,
                                                                    requireData: DataRequiredAction,
+                                                                   statusCheck: CheckSubmissionStatusAction,
                                                                    sdltCalculationService: SdltCalculationService,
                                                                    sessionRepository: SessionRepository,
                                                                    navigator: Navigator,
@@ -58,7 +59,7 @@ class FreeholdTaxCalculatedSdltSelfAssessmentController @Inject()(
   private def postAction(mode: Mode): Call =
     routes.FreeholdTaxCalculatedSdltSelfAssessmentController.onSubmit(mode)
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(FreeholdTaxCalculated) {
         sdltCalculationService.calculateStampDutyLandTax(request.userAnswers).map {
@@ -80,7 +81,7 @@ class FreeholdTaxCalculatedSdltSelfAssessmentController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(FreeholdTaxCalculated) {
         form.bindFromRequest().fold(

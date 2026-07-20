@@ -59,7 +59,7 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
 
     "must return OK and the correct view for a GET" in {
 
-      val fullReturn = completeFullReturn.copy(returnAgent = None, vendor = None)
+      val fullReturn = completeFullReturn.copy(returnAgent = None, vendor = None, submission = None)
 
       val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
         .set(AgentNamePage, "Mary Brown").success.value
@@ -86,7 +86,7 @@ class AddVendorAgentContactDetailsControllerSpec extends SpecBase with MockitoSu
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val fullReturn = completeFullReturn.copy(returnAgent = None, vendor = None)
+      val fullReturn = completeFullReturn.copy(returnAgent = None, vendor = None, submission = None)
 
       val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
         .set(AgentNamePage, "Mary Brown").success.value

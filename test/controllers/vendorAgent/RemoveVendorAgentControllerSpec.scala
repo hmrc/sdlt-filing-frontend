@@ -80,7 +80,7 @@ class RemoveVendorAgentControllerSpec extends SpecBase with MockitoSugar {
           .success
           .value
           .set(AgentNamePage, "Sheldon").success.value
-          .copy(storn = testStorn, fullReturn = Some(completeFullReturn))
+          .copy(storn = testStorn, fullReturn = Some(completeFullReturn.copy(submission = None)))
 
         val agentsName = userAnswers.get(AgentNamePage).get
 
@@ -133,7 +133,7 @@ class RemoveVendorAgentControllerSpec extends SpecBase with MockitoSugar {
           .success
           .value
           .set(RemoveVendorAgentPage, true).success.value
-          .copy(storn = testStorn, fullReturn = Some(completeFullReturn))
+          .copy(storn = testStorn, fullReturn = Some(completeFullReturn.copy(submission = None)))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -211,7 +211,8 @@ class RemoveVendorAgentControllerSpec extends SpecBase with MockitoSugar {
         )
 
         val fullReturnWithSingleVendor = completeFullReturn.copy(
-          returnAgent = Some(Seq(singleVendorAgent))
+          returnAgent = Some(Seq(singleVendorAgent)),
+          submission = None
         )
 
         val agentId = singleVendorAgent.returnAgentID.value
@@ -291,7 +292,8 @@ class RemoveVendorAgentControllerSpec extends SpecBase with MockitoSugar {
         )
 
         val fullReturnWithSingleVendor = completeFullReturn.copy(
-          returnAgent = Some(Seq(singleVendorAgent))
+          returnAgent = Some(Seq(singleVendorAgent)),
+          submission = None
         )
 
         val agentId = singleVendorAgent.returnAgentID.value
@@ -323,7 +325,8 @@ class RemoveVendorAgentControllerSpec extends SpecBase with MockitoSugar {
         )
 
         val fullReturnWithSingleVendor = completeFullReturn.copy(
-          returnAgent = Some(Seq(singleVendorAgent))
+          returnAgent = Some(Seq(singleVendorAgent)),
+          submission = None
         )
 
         val agentId = singleVendorAgent.returnAgentID.value
@@ -361,7 +364,8 @@ class RemoveVendorAgentControllerSpec extends SpecBase with MockitoSugar {
         )
 
         val fullReturnWithSingleVendor = completeFullReturn.copy(
-          returnAgent = Some(Seq(singleVendorAgent))
+          returnAgent = Some(Seq(singleVendorAgent)),
+          submission = None
         )
 
         val agentId = singleVendorAgent.returnAgentID.value

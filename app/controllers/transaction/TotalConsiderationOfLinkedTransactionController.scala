@@ -40,12 +40,13 @@ class TotalConsiderationOfLinkedTransactionController @Inject()(
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
+                                        statusCheck: CheckSubmissionStatusAction,
                                         formProvider: TotalConsiderationOfLinkedTransactionFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: TotalConsiderationOfLinkedTransactionView
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       val form = buildForm(request.userAnswers)
@@ -58,7 +59,7 @@ class TotalConsiderationOfLinkedTransactionController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       val form = buildForm(request.userAnswers)

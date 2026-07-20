@@ -17,7 +17,7 @@
 package controllers.taxCalculation
 
 import connectors.StampDutyLandTaxConnector
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{CheckSubmissionStatusAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.ReturnVersionUpdateRequest
 import models.UserAnswers
 import models.requests.DataRequest
@@ -52,6 +52,7 @@ class TaxCalculationCheckYourAnswersController @Inject()(
                                                          identify: IdentifierAction,
                                                          getData: DataRetrievalAction,
                                                          requireData: DataRequiredAction,
+                                                         statusCheck: CheckSubmissionStatusAction,
                                                          sdltCalculationService: SdltCalculationService,
                                                          checkAnswersService: CheckAnswersService,
                                                          backendConnector: StampDutyLandTaxConnector,
@@ -64,7 +65,7 @@ class TaxCalculationCheckYourAnswersController @Inject()(
                                                        )(implicit ec: ExecutionContext)
   extends FrontendBaseController with I18nSupport with Logging with TaxCalculationErrorRecovery {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sessionRepository.get(request.userAnswers.id).flatMap {
         case None =>
@@ -132,7 +133,7 @@ class TaxCalculationCheckYourAnswersController @Inject()(
     }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sessionRepository.get(request.userAnswers.id).flatMap {
         case None =>

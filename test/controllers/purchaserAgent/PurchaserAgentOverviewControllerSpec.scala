@@ -38,12 +38,12 @@ class PurchaserAgentOverviewControllerSpec extends SpecBase with MockitoSugar {
 
   private val userAnswersWithAgent = emptyUserAnswers.copy(
     returnId = Some(completeFullReturn.returnResourceRef),
-    fullReturn = Some(completeFullReturn)
+    fullReturn = Some(completeFullReturn.copy(submission = None))
   )
 
   private val userAnswersWithoutAgent = emptyUserAnswers.copy(
     returnId = Some(completeFullReturn.returnResourceRef),
-    fullReturn = Some(completeFullReturn.copy(returnAgent = None))
+    fullReturn = Some(completeFullReturn.copy(returnAgent = None, submission = None))
   )
 
   lazy val onPageLoadRoute = routes.PurchaserAgentOverviewController.onPageLoad().url

@@ -17,7 +17,8 @@
 package controllers.submission
 
 import base.SpecBase
-import models.UserAnswers
+import constants.FullReturnConstants.completeFullReturn
+import models.{Submission, UserAnswers}
 import models.submission.WhoAreYouSubmittingFor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{never, verify}
@@ -33,11 +34,14 @@ class DeclarationControllerSpec extends SpecBase with MockitoSugar {
   lazy val declarationRoute: String = controllers.submission.routes.DeclarationController.onPageLoad().url
   lazy val submitRoute: String      = controllers.submission.routes.DeclarationController.onSubmit().url
 
+  val testFullReturn = completeFullReturn.copy(submission = Some(Submission(None)))
+  val testUserAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn))
+
   "Declaration Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.PurchaserAuthorised).success.value)).build()
+      val application = applicationBuilder(userAnswers = Some(testUserAnswers.set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.PurchaserAuthorised).success.value)).build()
 
       running(application) {
 
@@ -69,7 +73,7 @@ class DeclarationControllerSpec extends SpecBase with MockitoSugar {
 
     "render 'purchaserAuthorised' content in GET method" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.PurchaserAuthorised).success.value)).build()
+      val application = applicationBuilder(userAnswers = Some(testUserAnswers.set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.PurchaserAuthorised).success.value)).build()
 
       running(application) {
         val request = FakeRequest(GET, declarationRoute)
@@ -84,7 +88,7 @@ class DeclarationControllerSpec extends SpecBase with MockitoSugar {
 
     "render 'purchaserApproved' content in GET method" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.PurchaserApproved).success.value)).build()
+      val application = applicationBuilder(userAnswers = Some(testUserAnswers.set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.PurchaserApproved).success.value)).build()
 
       running(application) {
         val request = FakeRequest(GET, declarationRoute)
@@ -98,7 +102,7 @@ class DeclarationControllerSpec extends SpecBase with MockitoSugar {
 
     "render 'myself' content in GET method" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.Myself).success.value)).build()
+      val application = applicationBuilder(userAnswers = Some(testUserAnswers.set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.Myself).success.value)).build()
 
       running(application) {
         val request = FakeRequest(GET, declarationRoute)

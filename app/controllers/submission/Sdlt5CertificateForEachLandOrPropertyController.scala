@@ -38,6 +38,7 @@ class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
                                                                    activatedIdentify: ActivatedIdentifierAction,
                                                                    getData: DataRetrievalAction,
                                                                    requireData: DataRequiredAction,
+                                                                   resubmissionCheck: ResubmissionCheckAction,
                                                                    formProvider: Sdlt5CertificateForEachLandOrPropertyFormProvider,
                                                                    val controllerComponents: MessagesControllerComponents,
                                                                    view: Sdlt5CertificateForEachLandOrPropertyView
@@ -45,7 +46,7 @@ class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck ) {
     implicit request =>
 
       val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)

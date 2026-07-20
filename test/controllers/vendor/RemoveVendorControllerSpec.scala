@@ -48,7 +48,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
       val vendorResourceRef = "VEN-REF-001"
 
       val fullReturn = completeFullReturn.copy(
-        vendor = Some(Seq(Vendor(vendorResourceRef = Some("VEN-REF-001"), forename1 = Some("John"), forename2 = Some("Michael"), name = Some("Smith"))))
+        submission = None, vendor = Some(Seq(Vendor(vendorResourceRef = Some("VEN-REF-001"), forename1 = Some("John"), forename2 = Some("Michael"), name = Some("Smith"))))
       )
       val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
         .set(VendorOverviewRemovePage, vendorResourceRef).success.value
@@ -77,7 +77,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
     "must return OK and the correct view for a GET when vendor is not found" in {
 
       val fullReturn = completeFullReturn.copy(
-        vendor = Some(Seq(Vendor(vendorResourceRef = Some("VEN-REF-000"))))
+        submission = None, vendor = Some(Seq(Vendor(vendorResourceRef = Some("VEN-REF-000"))))
       )
       val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
         .set(VendorOverviewRemovePage, "VEN-REF-001").success.value
@@ -122,6 +122,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
 
       val vendorResourceRef = "VEN-REF-001"
       val fullReturn = completeFullReturn.copy(
+        submission = None,
         returnInfo = Some(ReturnInfo(version = Some("1.00"))),
         vendor = Some(Seq(Vendor(vendorResourceRef = Some("VEN-REF-001"), forename1 = Some("John"), name = Some("Smith"))))
       )
@@ -158,6 +159,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
 
         val vendorResourceRef = "VEN-REF-001"
         val fullReturn = completeFullReturn.copy(
+          submission = None,
           returnInfo = Some(ReturnInfo(version = None)),
           vendor = Some(Seq(Vendor(vendorResourceRef = Some("VEN-REF-001"))))
         )
@@ -185,6 +187,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
 
         val fullReturn = completeFullReturn.copy(
+          submission = None,
           returnInfo = Some(ReturnInfo(version = Some("1.00"))),
           vendor = Some(Seq(Vendor(vendorResourceRef = Some("VEN-REF-000"))))
         )
@@ -219,6 +222,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
 
         val vendorResourceRef = "VEN-REF-001"
         val fullReturn = completeFullReturn.copy(
+          submission = None,
           returnInfo = Some(ReturnInfo(version = Some("1.00"))),
           vendor = Some(Seq(Vendor(vendorResourceRef = Some("VEN-REF-001"))))
         )
@@ -253,6 +257,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
 
         val vendorResourceRef = "VEN-REF-001"
         val fullReturn = completeFullReturn.copy(
+          submission = None,
           returnInfo = Some(ReturnInfo(version = Some("1.00"))),
           vendor = Some(Seq(Vendor(vendorResourceRef = Some("VEN-REF-001"))))
         )
@@ -286,7 +291,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
 
     "must redirect to vendor overview when No is selected" in {
 
-      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn))
+      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn.copy(submission = None)))
         .set(VendorOverviewRemovePage, "VEN-REF-001").success.value
 
       val application =
@@ -307,7 +312,7 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
 
     "must redirect to vendor overview for a POST when removeVendorId is not set" in {
 
-      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn))
+      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn.copy(submission = None)))
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))

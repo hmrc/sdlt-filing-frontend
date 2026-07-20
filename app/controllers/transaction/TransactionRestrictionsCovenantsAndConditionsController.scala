@@ -39,6 +39,7 @@ class TransactionRestrictionsCovenantsAndConditionsController @Inject()(
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
+                                         statusCheck: CheckSubmissionStatusAction,
                                          formProvider: TransactionRestrictionsCovenantsAndConditionsFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: TransactionRestrictionsCovenantsAndConditionsView
@@ -46,7 +47,7 @@ class TransactionRestrictionsCovenantsAndConditionsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(TransactionRestrictionsCovenantsAndConditionsPage) match {
@@ -57,7 +58,7 @@ class TransactionRestrictionsCovenantsAndConditionsController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       form.bindFromRequest().fold(

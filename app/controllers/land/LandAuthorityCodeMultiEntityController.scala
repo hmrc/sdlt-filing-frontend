@@ -35,6 +35,7 @@ class LandAuthorityCodeMultiEntityController @Inject()(
                                                         identify: IdentifierAction,
                                                         getData: DataRetrievalAction,
                                                         requireData: DataRequiredAction,
+                                                        statusCheck: CheckSubmissionStatusAction,
                                                         sessionRepository: SessionRepository,
                                                         crossFlow: CrossFlowValidationService,
                                                         landService: LandService,
@@ -44,7 +45,7 @@ class LandAuthorityCodeMultiEntityController @Inject()(
 
   private val headingKey = "crossflow.land.Cf-7.heading"
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       val offending = crossFlow.landFailuresExcluding(Set("Cf-6"), request.userAnswers)
@@ -71,7 +72,7 @@ class LandAuthorityCodeMultiEntityController @Inject()(
   }
 
   def removeLand(landId: String): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
       for {
         updatedAnswers <- Future.fromTry(request.userAnswers.set(LandOverviewRemovePage, landId))
         _              <- sessionRepository.set(updatedAnswers)

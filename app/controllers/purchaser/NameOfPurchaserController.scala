@@ -38,6 +38,7 @@ class NameOfPurchaserController @Inject()(
                                       identify: IdentifierAction,
                                       getData: DataRetrievalAction,
                                       requireData: DataRequiredAction,
+                                      statusCheck: CheckSubmissionStatusAction,
                                       formProvider: NameOfPurchaserFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
                                       view: NameOfPurchaserView
@@ -45,7 +46,7 @@ class NameOfPurchaserController @Inject()(
 
   
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
 
       val purchaserOrCompany: String = request.userAnswers.get(WhoIsMakingThePurchasePage) match {
@@ -66,7 +67,7 @@ class NameOfPurchaserController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       val purchaserOrCompany: String = request.userAnswers.get(WhoIsMakingThePurchasePage) match {

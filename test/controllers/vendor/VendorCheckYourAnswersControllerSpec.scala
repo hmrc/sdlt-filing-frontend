@@ -269,7 +269,7 @@ class VendorCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlue
 
       "must update vendor and redirect to VendorOverview when all required data is present and valid for an existing vendor" in {
 
-        val fullReturn = completeFullReturn
+        val fullReturn = completeFullReturn.copy(submission = None)
 
         val userAnswers = UserAnswers(
           id = "12345",

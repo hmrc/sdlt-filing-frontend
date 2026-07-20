@@ -45,7 +45,7 @@ class FreeholdTaxCalculatedSdltSelfAssessmentControllerSpec extends SpecBase wit
 
   private val freeholdAnswers: UserAnswers =
     emptyUserAnswers
-      .copy(fullReturn = Some(completeFullReturn))
+      .copy(fullReturn = Some(completeFullReturn.copy(submission = None)))
       .set(TaxCalculationFlowPage, TaxCalculationFlow.FreeholdTaxCalculated).success.value
 
   private val wrongFlowAnswers: UserAnswers =

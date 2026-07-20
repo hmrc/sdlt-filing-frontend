@@ -18,7 +18,7 @@ package controllers.preliminary
 
 import com.google.inject.{Inject, Singleton}
 import connectors.StampDutyLandTaxConnector
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{CheckSubmissionStatusAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.UserAnswers
 import models.prelimQuestions.{PrelimReturn, PrelimSessionQuestions}
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -39,6 +39,7 @@ class CheckYourAnswersController @Inject()(
                                             identify: IdentifierAction,
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
+                                            statusCheck: CheckSubmissionStatusAction,
                                             sessionRepository: SessionRepository,
                                             backendConnector: StampDutyLandTaxConnector,
                                             val controllerComponents: MessagesControllerComponents,
@@ -46,7 +47,7 @@ class CheckYourAnswersController @Inject()(
                                             checkAnswersService: CheckAnswersService
                                           )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       for {
@@ -77,7 +78,7 @@ class CheckYourAnswersController @Inject()(
       }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
       sessionRepository.get(request.userAnswers.id).flatMap {

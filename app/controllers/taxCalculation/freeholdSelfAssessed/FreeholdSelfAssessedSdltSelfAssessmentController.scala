@@ -16,7 +16,7 @@
 
 package controllers.taxCalculation.freeholdSelfAssessed
 
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{CheckSubmissionStatusAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.taxCalculation.SdltSelfAssessmentFormProvider
 import models.Mode
 import models.taxCalculation.TaxCalculationFlow.FreeholdSelfAssessed
@@ -40,6 +40,7 @@ class FreeholdSelfAssessedSdltSelfAssessmentController @Inject()(
                                                                  identify: IdentifierAction,
                                                                  getData: DataRetrievalAction,
                                                                  requireData: DataRequiredAction,
+                                                                 statusCheck: CheckSubmissionStatusAction,
                                                                  sdltCalculationService: SdltCalculationService,
                                                                  sessionRepository: SessionRepository,
                                                                  navigator: Navigator,
@@ -56,7 +57,7 @@ class FreeholdSelfAssessedSdltSelfAssessmentController @Inject()(
   private def postAction(mode: Mode): Call =
     routes.FreeholdSelfAssessedSdltSelfAssessmentController.onSubmit(mode)
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
       sdltCalculationService.whenInFlow(FreeholdSelfAssessed) {
         val prepared = request.userAnswers.get(FreeholdSelfAssessedAmountPage).fold(form)(form.fill)
@@ -64,7 +65,7 @@ class FreeholdSelfAssessedSdltSelfAssessmentController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(FreeholdSelfAssessed) {
         form.bindFromRequest().fold(

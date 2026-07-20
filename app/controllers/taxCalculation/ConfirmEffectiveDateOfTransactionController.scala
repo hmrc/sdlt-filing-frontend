@@ -41,6 +41,7 @@ class ConfirmEffectiveDateOfTransactionController @Inject()(override val message
                                                             identify: IdentifierAction,
                                                             getData: DataRetrievalAction,
                                                             requireData: DataRequiredAction,
+                                                            statusCheck: CheckSubmissionStatusAction,
                                                             navigator: Navigator,
                                                             sessionRepository: SessionRepository,
                                                             populateTransactionService: PopulateTransactionService,
@@ -52,7 +53,7 @@ class ConfirmEffectiveDateOfTransactionController @Inject()(override val message
 
   private val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
       EffectiveDateHelper.getEffectiveDate(request.userAnswers) match {
         case Right(effectiveDate) =>
@@ -65,7 +66,7 @@ class ConfirmEffectiveDateOfTransactionController @Inject()(override val message
 
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       EffectiveDateHelper.getEffectiveDate(request.userAnswers) match {
         case Right(effectiveDate) =>

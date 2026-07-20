@@ -30,11 +30,12 @@ class PurchaserBeforeYouStartController @Inject()(
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
+                                       statusCheck: CheckSubmissionStatusAction,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: PurchaserBeforeYouStartView
                                      ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
       Ok(view())
   }

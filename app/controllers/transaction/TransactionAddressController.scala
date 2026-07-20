@@ -16,7 +16,7 @@
 
 package controllers.transaction
 
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{CheckSubmissionStatusAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.routes
 import models.Mode
 import models.address.AddressLookupJourneyIdentifier.transactionQuestionsAddress
@@ -37,13 +37,14 @@ class TransactionAddressController @Inject()(
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
+                                       statusCheck: CheckSubmissionStatusAction,
                                        val controllerComponents: MessagesControllerComponents,
                                        sessionRepository: SessionRepository,
                                        addressLookupService: AddressLookupService
                                      ) (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def redirectToAddressLookupTransaction(mode: Mode, changeRoute: Option[String] = None): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
       val journeyId = transactionQuestionsAddress
       val addressConfig = MandatoryFieldsConfigModel(
         addressLine1 = Some(true),
@@ -72,7 +73,7 @@ class TransactionAddressController @Inject()(
     }
 
 
-  def addressLookupCallbackTransaction(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def addressLookupCallbackTransaction(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       for {
         address <- addressLookupService.getAddressById(id)
@@ -84,7 +85,7 @@ class TransactionAddressController @Inject()(
       }
   }
 
-  def addressLookupCallbackChangeTransaction(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def addressLookupCallbackChangeTransaction(id: String, mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       for {
         address <- addressLookupService.getAddressById(id)
