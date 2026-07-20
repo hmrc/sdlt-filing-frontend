@@ -17,14 +17,16 @@
 package controllers.transaction
 
 import base.SpecBase
+import constants.FullReturnConstants.{completeFullReturn, completeLandAdditional, completeLandNonResidential}
 import controllers.routes
 import forms.transaction.ConsiderationsAffectedUncertainFormProvider
-import models.NormalMode
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.transaction.ConsiderationsAffectedUncertainPage
+import pages.transaction.{ConsiderationsAffectedUncertainPage, TransactionDeferringPaymentPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -74,7 +76,7 @@ class ConsiderationsAffectedUncertainControllerSpec extends SpecBase with Mockit
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to the next page when yes is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -95,6 +97,85 @@ class ConsiderationsAffectedUncertainControllerSpec extends SpecBase with Mockit
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+
+    "must redirect to use of property page when no is submitted and property type is non residential" in {
+
+      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(completeFullReturn.copy(land = Some(Seq(completeLandNonResidential)), submission = None)))
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, considerationsAffectedUncertainRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.transaction.routes.TransactionUseOfLandOrPropertyController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to sale of business page when no is submitted and property type is additional" in {
+
+      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(completeFullReturn.copy(land = Some(Seq(completeLandAdditional)), submission = None)))
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, considerationsAffectedUncertainRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must clear deferring payment answer when no is submitted" in {
+
+      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(completeFullReturn.copy(land = Some(Seq(completeLandAdditional)), submission = None)))
+        .set(TransactionDeferringPaymentPage, true).success.value
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, considerationsAffectedUncertainRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.transaction.routes.SaleOfBusinessController.onPageLoad(NormalMode).url
+        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(uaCaptor.capture())
+        uaCaptor.getValue.get(TransactionDeferringPaymentPage).isDefined mustBe false
       }
     }
 

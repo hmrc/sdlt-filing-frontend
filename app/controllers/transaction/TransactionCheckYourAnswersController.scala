@@ -187,7 +187,7 @@ class TransactionCheckYourAnswersController @Inject()(
       TransactionPartialReliefSummary.row(ua),
       ClaimingPartialReliefAmountSummary.row(ua),
       Some(ConsiderationsAffectedUncertainSummary.row(ua)),
-      Some(TransactionDeferringPaymentSummary.row(ua)),
+      if (considerationsAffectedUncertainCheck(ua)) Some(TransactionDeferringPaymentSummary.row(ua)) else None,
       if (propertyTypeCheck(ua)) Some(TransactionUseOfLandOrPropertySummary.row(ua)) else None,
       Some(SaleOfBusinessSummary.row(ua)),
       if (saleOfBusinessCheck(ua)) Some(TransactionSaleOfBusinessAssetsSummary.row(ua)) else None,
@@ -231,5 +231,8 @@ class TransactionCheckYourAnswersController @Inject()(
 
   private def landExchangedCheck(ua: UserAnswers): Boolean =
     ua.get(IsLandOrPropertyExchangedPage).contains(true)
+    
+  private def considerationsAffectedUncertainCheck(ua: UserAnswers): Boolean =
+    ua.get(ConsiderationsAffectedUncertainPage).contains(true)
 
 }
