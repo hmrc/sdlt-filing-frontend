@@ -61,8 +61,8 @@ object LandTaskList {
     val onlyCf6 = status.ruleIds.nonEmpty && status.ruleIds.forall(_ == "Cf-6")
 
     val url =
-      if (status.hasFailures && onlyCf6) cf6Url
-      else if (status.hasFailures) errorUrl
+      if status.hasFailures && onlyCf6 && isLandComplete(fullReturn) then cf6Url
+      else if status.hasFailures && isLandComplete(fullReturn) then errorUrl
       else defaultUrl
 
     TaskListRowBuilder(
