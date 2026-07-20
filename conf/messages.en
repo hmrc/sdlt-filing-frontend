@@ -571,6 +571,7 @@ purchaser.dateOfBirth.error.required.year                                       
 purchaser.dateOfBirth.error.invalid                                                 = {0}’s date of birth must only include numbers 0 to 9
 purchaser.dateOfBirth.change.hidden                                                 = Date of birth
 purchaser.dateOfBirth.error.date.range.max                                          = {0}’s date of birth must be in the past
+purchaser.dateOfBirth.error.date.range.min                                          = {0}’s date of birth must be the same as or after 1 January 1900
 
 purchaser.doesPurchaserHaveNI.title                                                 = Does the purchaser have a National Insurance number? - About the purchaser
 purchaser.doesPurchaserHaveNI.heading                                               = Does {0} have a National Insurance number?
@@ -1836,6 +1837,7 @@ lease.leaseStartDate.error.required                                             
 lease.leaseStartDate.error.invalid                                                  = The start date as specified in the lease must be a real date
 lease.leaseStartDate.change.hidden                                                  = Lease start date
 lease.leaseStartDate.error.date.range.min                                           = The start date as specified in the lease must be the same as or after 1 January 1500
+lease.leaseStartDate.error.date.range.max                                           = The start date as specified in the lease must be the same as or before 31 December 9999
 lease.leaseStartDate.error.leaseBeforeRentEndDate                                   = The start date as specified in the lease must be before the end date for starting rent
 lease.leaseStartDate.error.leaseStartBeforeLeaseEndDate                             = The start date as specified in the lease must be before the end date as specified in the lease
 
@@ -1863,6 +1865,7 @@ lease.leaseStartingRentEndDate.error.required.two                               
 lease.leaseStartingRentEndDate.error.required                                       = The end date for starting rent must include a {0}
 lease.leaseStartingRentEndDate.error.invalid                                        = The end date for starting rent must be a real date
 lease.leaseStartingRentEndDate.error.date.range.min                                 = The end date for starting rent must be the same as or after 1 January 1900
+lease.leaseStartingRentEndDate.error.date.range.max                                 = The end date for starting rent must be the same as or before 31 December 9999
 lease.leaseStartingRentEndDate.error.afterLeaseStartDate                            = The end date for starting rent must be after the start date as specified in the lease
 lease.leaseStartingRentEndDate.error.beforeLeaseEndDate                             = The end date for starting rent must be before the end date as specified in the lease
 lease.leaseStartingRentEndDate.change.hidden                                        = End of annual starting rent
@@ -1941,6 +1944,7 @@ lease.leaseEndDate.error.required                                               
 lease.leaseEndDate.error.invalid                                                    = The end date as specified in the lease must be a real date
 lease.leaseEndDate.change.hidden                                                    = Lease end date
 lease.leaseEndDate.error.date.range.min                                             = The end date as specified in the lease must be the same as or after 1 December 2003
+lease.leaseEndDate.error.date.range.max                                             = The end date as specified in the lease must be the same as or before 31 December 9999
 lease.leaseEndDate.error.LeaseEndDateBeforeRentEndDate                              = The end date as specified in the lease must be after the end date for starting rent
 lease.leaseEndDate.error.LeaseEndDateBeforeLeaseStartDate                           = The end date as specified in the lease must be after the start date as specified in the lease
 

@@ -82,6 +82,32 @@ class LeaseEndDateFormProviderSpec extends DateBehaviours {
       result.errors.map(_.message) must contain("lease.leaseEndDate.error.date.range.min")
     }
 
+    "bind the maximum allowed date" in {
+
+      val result = form.bind(
+        Map(
+          "value.day" -> "31",
+          "value.month" -> "12",
+          "value.year" -> "9999"
+        )
+      )
+
+      result.errors mustBe empty
+    }
+
+    "error when date is after the maximum allowed date" in {
+
+      val result = form.bind(
+        Map(
+          "value.day" -> "1",
+          "value.month" -> "1",
+          "value.year" -> "10000"
+        )
+      )
+
+      result.errors.map(_.message) must contain("lease.leaseEndDate.error.date.range.max")
+    }
+
     "error when all date fields are missing" in {
 
       val result = form.bind(Map.empty[String, String])

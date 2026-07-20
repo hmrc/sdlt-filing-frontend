@@ -28,6 +28,7 @@ import javax.inject.Inject
 class PurchaserDateOfBirthFormProvider @Inject()(timeMachine: TimeMachine) extends Mappings {
 
   private def maxDateAllowed: LocalDate = timeMachine.today
+  private val minDateAllowed: LocalDate = LocalDate.of(1900, 1, 1)
   private def dateFormatter = DateTimeFormatter.ofPattern("dd MM yyyy")
 
   def apply(purchaserName: String)(implicit messages: Messages): Form[LocalDate] =
@@ -41,6 +42,8 @@ class PurchaserDateOfBirthFormProvider @Inject()(timeMachine: TimeMachine) exten
         monthRequiredKey = Some(messages("purchaser.dateOfBirth.error.required.month", purchaserName)),
         yearRequiredKey = Some(messages("purchaser.dateOfBirth.error.required.year", purchaserName)),
         args = Seq(purchaserName)
+      ).verifying(
+        minDate(minDateAllowed, messages("purchaser.dateOfBirth.error.date.range.min", purchaserName), minDateAllowed.format(dateFormatter))
       ).verifying(
         maxDate(maxDateAllowed, messages("purchaser.dateOfBirth.error.date.range.max", purchaserName), maxDateAllowed.format(dateFormatter))
       )

@@ -28,6 +28,7 @@ class LeaseStartingRentEndDateFormProvider @Inject() () extends Mappings {
 
   private val formatter     = DateTimeFormatter.ofPattern("d MM yyyy")
   private val minDateAllowed: LocalDate = LocalDate.parse("1 01 1900", formatter)
+  private val maxDateAllowed: LocalDate = LocalDate.parse("31 12 9999", formatter)
 
   def apply()(implicit messages: Messages): Form[LocalDate] =
     Form(
@@ -37,5 +38,6 @@ class LeaseStartingRentEndDateFormProvider @Inject() () extends Mappings {
         twoRequiredKey = "lease.leaseStartingRentEndDate.error.required.two",
         requiredKey    = "lease.leaseStartingRentEndDate.error.required"
       ).verifying(minDate(minDateAllowed, "lease.leaseStartingRentEndDate.error.date.range.min", minDateAllowed))
+       .verifying(maxDate(maxDateAllowed, "lease.leaseStartingRentEndDate.error.date.range.max", maxDateAllowed))
     )
 }
