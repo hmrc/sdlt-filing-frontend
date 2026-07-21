@@ -56,7 +56,7 @@ object VendorAgentTaskList {
 
   def vendorAgentRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
-    val url = if(isVendorAgentComplete(fullReturn)) {
+    val url = if (isVendorAgentComplete(fullReturn)) {
         controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad().url
     } else {
       controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url

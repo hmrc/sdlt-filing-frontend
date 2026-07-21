@@ -100,7 +100,7 @@ class TaskListRowViewSpec extends SpecBase {
 
           val tag = doc.select("strong.govuk-tag").first()
           tag.text() mustBe messagesInstance("tasklist.notStarted")
-          tag.hasClass("govuk-tag--grey") mustBe true
+          tag.hasClass("govuk-tag--blue") mustBe true
         }
       }
 
@@ -138,7 +138,7 @@ class TaskListRowViewSpec extends SpecBase {
 
           val tag = doc.select("strong.govuk-tag").first()
           tag.text() mustBe messagesInstance("tasklist.inProgress")
-          tag.hasClass("govuk-tag--blue") mustBe true
+          tag.hasClass("govuk-tag--green") mustBe true
         }
       }
 
@@ -173,7 +173,7 @@ class TaskListRowViewSpec extends SpecBase {
           val html = view("Test Task", "/test-url", "testTagId", TLCompleted)
           val doc = Jsoup.parse(html.toString())
 
-          val tag = doc.select("strong.govuk-tag").first()
+          val tag = doc.getElementById("status-testTagId")
           tag.text() mustBe messagesInstance("tasklist.complete")
           tag.hasClass("app-task-list__task-completed") mustBe true
         }

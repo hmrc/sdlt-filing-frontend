@@ -113,10 +113,8 @@ site.error.noReturnReference.error.required                                     
 site.error.noReturnReference.change.hidden                                          = You cannot reach this page
 
 # Task List
-taskList.title                                                                      = returnTaskList
-taskList.heading                                                                    = returnTaskList
-tasklist.prelimQuestion.details                                                     = Prelim Questions
-tasklist.prelimQuestion.heading                                                     = Prelim Questions
+taskList.title                                                                      = Task list
+taskList.heading                                                                    = SDLT return for {0}, {1}
 tasklist.vendorQuestion.details                                                     = Vendor Questions
 tasklist.vendorQuestion.heading                                                     = Vendor Questions
 tasklist.purchaserQuestion.details                                                  = Purchaser Questions

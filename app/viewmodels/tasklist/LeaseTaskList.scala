@@ -76,16 +76,9 @@ object LeaseTaskList {
     LeaseHelper.isLeaseDefined(fullReturn)
   }
 
-  private def isLeaseStarted(fullReturn: FullReturn): Boolean =
-    fullReturn.lease.exists { lease =>
-      lease.leaseType.isDefined ||
-        lease.contractStartDate.isDefined ||
-        lease.contractEndDate.isDefined ||
-        lease.rentFreePeriod.isDefined ||
-        lease.startingRent.isDefined ||
-        lease.startingRentEndDate.isDefined ||
-        lease.laterRentKnown.isDefined
-    }
+  private def isLeaseStarted(fullReturn: FullReturn): Boolean = {
+    fullReturn.lease.nonEmpty
+  }
 
   def leaseRowBuilder(fullReturn: FullReturn, status: SectionStatus)
                      (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {

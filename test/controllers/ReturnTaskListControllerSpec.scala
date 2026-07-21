@@ -27,8 +27,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.FullReturnService
-import services.crossflow.fields.CrossFlowValidationService
 import services.crossflow.*
+import services.crossflow.fields.CrossFlowValidationService
 
 import scala.concurrent.Future
 
@@ -38,6 +38,11 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
   val testStorn = "TESTSTORN"
   val testGetReturnByRefRequest: GetReturnByRefRequest = GetReturnByRefRequest(returnResourceRef = testReturnId, storn = testStorn)
   val testFullReturn = completeFullReturn.copy(submission = None)
+  val incompleteFullReturnWithNameAndAddress = incompleteFullReturn.copy(
+    purchaser = Some(Seq(Purchaser(purchaserID = Some("1234"), surname = Some("Name")))),
+    returnInfo = Some(ReturnInfo(mainPurchaserID = Some("1234"))),
+    land = Some(Seq(Land(address1 = Some("Address 1"))))
+  )
 
   "ReturnTaskList Controller" - {
 
@@ -182,7 +187,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository = mock[SessionRepository]
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(incompleteFullReturn))
+          .thenReturn(Future.successful(incompleteFullReturnWithNameAndAddress))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -472,9 +477,14 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
       "must handle minimal FullReturn" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
+        val minimalFullReturnWithNameAndAddress = minimalFullReturn.copy(
+          purchaser = Some(Seq(Purchaser(purchaserID = Some("1234"), surname = Some("Name")))),
+          returnInfo = Some(ReturnInfo(mainPurchaserID = Some("1234"))),
+          land = Some(Seq(Land(address1 = Some("Address 1"))))
+        )
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(minimalFullReturn))
+          .thenReturn(Future.successful(minimalFullReturnWithNameAndAddress))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -517,7 +527,8 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
           val result = route(application, request).value
 
-          status(result) mustEqual OK
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
           verify(mockFullReturnService, times(1)).getFullReturn(any())(any(), any())
           verify(mockSessionRepository, times(1)).set(any[UserAnswers])
         }
@@ -745,9 +756,8 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
           val result = route(application, request).value
 
-          status(result) mustEqual OK
-          val content = contentAsString(result)
-          content must include("Purchaser Questions")
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
         }
       }
 
@@ -773,9 +783,8 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
           val result = route(application, request).value
 
-          status(result) mustEqual OK
-          val content = contentAsString(result)
-          content must include("Purchaser Questions")
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
         }
       }
 
