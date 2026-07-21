@@ -19,6 +19,7 @@ package viewmodels.tasklist
 import base.SpecBase
 import config.FrontendAppConfig
 import constants.FullReturnConstants.*
+import models.Lease
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import services.crossflow.{CrossFlowTarget, Pages, ReturnSection, SectionStatus}
@@ -29,7 +30,7 @@ class LeaseTaskListSpec extends SpecBase {
   private val fullReturnIncompleteLease = fullReturnComplete.copy(
     lease = Some(completeLease.copy(leaseType = None)))
   private val fullReturnNotGrantOfLease = fullReturnComplete.copy(
-    lease = Some(completeLease.copy(
+    lease = Some(Lease(
       leaseType = Some("A"),
       contractStartDate = Some("02-02-2026"),
       contractEndDate = Some("07-07-2000"),
@@ -39,7 +40,7 @@ class LeaseTaskListSpec extends SpecBase {
       laterRentKnown = Some("NO")
     )))
   private val fullReturnSomeMandatoryFieldsMissing = fullReturnComplete.copy(
-    lease = Some(completeLease.copy(
+    lease = Some(Lease(
       leaseType = None,
       contractStartDate = Some("02-02-2026"),
       contractEndDate = None,
@@ -49,17 +50,10 @@ class LeaseTaskListSpec extends SpecBase {
       laterRentKnown = None
     )))
   private val fullReturnAllMandatoryFieldsMissing = fullReturnComplete.copy(
-    lease = Some(completeLease.copy(
-      leaseType = None,
-      contractStartDate = None,
-      contractEndDate = None,
-      rentFreePeriod = None,
-      startingRent = None,
-      startingRentEndDate = None,
-      laterRentKnown = None
-    )))
+    lease = None
+  )
   private val fullReturnGrantOfLease = fullReturnComplete.copy(
-    lease = Some(completeLease.copy(
+    lease = Some(Lease(
       leaseType = Some("L"),
       contractStartDate = Some("02-02-2026"),
       contractEndDate = Some("07-07-2000"),
@@ -72,7 +66,7 @@ class LeaseTaskListSpec extends SpecBase {
       isAnnualRentOver1000 = Some("YES")
     )))
   private val fullReturnGOTSomeMandatoryFieldsMissing = fullReturnComplete.copy(
-    lease = Some(completeLease.copy(
+    lease = Some(Lease(
       leaseType = Some("L"),
       contractStartDate = None,
       contractEndDate = Some("07-07-2000"),
@@ -85,18 +79,8 @@ class LeaseTaskListSpec extends SpecBase {
       isAnnualRentOver1000 = None
     )))
   private val fullReturnGOLAllMandatoryFieldsMissing = fullReturnComplete.copy(
-    lease = Some(completeLease.copy(
-      leaseType = None,
-      contractStartDate = None,
-      contractEndDate = None,
-      rentFreePeriod = None,
-      startingRent = None,
-      startingRentEndDate = None,
-      laterRentKnown = None,
-      totalPremiumPayable = None,
-      netPresentValue = None,
-      isAnnualRentOver1000 = None
-    )))
+    lease = None
+  )
   private val fullReturnMissingLease = fullReturnComplete.copy(lease = None)
   private val noFailures: SectionStatus =
     SectionStatus(ReturnSection.Lease, hasFailures = false, ruleIds = Nil, messageKeys = Nil, targets = Nil)

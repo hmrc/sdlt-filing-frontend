@@ -66,17 +66,13 @@ object UkResidencyTaskList {
   }
 
   private def isResidencyStarted(fullReturn: FullReturn): Boolean =
-    fullReturn.residency.exists { res =>
-      res.isNonUkResidents.isDefined ||
-      res.isCloseCompany.isDefined ||
-      res.isCrownRelief.isDefined
-    }
+    fullReturn.residency.nonEmpty
   
   def ukResidencyRowBuilder(fullReturn: FullReturn)
                                  (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
 
-    val url = if(isResidencyComplete(fullReturn)) {
+    val url = if (isResidencyComplete(fullReturn)) {
         controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
       } else {
         controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad().url

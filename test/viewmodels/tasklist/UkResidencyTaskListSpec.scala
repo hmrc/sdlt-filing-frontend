@@ -48,11 +48,7 @@ class UkResidencyTaskListSpec extends SpecBase {
     )))
   )
   private val fullReturnAllMandatoryFieldsMissing = fullReturnComplete.copy(
-    residency = Some(completeResidency.copy(
-      isNonUkResidents = None,
-      isCloseCompany = None,
-      isCrownRelief = None
-    )),
+    residency = None,
     purchaser = Some(Seq(completePurchaser1.copy(
       isCompany = Some("YES")
     ))))
