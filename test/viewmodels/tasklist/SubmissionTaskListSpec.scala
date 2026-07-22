@@ -104,7 +104,6 @@ class SubmissionTaskListSpec extends SpecBase {
         }
       }
 
-      //TODO UPDATE to DTR-5731 Success page
       "must have Submission Success page url when submission is complete" in {
         val application = applicationBuilder().build()
 
@@ -114,11 +113,11 @@ class SubmissionTaskListSpec extends SpecBase {
 
           val result = SubmissionTaskList.buildSubmissionRow(fullReturnComplete)
 
-          result.url mustBe controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad().url
+          result.url mustBe controllers.submission.routes.SubmissionCompleteController.onPageLoad().url
         }
       }
 
-      "must show completed status when submission ID is present" in {
+      "must show 'Complete' status when submission ID is present" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -131,7 +130,7 @@ class SubmissionTaskListSpec extends SpecBase {
         }
       }
 
-      "must show 'Cannot start' status and display hint when vendor is absent" in {
+      "must show 'Cannot start yet' status and display hint when vendor is absent" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -145,7 +144,7 @@ class SubmissionTaskListSpec extends SpecBase {
         }
       }
 
-      "must show 'Cannot start' status and display hint when purchaser is absent" in {
+      "must show 'Cannot start yet' status and display hint when purchaser is absent" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -159,7 +158,7 @@ class SubmissionTaskListSpec extends SpecBase {
         }
       }
 
-      "must show 'Cannot start' status and display hint when land is absent" in {
+      "must show 'Cannot start yet' status and display hint when land is absent" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -173,7 +172,7 @@ class SubmissionTaskListSpec extends SpecBase {
         }
       }
 
-      "must show 'Cannot start' status and display hint when transaction is absent" in {
+      "must show 'Cannot start yet' status and display hint when transaction is absent" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -187,7 +186,7 @@ class SubmissionTaskListSpec extends SpecBase {
         }
       }
 
-      "must show 'Cannot start' status and display hint when tax calculation is absent" in {
+      "must show 'Cannot start yet' status and display hint when tax calculation is absent" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -201,7 +200,7 @@ class SubmissionTaskListSpec extends SpecBase {
         }
       }
 
-      "must show 'Cannot start' status and display hint when vendor agent started but is incomplete" in {
+      "must show 'Cannot start yet' status and display hint when vendor agent started but is incomplete" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -216,7 +215,7 @@ class SubmissionTaskListSpec extends SpecBase {
         }
       }
 
-      "must show 'Cannot start' status and display hint when purchaser agent started but is incomplete" in {
+      "must show 'Cannot start yet' status and display hint when purchaser agent started but is incomplete" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -224,14 +223,15 @@ class SubmissionTaskListSpec extends SpecBase {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
           val result = SubmissionTaskList.buildSubmissionRow(completeFullReturn
-            .copy(returnAgent = Some(Seq(completeReturnAgent.copy(name = None)))))
+            .copy(returnAgent = Some(Seq(completeReturnAgent.copy(name = None))),
+              purchaser = Some(Seq(completePurchaser1.copy(isRepresentedByAgent = Some("YES"))))))
 
           result.status mustBe TLCannotStart
           result.hint mustBe Some("tasklist.submissionQuestion.hint")
         }
       }
 
-      "must show 'Cannot start' status and display hint when lease is required but is incomplete" in {
+      "must show 'Cannot start yet' status and display hint when lease is required but is incomplete" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -248,7 +248,7 @@ class SubmissionTaskListSpec extends SpecBase {
         }
       }
 
-      "must show 'Cannot start' status and display hint when residency is required but is incomplete" in {
+      "must show 'Cannot start yet' status and display hint when residency is required but is incomplete" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -257,7 +257,7 @@ class SubmissionTaskListSpec extends SpecBase {
 
           val result = SubmissionTaskList.buildSubmissionRow(fullReturnComplete
             .copy(residency = Some(completeResidency
-              .copy(isCloseCompany = None)), land = Some(Seq(completeLand
+              .copy(isCrownRelief = None)), land = Some(Seq(completeLand
               .copy(propertyType = Some("01"))))))
 
           result.status mustBe TLCannotStart
@@ -265,7 +265,7 @@ class SubmissionTaskListSpec extends SpecBase {
         }
       }
 
-      "must show 'Not started' status and hide hint when no vendor agent exists but purchaser agent is complete" in {
+      "must show 'Not yet started' status and hide hint when no vendor agent exists but purchaser agent is complete" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -279,7 +279,7 @@ class SubmissionTaskListSpec extends SpecBase {
         }
       }
 
-      "must show 'Not started' status and hide hint when vendor agent is complete and purchaser agent not started" in {
+      "must show 'Not yet started' status and hide hint when vendor agent is complete and purchaser agent not started" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -294,7 +294,7 @@ class SubmissionTaskListSpec extends SpecBase {
         }
       }
 
-      "must show 'Not started' status and hide hint when no purchaser agent exists but vendor agent is complete" in {
+      "must show 'Not yet started' status and hide hint when no purchaser agent exists but vendor agent is complete" in {
 
         val application = applicationBuilder().build()
 
@@ -309,7 +309,7 @@ class SubmissionTaskListSpec extends SpecBase {
         }
       }
 
-      "must show 'Not started' status and hide hint when purchaser agent is complete and vendor agent not started" in {
+      "must show 'Not yet started' status and hide hint when purchaser agent is complete and vendor agent not started" in {
 
         val application = applicationBuilder().build()
 
@@ -324,7 +324,7 @@ class SubmissionTaskListSpec extends SpecBase {
         }
       }
 
-      "must show 'Not started' status and hide hint when lease is not required" in {
+      "must show 'Not yet started' status and hide hint when lease is not required" in {
 
         val application = applicationBuilder().build()
 
@@ -339,7 +339,7 @@ class SubmissionTaskListSpec extends SpecBase {
         }
       }
 
-      "must show 'Not started' status and hide hint when lease is required and complete" in {
+      "must show 'Not yet started' status and hide hint when lease is required and complete" in {
 
         val application = applicationBuilder().build()
 
@@ -348,15 +348,18 @@ class SubmissionTaskListSpec extends SpecBase {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
           val result = SubmissionTaskList.buildSubmissionRow(fullReturnComplete
-            .copy(submission = None, transaction = Some(completeTransaction
-                .copy(transactionDescription = Some("L")))))
+            .copy(
+              submission = None,
+              transaction = Some(completeTransaction.copy(transactionDescription = Some("L"))),
+              lease = Some(completeLease.copy(netPresentValue = Some("100000"), totalPremiumPayable = Some("100000"), isAnnualRentOver1000 = Some("YES"))),
+            ))
 
           result.status mustBe TLNotStarted
           result.hint mustBe None
         }
       }
 
-      "must show 'Not started' status and hide hint when residency is not required" in {
+      "must show 'Not yet started' status and hide hint when residency is not required" in {
 
         val application = applicationBuilder().build()
 
@@ -371,9 +374,8 @@ class SubmissionTaskListSpec extends SpecBase {
           result.hint mustBe None
         }
       }
-
-
-      "must show 'Not started' status and hide hint when residency is required and complete" in {
+      
+      "must show 'Not yet started' status and hide hint when residency is required and complete" in {
 
         val application = applicationBuilder().build()
 
@@ -479,7 +481,8 @@ class SubmissionTaskListSpec extends SpecBase {
       "must return true when purchaser agent is complete and vendor agent not started" in {
         val application = applicationBuilder().build()
 
-        val fullReturn = fullReturnComplete
+        val fullReturn = completeFullReturn.copy(
+          vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = Some("NO")))))
         running(application) {
           SubmissionTaskList.canStartSubmission(fullReturn) mustBe true
         }
@@ -488,7 +491,9 @@ class SubmissionTaskListSpec extends SpecBase {
       "must return false when purchaser agent is incomplete and vendor agent not started" in {
         val application = applicationBuilder().build()
 
-        val fullReturn = fullReturnComplete.copy(returnAgent = Some(Seq(completeReturnAgent.copy(name = None))))
+        val fullReturn = fullReturnComplete.copy(
+          returnAgent = Some(Seq(completeReturnAgent.copy(name = None))),
+          purchaser = Some(Seq(completePurchaser1.copy(isRepresentedByAgent = Some("YES")))))
         running(application) {
           SubmissionTaskList.canStartSubmission(fullReturn) mustBe false
         }
@@ -506,7 +511,10 @@ class SubmissionTaskListSpec extends SpecBase {
       "must return true when lease is required and complete" in {
         val application = applicationBuilder().build()
 
-        val fullReturn = fullReturnComplete.copy(transaction = Some(completeTransaction.copy(transactionDescription = Some("L"))))
+        val fullReturn = fullReturnComplete.copy(
+          transaction = Some(completeTransaction.copy(transactionDescription = Some("L"))),
+          lease = Some(completeLease.copy(netPresentValue = Some("100000"), totalPremiumPayable = Some("100000"), isAnnualRentOver1000 = Some("YES"))),
+        )
         running(application) {
           SubmissionTaskList.canStartSubmission(fullReturn) mustBe true
         }
@@ -542,7 +550,7 @@ class SubmissionTaskListSpec extends SpecBase {
       "must return false when residency is required and incomplete" in {
         val application = applicationBuilder().build()
 
-        val fullReturn = fullReturnComplete.copy(residency = Some(completeResidency.copy(isCloseCompany = None)), land = Some(Seq(completeLand.copy(propertyType = Some("01")))))
+        val fullReturn = fullReturnComplete.copy(residency = Some(completeResidency.copy(isCrownRelief = None)), land = Some(Seq(completeLand.copy(propertyType = Some("01")))))
         running(application) {
           SubmissionTaskList.canStartSubmission(fullReturn) mustBe false
         }
@@ -550,7 +558,7 @@ class SubmissionTaskListSpec extends SpecBase {
     }
 
     "integration" - {
-      "must build complete TaskListSection with completed row when submission present" in {
+      "must build complete TaskListSection with 'Complete' row when submission present" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -563,11 +571,11 @@ class SubmissionTaskListSpec extends SpecBase {
           section.heading mustBe messagesInstance("tasklist.submissionQuestion.heading")
           messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.submissionQuestion.details")
           row.status mustBe TLCompleted
-          row.url mustBe controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad().url
+          row.url mustBe controllers.submission.routes.SubmissionCompleteController.onPageLoad().url
         }
       }
 
-      "must build complete TaskListSection with cannot start row when submission absent" in {
+      "must build complete TaskListSection with 'Cannot start yet' row when submission absent" in {
         val application = applicationBuilder().build()
 
         running(application) {

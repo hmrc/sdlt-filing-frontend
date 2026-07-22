@@ -38,7 +38,6 @@ object TaskListSections {
                                        hc: HeaderCarrier,
                                        ec: ExecutionContext,
                                        request: Request[_]) = List(
-    Some(PrelimTaskList.build(fullReturn)),
     Some(VendorTaskList.build(fullReturn)),
     Some(PurchaserTaskList.build(fullReturn)),
     Some(PurchaserAgentTaskList.build(fullReturn)),

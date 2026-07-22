@@ -17,7 +17,7 @@
 package viewmodels.tasklist
 
 import config.FrontendAppConfig
-import models.{AgentType, FullReturn, NormalMode, ReturnAgent}
+import models.{AgentType, FullReturn, NormalMode, Purchaser, ReturnAgent}
 import play.api.i18n.Messages
 
 import javax.inject.Singleton
@@ -42,24 +42,49 @@ object PurchaserAgentTaskList {
   def isPurchaserAgentStarted(fullReturn: FullReturn): Boolean = {
     purchaserAgents(fullReturn).nonEmpty
   }
+
+  private def mainPurchaser(fullReturn: FullReturn): Option[Purchaser] =
+    for {
+      mainPurchaserId <- fullReturn.returnInfo.flatMap(_.mainPurchaserID)
+      purchasers <- fullReturn.purchaser
+      purchaser <- purchasers.find(_.purchaserID.contains(mainPurchaserId))
+    } yield purchaser
+
+  private def purchaserAgentChecks(fullReturn: FullReturn): Seq[Boolean] = {
+    val agents = purchaserAgents(fullReturn)
+
+    Seq(
+      true,
+      agents.exists(_.name.isDefined),
+      agents.exists(_.address1.isDefined),
+      agents.exists(_.isAuthorised.isDefined)
+    )
+  }
+
+  def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] =
+    mainPurchaser(fullReturn).flatMap(_.isRepresentedByAgent) match {
+      case Some("YES") => purchaserAgentChecks(fullReturn)
+      case Some("NO") => Seq(true)
+      case _ => Seq(false)
+    }
+
   def isPurchaserAgentComplete(fullReturn: FullReturn): Boolean = {
-    purchaserAgents(fullReturn).nonEmpty &&
-      purchaserAgents(fullReturn).forall( agent =>
-        agent.name.isDefined
-        //TODO ADD ALL MANDATORY CONDITIONS FOR PURCHASER AGENT
-      )
+    mandatoryFieldsDefined(fullReturn).forall(identity)
   }
 
   def purchaserAgentRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
-    val url = if (isPurchaserAgentComplete(fullReturn)) {
+    val isNotRepresentedByAnAgent = mainPurchaser(fullReturn).flatMap(_.isRepresentedByAgent).exists(_.equalsIgnoreCase("NO"))
+
+    val url = if (isNotRepresentedByAnAgent) {
+      controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode).url
+    } else if (isPurchaserAgentComplete(fullReturn)) {
       controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad().url
     } else {
       controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode).url
     }
 
     TaskListRowBuilder(
-      isOptional = true,
       canEdit = {
         case TLCompleted => true
         case _ => true
@@ -69,8 +94,8 @@ object PurchaserAgentTaskList {
         url
       },
       tagId = "purchaserAgentQuestionDetailRow",
-      checks = scheme => Seq(isPurchaserAgentComplete(fullReturn)),
-      prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
+      checks = scheme => mandatoryFieldsDefined(fullReturn),
+      prerequisites = _ => Seq()
     )
   }
 

@@ -113,10 +113,8 @@ site.error.noReturnReference.error.required                                     
 site.error.noReturnReference.change.hidden                                          = You cannot reach this page
 
 # Task List
-taskList.title                                                                      = returnTaskList
-taskList.heading                                                                    = returnTaskList
-tasklist.prelimQuestion.details                                                     = Prelim Questions
-tasklist.prelimQuestion.heading                                                     = Prelim Questions
+taskList.title                                                                      = Task list
+taskList.heading                                                                    = SDLT return
 tasklist.vendorQuestion.details                                                     = Vendor Questions
 tasklist.vendorQuestion.heading                                                     = Vendor Questions
 tasklist.purchaserQuestion.details                                                  = Purchaser Questions
@@ -136,6 +134,7 @@ tasklist.leaseQuestion.details                                                  
 tasklist.submissionQuestion.heading                                                 = Submit your return
 tasklist.submissionQuestion.details                                                 = Submit your return
 tasklist.submissionQuestion.hint                                                    = You must complete all previous sections before starting
+tasklist.taxCalculationQuestion.hint                                                = You must complete all previous sections before starting
 tasklist.inProgress                                                                 = In Progress
 tasklist.cannotStartYet                                                             = Cannot start yet
 tasklist.failed                                                                     = Failed
@@ -144,7 +143,7 @@ tasklist.transactionQuestion.details                                            
 tasklist.transactionQuestion.heading                                                = Transaction Questions
 tasklist.taxCalculationQuestion.details                                             = Tax Calculation Questions
 tasklist.taxCalculationQuestion.heading                                             = Tax Calculation Questions
-tasklist.invalid                                                                    = Needs review
+tasklist.invalid                                                                    = There is a problem
 
 # Check Your Answers
 site.checkYourAnswers.heading                                                       = Check your answers

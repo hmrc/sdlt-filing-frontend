@@ -34,7 +34,7 @@ POST        /preliminary-questions/who-is-making-the-purchase                   
 GET         /preliminary-questions/who-is-making-the-purchase/change                                 controllers.preliminary.PurchaserIsIndividualController.onPageLoad(mode: Mode = CheckMode)
 POST        /preliminary-questions/who-is-making-the-purchase/change                                 controllers.preliminary.PurchaserIsIndividualController.onSubmit(mode: Mode = CheckMode)
 
-GET         /returnTaskList                                                                          controllers.ReturnTaskListController.onPageLoad(returnId: Option[String] ?= None)
+GET         /task-list                                                                               controllers.ReturnTaskListController.onPageLoad(returnId: Option[String] ?= None)
 GET         /return/pdf                                                                              controllers.ReturnTaskListController.downloadPdf
 GET         /preliminary-questions/before-you-start                                                  controllers.preliminary.BeforeStartReturnController.onPageLoad()
 

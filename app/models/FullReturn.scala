@@ -262,6 +262,34 @@ object Vendor {
       nextVendorID = existingVendor.flatMap(_.nextVendorID)
     ))
   }
+
+  def mainVendorFrom(userAnswers: UserAnswers): Future[Vendor] = {
+
+    val existingMainVendor = for {
+      fullReturn <- userAnswers.fullReturn
+      vendors <- fullReturn.vendor
+      returnInfo <- fullReturn.returnInfo
+      mainVendorId <- returnInfo.mainVendorID
+      existing <- vendors.find(_.vendorID.contains(mainVendorId))
+    } yield existing
+
+    Future.successful(Vendor(
+      vendorID = existingMainVendor.flatMap(_.vendorID),
+      returnID = userAnswers.returnId,
+      forename1 = existingMainVendor.flatMap(_.forename1),
+      forename2 = existingMainVendor.flatMap(_.forename2),
+      name = existingMainVendor.flatMap(_.name),
+      houseNumber = existingMainVendor.flatMap(_.houseNumber),
+      address1 = existingMainVendor.flatMap(_.address1),
+      address2 = existingMainVendor.flatMap(_.address2),
+      address3 = existingMainVendor.flatMap(_.address3),
+      address4 = existingMainVendor.flatMap(_.address4),
+      postcode = existingMainVendor.flatMap(_.postcode),
+      isRepresentedByAgent = existingMainVendor.flatMap(_.isRepresentedByAgent),
+      vendorResourceRef = existingMainVendor.flatMap(_.vendorResourceRef),
+      nextVendorID = existingMainVendor.flatMap(_.nextVendorID)
+    ))
+  }
 }
 
 case class Land(

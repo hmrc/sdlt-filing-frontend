@@ -30,13 +30,16 @@ class VendorTaskListSpec extends SpecBase {
   private val fullReturnCompleteWithMultipleVendors = completeFullReturn.copy(
     vendor = Some(Seq(completeVendor, completeVendor2, completeVendor3))
   )
-  private val fullReturnIncompleteVendor = fullReturnComplete.copy(
-    vendor = Some(Seq.empty))
+  private val fullReturnAllMandatoryFieldsMissing = fullReturnCompleteWithOneMainVendor.copy(
+    vendor = Some(Seq(completeVendor.copy(name = None, address1 = None))))
+  private val fullReturnSomeMandatoryFieldsMissing = fullReturnCompleteWithOneMainVendor.copy(
+    vendor = Some(Seq(completeVendor.copy(name = Some("Batman"), address1 = None))))
   private val fullReturnMissingVendor = fullReturnComplete.copy(vendor = None)
 
   "VendorTaskList" - {
 
     ".build" - {
+      
       "must return TaskListSection with correct heading when vendor is present" in {
         val application = applicationBuilder().build()
 
@@ -79,22 +82,47 @@ class VendorTaskListSpec extends SpecBase {
       }
     }
 
-    ".isVendorComplete" - {
+    ".mandatoryFieldsDefined" - {
+      
+      "must return a sequence of true if all mandatory fields of main Vendor are defined" in {
+        val result = VendorTaskList.mandatoryFieldsDefined(fullReturnCompleteWithOneMainVendor)
+        result mustBe Seq(true, true)
+      }
 
-      "must return true if vendor exists and is not empty" in {
+      "must return a sequence of true and false if some mandatory fields of main Vendor are missing" in {
+        val result = VendorTaskList.mandatoryFieldsDefined(fullReturnSomeMandatoryFieldsMissing)
+        result mustBe Seq(true, false)
+      }
+
+      "must return a sequence of false if all mandatory fields of main Vendor are missing" in {
+        val result = VendorTaskList.mandatoryFieldsDefined(fullReturnAllMandatoryFieldsMissing)
+        result mustBe Seq(false, false)
+      }
+    }
+
+    ".isVendorComplete" - {
+      
+      "must return true if vendor exists and mandatory fields are defined" in {
           val result = VendorTaskList.isVendorComplete(fullReturnComplete)
 
           result mustBe true
       }
 
-      "must return false if vendor exists but is empty" in {
-          val result = VendorTaskList.isVendorComplete(fullReturnIncompleteVendor)
+      "must return false if vendor exists but some mandatory field are missing" in {
+          val result = VendorTaskList.isVendorComplete(fullReturnAllMandatoryFieldsMissing)
+
+          result mustBe false
+      }
+
+      "must return false if vendor exists but all mandatory fields are missing" in {
+          val result = VendorTaskList.isVendorComplete(fullReturnAllMandatoryFieldsMissing)
 
           result mustBe false
       }
     }
 
     ".buildVendorRow" - {
+      
       "must return TaskListSectionRow" in {
         val application = applicationBuilder().build()
 
@@ -144,19 +172,35 @@ class VendorTaskListSpec extends SpecBase {
         }
       }
 
-      "must have Vendor Before You Start url when main vendor is incomplete" in {
+      "must have Vendor Before You Start url and show 'Not yet started' status when all mandatory fields are missing from main vendor" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = VendorTaskList.buildVendorRow(fullReturnIncompleteVendor)
+          val result = VendorTaskList.buildVendorRow(fullReturnAllMandatoryFieldsMissing)
 
           result.url mustBe controllers.vendor.routes.VendorBeforeYouStartController.onPageLoad().url
+
+          result.status mustBe TLNotStarted
         }
       }
 
-      "must have Vendor Overview url when a main vendor is complete" in {
+      "must have Vendor Before You Start url and show 'In progress' status when some mandatory fields are missing from main vendor" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = VendorTaskList.buildVendorRow(fullReturnSomeMandatoryFieldsMissing)
+
+          result.url mustBe controllers.vendor.routes.VendorBeforeYouStartController.onPageLoad().url
+
+          result.status mustBe TLInProgress
+        }
+      }
+
+      "must have Vendor Overview url and show in 'Complete' status when all mandatory fields are present in main vendor" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -180,19 +224,7 @@ class VendorTaskListSpec extends SpecBase {
         }
       }
 
-      "must show completed status when a main vendor is present" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-
-          val result = VendorTaskList.buildVendorRow(fullReturnComplete)
-
-          result.status mustBe TLCompleted
-        }
-      }
-
-      "must show not started status when vendor is absent" in {
+      "must show 'Not yet started' status when vendor is absent" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -203,21 +235,10 @@ class VendorTaskListSpec extends SpecBase {
           result.status mustBe TLNotStarted
         }
       }
-
-      "must show cannot start status when preliminary section is incomplete" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-
-          val result = VendorTaskList.buildVendorRow(emptyFullReturn)
-
-          result.status mustBe TLCannotStart
-        }
-      }
     }
 
     "integration" - {
+      
       "must build complete TaskListSection with completed row when vendor present" in {
         val application = applicationBuilder().build()
 

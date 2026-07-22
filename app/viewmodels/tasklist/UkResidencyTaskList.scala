@@ -19,6 +19,7 @@ package viewmodels.tasklist
 import config.FrontendAppConfig
 import models.FullReturn
 import play.api.i18n.Messages
+import utils.PropertyTypeHelper
 
 import javax.inject.Singleton
 
@@ -35,26 +36,46 @@ object UkResidencyTaskList {
       )
     )
 
-  def isResidencyComplete(fullReturn: FullReturn): Boolean = {
-    //TODO ADD ALL REQUIRED FIELDS FOR UK RESIDENCY
-    fullReturn.residency.exists(res =>
-      res.isNonUkResidents.isDefined &&
-        res.isCloseCompany.isDefined &&
-        res.isCrownRelief.isDefined
-    )
+  def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
+    val isCompany: Boolean = fullReturn.purchaser
+      .getOrElse(Seq.empty)
+      .exists(_.isCompany.contains("YES"))
+    val isNonUkResidents = fullReturn.residency.exists(_.isNonUkResidents.exists(_.equalsIgnoreCase("YES")))
+    val isNonUkResidentsDefined = fullReturn.residency.exists(_.isNonUkResidents.isDefined)
+    val isCloseCompanyDefined = fullReturn.residency.exists(_.isCloseCompany.isDefined)
+    val isCrownReliefDefined = fullReturn.residency.exists(_.isCrownRelief.isDefined)
+
+    (isCompany, isNonUkResidents) match {
+      case (true, true) =>
+        Seq(isCloseCompanyDefined, isCrownReliefDefined)
+      case (true, false) =>
+        Seq(isCloseCompanyDefined)
+      case (false, true) =>
+        Seq(isCrownReliefDefined)
+      case (false, false) =>
+        Seq(isNonUkResidentsDefined)
+    }
   }
+
+  def isResidencyComplete(fullReturn: FullReturn): Boolean = {
+    mandatoryFieldsDefined(fullReturn).forall(identity)
+  }
+
+  private def isResidencyRequired(fullReturn: FullReturn): Boolean = {
+    PropertyTypeHelper.isResidentialProperty(fullReturn)
+  }
+
+  private def isResidencyStarted(fullReturn: FullReturn): Boolean =
+    fullReturn.residency.nonEmpty
   
   def ukResidencyRowBuilder(fullReturn: FullReturn)
                                  (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
-    val residency = fullReturn.residency
 
-    val url =
-      residency match {
-        case Some(residency) if residency.isNonUkResidents.isDefined =>
-            controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
-        case _ =>
-          controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad().url
+    val url = if (isResidencyComplete(fullReturn)) {
+        controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
+      } else {
+        controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad().url
       }
 
     TaskListRowBuilder(
@@ -65,11 +86,9 @@ object UkResidencyTaskList {
       messageKey = _ => "tasklist.ukResidencyQuestion.details",
       url = _ => _ => url,
       tagId = "ukResidencyQuestionRow",
-      checks = _ => Seq(isResidencyComplete(fullReturn)),
-      prerequisites = _ =>
-        Seq(
-          PrelimTaskList.buildPrelimRow(fullReturn)
-        )
+      checks = _ => mandatoryFieldsDefined(fullReturn),
+      started       = _ => if (isResidencyRequired(fullReturn)) isResidencyStarted(fullReturn) else false,
+      prerequisites = _ => Seq()
     )
   }
 

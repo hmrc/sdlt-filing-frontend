@@ -35,17 +35,28 @@ object VendorTaskList {
       )
     )
   }
-  
+
+  def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
+    val mainVendorId: Option[String] = fullReturn.returnInfo.flatMap(_.mainVendorID)
+    val mainVendor = fullReturn.vendor.flatMap(_.find(vendor => mainVendorId.equals(vendor.vendorID)))
+
+    Seq(
+      mainVendor.exists(_.name.isDefined),
+      mainVendor.exists(_.address1.isDefined)
+    )
+
+  }
+
   def isVendorComplete(fullReturn: FullReturn): Boolean = {
-    fullReturn.vendor.exists(_.nonEmpty)
-    //TODO ADD ALL REQUIRED FIELDS FOR VENDOR
+    mandatoryFieldsDefined(fullReturn).forall(identity)
   }
 
   def vendorRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
-    val url = fullReturn.vendor match {
-      case Some(list) if list.nonEmpty => controllers.vendor.routes.VendorOverviewController.onPageLoad().url
-      case _ => controllers.vendor.routes.VendorBeforeYouStartController.onPageLoad().url
+    val url = if (isVendorComplete(fullReturn)) {
+      controllers.vendor.routes.VendorOverviewController.onPageLoad().url
+    } else {
+      controllers.vendor.routes.VendorBeforeYouStartController.onPageLoad().url
     }
 
     TaskListRowBuilder(
@@ -58,8 +69,8 @@ object VendorTaskList {
         url
       },
       tagId = "vendorQuestionDetailRow",
-      checks = scheme => Seq(isVendorComplete(fullReturn)),
-      prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
+      checks = _ => mandatoryFieldsDefined(fullReturn),
+      prerequisites = _ => Seq()
     )
   }
 
