@@ -38,7 +38,7 @@ class PurchaserDateOfBirthFormProviderSpec extends DateBehaviours with MockitoSu
   private val form = new PurchaserDateOfBirthFormProvider(mockTimeMachine)("Doe")
   private val formWithDifferentName = new PurchaserDateOfBirthFormProvider(mockTimeMachine)("Smith")
 
-  def minDate = mockTimeMachine.today.minusYears(130)
+  def minDate = LocalDate.of(1900, 1, 1)
 
   def maxDate = mockTimeMachine.today
 
@@ -58,6 +58,13 @@ class PurchaserDateOfBirthFormProviderSpec extends DateBehaviours with MockitoSu
       key = "value",
       max = maxDate,
       formError = FormError("value", "purchaser.dateOfBirth.error.date.range.max", Seq(maxDate.format(dateFormatter)))
+    )
+
+    behave like dateFieldWithMin(
+      form = form,
+      key = "value",
+      min = minDate,
+      formError = FormError("value", "purchaser.dateOfBirth.error.date.range.min", Seq(minDate.format(dateFormatter)))
     )
 
     behave like mandatoryDateField(

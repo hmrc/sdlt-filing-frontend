@@ -27,6 +27,7 @@ import javax.inject.Inject
 class LeaseStartDateFormProvider @Inject() extends Mappings {
   private val formatter = DateTimeFormatter.ofPattern("d MM yyyy")
   private val minDateAllowed: LocalDate = LocalDate.parse("1 01 1500", formatter)
+  private val maxDateAllowed: LocalDate = LocalDate.parse("31 12 9999", formatter)
 
   def apply()(implicit messages: Messages): Form[LocalDate] =
     Form(
@@ -36,5 +37,6 @@ class LeaseStartDateFormProvider @Inject() extends Mappings {
         twoRequiredKey = "lease.leaseStartDate.error.required.two",
         requiredKey    = "lease.leaseStartDate.error.required"
       ).verifying(minDate(minDateAllowed, "lease.leaseStartDate.error.date.range.min", minDateAllowed))
+       .verifying(maxDate(maxDateAllowed, "lease.leaseStartDate.error.date.range.max", maxDateAllowed))
     )
 }
