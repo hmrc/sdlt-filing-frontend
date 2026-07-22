@@ -17,7 +17,7 @@
 package viewmodels.tasklist
 
 import config.FrontendAppConfig
-import models.{AgentType, FullReturn, ReturnAgent}
+import models.{AgentType, FullReturn, ReturnAgent, Vendor}
 import play.api.i18n.Messages
 
 import javax.inject.Singleton
@@ -43,27 +43,57 @@ object VendorAgentTaskList {
     vendorAgents(fullReturn).nonEmpty
   }
 
-  def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
+  private def mainVendor(fullReturn: FullReturn): Option[Vendor] =
+    for {
+      mainVendorId <- fullReturn.returnInfo.flatMap(_.mainVendorID)
+      vendors <- fullReturn.vendor
+      vendor <- vendors.find(_.vendorID.contains(mainVendorId))
+    } yield vendor
+
+  private def vendorAgentChecks(fullReturn: FullReturn): Seq[Boolean] = {
+    val agents = vendorAgents(fullReturn)
+
     Seq(
-      vendorAgents(fullReturn).exists(_.name.isDefined),
-      vendorAgents(fullReturn).exists(_.address1.isDefined)
+      true,
+      agents.exists(_.name.isDefined),
+      agents.exists(_.address1.isDefined)
     )
   }
-  
+
+  def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
+    val hasAgentDetails = fullReturn.returnAgent.exists(_.nonEmpty)
+    val isRepresentedByAgent = mainVendor(fullReturn).flatMap(_.isRepresentedByAgent)
+
+    (isRepresentedByAgent, hasAgentDetails) match {
+      case (Some("YES"), true) => vendorAgentChecks(fullReturn)
+      case (Some("NO"), true) => Seq(false)
+      case (Some("NO"), false) => Seq(true)
+      case _ => Seq(false)
+    }
+  }
+
   def isVendorAgentComplete(fullReturn: FullReturn): Boolean = {
     mandatoryFieldsDefined(fullReturn).forall(identity)
   }
 
   def vendorAgentRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
-    val url = if (isVendorAgentComplete(fullReturn)) {
+    val hasAgentDetails = fullReturn.returnAgent.exists(_.nonEmpty)
+    val isNotRepresentedByAnAgent = mainVendor(fullReturn).flatMap(_.isRepresentedByAgent).exists(_.equalsIgnoreCase("NO"))
+
+    val url = {
+      if (isNotRepresentedByAnAgent && hasAgentDetails) {
+        controllers.vendorAgent.routes.RemoveVendorAgentController.onPageLoad().url
+      } else if (isNotRepresentedByAnAgent) {
+        controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
+      } else if (isVendorAgentComplete(fullReturn)) {
         controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad().url
-    } else {
-      controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
+      } else {
+        controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
+      }
     }
 
     TaskListRowBuilder(
-      isOptional = true,
       canEdit = {
         case TLCompleted => true
         case _ => true

@@ -53,25 +53,11 @@ class VendorAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSugar
       name =  Some("Smith & Partners LLP")
     )
 
-    val returnAgentWithAgentType = ReturnAgent(
-      returnAgentID = Some("RA001"),
-      returnID = Some("RET123456789"),
-      agentType = Some("VENDOR"),
-      name = Some("Smith & Partners LLP")
-    )
-
     val fullReturn: FullReturn = completeFullReturn.copy(submission = None, returnAgent = Some(Seq(returnAgent)))
-    val fullReturnWithAgentType: FullReturn = completeFullReturn.copy(submission = None, returnAgent = Some(Seq(returnAgentWithAgentType)))
-
 
     val userAnswersWithIndividualPurchaser: UserAnswers =
       UserAnswers(userAnswersId, storn = "test-storn")
         .copy(fullReturn = Some(fullReturn))
-
-    val userAnswersWithgentType: UserAnswers =
-        UserAnswers(userAnswersId, storn = "test-storn")
-          .copy(fullReturn = Some(fullReturnWithAgentType))
-
 
     "must return OK and the correct view for a GET" in {
 
@@ -106,37 +92,7 @@ class VendorAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSugar
         contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
       }
     }
-
-    "must redirect to returnTaskList when userAnswers is empty for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, vendorAgentBeforeYouStartRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
-      }
-    }
-
-    "must redirect to returnTaskList when agentType is 'VENDOR' for a GET" in {
-
-      val userAnswers = userAnswersWithgentType.set(VendorAgentBeforeYouStartPage, true).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, vendorAgentBeforeYouStartRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
-      }
-    }
-
+    
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()

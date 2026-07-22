@@ -86,9 +86,9 @@ class ReturnTaskListController @Inject()(
 
             val sections = List(
               Some(VendorTaskList.build(fullReturn)),
-              Some(VendorAgentTaskList.build(fullReturn)),
+              if(VendorTaskList.isVendorComplete(fullReturn)) Some(VendorAgentTaskList.build(fullReturn)) else None,
               Some(PurchaserTaskList.build(fullReturn)),
-              Some(PurchaserAgentTaskList.build(fullReturn)),
+              if(PurchaserTaskList.isPurchaserComplete(fullReturn)) Some(PurchaserAgentTaskList.build(fullReturn)) else None,
               Some(LandTaskList.build(fullReturn, landStatus)),
               if (PropertyTypeHelper.isResidentialProperty(fullReturn)) Some(UkResidencyTaskList.build(fullReturn)) else None,
               Some(TransactionTaskList.build(fullReturn, transactionStatus)),
@@ -96,13 +96,8 @@ class ReturnTaskListController @Inject()(
               Some(TaxCalculationTaskList.build(fullReturn)),
               Some(SubmissionTaskList.build(fullReturn))
             ).flatten
-            
-            (purchaserName, landAddress1) match {
-              case (Some(name), Some(address1)) =>
-                Ok(view(name, address1, sections: _*))
-              case _ =>
-                Redirect(routes.JourneyRecoveryController.onPageLoad())
-            }
+
+            Ok(view(purchaserName, landAddress1, sections: _*))
           }
         }
       }
