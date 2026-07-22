@@ -114,7 +114,7 @@ site.error.noReturnReference.change.hidden                                      
 
 # Task List
 taskList.title                                                                      = Task list
-taskList.heading                                                                    = SDLT return for {0}, {1}
+taskList.heading                                                                    = SDLT return
 tasklist.vendorQuestion.details                                                     = Vendor Questions
 tasklist.vendorQuestion.heading                                                     = Vendor Questions
 tasklist.purchaserQuestion.details                                                  = Purchaser Questions

@@ -25,18 +25,36 @@ import play.api.test.Helpers.running
 
 class PurchaserAgentTaskListSpec extends SpecBase {
 
-  private val fullReturnCompleteWithPurchaserAgent = completeFullReturn
+  private val fullReturnCompleteWithPurchaserAgent = completeFullReturn.copy(
+    purchaser = Some(Seq(completePurchaser1.copy(
+      isRepresentedByAgent = Some("YES"))))
+  )
   private val fullReturnCompleteWithOtherAgent = completeFullReturn.copy(returnAgent = Some(Seq(completeReturnAgentVendor)))
   private val fullReturnSomeMandatoryFieldsMissing = completeFullReturn.copy(
     returnAgent = Some(Seq(completeReturnAgent.copy(
       name = Some("Jon"),
       address1 = None,
-      isAuthorised = None))))
+      isAuthorised = None))),
+    purchaser = Some(Seq(completePurchaser1.copy(
+      isRepresentedByAgent = Some("YES"))))
+  )
   private val fullReturnAllMandatoryFieldsMissing = completeFullReturn.copy(
     returnAgent = Some(Seq(completeReturnAgent.copy(
       address1 = None,
       name = None,
-      isAuthorised = None))))
+      isAuthorised = None))),
+    purchaser = Some(Seq(completePurchaser1.copy(
+      isRepresentedByAgent = Some("YES"))))
+  )
+  private val fullReturnNoAgent = completeFullReturn.copy(
+    returnAgent = None,
+    purchaser = Some(Seq(completePurchaser1.copy(
+      isRepresentedByAgent = Some("NO"))))
+  )
+  private val fullReturnMissingRepresentedByAgent = completeFullReturn.copy(
+    returnAgent = None,
+    purchaser = Some(Seq(completePurchaser1.copy(
+      isRepresentedByAgent = None))))
 
   "PurchaserAgentTaskList" - {
 
@@ -72,20 +90,34 @@ class PurchaserAgentTaskListSpec extends SpecBase {
     }
 
     ".mandatoryFieldsDefined" - {
-      
-      "must return a sequence of true if all mandatory fields are defined" in {
-        val result = PurchaserAgentTaskList.mandatoryFieldsDefined(fullReturnCompleteWithPurchaserAgent)
-        result mustBe Seq(true, true, true)
+
+      "when purchaser is represented by agent - YES" - {
+
+        "must return a sequence of true if all mandatory fields are defined" in {
+          val result = PurchaserAgentTaskList.mandatoryFieldsDefined(fullReturnCompleteWithPurchaserAgent)
+          result mustBe Seq(true, true, true, true)
+        }
+
+        "must return a sequence of true and false if some mandatory fields are missing" in {
+          val result = PurchaserAgentTaskList.mandatoryFieldsDefined(fullReturnSomeMandatoryFieldsMissing)
+          result mustBe Seq(true, true, false, false)
+        }
       }
 
-      "must return a sequence of true and false if some mandatory fields are missing" in {
-        val result = PurchaserAgentTaskList.mandatoryFieldsDefined(fullReturnSomeMandatoryFieldsMissing)
-        result mustBe Seq(true, false, false)
+      "when purchaser is not represented by agent - NO" - {
+
+        "must return a sequence of true" in {
+          val result = PurchaserAgentTaskList.mandatoryFieldsDefined(fullReturnNoAgent)
+          result mustBe Seq(true)
+        }
       }
 
-      "must return a sequence of false if all mandatory fields are missing" in {
-        val result = PurchaserAgentTaskList.mandatoryFieldsDefined(fullReturnAllMandatoryFieldsMissing)
-        result mustBe Seq(false, false, false)
+      "when represented by agent is unknown" - {
+
+        "must return a sequence false" in {
+          val result = PurchaserAgentTaskList.mandatoryFieldsDefined(fullReturnMissingRepresentedByAgent)
+          result mustBe Seq(false)
+        }
       }
     }
 
@@ -127,21 +159,35 @@ class PurchaserAgentTaskListSpec extends SpecBase {
         }
       }
 
-      "must have purchaserAgent Before You Start url and show 'Optional' status when purchaser agent is missing" in {
+      "must have purchaserAgent Before You Start url and show 'Not yet started' status when represented by agent is missing" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = PurchaserAgentTaskList.buildPurchaserAgentRow(fullReturnCompleteWithOtherAgent)
+          val result = PurchaserAgentTaskList.buildPurchaserAgentRow(fullReturnMissingRepresentedByAgent)
 
           result.url mustBe controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode).url
-          
-          result.status mustBe TLOptional
+
+          result.status mustBe TLNotStarted
         }
       }
 
-      "must have purchaserAgent Overview url and show 'Complete' status when all mandatory fields are present in purchaser agent" in {
+      "must have purchaserAgent Before You Start url and show 'Complete' status when not represented by agent" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = PurchaserAgentTaskList.buildPurchaserAgentRow(fullReturnNoAgent)
+
+          result.url mustBe controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode).url
+
+          result.status mustBe TLCompleted
+        }
+      }
+
+      "must have purchaserAgent Overview url and show 'Complete' status when represented by agent and all mandatory fields are present" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -155,7 +201,7 @@ class PurchaserAgentTaskListSpec extends SpecBase {
         }
       }
 
-      "must have purchaserAgent Before You Start url and show 'In progress' status when some mandatory fields are missing from purchaser agent" in {
+      "must have purchaserAgent Before You Start url and show 'In progress' status when represented by agent and some mandatory fields are missing" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -169,7 +215,7 @@ class PurchaserAgentTaskListSpec extends SpecBase {
         }
       }
 
-      "must have purchaserAgent Before You Start url and show 'Optional' status when all mandatory fields are missing from purchaser agent" in {
+      "must have purchaserAgent Before You Start url and show 'In progress' status when represented by agent and all mandatory fields are missing" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -179,7 +225,7 @@ class PurchaserAgentTaskListSpec extends SpecBase {
 
           result.url mustBe controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode).url
           
-          result.status mustBe TLOptional
+          result.status mustBe TLInProgress
         }
       }
     }

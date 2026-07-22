@@ -223,7 +223,8 @@ class SubmissionTaskListSpec extends SpecBase {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
           val result = SubmissionTaskList.buildSubmissionRow(completeFullReturn
-            .copy(returnAgent = Some(Seq(completeReturnAgent.copy(name = None)))))
+            .copy(returnAgent = Some(Seq(completeReturnAgent.copy(name = None))),
+              purchaser = Some(Seq(completePurchaser1.copy(isRepresentedByAgent = Some("YES"))))))
 
           result.status mustBe TLCannotStart
           result.hint mustBe Some("tasklist.submissionQuestion.hint")
@@ -480,7 +481,8 @@ class SubmissionTaskListSpec extends SpecBase {
       "must return true when purchaser agent is complete and vendor agent not started" in {
         val application = applicationBuilder().build()
 
-        val fullReturn = fullReturnComplete
+        val fullReturn = completeFullReturn.copy(
+          vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = Some("NO")))))
         running(application) {
           SubmissionTaskList.canStartSubmission(fullReturn) mustBe true
         }
@@ -489,7 +491,9 @@ class SubmissionTaskListSpec extends SpecBase {
       "must return false when purchaser agent is incomplete and vendor agent not started" in {
         val application = applicationBuilder().build()
 
-        val fullReturn = fullReturnComplete.copy(returnAgent = Some(Seq(completeReturnAgent.copy(name = None))))
+        val fullReturn = fullReturnComplete.copy(
+          returnAgent = Some(Seq(completeReturnAgent.copy(name = None))),
+          purchaser = Some(Seq(completePurchaser1.copy(isRepresentedByAgent = Some("YES")))))
         running(application) {
           SubmissionTaskList.canStartSubmission(fullReturn) mustBe false
         }

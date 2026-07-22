@@ -38,11 +38,6 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
   val testStorn = "TESTSTORN"
   val testGetReturnByRefRequest: GetReturnByRefRequest = GetReturnByRefRequest(returnResourceRef = testReturnId, storn = testStorn)
   val testFullReturn = completeFullReturn.copy(submission = None)
-  val incompleteFullReturnWithNameAndAddress = incompleteFullReturn.copy(
-    purchaser = Some(Seq(Purchaser(purchaserID = Some("1234"), surname = Some("Name")))),
-    returnInfo = Some(ReturnInfo(mainPurchaserID = Some("1234"))),
-    land = Some(Seq(Land(address1 = Some("Address 1"))))
-  )
 
   "ReturnTaskList Controller" - {
 
@@ -187,7 +182,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository = mock[SessionRepository]
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(incompleteFullReturnWithNameAndAddress))
+          .thenReturn(Future.successful(incompleteFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -443,6 +438,61 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
+      "must render view with VendorAgentTaskList section when VendorTaskList is 'Complete" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(testFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+          content must include("Vendor Agent Questions")
+        }
+      }
+
+      "must hide VendorAgentTaskList section when VendorTaskList is not 'Complete" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(testFullReturn.copy(vendor = None)))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+          content must include("Vendor Questions")
+          content must not include("Vendor Agent Questions")
+        }
+      }
+
       "must render view with both sections in correct order" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
@@ -477,14 +527,9 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
       "must handle minimal FullReturn" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
-        val minimalFullReturnWithNameAndAddress = minimalFullReturn.copy(
-          purchaser = Some(Seq(Purchaser(purchaserID = Some("1234"), surname = Some("Name")))),
-          returnInfo = Some(ReturnInfo(mainPurchaserID = Some("1234"))),
-          land = Some(Seq(Land(address1 = Some("Address 1"))))
-        )
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
-          .thenReturn(Future.successful(minimalFullReturnWithNameAndAddress))
+          .thenReturn(Future.successful(minimalFullReturn))
 
         when(mockSessionRepository.set(any[UserAnswers]))
           .thenReturn(Future.successful(true))
@@ -527,8 +572,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
           val result = route(application, request).value
 
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+          status(result) mustEqual OK
           verify(mockFullReturnService, times(1)).getFullReturn(any())(any(), any())
           verify(mockSessionRepository, times(1)).set(any[UserAnswers])
         }
@@ -672,7 +716,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must render view with PurchaserAgentTaskList section" in {
+      "must render view with PurchaserAgentTaskList section when PurchaserTaskList is 'Complete'" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
 
@@ -696,6 +740,33 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual OK
           val content = contentAsString(result)
           content must include("Purchaser Agent Questions")
+        }
+      }
+
+      "must hide PurchaserAgentTaskList section when PurchaserTaskList is not 'Complete" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(testFullReturn.copy(purchaser = Some(Seq(completePurchaser1.copy(address1 = None))))))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+          content must not include ("Purchaser Agent Questions")
         }
       }
 
@@ -756,8 +827,9 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
           val result = route(application, request).value
 
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+          content must include("Purchaser Questions")
         }
       }
 
@@ -783,8 +855,9 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
           val result = route(application, request).value
 
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+          content must include("Purchaser Questions")
         }
       }
 

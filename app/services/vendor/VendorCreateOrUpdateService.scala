@@ -60,6 +60,16 @@ class VendorCreateOrUpdateService @Inject()(backendConnector: StampDutyLandTaxCo
     }
   }
 
+  def updateIsRepresentedByAgent(value: Boolean, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Boolean] = {
+    for {
+      mainVendor <- Vendor.mainVendorFrom(userAnswers)
+      updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
+      updateReturnVersionReturn <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
+      updateVendorRequest <- UpdateVendorRequest.from(userAnswers, mainVendor.copy(isRepresentedByAgent = if value then Some("YES") else Some("NO"))) if updateReturnVersionReturn.newVersion.isDefined
+      updateVendorReturn <- backendConnector.updateVendor(updateVendorRequest) if updateReturnVersionReturn.newVersion.isDefined
+    } yield updateVendorReturn.updated
+  }
+
   def isVendorPurchaserCountBelowMaximum(userAnswers: UserAnswers): Boolean = {
     val (vendorList, purchaserList) = userAnswers.fullReturn match {
       case Some(fr) => (fr.vendor.getOrElse(Seq.empty), fr.purchaser.getOrElse(Seq.empty))

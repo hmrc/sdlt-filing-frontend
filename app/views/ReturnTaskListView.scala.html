@@ -26,11 +26,20 @@
         taskList: components.TaskListComponent
 )
 
-@(name: String, address1: String, sections: TaskListSection*)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@(name: Option[String], address1: Option[String], sections: TaskListSection*)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+
+@displayText = @{
+ (name, address1) match {
+  case (Some(n), Some(a)) => s" for $n, $a"
+  case (Some(n), None)    => s" for $n"
+  case (None, Some(a))    => s" for $a"
+  case (None, None)       => ""
+ }
+}
 
 @layout(pageTitle = titleNoForm(messages("taskList.title")), showBackLink = false) {
 
- @h1(messages("taskList.heading", name, address1))
+ @h1(messages("taskList.heading") + displayText)
 
  @taskList(sections: _*)
 

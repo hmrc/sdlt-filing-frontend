@@ -326,7 +326,8 @@ class TaxCalculationTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
 
           val result = TaxCalculationTaskList.buildTaxCalculationRow(completeFullReturn
-            .copy(returnAgent = Some(Seq(completeReturnAgent.copy(name = None)))))
+            .copy(returnAgent = Some(Seq(completeReturnAgent.copy(name = None))),
+              purchaser = Some(Seq(completePurchaser1.copy(isRepresentedByAgent = Some("YES"))))))
 
           result.status mustBe TLCannotStart
           result.hint mustBe Some("tasklist.taxCalculationQuestion.hint")
