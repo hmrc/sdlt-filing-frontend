@@ -52,8 +52,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
   def sdltStubUrl: String = sdltStubBase
   def backendUrl: String = sdltBackendBase
 
-  private def activeBase: String =
-    if (config.stubBool) sdltStubBase else sdltBackendBase
+  private def activeBase: String = sdltBackendBase
   
   def getFullReturn(getReturnByRefRequest: GetReturnByRefRequest)(implicit hc: HeaderCarrier,
                                                request: Request[_]): Future[FullReturn] = {

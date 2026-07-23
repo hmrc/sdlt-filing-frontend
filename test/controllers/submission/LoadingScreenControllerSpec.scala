@@ -155,7 +155,7 @@ class LoadingScreenControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must return INTERNAL_SERVER_ERROR when SubmissionFailedPage is set" in {
+      "must redirect to the Submission Failed page when SubmissionFailedPage is set" in {
 
         val answers     = testUserAnswers.set(SubmissionFailedPage, true).success.value
         val application = applicationBuilder(userAnswers = Some(answers)).build()
@@ -165,9 +165,8 @@ class LoadingScreenControllerSpec extends SpecBase with MockitoSugar {
 
           val result = route(application, request).value
 
-          whenReady(result.failed) { e =>
-            e mustBe a[RuntimeException]
-          }
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustBe controllers.submission.routes.SubmissionFailedController.onPageLoad().url
         }
       }
     }

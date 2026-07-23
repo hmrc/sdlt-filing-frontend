@@ -2360,7 +2360,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
 
     "activeBase" - {
 
-      "must return stub URL when stubBool is true" in {
+      "must use the backend base URL (stubBool no longer switches the target)" in {
         val mockHttpClient = mock[HttpClientV2]
         val mockConfig = mock[FrontendAppConfig]
         val mockRequestBuilder = mock[RequestBuilder]
@@ -2377,10 +2377,10 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
         connector.createReturn(completePrelimReturn).futureValue
 
-        verify(mockConfig, atLeastOnce()).stubBool
+        verify(mockConfig, atLeastOnce()).baseUrl("stamp-duty-land-tax")
       }
 
-      "must return backend URL when stubBool is false" in {
+      "must use the backend base URL when stubBool is false" in {
         val mockHttpClient = mock[HttpClientV2]
         val mockConfig = mock[FrontendAppConfig]
         val mockRequestBuilder = mock[RequestBuilder]
@@ -2397,10 +2397,9 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val connector = new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
         connector.createReturn(completePrelimReturn).futureValue
 
-        verify(mockConfig, atLeastOnce()).stubBool
+        verify(mockConfig, atLeastOnce()).baseUrl("stamp-duty-land-tax")
       }
     }
-
     "updateReturnInfo" - {
 
       "must return ReturnInfoReturn when request is successful" in {
