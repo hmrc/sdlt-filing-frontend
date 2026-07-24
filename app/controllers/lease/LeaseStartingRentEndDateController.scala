@@ -72,19 +72,17 @@ class LeaseStartingRentEndDateController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(LeaseStartingRentEndDatePage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield {
+          Future.fromTry(request.userAnswers.set(LeaseStartingRentEndDatePage, value)).flatMap { updatedAnswers =>
             leaseDatesService.leaseDatesValidation(updatedAnswers) match {
               case LeaseDatesService.LeaseDateValid =>
-                Redirect(navigator.nextPage(LeaseStartingRentEndDatePage, mode, updatedAnswers))
+                sessionRepository.set(updatedAnswers).map(_ =>
+                  Redirect(navigator.nextPage(LeaseStartingRentEndDatePage, mode, updatedAnswers)))
               case LeaseDatesService.LeaseStartBeforeRentEndDate =>
-                BadRequest(view(form.fill(value).withError("value", "lease.leaseStartingRentEndDate.error.afterLeaseStartDate"), mode))
+                Future.successful(BadRequest(view(form.fill(value).withError("value", "lease.leaseStartingRentEndDate.error.afterLeaseStartDate"), mode)))
               case LeaseDatesService.RentEndDateAfterLeaseEndDate =>
-                BadRequest(view(form.fill(value).withError("value", "lease.leaseStartingRentEndDate.error.beforeLeaseEndDate"), mode))
+                Future.successful(BadRequest(view(form.fill(value).withError("value", "lease.leaseStartingRentEndDate.error.beforeLeaseEndDate"), mode)))
               case LeaseDatesService.LeaseStartBeforeLeaseEndDate =>
-                Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+                Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
             }
           }
       )

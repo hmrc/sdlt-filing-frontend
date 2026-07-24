@@ -23,7 +23,7 @@ import forms.lease.LeaseEndDateFormProvider
 import models.{FullReturn, NormalMode, Transaction, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{never, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.lease.{LeaseEndDatePage, LeaseStartDatePage, LeaseStartingRentEndDatePage}
 import play.api.i18n.Messages
@@ -191,6 +191,33 @@ class LeaseEndDateControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) must include("The end date as specified in the lease must be after the start date as specified in the lease")
+      }
+    }
+
+    "must not update the session when lease end date is before the lease start date for a POST" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers = emptyUserAnswers.set(LeaseStartDatePage, LocalDate.of(2031, 10, 26)).success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(application) {
+
+        val request =
+          FakeRequest(POST, leaseEndDateRoute)
+            .withFormUrlEncodedBody(
+              "value.day" -> validAnswer.getDayOfMonth.toString,
+              "value.month" -> validAnswer.getMonthValue.toString,
+              "value.year" -> validAnswer.getYear.toString)
+
+        val result = route(application, request).value
+        status(result) mustEqual BAD_REQUEST
+        verify(mockSessionRepository, never()).set(any())
       }
     }
 
