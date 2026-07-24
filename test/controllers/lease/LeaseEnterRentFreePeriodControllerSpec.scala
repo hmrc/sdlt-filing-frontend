@@ -22,8 +22,9 @@ import controllers.routes
 import forms.lease.LeaseEnterRentFreePeriodFormProvider
 import models.{FullReturn, NormalMode, Transaction, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.lease.LeaseEnterRentFreePeriodPage
 import play.api.inject.bind
@@ -194,6 +195,65 @@ class LeaseEnterRentFreePeriodControllerSpec extends SpecBase with MockitoSugar 
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must zero-pad the stored rent free period to two digits" in {
+
+      val scenarios = Seq(
+        "5"  -> "05",
+        "9"  -> "09",
+        "10" -> "10",
+        "12" -> "12"
+      )
+
+      scenarios.foreach { case (submitted, expectedStored) =>
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswers))
+            .overrides(
+              bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+              bind[SessionRepository].toInstance(mockSessionRepository)
+            )
+            .build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, leaseEnterRentFreePeriodRoute)
+              .withFormUrlEncodedBody(("value", submitted))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+
+          val answersCaptor = ArgumentCaptor.forClass(classOf[UserAnswers])
+          verify(mockSessionRepository).set(answersCaptor.capture())
+
+          withClue(s"submitting '$submitted' should store '$expectedStored': ") {
+            answersCaptor.getValue.get(LeaseEnterRentFreePeriodPage).value mustEqual expectedStored
+          }
+        }
+      }
+    }
+
+    "must populate the view with the numeric value when a previously stored rent free period was zero-padded" in {
+
+      val userAnswers = userAnswersGrantOfLease.set(LeaseEnterRentFreePeriodPage, "05").success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, leaseEnterRentFreePeriodRoute)
+
+        val view = application.injector.instanceOf[LeaseEnterRentFreePeriodView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form.fill(5), NormalMode)(request, messages(application)).toString
       }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,42 @@
 package services
 
 import connectors.StampDutyLandTaxConnector
-import models.{FullReturn, GetReturnByRefRequest}
+import models.land.LandInterestTransferredOrCreated
+import models.{FullReturn, GetReturnByRefRequest, Land}
 import org.slf4j.{Logger, LoggerFactory}
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class FullReturnService @Inject()(stubConnector: StampDutyLandTaxConnector) {
-  
+class FullReturnService @Inject()(backendConnector: StampDutyLandTaxConnector)(implicit ec: ExecutionContext) {
+
   val logger: Logger = LoggerFactory.getLogger(getClass)
-  
-  def getFullReturn(getReturnByRefRequest: GetReturnByRefRequest)(implicit hc: HeaderCarrier, request: Request[_]): Future[FullReturn] = {
-    logger.info("[getFullReturnBE] Getting Full Return")
-    stubConnector.getFullReturn(getReturnByRefRequest)
+
+  private val validLandInterests: Set[String] =
+    LandInterestTransferredOrCreated.values.map(_.toString).toSet
+
+  private def stripInvalidLandInterest(fullReturn: FullReturn): FullReturn = {
+    val cleanedLands: Option[Seq[Land]] =
+      fullReturn.land.map(_.map { land =>
+        land.interestCreatedTransferred match {
+          case Some(value) if !validLandInterests.contains(value) =>
+            logger.info(
+              s"[FullReturnService][stripInvalidLandInterest] Removing invalid " +
+                s"interestCreatedTransferred '$value' for landID: ${land.landID}"
+            )
+            land.copy(interestCreatedTransferred = None)
+          case _ => land
+        }
+      })
+
+    fullReturn.copy(land = cleanedLands)
   }
 
+  def getFullReturn(getReturnByRefRequest: GetReturnByRefRequest)
+                   (implicit hc: HeaderCarrier, request: Request[_]): Future[FullReturn] = {
+    logger.info("[getFullReturnBE] Getting Full Return")
+    backendConnector.getFullReturn(getReturnByRefRequest).map(stripInvalidLandInterest)
+  }
 }

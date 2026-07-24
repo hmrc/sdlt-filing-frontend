@@ -72,7 +72,7 @@ class LeaseEnterRentFreePeriodController @Inject()(
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(LeaseEnterRentFreePeriodPage, value.toString))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(LeaseEnterRentFreePeriodPage, f"$value%02d"))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(LeaseEnterRentFreePeriodPage, mode, updatedAnswers))
       )
