@@ -57,7 +57,8 @@ class LoadingScreenController @Inject()(
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
       if (request.userAnswers.get(SubmissionFailedPage).contains(true)) {
-        throw new RuntimeException("[LoadingScreenController] submission failed — SubmissionFailedPage set")
+        //TODO Change this to resubmit
+        Future.successful(Redirect(controllers.submission.routes.SubmissionFailedController.onPageLoad()))
       } else {
         latestStatus(request.userAnswers.storn, request.userAnswers.returnId).map {
           case Some(s) if SucceededStatuses.contains(s) =>
