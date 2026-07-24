@@ -18,8 +18,9 @@ package controllers.transaction
 
 import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
-import models.{ReturnVersionUpdateRequest, Transaction, UserAnswers}
+import models.{CheckMode, Lease, ReturnVersionUpdateRequest, Transaction, UserAnswers}
 import models.land.LandTypeOfProperty
+import models.lease.{CreateLeaseRequest, DeleteLeaseRequest}
 import models.prelimQuestions.TransactionType
 import models.transaction.{ReasonForRelief, TransactionSessionQuestions, UpdateTransactionRequest}
 import pages.transaction.*
@@ -36,7 +37,6 @@ import viewmodels.checkAnswers.transaction.*
 import views.html.transaction.TransactionCheckYourAnswersView
 import services.crossflow.fields.CrossFlowValidationService
 import services.crossflow.*
-import models.CheckMode
 import services.taxCalculation.UpdateTaxCalcService
 
 import javax.inject.{Inject, Singleton}
@@ -98,11 +98,43 @@ class TransactionCheckYourAnswersController @Inject()(
     }
   }
 
+  private def handleLeaseDecision(userAnswers: UserAnswers, leaseDecision: String)(implicit hc: HeaderCarrier, request: Request[_]): Future[Unit] = {
+    val getReturnResourceRef = userAnswers.fullReturn.map(_.returnResourceRef)
+    (leaseDecision, getReturnResourceRef) match {
+      case ("createLease", _) =>
+        for {
+          lease <- Lease.from(userAnswers)
+          createLeaseRequest <- CreateLeaseRequest.from(userAnswers, lease)
+          _ <- backendConnector.createLease(createLeaseRequest)
+        } yield ()
+
+      case ("deleteLease", Some(availableReturnResourceRef)) =>
+        for {
+          req <- DeleteLeaseRequest.from(userAnswers, availableReturnResourceRef)
+          _ <- backendConnector.deleteLease(req)
+        } yield ()
+
+      case _ => Future.unit
+    }
+  }
+
   private def updateTransaction(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
+
+    val isLeaseDefined = userAnswers.fullReturn.flatMap(_.lease).isDefined
+    val transactionType = userAnswers.fullReturn.flatMap(_.transaction).flatMap(_.transactionDescription)
+
+    val leaseDecision: String = transactionType match {
+      case Some("L") if isLeaseDefined => "noAction"
+      case Some("L") if !isLeaseDefined => "createLease"
+      case Some(_) if isLeaseDefined => "deleteLease"
+      case _ => "noAction"
+    }
+
     for {
       transaction <- Transaction.from(userAnswers)
       updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
       updateReturnVersionReturn <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
+      _ <- handleLeaseDecision(userAnswers, leaseDecision)
       result <-
         if (updateReturnVersionReturn.newVersion.isDefined) {
           for {
