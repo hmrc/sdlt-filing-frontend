@@ -19,7 +19,7 @@ package services
 import base.SpecBase
 import connectors.StampDutyLandTaxConnector
 import constants.FullReturnConstants.*
-import models.{FullReturn, GetReturnByRefRequest}
+import models.{FullReturn, GetReturnByRefRequest, Land}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
@@ -236,6 +236,113 @@ class FullReturnServiceSpec extends SpecBase with MockitoSugar {
         result2 mustBe minimalFullReturn
         verify(mockBackendConnector, times(1)).getFullReturn(eqTo(testReturnId1))(any(), any())
         verify(mockBackendConnector, times(1)).getFullReturn(eqTo(testReturnId2))(any(), any())
+      }
+
+      "must remove interestCreatedTransferred from a land when the value is not a recognised land interest" in {
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
+
+        val landWithInvalidInterest = Land(
+          landID = Some("L1"),
+          interestCreatedTransferred = Some("ZZ"),
+          postcode = Some("AB1 2CD")
+        )
+        val returnWithInvalidLand = completeFullReturn.copy(land = Some(Seq(landWithInvalidInterest)))
+
+        when(mockBackendConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
+          .thenReturn(Future.successful(returnWithInvalidLand))
+
+        val service = new FullReturnService(mockBackendConnector)
+        val result = service.getFullReturn(testGetReturnByRefRequest).futureValue
+
+        // the invalid value is stripped...
+        result.land.get.head.interestCreatedTransferred mustBe None
+        // ...but the rest of the land is untouched
+        result.land.get.head.landID mustBe Some("L1")
+        result.land.get.head.postcode mustBe Some("AB1 2CD")
+      }
+
+      "must keep interestCreatedTransferred for every recognised land interest value" in {
+        val validInterests = Seq("FG", "FP", "FT", "LG", "LP", "LT", "OT")
+
+        validInterests.foreach { code =>
+          val mockBackendConnector = mock[StampDutyLandTaxConnector]
+
+          val landWithValidInterest = Land(landID = Some("L1"), interestCreatedTransferred = Some(code))
+          val returnWithValidLand = completeFullReturn.copy(land = Some(Seq(landWithValidInterest)))
+
+          when(mockBackendConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
+            .thenReturn(Future.successful(returnWithValidLand))
+
+          val service = new FullReturnService(mockBackendConnector)
+          val result = service.getFullReturn(testGetReturnByRefRequest).futureValue
+
+          withClue(s"interest code '$code' should have been preserved: ") {
+            result.land.get.head.interestCreatedTransferred mustBe Some(code)
+          }
+        }
+      }
+
+      "must strip only the lands with an invalid interest and leave valid lands untouched" in {
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
+
+        val validLand = Land(landID = Some("L1"), interestCreatedTransferred = Some("FG"))
+        val invalidLand = Land(landID = Some("L2"), interestCreatedTransferred = Some("XX"))
+        val returnWithMixedLand = completeFullReturn.copy(land = Some(Seq(validLand, invalidLand)))
+
+        when(mockBackendConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
+          .thenReturn(Future.successful(returnWithMixedLand))
+
+        val service = new FullReturnService(mockBackendConnector)
+        val result = service.getFullReturn(testGetReturnByRefRequest).futureValue
+
+        result.land.get must have size 2
+        result.land.get.head.interestCreatedTransferred mustBe Some("FG")
+        result.land.get(1).interestCreatedTransferred mustBe None
+        result.land.get(1).landID mustBe Some("L2")
+      }
+
+      "must leave a land unchanged when interestCreatedTransferred is not set" in {
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
+
+        val landWithNoInterest = Land(landID = Some("L1"), interestCreatedTransferred = None)
+        val returnWithNoInterest = completeFullReturn.copy(land = Some(Seq(landWithNoInterest)))
+
+        when(mockBackendConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
+          .thenReturn(Future.successful(returnWithNoInterest))
+
+        val service = new FullReturnService(mockBackendConnector)
+        val result = service.getFullReturn(testGetReturnByRefRequest).futureValue
+
+        result.land.get.head mustBe landWithNoInterest
+      }
+
+      "must strip interestCreatedTransferred when a valid code is supplied in the wrong case" in {
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
+
+        val landWithLowerCaseInterest = Land(landID = Some("L1"), interestCreatedTransferred = Some("fg"))
+        val returnWithLowerCase = completeFullReturn.copy(land = Some(Seq(landWithLowerCaseInterest)))
+
+        when(mockBackendConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
+          .thenReturn(Future.successful(returnWithLowerCase))
+
+        val service = new FullReturnService(mockBackendConnector)
+        val result = service.getFullReturn(testGetReturnByRefRequest).futureValue
+
+        result.land.get.head.interestCreatedTransferred mustBe None
+      }
+
+      "must return the full return unchanged when there are no lands" in {
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
+
+        val returnWithNoLand = completeFullReturn.copy(land = None)
+
+        when(mockBackendConnector.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
+          .thenReturn(Future.successful(returnWithNoLand))
+
+        val service = new FullReturnService(mockBackendConnector)
+        val result = service.getFullReturn(testGetReturnByRefRequest).futureValue
+
+        result mustBe returnWithNoLand
       }
     }
   }

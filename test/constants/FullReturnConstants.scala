@@ -240,7 +240,7 @@ object FullReturnConstants {
     landID = Some("LND001"),
     returnID = Some("RET123456789"),
     propertyType = Some("01"),
-    interestCreatedTransferred = Some("FREEHOLD"),
+    interestCreatedTransferred = Some("FG"),
     houseNumber = Some("123"),
     address1 = Some("Baker Street"),
     address2 = Some("Marylebone"),
