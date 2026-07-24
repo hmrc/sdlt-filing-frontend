@@ -640,7 +640,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           addressLine3 = Some("Building A"),
           addressLine4 = Some("District B"),
           postcode = Some("TE23 5TT"),
-          isRepresentedByAgent = "YES"
+          isRepresentedByAgent = Some("yes")
         )
         val expectedResult = CreateVendorReturn(vendorResourceRef = "VRF-001", vendorId = "VID-001")
 
@@ -669,7 +669,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           returnResourceRef = "RRF-2024-001",
           name = "Smith",
           addressLine1 = "Main Street",
-          isRepresentedByAgent = "YES"
+          isRepresentedByAgent = Some("yes")
         )
         val upstreamError = uk.gov.hmrc.http.UpstreamErrorResponse("Bad Request", 400)
 
@@ -697,7 +697,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           returnResourceRef = "RRF-2024-001",
           name = "Smith",
           addressLine1 = "Main Street",
-          isRepresentedByAgent = "YES"
+          isRepresentedByAgent = Some("yes")
         )
         val runtimeException = new RuntimeException("Connection failed")
 
@@ -726,7 +726,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           returnResourceRef = "RRF-2024-001",
           name = "Smith",
           addressLine1 = "Main Street",
-          isRepresentedByAgent = "YES"
+          isRepresentedByAgent = Some("yes")
         )
         val expectedResult = CreateVendorReturn(vendorResourceRef = "VRF-001", vendorId = "VID-001")
 
@@ -754,7 +754,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           returnResourceRef = "RRF-2024-001",
           name = "Smith",
           addressLine1 = "Main Street",
-          isRepresentedByAgent = "YES"
+          isRepresentedByAgent = Some("yes")
         )
         val expectedResult = CreateVendorReturn(vendorResourceRef = "VRF-001", vendorId = "VID-001")
 
@@ -792,7 +792,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           addressLine3 = Some("Building A"),
           addressLine4 = Some("District B"),
           postcode = Some("TE23 5TT"),
-          isRepresentedByAgent = "YES",
+          isRepresentedByAgent = Some("yes"),
           vendorResourceRef = "VRF-001",
           nextVendorId = Some("VID-002")
         )
@@ -822,7 +822,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           returnResourceRef = "RRF-2024-001",
           name = "Smith",
           addressLine1 = "Main Street",
-          isRepresentedByAgent = "YES",
+          isRepresentedByAgent = Some("yes"),
           vendorResourceRef = "VRF-001"
         )
         val upstreamError = uk.gov.hmrc.http.UpstreamErrorResponse("Not Found", 404)
@@ -851,7 +851,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           returnResourceRef = "RRF-2024-001",
           name = "Smith",
           addressLine1 = "Main Street",
-          isRepresentedByAgent = "YES",
+          isRepresentedByAgent = Some("yes"),
           vendorResourceRef = "VRF-001"
         )
         val expectedResult = UpdateVendorReturn(updated = true)

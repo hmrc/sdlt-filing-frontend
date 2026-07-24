@@ -177,7 +177,7 @@ object FullReturnConstants {
     address3 = Some("London"),
     address4 = None,
     postcode = Some("W1K 1LB"),
-    isRepresentedByAgent = Some("YES"),
+    isRepresentedByAgent = Some("yes"),
     vendorResourceRef = Some("VEN-REF-001"),
     nextVendorID = None
   )
@@ -231,7 +231,7 @@ object FullReturnConstants {
     address3 = Some("London"),
     address4 = None,
     postcode = Some("W1K 1LB"),
-    isRepresentedByAgent = Some("YES"),
+    isRepresentedByAgent = Some("yes"),
     vendorResourceRef = Some("VEN-REF-001"),
     nextVendorID = Some("VEN002")
   )
