@@ -34,7 +34,7 @@ import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.lease.LeaseStartDateView
 
-import java.time.{LocalDate, ZoneOffset}
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class LeaseStartDateControllerSpec extends SpecBase with MockitoSugar {
@@ -46,8 +46,8 @@ class LeaseStartDateControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val validAnswer: LocalDate = LocalDate.now(ZoneOffset.UTC)
-  val validFutureDate: LocalDate = LocalDate.now(ZoneOffset.UTC).plusYears(2)
+  val validAnswer: LocalDate = LocalDate.of(2026, 1, 1)
+  val validFutureDate: LocalDate = LocalDate.of(2029, 1, 1)
 
   lazy val leaseStartDateRoute: String = controllers.lease.routes.LeaseStartDateController.onPageLoad(NormalMode).url
 
