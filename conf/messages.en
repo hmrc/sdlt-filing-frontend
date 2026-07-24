@@ -17,6 +17,8 @@ site.startAgain                                                                 
 site.signIn                                                                         = Sign in
 site.govuk                                                                          = GOV.UK
 site.save.continue                                                                  = Save and continue
+site.save.exit                                                                      = Save and exit
+site.delete.return                                                                  = Delete return
 site.confirm.submit                                                                 = Confirm and submit
 site.success                                                                        = Success
 site.section.prefix                                                                 = This section is
@@ -2310,7 +2312,14 @@ submission.completedSdltReturn.taxCalc.header                                   
 
 submission.completedSdltReturn.summary.purchaser.name                               = Purchaser name
 
-submission.loading.title = Your return is being submitted to HMRC - Submit your return
-submission.loading.heading = Your return is being submitted to HMRC
-submission.loading.paragraph = This may take a few minutes, do not close or refresh this tab until submission is complete.
-submission.loading.continue = Check submission status
+submission.loading.title                                                            = Your return is being submitted to HMRC - Submit your return
+submission.loading.heading                                                          = Your return is being submitted to HMRC
+submission.loading.paragraph                                                        = This may take a few minutes, do not close or refresh this tab until submission is complete.
+submission.loading.continue                                                         = Check submission status
+
+taskListSaveExit.title                                                              = Save and exit – Task list
+taskListSaveExit.heading                                                            = Save and exit
+taskListSaveExit.subheading                                                         = Are you sure you want to save and exit?
+taskListSaveExit.p1                                                                 = Selecting ‘Save and exit’ will take you to your Stamp Taxes Online account.
+taskListSaveExit.p2                                                                 = You can view, edit and submit your return by selecting it within ‘Returns in progress’.
+taskListSaveExit.error.required                                                     = Select yes if you are sure you want to save and exit
