@@ -23,7 +23,7 @@ import forms.lease.LeaseStartDateFormProvider
 import models.{FullReturn, Lease, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{never, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.lease.{LeaseEndDatePage, LeaseStartDatePage, LeaseStartingRentEndDatePage}
 import play.api.i18n.Messages
@@ -34,7 +34,7 @@ import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.lease.LeaseStartDateView
 
-import java.time.{LocalDate, ZoneOffset}
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class LeaseStartDateControllerSpec extends SpecBase with MockitoSugar {
@@ -46,8 +46,8 @@ class LeaseStartDateControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val validAnswer: LocalDate = LocalDate.now(ZoneOffset.UTC)
-  val validFutureDate: LocalDate = LocalDate.now(ZoneOffset.UTC).plusYears(2)
+  val validAnswer: LocalDate = LocalDate.of(2026, 1, 1)
+  val validFutureDate: LocalDate = LocalDate.of(2029, 1, 1)
 
   lazy val leaseStartDateRoute: String = controllers.lease.routes.LeaseStartDateController.onPageLoad(NormalMode).url
 
@@ -225,6 +225,33 @@ class LeaseStartDateControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) must include("The start date as specified in the lease must be before the end date for starting rent")
+      }
+    }
+
+    "must not update the session when lease start date greater than lease end date for a POST" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val userAnswers = emptyUserAnswers.set(LeaseEndDatePage, LocalDate.of(2027, 2, 1)).success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+      running(application) {
+
+        val request =
+          FakeRequest(POST, leaseStartDateRoute)
+            .withFormUrlEncodedBody(
+              "value.day"   -> validFutureDate.getDayOfMonth.toString,
+              "value.month" -> validFutureDate.getMonthValue.toString,
+              "value.year"  -> validFutureDate.getYear.toString)
+
+        val result = route(application, request).value
+        status(result) mustEqual BAD_REQUEST
+        verify(mockSessionRepository, never()).set(any())
       }
     }
 
