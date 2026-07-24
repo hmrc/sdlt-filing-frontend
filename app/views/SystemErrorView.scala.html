@@ -14,15 +14,26 @@
  * limitations under the License.
  *@
 
+@import views.html.components._
+
 @this(
-        layout: templates.Layout,
-        govukButton: GovukButton
+    layout: templates.Layout,
+    h1: h1,
+    p: Paragraph,
+    paragraphWithLink: ParagraphWithLink
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@()(implicit rh: RequestHeader, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("site.error.generic.title"))) {
+@layout(pageTitle = titleNoForm("site.error.systemError.title")) {
 
-    <h1 class="govuk-heading-xl">@messages("site.error.generic.heading")</h1>
+    @h1(messages("site.error.systemError.heading"))
 
+    @p(messages("site.error.systemError.p1"))
+    @p(messages("site.error.systemError.p2"))
+    @paragraphWithLink(
+        messageKey = "site.error.systemError.p3",
+        linkKey = "site.error.systemError.p3.link",
+        textKey = "site.error.systemError.p3.linkText"
+    )
 }
