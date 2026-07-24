@@ -768,7 +768,7 @@ GET        /submit-your-return/submission-receipt-and-SDLT5                     
 
 GET        /submit-your-return/account-not-activated                                                 controllers.submission.SubmissionAccountNotActivatedController.onPageLoad()
 
-GET       /submit-your-return/your-completed-SDLT-return                                            controllers.submission.CompletedSdltReturnController.onPageLoad()
+GET       /submit-your-return/your-completed-SDLT-return                                             controllers.submission.CompletedSdltReturnController.onPageLoad()
 
 GET        /update-transaction-relief                                                                controllers.transaction.TransactionSingleEntityController.onPageLoad()
 GET        /update-lease-type                                                                        controllers.lease.LeaseSingleEntityController.onPageLoad()
@@ -779,6 +779,8 @@ GET        /about-the-land/property-type-mismatch/:landId/update                
 
 GET        /submit-your-return/submission-failed                                                     controllers.submission.SubmissionFailedController.onPageLoad()
 
-GET       /submit-your-return/return-is-being-submitted                                                                      controllers.submission.LoadingScreenController.show
-GET       /submit-your-return/return-is-being-submitted/query                                                              controllers.submission.LoadingScreenController.query
+GET       /submit-your-return/return-is-being-submitted                                              controllers.submission.LoadingScreenController.show
+GET       /submit-your-return/return-is-being-submitted/query                                        controllers.submission.LoadingScreenController.query
 
+GET       /task-list/save-and-exit                                                                   controllers.TaskListSaveExitController.onPageLoad(mode: Mode = NormalMode)
+POST      /task-list/save-and-exit                                                                   controllers.TaskListSaveExitController.onSubmit(mode: Mode = NormalMode)

@@ -29,10 +29,21 @@
 
     <h1 class="govuk-heading-l">@messages("taskList.heading")</h1>
 
- @taskList(sections: _*)
+    @taskList(sections: _*)
 
-<a href="@routes.ReturnTaskListController.downloadPdf" class="govuk-link">
-    Download SDLT return PDF
-</a>
+    <div class="govuk-button-group">
+        @govukButton(
+            ButtonViewModel(messages("site.save.exit")).asSecondaryButton()
+            .asLink(controllers.routes.TaskListSaveExitController.onPageLoad().url)
+        )
 
+        @govukButton(
+            ButtonViewModel(messages("site.delete.return")).asWarningButton()
+        )
+    </div>
+    <p>
+        <a href="@routes.ReturnTaskListController.downloadPdf" class="govuk-link">
+            Download a PDF version of this return
+        </a>
+    </p>
 }
