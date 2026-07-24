@@ -10,7 +10,7 @@ GET         /language/:lang                                                     
 
 GET         /refresh-session                                                                         controllers.KeepAliveController.keepAlive()
 
-GET         /there-is-a-problem                                                                      controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
+GET         /there-is-a-problem                                                                      controllers.JourneyRecoveryController.onPageLoad()
 
 GET         /preliminary-questions/check-answers                                                     controllers.preliminary.CheckYourAnswersController.onPageLoad()
 POST        /preliminary-questions/check-answers                                                     controllers.preliminary.CheckYourAnswersController.onSubmit()
@@ -23,6 +23,7 @@ GET         /no-return-ref                                                      
 POST        /no-return-ref                                                                           controllers.NoReturnReferenceController.onSubmit()
 
 GET         /unauthorised                                                                            controllers.UnauthorisedController.onPageLoad()
+GET         /unauthorised-inividual                                                                  controllers.UnauthorisedIndividualController.onPageLoad()
 
 GET         /preliminary-questions/purchaser-name                                                    controllers.preliminary.PurchaserSurnameOrCompanyNameController.onPageLoad(mode: Mode = NormalMode)
 POST        /preliminary-questions/purchaser-name                                                    controllers.preliminary.PurchaserSurnameOrCompanyNameController.onSubmit(mode: Mode = NormalMode)
@@ -66,8 +67,6 @@ GET         /about-the-vendor/vendor-name                                       
 POST        /about-the-vendor/vendor-name                                                            controllers.vendor.VendorOrCompanyNameController.onSubmit(mode: Mode = NormalMode)
 GET         /about-the-vendor/vendor-name/change                                                     controllers.vendor.VendorOrCompanyNameController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-vendor/vendor-name/change                                                     controllers.vendor.VendorOrCompanyNameController.onSubmit(mode: Mode = CheckMode)
-
-GET         /generic-error                                                                           controllers.GenericErrorController.onPageLoad()
 
 GET         /about-the-vendor/vendor-overview                                                        controllers.vendor.VendorOverviewController.onPageLoad(mode: Mode = NormalMode, paginationIndex: Int ?= 1)
 POST        /about-the-vendor/vendor-overview                                                        controllers.vendor.VendorOverviewController.onSubmit(mode: Mode = NormalMode)

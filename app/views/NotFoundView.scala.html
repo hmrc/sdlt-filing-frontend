@@ -14,23 +14,26 @@
  * limitations under the License.
  *@
 
+@import views.html.components._
+
 @this(
-        layout: templates.Layout,
-        govukButton: GovukButton
+    layout: templates.Layout,
+    h1: h1,
+    p: Paragraph,
+    paragraphWithLink: ParagraphWithLink
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@()(implicit rh: RequestHeader, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("site.journeyRecovery.startAgain.title"))) {
+@layout(pageTitle = titleNoForm("site.error.pageNotFound.title")) {
 
-    <h1 class="govuk-heading-l">@messages("site.journeyRecovery.startAgain.heading")</h1>
+    @h1(messages("site.error.pageNotFound.heading"))
 
-    <p class="govuk-body">@messages("site.journeyRecovery.startAgain.guidance")</p>
-
-    <p class="govuk-body">
-    @govukButton(
-        ButtonViewModel(messages("site.startAgain"))
-        .asLink(routes.IndexController.onPageLoad().url)
+    @p(messages("site.error.pageNotFound.p1"))
+    @p(messages("site.error.pageNotFound.p2"))
+    @paragraphWithLink(
+        messageKey = "site.error.pageNotFound.p3",
+        linkKey = "site.error.pageNotFound.p3.link",
+        textKey = "site.error.pageNotFound.p3.linkText"
     )
-    </p>
 }

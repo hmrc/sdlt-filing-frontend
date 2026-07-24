@@ -23,6 +23,7 @@ import models.requests.IdentifierRequest
 import play.api.mvc.*
 import play.api.mvc.Results.*
 import uk.gov.hmrc.auth.core.*
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.{HeaderCarrier, UnauthorizedException}
@@ -43,8 +44,8 @@ class AuthenticatedIdentifierAction @Inject()(
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    authorised().retrieve(Retrievals.internalId and Retrievals.allEnrolments) {
-      case Some(internalId) ~ enrolments =>
+    authorised().retrieve(Retrievals.internalId and Retrievals.allEnrolments and Retrievals.affinityGroup) {
+      case Some(internalId) ~ enrolments ~ Some(affinityGroup) if !affinityGroup.equals(Individual) =>
 
         val sdltEnrol: Option[Enrolment] =
           enrolments.getEnrolment("IR-SDLT-AGENT")
@@ -58,16 +59,19 @@ class AuthenticatedIdentifierAction @Inject()(
               case Some(stornId) =>
                 block(IdentifierRequest(request, internalId, storn = stornId))
               case None =>
-                //TODO get error page for this 
+                //TODO get error page for this
                 Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
             }
 
           case None =>
             Future.successful(Redirect(routes.NoSdltEnrolmentErrorPageController.onPageLoad()))
         }
-
-      case None ~ _ =>
+      case Some(_) ~ _ ~ Some(Individual) =>
+        Future.successful(Redirect(routes.UnauthorisedIndividualController.onPageLoad()))
+      case None ~ _ ~ _ =>
         Future.failed(new UnauthorizedException("Unable to retrieve internal Id"))
+      case _ =>
+        Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
     }.recover {
       case _: NoActiveSession =>
         Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))

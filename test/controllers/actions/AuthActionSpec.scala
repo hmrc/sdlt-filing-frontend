@@ -24,6 +24,7 @@ import play.api.mvc.{Action, AnyContent, BodyParsers, Results}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import uk.gov.hmrc.auth.core.*
+import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -45,8 +46,36 @@ class AuthActionSpec extends SpecBase {
       val enrolments: Enrolments = Enrolments(Set(
         Enrolment("IR-OTHER", Seq(), "activated")
       ))
+      val affinityGroup: Option[AffinityGroup] = Some(Organisation)
 
-      Future.successful(new~(internalId, enrolments).asInstanceOf[A])
+      Future.successful(new~(new~(internalId, enrolments), affinityGroup).asInstanceOf[A])
+    }
+  }
+
+  class FakeAuthConnectorIndividual extends AuthConnector {
+    override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])
+                             (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
+
+      val internalId: Option[String] = Some("internalId-123")
+      val enrolments: Enrolments = Enrolments(Set(
+        Enrolment("IR-SDLT-AGENT", Seq(), "activated")
+      ))
+      val affinityGroup: Option[AffinityGroup] = Some(Individual)
+
+      Future.successful(new~(new~(internalId, enrolments), affinityGroup).asInstanceOf[A])
+    }
+  }
+
+  class FakeAuthConnectorMissingAffinityGroup extends AuthConnector {
+    override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])
+                             (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
+
+      val internalId: Option[String] = Some("internalId-123")
+      val enrolments: Enrolments = Enrolments(Set(
+        Enrolment("IR-SDLT-AGENT", Seq(), "activated")
+      ))
+
+      Future.successful(new~(new~(internalId, enrolments), None).asInstanceOf[A])
     }
   }
 
@@ -134,6 +163,56 @@ class AuthActionSpec extends SpecBase {
 
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustBe routes.NoSdltEnrolmentErrorPageController.onPageLoad().url
+        }
+      }
+    }
+
+    "the user has an individual affinity group" - {
+
+      "must redirect the user to the unauthorised individual page" in {
+
+        val application = applicationBuilder(userAnswers = None).build()
+
+        running(application) {
+          val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val authAction = new AuthenticatedIdentifierAction(
+            new FakeAuthConnectorIndividual,
+            appConfig,
+            bodyParsers
+          )
+
+          val controller = new Harness(authAction)
+          val result = controller.onPageLoad()(FakeRequest())
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustBe routes.UnauthorisedIndividualController.onPageLoad().url
+        }
+      }
+    }
+
+    "the user has no affinity group" - {
+
+      "must redirect the user to the unauthorised page" in {
+
+        val application = applicationBuilder(userAnswers = None).build()
+
+        running(application) {
+          val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val authAction = new AuthenticatedIdentifierAction(
+            new FakeAuthConnectorMissingAffinityGroup,
+            appConfig,
+            bodyParsers
+          )
+
+          val controller = new Harness(authAction)
+          val result = controller.onPageLoad()(FakeRequest())
+
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad().url
         }
       }
     }

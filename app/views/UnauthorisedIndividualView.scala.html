@@ -14,23 +14,28 @@
  * limitations under the License.
  *@
 
+@import views.html.components._
+@import config.FrontendAppConfig
+
 @this(
         layout: templates.Layout,
-        govukButton: GovukButton
+        h1: h1,
+        p: Paragraph,
+        link: link,
+        appConfig: FrontendAppConfig
 )
 
-@(continueUrl: String)(implicit request: Request[_], messages: Messages)
+@()(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("site.journeyRecovery.continue.title"))) {
+@layout(
+    pageTitle = titleNoForm(messages("site.unauthorisedIndividual.title")),
+    timeout = false
+) {
 
-    <h1 class="govuk-heading-l">@messages("site.journeyRecovery.continue.heading")</h1>
+    @h1(messages("site.unauthorisedIndividual.heading"))
 
-    <p class="govuk-body">@messages("site.journeyRecovery.continue.guidance")</p>
-
+    @p(messages("site.unauthorisedIndividual.guidance"))
     <p class="govuk-body">
-    @govukButton(
-        ButtonViewModel(messages("site.continue"))
-        .asLink(continueUrl)
-    )
+        @link(appConfig.businessTaxAccountRedirectUrl, messages("site.unauthorisedIndividual.linkText"))
     </p>
 }

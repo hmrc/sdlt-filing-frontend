@@ -32,9 +32,6 @@
 
     <p class="govuk-body">
         @messages("site.error.noSdltEnrolmentErrorPage.p")
-        <a class="govuk-link" href=@appConfig.addTaxesRedirectUrl>
-            @messages("site.error.noSdltEnrolmentErrorPage.link.message")
-        </a>
-        @messages("site.fullStop")
+        <a class="govuk-link" href=@appConfig.addTaxesRedirectUrl>@messages("site.error.noSdltEnrolmentErrorPage.link.message")</a>@messages("site.fullStop")
     </p>
 }
