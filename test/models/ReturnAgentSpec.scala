@@ -99,7 +99,7 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
     "phoneNumber" -> "01234567890",
     "email" -> "agent@example.com",
     "agentReference" -> "AGT-001",
-    "isAuthorised" -> "YES"
+    "isAuthorised" -> "yes"
   )
 
   private val validUpdateReturnAgentRequestJsonMinimal = Json.obj(
@@ -125,7 +125,7 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
     phoneNumber = Some("01234567890"),
     email = Some("agent@example.com"),
     agentReference = Some("AGT-001"),
-    isAuthorised = Some("YES")
+    isAuthorised = Some("yes")
   )
 
   private val minimalUpdateReturnAgentRequest = UpdateReturnAgentRequest(
@@ -152,7 +152,7 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
     "phoneNumber" -> "01234567890",
     "email" -> "agent@example.com",
     "agentReference" -> "AGT-001",
-    "isAuthorised" -> "YES"
+    "isAuthorised" -> "yes"
   )
 
   private val validCreateReturnAgentRequestJsonMinimal = Json.obj(
@@ -178,7 +178,7 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
     phoneNumber = Some("01234567890"),
     email = Some("agent@example.com"),
     agentReference = Some("AGT-001"),
-    isAuthorised = Some("YES")
+    isAuthorised = Some("yes")
   )
 
   private val minimalCreateReturnAgentRequest = CreateReturnAgentRequest(
@@ -222,7 +222,7 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
         result.phoneNumber mustBe Some("01234567890")
         result.email mustBe Some("agent@example.com")
         result.agentReference mustBe Some("AGT-001")
-        result.isAuthorised mustBe Some("YES")
+        result.isAuthorised mustBe Some("yes")
       }
 
       "must deserialize valid JSON with only required fields" in {
@@ -365,7 +365,7 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
         (json \ "phoneNumber").asOpt[String] mustBe Some("01234567890")
         (json \ "email").asOpt[String] mustBe Some("agent@example.com")
         (json \ "agentReference").asOpt[String] mustBe Some("AGT-001")
-        (json \ "isAuthorised").asOpt[String] mustBe Some("YES")
+        (json \ "isAuthorised").asOpt[String] mustBe Some("yes")
       }
 
       "must serialize CreateReturnAgentRequest with only required fields" in {
@@ -533,7 +533,7 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
             phoneNumber = None,
             email = None,
             agentReference = None,
-            isAuthorised = Some("YES")
+            isAuthorised = Some("yes")
           )
 
           val result = CreateReturnAgentRequest.from(userAnswers, AgentType.Purchaser).futureValue
@@ -572,7 +572,7 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
             phoneNumber = Some("12345678"),
             email = Some("test@example.com"),
             agentReference = Some("AGT-REF-001"),
-            isAuthorised = Some("YES")
+            isAuthorised = Some("yes")
           )
 
           val result = CreateReturnAgentRequest.from(userAnswers, AgentType.Purchaser).futureValue
@@ -823,7 +823,7 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
         result.phoneNumber mustBe Some("01234567890")
         result.email mustBe Some("agent@example.com")
         result.agentReference mustBe Some("AGT-001")
-        result.isAuthorised mustBe Some("YES")
+        result.isAuthorised mustBe Some("yes")
       }
 
       "must deserialize valid JSON with only required fields" in {
@@ -966,7 +966,7 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
         (json \ "phoneNumber").asOpt[String] mustBe Some("01234567890")
         (json \ "email").asOpt[String] mustBe Some("agent@example.com")
         (json \ "agentReference").asOpt[String] mustBe Some("AGT-001")
-        (json \ "isAuthorised").asOpt[String] mustBe Some("YES")
+        (json \ "isAuthorised").asOpt[String] mustBe Some("yes")
       }
 
       "must serialize UpdateReturnAgentRequest with only required fields" in {
@@ -1258,7 +1258,7 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
             phoneNumber = None,
             email = None,
             agentReference = None,
-            isAuthorised = Some("YES")
+            isAuthorised = Some("yes")
           )
 
           val result = UpdateReturnAgentRequest.from(userAnswers, AgentType.Purchaser).futureValue
@@ -1297,7 +1297,7 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
             phoneNumber = Some("12345678"),
             email = Some("test@example.com"),
             agentReference = Some("AGT-REF-001"),
-            isAuthorised = Some("YES")
+            isAuthorised = Some("yes")
           )
 
           val result = UpdateReturnAgentRequest.from(userAnswers, AgentType.Purchaser).futureValue

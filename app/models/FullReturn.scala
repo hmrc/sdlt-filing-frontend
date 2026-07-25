@@ -87,9 +87,9 @@ case class Purchaser(
                       nino: Option[String] = None,
                       purchaserResourceRef: Option[String] = None,
                       nextPurchaserID: Option[String] = None,
-                      lMigrated: Option[String] = None, // Used in backend
-                      createDate: Option[String] = None, // Used in backend
-                      lastUpdateDate: Option[String] = None, // Used in backend
+                      lMigrated: Option[String] = None,
+                      createDate: Option[String] = None,
+                      lastUpdateDate: Option[String] = None,
                       isUkCompany: Option[String] = None,
                       hasNino: Option[String] = None,
                       dateOfBirth: Option[String] = None,
@@ -126,18 +126,17 @@ object Purchaser {
         Purchaser(
           purchaserID = purchaserSessionQuestions.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID),
           returnID = userAnswers.flatMap(_.returnId),
-          isCompany = if (purchaserSessionQuestions.purchaserCurrent.whoIsMakingThePurchase == "Company") Some("YES") else Some("NO"),
+          isCompany = if (purchaserSessionQuestions.purchaserCurrent.whoIsMakingThePurchase == "Company") Some("yes") else Some("no"),
           isTrustee =  purchaserSessionQuestions.purchaserCurrent.isPurchaserActingAsTrustee match {
-            case Some(true) => Some("YES")
-            case Some(false) => Some("NO")
+            case Some(true) => Some("yes")
+            case Some(false) => Some("no")
             case None => None
           },
           isConnectedToVendor = purchaserSessionQuestions.purchaserCurrent.purchaserAndVendorConnected match {
-            case Some(true) => Some("YES")
-            case Some(false) => Some("NO")
+            case Some(true) => Some("yes")
+            case Some(false) => Some("no")
             case None => None
           },
-          isRepresentedByAgent = Some("NO"),
           title = None,
           surname = if (purchaserSessionQuestions.purchaserCurrent.whoIsMakingThePurchase == "Individual") {
             Some(purchaserSessionQuestions.purchaserCurrent.nameOfPurchaser.name)
@@ -257,7 +256,7 @@ object Vendor {
       address3 = vendorSessionQuestions.vendorCurrent.vendorAddress.line3,
       address4 = vendorSessionQuestions.vendorCurrent.vendorAddress.line4,
       postcode = vendorSessionQuestions.vendorCurrent.vendorAddress.postcode,
-      isRepresentedByAgent = existingVendor.map(_.isRepresentedByAgent).getOrElse(Some("NO")),
+      isRepresentedByAgent = existingVendor.flatMap(_.isRepresentedByAgent),
       vendorResourceRef = existingVendor.flatMap(_.vendorResourceRef),
       nextVendorID = existingVendor.flatMap(_.nextVendorID)
     ))
@@ -266,7 +265,7 @@ object Vendor {
 
 case class Land(
                  landID: Option[String] = None,
-                 returnID: Option[String] = None, // Used in backend
+                 returnID: Option[String] = None,
                  propertyType: Option[String] = None,
                  interestCreatedTransferred: Option[String] = None,
                  houseNumber: Option[String] = None,

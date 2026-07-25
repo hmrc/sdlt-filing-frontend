@@ -34,7 +34,7 @@ case class CreateVendorRequest(
                        addressLine3: Option[String] = None,
                        addressLine4: Option[String] = None,
                        postcode: Option[String] = None,
-                       isRepresentedByAgent: String
+                       isRepresentedByAgent: Option[String] = None
                        )
 
 object CreateVendorRequest {
@@ -43,8 +43,8 @@ object CreateVendorRequest {
   def from(userAnswers: UserAnswers, vendor: Vendor): Future[CreateVendorRequest] =
     userAnswers.fullReturn match {
       case Some(fullReturn) =>
-        (vendor.name, vendor.address1, vendor.isRepresentedByAgent) match {
-          case (Some(name), Some(address1), Some(isRepresentedByAgent)) =>
+        (vendor.name, vendor.address1) match {
+          case (Some(name), Some(address1)) =>
             Future.successful(CreateVendorRequest(
               stornId = userAnswers.storn,
               returnResourceRef = fullReturn.returnResourceRef,
@@ -57,7 +57,7 @@ object CreateVendorRequest {
               addressLine3 = vendor.address3,
               addressLine4 = vendor.address4,
               postcode = vendor.postcode,
-              isRepresentedByAgent = isRepresentedByAgent,
+              isRepresentedByAgent = vendor.isRepresentedByAgent,
             ))
           case _ => Future.failed(new NoSuchElementException("Vendor mandatory fields not found"))
         }
@@ -90,7 +90,7 @@ case class UpdateVendorRequest(
                                 addressLine3: Option[String] = None,
                                 addressLine4: Option[String] = None,
                                 postcode: Option[String] = None,
-                                isRepresentedByAgent: String,
+                                isRepresentedByAgent: Option[String] = None,
                                 vendorResourceRef: String,
                                 nextVendorId: Option[String] = None
                               )
@@ -116,7 +116,7 @@ object UpdateVendorRequest {
               addressLine3 = vendor.address3,
               addressLine4 = vendor.address4,
               postcode = vendor.postcode,
-              isRepresentedByAgent = vendor.isRepresentedByAgent.getOrElse("NO"),
+              isRepresentedByAgent = vendor.isRepresentedByAgent,
               vendorResourceRef = vendorResourceRef,
               nextVendorId = vendor.nextVendorID
             ))
