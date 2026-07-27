@@ -17,7 +17,7 @@
 package viewmodels.tasklist
 
 import config.FrontendAppConfig
-import models.FullReturn
+import models.{FullReturn, Vendor}
 import play.api.i18n.Messages
 
 import javax.inject.Singleton
@@ -36,38 +36,57 @@ object VendorTaskList {
     )
   }
 
-  def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
-    val mainVendorId: Option[String] = fullReturn.returnInfo.flatMap(_.mainVendorID)
-    val mainVendor = fullReturn.vendor.flatMap(_.find(vendor => mainVendorId.equals(vendor.vendorID)))
-
+  // ── Per-vendor: the single source of truth for the mandatory fields ───────
+  def mandatoryFieldsDefined(vendor: Vendor): Seq[Boolean] =
     Seq(
-      mainVendor.exists(_.name.isDefined),
-      mainVendor.exists(_.address1.isDefined)
+      vendor.name.isDefined,
+      vendor.address1.isDefined
     )
 
+  def isVendorComplete(vendor: Vendor): Boolean =
+    mandatoryFieldsDefined(vendor).forall(identity)
+
+  // ── Across all vendors on the return ──────────────────────────────────────
+  def vendors(fullReturn: FullReturn): Seq[Vendor] =
+    fullReturn.vendor.getOrElse(Seq.empty)
+
+  // The vendors still missing a mandatory field — what the overview lists.
+  def incompleteVendors(fullReturn: FullReturn): Seq[Vendor] =
+    vendors(fullReturn).filterNot(vendor => isVendorComplete(vendor))
+
+  // Flattened checks across every vendor, so the task-list row reflects them
+  // all. No vendors => two failing checks (row shows "not started").
+  def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
+    val all = vendors(fullReturn)
+    if (all.isEmpty) Seq.fill(2)(false)
+    else all.flatMap(vendor => mandatoryFieldsDefined(vendor))
   }
 
+  // Complete only when there is at least one vendor and every one is complete.
   def isVendorComplete(fullReturn: FullReturn): Boolean = {
-    mandatoryFieldsDefined(fullReturn).forall(identity)
+    val all = vendors(fullReturn)
+    all.nonEmpty && all.forall(vendor => isVendorComplete(vendor))
   }
 
   def vendorRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
-    val url = if (isVendorComplete(fullReturn)) {
-      controllers.vendor.routes.VendorOverviewController.onPageLoad().url
-    } else {
-      controllers.vendor.routes.VendorBeforeYouStartController.onPageLoad().url
-    }
+    val url =
+      if (isVendorComplete(fullReturn))
+        controllers.vendor.routes.VendorOverviewController.onPageLoad().url
+      else if (incompleteVendors(fullReturn).nonEmpty) {
+        //TODO redirect to incomplete overview
+//        controllers.vendor.routes.VendorIncompleteOverviewController.onPageLoad().url
+        controllers.vendor.routes.VendorOverviewController.onPageLoad().url
+      } else
+        controllers.vendor.routes.VendorBeforeYouStartController.onPageLoad().url
 
     TaskListRowBuilder(
       canEdit = {
         case TLCompleted => true
-        case _ => true
+        case _           => true
       },
       messageKey = _ => "tasklist.vendorQuestion.details",
-      url = _ => _ => {
-        url
-      },
+      url = _ => _ => url,
       tagId = "vendorQuestionDetailRow",
       checks = _ => mandatoryFieldsDefined(fullReturn),
       prerequisites = _ => Seq()
@@ -76,5 +95,4 @@ object VendorTaskList {
 
   def buildVendorRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow =
     vendorRowBuilder(fullReturn).build(fullReturn)
-
 }

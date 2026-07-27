@@ -17,7 +17,7 @@
 package viewmodels.tasklist
 
 import config.FrontendAppConfig
-import models.FullReturn
+import models.{CompanyDetails, FullReturn, Purchaser}
 import play.api.i18n.Messages
 
 import javax.inject.Singleton
@@ -35,70 +35,93 @@ object PurchaserTaskList {
       )
     )
 
-  def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
-    val mainPurchaserID: Option[String] = fullReturn.returnInfo.flatMap(_.mainPurchaserID)
-    val mainPurchaser = fullReturn.purchaser.flatMap(_.find(purchaser => mainPurchaserID.equals(purchaser.purchaserID)))
-
-    val isPurchaserCompany = mainPurchaser.exists(_.isCompany.exists(_.equalsIgnoreCase("yes")))
-    val isCompanyDetailsDefined = fullReturn.companyDetails.isDefined
-
-    // common purchaser fields
-    val commonFieldsDefined = Seq(
-      mainPurchaser.exists(_.isCompany.isDefined),
-      mainPurchaser.exists(_.address1.isDefined),
-      mainPurchaser.exists(_.isTrustee.isDefined),
-      mainPurchaser.exists(_.isConnectedToVendor.isDefined)
+  def commonFieldsDefined(purchaser: Purchaser): Seq[Boolean] =
+    Seq(
+      purchaser.isCompany.isDefined,
+      purchaser.address1.isDefined,
+      purchaser.isTrustee.isDefined,
+      purchaser.isConnectedToVendor.isDefined
     )
 
-    // purchaser company fields
+  def mainSpecificFieldsDefined(purchaser: Purchaser, companyDetails: Option[CompanyDetails]): Seq[Boolean] = {
+    val isPurchaserCompany      = purchaser.isCompany.exists(_.equalsIgnoreCase("yes"))
+    val isCompanyDetailsDefined = companyDetails.isDefined
+
     val companyFieldsDefined = Seq(
-      mainPurchaser.exists(_.companyName.isDefined),
-      fullReturn.companyDetails.exists(x => x.VATReference.isDefined || x.UTR.isDefined) ||
-        mainPurchaser.exists(x => x.registrationNumber.isDefined && x.placeOfRegistration.isDefined)
+      purchaser.companyName.isDefined,
+      companyDetails.exists(x => x.VATReference.isDefined || x.UTR.isDefined) ||
+        (purchaser.registrationNumber.isDefined && purchaser.placeOfRegistration.isDefined)
     )
 
-    // purchaser individual fields
-    val isNinoDefined = mainPurchaser.exists(_.nino.isDefined)
-    val isDOBDefined = mainPurchaser.exists(_.dateOfBirth.isDefined)
-    val isRegDefined = mainPurchaser.exists(x => x.registrationNumber.isDefined && x.placeOfRegistration.isDefined)
-
+    val isNinoDefined = purchaser.nino.isDefined
+    val isDOBDefined  = purchaser.dateOfBirth.isDefined
+    val isRegDefined  = purchaser.registrationNumber.isDefined && purchaser.placeOfRegistration.isDefined
     val individualFieldsDefined = Seq(
-      mainPurchaser.exists(_.surname.isDefined)
+      purchaser.surname.isDefined
     ) ++ (
-      if (isNinoDefined) {
-        Seq(isNinoDefined, isDOBDefined)
-      } else {
-        Seq(isRegDefined)
-      })
+      if (isNinoDefined) Seq(isNinoDefined, isDOBDefined)
+      else Seq(isRegDefined)
+      )
 
     (isPurchaserCompany, isCompanyDetailsDefined) match {
-      case (true, true) => commonFieldsDefined ++ companyFieldsDefined
-      case (true, false) => commonFieldsDefined ++ Seq(isCompanyDetailsDefined)
-      case (false, _) => commonFieldsDefined ++ individualFieldsDefined
+      case (true, true)  => companyFieldsDefined
+      case (true, false) => Seq(isCompanyDetailsDefined)
+      case (false, _)    => individualFieldsDefined
     }
   }
-    
+
+  def mandatoryFieldsDefined(purchaser: Purchaser, isMainPurchaser: Boolean, companyDetails: Option[CompanyDetails]): Seq[Boolean] =
+    if (isMainPurchaser) commonFieldsDefined(purchaser) ++ mainSpecificFieldsDefined(purchaser, companyDetails)
+    else commonFieldsDefined(purchaser)
+
+  def isPurchaserComplete(purchaser: Purchaser, isMainPurchaser: Boolean, companyDetails: Option[CompanyDetails]): Boolean =
+    mandatoryFieldsDefined(purchaser, isMainPurchaser, companyDetails).forall(identity)
+
+  def purchasers(fullReturn: FullReturn): Seq[Purchaser] =
+    fullReturn.purchaser.getOrElse(Seq.empty)
+
+  private def mainPurchaserId(fullReturn: FullReturn): Option[String] =
+    fullReturn.returnInfo.flatMap(_.mainPurchaserID)
+
+  private def isMainPurchaser(purchaser: Purchaser, fullReturn: FullReturn): Boolean =
+    mainPurchaserId(fullReturn).exists(id => purchaser.purchaserID.contains(id))
+
+  def incompletePurchasers(fullReturn: FullReturn): Seq[Purchaser] =
+    purchasers(fullReturn).filterNot(purchaser =>
+      isPurchaserComplete(purchaser, isMainPurchaser(purchaser, fullReturn), fullReturn.companyDetails))
+
+  def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
+    val all = purchasers(fullReturn)
+    if (all.isEmpty) Seq(false)
+    else all.flatMap(purchaser =>
+      mandatoryFieldsDefined(purchaser, isMainPurchaser(purchaser, fullReturn), fullReturn.companyDetails))
+  }
+
   def isPurchaserComplete(fullReturn: FullReturn): Boolean = {
-    mandatoryFieldsDefined(fullReturn).forall(identity)
+    val all = purchasers(fullReturn)
+    all.nonEmpty && all.forall(purchaser =>
+      isPurchaserComplete(purchaser, isMainPurchaser(purchaser, fullReturn), fullReturn.companyDetails))
   }
 
   def purchaserRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
-    
-    val url = if (isPurchaserComplete(fullReturn)) {
-      controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
-    } else {
-      controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
-    }
-    
+
+    val url =
+      if (isPurchaserComplete(fullReturn))
+        controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
+      else if (incompletePurchasers(fullReturn).nonEmpty) {
+        //TODO send to incomplete overview
+        controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
+//        controllers.purchaser.routes.PurchaserIncompleteOverviewController.onPageLoad().url
+      } else
+        controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
+
     TaskListRowBuilder(
       canEdit = {
         case TLCompleted => true
-        case _ => true
+        case _           => true
       },
       messageKey = _ => "tasklist.purchaserQuestion.details",
-      url = _ => _ => {
-        url
-      },
+      url = _ => _ => url,
       tagId = "purchaserQuestionDetailRow",
       checks = scheme => mandatoryFieldsDefined(fullReturn),
       prerequisites = _ => Seq()
@@ -107,5 +130,4 @@ object PurchaserTaskList {
 
   def buildPurchaserRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow =
     purchaserRowBuilder(fullReturn).build(fullReturn)
-
 }

@@ -18,7 +18,7 @@ package controllers.vendorAgent
 
 import controllers.actions.*
 import forms.vendorAgent.VendorAgentBeforeYouStartFormProvider
-import models.Mode
+import models.{AgentType, Mode}
 import navigation.Navigator
 import pages.vendorAgent.VendorAgentBeforeYouStartPage
 import play.api.data.Form
@@ -66,6 +66,10 @@ class VendorAgentBeforeYouStartController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
+      val hasAgentTypeVendor = request.userAnswers.fullReturn
+        .flatMap(_.returnAgent)
+        .exists(_.exists(_.agentType.contains(AgentType.Vendor.toString)))
+
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
@@ -77,7 +81,11 @@ class VendorAgentBeforeYouStartController @Inject()(
             _ <- vendorCreateOrUpdateService.updateIsRepresentedByAgent(value, updatedAnswers)
           } yield {
             if (value) {
-              Redirect(navigator.nextPage(VendorAgentBeforeYouStartPage, mode, updatedAnswers))
+              if(hasAgentTypeVendor) {
+                Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad())
+              } else {
+                Redirect(navigator.nextPage(VendorAgentBeforeYouStartPage, mode, updatedAnswers))
+              }
             } else {
               Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
             }

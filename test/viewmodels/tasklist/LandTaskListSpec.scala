@@ -277,7 +277,7 @@ class LandTaskListSpec extends SpecBase {
         }
       }
 
-      "must have Land Before You Start url and show 'Not yet started' status when all mandatory fields are missing from main land" in {
+      "must have Land Incomplete url and show 'Not yet started' status when all mandatory fields are missing from main land" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -285,13 +285,13 @@ class LandTaskListSpec extends SpecBase {
 
           val result = LandTaskList.buildLandRow(fullReturnAllMandatoryFieldsMissing, noFailuresStatus)
 
-          result.url mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
+          result.url mustBe controllers.land.routes.LandOverviewController.onPageLoad().url
 
           result.status mustBe TLNotStarted
         }
       }
 
-      "must have Land Before You Start url and show 'In progress' status when some mandatory fields are missing from main land" in {
+      "must have Land Incomplete url and show 'In progress' status when some mandatory fields are missing from main land" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -299,7 +299,7 @@ class LandTaskListSpec extends SpecBase {
 
           val result = LandTaskList.buildLandRow(fullReturnSomeMandatoryFieldsMissing, noFailuresStatus)
 
-          result.url mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
+          result.url mustBe controllers.land.routes.LandOverviewController.onPageLoad().url
 
           result.status mustBe TLInProgress
         }
@@ -360,7 +360,7 @@ class LandTaskListSpec extends SpecBase {
         }
       }
 
-      "must route to the before you start controller when main land is incomplete" in {
+      "must route to Land Incomplete Overview when main land is incomplete" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -368,7 +368,7 @@ class LandTaskListSpec extends SpecBase {
 
           val result = LandTaskList.buildLandRow(fullReturnSomeMandatoryFieldsMissing, withFailuresStatus)
 
-          result.url mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
+          result.url mustBe controllers.land.routes.LandOverviewController.onPageLoad().url
         }
       }
 

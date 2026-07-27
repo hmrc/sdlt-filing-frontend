@@ -172,7 +172,7 @@ class VendorTaskListSpec extends SpecBase {
         }
       }
 
-      "must have Vendor Before You Start url and show 'Not yet started' status when all mandatory fields are missing from main vendor" in {
+      "must have Vendor Incomplete url and show 'Not yet started' status when all mandatory fields are missing but non-mandatory fields present" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -180,13 +180,13 @@ class VendorTaskListSpec extends SpecBase {
 
           val result = VendorTaskList.buildVendorRow(fullReturnAllMandatoryFieldsMissing)
 
-          result.url mustBe controllers.vendor.routes.VendorBeforeYouStartController.onPageLoad().url
+          result.url mustBe controllers.vendor.routes.VendorOverviewController.onPageLoad().url
 
           result.status mustBe TLNotStarted
         }
       }
 
-      "must have Vendor Before You Start url and show 'In progress' status when some mandatory fields are missing from main vendor" in {
+      "must have Vendor Incomplete Overview url and show 'In progress' status when some mandatory fields are missing from main vendor" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -194,7 +194,7 @@ class VendorTaskListSpec extends SpecBase {
 
           val result = VendorTaskList.buildVendorRow(fullReturnSomeMandatoryFieldsMissing)
 
-          result.url mustBe controllers.vendor.routes.VendorBeforeYouStartController.onPageLoad().url
+          result.url mustBe controllers.vendor.routes.VendorOverviewController.onPageLoad().url
 
           result.status mustBe TLInProgress
         }
