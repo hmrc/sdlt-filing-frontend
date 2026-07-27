@@ -17,7 +17,7 @@
 package controllers.vendorAgent
 
 import base.SpecBase
-import constants.FullReturnConstants.completeFullReturn
+import constants.FullReturnConstants.{completeFullReturn, completeReturnAgentVendor, emptyFullReturn}
 import controllers.routes
 import forms.vendorAgent.VendorAgentBeforeYouStartFormProvider
 import models.{FullReturn, NormalMode, ReturnAgent, UserAnswers}
@@ -32,6 +32,7 @@ import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.vendorAgent.VendorAgentBeforeYouStartView
 import navigation.{FakeNavigator, Navigator}
+import services.vendor.VendorCreateOrUpdateService
 
 import scala.concurrent.Future
 
@@ -107,17 +108,20 @@ class VendorAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSugar
       }
     }
 
-    "must redirect to AgentName page when yes is selected" in {
+    "must redirect to the next page when 'Yes' is selected and no existing vendor agent is found" in {
 
       val mockSessionRepository = mock[SessionRepository]
+      val mockVendorCreateOrUpdateService = mock[VendorCreateOrUpdateService]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockVendorCreateOrUpdateService.updateIsRepresentedByAgent(any(), any())(any(), any())) thenReturn Future.successful(true)
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[VendorCreateOrUpdateService].toInstance(mockVendorCreateOrUpdateService)
           )
           .build()
 
@@ -132,17 +136,54 @@ class VendorAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSugar
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
+    
+    "must redirect to the Overview page when 'Yes' is selected and existing vendor agent is found" in {
 
-    "must redirect to task list when no is selected" in {
-
+      val userAnswers = emptyUserAnswers.copy(
+        fullReturn = Some(emptyFullReturn.copy(
+          returnAgent = Some(Seq(completeReturnAgentVendor))
+        )))
+      
       val mockSessionRepository = mock[SessionRepository]
+      val mockVendorCreateOrUpdateService = mock[VendorCreateOrUpdateService]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockVendorCreateOrUpdateService.updateIsRepresentedByAgent(any(), any())(any(), any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[VendorCreateOrUpdateService].toInstance(mockVendorCreateOrUpdateService)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, vendorAgentBeforeYouStartRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad().url
+      }
+    }
+
+    "must redirect to task list when 'No' is selected" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      val mockVendorCreateOrUpdateService = mock[VendorCreateOrUpdateService]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockVendorCreateOrUpdateService.updateIsRepresentedByAgent(any(), any())(any(), any())) thenReturn Future.successful(true)
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[VendorCreateOrUpdateService].toInstance(mockVendorCreateOrUpdateService)
           )
           .build()
 

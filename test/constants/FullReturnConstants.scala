@@ -51,7 +51,7 @@ object FullReturnConstants {
     isCompany = Some("NO"),
     isTrustee = Some("NO"),
     isConnectedToVendor = Some("NO"),
-    isRepresentedByAgent = Some("NO"),
+    isRepresentedByAgent = Some("yes"),
     title = Some("Mr"),
     surname = Some("Smith"),
     forename1 = Some("John"),
@@ -83,7 +83,7 @@ object FullReturnConstants {
     isCompany = Some("NO"),
     isTrustee = Some("NO"),
     isConnectedToVendor = Some("NO"),
-    isRepresentedByAgent = Some("YES"),
+    isRepresentedByAgent = Some("yes"),
     title = Some("Mrs"),
     surname = Some("Smith"),
     forename1 = Some("Sarah"),
@@ -115,7 +115,7 @@ object FullReturnConstants {
     isCompany = Some("YES"),
     isTrustee = Some("NO"),
     isConnectedToVendor = Some("NO"),
-    isRepresentedByAgent = Some("YES"),
+    isRepresentedByAgent = Some("yes"),
     title = Some("Mrs"),
     surname = Some("Smith"),
     forename1 = Some("Sarah"),
@@ -177,7 +177,7 @@ object FullReturnConstants {
     address3 = Some("London"),
     address4 = None,
     postcode = Some("W1K 1LB"),
-    isRepresentedByAgent = Some("YES"),
+    isRepresentedByAgent = Some("yes"),
     vendorResourceRef = Some("VEN-REF-001"),
     nextVendorID = None
   )
@@ -195,7 +195,7 @@ object FullReturnConstants {
     address3 = Some("London"),
     address4 = None,
     postcode = Some("W12 1BL"),
-    isRepresentedByAgent = Some("NO"),
+    isRepresentedByAgent = Some("no"),
     vendorResourceRef = Some("VEN-REF-002"),
     nextVendorID = None
   )
@@ -213,7 +213,7 @@ object FullReturnConstants {
     address3 = Some("Essex"),
     address4 = None,
     postcode = Some("SS1 1LB"),
-    isRepresentedByAgent = Some("YES"),
+    isRepresentedByAgent = Some("yes"),
     vendorResourceRef = Some("VEN-REF-003"),
     nextVendorID = None
   )
@@ -539,7 +539,7 @@ object FullReturnConstants {
     vendor = Some(Seq(completeVendor)),
     land = Some(Seq(completeLand)),
     transaction = Some(completeTransaction),
-    returnAgent = Some(Seq(completeReturnAgent)),
+    returnAgent = Some(Seq(completeReturnAgent, completeReturnAgentVendor)),
     agent = Some(completeAgent),
     lease = Some(completeLease),
     taxCalculation = Some(completeTaxCalculation),
@@ -558,7 +558,7 @@ object FullReturnConstants {
     vendor = Some(Seq(completeVendor, completeVendor2, completeVendor3)),
     land = Some(Seq(completeLand)),
     transaction = Some(completeTransaction),
-    returnAgent = Some(Seq(completeReturnAgent)),
+    returnAgent = Some(Seq(completeReturnAgent, completeReturnAgentVendor)),
     agent = Some(completeAgent),
     lease = Some(completeLease),
     taxCalculation = Some(completeTaxCalculation),

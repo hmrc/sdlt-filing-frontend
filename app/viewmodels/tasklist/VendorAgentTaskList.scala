@@ -54,21 +54,21 @@ object VendorAgentTaskList {
     val agents = vendorAgents(fullReturn)
 
     Seq(
-      true,
       agents.exists(_.name.isDefined),
       agents.exists(_.address1.isDefined)
     )
   }
 
   def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
-    val isRepresentedByAgent = mainVendor(fullReturn).flatMap(_.isRepresentedByAgent)
+    val isRepresentedByAgent = mainVendor(fullReturn).flatMap(_.isRepresentedByAgent).map(_.toLowerCase)
 
     val hasVendorAgents = vendorAgents(fullReturn).nonEmpty
 
     (isRepresentedByAgent, hasVendorAgents) match {
-      case (Some("YES"), true) => vendorAgentChecks(fullReturn)
-      case (Some("NO"), true) => Seq(false)
-      case (Some("NO"), false) => Seq(true)
+      case (Some("yes"), true) => vendorAgentChecks(fullReturn)
+      case (Some("yes"), false) => Seq(true, false)
+      case (Some("no"), true) => Seq(false)
+      case (Some("no"), false) => Seq(true)
       case _ => Seq(false)
     }
   }
@@ -78,7 +78,8 @@ object VendorAgentTaskList {
   }
 
   def vendorAgentRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
-    val isNotRepresentedByAnAgent = mainVendor(fullReturn).flatMap(_.isRepresentedByAgent).exists(_.equalsIgnoreCase("NO"))
+
+    val isNotRepresentedByAnAgent = mainVendor(fullReturn).flatMap(_.isRepresentedByAgent).exists(_.equalsIgnoreCase("no"))
 
     val url = {
       if (isNotRepresentedByAnAgent) {

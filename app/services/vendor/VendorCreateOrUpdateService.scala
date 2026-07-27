@@ -19,7 +19,7 @@ package services.vendor
 import com.google.inject.Inject
 import connectors.StampDutyLandTaxConnector
 import models.vendor.{CreateVendorRequest, UpdateVendorRequest}
-import models.{ReturnVersionUpdateRequest, UserAnswers, Vendor}
+import models.{AgentType, DeleteReturnAgentRequest, ReturnVersionUpdateRequest, UserAnswers, Vendor}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -61,13 +61,28 @@ class VendorCreateOrUpdateService @Inject()(backendConnector: StampDutyLandTaxCo
   }
 
   def updateIsRepresentedByAgent(value: Boolean, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Boolean] = {
+
+    val hasVendorAgentDetails = userAnswers.fullReturn.exists(_.returnAgent.exists(_.exists(_.agentType.contains(AgentType.Vendor.toString))))
+
     for {
       mainVendor <- Vendor.mainVendorFrom(userAnswers)
       updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
       updateReturnVersionReturn <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
       updateVendorRequest <- UpdateVendorRequest.from(userAnswers, mainVendor.copy(isRepresentedByAgent = if value then Some("yes") else Some("no"))) if updateReturnVersionReturn.newVersion.isDefined
       updateVendorReturn <- backendConnector.updateVendor(updateVendorRequest) if updateReturnVersionReturn.newVersion.isDefined
+      deleteVendorAgent <- deleteVendorAgentIfRequired(value, hasVendorAgentDetails, userAnswers)
     } yield updateVendorReturn.updated
+  }
+
+  private def deleteVendorAgentIfRequired(value: Boolean, hasVendorAgentDetails: Boolean, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Unit] = {
+    if (!value && hasVendorAgentDetails) {
+      for {
+        deleteVendorAgentRequest <- DeleteReturnAgentRequest.from(userAnswers, agentType = AgentType.Vendor)
+        _ <- backendConnector.deleteReturnAgent(deleteVendorAgentRequest)
+      } yield ()
+    } else {
+      Future.unit
+    }
   }
 
   def isVendorPurchaserCountBelowMaximum(userAnswers: UserAnswers): Boolean = {

@@ -482,7 +482,8 @@ class SubmissionTaskListSpec extends SpecBase {
         val application = applicationBuilder().build()
 
         val fullReturn = completeFullReturn.copy(
-          vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = Some("NO")))))
+          vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = Some("no")))),
+          returnAgent = Some(Seq(completeReturnAgent)))
         running(application) {
           SubmissionTaskList.canStartSubmission(fullReturn) mustBe true
         }

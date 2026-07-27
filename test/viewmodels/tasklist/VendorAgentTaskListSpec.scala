@@ -36,6 +36,12 @@ class VendorAgentTaskListSpec extends SpecBase {
   private val fullReturnAllMandatoryFieldsMissing = completeFullReturn.copy(
     returnAgent = Some(Seq(completeReturnAgentVendor.copy(address1 = None, name = None))),
     vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = Some("YES")))))
+  private val fullReturnRepresentedWithNoAgentDetails = completeFullReturn.copy(
+    returnAgent = None,
+    vendor = Some(Seq(completeVendor.copy(
+      isRepresentedByAgent = Some("yes"))))
+  )
+
   private val fullReturnNoAgent = completeFullReturn.copy(
     returnAgent = None,
     vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = Some("NO")))))
@@ -83,12 +89,12 @@ class VendorAgentTaskListSpec extends SpecBase {
         
         "must return a sequence of true if all mandatory fields are defined" in {
           val result = VendorAgentTaskList.mandatoryFieldsDefined(fullReturnCompleteWithVendorAgent)
-          result mustBe Seq(true, true, true)
+          result mustBe Seq(true, true)
         }
 
         "must return a sequence of true and false if some mandatory fields are missing" in {
           val result = VendorAgentTaskList.mandatoryFieldsDefined(fullReturnSomeMandatoryFieldsMissing)
-          result mustBe Seq(true, true, false)
+          result mustBe Seq(true, false)
         }
       }
 
@@ -203,7 +209,7 @@ class VendorAgentTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = VendorAgentTaskList.buildVendorAgentRow(fullReturnAllMandatoryFieldsMissing)
+          val result = VendorAgentTaskList.buildVendorAgentRow(fullReturnRepresentedWithNoAgentDetails)
 
           result.url mustBe controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
           result.status mustBe TLInProgress

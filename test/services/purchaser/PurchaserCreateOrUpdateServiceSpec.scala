@@ -19,8 +19,9 @@ package services.purchaser
 import base.SpecBase
 import connectors.StampDutyLandTaxConnector
 import constants.FullReturnConstants
+import constants.FullReturnConstants.*
 import models.purchaser.*
-import models.{CompanyDetails, FullReturn, Purchaser, ReturnInfo, ReturnVersionUpdateReturn, UserAnswers, Vendor}
+import models.{ReturnAgent, CompanyDetails, DeleteReturnAgentRequest, DeleteReturnAgentReturn, FullReturn, Purchaser, ReturnInfo, ReturnVersionUpdateRequest, ReturnVersionUpdateReturn, UserAnswers, Vendor}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito
 import org.mockito.Mockito.{never, times, verify, when}
@@ -248,6 +249,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         "purchaserAndVendorConnected" -> true,
       )),
     lastUpdated = Instant.now)
+
   private val userAnswersPurchaserIndividual = UserAnswers(
     id = "test-session-id",
     storn = "test-storn",
@@ -311,6 +313,35 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         "purchaserAndVendorConnected" -> true,
       )),
     lastUpdated = Instant.now)
+
+  private val purchaserAgent = ReturnAgent(
+    returnAgentID = Some("AGENT004"),
+    agentType = Some("PURCHASER"),
+    name = Some("Purchaser Agent Ltd")
+  )
+
+  private val vendorAgent = ReturnAgent(
+    returnAgentID = Some("AGENT003"),
+    agentType = Some("VENDOR"),
+    name = Some("Vendor Agent Ltd")
+  )
+
+  private val userAnswers = emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)
+  
+  private val userAnswersWithNoPurchaserAgent = userAnswers.copy(
+    fullReturn = Some(completeFullReturn.copy(
+      returnAgent = None)
+    ))
+
+  private val userAnswersWithVendorAgent = userAnswers.copy(
+    fullReturn = Some(completeFullReturn.copy(
+      returnAgent = Some(Seq(vendorAgent)))
+    ))
+
+  private val userAnswersWithPurchaserAgent = userAnswers.copy(
+    fullReturn = Some(completeFullReturn.copy(
+      returnAgent = Some(Seq(purchaserAgent)))
+    ))
 
   private def createMainPurchaserCompanyUserAnswers(
                                                      returnId: Option[String] = Some(testReturnId),
@@ -893,6 +924,216 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         whenReady(service.updatePurchaser(mockBackendConnector, mockPurchaserService, userAnswers).failed) { exception =>
           exception mustBe an[RuntimeException]
           exception.getMessage mustBe "Update purchaser failed"
+        }
+      }
+    }
+
+    ".updateIsRepresentedByAgent" - {
+
+      "when answer is yes" - {
+
+        "must update isRepresentedByAgent when update is successful" in {
+          val mockBackendConnector = mock[StampDutyLandTaxConnector]
+          val service = new PurchaserCreateOrUpdateService()
+          
+          val userAnswers = userAnswersWithPurchaserAgent
+
+          val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = Some(2))
+          val updatePurchaserReturn = UpdatePurchaserReturn(true)
+
+          when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+            .thenReturn(Future.successful(returnVersionResponse))
+          when(mockBackendConnector.updatePurchaser(any[UpdatePurchaserRequest])(any(), any()))
+            .thenReturn(Future.successful(updatePurchaserReturn))
+
+          val result = service.updateIsRepresentedByAgent(mockBackendConnector, true, userAnswers).futureValue
+
+          result mustEqual true
+          verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
+          verify(mockBackendConnector, times(1)).updatePurchaser(any())(any(), any())
+          verify(mockBackendConnector, never()).deleteReturnAgent(any())(any(), any())
+        }
+      }
+
+      "when answer is no" - {
+
+        "must update isRepresentedByAgent when update is successful" in {
+          val mockBackendConnector = mock[StampDutyLandTaxConnector]
+          val service = new PurchaserCreateOrUpdateService()
+
+          val userAnswers = userAnswersWithNoPurchaserAgent
+
+          val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = Some(2))
+          val updatePurchaserReturn = UpdatePurchaserReturn(true)
+
+          when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+            .thenReturn(Future.successful(returnVersionResponse))
+          when(mockBackendConnector.updatePurchaser(any[UpdatePurchaserRequest])(any(), any()))
+            .thenReturn(Future.successful(updatePurchaserReturn))
+
+          val result = service.updateIsRepresentedByAgent(mockBackendConnector, false, userAnswers).futureValue
+
+          result mustEqual true
+          verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
+          verify(mockBackendConnector, times(1)).updatePurchaser(any())(any(), any())
+          verify(mockBackendConnector, never()).deleteReturnAgent(any())(any(), any())
+        }
+
+        "must update isRepresentedByAgent and remove purchaser agent details if they exist" in {
+          val mockBackendConnector = mock[StampDutyLandTaxConnector]
+          val service = new PurchaserCreateOrUpdateService()
+          
+          val userAnswers = userAnswersWithPurchaserAgent
+
+          val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = Some(2))
+          val updatePurchaserReturn = UpdatePurchaserReturn(true)
+          val deleteReturnAgentReturn = DeleteReturnAgentReturn(true)
+
+          when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+            .thenReturn(Future.successful(returnVersionResponse))
+          when(mockBackendConnector.updatePurchaser(any[UpdatePurchaserRequest])(any(), any()))
+            .thenReturn(Future.successful(updatePurchaserReturn))
+          when(mockBackendConnector.deleteReturnAgent(any[DeleteReturnAgentRequest])(any(), any()))
+            .thenReturn(Future.successful(deleteReturnAgentReturn))
+
+          val result = service.updateIsRepresentedByAgent(mockBackendConnector, false, userAnswers).futureValue
+
+          result mustEqual true
+          verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
+          verify(mockBackendConnector, times(1)).updatePurchaser(any())(any(), any())
+          verify(mockBackendConnector, times(1)).deleteReturnAgent(any())(any(), any())
+        }
+
+        "must update isRepresentedByAgent and not remove vendor agent details if they exist" in {
+          val mockBackendConnector = mock[StampDutyLandTaxConnector]
+          val service = new PurchaserCreateOrUpdateService()
+
+          val userAnswers = userAnswersWithVendorAgent
+
+          val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = Some(2))
+          val updatePurchaserReturn = UpdatePurchaserReturn(true)
+
+          when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+            .thenReturn(Future.successful(returnVersionResponse))
+          when(mockBackendConnector.updatePurchaser(any[UpdatePurchaserRequest])(any(), any()))
+            .thenReturn(Future.successful(updatePurchaserReturn))
+
+          val result = service.updateIsRepresentedByAgent(mockBackendConnector, false, userAnswers).futureValue
+
+          result mustEqual true
+          verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
+          verify(mockBackendConnector, times(1)).updatePurchaser(any())(any(), any())
+          verify(mockBackendConnector, never()).deleteReturnAgent(any())(any(), any())
+        }
+      }
+
+      "must fail when purchaser is not found in full return" in {
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
+        val service = new PurchaserCreateOrUpdateService()
+
+        val userAnswers = userAnswersWithPurchaserAgent.copy(fullReturn = Some(completeFullReturn.copy(purchaser = Some(Seq(completePurchaser1.copy(purchaserID = Some("PUR002")))))))
+        val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = Some(2))
+
+        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+          .thenReturn(Future.successful(returnVersionResponse))
+
+        when(mockBackendConnector.updatePurchaser(any[UpdatePurchaserRequest])(any(), any()))
+          .thenReturn(Future.failed(new NoSuchElementException))
+
+        whenReady(service.updateIsRepresentedByAgent(mockBackendConnector, true, userAnswers).failed) { exception =>
+          exception mustBe a[NoSuchElementException]
+        }
+      }
+
+      "must fail when purchaser resource ref is not found" in {
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
+        val service = new PurchaserCreateOrUpdateService()
+
+        val userAnswers = userAnswersWithPurchaserAgent.copy(fullReturn = Some(completeFullReturn.copy(purchaser = Some(Seq(completePurchaser1.copy(purchaserResourceRef = None))))))
+
+        val returnVersionResponse = ReturnVersionUpdateReturn(
+          newVersion = Some(2))
+
+        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+          .thenReturn(Future.successful(returnVersionResponse))
+
+        when(mockBackendConnector.updatePurchaser(any[UpdatePurchaserRequest])(any(), any()))
+          .thenReturn(Future.failed(new NoSuchElementException))
+
+        whenReady(service.updateIsRepresentedByAgent(mockBackendConnector, true, userAnswers).failed) { exception =>
+          exception mustBe a[NoSuchElementException]
+        }
+      }
+
+      "must fail when version update does not return a new version" in {
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
+        val service = new PurchaserCreateOrUpdateService()
+
+        val userAnswers = userAnswersWithPurchaserAgent
+
+        val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = None)
+
+        when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+          .thenReturn(Future.successful(returnVersionResponse))
+
+        whenReady(service.updateIsRepresentedByAgent(mockBackendConnector, true, userAnswers).failed) { exception =>
+          exception mustBe a[NoSuchElementException]
+        }
+      }
+
+      "must propagate backend connector updateReturnVersion failures" in {
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
+        val service = new PurchaserCreateOrUpdateService()
+
+        val userAnswers = userAnswersWithPurchaserAgent
+
+        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+          .thenReturn(Future.failed(new RuntimeException("Backend failure")))
+
+        whenReady(service.updateIsRepresentedByAgent(mockBackendConnector, true, userAnswers).failed) { exception =>
+          exception mustBe a[RuntimeException]
+          exception.getMessage mustBe "Backend failure"
+        }
+      }
+
+      "must propagate backend connector updatePurchaser failures" in {
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
+        val service = new PurchaserCreateOrUpdateService()
+
+        val userAnswers = userAnswersWithPurchaserAgent
+        val returnVersionResponse = ReturnVersionUpdateReturn(
+          newVersion = Some(2)
+        )
+
+        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+          .thenReturn(Future.successful(returnVersionResponse))
+        when(mockBackendConnector.updatePurchaser(any())(any(), any()))
+          .thenReturn(Future.failed(new RuntimeException("Update purchaser failed")))
+
+        whenReady(service.updateIsRepresentedByAgent(mockBackendConnector, true, userAnswers).failed) { exception =>
+          exception mustBe a[RuntimeException]
+          exception.getMessage mustBe "Update purchaser failed"
+        }
+      }
+
+      "must propagate backend connector deleteReturnAgent failures" in {
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
+        val service = new PurchaserCreateOrUpdateService()
+
+        val userAnswers = userAnswersWithPurchaserAgent
+        val returnVersionResponse = ReturnVersionUpdateReturn(
+          newVersion = Some(2)
+        )
+        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+          .thenReturn(Future.successful(returnVersionResponse))
+        when(mockBackendConnector.updatePurchaser(any())(any(), any()))
+          .thenReturn(Future.successful(UpdatePurchaserReturn(true)))
+        when(mockBackendConnector.deleteReturnAgent(any())(any(), any()))
+          .thenReturn(Future.failed(new RuntimeException("Delete purchaser agent failed")))
+
+        whenReady(service.updateIsRepresentedByAgent(mockBackendConnector, false, userAnswers).failed) { exception =>
+          exception mustBe a[RuntimeException]
+          exception.getMessage mustBe "Delete purchaser agent failed"
         }
       }
     }

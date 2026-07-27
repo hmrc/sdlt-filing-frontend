@@ -17,10 +17,12 @@
 package controllers.purchaserAgent
 
 import base.SpecBase
-import constants.FullReturnConstants.completeFullReturn
+import connectors.StampDutyLandTaxConnector
+import constants.FullReturnConstants.{completeFullReturn, completePurchaser1, completeReturnAgent}
 import controllers.routes
 import forms.purchaserAgent.PurchaserAgentBeforeYouStartFormProvider
-import models.{FullReturn, NormalMode, UserAnswers}
+import models.purchaser.*
+import models.{FullReturn, NormalMode, DeleteReturnAgentRequest, DeleteReturnAgentReturn, ReturnVersionUpdateRequest, ReturnVersionUpdateReturn, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -31,6 +33,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
+import services.purchaser.PurchaserCreateOrUpdateService
 import views.html.purchaserAgent.PurchaserAgentBeforeYouStartView
 
 import scala.concurrent.Future
@@ -86,23 +89,21 @@ class PurchaserAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSu
       }
     }
 
-    "must redirect to the next page when valid data and Yes has been selected is submitted" in {
-
-      val fullReturn: FullReturn = completeFullReturn.copy(returnAgent = None, submission = None)
-
-      val userAnswersWithIndividualPurchaser: UserAnswers =
-        UserAnswers(userAnswersId, storn = "test-storn")
-          .copy(fullReturn = Some(fullReturn))
+    "must redirect to the next page when 'Yes' is selected and no existing purchaser agent is found" in {
 
       val mockSessionRepository = mock[SessionRepository]
+      val mockPurchaserCreateOrUpdateService = mock[PurchaserCreateOrUpdateService]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockPurchaserCreateOrUpdateService.updateIsRepresentedByAgent(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(userAnswersWithIndividualPurchaser))
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[PurchaserCreateOrUpdateService].toInstance(mockPurchaserCreateOrUpdateService)
           )
           .build()
 
@@ -118,23 +119,130 @@ class PurchaserAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSu
       }
     }
 
-    "must redirect to the next page when valid data and NO has been selected is submitted" in {
+    "must redirect to the Overview page when 'Yes' is selected and existing purchaser agent is found" in {
 
-      val fullReturn: FullReturn = completeFullReturn.copy(returnAgent = None, submission = None)
-
-      val userAnswersWithIndividualPurchaser: UserAnswers =
-        UserAnswers(userAnswersId, storn = "test-storn")
-          .copy(fullReturn = Some(fullReturn))
+      val userAnswers = emptyUserAnswers.copy(
+        fullReturn = Some(completeFullReturn.copy(
+          returnAgent = Some(Seq(completeReturnAgent)),
+          submission = None
+        )))
 
       val mockSessionRepository = mock[SessionRepository]
+      val mockBackendConnector = mock[StampDutyLandTaxConnector]
+      val mockPurchaserCreateOrUpdateService = mock[PurchaserCreateOrUpdateService]
+
+      val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = Some(2))
+      val updatePurchaserReturn = UpdatePurchaserReturn(true)
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+        .thenReturn(Future.successful(returnVersionResponse))
+      when(mockBackendConnector.updatePurchaser(any[UpdatePurchaserRequest])(any(), any()))
+        .thenReturn(Future.successful(updatePurchaserReturn))
+      when(mockPurchaserCreateOrUpdateService.updateIsRepresentedByAgent(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(userAnswersWithIndividualPurchaser))
+        applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, purchaserAgentBeforeYouStartRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad().url
+      }
+    }
+
+    "must redirect to the return task list page when 'No' is selected and purchaser agent is absent" in {
+
+      val userAnswers = emptyUserAnswers.copy(
+        fullReturn = Some(completeFullReturn.copy(
+          purchaser = Some(Seq(completePurchaser1.copy(
+            isRepresentedByAgent = None))),
+          returnAgent = None,
+          submission = None
+        )))
+
+      val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = Some(2))
+      val updatePurchaserReturn = UpdatePurchaserReturn(true)
+
+      val mockSessionRepository = mock[SessionRepository]
+      val mockBackendConnector = mock[StampDutyLandTaxConnector]
+      val mockPurchaserCreateOrUpdateService = mock[PurchaserCreateOrUpdateService]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+        .thenReturn(Future.successful(returnVersionResponse))
+      when(mockBackendConnector.updatePurchaser(any[UpdatePurchaserRequest])(any(), any()))
+        .thenReturn(Future.successful(updatePurchaserReturn))
+      when(mockPurchaserCreateOrUpdateService.updateIsRepresentedByAgent(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(true))
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, purchaserAgentBeforeYouStartRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
+    "must redirect to the return task list page when 'No' is selected and purchaser agent is present" in {
+
+      val userAnswers = emptyUserAnswers.copy(
+        fullReturn = Some(completeFullReturn.copy(
+          purchaser = Some(Seq(completePurchaser1.copy(
+            isRepresentedByAgent = None))),
+          returnAgent = Some(Seq(completeReturnAgent)),
+          submission = None
+        )))
+
+      val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = Some(2))
+      val updatePurchaserReturn = UpdatePurchaserReturn(true)
+
+      val mockSessionRepository = mock[SessionRepository]
+      val mockBackendConnector = mock[StampDutyLandTaxConnector]
+      val mockPurchaserCreateOrUpdateService = mock[PurchaserCreateOrUpdateService]
+      val deleteReturnAgentReturn = DeleteReturnAgentReturn(true)
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+        .thenReturn(Future.successful(returnVersionResponse))
+      when(mockBackendConnector.updatePurchaser(any[UpdatePurchaserRequest])(any(), any()))
+        .thenReturn(Future.successful(updatePurchaserReturn))
+      when(mockBackendConnector.deleteReturnAgent(any[DeleteReturnAgentRequest])(any(), any()))
+        .thenReturn(Future.successful(deleteReturnAgentReturn))
+      when(mockPurchaserCreateOrUpdateService.updateIsRepresentedByAgent(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(true))
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
           )
           .build()
 

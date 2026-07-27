@@ -54,7 +54,6 @@ object PurchaserAgentTaskList {
     val agents = purchaserAgents(fullReturn)
 
     Seq(
-      true,
       agents.exists(_.name.isDefined),
       agents.exists(_.address1.isDefined),
       agents.exists(_.isAuthorised.isDefined)
@@ -62,9 +61,15 @@ object PurchaserAgentTaskList {
   }
 
   def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] =
-    mainPurchaser(fullReturn).flatMap(_.isRepresentedByAgent) match {
-      case Some("YES") => purchaserAgentChecks(fullReturn)
-      case Some("NO") => Seq(true)
+    val isRepresentedByAgent = mainPurchaser(fullReturn).flatMap(_.isRepresentedByAgent).map(_.toLowerCase)
+    
+    val hasPurchaserAgents = purchaserAgents(fullReturn).nonEmpty
+
+    (isRepresentedByAgent, hasPurchaserAgents) match {
+      case (Some("yes"), true) => purchaserAgentChecks(fullReturn)
+      case (Some("yes"), false) => Seq(true, false)
+      case (Some("no"), true) => Seq(false)
+      case (Some("no"), false) => Seq(true)
       case _ => Seq(false)
     }
 
@@ -74,7 +79,7 @@ object PurchaserAgentTaskList {
 
   def purchaserAgentRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
-    val isNotRepresentedByAnAgent = mainPurchaser(fullReturn).flatMap(_.isRepresentedByAgent).exists(_.equalsIgnoreCase("NO"))
+    val isNotRepresentedByAnAgent = mainPurchaser(fullReturn).flatMap(_.isRepresentedByAgent).exists(_.equalsIgnoreCase("no"))
 
     val url = if (isNotRepresentedByAnAgent) {
       controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode).url

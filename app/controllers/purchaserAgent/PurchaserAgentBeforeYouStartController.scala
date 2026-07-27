@@ -16,16 +16,17 @@
 
 package controllers.purchaserAgent
 
+import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
 import forms.purchaserAgent.PurchaserAgentBeforeYouStartFormProvider
-import models.Mode
+import models.{AgentType, Mode}
 import navigation.Navigator
 import pages.purchaserAgent.PurchaserAgentBeforeYouStartPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.purchaserAgent.PurchaserAgentService
+import services.purchaser.PurchaserCreateOrUpdateService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaserAgent.PurchaserAgentBeforeYouStartView
 
@@ -43,7 +44,8 @@ class PurchaserAgentBeforeYouStartController @Inject()(
                                          navigator: Navigator,
                                          formProvider: PurchaserAgentBeforeYouStartFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
-                                         purchaserAgentService: PurchaserAgentService,
+                                         purchaserCreateOrUpdateService: PurchaserCreateOrUpdateService,
+                                         backendConnector: StampDutyLandTaxConnector,
                                          view: PurchaserAgentBeforeYouStartView
                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
@@ -57,14 +59,15 @@ class PurchaserAgentBeforeYouStartController @Inject()(
         case Some(value) => form.fill(value)
       }
       
-      purchaserAgentService.purchaserAgentExistsCheck(
-        userAnswers = request.userAnswers,
-        continueRoute = Ok(view(preparedForm, mode))
-      )
+      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
+
+      val hasAgentTypePurchaser = request.userAnswers.fullReturn
+        .flatMap(_.returnAgent)
+        .exists(_.exists(_.agentType.contains(AgentType.Purchaser.toString)))
 
       form.bindFromRequest().fold(
         formWithErrors =>
@@ -74,9 +77,14 @@ class PurchaserAgentBeforeYouStartController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserAgentBeforeYouStartPage, value))
             _              <- sessionRepository.set(updatedAnswers)
+            _              <- purchaserCreateOrUpdateService.updateIsRepresentedByAgent(backendConnector, value, updatedAnswers)
           } yield {
             if(value) {
-              Redirect(navigator.nextPage(PurchaserAgentBeforeYouStartPage, mode, updatedAnswers))
+              if(hasAgentTypePurchaser) {
+                Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad())
+              } else {
+                Redirect(navigator.nextPage(PurchaserAgentBeforeYouStartPage, mode, updatedAnswers))
+              }
             } else {
               Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
             }

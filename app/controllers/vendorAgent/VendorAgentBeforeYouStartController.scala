@@ -44,8 +44,8 @@ class VendorAgentBeforeYouStartController @Inject()(
                                                      formProvider: VendorAgentBeforeYouStartFormProvider,
                                                      val controllerComponents: MessagesControllerComponents,
                                                      view: VendorAgentBeforeYouStartView,
-                                                     vendorCreateOrUpdateService: VendorCreateOrUpdateService)
-                                                   (implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                     vendorCreateOrUpdateService: VendorCreateOrUpdateService
+                                                   )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form: Form[Boolean] = formProvider()
 

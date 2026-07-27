@@ -66,8 +66,8 @@ class AgentNameControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must return OK and the correct view for a GET when return agent exists and no vendors" in {
-      val fullReturn = completeFullReturn.copy(vendor = None, submission = None)
+    "must return OK and the correct view for a GET when purchaser return agent exists and no vendors" in {
+      val fullReturn = completeFullReturn.copy(vendor = None, submission = None, returnAgent = Some(Seq(ReturnAgent(agentType = Some("PURCHASER")))))
 
       val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
 
@@ -105,8 +105,7 @@ class AgentNameControllerSpec extends SpecBase with MockitoSugar {
         redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad().url
       }
     }
-
-
+    
     "must redirect to task list  page when full return doesn't exist" in {
       val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = None)
 
@@ -124,7 +123,7 @@ class AgentNameControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn.copy(submission = None, vendor = None)))
+      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(completeFullReturn.copy(submission = None, vendor = None, returnAgent = None)))
         .set(AgentNamePage, "answer").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()

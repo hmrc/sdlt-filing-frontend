@@ -180,7 +180,50 @@ object Purchaser {
           } else {
             purchaserSessionQuestions.purchaserCurrent.purchaserFormOfIdCompany.map(_.countryIssued)
           }
-    ) )
+        )
+    )
+  }
+
+  def mainPurchaserFrom(userAnswers: UserAnswers): Future[Purchaser]  = {
+    val existingMainPurchaser = for {
+      fullReturn <- userAnswers.fullReturn
+      purchasers <- fullReturn.purchaser
+      returnInfo <- fullReturn.returnInfo
+      mainPurchaserId <- returnInfo.mainPurchaserID
+      existing <- purchasers.find(_.purchaserID.contains(mainPurchaserId))
+    } yield existing
+
+    Future.successful(Purchaser(
+      purchaserID = existingMainPurchaser.flatMap(_.purchaserID),
+      returnID = existingMainPurchaser.flatMap(_.returnID),
+      isCompany = existingMainPurchaser.flatMap(_.isCompany),
+      isTrustee = existingMainPurchaser.flatMap(_.isTrustee),
+      isConnectedToVendor = existingMainPurchaser.flatMap(_.isConnectedToVendor),
+      isRepresentedByAgent = existingMainPurchaser.flatMap(_.isRepresentedByAgent),
+      title = existingMainPurchaser.flatMap(_.title),
+      surname = existingMainPurchaser.flatMap(_.surname),
+      forename1 = existingMainPurchaser.flatMap(_.forename1),
+      forename2 = existingMainPurchaser.flatMap(_.forename2),
+      companyName = existingMainPurchaser.flatMap(_.companyName),
+      houseNumber = existingMainPurchaser.flatMap(_.houseNumber),
+      address1 = existingMainPurchaser.flatMap(_.address1),
+      address2 = existingMainPurchaser.flatMap(_.address2),
+      address3 = existingMainPurchaser.flatMap(_.address3),
+      address4 = existingMainPurchaser.flatMap(_.address4),
+      postcode = existingMainPurchaser.flatMap(_.postcode),
+      phone = existingMainPurchaser.flatMap(_.phone),
+      nino = existingMainPurchaser.flatMap(_.nino),
+      purchaserResourceRef = existingMainPurchaser.flatMap(_.purchaserResourceRef),
+      nextPurchaserID = existingMainPurchaser.flatMap(_.nextPurchaserID),
+      lMigrated = existingMainPurchaser.flatMap(_.lMigrated),
+      createDate = existingMainPurchaser.flatMap(_.createDate),
+      lastUpdateDate = existingMainPurchaser.flatMap(_.lastUpdateDate),
+      isUkCompany = existingMainPurchaser.flatMap(_.isUkCompany),
+      hasNino = existingMainPurchaser.flatMap(_.hasNino),
+      dateOfBirth = existingMainPurchaser.flatMap(_.dateOfBirth),
+      registrationNumber = existingMainPurchaser.flatMap(_.registrationNumber),
+      placeOfRegistration = existingMainPurchaser.flatMap(_.placeOfRegistration)
+    ))
   }
 }
 

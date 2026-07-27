@@ -27,7 +27,7 @@ class PurchaserAgentTaskListSpec extends SpecBase {
 
   private val fullReturnCompleteWithPurchaserAgent = completeFullReturn.copy(
     purchaser = Some(Seq(completePurchaser1.copy(
-      isRepresentedByAgent = Some("YES"))))
+      isRepresentedByAgent = Some("yes"))))
   )
   private val fullReturnCompleteWithOtherAgent = completeFullReturn.copy(returnAgent = Some(Seq(completeReturnAgentVendor)))
   private val fullReturnSomeMandatoryFieldsMissing = completeFullReturn.copy(
@@ -36,7 +36,7 @@ class PurchaserAgentTaskListSpec extends SpecBase {
       address1 = None,
       isAuthorised = None))),
     purchaser = Some(Seq(completePurchaser1.copy(
-      isRepresentedByAgent = Some("YES"))))
+      isRepresentedByAgent = Some("yes"))))
   )
   private val fullReturnAllMandatoryFieldsMissing = completeFullReturn.copy(
     returnAgent = Some(Seq(completeReturnAgent.copy(
@@ -44,8 +44,15 @@ class PurchaserAgentTaskListSpec extends SpecBase {
       name = None,
       isAuthorised = None))),
     purchaser = Some(Seq(completePurchaser1.copy(
-      isRepresentedByAgent = Some("YES"))))
+      isRepresentedByAgent = Some("yes"))))
   )
+
+  private val fullReturnRepresentedWithNoAgentDetails = completeFullReturn.copy(
+    returnAgent = None,
+    purchaser = Some(Seq(completePurchaser1.copy(
+      isRepresentedByAgent = Some("yes"))))
+  )
+
   private val fullReturnNoAgent = completeFullReturn.copy(
     returnAgent = None,
     purchaser = Some(Seq(completePurchaser1.copy(
@@ -95,12 +102,12 @@ class PurchaserAgentTaskListSpec extends SpecBase {
 
         "must return a sequence of true if all mandatory fields are defined" in {
           val result = PurchaserAgentTaskList.mandatoryFieldsDefined(fullReturnCompleteWithPurchaserAgent)
-          result mustBe Seq(true, true, true, true)
+          result mustBe Seq(true, true, true)
         }
 
         "must return a sequence of true and false if some mandatory fields are missing" in {
           val result = PurchaserAgentTaskList.mandatoryFieldsDefined(fullReturnSomeMandatoryFieldsMissing)
-          result mustBe Seq(true, true, false, false)
+          result mustBe Seq(true, false, false)
         }
       }
 
@@ -221,7 +228,7 @@ class PurchaserAgentTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = PurchaserAgentTaskList.buildPurchaserAgentRow(fullReturnAllMandatoryFieldsMissing)
+          val result = PurchaserAgentTaskList.buildPurchaserAgentRow(fullReturnRepresentedWithNoAgentDetails)
 
           result.url mustBe controllers.purchaserAgent.routes.PurchaserAgentBeforeYouStartController.onPageLoad(NormalMode).url
           

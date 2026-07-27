@@ -39,10 +39,14 @@ object TaskListSections {
                                        ec: ExecutionContext,
                                        request: Request[_]) = List(
     Some(VendorTaskList.build(fullReturn)),
+    Some(VendorAgentTaskList.build(fullReturn)),
     Some(PurchaserTaskList.build(fullReturn)),
     Some(PurchaserAgentTaskList.build(fullReturn)),
     Some(LandTaskList.build(fullReturn)),
+    Some(UkResidencyTaskList.build(fullReturn)),
+    Some(TransactionTaskList.build(fullReturn)),
     Some(LeaseTaskList.build(fullReturn)),
+    Some(TaxCalculationTaskList.build(fullReturn)),
     Some(SubmissionTaskList.build(fullReturn))
   ).flatten
   def allComplete(fullReturn: FullReturn)
