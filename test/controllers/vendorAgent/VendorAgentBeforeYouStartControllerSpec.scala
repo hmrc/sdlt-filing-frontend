@@ -132,7 +132,7 @@ class VendorAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSugar
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
-    
+
     "must redirect to task list when no is selected" in {
 
       val mockSessionRepository = mock[SessionRepository]

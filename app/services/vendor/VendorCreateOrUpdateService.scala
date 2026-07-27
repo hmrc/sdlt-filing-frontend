@@ -61,11 +61,11 @@ class VendorCreateOrUpdateService @Inject()(backendConnector: StampDutyLandTaxCo
   }
 
   def updateIsRepresentedByAgent(value: Boolean, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Boolean] = {
-    for { //if isrepbyagent = NO but there is RA of type vendor delete that RA
+    for {
       mainVendor <- Vendor.mainVendorFrom(userAnswers)
       updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
       updateReturnVersionReturn <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
-      updateVendorRequest <- UpdateVendorRequest.from(userAnswers, mainVendor.copy(isRepresentedByAgent = if value then Some("YES") else Some("NO"))) if updateReturnVersionReturn.newVersion.isDefined
+      updateVendorRequest <- UpdateVendorRequest.from(userAnswers, mainVendor.copy(isRepresentedByAgent = if value then Some("yes") else Some("no"))) if updateReturnVersionReturn.newVersion.isDefined
       updateVendorReturn <- backendConnector.updateVendor(updateVendorRequest) if updateReturnVersionReturn.newVersion.isDefined
     } yield updateVendorReturn.updated
   }

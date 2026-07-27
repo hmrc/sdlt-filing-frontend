@@ -61,16 +61,15 @@ object VendorAgentTaskList {
   }
 
   def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
-//    val hasAgentDetails = fullReturn.returnAgent.exists(_.nonEmpty) //check for agent type VENDOR (will only be one of type vendor) - might not need to do this as it's part of vendorAgentChecks
     val isRepresentedByAgent = mainVendor(fullReturn).flatMap(_.isRepresentedByAgent)
 
     val hasVendorAgents = vendorAgents(fullReturn).nonEmpty
 
     (isRepresentedByAgent, hasVendorAgents) match {
       case (Some("YES"), true) => vendorAgentChecks(fullReturn)
-      case (Some("NO"), true) => Seq(false) //user might hit this case if main vendor is deleted and that tag is lost/different on the next vendor
+      case (Some("NO"), true) => Seq(false)
       case (Some("NO"), false) => Seq(true)
-      case _ => Seq(false) //but more likely to hit this case and so they don't go through the check for VENDOR agent type
+      case _ => Seq(false)
     }
   }
 
@@ -79,14 +78,10 @@ object VendorAgentTaskList {
   }
 
   def vendorAgentRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
-
-    val hasAgentDetails = fullReturn.returnAgent.exists(_.nonEmpty) //Do I need to change this to check VENDOR?
     val isNotRepresentedByAnAgent = mainVendor(fullReturn).flatMap(_.isRepresentedByAgent).exists(_.equalsIgnoreCase("NO"))
 
     val url = {
-      if (isNotRepresentedByAnAgent && hasAgentDetails) {
-        controllers.vendorAgent.routes.RemoveVendorAgentController.onPageLoad().url
-      } else if (isNotRepresentedByAnAgent) {
+      if (isNotRepresentedByAnAgent) {
         controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
       } else if (isVendorAgentComplete(fullReturn)) {
         controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad().url

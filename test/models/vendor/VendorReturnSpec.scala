@@ -89,7 +89,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
     "addressLine3" -> "Building A",
     "addressLine4" -> "District B",
     "postcode" -> "TE23 5TT",
-    "isRepresentedByAgent" -> "yes",
+    "isRepresentedByAgent" -> "YES",
     "vendorResourceRef" -> "VRF-001",
     "nextVendorId" -> "VID-002"
   )
@@ -475,7 +475,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
           addressLine3 = Some("London"),
           addressLine4 = None,
           postcode = Some("W1K 1LB"),
-          isRepresentedByAgent = Some("yes")
+          isRepresentedByAgent = Some("YES")
         )
 
         val result = CreateVendorRequest.from(userAnswers, completeVendor).futureValue
@@ -560,7 +560,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
         result.addressLine3 mustBe Some("Building A")
         result.addressLine4 mustBe Some("District B")
         result.postcode mustBe Some("TE23 5TT")
-        result.isRepresentedByAgent mustBe Some("yes")
+        result.isRepresentedByAgent mustBe Some("YES")
         result.vendorResourceRef mustBe "VRF-001"
         result.nextVendorId mustBe Some("VID-002")
       }
@@ -866,7 +866,7 @@ class VendorReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
           addressLine3 = Some("London"),
           addressLine4 = None,
           postcode = Some("W1K 1LB"),
-          isRepresentedByAgent = Some("yes"),
+          isRepresentedByAgent = Some("YES"),
           vendorResourceRef = "VEN-REF-001",
           nextVendorId = Some("VEN-ID-002")
         )

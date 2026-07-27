@@ -34,6 +34,8 @@ class VendorTaskListSpec extends SpecBase {
     vendor = Some(Seq(completeVendor.copy(name = None, address1 = None))))
   private val fullReturnSomeMandatoryFieldsMissing = fullReturnCompleteWithOneMainVendor.copy(
     vendor = Some(Seq(completeVendor.copy(name = Some("Batman"), address1 = None))))
+  private val fullReturnSomeMandatoryFieldsMissingFromOtherVendor = fullReturnCompleteWithOneMainVendor.copy(
+    vendor = Some(Seq(completeVendor, completeVendor2, completeVendor3.copy(name = Some("Batman"), address1 = None))))
   private val fullReturnMissingVendor = fullReturnComplete.copy(vendor = None)
 
   "VendorTaskList" - {
@@ -94,10 +96,16 @@ class VendorTaskListSpec extends SpecBase {
         result mustBe Seq(true, false)
       }
 
+      "must return a sequence of true and false if some mandatory fields of other Vendor are missing" in {
+        val result = VendorTaskList.mandatoryFieldsDefined(fullReturnSomeMandatoryFieldsMissingFromOtherVendor)
+        result mustBe Seq(true, true, true, true, true, false)
+      }
+
       "must return a sequence of false if all mandatory fields of main Vendor are missing" in {
         val result = VendorTaskList.mandatoryFieldsDefined(fullReturnAllMandatoryFieldsMissing)
         result mustBe Seq(false, false)
       }
+
     }
 
     ".isVendorComplete" - {
@@ -193,6 +201,20 @@ class VendorTaskListSpec extends SpecBase {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
           val result = VendorTaskList.buildVendorRow(fullReturnSomeMandatoryFieldsMissing)
+
+          result.url mustBe controllers.vendor.routes.VendorOverviewController.onPageLoad().url
+
+          result.status mustBe TLInProgress
+        }
+      }
+
+      "must have Vendor Incomplete Overview url and show 'In progress' status when some mandatory fields are missing from other vendor" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = VendorTaskList.buildVendorRow(fullReturnSomeMandatoryFieldsMissingFromOtherVendor)
 
           result.url mustBe controllers.vendor.routes.VendorOverviewController.onPageLoad().url
 

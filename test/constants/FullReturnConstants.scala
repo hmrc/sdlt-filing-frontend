@@ -177,7 +177,7 @@ object FullReturnConstants {
     address3 = Some("London"),
     address4 = None,
     postcode = Some("W1K 1LB"),
-    isRepresentedByAgent = Some("yes"),
+    isRepresentedByAgent = Some("YES"),
     vendorResourceRef = Some("VEN-REF-001"),
     nextVendorID = None
   )
