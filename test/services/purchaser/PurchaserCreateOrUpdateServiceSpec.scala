@@ -327,7 +327,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
   )
 
   private val userAnswers = emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)
-  
+
   private val userAnswersWithNoPurchaserAgent = userAnswers.copy(
     fullReturn = Some(completeFullReturn.copy(
       returnAgent = None)
@@ -935,7 +935,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         "must update isRepresentedByAgent when update is successful" in {
           val mockBackendConnector = mock[StampDutyLandTaxConnector]
           val service = new PurchaserCreateOrUpdateService()
-          
+
           val userAnswers = userAnswersWithPurchaserAgent
 
           val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = Some(2))
@@ -982,7 +982,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         "must update isRepresentedByAgent and remove purchaser agent details if they exist" in {
           val mockBackendConnector = mock[StampDutyLandTaxConnector]
           val service = new PurchaserCreateOrUpdateService()
-          
+
           val userAnswers = userAnswersWithPurchaserAgent
 
           val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = Some(2))

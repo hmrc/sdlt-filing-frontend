@@ -62,7 +62,7 @@ object PurchaserAgentTaskList {
 
   def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] =
     val isRepresentedByAgent = mainPurchaser(fullReturn).flatMap(_.isRepresentedByAgent).map(_.toLowerCase)
-    
+
     val hasPurchaserAgents = purchaserAgents(fullReturn).nonEmpty
 
     (isRepresentedByAgent, hasPurchaserAgents) match {
