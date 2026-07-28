@@ -222,7 +222,7 @@ class VendorTaskListSpec extends SpecBase {
         }
       }
 
-      "must have Vendor Overview url and show in 'Complete' status when all mandatory fields are present in main vendor" in {
+      "must have Vendor Overview url and show 'Complete' status when all mandatory fields are present in main vendor" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -234,7 +234,7 @@ class VendorTaskListSpec extends SpecBase {
         }
       }
 
-      "must have Vendor Overview url when main vendor complete among other vendors" in {
+      "must have Vendor Overview url when main vendor complete among other complete vendors" in {
         val application = applicationBuilder().build()
 
         running(application) {

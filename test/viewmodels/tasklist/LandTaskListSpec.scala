@@ -48,6 +48,13 @@ class LandTaskListSpec extends SpecBase {
       willSendPlanByPost = Some("YES"),
       mineralRights = None,
     ))))
+
+  private val fullReturnCompleteWithMultipleLand = fullReturnComplete.copy(
+    land = Some(Seq(completeLand, completeLand.copy(landID = Some("LND002")))))
+
+  private val fullReturnIncompleteWithMultipleLand = fullReturnComplete.copy(
+    land = Some(Seq(completeLand, completeLand.copy(landID = Some("LND002"), interestCreatedTransferred = None))))
+  
   private val fullReturnMissingLand = fullReturnComplete.copy(land = None)
   private val noFailuresStatus: SectionStatus =
     SectionStatus(ReturnSection.Land, hasFailures = false, ruleIds = Nil, messageKeys = Nil, targets = Nil)
@@ -212,9 +219,19 @@ class LandTaskListSpec extends SpecBase {
           result mustBe true
       }
 
-      "must return false if land exists but some mandatory field are missing" in {
+      "must return true if land exists and mandatory fields are defined with multiple lands" in {
+        val result = LandTaskList.isLandComplete(fullReturnCompleteWithMultipleLand)
+        result mustBe true
+      }
+
+      "must return false if land exists but some mandatory field are missing from main land" in {
           val result = LandTaskList.isLandComplete(fullReturnSomeMandatoryFieldsMissing)
           result mustBe false
+      }
+
+      "must return false if land exists but some mandatory field are missing from other land" in {
+        val result = LandTaskList.isLandComplete(fullReturnIncompleteWithMultipleLand)
+        result mustBe false
       }
 
       "must return false if land exists but all mandatory fields are missing" in {
