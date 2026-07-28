@@ -26,25 +26,27 @@ class VendorAgentTaskListSpec extends SpecBase {
 
   private val fullReturnCompleteWithVendorAgent = completeFullReturn.copy(
     returnAgent = Some(Seq(completeReturnAgentVendor)),
-    vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = Some("YES"))))
+    vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = Some("yes"))))
   )
   private val fullReturnCompleteWithOtherAgent = completeFullReturn.copy(returnAgent = Some(Seq(completeReturnAgent)))
   private val fullReturnSomeMandatoryFieldsMissing = completeFullReturn.copy(
     returnAgent = Some(Seq(completeReturnAgentVendor.copy(address1 = None, name = Some("Jon")))),
-    vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = Some("YES"))))
+    vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = Some("yes"))))
   )
   private val fullReturnAllMandatoryFieldsMissing = completeFullReturn.copy(
     returnAgent = Some(Seq(completeReturnAgentVendor.copy(address1 = None, name = None))),
-    vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = Some("YES")))))
+    vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = Some("yes")))))
   private val fullReturnRepresentedWithNoAgentDetails = completeFullReturn.copy(
     returnAgent = None,
     vendor = Some(Seq(completeVendor.copy(
       isRepresentedByAgent = Some("yes"))))
   )
-
-  private val fullReturnNoAgent = completeFullReturn.copy(
+  private val fullReturnNotRepresentedWithoutDetails = completeFullReturn.copy(
     returnAgent = None,
-    vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = Some("NO")))))
+    vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = Some("no")))))
+  private val fullReturnNotRepresentedWithDetails = completeFullReturn.copy(
+    returnAgent = Some(Seq(completeReturnAgentVendor)),
+    vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = Some("no")))))
   private val fullReturnMissingRepresentedByAgent = completeFullReturn.copy(
     returnAgent = None,
     vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = None))))
@@ -99,8 +101,14 @@ class VendorAgentTaskListSpec extends SpecBase {
       }
 
       "when vendor is not represented by agent - NO" - {
-        "must return a sequence of true" in {
-          val result = VendorAgentTaskList.mandatoryFieldsDefined(fullReturnNoAgent)
+        
+        "must return a sequence of false if agent details exist" in {
+          val result = VendorAgentTaskList.mandatoryFieldsDefined(fullReturnNotRepresentedWithDetails)
+          result mustBe Seq(false)
+        }
+
+        "must return a sequence of true if agent details don't exist" in {
+          val result = VendorAgentTaskList.mandatoryFieldsDefined(fullReturnNotRepresentedWithoutDetails)
           result mustBe Seq(true)
         }
       }
@@ -170,7 +178,7 @@ class VendorAgentTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = VendorAgentTaskList.buildVendorAgentRow(fullReturnNoAgent)
+          val result = VendorAgentTaskList.buildVendorAgentRow(fullReturnNotRepresentedWithoutDetails)
 
           result.url mustBe controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
           result.status mustBe TLCompleted

@@ -90,32 +90,6 @@ class TaskListRowBuilderSpec extends SpecBase {
       }
     }
     
-    "notStarted" - {
-      "must return true when started is false" in {
-        val builder = TaskListRowBuilder(
-          messageKey = _ => "test.key",
-          url = _ => _ => "/test",
-          tagId = "testId",
-          checks = _ => Seq(),
-          started = _ => false,
-          prerequisites = _ => Seq()
-        )
-        builder.notStarted(fullReturnComplete) mustBe true
-      }
-      
-      "must return false when started is true" in {
-        val builder = TaskListRowBuilder(
-          messageKey = _ => "test.key",
-          url = _ => _ => "/test",
-          tagId = "testId",
-          checks = _ => Seq(),
-          started = _ => true,
-          prerequisites = _ => Seq()
-        )
-        builder.notStarted(fullReturnComplete) mustBe false
-      }
-    }
-
     "prerequisitesMet" - {
 
       "must return true when no prerequisites exist" in {

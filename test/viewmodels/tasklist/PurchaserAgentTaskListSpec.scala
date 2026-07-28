@@ -46,13 +46,16 @@ class PurchaserAgentTaskListSpec extends SpecBase {
     purchaser = Some(Seq(completePurchaser1.copy(
       isRepresentedByAgent = Some("yes"))))
   )
-
   private val fullReturnRepresentedWithNoAgentDetails = completeFullReturn.copy(
     returnAgent = None,
     purchaser = Some(Seq(completePurchaser1.copy(
       isRepresentedByAgent = Some("yes"))))
   )
-
+  private val fullReturnNotRepresentedWithAgentDetails = completeFullReturn.copy(
+    purchaser = Some(Seq(completePurchaser1.copy(
+      isRepresentedByAgent = Some("no")))),
+    returnAgent = Some(Seq(completeReturnAgent))
+  )
   private val fullReturnNoAgent = completeFullReturn.copy(
     returnAgent = None,
     purchaser = Some(Seq(completePurchaser1.copy(
@@ -113,7 +116,12 @@ class PurchaserAgentTaskListSpec extends SpecBase {
 
       "when purchaser is not represented by agent - NO" - {
 
-        "must return a sequence of true" in {
+        "must return a sequence of false if agent details exist" in {
+          val result = PurchaserAgentTaskList.mandatoryFieldsDefined(fullReturnNotRepresentedWithAgentDetails)
+          result mustBe Seq(false)
+        }
+
+        "must return a sequence of true if agent details don't exist" in {
           val result = PurchaserAgentTaskList.mandatoryFieldsDefined(fullReturnNoAgent)
           result mustBe Seq(true)
         }

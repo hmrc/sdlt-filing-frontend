@@ -19,7 +19,6 @@ package viewmodels.tasklist
 import config.FrontendAppConfig
 import models.FullReturn
 import play.api.i18n.Messages
-import utils.PropertyTypeHelper
 
 import javax.inject.Singleton
 
@@ -61,13 +60,6 @@ object UkResidencyTaskList {
     mandatoryFieldsDefined(fullReturn).forall(identity)
   }
 
-  private def isResidencyRequired(fullReturn: FullReturn): Boolean = {
-    PropertyTypeHelper.isResidentialProperty(fullReturn)
-  }
-
-  private def isResidencyStarted(fullReturn: FullReturn): Boolean =
-    fullReturn.residency.nonEmpty
-  
   def ukResidencyRowBuilder(fullReturn: FullReturn)
                                  (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
@@ -87,7 +79,6 @@ object UkResidencyTaskList {
       url = _ => _ => url,
       tagId = "ukResidencyQuestionRow",
       checks = _ => mandatoryFieldsDefined(fullReturn),
-      started       = _ => if (isResidencyRequired(fullReturn)) isResidencyStarted(fullReturn) else false,
       prerequisites = _ => Seq()
     )
   }

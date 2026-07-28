@@ -380,7 +380,7 @@ class LeaseTaskListSpec extends SpecBase {
         }
       }
 
-      "must show 'Not yet started' status when lease is absent but prerequisites are complete" in {
+      "must show 'Not yet started' status when lease is absent" in {
         val application = applicationBuilder().build()
 
         running(application) {

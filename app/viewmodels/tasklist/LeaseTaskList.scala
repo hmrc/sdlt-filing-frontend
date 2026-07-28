@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import models.FullReturn
 import play.api.i18n.Messages
 import services.crossflow.{ReturnSection, SectionStatus}
-import utils.LeaseHelper
 
 import javax.inject.Singleton
 
@@ -71,14 +70,7 @@ object LeaseTaskList {
   def isLeaseComplete(fullReturn: FullReturn): Boolean = {
     mandatoryFieldsDefined(fullReturn).forall(identity)
   }
-
-  private def isLeaseRequired(fullReturn: FullReturn): Boolean = {
-    LeaseHelper.isLeaseDefined(fullReturn)
-  }
-
-  private def isLeaseStarted(fullReturn: FullReturn): Boolean = {
-    fullReturn.lease.nonEmpty
-  }
+  
 
   def leaseRowBuilder(fullReturn: FullReturn, status: SectionStatus)
                      (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
@@ -101,7 +93,6 @@ object LeaseTaskList {
       url           = _ => _ => url,
       tagId         = "leaseQuestionDetailRow",
       checks        = _ => mandatoryFieldsDefined(fullReturn),
-      started       = _ => if (isLeaseRequired(fullReturn)) isLeaseStarted(fullReturn) else false,
       invalid       = _ => status.hasFailures,
       prerequisites = _ => Seq()
     )
