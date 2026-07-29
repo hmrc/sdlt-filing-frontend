@@ -27,8 +27,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.FullReturnService
-import services.crossflow.fields.CrossFlowValidationService
 import services.crossflow.*
+import services.crossflow.fields.CrossFlowValidationService
 
 import scala.concurrent.Future
 
@@ -438,6 +438,61 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
+      "must render view with VendorAgentTaskList section when VendorTaskList is 'Complete" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(testFullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+          content must include("Vendor Agent Questions")
+        }
+      }
+
+      "must hide VendorAgentTaskList section when VendorTaskList is not 'Complete" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(testFullReturn.copy(vendor = None)))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+          content must include("Vendor Questions")
+          content must not include("Vendor Agent Questions")
+        }
+      }
+
       "must render view with both sections in correct order" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
@@ -661,7 +716,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must render view with PurchaserAgentTaskList section" in {
+      "must render view with PurchaserAgentTaskList section when PurchaserTaskList is 'Complete'" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
 
@@ -685,6 +740,33 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual OK
           val content = contentAsString(result)
           content must include("Purchaser Agent Questions")
+        }
+      }
+
+      "must hide PurchaserAgentTaskList section when PurchaserTaskList is not 'Complete" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(testFullReturn.copy(purchaser = Some(Seq(completePurchaser1.copy(address1 = None))))))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+          content must not include ("Purchaser Agent Questions")
         }
       }
 
@@ -915,6 +997,40 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual OK
           val content = contentAsString(result)
           content must include("Tax Calculation Questions")
+        }
+      }
+      
+      "must render view with Tax Calculation section and hint when previous sections incomplete" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+        
+        val fullReturn = testFullReturn.copy(land = None)
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(fullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(
+          userAnswers = Some(emptyUserAnswers.copy(
+            returnId = Some(testReturnId), 
+            storn = testStorn, 
+            fullReturn = Some(fullReturn))))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+          content must include("Tax Calculation Questions")
+          content must include("You must complete all previous sections before starting")
         }
       }
 
@@ -1198,6 +1314,40 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
           val invalidCount = messages(application)("tasklist.invalid").r.findAllMatchIn(content).size
           invalidCount must be >= 2
+        }
+      }
+
+      "must render view with Submission section and hint when previous sections incomplete" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        val fullReturn = testFullReturn.copy(taxCalculation = None)
+
+        when(mockFullReturnService.getFullReturn(any())(any(), any()))
+          .thenReturn(Future.successful(fullReturn))
+
+        when(mockSessionRepository.set(any[UserAnswers]))
+          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(
+          userAnswers = Some(emptyUserAnswers.copy(
+            returnId = Some(testReturnId),
+            storn = testStorn,
+            fullReturn = Some(fullReturn))))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val content = contentAsString(result)
+          content must include("Submit your return")
+          content must include("You must complete all previous sections before starting")
         }
       }
     }

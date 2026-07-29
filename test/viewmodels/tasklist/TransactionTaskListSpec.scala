@@ -19,6 +19,7 @@ package viewmodels.tasklist
 import base.SpecBase
 import config.FrontendAppConfig
 import constants.FullReturnConstants.*
+import models.Transaction
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import services.crossflow.{CrossFlowTarget, PageId, Pages, ReturnSection, SectionStatus}
@@ -26,6 +27,98 @@ import services.crossflow.{CrossFlowTarget, PageId, Pages, ReturnSection, Sectio
 class TransactionTaskListSpec extends SpecBase {
 
   private val fullReturnComplete = completeFullReturn
+
+  private val fullReturnMixedResNotGrantOfLease = fullReturnComplete.copy(
+    transaction = Some(Transaction(
+      transactionDescription = Some("A"), // not Grant of Lease
+      effectiveDate = Some("01/02/2024"),
+      isDependantOnFutureEvent = Some("YES"),
+      agreedToDeferPayment = Some("YES"),
+      isPartOfSaleOfBusiness = Some("YES"),
+      postTransRulingApplied = Some("YES"),
+      restrictionsAffectInterest = Some("NO"),
+      isLandExchanged = Some("YES"),
+      isPursuantToPreviousOption = Some("NO"),
+      usedAsShop = Some("YES"),
+      totalConsideration = Some("100000"),
+      considerationCash = Some("YES")
+    )),
+    land = Some(Seq(completeLand.copy(
+      propertyType = Some("02") // mixed
+    )))
+  )
+
+  private val fullReturnMixedResNotGrantOfLeaseMissing = fullReturnMixedResNotGrantOfLease.copy(
+    transaction = Some(fullReturnMixedResNotGrantOfLease.transaction.get.copy(
+      totalConsideration = None,
+      considerationCash = None
+    ))
+  )
+
+  private val fullReturnMixedResGrantOfLease = fullReturnComplete.copy(
+    transaction = Some(Transaction(
+      transactionDescription = Some("L"), // Grant of Lease
+      effectiveDate = Some("01/02/2024"),
+      isDependantOnFutureEvent = Some("YES"),
+      agreedToDeferPayment = Some("YES"),
+      isPartOfSaleOfBusiness = Some("YES"),
+      postTransRulingApplied = Some("YES"),
+      restrictionsAffectInterest = Some("NO"),
+      isLandExchanged = Some("YES"),
+      isPursuantToPreviousOption = Some("NO"),
+      usedAsShop = Some("YES")
+    )),
+    land = Some(Seq(completeLand.copy(
+      propertyType = Some("02") // mixed
+    ))))
+
+  private val fullReturnMixedResGrantOfLeaseMissing = fullReturnMixedResGrantOfLease.copy(
+    transaction = Some(fullReturnMixedResGrantOfLease.transaction.get.copy(
+      usedAsShop = None
+    ))
+  )
+
+  private val fullReturnNotMixedResNotGrantOfLease = fullReturnComplete.copy(
+    transaction = Some(Transaction(
+      transactionDescription = Some("A"), // not Grant of Lease
+      effectiveDate = Some("01/02/2024"),
+      isDependantOnFutureEvent = Some("YES"),
+      agreedToDeferPayment = Some("YES"),
+      isPartOfSaleOfBusiness = Some("YES"),
+      postTransRulingApplied = Some("YES"),
+      restrictionsAffectInterest = Some("NO"),
+      isLandExchanged = Some("YES"),
+      isPursuantToPreviousOption = Some("NO"),
+      totalConsideration = Some("100000"),
+      considerationCash = Some("YES")
+    )),
+    land = Some(Seq(completeLand.copy(
+      propertyType = Some("01") // residential
+    )))
+  )
+
+  private val fullReturnNotMixedResNotGrantOfLeaseMissing = fullReturnNotMixedResNotGrantOfLease.copy(
+    transaction = Some(fullReturnNotMixedResNotGrantOfLease.transaction.get.copy(
+      totalConsideration = None,
+      considerationCash = None
+    ))
+  )
+
+  private val fullReturnNotMixedResGrantOfLease = fullReturnComplete.copy(
+    transaction = Some(Transaction(
+      transactionDescription = Some("L"), // Grant of Lease
+      effectiveDate = Some("01/02/2024"),
+      isDependantOnFutureEvent = Some("YES"),
+      agreedToDeferPayment = Some("YES"),
+      isPartOfSaleOfBusiness = Some("YES"),
+      postTransRulingApplied = Some("YES"),
+      restrictionsAffectInterest = Some("NO"),
+      isLandExchanged = Some("YES"),
+      isPursuantToPreviousOption = Some("NO")
+    )),
+    land = Some(Seq(completeLand.copy(
+      propertyType = Some("01") // residential
+    ))))
 
   private val noFailures: SectionStatus =
     SectionStatus(ReturnSection.Transaction, hasFailures = false, ruleIds = Nil, messageKeys = Nil, targets = Nil)
@@ -110,17 +203,126 @@ class TransactionTaskListSpec extends SpecBase {
       }
     }
 
+    ".mandatoryFieldsDefined" - {
+
+      "when property type is mixed or non residential and transaction is not Grant of Lease" - {
+
+        "must return a sequence of true including use of land and consideration fields" in {
+
+          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnMixedResNotGrantOfLease)
+
+          result.length mustBe 12
+
+          // first 9 are general transaction fields (all true here)
+          result.take(9).forall(identity) mustBe true
+
+          result(9) mustBe true // isAnyUseOfLandYes
+
+          result(10) mustBe true // isTotalConsiderationDefined
+
+          result(11) mustBe true // isAnyFormsOfConsiderationDefined
+        }
+
+        "must return a sequence with false for consideration fields when they are missing" in {
+
+          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnMixedResNotGrantOfLeaseMissing)
+
+          result.length mustBe 12
+          result(10) mustBe false // isTotalConsiderationDefined
+          result(11) mustBe false // isAnyFormsOfConsiderationDefined
+        }
+      }
+
+      "when property type is mixed or non residential and transaction is Grant of Lease" - {
+
+        "must return a sequence of true including use of land but not consideration fields" in {
+
+          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnMixedResGrantOfLease)
+
+          result.length mustBe 10
+
+          // first 9 are general transaction fields (all true here)
+          result.take(9).forall(identity) mustBe true
+
+          result(9) mustBe true // isAnyUseOfLandYes
+        }
+
+        "must return a sequence with false for use of land when it is missing" in {
+          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnMixedResGrantOfLeaseMissing)
+
+          result.length mustBe 10
+          result(9) mustBe false
+        }
+      }
+
+      "when property type is not mixed or non residential and transaction is not Grant of Lease" - {
+
+        "must return a sequence of true including consideration fields but not use of land" - {
+
+          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnNotMixedResNotGrantOfLease)
+
+          result.length mustBe 11
+
+          // first 9 are general transaction fields (all true here)
+          result.take(9).forall(identity) mustBe true
+
+          result(9) mustBe true // isTotalConsiderationDefined
+
+          result(10) mustBe true // isAnyFormsOfConsiderationDefined
+        }
+
+        "must return a sequence with false for consideration fields when they are missing" in {
+          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnNotMixedResNotGrantOfLeaseMissing)
+
+          result.length mustBe 11
+
+          // first 9 are general transaction fields (all true here)
+          result.take(9).forall(identity) mustBe true
+
+          result(9) mustBe false // isTotalConsiderationDefined
+
+          result(10) mustBe false // isAnyFormsOfConsiderationDefined
+        }
+      }
+
+      "when property type is not mixed or non residential and transaction is Grant of Lease" - {
+
+        "must return only the general transaction fields" - {
+
+          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnNotMixedResGrantOfLease)
+
+          result.length mustBe 9
+
+          // first 9 are general transaction fields (all true here)
+          result.take(9).forall(identity) mustBe true
+        }
+
+        "must return false for generic fields when they are missing" in {
+
+          val result = TransactionTaskList.mandatoryFieldsDefined(emptyFullReturn)
+
+          result.length mustBe 9
+          result.forall(identity) mustBe false
+        }
+      }
+    }
+
     ".isTransactionComplete" - {
 
-      "must return true if transaction exists and contains effective date" in {
-          val result = TransactionTaskList.isTransactionComplete(fullReturnComplete)
+      "must return true if transaction exists and mandatory fields are defined" in {
+          val result = TransactionTaskList.isTransactionComplete(fullReturnMixedResNotGrantOfLease)
 
           result mustBe true
       }
 
-      "must return false if transaction exists but effective date is empty" in {
-          val result = TransactionTaskList.isTransactionComplete(fullReturnComplete.copy(transaction = Some(completeTransaction
-          .copy(effectiveDate = None))))
+      "must return false if transaction exists but some mandatory field are missing" in {
+          val result = TransactionTaskList.isTransactionComplete(fullReturnMixedResNotGrantOfLeaseMissing)
+
+          result mustBe false
+      }
+
+      "must return false if transaction exists but all mandatory field are missing" in {
+          val result = TransactionTaskList.isTransactionComplete(emptyFullReturn)
 
           result mustBe false
       }
@@ -168,7 +370,35 @@ class TransactionTaskListSpec extends SpecBase {
 
     ".buildTransactionRow status logic" - {
 
-      "must show completed status when transaction is present and there are no failures" in {
+      "must have Transaction Before You Start url and show 'In progress' status when some mandatory fields are present in transaction" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnMixedResNotGrantOfLeaseMissing, noFailures)
+
+          result.url mustBe controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
+
+          result.status mustBe TLInProgress
+        }
+      }
+
+      "must have Transaction Check Your Answers url when and show 'Complete' status when all mandatory fields are present in transaction" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnMixedResNotGrantOfLease, noFailures)
+
+          result.url mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
+
+          result.status mustBe TLCompleted
+        }
+      }
+
+      "must show 'Complete' status when transaction is present and there are no failures" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -180,7 +410,7 @@ class TransactionTaskListSpec extends SpecBase {
         }
       }
 
-      "must show not-started status when transaction is absent and there are no failures" in {
+      "must show 'Not yet started' status when transaction is absent and there are no failures" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -189,18 +419,6 @@ class TransactionTaskListSpec extends SpecBase {
           val result = TransactionTaskList.buildTransactionRow(fullReturnComplete.copy(transaction = None), noFailures)
 
           result.status mustBe TLNotStarted
-        }
-      }
-
-      "must show cannot start status when preliminary section is incomplete and there are no failures" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-
-          val result = TransactionTaskList.buildTransactionRow(emptyFullReturn, noFailures)
-
-          result.status mustBe TLCannotStart
         }
       }
 
@@ -225,18 +443,6 @@ class TransactionTaskListSpec extends SpecBase {
           val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, multipleFailures)
 
           result.status mustBe TLInvalid
-        }
-      }
-
-      "must defer to cannot-start when prerequisites are unmet, even with cross-flow failures" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-
-          val result = TransactionTaskList.buildTransactionRow(emptyFullReturn, withFailure(Pages.ReliefReason))
-
-          result.status mustBe TLCannotStart
         }
       }
     }

@@ -25,6 +25,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.vendor.VendorCreateOrUpdateService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.vendorAgent.VendorAgentBeforeYouStartView
 
@@ -42,7 +43,8 @@ class VendorAgentBeforeYouStartController @Inject()(
                                                      statusCheck: CheckSubmissionStatusAction,
                                                      formProvider: VendorAgentBeforeYouStartFormProvider,
                                                      val controllerComponents: MessagesControllerComponents,
-                                                     view: VendorAgentBeforeYouStartView
+                                                     view: VendorAgentBeforeYouStartView,
+                                                     vendorCreateOrUpdateService: VendorCreateOrUpdateService
                                                    )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form: Form[Boolean] = formProvider()
@@ -57,19 +59,16 @@ class VendorAgentBeforeYouStartController @Inject()(
         case Some(value) => form.fill(value)
       }
       
-      userAnswers.fullReturn match {
-        case Some(fullReturn) =>
-          if (fullReturn.returnAgent.exists(_.exists(_.agentType.contains(AgentType.Vendor.toString)))) {
-            Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-          } else {
-            Ok(view(preparedForm, mode))
-          }
-        case _ => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-      }
+      Ok(view(preparedForm, mode))
   }
+  
   
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
+
+      val hasAgentTypeVendor = request.userAnswers.fullReturn
+        .flatMap(_.returnAgent)
+        .exists(_.exists(_.agentType.contains(AgentType.Vendor.toString)))
 
       form.bindFromRequest().fold(
         formWithErrors =>
@@ -79,9 +78,14 @@ class VendorAgentBeforeYouStartController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(VendorAgentBeforeYouStartPage, value))
             _ <- sessionRepository.set(updatedAnswers)
+            _ <- vendorCreateOrUpdateService.updateIsRepresentedByAgent(value, updatedAnswers)
           } yield {
             if (value) {
-              Redirect(navigator.nextPage(VendorAgentBeforeYouStartPage, mode, updatedAnswers))
+              if(hasAgentTypeVendor) {
+                Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad())
+              } else {
+                Redirect(navigator.nextPage(VendorAgentBeforeYouStartPage, mode, updatedAnswers))
+              }
             } else {
               Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
             }

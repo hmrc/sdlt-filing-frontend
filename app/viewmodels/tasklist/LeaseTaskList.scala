@@ -39,10 +39,38 @@ object LeaseTaskList {
       )
     )
 
-  def isLeaseComplete(fullReturn: FullReturn): Boolean = {
-    fullReturn.lease.exists(_.leaseType.isDefined)
-    //TODO ADD ALL REQUIRED FIELDS FOR LEASE
+  def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
+    
+    val generalLeaseFields = Seq(
+      fullReturn.lease.exists(_.leaseType.isDefined),
+      fullReturn.lease.exists(_.contractStartDate.isDefined),
+      fullReturn.lease.exists(_.contractEndDate.isDefined),
+      fullReturn.lease.exists(_.rentFreePeriod.isDefined),
+      fullReturn.lease.exists(_.startingRent.isDefined),
+      fullReturn.lease.exists(_.startingRentEndDate.isDefined),
+      fullReturn.lease.exists(_.laterRentKnown.isDefined)
+    )
+
+    // if transaction type is Grant of Lease
+    val isTransactionTypeGrantOfLease = fullReturn.transaction.exists(_.transactionDescription.contains("L"))
+    
+    val grantOfLeaseFields = Seq(
+      fullReturn.lease.exists(_.totalPremiumPayable.isDefined),
+      fullReturn.lease.exists(_.isAnnualRentOver1000.isDefined),
+      fullReturn.lease.exists(_.netPresentValue.isDefined)
+    )
+
+    if (isTransactionTypeGrantOfLease) {
+      generalLeaseFields ++ grantOfLeaseFields
+    } else {
+      generalLeaseFields
+    }
   }
+
+  def isLeaseComplete(fullReturn: FullReturn): Boolean = {
+    mandatoryFieldsDefined(fullReturn).forall(identity)
+  }
+  
 
   def leaseRowBuilder(fullReturn: FullReturn, status: SectionStatus)
                      (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
@@ -64,9 +92,9 @@ object LeaseTaskList {
       messageKey    = _ => "tasklist.leaseQuestion.details",
       url           = _ => _ => url,
       tagId         = "leaseQuestionDetailRow",
-      checks        = scheme => Seq(isLeaseComplete(fullReturn)),
+      checks        = _ => mandatoryFieldsDefined(fullReturn),
       invalid       = _ => status.hasFailures,
-      prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
+      prerequisites = _ => Seq()
     )
   }
 

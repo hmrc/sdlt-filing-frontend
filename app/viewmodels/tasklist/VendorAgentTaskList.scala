@@ -17,7 +17,7 @@
 package viewmodels.tasklist
 
 import config.FrontendAppConfig
-import models.{AgentType, FullReturn, ReturnAgent}
+import models.{AgentType, FullReturn, ReturnAgent, Vendor}
 import play.api.i18n.Messages
 
 import javax.inject.Singleton
@@ -43,24 +43,55 @@ object VendorAgentTaskList {
     vendorAgents(fullReturn).nonEmpty
   }
 
+  private def mainVendor(fullReturn: FullReturn): Option[Vendor] =
+    for {
+      mainVendorId <- fullReturn.returnInfo.flatMap(_.mainVendorID)
+      vendors <- fullReturn.vendor
+      vendor <- vendors.find(_.vendorID.contains(mainVendorId))
+    } yield vendor
+
+  private def vendorAgentChecks(fullReturn: FullReturn): Seq[Boolean] = {
+    val agents = vendorAgents(fullReturn)
+
+    Seq(
+      agents.exists(_.name.isDefined),
+      agents.exists(_.address1.isDefined)
+    )
+  }
+
+  def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
+    val isRepresentedByAgent = mainVendor(fullReturn).flatMap(_.isRepresentedByAgent).map(_.toLowerCase)
+
+    val hasVendorAgents = vendorAgents(fullReturn).nonEmpty
+
+    (isRepresentedByAgent, hasVendorAgents) match {
+      case (Some("yes"), true) => vendorAgentChecks(fullReturn)
+      case (Some("yes"), false) => Seq(true, false)
+      case (Some("no"), true) => Seq(false)
+      case (Some("no"), false) => Seq(true)
+      case _ => Seq(false)
+    }
+  }
+
   def isVendorAgentComplete(fullReturn: FullReturn): Boolean = {
-    vendorAgents(fullReturn).nonEmpty &&
-      vendorAgents(fullReturn).forall( agent =>
-        agent.name.isDefined
-        //TODO ADD ALL MANDATORY CONDITIONS FOR VENDOR AGENT
-      )
+    mandatoryFieldsDefined(fullReturn).forall(identity)
   }
 
   def vendorAgentRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
-    val url = if(isVendorAgentComplete(fullReturn)) {
+    val isNotRepresentedByAnAgent = mainVendor(fullReturn).flatMap(_.isRepresentedByAgent).exists(_.equalsIgnoreCase("no"))
+
+    val url = {
+      if (isNotRepresentedByAnAgent) {
+        controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
+      } else if (isVendorAgentComplete(fullReturn)) {
         controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad().url
-    } else {
-      controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
+      } else {
+        controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
+      }
     }
 
     TaskListRowBuilder(
-      isOptional = true,
       canEdit = {
         case TLCompleted => true
         case _ => true
@@ -68,8 +99,8 @@ object VendorAgentTaskList {
       messageKey = _ => "tasklist.vendorAgentQuestion.details",
       url = _ => _ => {url},
       tagId = "vendorAgentQuestionDetailRow",
-      checks = scheme => Seq(isVendorAgentComplete(fullReturn)),
-      prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
+      checks = scheme => mandatoryFieldsDefined(fullReturn),
+      prerequisites = _ => Seq()
     )
   }
 

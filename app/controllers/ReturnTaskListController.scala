@@ -22,12 +22,14 @@ import models.{GetReturnByRefRequest, UserAnswers}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.pdf.PDFGenerationService
 import services.FullReturnService
-import services.crossflow.{ReturnSection, SectionStatus}
 import services.crossflow.fields.CrossFlowValidationService
+import services.crossflow.{ReturnSection, SectionStatus}
+import services.land.LandService
+import services.pdf.PDFGenerationService
+import services.purchaser.PurchaserService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.{LeaseHelper, PropertyTypeHelper}
+import utils.{FullName, LeaseHelper, PropertyTypeHelper}
 import viewmodels.tasklist.*
 import views.html.ReturnTaskListView
 
@@ -45,7 +47,9 @@ class ReturnTaskListController @Inject()(
                                           view: ReturnTaskListView,
                                           sessionRepository: SessionRepository,
                                           pdfGenerationService: PDFGenerationService,
-                                          crossFlowService: CrossFlowValidationService
+                                          crossFlowService: CrossFlowValidationService,
+                                          purchaserService: PurchaserService,
+                                          landService: LandService
                                         )(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig)
   extends FrontendBaseController
     with I18nSupport {
@@ -62,6 +66,12 @@ class ReturnTaskListController @Inject()(
           _           <- sessionRepository.set(userAnswers)
         } yield {
           val maybeSubmissionObject = userAnswers.fullReturn.flatMap(_.submission)
+          val purchaserName: Option[String] = {
+            purchaserService.getMainPurchaser(userAnswers).flatMap { purchaser => purchaser.companyName.orElse(
+              FullName.optionalFullName(purchaser.forename1, purchaser.forename2, purchaser.surname))
+            }
+          }
+          val landAddress1: Option[String] = landService.getMainLand(userAnswers).flatMap(_.address1)
 
           if(maybeSubmissionObject.isDefined) {
             Redirect(controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad())
@@ -76,9 +86,9 @@ class ReturnTaskListController @Inject()(
 
             val sections = List(
               Some(VendorTaskList.build(fullReturn)),
-              Some(VendorAgentTaskList.build(fullReturn)),
+              if(VendorTaskList.isVendorComplete(fullReturn)) Some(VendorAgentTaskList.build(fullReturn)) else None,
               Some(PurchaserTaskList.build(fullReturn)),
-              Some(PurchaserAgentTaskList.build(fullReturn)),
+              if(PurchaserTaskList.isPurchaserComplete(fullReturn)) Some(PurchaserAgentTaskList.build(fullReturn)) else None,
               Some(LandTaskList.build(fullReturn, landStatus)),
               if (PropertyTypeHelper.isResidentialProperty(fullReturn)) Some(UkResidencyTaskList.build(fullReturn)) else None,
               Some(TransactionTaskList.build(fullReturn, transactionStatus)),
@@ -86,7 +96,8 @@ class ReturnTaskListController @Inject()(
               Some(TaxCalculationTaskList.build(fullReturn)),
               Some(SubmissionTaskList.build(fullReturn))
             ).flatten
-            Ok(view(sections: _*))
+
+            Ok(view(purchaserName, landAddress1, sections: _*))
           }
         }
       }

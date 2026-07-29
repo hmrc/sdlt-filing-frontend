@@ -82,6 +82,33 @@ class VendorCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar with Be
   private val userAnswersWithNoVendors = userAnswersWithExistingVendor
     .copy(fullReturn = Some(incompleteFullReturn), data = vendorCurrentData)
 
+  private val purchaserAgent = ReturnAgent(
+    returnAgentID = Some("AGENT004"),
+    agentType = Some("PURCHASER"),
+    name = Some("Purchaser Agent Ltd")
+  )
+
+  private val vendorAgent = ReturnAgent(
+    returnAgentID = Some("AGENT003"),
+    agentType = Some("VENDOR"),
+    name = Some("Vendor Agent Ltd")
+  )
+
+  private val userAnswersWithNoVendorAgent = userAnswers.copy(
+    fullReturn = Some(completeFullReturn.copy(
+      returnAgent = None)
+    ))
+
+  private val userAnswersWithVendorAgent = userAnswers.copy(
+    fullReturn = Some(completeFullReturn.copy(
+      returnAgent = Some(Seq(vendorAgent)))
+    ))
+
+  private val userAnswersWithPurchaserAgent = userAnswers.copy(
+    fullReturn = Some(completeFullReturn.copy(
+      returnAgent = Some(Seq(purchaserAgent)))
+    ))
+
   "VendorCreateOrUpdateService" - {
 
     "updateVendor" - {
@@ -211,6 +238,186 @@ class VendorCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar with Be
 
         verify(mockBackendConnector, times(1)).updateReturnVersion(any())(eqTo(testHc), any())
         verify(mockBackendConnector, times(1)).updateVendor(any())(eqTo(testHc), any())
+      }
+    }
+
+    "updateIsRepresentedByAgent" - {
+
+      "when answer is yes" - {
+
+        "must update isRepresentedByAgent when update is successful" in {
+          val userAnswers = userAnswersWithVendorAgent
+
+          val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = Some(2))
+          val updateVendorReturn = UpdateVendorReturn(true)
+
+          when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+            .thenReturn(Future.successful(returnVersionResponse))
+          when(mockBackendConnector.updateVendor(any[UpdateVendorRequest])(any(), any()))
+            .thenReturn(Future.successful(updateVendorReturn))
+
+          val result = service.updateIsRepresentedByAgent(true, userAnswers).futureValue
+
+          result mustEqual true
+          verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
+          verify(mockBackendConnector, times(1)).updateVendor(any())(any(), any())
+          verify(mockBackendConnector, never()).deleteReturnAgent(any())(any(), any())
+        }
+      }
+
+      "when answer is no" - {
+
+        "must update isRepresentedByAgent when update is successful" in {
+          val userAnswers = userAnswersWithNoVendorAgent
+
+          val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = Some(2))
+          val updateVendorReturn = UpdateVendorReturn(true)
+
+          when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+            .thenReturn(Future.successful(returnVersionResponse))
+          when(mockBackendConnector.updateVendor(any[UpdateVendorRequest])(any(), any()))
+            .thenReturn(Future.successful(updateVendorReturn))
+
+          val result = service.updateIsRepresentedByAgent(false, userAnswers).futureValue
+
+          result mustEqual true
+          verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
+          verify(mockBackendConnector, times(1)).updateVendor(any())(any(), any())
+          verify(mockBackendConnector, never()).deleteReturnAgent(any())(any(), any())
+        }
+
+        "must update isRepresentedByAgent and remove vendor agent details if they exist" in {
+          val userAnswers = userAnswersWithVendorAgent
+
+          val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = Some(2))
+          val updateVendorReturn = UpdateVendorReturn(true)
+          val deleteReturnAgentReturn = DeleteReturnAgentReturn(true)
+
+          when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+            .thenReturn(Future.successful(returnVersionResponse))
+          when(mockBackendConnector.updateVendor(any[UpdateVendorRequest])(any(), any()))
+            .thenReturn(Future.successful(updateVendorReturn))
+          when(mockBackendConnector.deleteReturnAgent(any[DeleteReturnAgentRequest])(any(), any()))
+            .thenReturn(Future.successful(deleteReturnAgentReturn))
+
+          val result = service.updateIsRepresentedByAgent(false, userAnswers).futureValue
+
+          result mustEqual true
+          verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
+          verify(mockBackendConnector, times(1)).updateVendor(any())(any(), any())
+          verify(mockBackendConnector, times(1)).deleteReturnAgent(any())(any(), any())
+        }
+
+        "must update isRepresentedByAgent and not remove purchaser agent details if they exist" in {
+          val userAnswers = userAnswersWithPurchaserAgent
+
+          val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = Some(2))
+          val updateVendorReturn = UpdateVendorReturn(true)
+          
+          when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+            .thenReturn(Future.successful(returnVersionResponse))
+          when(mockBackendConnector.updateVendor(any[UpdateVendorRequest])(any(), any()))
+            .thenReturn(Future.successful(updateVendorReturn))
+
+          val result = service.updateIsRepresentedByAgent(false, userAnswers).futureValue
+
+          result mustEqual true
+          verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
+          verify(mockBackendConnector, times(1)).updateVendor(any())(any(), any())
+          verify(mockBackendConnector, never()).deleteReturnAgent(any())(any(), any())
+        }
+      }
+
+      "must fail when vendor is not found in full return" in {
+        val userAnswers = userAnswersWithVendorAgent.copy(fullReturn = Some(completeFullReturn.copy(vendor = Some(Seq(completeVendor.copy(vendorID = Some("VEN002")))))))
+        val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = Some(2))
+
+        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+          .thenReturn(Future.successful(returnVersionResponse))
+
+        when(mockBackendConnector.updateVendor(any[UpdateVendorRequest])(any(), any()))
+          .thenReturn(Future.failed(new NoSuchElementException))
+
+        whenReady(service.updateIsRepresentedByAgent(true, userAnswers).failed) { exception =>
+          exception mustBe a[NoSuchElementException]
+        }
+      }
+
+      "must fail when vendor resource ref is not found" in {
+        val userAnswers = userAnswersWithVendorAgent.copy(fullReturn = Some(completeFullReturn.copy(vendor = Some(Seq(completeVendor.copy(vendorResourceRef = None))))))
+
+        val returnVersionResponse = ReturnVersionUpdateReturn(
+          newVersion = Some(2))
+
+        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+          .thenReturn(Future.successful(returnVersionResponse))
+
+        when(mockBackendConnector.updateVendor(any[UpdateVendorRequest])(any(), any()))
+          .thenReturn(Future.failed(new NoSuchElementException))
+
+        whenReady(service.updateIsRepresentedByAgent(true, userAnswers).failed) { exception =>
+          exception mustBe a[NoSuchElementException]
+        }
+      }
+
+      "must fail when version update does not return a new version" - {
+        val userAnswers = userAnswersWithVendorAgent
+
+        val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = None)
+
+        when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+          .thenReturn(Future.successful(returnVersionResponse))
+
+        whenReady(service.updateIsRepresentedByAgent(true, userAnswers).failed) { exception =>
+          exception mustBe a [NoSuchElementException]
+        }
+      }
+
+      "must propagate backend connector updateReturnVersion failures" in {
+        val userAnswers = userAnswersWithVendorAgent
+
+        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+          .thenReturn(Future.failed(new RuntimeException("Backend failure")))
+
+        whenReady(service.updateIsRepresentedByAgent(true, userAnswers).failed) { exception =>
+          exception mustBe a [RuntimeException]
+          exception.getMessage mustBe "Backend failure"
+        }
+      }
+
+      "must propagate backend connector updateVendor failures" in {
+        val userAnswers = userAnswersWithVendorAgent
+        val returnVersionResponse = ReturnVersionUpdateReturn(
+          newVersion = Some(2)
+        )
+
+        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+          .thenReturn(Future.successful(returnVersionResponse))
+        when(mockBackendConnector.updateVendor(any())(any(), any()))
+          .thenReturn(Future.failed(new RuntimeException("Update vendor failed")))
+
+        whenReady(service.updateIsRepresentedByAgent(true, userAnswers).failed) { exception =>
+          exception mustBe a[RuntimeException]
+          exception.getMessage mustBe "Update vendor failed"
+        }
+      }
+
+      "must propagate backend connector deleteReturnAgent failures" - {
+        val userAnswers = userAnswersWithVendorAgent
+        val returnVersionResponse = ReturnVersionUpdateReturn(
+          newVersion = Some(2)
+        )
+        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+          .thenReturn(Future.successful(returnVersionResponse))
+        when(mockBackendConnector.updateVendor(any())(any(), any()))
+          .thenReturn(Future.successful(UpdateVendorReturn(true)))
+        when(mockBackendConnector.deleteReturnAgent(any())(any(), any()))
+          .thenReturn(Future.failed(new RuntimeException("Delete vendor agent failed")))
+        
+        whenReady(service.updateIsRepresentedByAgent(false, userAnswers).failed) { exception =>
+          exception mustBe a[RuntimeException]
+          exception.getMessage mustBe "Delete vendor agent failed"
+        }
       }
     }
 

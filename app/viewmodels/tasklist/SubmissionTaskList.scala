@@ -22,13 +22,13 @@ import play.api.i18n.Messages
 import utils.{LeaseHelper, PropertyTypeHelper}
 import viewmodels.tasklist.LandTaskList.isLandComplete
 import viewmodels.tasklist.LeaseTaskList.isLeaseComplete
+import viewmodels.tasklist.VendorTaskList.isVendorComplete
 import viewmodels.tasklist.PurchaserTaskList.isPurchaserComplete
 import viewmodels.tasklist.TaxCalculationTaskList.isTaxCalculationComplete
 import viewmodels.tasklist.TransactionTaskList.isTransactionComplete
 import viewmodels.tasklist.VendorAgentTaskList.*
 import viewmodels.tasklist.PurchaserAgentTaskList.*
 import viewmodels.tasklist.UkResidencyTaskList.isResidencyComplete
-import viewmodels.tasklist.VendorTaskList.isVendorComplete
 
 import javax.inject.Singleton
 
@@ -48,8 +48,7 @@ object SubmissionTaskList {
   def buildSubmissionRow(fullReturn: FullReturn)(implicit messages: Messages, appConfig: FrontendAppConfig): TaskListSectionRow = {
     val url = fullReturn.submission match {
       case Some(submission) if submission.submissionID.isDefined =>
-        //TODO UPDATE to DTR-5731 Success page
-        controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad().url
+        controllers.submission.routes.SubmissionCompleteController.onPageLoad().url
       case _ =>
         controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad().url
     }
@@ -117,5 +116,4 @@ object SubmissionTaskList {
   private def isResidencyRequired(fullReturn: FullReturn): Boolean = {
     PropertyTypeHelper.isResidentialProperty(fullReturn)
   }
-
 }

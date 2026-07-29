@@ -17,7 +17,7 @@
 package viewmodels.tasklist
 
 import config.FrontendAppConfig
-import models.FullReturn
+import models.{FullReturn, Land}
 import play.api.i18n.Messages
 import services.crossflow.{ReturnSection, SectionStatus}
 
@@ -36,24 +36,49 @@ object LandTaskList {
       rows    = Seq(buildLandRow(fullReturn, status))
     )
   }
-  
+
+  def mandatoryFieldsDefined(land: Land): Seq[Boolean] =
+    Seq(
+      land.propertyType.isDefined,
+      land.interestCreatedTransferred.isDefined,
+      land.address1.isDefined,
+      land.localAuthorityNumber.isDefined,
+      land.willSendPlanByPost.isDefined,
+      land.mineralRights.isDefined
+    )
+
+  def isLandComplete(land: Land): Boolean =
+    mandatoryFieldsDefined(land).forall(identity)
+
+  def lands(fullReturn: FullReturn): Seq[Land] =
+    fullReturn.land.getOrElse(Seq.empty)
+
+  def incompleteLands(fullReturn: FullReturn): Seq[Land] =
+    lands(fullReturn).filterNot(land => isLandComplete(land))
+
+  def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
+    val all = lands(fullReturn)
+    if (all.isEmpty) Seq.fill(6)(false)
+    else all.flatMap(land => mandatoryFieldsDefined(land))
+  }
+
   def isLandComplete(fullReturn: FullReturn): Boolean = {
-    fullReturn.land.exists(_.nonEmpty)
-    //TODO ADD ALL REQUIRED FIELDS FOR LAND
+    val all = lands(fullReturn)
+    all.nonEmpty && all.forall(land => isLandComplete(land))
   }
 
   def landRowBuilder(fullReturn: FullReturn, status: SectionStatus)
-                  (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
+                    (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
-    val mainLandID = fullReturn.returnInfo.flatMap(_.mainLandID)
-
-    val defaultUrl = fullReturn.land match {
-      case Some(list) if list.length > 1                                                => controllers.land.routes.LandOverviewController.onPageLoad().url
-      case Some(list) if list.exists(x => x.landID == mainLandID && x.mineralRights.isEmpty)
-      => controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
-      case Some(list) if list.nonEmpty                                                  => controllers.land.routes.LandOverviewController.onPageLoad().url
-      case _                                                                            => controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
-    }
+    val defaultUrl =
+      if (isLandComplete(fullReturn))
+        controllers.land.routes.LandOverviewController.onPageLoad().url
+      else if (incompleteLands(fullReturn).nonEmpty)
+        // TODO: Send to incomplete overview instead
+        //controllers.land.routes.LandIncompleteOverviewController.onPageLoad().url
+        controllers.land.routes.LandOverviewController.onPageLoad().url
+      else
+        controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
 
     val errorUrl = controllers.land.routes.LandAuthorityCodeMultiEntityController.onPageLoad().url
     val cf6Url = controllers.land.routes.LandPropertyTypeMultiEntityController.onPageLoad().url
@@ -70,12 +95,12 @@ object LandTaskList {
       messageKey    = _ => "tasklist.landQuestion.details",
       url           = _ => _ => url,
       tagId         = "landQuestionDetailRow",
-      checks        = _ => Seq(isLandComplete(fullReturn)),
+      checks        = _ => mandatoryFieldsDefined(fullReturn),
       invalid       = _ => status.hasFailures,
-      prerequisites = _ => Seq(PrelimTaskList.buildPrelimRow(fullReturn))
+      prerequisites = _ => Seq()
     )
   }
-  
+
   def buildLandRow(fullReturn: FullReturn, status: SectionStatus)
                   (implicit appConfig: FrontendAppConfig): TaskListSectionRow  = {
     landRowBuilder(fullReturn, status).build(fullReturn)

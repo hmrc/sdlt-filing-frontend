@@ -31,7 +31,10 @@ case class TaskListRowBuilder(messageKey: FullReturn => String,
                               isOptional: Boolean = false,
                               hint: FullReturn => Option[String]= _ => None) {
 
-  def isComplete(fullReturn: FullReturn): Boolean = checks(fullReturn).forall(_ == true)
+  def isComplete(fullReturn: FullReturn): Boolean = {
+    val result = checks(fullReturn)
+    result.nonEmpty && result.forall(identity)
+  }
 
   def prerequisitesMet(fullReturn: FullReturn): Boolean = {
     @tailrec

@@ -24,12 +24,37 @@ import play.api.test.Helpers.running
 
 class VendorAgentTaskListSpec extends SpecBase {
 
-  private val fullReturnCompleteWithVendorAgent = completeFullReturn.copy(returnAgent = Some(Seq(completeReturnAgentVendor)))
+  private val fullReturnCompleteWithVendorAgent = completeFullReturn.copy(
+    returnAgent = Some(Seq(completeReturnAgentVendor)),
+    vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = Some("yes"))))
+  )
   private val fullReturnCompleteWithOtherAgent = completeFullReturn.copy(returnAgent = Some(Seq(completeReturnAgent)))
+  private val fullReturnSomeMandatoryFieldsMissing = completeFullReturn.copy(
+    returnAgent = Some(Seq(completeReturnAgentVendor.copy(address1 = None, name = Some("Jon")))),
+    vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = Some("yes"))))
+  )
+  private val fullReturnAllMandatoryFieldsMissing = completeFullReturn.copy(
+    returnAgent = Some(Seq(completeReturnAgentVendor.copy(address1 = None, name = None))),
+    vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = Some("yes")))))
+  private val fullReturnRepresentedWithNoAgentDetails = completeFullReturn.copy(
+    returnAgent = None,
+    vendor = Some(Seq(completeVendor.copy(
+      isRepresentedByAgent = Some("yes"))))
+  )
+  private val fullReturnNotRepresentedWithoutDetails = completeFullReturn.copy(
+    returnAgent = None,
+    vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = Some("no")))))
+  private val fullReturnNotRepresentedWithDetails = completeFullReturn.copy(
+    returnAgent = Some(Seq(completeReturnAgentVendor)),
+    vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = Some("no")))))
+  private val fullReturnMissingRepresentedByAgent = completeFullReturn.copy(
+    returnAgent = None,
+    vendor = Some(Seq(completeVendor.copy(isRepresentedByAgent = None))))
 
   "VendorAgentTaskList" - {
 
     ".build" - {
+
       "must return TaskListSection with correct heading when vendor agent is present" in {
         val application = applicationBuilder().build()
 
@@ -60,25 +85,65 @@ class VendorAgentTaskListSpec extends SpecBase {
       }
     }
 
-    ".isVendorAgentComplete" - {
+    ".mandatoryFieldsDefined" - {
 
-      "must return true if VendorAgent exists and agent name is defined" in {
-          val result = VendorAgentTaskList.isVendorAgentComplete(fullReturnCompleteWithVendorAgent)
+      "when vendor is represented by agent - YES" - {
+        
+        "must return a sequence of true if all mandatory fields are defined" in {
+          val result = VendorAgentTaskList.mandatoryFieldsDefined(fullReturnCompleteWithVendorAgent)
+          result mustBe Seq(true, true)
+        }
 
-          result mustBe true
+        "must return a sequence of true and false if some mandatory fields are missing" in {
+          val result = VendorAgentTaskList.mandatoryFieldsDefined(fullReturnSomeMandatoryFieldsMissing)
+          result mustBe Seq(true, false)
+        }
       }
 
-      "must return false if VendorAgent exists but agent name is missing" in {
-          val result = VendorAgentTaskList.isVendorAgentComplete(fullReturnCompleteWithVendorAgent
-            .copy(returnAgent = Some(Seq(completeReturnAgentVendor
-              .copy(name = None)))))
+      "when vendor is not represented by agent - NO" - {
+        
+        "must return a sequence of false if agent details exist" in {
+          val result = VendorAgentTaskList.mandatoryFieldsDefined(fullReturnNotRepresentedWithDetails)
+          result mustBe Seq(false)
+        }
 
-          result mustBe false
+        "must return a sequence of true if agent details don't exist" in {
+          val result = VendorAgentTaskList.mandatoryFieldsDefined(fullReturnNotRepresentedWithoutDetails)
+          result mustBe Seq(true)
+        }
+      }
+      
+      "when represented by agent is unknown" - {
+        "must return a sequence false" in {
+          val result = VendorAgentTaskList.mandatoryFieldsDefined(fullReturnMissingRepresentedByAgent)
+          result mustBe Seq(false)
+        }
       }
     }
 
+    ".isVendorAgentComplete" - {
+
+      "must return true if VendorAgent exists and mandatory fields are defined" in {
+        val result = VendorAgentTaskList.isVendorAgentComplete(fullReturnCompleteWithVendorAgent)
+
+        result mustBe true
+      }
+
+      "must return false if VendorAgent exists but some mandatory field are missing" in {
+        val result = VendorAgentTaskList.isVendorAgentComplete(fullReturnSomeMandatoryFieldsMissing)
+
+        result mustBe false
+      }
+
+      "must return false if VendorAgent exists but all mandatory fields are missing" in {
+        val result = VendorAgentTaskList.isVendorAgentComplete(fullReturnAllMandatoryFieldsMissing)
+
+        result mustBe false
+      }
+    }
 
     ".buildVendorAgentRow" - {
+
       "must return TaskListSectionRow with correct tag id and link text" in {
         val application = applicationBuilder().build()
 
@@ -94,20 +159,33 @@ class VendorAgentTaskListSpec extends SpecBase {
         }
       }
 
-      "must have VendorAgent Before You Start url and show optional status when vendor agent is missing" in {
+      "must have VendorAgent Before you Start url and show 'Not yet started' status when represented by agent is missing" in {
+        val application = applicationBuilder().build()
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = VendorAgentTaskList.buildVendorAgentRow(fullReturnMissingRepresentedByAgent)
+
+          result.url mustBe controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
+          result.status mustBe TLNotStarted
+        }
+
+      }
+
+      "must have VendorAgent Before you Start url and show 'Complete' status when not represented by agent" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = VendorAgentTaskList.buildVendorAgentRow(fullReturnCompleteWithOtherAgent)
+          val result = VendorAgentTaskList.buildVendorAgentRow(fullReturnNotRepresentedWithoutDetails)
 
           result.url mustBe controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
-          result.status mustBe TLOptional
+          result.status mustBe TLCompleted
         }
       }
 
-      "must have VendorAgent Overview url and show completed status when vendor agent is complete" in {
+      "must have VendorAgent Overview url and show 'Complete' status when represented by agent and all mandatory fields are present" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -120,15 +198,29 @@ class VendorAgentTaskListSpec extends SpecBase {
         }
       }
 
-      "must show cannot start status when preliminary section is incomplete" in {
+      "must have VendorAgent Before you Start url and show 'In progress' status when represented by agent and some mandatory fields are missing" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = VendorAgentTaskList.buildVendorAgentRow(emptyFullReturn)
+          val result = VendorAgentTaskList.buildVendorAgentRow(fullReturnSomeMandatoryFieldsMissing)
 
-          result.status mustBe TLCannotStart
+          result.url mustBe controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
+          result.status mustBe TLInProgress
+        }
+      }
+
+      "must have VendorAgent Before You Start url and show 'In Progress' status when represented by agent and all mandatory fields are missing"  in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = VendorAgentTaskList.buildVendorAgentRow(fullReturnRepresentedWithNoAgentDetails)
+
+          result.url mustBe controllers.vendorAgent.routes.VendorAgentBeforeYouStartController.onPageLoad().url
+          result.status mustBe TLInProgress
         }
       }
     }

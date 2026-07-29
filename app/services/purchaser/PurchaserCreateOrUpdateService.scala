@@ -18,7 +18,7 @@ package services.purchaser
 
 import connectors.StampDutyLandTaxConnector
 import models.purchaser.{CreateCompanyDetailsRequest, CreatePurchaserRequest, UpdateCompanyDetailsRequest, UpdatePurchaserRequest}
-import models.{Purchaser, ReturnVersionUpdateRequest, UserAnswers}
+import models.{AgentType, Purchaser, ReturnVersionUpdateRequest, DeleteReturnAgentRequest, UserAnswers}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -44,6 +44,31 @@ class PurchaserCreateOrUpdateService {
       _                          <- updateOrCreateCompanyDetails(backendConnector, userAnswers, purchaser, updateRequest.purchaserResourceRef)
     } yield Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())
       .flashing("purchaserUpdated" -> purchaserService.createPurchaserName(purchaser).map(_.fullName).getOrElse(""))
+  }
+
+  def updateIsRepresentedByAgent(backendConnector: StampDutyLandTaxConnector, value: Boolean, userAnswers: UserAnswers)(implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Boolean] = {
+
+    val hasPurchaserAgentDetails = userAnswers.fullReturn.exists(_.returnAgent.exists(_.exists(_.agentType.contains(AgentType.Purchaser.toString))))
+
+    for {
+      mainPurchaser <- Purchaser.mainPurchaserFrom(userAnswers)
+      updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
+      updateReturnVersionReturn <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
+      updatePurchaserRequest <- UpdatePurchaserRequest.from(userAnswers, mainPurchaser.copy(isRepresentedByAgent = if value then Some("yes") else Some("no"))) if updateReturnVersionReturn.newVersion.isDefined
+      updatePurchaserReturn <- backendConnector.updatePurchaser(updatePurchaserRequest) if updateReturnVersionReturn.newVersion.isDefined
+      deletePurchaserAgent <- deletePurchaserAgentIfRequired(backendConnector, value, hasPurchaserAgentDetails, userAnswers)
+    } yield updatePurchaserReturn.updated
+  }
+
+  private def deletePurchaserAgentIfRequired(backendConnector: StampDutyLandTaxConnector, value: Boolean, hasPurchaserAgentDetails: Boolean, userAnswers: UserAnswers)(implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Unit] = {
+    if (!value && hasPurchaserAgentDetails) {
+      for {
+        deletePurchaserAgentRequest <- DeleteReturnAgentRequest.from(userAnswers, agentType = AgentType.Purchaser)
+        _ <- backendConnector.deleteReturnAgent(deletePurchaserAgentRequest)
+      } yield ()
+    } else {
+      Future.unit
+    }
   }
 
   def createPurchaser(backendConnector: StampDutyLandTaxConnector,
