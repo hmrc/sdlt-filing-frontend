@@ -76,8 +76,8 @@ object TransactionTaskList {
         ).exists(_.exists(_.equalsIgnoreCase("yes")))
     }
 
-    // if transaction type is not Grand of Lease
-    val isTransactionTypeNotGrandOfLease = fullReturn.transaction.exists(!_.transactionDescription.contains("L"))
+    // if transaction type is not Grant of Lease
+    val isTransactionTypeNotGrantOfLease = fullReturn.transaction.exists(!_.transactionDescription.contains("L"))
 
     val isTotalConsiderationDefined = fullReturn.transaction.exists(_.totalConsideration.isDefined)
 
@@ -99,7 +99,7 @@ object TransactionTaskList {
       }
     }
 
-    (isPropertyTypeMixedOrNonResidential, isTransactionTypeNotGrandOfLease) match {
+    (isPropertyTypeMixedOrNonResidential, isTransactionTypeNotGrantOfLease) match {
         case (true, true) =>
           generalTransactionFields ++ Seq(isAnyUseOfLandYes) ++  Seq(isTotalConsiderationDefined, isAnyFormsOfConsiderationDefined)
         case (true, false) =>

@@ -28,7 +28,7 @@ class TransactionTaskListSpec extends SpecBase {
 
   private val fullReturnComplete = completeFullReturn
 
-  private val fullReturnMixedResNotGrandOfLease = fullReturnComplete.copy(
+  private val fullReturnMixedResNotGrantOfLease = fullReturnComplete.copy(
     transaction = Some(Transaction(
       transactionDescription = Some("A"), // not Grant of Lease
       effectiveDate = Some("01/02/2024"),
@@ -48,14 +48,14 @@ class TransactionTaskListSpec extends SpecBase {
     )))
   )
 
-  private val fullReturnMixedResNotGrandOfLeaseMissing = fullReturnMixedResNotGrandOfLease.copy(
-    transaction = Some(fullReturnMixedResNotGrandOfLease.transaction.get.copy(
+  private val fullReturnMixedResNotGrantOfLeaseMissing = fullReturnMixedResNotGrantOfLease.copy(
+    transaction = Some(fullReturnMixedResNotGrantOfLease.transaction.get.copy(
       totalConsideration = None,
       considerationCash = None
     ))
   )
 
-  private val fullReturnMixedResGrandOfLease = fullReturnComplete.copy(
+  private val fullReturnMixedResGrantOfLease = fullReturnComplete.copy(
     transaction = Some(Transaction(
       transactionDescription = Some("L"), // Grant of Lease
       effectiveDate = Some("01/02/2024"),
@@ -72,13 +72,13 @@ class TransactionTaskListSpec extends SpecBase {
       propertyType = Some("02") // mixed
     ))))
 
-  private val fullReturnMixedResGrandOfLeaseMissing = fullReturnMixedResGrandOfLease.copy(
-    transaction = Some(fullReturnMixedResGrandOfLease.transaction.get.copy(
+  private val fullReturnMixedResGrantOfLeaseMissing = fullReturnMixedResGrantOfLease.copy(
+    transaction = Some(fullReturnMixedResGrantOfLease.transaction.get.copy(
       usedAsShop = None
     ))
   )
 
-  private val fullReturnNotMixedResNotGrandOfLease = fullReturnComplete.copy(
+  private val fullReturnNotMixedResNotGrantOfLease = fullReturnComplete.copy(
     transaction = Some(Transaction(
       transactionDescription = Some("A"), // not Grant of Lease
       effectiveDate = Some("01/02/2024"),
@@ -97,14 +97,14 @@ class TransactionTaskListSpec extends SpecBase {
     )))
   )
 
-  private val fullReturnNotMixedResNotGrandOfLeaseMissing = fullReturnNotMixedResNotGrandOfLease.copy(
-    transaction = Some(fullReturnNotMixedResNotGrandOfLease.transaction.get.copy(
+  private val fullReturnNotMixedResNotGrantOfLeaseMissing = fullReturnNotMixedResNotGrantOfLease.copy(
+    transaction = Some(fullReturnNotMixedResNotGrantOfLease.transaction.get.copy(
       totalConsideration = None,
       considerationCash = None
     ))
   )
 
-  private val fullReturnNotMixedResGrandOfLease = fullReturnComplete.copy(
+  private val fullReturnNotMixedResGrantOfLease = fullReturnComplete.copy(
     transaction = Some(Transaction(
       transactionDescription = Some("L"), // Grant of Lease
       effectiveDate = Some("01/02/2024"),
@@ -209,7 +209,7 @@ class TransactionTaskListSpec extends SpecBase {
 
         "must return a sequence of true including use of land and consideration fields" in {
 
-          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnMixedResNotGrandOfLease)
+          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnMixedResNotGrantOfLease)
 
           result.length mustBe 12
 
@@ -225,7 +225,7 @@ class TransactionTaskListSpec extends SpecBase {
 
         "must return a sequence with false for consideration fields when they are missing" in {
 
-          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnMixedResNotGrandOfLeaseMissing)
+          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnMixedResNotGrantOfLeaseMissing)
 
           result.length mustBe 12
           result(10) mustBe false // isTotalConsiderationDefined
@@ -237,7 +237,7 @@ class TransactionTaskListSpec extends SpecBase {
 
         "must return a sequence of true including use of land but not consideration fields" in {
 
-          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnMixedResGrandOfLease)
+          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnMixedResGrantOfLease)
 
           result.length mustBe 10
 
@@ -248,7 +248,7 @@ class TransactionTaskListSpec extends SpecBase {
         }
 
         "must return a sequence with false for use of land when it is missing" in {
-          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnMixedResGrandOfLeaseMissing)
+          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnMixedResGrantOfLeaseMissing)
 
           result.length mustBe 10
           result(9) mustBe false
@@ -259,7 +259,7 @@ class TransactionTaskListSpec extends SpecBase {
 
         "must return a sequence of true including consideration fields but not use of land" - {
 
-          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnNotMixedResNotGrandOfLease)
+          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnNotMixedResNotGrantOfLease)
 
           result.length mustBe 11
 
@@ -272,7 +272,7 @@ class TransactionTaskListSpec extends SpecBase {
         }
 
         "must return a sequence with false for consideration fields when they are missing" in {
-          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnNotMixedResNotGrandOfLeaseMissing)
+          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnNotMixedResNotGrantOfLeaseMissing)
 
           result.length mustBe 11
 
@@ -289,7 +289,7 @@ class TransactionTaskListSpec extends SpecBase {
 
         "must return only the general transaction fields" - {
 
-          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnNotMixedResGrandOfLease)
+          val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnNotMixedResGrantOfLease)
 
           result.length mustBe 9
 
@@ -310,13 +310,13 @@ class TransactionTaskListSpec extends SpecBase {
     ".isTransactionComplete" - {
 
       "must return true if transaction exists and mandatory fields are defined" in {
-          val result = TransactionTaskList.isTransactionComplete(fullReturnMixedResNotGrandOfLease)
+          val result = TransactionTaskList.isTransactionComplete(fullReturnMixedResNotGrantOfLease)
 
           result mustBe true
       }
 
       "must return false if transaction exists but some mandatory field are missing" in {
-          val result = TransactionTaskList.isTransactionComplete(fullReturnMixedResNotGrandOfLeaseMissing)
+          val result = TransactionTaskList.isTransactionComplete(fullReturnMixedResNotGrantOfLeaseMissing)
 
           result mustBe false
       }
@@ -376,7 +376,7 @@ class TransactionTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.buildTransactionRow(fullReturnMixedResNotGrandOfLeaseMissing, noFailures)
+          val result = TransactionTaskList.buildTransactionRow(fullReturnMixedResNotGrantOfLeaseMissing, noFailures)
 
           result.url mustBe controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
 
@@ -390,7 +390,7 @@ class TransactionTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.buildTransactionRow(fullReturnMixedResNotGrandOfLease, noFailures)
+          val result = TransactionTaskList.buildTransactionRow(fullReturnMixedResNotGrantOfLease, noFailures)
 
           result.url mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
 

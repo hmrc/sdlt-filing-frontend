@@ -51,8 +51,8 @@ object LeaseTaskList {
       fullReturn.lease.exists(_.laterRentKnown.isDefined)
     )
 
-    // if transaction type is Grand of Lease
-    val isTransactionTypeGrandOfLease = fullReturn.transaction.exists(_.transactionDescription.contains("L"))
+    // if transaction type is Grant of Lease
+    val isTransactionTypeGrantOfLease = fullReturn.transaction.exists(_.transactionDescription.contains("L"))
     
     val grantOfLeaseFields = Seq(
       fullReturn.lease.exists(_.totalPremiumPayable.isDefined),
@@ -60,7 +60,7 @@ object LeaseTaskList {
       fullReturn.lease.exists(_.netPresentValue.isDefined)
     )
 
-    if (isTransactionTypeGrandOfLease) {
+    if (isTransactionTypeGrantOfLease) {
       generalLeaseFields ++ grantOfLeaseFields
     } else {
       generalLeaseFields
