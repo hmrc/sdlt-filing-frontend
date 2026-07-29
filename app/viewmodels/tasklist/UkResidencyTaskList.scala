@@ -38,8 +38,8 @@ object UkResidencyTaskList {
   def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
     val isCompany: Boolean = fullReturn.purchaser
       .getOrElse(Seq.empty)
-      .exists(_.isCompany.contains("YES"))
-    val isNonUkResidents = fullReturn.residency.exists(_.isNonUkResidents.exists(_.equalsIgnoreCase("YES")))
+      .exists(_.isCompany.exists(_.equalsIgnoreCase("yes")))
+    val isNonUkResidents = fullReturn.residency.exists(_.isNonUkResidents.exists(_.equalsIgnoreCase("yes")))
     val isNonUkResidentsDefined = fullReturn.residency.exists(_.isNonUkResidents.isDefined)
     val isCloseCompanyDefined = fullReturn.residency.exists(_.isCloseCompany.isDefined)
     val isCrownReliefDefined = fullReturn.residency.exists(_.isCrownRelief.isDefined)

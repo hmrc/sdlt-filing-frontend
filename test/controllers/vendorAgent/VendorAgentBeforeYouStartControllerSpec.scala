@@ -22,7 +22,7 @@ import controllers.routes
 import forms.vendorAgent.VendorAgentBeforeYouStartFormProvider
 import models.{FullReturn, NormalMode, ReturnAgent, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.vendorAgent.VendorAgentBeforeYouStartPage
 import play.api.inject.bind
@@ -171,7 +171,7 @@ class VendorAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSugar
       }
     }
 
-    "must redirect to task list when 'No' is selected" in {
+    "must redirect to task list when 'No' is selected and no existing vendor agent is found" in {
 
       val mockSessionRepository = mock[SessionRepository]
       val mockVendorCreateOrUpdateService = mock[VendorCreateOrUpdateService]
@@ -196,6 +196,40 @@ class VendorAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSugar
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+    
+    "must redirect to task list when 'No' is selected and existing vendor agent is found" in {
+
+      val userAnswers = emptyUserAnswers.copy(
+        fullReturn = Some(emptyFullReturn.copy(
+          returnAgent = Some(Seq(completeReturnAgentVendor))
+        )))
+      
+      val mockSessionRepository = mock[SessionRepository]
+      val mockVendorCreateOrUpdateService = mock[VendorCreateOrUpdateService]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockVendorCreateOrUpdateService.updateIsRepresentedByAgent(any(), any())(any(), any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[VendorCreateOrUpdateService].toInstance(mockVendorCreateOrUpdateService)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, vendorAgentBeforeYouStartRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        verify(mockVendorCreateOrUpdateService).updateIsRepresentedByAgent(any(), any())(any(), any())
       }
     }
 
