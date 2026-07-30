@@ -23,6 +23,7 @@ import pages.ukResidency.CloseCompanyPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class CloseCompanySummarySpec extends SpecBase {
 
@@ -53,18 +54,20 @@ class CloseCompanySummarySpec extends SpecBase {
               .copy(fullReturn = Some(fullReturnWithCompany))
               .set(CloseCompanyPage, true).success.value
 
-            val result = CloseCompanySummary.row(userAnswers).value
+            val row = CloseCompanySummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+
+            val result = row match {
+              case Row(r) => r
+              case _ => fail("Expected Row but got Missing")
+            }
 
             result.key.content.asHtml.toString mustEqual msgs("ukResidency.closeCompany.checkYourAnswersLabel")
 
             result.value.content.asInstanceOf[Text].asHtml.toString mustEqual msgs("site.yes")
 
             result.actions.get.items.size mustEqual 1
-            result.actions.get.items.head.href mustEqual
-              controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode).url
-
+            result.actions.get.items.head.href mustEqual controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode).url
             result.actions.get.items.head.content.asHtml.toString must include(msgs("site.change"))
-
             result.actions.get.items.head.visuallyHiddenText.value mustEqual
               msgs("ukResidency.closeCompany.change.hidden")
           }
@@ -84,18 +87,19 @@ class CloseCompanySummarySpec extends SpecBase {
               .copy(fullReturn = Some(fullReturnWithCompany))
               .set(CloseCompanyPage, false).success.value
 
-            val result = CloseCompanySummary.row(userAnswers).value
+            val row = CloseCompanySummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+
+            val result = row match {
+              case Row(r) => r
+              case _ => fail("Expected Row but got Missing")
+            }
 
             result.key.content.asHtml.toString mustEqual msgs("ukResidency.closeCompany.checkYourAnswersLabel")
-
             result.value.content.asInstanceOf[Text].asHtml.toString mustEqual msgs("site.no")
-
             result.actions.get.items.size mustEqual 1
             result.actions.get.items.head.href mustEqual
               controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode).url
-
             result.actions.get.items.head.content.asHtml.toString must include(msgs("site.change"))
-
             result.actions.get.items.head.visuallyHiddenText.value mustEqual
               msgs("ukResidency.closeCompany.change.hidden")
           }
@@ -104,7 +108,7 @@ class CloseCompanySummarySpec extends SpecBase {
 
       "and the close company answer is not present" - {
 
-        "must return Some SummaryListRow with a missing link" in {
+        "must return a Missing and redirect call to missing page when data is missing " in {
 
           val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -113,16 +117,15 @@ class CloseCompanySummarySpec extends SpecBase {
 
             val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithCompany))
 
-            val result = CloseCompanySummary.row(userAnswers).value
+            val result = CloseCompanySummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-            result.key.content.asHtml.toString mustEqual msgs("ukResidency.closeCompany.checkYourAnswersLabel")
+            result match {
+              case Missing(call) =>
+                call mustEqual controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode)
 
-            val valueHtml = result.value.content.asHtml.toString
-            valueHtml must include(controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode).url)
-            valueHtml must include(msgs("ukResidency.closeCompany.missing"))
-            valueHtml must include("govuk-link")
-
-            result.actions mustBe None
+              case Row(_) =>
+                fail("Expected Missing but got Row")
+            }
           }
         }
       }

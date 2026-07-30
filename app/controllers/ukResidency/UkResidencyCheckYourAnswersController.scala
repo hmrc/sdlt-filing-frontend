@@ -21,16 +21,18 @@ import controllers.actions.*
 import models.{ReturnVersionUpdateRequest, UserAnswers}
 import models.ukResidency.{CreateResidencyRequest, UpdateResidencyRequest}
 import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.JsObject
 import play.api.mvc.*
 import repositories.SessionRepository
+import services.checkAnswers.CheckAnswersService
 import services.taxCalculation.UpdateTaxCalcService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.ukResidency.{CloseCompanySummary, CrownEmploymentReliefSummary, NonUkResidentPurchaserSummary}
-import viewmodels.govuk.summarylist.*
 import views.html.ukResidency.UkResidencyCheckYourAnswersView
 import utils.PropertyTypeHelper.isResidentialProperty
+import viewmodels.checkAnswers.summary.SummaryRowResult
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,17 +40,18 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class UkResidencyCheckYourAnswersController @Inject()(
-  override val messagesApi: MessagesApi,
-  identify: IdentifierAction,
-  getData: DataRetrievalAction,
-  requireData: DataRequiredAction,
-  statusCheck: CheckSubmissionStatusAction,
-  sessionRepository: SessionRepository,
-  backendConnector: StampDutyLandTaxConnector,
-  val controllerComponents: MessagesControllerComponents,
-  view: UkResidencyCheckYourAnswersView,
-  updateTaxCalcService: UpdateTaxCalcService
-)(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                  override val messagesApi: MessagesApi,
+                                                  identify: IdentifierAction,
+                                                  getData: DataRetrievalAction,
+                                                  requireData: DataRequiredAction,
+                                                  statusCheck: CheckSubmissionStatusAction,
+                                                  sessionRepository: SessionRepository,
+                                                  checkAnswersService: CheckAnswersService,
+                                                  backendConnector: StampDutyLandTaxConnector,
+                                                  val controllerComponents: MessagesControllerComponents,
+                                                  view: UkResidencyCheckYourAnswersView,
+                                                  updateTaxCalcService: UpdateTaxCalcService
+                                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
@@ -63,8 +66,8 @@ class UkResidencyCheckYourAnswersController @Inject()(
   private def handleSessionResult(result: Option[UserAnswers])(implicit request: Request[_]): Future[Result] =
     result match {
       case Some(userAnswers) if userAnswers.returnId.isEmpty   => Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
-      case Some(userAnswers) if userAnswers.data.value.isEmpty => populateFromResidency(userAnswers)
-      case Some(userAnswers)                                   => Future.successful(Ok(view(buildSummaryList(userAnswers))))
+      case Some(userAnswers) if (userAnswers.data \ "ukResidencyCurrent").asOpt[JsObject].forall(_.values.isEmpty) => populateFromResidency(userAnswers)
+      case Some(userAnswers)                                   => Future.successful(renderOrRedirect(userAnswers))
       case None                                                => Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
     }
 
@@ -77,15 +80,49 @@ class UkResidencyCheckYourAnswersController @Inject()(
             .flatMap(_.purchaser)
             .getOrElse(Seq.empty)
             .exists(_.isCompany.exists(_.equalsIgnoreCase("yes")))
-        (for {
-          ua  <- userAnswers.set(NonUkResidentPurchaserPage, residency.isNonUkResidents.exists(_.equalsIgnoreCase("yes")))
-          ua2 <- if (isCompany) ua.set(CloseCompanyPage, residency.isCloseCompany.exists(_.equalsIgnoreCase("yes"))) else Success(ua)
-          ua3 <- ua2.set(CrownEmploymentReliefPage, residency.isCrownRelief.exists(_.equalsIgnoreCase("yes")))
-        } yield ua3) match {
+
+        val populatedResult = for {
+          ua1  <- residency.isNonUkResidents match {
+            case Some(value) =>
+              userAnswers.set(
+                NonUkResidentPurchaserPage,
+                value.equalsIgnoreCase("yes")
+              )
+            case None =>
+              Success(userAnswers)
+          }
+          ua2 <- if (isCompany) {
+            residency.isCloseCompany match {
+              case Some(value) =>
+                ua1.set(
+                  CloseCompanyPage,
+                  value.equalsIgnoreCase("yes")
+                )
+              case None =>
+                Success(ua1)
+            }
+          } else {
+            Success(ua1)
+          }
+          ua3 <- residency.isCrownRelief match {
+            case Some(value) =>
+              ua2.set(
+                CrownEmploymentReliefPage,
+                value.equalsIgnoreCase("yes")
+              )
+            case None =>
+              Success(ua2)
+          }
+        } yield ua3
+
+        populatedResult match {
           case Success(populated) =>
-            sessionRepository.set(populated).map(_ => Ok(view(buildSummaryList(populated))))
+            sessionRepository.set(populated).map(_ => renderOrRedirect(populated))
+
           case Failure(_) =>
-            Future.successful(Redirect(controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad()))
+            Future.successful(
+              Redirect(controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad())
+            )
         }
     }
 
@@ -153,12 +190,17 @@ class UkResidencyCheckYourAnswersController @Inject()(
       Future.successful(())
     }
 
-  private def buildSummaryList(userAnswers: UserAnswers)(implicit messages: Messages) =
-    SummaryListViewModel(
-      rows = Seq(
-        Some(NonUkResidentPurchaserSummary.row(userAnswers)),
-        CloseCompanySummary.row(userAnswers),
-        CrownEmploymentReliefSummary.row(userAnswers)
-      ).flatten
-    )
+  private def renderOrRedirect(ua: UserAnswers)(implicit request: Request[_]): Result =
+    checkAnswersService.redirectOrRender(buildSummaryList(ua)) match {
+      case Left(call) => Redirect(call)
+      case Right(summaryList) => Ok(view(summaryList))
+    }
+
+  private def buildSummaryList(userAnswers: UserAnswers)(implicit request: Request[_]): Seq[SummaryRowResult]  =
+    Seq(
+      Some(NonUkResidentPurchaserSummary.row(userAnswers)),
+      CloseCompanySummary.row(userAnswers),
+      CrownEmploymentReliefSummary.row(userAnswers)
+    ).flatten
+
 }
