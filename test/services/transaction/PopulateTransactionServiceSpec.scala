@@ -55,9 +55,9 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
             considerationLand        = Some("no"),
             considerationServices    = Some("no"),
             considerationContingent  = Some("no"),
-            isLinked                 = Some("YES"),
+            isLinked                 = Some("yes"),
             totalConsiderationLinked = Some("500000"),
-            claimingRelief           = Some("YES"),
+            claimingRelief           = Some("yes"),
             reliefAmount             = Some("10000"),
             reliefReason             = Some("20"),
             reliefSchemeNumber       = Some("CS123456")
@@ -105,8 +105,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
             transactionDescription = Some("F"),
             effectiveDate          = Some("15/01/2024"),
             contractDate           = None,
-            isLinked               = Some("NO"),
-            claimingRelief         = Some("NO")
+            isLinked               = Some("no"),
+            claimingRelief         = Some("no")
           )
 
           val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -126,8 +126,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
             transactionDescription = Some("F"),
             effectiveDate          = Some("15/01/2024"),
             considerationVAT       = Some("20000"),
-            isLinked               = Some("NO"),
-            claimingRelief         = Some("NO")
+            isLinked               = Some("no"),
+            claimingRelief         = Some("no")
           )
 
           val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -147,8 +147,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
             transactionDescription = Some("F"),
             effectiveDate          = Some("15/01/2024"),
             considerationVAT       = Some("0"),
-            isLinked               = Some("NO"),
-            claimingRelief         = Some("NO")
+            isLinked               = Some("no"),
+            claimingRelief         = Some("no")
           )
 
           val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -168,8 +168,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
             transactionDescription = Some("F"),
             effectiveDate          = Some("15/01/2024"),
             considerationVAT       = None,
-            isLinked               = Some("NO"),
-            claimingRelief         = Some("NO")
+            isLinked               = Some("no"),
+            claimingRelief         = Some("no")
           )
 
           val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -188,9 +188,9 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription   = Some("F"),
             effectiveDate            = Some("15/01/2024"),
-            isLinked                 = Some("YES"),
+            isLinked                 = Some("yes"),
             totalConsiderationLinked = Some("500000"),
-            claimingRelief           = Some("NO")
+            claimingRelief           = Some("no")
           )
 
           val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -209,9 +209,9 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription   = Some("F"),
             effectiveDate            = Some("15/01/2024"),
-            isLinked                 = Some("NO"),
+            isLinked                 = Some("no"),
             totalConsiderationLinked = Some("500000"),
-            claimingRelief           = Some("NO")
+            claimingRelief           = Some("no")
           )
 
           val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -235,8 +235,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           totalConsideration       = Some("100000"),
           considerationVAT         = Some("20000"),
           considerationCash        = Some("yes"),
-          isLinked                 = Some("NO"),
-          claimingRelief           = Some("NO")
+          isLinked                 = Some("no"),
+          claimingRelief           = Some("no")
         )
 
         val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -259,8 +259,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         val transaction = Transaction(
           transactionDescription = Some("A"),
           effectiveDate          = Some("15/01/2024"),
-          isLinked               = Some("NO"),
-          claimingRelief         = Some("NO")
+          isLinked               = Some("no"),
+          claimingRelief         = Some("no")
         )
 
         val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -277,8 +277,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         val transaction = Transaction(
           transactionDescription = Some("O"),
           effectiveDate          = Some("15/01/2024"),
-          isLinked               = Some("NO"),
-          claimingRelief         = Some("NO")
+          isLinked               = Some("no"),
+          claimingRelief         = Some("no")
         )
 
         val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -295,8 +295,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         val transaction = Transaction(
           transactionDescription   = Some("F"),
           effectiveDate            = Some("15/01/2024"),
-          isLinked                 = Some("NO"),
-          claimingRelief           = Some("NO"),
+          isLinked                 = Some("no"),
+          claimingRelief           = Some("no"),
           considerationCash        = Some("yes"),
           considerationDebt        = Some("yes"),
           considerationBuild       = Some("no"),
@@ -331,8 +331,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         val transaction = Transaction(
           transactionDescription   = Some("F"),
           effectiveDate            = Some("15/01/2024"),
-          isLinked                 = Some("NO"),
-          claimingRelief           = Some("NO"),
+          isLinked                 = Some("no"),
+          claimingRelief           = Some("no"),
           considerationCash        = Some("no"),
           considerationDebt        = Some("no"),
           considerationBuild       = Some("no"),
@@ -356,8 +356,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         val transaction = Transaction(
           transactionDescription = Some("F"),
           effectiveDate          = Some("15/01/2024"),
-          isLinked               = Some("NO"),
-          claimingRelief         = Some("NO")
+          isLinked               = Some("no"),
+          claimingRelief         = Some("no")
         )
 
         val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -375,8 +375,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription = Some("F"),
             effectiveDate          = Some("15/01/2024"),
-            isLinked               = Some("NO"),
-            claimingRelief         = Some("YES"),
+            isLinked               = Some("no"),
+            claimingRelief         = Some("yes"),
             reliefReason           = Some("20"),
             reliefAmount           = Some("5000"),
             reliefSchemeNumber     = None
@@ -399,8 +399,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription = Some("F"),
             effectiveDate          = Some("15/01/2024"),
-            isLinked               = Some("NO"),
-            claimingRelief         = Some("YES"),
+            isLinked               = Some("no"),
+            claimingRelief         = Some("yes"),
             reliefReason           = Some("20"),
             reliefAmount           = None,
             reliefSchemeNumber     = None
@@ -423,8 +423,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription = Some("F"),
             effectiveDate          = Some("15/01/2024"),
-            isLinked               = Some("NO"),
-            claimingRelief         = Some("YES"),
+            isLinked               = Some("no"),
+            claimingRelief         = Some("yes"),
             reliefReason           = Some("20"),
             reliefAmount           = None,
             reliefSchemeNumber     = Some("CS654321")
@@ -447,8 +447,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription = Some("F"),
             effectiveDate          = Some("15/01/2024"),
-            isLinked               = Some("NO"),
-            claimingRelief         = Some("YES"),
+            isLinked               = Some("no"),
+            claimingRelief         = Some("yes"),
             reliefReason           = Some("08"),
             reliefAmount           = None,
             reliefSchemeNumber     = Some("CIS123456")
@@ -471,8 +471,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription = Some("F"),
             effectiveDate          = Some("15/01/2024"),
-            isLinked               = Some("NO"),
-            claimingRelief         = Some("YES"),
+            isLinked               = Some("no"),
+            claimingRelief         = Some("yes"),
             reliefReason           = Some("20"),
             reliefAmount           = None,
             reliefSchemeNumber     = None
@@ -494,8 +494,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription = Some("F"),
             effectiveDate          = Some("15/01/2024"),
-            isLinked               = Some("NO"),
-            claimingRelief         = Some("YES"),
+            isLinked               = Some("no"),
+            claimingRelief         = Some("yes"),
             reliefReason           = Some("08"),
             reliefAmount           = None,
             reliefSchemeNumber     = None
@@ -517,8 +517,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription = Some("F"),
             effectiveDate          = Some("15/01/2024"),
-            isLinked               = Some("NO"),
-            claimingRelief         = Some("YES"),
+            isLinked               = Some("no"),
+            claimingRelief         = Some("yes"),
             reliefReason           = Some("invalidReason"),
             reliefAmount           = None,
             reliefSchemeNumber     = None
@@ -540,8 +540,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription = Some("F"),
             effectiveDate          = Some("15/01/2024"),
-            isLinked               = Some("NO"),
-            claimingRelief         = Some("YES"),
+            isLinked               = Some("no"),
+            claimingRelief         = Some("yes"),
             reliefReason           = None,
             reliefAmount           = None,
             reliefSchemeNumber     = None
@@ -564,8 +564,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         val transaction = Transaction(
           transactionDescription = Some("F"),
           effectiveDate          = Some("15/01/2024"),
-          isLinked               = Some("NO"),
-          claimingRelief         = Some("NO")
+          isLinked               = Some("no"),
+          claimingRelief         = Some("no")
         )
 
         val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -589,10 +589,10 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription   = Some("F"),
             effectiveDate            = Some("15/01/2024"),
-            isLinked                 = Some("NO"),
-            claimingRelief           = Some("NO"),
-            isDependantOnFutureEvent = Some("YES"),
-            agreedToDeferPayment     = Some("YES")
+            isLinked                 = Some("no"),
+            claimingRelief           = Some("no"),
+            isDependantOnFutureEvent = Some("yes"),
+            agreedToDeferPayment     = Some("yes")
           )
 
           val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -611,10 +611,10 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription   = Some("F"),
             effectiveDate            = Some("15/01/2024"),
-            isLinked                 = Some("NO"),
-            claimingRelief           = Some("NO"),
-            isDependantOnFutureEvent = Some("YES"),
-            agreedToDeferPayment     = Some("NO")
+            isLinked                 = Some("no"),
+            claimingRelief           = Some("no"),
+            isDependantOnFutureEvent = Some("yes"),
+            agreedToDeferPayment     = Some("no")
           )
 
           val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -633,10 +633,10 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription   = Some("F"),
             effectiveDate            = Some("15/01/2024"),
-            isLinked                 = Some("NO"),
-            claimingRelief           = Some("NO"),
-            isDependantOnFutureEvent = Some("NO"),
-            agreedToDeferPayment     = Some("NO")
+            isLinked                 = Some("no"),
+            claimingRelief           = Some("no"),
+            isDependantOnFutureEvent = Some("no"),
+            agreedToDeferPayment     = Some("no")
           )
 
           val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -655,8 +655,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription   = Some("F"),
             effectiveDate            = Some("15/01/2024"),
-            isLinked                 = Some("NO"),
-            claimingRelief           = Some("NO"),
+            isLinked                 = Some("no"),
+            claimingRelief           = Some("no"),
             isDependantOnFutureEvent = None,
             agreedToDeferPayment     = None
           )
@@ -679,8 +679,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         val transaction = Transaction(
           transactionDescription = Some("F"),
           effectiveDate          = Some("15/01/2024"),
-          isLinked               = Some("NO"),
-          claimingRelief         = Some("NO"),
+          isLinked               = Some("no"),
+          claimingRelief         = Some("no"),
           usedAsOffice           = Some("yes"),
           usedAsHotel            = Some("no"),
           usedAsShop             = Some("yes"),
@@ -709,8 +709,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         val transaction = Transaction(
           transactionDescription = Some("F"),
           effectiveDate          = Some("15/01/2024"),
-          isLinked               = Some("NO"),
-          claimingRelief         = Some("NO"),
+          isLinked               = Some("no"),
+          claimingRelief         = Some("no"),
           usedAsOffice           = Some("no"),
           usedAsHotel            = Some("no"),
           usedAsShop             = Some("no"),
@@ -731,8 +731,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         val transaction = Transaction(
           transactionDescription = Some("F"),
           effectiveDate          = Some("15/01/2024"),
-          isLinked               = Some("NO"),
-          claimingRelief         = Some("NO")
+          isLinked               = Some("no"),
+          claimingRelief         = Some("no")
         )
 
         val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -750,8 +750,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription     = Some("F"),
             effectiveDate              = Some("15/01/2024"),
-            isLinked                   = Some("NO"),
-            claimingRelief             = Some("NO"),
+            isLinked                   = Some("no"),
+            claimingRelief             = Some("no"),
             totalConsiderationBusiness = Some("100000"),
             includesStock              = Some("yes"),
             includesGoodwill           = Some("no"),
@@ -781,8 +781,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription     = Some("F"),
             effectiveDate              = Some("15/01/2024"),
-            isLinked                   = Some("NO"),
-            claimingRelief             = Some("NO"),
+            isLinked                   = Some("no"),
+            claimingRelief             = Some("no"),
             totalConsiderationBusiness = None
           )
 
@@ -806,8 +806,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription  = Some("F"),
             effectiveDate           = Some("15/01/2024"),
-            isLinked                = Some("NO"),
-            claimingRelief          = Some("NO"),
+            isLinked                = Some("no"),
+            claimingRelief          = Some("no"),
             postTransRulingFollowed = Some("yes")
           )
 
@@ -827,8 +827,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription  = Some("F"),
             effectiveDate           = Some("15/01/2024"),
-            isLinked                = Some("NO"),
-            claimingRelief          = Some("NO"),
+            isLinked                = Some("no"),
+            claimingRelief          = Some("no"),
             postTransRulingFollowed = Some("no")
           )
 
@@ -848,8 +848,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription  = Some("F"),
             effectiveDate           = Some("15/01/2024"),
-            isLinked                = Some("NO"),
-            claimingRelief          = Some("NO"),
+            isLinked                = Some("no"),
+            claimingRelief          = Some("no"),
             postTransRulingFollowed = Some("rulingNotReceived")
           )
 
@@ -869,8 +869,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription  = Some("F"),
             effectiveDate           = Some("15/01/2024"),
-            isLinked                = Some("NO"),
-            claimingRelief          = Some("NO"),
+            isLinked                = Some("no"),
+            claimingRelief          = Some("no"),
             postTransRulingFollowed = Some("unknown")
           )
 
@@ -890,8 +890,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription  = Some("F"),
             effectiveDate           = Some("15/01/2024"),
-            isLinked                = Some("NO"),
-            claimingRelief          = Some("NO"),
+            isLinked                = Some("no"),
+            claimingRelief          = Some("no"),
             postTransRulingFollowed = None
           )
 
@@ -914,8 +914,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription = Some("F"),
             effectiveDate          = Some("15/01/2024"),
-            isLinked               = Some("NO"),
-            claimingRelief         = Some("NO"),
+            isLinked               = Some("no"),
+            claimingRelief         = Some("no"),
             restrictionDetails     = Some("some restriction details")
           )
 
@@ -935,8 +935,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription = Some("F"),
             effectiveDate          = Some("15/01/2024"),
-            isLinked               = Some("NO"),
-            claimingRelief         = Some("NO"),
+            isLinked               = Some("no"),
+            claimingRelief         = Some("no"),
             restrictionDetails     = None
           )
 
@@ -959,8 +959,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription = Some("F"),
             effectiveDate          = Some("15/01/2024"),
-            isLinked               = Some("NO"),
-            claimingRelief         = Some("NO"),
+            isLinked               = Some("no"),
+            claimingRelief         = Some("no"),
             exchangedLandAddress1  = Some("1 Exchange Street"),
             exchangedLandAddress2  = Some("Exchange Town"),
             exchangedLandAddress3  = None,
@@ -991,8 +991,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription = Some("F"),
             effectiveDate          = Some("15/01/2024"),
-            isLinked               = Some("NO"),
-            claimingRelief         = Some("NO"),
+            isLinked               = Some("no"),
+            claimingRelief         = Some("no"),
             exchangedLandAddress1  = None
           )
 
@@ -1015,9 +1015,9 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription     = Some("F"),
             effectiveDate              = Some("15/01/2024"),
-            isLinked                   = Some("NO"),
-            claimingRelief             = Some("NO"),
-            isPursuantToPreviousOption = Some("YES")
+            isLinked                   = Some("no"),
+            claimingRelief             = Some("no"),
+            isPursuantToPreviousOption = Some("yes")
           )
 
           val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -1033,9 +1033,9 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription     = Some("F"),
             effectiveDate              = Some("15/01/2024"),
-            isLinked                   = Some("NO"),
-            claimingRelief             = Some("NO"),
-            isPursuantToPreviousOption = Some("NO")
+            isLinked                   = Some("no"),
+            claimingRelief             = Some("no"),
+            isPursuantToPreviousOption = Some("no")
           )
 
           val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -1051,8 +1051,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val transaction = Transaction(
             transactionDescription     = Some("F"),
             effectiveDate              = Some("15/01/2024"),
-            isLinked                   = Some("NO"),
-            claimingRelief             = Some("NO"),
+            isLinked                   = Some("no"),
+            claimingRelief             = Some("no"),
             isPursuantToPreviousOption = None
           )
 
@@ -1071,8 +1071,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         val transaction = Transaction(
           transactionDescription = None,
           effectiveDate          = Some("15/01/2024"),
-          isLinked               = Some("NO"),
-          claimingRelief         = Some("NO")
+          isLinked               = Some("no"),
+          claimingRelief         = Some("no")
         )
 
         val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -1085,8 +1085,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         val transaction = Transaction(
           transactionDescription = Some("INVALID"),
           effectiveDate          = Some("15/01/2024"),
-          isLinked               = Some("NO"),
-          claimingRelief         = Some("NO")
+          isLinked               = Some("no"),
+          claimingRelief         = Some("no")
         )
 
         val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -1099,8 +1099,8 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         val transaction = Transaction(
           transactionDescription = Some("F"),
           effectiveDate          = None,
-          isLinked               = Some("NO"),
-          claimingRelief         = Some("NO")
+          isLinked               = Some("no"),
+          claimingRelief         = Some("no")
         )
 
         val result = service.populateTransactionInSession(transaction, userAnswers)
@@ -1113,9 +1113,9 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         val transaction = Transaction(
           transactionDescription = None,
           effectiveDate          = Some("15/01/2024"),
-          isLinked               = Some("YES"),
+          isLinked               = Some("yes"),
           totalConsiderationLinked = Some("500000"),
-          claimingRelief         = Some("NO")
+          claimingRelief         = Some("no")
         )
 
         val result = service.populateTransactionInSession(transaction, userAnswers)

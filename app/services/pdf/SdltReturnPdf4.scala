@@ -81,7 +81,7 @@ class SdltReturnPdf4 @Inject()(
     val mainLand = r.land.flatMap(_.find(land => mainLandId.equals(land.landID)))
 
     r.transaction.foreach { t =>
-      val postRulingApplied = t.postTransRulingApplied.map(_.equalsIgnoreCase("YES"))
+      val postRulingApplied = t.postTransRulingApplied.map(_.equalsIgnoreCase("yes"))
 
       w.selectMultiple(
         Seq(
@@ -120,12 +120,12 @@ class SdltReturnPdf4 @Inject()(
       w.yesNo(
         TRANSACTION_DEPENDS_FUTURE_EVENT_YES,
         TRANSACTION_DEPENDS_FUTURE_EVENT_NO,
-        t.isDependantOnFutureEvent.map(_.equalsIgnoreCase("YES"))
+        t.isDependantOnFutureEvent.map(_.equalsIgnoreCase("yes"))
       )
       w.yesNo(
         TRANSACTION_PAY_DEFERRED_YES,
         TRANSACTION_PAY_DEFERRED_NO,
-        t.agreedToDeferPayment.map(_.equalsIgnoreCase("YES"))
+        t.agreedToDeferPayment.map(_.equalsIgnoreCase("yes"))
       )
     }
 
@@ -189,7 +189,7 @@ class SdltReturnPdf4 @Inject()(
     w.yesNo(
       LAND_PLAN_ATTACHED_YES,
       LAND_PLAN_ATTACHED_NO,
-      l.willSendPlanByPost.map(_.equalsIgnoreCase("YES"))
+      l.willSendPlanByPost.map(_.equalsIgnoreCase("yes"))
     )
     w.text(LAND_ESTATE_OR_INTEREST_TRANSFERRED, l.interestCreatedTransferred)
   }
@@ -221,7 +221,7 @@ class SdltReturnPdf4 @Inject()(
       w.yesNo(
         LEASE_STARTING_RENT_LATER_KNOWN_YES,
         LEASE_STARTING_RENT_LATER_KNOWN_NO,
-        l.laterRentKnown.map(_.equalsIgnoreCase("YES"))
+        l.laterRentKnown.map(_.equalsIgnoreCase("yes"))
       )
       w.wholeDecimal(LEASE_VAT_AMOUNT, l.VATAmount)
       w.wholeDecimal(LEASE_PREMIUM_PAID, l.totalPremiumPayable)
@@ -331,9 +331,9 @@ class SdltReturnPdf4 @Inject()(
 
   private def checkRulingFollowed(w: PdfFieldWriter, yesField: String, noField: String, rulingNotReceived: String, value: Option[String]): Unit =
     value match {
-      case Some(v) if v.equalsIgnoreCase("YES") =>
+      case Some(v) if v.equalsIgnoreCase("yes") =>
         w.check(yesField)
-      case Some(v) if v.equalsIgnoreCase("NO") =>
+      case Some(v) if v.equalsIgnoreCase("no") =>
         w.check(noField)
       case Some(v) if v.equalsIgnoreCase("RulingNotReceived") =>
         w.check(rulingNotReceived)

@@ -38,7 +38,7 @@ class YesNoHelperSpec extends AnyFreeSpec with Matchers {
 
     "is case-insensitive" in {
       toYesNo("Yes") mustBe Right("site.yes")
-      toYesNo("NO")  mustBe Right("site.no")
+      toYesNo("no")  mustBe Right("site.no")
       toYesNo("yEs") mustBe Right("site.yes")
     }
 

@@ -160,21 +160,21 @@ class SdltReturnPdf2PurchaserSpec extends SpecBase with MockitoSugar {
     }
 
     "must write purchaser title when purchaser is individual" in {
-      val purchaser = Purchaser(isCompany = Some("NO"), title = Some("MR"))
+      val purchaser = Purchaser(isCompany = Some("no"), title = Some("MR"))
       val fullReturn = withPurchaser(purchaser)
       val result = fill(purchaser, fullReturn)
       readField(result, "purchaser_title") mustBe Some("MR")
     }
 
     "must write purchaser surname when purchaser is individual" in {
-      val purchaser = Purchaser(isCompany = Some("NO"), surname = Some("Jon"))
+      val purchaser = Purchaser(isCompany = Some("no"), surname = Some("Jon"))
       val fullReturn = withPurchaser(purchaser)
       val result = fill(purchaser, fullReturn)
       readField(result, "purchaser_surname") mustBe Some("Jon")
     }
 
     "must write purchaser forename 1 and forename 2 when purchaser is individual" in {
-      val purchaser = Purchaser(isCompany = Some("NO"), forename1 = Some("Bone"), forename2 = Some("Jones"))
+      val purchaser = Purchaser(isCompany = Some("no"), forename1 = Some("Bone"), forename2 = Some("Jones"))
       val fullReturn = withPurchaser(purchaser)
       val result = fill(purchaser, fullReturn)
       readField(result, "purchaser_forename1") mustBe Some("Bone")
@@ -182,14 +182,14 @@ class SdltReturnPdf2PurchaserSpec extends SpecBase with MockitoSugar {
     }
 
     "must write purchaser company name when purchaser is company" in {
-      val purchaser = Purchaser(isCompany = Some("YES"), companyName = Some("Apple"))
+      val purchaser = Purchaser(isCompany = Some("yes"), companyName = Some("Apple"))
       val fullReturn = withPurchaser(purchaser)
       val result = fill(purchaser, fullReturn)
       readField(result, "purchaser_companyName") mustBe Some("Apple")
     }
 
     "must not write purchaser surname, forename 1 and forename 2 when purchaser is company" in {
-      val purchaser = Purchaser(isCompany = Some("YES"), companyName = Some("Apple"), surname = Some("Jon"), forename1 = Some("Bone"), forename2 = Some("Jones"))
+      val purchaser = Purchaser(isCompany = Some("yes"), companyName = Some("Apple"), surname = Some("Jon"), forename1 = Some("Bone"), forename2 = Some("Jones"))
       val fullReturn = withPurchaser(purchaser)
       val result = fill(purchaser, fullReturn)
       readField(result, "purchaser_surname") mustBe Some("")
@@ -198,7 +198,7 @@ class SdltReturnPdf2PurchaserSpec extends SpecBase with MockitoSugar {
     }
 
     "must not write purchaser company name when purchaser is individual" in {
-      val purchaser = Purchaser(isCompany = Some("NO"), companyName = Some("Apple"), surname = Some("Jon"), forename1 = Some("Bone"), forename2 = Some("Jones"))
+      val purchaser = Purchaser(isCompany = Some("no"), companyName = Some("Apple"), surname = Some("Jon"), forename1 = Some("Bone"), forename2 = Some("Jones"))
       val fullReturn = withPurchaser(purchaser)
       val result = fill(purchaser, fullReturn)
       readField(result, "purchaser_companyName") mustBe Some("")
@@ -239,7 +239,7 @@ class SdltReturnPdf2PurchaserSpec extends SpecBase with MockitoSugar {
     }
 
     "must fill yes checkbox when purchaser and vendor are connected" in {
-      val purchaser = Purchaser(isConnectedToVendor = Some("YES"))
+      val purchaser = Purchaser(isConnectedToVendor = Some("yes"))
       val fullReturn = withPurchaser(purchaser)
       val result = fill(purchaser, fullReturn)
       readField(result, "purchaser_connectedToVendor_yes") mustBe Some("Yes")
@@ -247,7 +247,7 @@ class SdltReturnPdf2PurchaserSpec extends SpecBase with MockitoSugar {
     }
 
     "must fill no checkbox when purchaser and vendor are not connected" in {
-      val purchaser = Purchaser(isConnectedToVendor = Some("NO"))
+      val purchaser = Purchaser(isConnectedToVendor = Some("no"))
       val fullReturn = withPurchaser(purchaser)
       val result = fill(purchaser, fullReturn)
       readField(result, "purchaser_connectedToVendor_yes") mustBe Some("Off")
@@ -255,7 +255,7 @@ class SdltReturnPdf2PurchaserSpec extends SpecBase with MockitoSugar {
     }
 
     "must fill yes checkbox when purchaser is acting as trustee" in {
-      val purchaser = Purchaser(isTrustee = Some("YES"))
+      val purchaser = Purchaser(isTrustee = Some("yes"))
       val fullReturn = withPurchaser(purchaser)
       val result = fill(purchaser, fullReturn)
       readField(result, "purchaser_actingTrustee_yes") mustBe Some("Yes")
@@ -263,7 +263,7 @@ class SdltReturnPdf2PurchaserSpec extends SpecBase with MockitoSugar {
     }
 
     "must fill no checkbox when purchaser is not acting as trustee" in {
-      val purchaser = Purchaser(isTrustee = Some("NO"))
+      val purchaser = Purchaser(isTrustee = Some("no"))
       val fullReturn = withPurchaser(purchaser)
       val result = fill(purchaser, fullReturn)
       readField(result, "purchaser_actingTrustee_yes") mustBe Some("Off")
@@ -272,7 +272,7 @@ class SdltReturnPdf2PurchaserSpec extends SpecBase with MockitoSugar {
 
     "must handle a completely populated purchaser in return without throwing" in {
       val purchaser = Purchaser(
-        isCompany = Some("NO"),
+        isCompany = Some("no"),
         title = Some("MR"),
         surname = Some("Jon"),
         forename1 = Some("Bone"),
@@ -280,8 +280,8 @@ class SdltReturnPdf2PurchaserSpec extends SpecBase with MockitoSugar {
         houseNumber = Some("1"),
         address1 = Some("Test Street"),
         postcode = Some("ST1 1AA"),
-        isTrustee = Some("YES"),
-        isConnectedToVendor = Some("YES")
+        isTrustee = Some("yes"),
+        isConnectedToVendor = Some("yes")
       )
 
       val fullReturn = FullReturn(

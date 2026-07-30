@@ -74,9 +74,7 @@ object LandTaskList {
       if (isLandComplete(fullReturn))
         controllers.land.routes.LandOverviewController.onPageLoad().url
       else if (incompleteLands(fullReturn).nonEmpty)
-        // TODO: Send to incomplete overview instead
-        //controllers.land.routes.LandIncompleteOverviewController.onPageLoad().url
-        controllers.land.routes.LandOverviewController.onPageLoad().url
+        controllers.land.routes.LandIncompleteOverviewController.onPageLoad().url
       else
         controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
 

@@ -1,0 +1,76 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import viewmodels.CaptionSize.Large
+@import models.Purchaser
+
+@this(
+        layout: templates.Layout,
+        govukButton: GovukButton,
+        govukSummaryList: GovukSummaryList,
+        p: Paragraph,
+        h1: h1,
+        caption: Caption
+)
+@(
+        purchasers:  Seq[Purchaser],
+        continueUrl: String
+)(
+        implicit request: Request[_],
+        messages: Messages
+)
+
+@rows = @{
+    purchasers.zipWithIndex.map { case (purchaser, index) =>
+        val individualName = Seq(purchaser.forename1, purchaser.surname).flatten.mkString(" ").trim
+        val label = purchaser.companyName
+        .orElse(if (individualName.nonEmpty) Some(individualName) else None)
+        .orElse(purchaser.address1)
+        .getOrElse(messages("purchaserIncompleteOverview.purchaser", index + 1))
+
+        SummaryListRow(
+            key = Key(content = Text(label), classes = "govuk-!-font-weight-regular"),
+            actions = Some(Actions(classes = "govuk-!-width-one-half", items = Seq(
+                ActionItem(
+                    href               = controllers.purchaser.routes.PurchaserIncompleteOverviewController.updatePurchaser(purchaser.purchaserID.getOrElse("")).url,
+                    content            = Text(messages("site.update")),
+                    visuallyHiddenText = Some(label)
+                ),
+                ActionItem(
+                    href               = controllers.purchaser.routes.PurchaserIncompleteOverviewController.removePurchaser(purchaser.purchaserID.getOrElse("")).url,
+                    content            = Text(messages("site.remove")),
+                    visuallyHiddenText = Some(label)
+                )
+            )))
+        )
+    }
+}
+
+@layout(pageTitle = titleNoForm(messages("purchaserIncompleteOverview.title")), showBackLink = true) {
+
+    @caption(messages("purchaserIncompleteOverview.caption"), size = Large)
+    @h1(if(purchasers.size == 1) messages("purchaserIncompleteOverview.heading.single") else messages("purchaserIncompleteOverview.heading.multiple", purchasers.size))
+    @p("purchaserIncompleteOverview.p1")
+    @p("purchaserIncompleteOverview.p2")
+
+    @govukSummaryList(SummaryList(rows = rows))
+
+    @govukButton(
+        ButtonViewModel(messages("site.continue")).asLink(continueUrl)
+    )
+}

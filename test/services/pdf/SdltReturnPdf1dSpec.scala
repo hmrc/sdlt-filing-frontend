@@ -126,7 +126,7 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
 
   private val additionalPurchaser = Some(Purchaser(
       title = Some("MR"),
-      isCompany = Some("NO"),
+      isCompany = Some("no"),
       surname = Some("Jones"),
       forename1 = Some("Jane"),
       forename2 = Some("Mary"),
@@ -137,12 +137,12 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
       address3 = Some("Address 3"),
       address4 = Some("Address 4"),
       postcode = Some("M1 2AB"),
-      isTrustee = Some("YES")
+      isTrustee = Some("yes")
     ))
 
   private val additionalPurchaserWithCompany = Some(Purchaser(
     title = Some("MR"),
-    isCompany = Some("YES"),
+    isCompany = Some("yes"),
     companyName = Some("Apple"),
     surname = Some("Jones"),
     forename1 = Some("Jane"),
@@ -154,12 +154,12 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
     address3 = Some("Address 3"),
     address4 = Some("Address 4"),
     postcode = Some("M1 2AB"),
-    isTrustee = Some("YES")
+    isTrustee = Some("yes")
   ))
 
   val r = withPurchaser(
     Purchaser(
-      isCompany = Some("NO"),
+      isCompany = Some("no"),
       title = Some("MR"),
       surname = Some("Smith"),
       forename1 = Some("John"),
@@ -168,7 +168,7 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
       nextPurchaserID = Some("PUR002")
     ),
     Purchaser(
-      isCompany = Some("NO"),
+      isCompany = Some("no"),
       title = Some("MR"),
       surname = Some("Jones"),
       forename1 = Some("Jane"),
@@ -350,10 +350,10 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
       val r = FullReturn(
         stornId = "STORN999",
         returnResourceRef = "RRF-999",
-        returnInfo = Some(ReturnInfo(returnID = Some("RET999"), landCertForEachProp = Some("YES"), mainPurchaserID = Some("PUR0001"))),
+        returnInfo = Some(ReturnInfo(returnID = Some("RET999"), landCertForEachProp = Some("yes"), mainPurchaserID = Some("PUR0001"))),
         submission = Some(Submission(UTRN = Some("UTR-1234"))),
         transaction = Some(Transaction(transactionDescription = Some("Freehold"), effectiveDate = Some("25/12/2024"), contractDate = Some("01/11/2024"),
-          totalConsideration = Some("500000"), isLinked = Some("NO")
+          totalConsideration = Some("500000"), isLinked = Some("no")
         )),
         land = Some(Seq(Land(
           propertyType = Some("01"), houseNumber = Some("1"), address1 = Some("Test Street"),
@@ -364,7 +364,7 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
         purchaser = Some(Seq(Purchaser(surname = Some("Purchaser One"), postcode = Some("ST2 2BB"), registrationNumber = Some("123456"), placeOfRegistration = Some("London"), purchaserID = Some("PUR0001")),
           Purchaser(title = Some("MR"), surname = Some("Jones"), forename1 = Some("Jane"), forename2 = Some("Mary"),
             purchaserID = Some("PUR002"), houseNumber = Some("5"), address1 = Some("Address 1"), address2 = Some("Address 2"),
-            address3 = Some("Address 3"), address4 = Some("Address 4"), postcode = Some("M1 2AB"), isTrustee = Some("NO")))),
+            address3 = Some("Address 3"), address4 = Some("Address 4"), postcode = Some("M1 2AB"), isTrustee = Some("no")))),
         vendor = Some(Seq(Vendor(name = Some("Vendor One"), postcode = Some("ST2 2BB")),
           Vendor(name = Some("Vendor Two"), postcode = Some("ST2 2BB")), Vendor(name = Some("Vendor Three"), postcode = Some("ST2 2BB")))),
         lease = Some(Lease(leaseID = Some("123456"), returnID = Some("L123456"), isAnnualRentOver1000 = Some("250000"))),
@@ -411,15 +411,15 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
       val r = FullReturn(
         stornId = "STORN999",
         returnResourceRef = "RRF-999",
-        returnInfo = Some(ReturnInfo(returnID = Some("RET999"), landCertForEachProp = Some("YES"), mainPurchaserID = Some("PUR0001"))),
+        returnInfo = Some(ReturnInfo(returnID = Some("RET999"), landCertForEachProp = Some("yes"), mainPurchaserID = Some("PUR0001"))),
         submission = Some(Submission(UTRN = Some("UTR-1234"))),
         transaction = Some(Transaction(transactionDescription = Some("Freehold"), effectiveDate = Some("25/12/2024"), contractDate = Some("01/11/2024"),
-          totalConsideration = Some("500000"), isLinked = Some("NO")
+          totalConsideration = Some("500000"), isLinked = Some("no")
         )),
         purchaser = Some(Seq(Purchaser(surname = Some("Purchaser One"), postcode = Some("ST2 2BB"), registrationNumber = Some("123456"), placeOfRegistration = Some("London"), purchaserID = Some("PUR0001")),
           Purchaser(title = Some("MR"), surname = Some("Jones"), forename1 = Some("Jane"), forename2 = Some("Mary"),
             purchaserID = Some("PUR002"), houseNumber = Some("5"), address1 = Some("Address 1"), address2 = Some("Address 2"),
-            address3 = Some("Address 3"), address4 = Some("Address 4"), postcode = Some("M1 2AB"), isTrustee = Some("NO")))),
+            address3 = Some("Address 3"), address4 = Some("Address 4"), postcode = Some("M1 2AB"), isTrustee = Some("no")))),
         vendor = Some(Seq(Vendor(name = Some("Vendor One"), postcode = Some("ST2 2BB")),
           Vendor(name = Some("Vendor Two"), postcode = Some("ST2 2BB")), Vendor(name = Some("Vendor Three"), postcode = Some("ST2 2BB")))),
         lease = Some(Lease(leaseID = Some("123456"), returnID = Some("L123456"), isAnnualRentOver1000 = Some("250000"))),
@@ -442,7 +442,7 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
       val r = FullReturn(
         stornId = "STORN999",
         returnResourceRef = "RRF-999",
-        returnInfo = Some(ReturnInfo(returnID = Some("RET999"), landCertForEachProp = Some("YES"), mainPurchaserID = Some("PUR0001"))),
+        returnInfo = Some(ReturnInfo(returnID = Some("RET999"), landCertForEachProp = Some("yes"), mainPurchaserID = Some("PUR0001"))),
         submission = Some(Submission(UTRN = Some("UTR-1234"))),
 
         vendor = Some(Seq(Vendor(name = Some("Vendor One"), postcode = Some("ST2 2BB")),

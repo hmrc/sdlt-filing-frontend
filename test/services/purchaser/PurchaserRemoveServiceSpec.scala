@@ -64,7 +64,7 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
                                forename2: Option[String] = None,
                                surname: Option[String] = None,
                                companyName: Option[String] = None,
-                               isCompany: Option[String] = Some("NO"),
+                               isCompany: Option[String] = Some("no"),
                                nextPurchaserID: Option[String] = None,
                                purchaserRef: Option[String] = Some("1")
                              ): Purchaser = Purchaser(
@@ -75,9 +75,9 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
     companyName = companyName,
     isCompany = isCompany,
     nextPurchaserID = nextPurchaserID,
-    isTrustee = Some("YES"),
-    isConnectedToVendor = Some("NO"),
-    isRepresentedByAgent = Some("NO"),
+    isTrustee = Some("yes"),
+    isConnectedToVendor = Some("no"),
+    isRepresentedByAgent = Some("no"),
     address1 = Some("123 Test Street"),
     address2 = None,
     address3 = None,
@@ -142,7 +142,7 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
           val purchaser = createPurchaser(
             purchaserId,
             companyName = Some("ACME Corporation"),
-            isCompany = Some("YES")
+            isCompany = Some("yes")
           )
           val returnInfo = ReturnInfo(mainPurchaserID = Some(purchaserId))
           val fullReturn = emptyFullReturn.copy(
@@ -231,13 +231,13 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
           val purchaser2 = createPurchaser(
             "PURCH002",
             companyName = Some("ABC Company Ltd"),
-            isCompany = Some("YES"),
+            isCompany = Some("yes"),
             nextPurchaserID = Some("PURCH003")
           )
           val purchaser3 = createPurchaser(
             "PURCH003",
             companyName = Some("XYZ Corporation"),
-            isCompany = Some("YES")
+            isCompany = Some("yes")
           )
           val purchasers = Seq(purchaser1, purchaser2, purchaser3)
           val returnInfo = ReturnInfo(mainPurchaserID = Some(purchaserId))
@@ -643,7 +643,7 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
           val purchaser1 = createPurchaser(
             mainPurchaserID,
             companyName = Some("TestCo"),
-            isCompany = Some("YES"),
+            isCompany = Some("yes"),
             nextPurchaserID = Some(nonmainPurchaserID),
             purchaserRef = Some("1")
           )
@@ -763,7 +763,7 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
           val purchaser = createPurchaser(
             purchaserId,
             companyName = Some("ACME Corp"),
-            isCompany = Some("YES")
+            isCompany = Some("yes")
           )
           val returnInfo = ReturnInfo(mainPurchaserID = Some(purchaserId), version = Some("0"))
           val fullReturn = emptyFullReturn.copy(

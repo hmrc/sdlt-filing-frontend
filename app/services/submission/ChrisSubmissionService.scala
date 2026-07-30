@@ -93,7 +93,7 @@ class ChrisSubmissionService @Inject()(connector: StampDutyLandTaxConnector,
                               (implicit hc: HeaderCarrier, request: Request[_]): Future[Unit] =
     fullReturn.vendor.getOrElse(Nil).find(_.vendorID == mainVendorId) match {
       case Some(v) =>
-        val flagged = v.copy(isRepresentedByAgent = Some("YES"))
+        val flagged = v.copy(isRepresentedByAgent = Some("yes"))
         UpdateVendorRequest.from(userAnswers, flagged).flatMap { req =>
           connector.updateVendor(req).map(_ => ())
         }
@@ -106,7 +106,7 @@ class ChrisSubmissionService @Inject()(connector: StampDutyLandTaxConnector,
                                  (implicit hc: HeaderCarrier, request: Request[_]): Future[Unit] =
     fullReturn.purchaser.getOrElse(Nil).find(_.purchaserID == mainPurchaserId) match {
       case Some(p) =>
-        val flagged = p.copy(isRepresentedByAgent = Some("YES"))
+        val flagged = p.copy(isRepresentedByAgent = Some("yes"))
         UpdatePurchaserRequest.from(userAnswers, flagged).flatMap { req =>
           connector.updatePurchaser(req).map(_ => ())
         }
@@ -122,12 +122,12 @@ class ChrisSubmissionService @Inject()(connector: StampDutyLandTaxConnector,
                                        mainPurchaserId: Option[String]): FullReturn = {
     val updatedVendors: Option[Seq[Vendor]] =
       if (vendorRepresented)
-        fullReturn.vendor.map(_.map(v => if (v.vendorID == mainVendorId) v.copy(isRepresentedByAgent = Some("YES")) else v))
+        fullReturn.vendor.map(_.map(v => if (v.vendorID == mainVendorId) v.copy(isRepresentedByAgent = Some("yes")) else v))
       else fullReturn.vendor
 
     val updatedPurchasers: Option[Seq[Purchaser]] =
       if (purchaserRepresented)
-        fullReturn.purchaser.map(_.map(p => if (p.purchaserID == mainPurchaserId) p.copy(isRepresentedByAgent = Some("YES")) else p))
+        fullReturn.purchaser.map(_.map(p => if (p.purchaserID == mainPurchaserId) p.copy(isRepresentedByAgent = Some("yes")) else p))
       else fullReturn.purchaser
 
     fullReturn.copy(vendor = updatedVendors, purchaser = updatedPurchasers)

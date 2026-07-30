@@ -73,11 +73,9 @@ object VendorTaskList {
     val url =
       if (isVendorComplete(fullReturn))
         controllers.vendor.routes.VendorOverviewController.onPageLoad().url
-      else if (incompleteVendors(fullReturn).nonEmpty) {
-        //TODO redirect to incomplete overview
-//        controllers.vendor.routes.VendorIncompleteOverviewController.onPageLoad().url
-        controllers.vendor.routes.VendorOverviewController.onPageLoad().url
-      } else
+      else if (incompleteVendors(fullReturn).nonEmpty)
+        controllers.vendor.routes.VendorIncompleteOverviewController.onPageLoad().url
+      else
         controllers.vendor.routes.VendorBeforeYouStartController.onPageLoad().url
 
     TaskListRowBuilder(
@@ -95,4 +93,5 @@ object VendorTaskList {
 
   def buildVendorRow(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListSectionRow =
     vendorRowBuilder(fullReturn).build(fullReturn)
+
 }

@@ -26,7 +26,7 @@ import javax.inject.Singleton
 
 @Singleton
 object TransactionTaskList {
-  
+
   val noFailures: SectionStatus =
     SectionStatus(ReturnSection.Transaction, hasFailures = false, ruleIds = Nil, messageKeys = Nil, targets = Nil)
 
@@ -76,8 +76,8 @@ object TransactionTaskList {
         ).exists(_.exists(_.equalsIgnoreCase("yes")))
     }
 
-    // if transaction type is not Grant of Lease
-    val isTransactionTypeNotGrantOfLease = fullReturn.transaction.exists(!_.transactionDescription.contains("L"))
+    // if transaction type is not Grand of Lease
+    val isTransactionTypeNotGrandOfLease = fullReturn.transaction.exists(!_.transactionDescription.contains("L"))
 
     val isTotalConsiderationDefined = fullReturn.transaction.exists(_.totalConsideration.isDefined)
 
@@ -99,32 +99,39 @@ object TransactionTaskList {
       }
     }
 
-    (isPropertyTypeMixedOrNonResidential, isTransactionTypeNotGrantOfLease) match {
-        case (true, true) =>
-          generalTransactionFields ++ Seq(isAnyUseOfLandYes) ++  Seq(isTotalConsiderationDefined, isAnyFormsOfConsiderationDefined)
-        case (true, false) =>
-          generalTransactionFields ++ Seq(isAnyUseOfLandYes)
-        case (false, true) =>
-          generalTransactionFields ++ Seq(isTotalConsiderationDefined, isAnyFormsOfConsiderationDefined)
-        case (false, false) =>
-          generalTransactionFields
-      }
+    (isPropertyTypeMixedOrNonResidential, isTransactionTypeNotGrandOfLease) match {
+      case (true, true) =>
+        generalTransactionFields ++ Seq(isAnyUseOfLandYes) ++  Seq(isTotalConsiderationDefined, isAnyFormsOfConsiderationDefined)
+      case (true, false) =>
+        generalTransactionFields ++ Seq(isAnyUseOfLandYes)
+      case (false, true) =>
+        generalTransactionFields ++ Seq(isTotalConsiderationDefined, isAnyFormsOfConsiderationDefined)
+      case (false, false) =>
+        generalTransactionFields
     }
+  }
 
   def isTransactionComplete(fullReturn: FullReturn): Boolean = {
     mandatoryFieldsDefined(fullReturn).forall(identity)
   }
 
-  def transactionRowBuilder(fullReturn: FullReturn, status: SectionStatus)
-                         (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
+  private val prelimIndices: Set[Int] = Set(0)
 
-    val cyaUrl   = controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
-    val startUrl = controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
-    val errorUrl = controllers.transaction.routes.TransactionSingleEntityController.onPageLoad().url
-    
+  def hasStartedBeyondPrelim(fullReturn: FullReturn): Boolean =
+    mandatoryFieldsDefined(fullReturn).zipWithIndex.exists { case (answered, idx) => answered && !prelimIndices.contains(idx) }
+
+  def transactionRowBuilder(fullReturn: FullReturn, status: SectionStatus)
+                           (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
+
+    val cyaUrl    = controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
+    val startUrl  = controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
+    val errorUrl  = controllers.transaction.routes.TransactionSingleEntityController.onPageLoad().url
+    val resumeUrl = controllers.routes.ResumeSectionController.resume("transaction", None).url
+
     val url =
       if isTransactionComplete(fullReturn) && status.hasFailures then errorUrl
       else if isTransactionComplete(fullReturn) then cyaUrl
+      else if hasStartedBeyondPrelim(fullReturn) then resumeUrl
       else startUrl
 
     TaskListRowBuilder(
@@ -134,9 +141,11 @@ object TransactionTaskList {
       tagId         = "transactionQuestionDetailRow",
       checks        = _ => mandatoryFieldsDefined(fullReturn),
       invalid       = _ => status.hasFailures,
-      prerequisites = _ => Seq()
+      prerequisites = _ => Seq(),
+      started       = Some(fr => hasStartedBeyondPrelim(fr))
     )
   }
+
 
   def buildTransactionRow(fullReturn: FullReturn, status: SectionStatus)
                          (implicit appConfig: FrontendAppConfig): TaskListSectionRow =

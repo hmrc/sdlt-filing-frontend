@@ -188,7 +188,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           storn = "TESTSTORN",
           returnId = None,
           data = Json.obj(
-            "purchaserIsIndividual" -> "YES",
+            "purchaserIsIndividual" -> "yes",
             "purchaserSurnameOrCompanyName" -> "Test Company",
             "purchaserAddress" -> Json.obj(
               "houseNumber" -> JsNull,
@@ -265,7 +265,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           returnId = None,
           storn = "TESTSTORN",
           data = Json.obj(
-            "purchaserIsIndividual" -> "YES",
+            "purchaserIsIndividual" -> "yes",
             "purchaserSurnameOrCompanyName" -> "Test Company",
             "purchaserAddress" -> Json.obj(
               "houseNumber" -> JsNull,

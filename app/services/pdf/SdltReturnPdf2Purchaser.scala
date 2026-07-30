@@ -89,13 +89,13 @@ class SdltReturnPdf2Purchaser @Inject()(
     w.yesNo(
       PURCHASER_CONNECTED_TO_VENDOR_YES,
       PURCHASER_CONNECTED_TO_VENDOR_NO,
-      purchaser.isConnectedToVendor.map(_.equalsIgnoreCase("YES"))
+      purchaser.isConnectedToVendor.map(_.equalsIgnoreCase("yes"))
     )
 
     w.yesNo(
       PURCHASER_ACTING_TRUSTEE_YES,
       PURCHASER_ACTING_TRUSTEE_NO,
-      purchaser.isTrustee.map(_.equalsIgnoreCase("YES"))
+      purchaser.isTrustee.map(_.equalsIgnoreCase("yes"))
     )
   }
 

@@ -101,21 +101,21 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         "purchaserUTRPage" -> "UTR1234",
         "purchaserFormOfIdCompany" -> JsNull,
         "purchaserTypeOfCompany" -> Json.obj(
-          "bank" -> "YES",
-          "buildingSociety" -> "NO",
-          "centralGovernment" -> "NO",
-          "individualOther" -> "NO",
-          "insuranceAssurance" -> "NO",
-          "localAuthority" -> "NO",
-          "partnership" -> "NO",
-          "propertyCompany" -> "NO",
-          "publicCorporation" -> "NO",
-          "otherCompany" -> "NO",
-          "otherFinancialInstitute" -> "NO",
-          "otherIncludingCharity" -> "NO",
-          "superannuationOrPensionFund" -> "NO",
-          "unincorporatedBuilder" -> "NO",
-          "unincorporatedSoleTrader" -> "NO"
+          "bank" -> "yes",
+          "buildingSociety" -> "no",
+          "centralGovernment" -> "no",
+          "individualOther" -> "no",
+          "insuranceAssurance" -> "no",
+          "localAuthority" -> "no",
+          "partnership" -> "no",
+          "propertyCompany" -> "no",
+          "publicCorporation" -> "no",
+          "otherCompany" -> "no",
+          "otherFinancialInstitute" -> "no",
+          "otherIncludingCharity" -> "no",
+          "superannuationOrPensionFund" -> "no",
+          "unincorporatedBuilder" -> "no",
+          "unincorporatedSoleTrader" -> "no"
         ),
         "isPurchaserActingAsTrustee" -> true,
         "purchaserAndVendorConnected" -> true,
@@ -165,21 +165,21 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         "purchaserUTRPage" -> "UTR1234",
         "purchaserFormOfIdCompany" -> JsNull,
         "purchaserTypeOfCompany" -> Json.obj(
-          "bank" -> "YES",
-          "buildingSociety" -> "NO",
-          "centralGovernment" -> "NO",
-          "individualOther" -> "NO",
-          "insuranceAssurance" -> "NO",
-          "localAuthority" -> "NO",
-          "partnership" -> "NO",
-          "propertyCompany" -> "NO",
-          "publicCorporation" -> "NO",
-          "otherCompany" -> "NO",
-          "otherFinancialInstitute" -> "NO",
-          "otherIncludingCharity" -> "NO",
-          "superannuationOrPensionFund" -> "NO",
-          "unincorporatedBuilder" -> "NO",
-          "unincorporatedSoleTrader" -> "NO"
+          "bank" -> "yes",
+          "buildingSociety" -> "no",
+          "centralGovernment" -> "no",
+          "individualOther" -> "no",
+          "insuranceAssurance" -> "no",
+          "localAuthority" -> "no",
+          "partnership" -> "no",
+          "propertyCompany" -> "no",
+          "publicCorporation" -> "no",
+          "otherCompany" -> "no",
+          "otherFinancialInstitute" -> "no",
+          "otherIncludingCharity" -> "no",
+          "superannuationOrPensionFund" -> "no",
+          "unincorporatedBuilder" -> "no",
+          "unincorporatedSoleTrader" -> "no"
         ),
         "isPurchaserActingAsTrustee" -> true,
         "purchaserAndVendorConnected" -> true,
@@ -229,21 +229,21 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         "purchaserUTRPage" -> "UTR1234",
         "purchaserFormOfIdCompany" -> JsNull,
         "purchaserTypeOfCompany" -> Json.obj(
-          "bank" -> "YES",
-          "buildingSociety" -> "NO",
-          "centralGovernment" -> "NO",
-          "individualOther" -> "NO",
-          "insuranceAssurance" -> "NO",
-          "localAuthority" -> "NO",
-          "partnership" -> "NO",
-          "propertyCompany" -> "NO",
-          "publicCorporation" -> "NO",
-          "otherCompany" -> "NO",
-          "otherFinancialInstitute" -> "NO",
-          "otherIncludingCharity" -> "NO",
-          "superannuationOrPensionFund" -> "NO",
-          "unincorporatedBuilder" -> "NO",
-          "unincorporatedSoleTrader" -> "NO"
+          "bank" -> "yes",
+          "buildingSociety" -> "no",
+          "centralGovernment" -> "no",
+          "individualOther" -> "no",
+          "insuranceAssurance" -> "no",
+          "localAuthority" -> "no",
+          "partnership" -> "no",
+          "propertyCompany" -> "no",
+          "publicCorporation" -> "no",
+          "otherCompany" -> "no",
+          "otherFinancialInstitute" -> "no",
+          "otherIncludingCharity" -> "no",
+          "superannuationOrPensionFund" -> "no",
+          "unincorporatedBuilder" -> "no",
+          "unincorporatedSoleTrader" -> "no"
         ),
         "isPurchaserActingAsTrustee" -> true,
         "purchaserAndVendorConnected" -> true,
@@ -293,21 +293,21 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         "purchaserUTRPage" -> "UTR1234",
         "purchaserFormOfIdCompany" -> JsNull,
         "purchaserTypeOfCompany" -> Json.obj(
-          "bank" -> "YES",
-          "buildingSociety" -> "NO",
-          "centralGovernment" -> "NO",
-          "individualOther" -> "NO",
-          "insuranceAssurance" -> "NO",
-          "localAuthority" -> "NO",
-          "partnership" -> "NO",
-          "propertyCompany" -> "NO",
-          "publicCorporation" -> "NO",
-          "otherCompany" -> "NO",
-          "otherFinancialInstitute" -> "NO",
-          "otherIncludingCharity" -> "NO",
-          "superannuationOrPensionFund" -> "NO",
-          "unincorporatedBuilder" -> "NO",
-          "unincorporatedSoleTrader" -> "NO"
+          "bank" -> "yes",
+          "buildingSociety" -> "no",
+          "centralGovernment" -> "no",
+          "individualOther" -> "no",
+          "insuranceAssurance" -> "no",
+          "localAuthority" -> "no",
+          "partnership" -> "no",
+          "propertyCompany" -> "no",
+          "publicCorporation" -> "no",
+          "otherCompany" -> "no",
+          "otherFinancialInstitute" -> "no",
+          "otherIncludingCharity" -> "no",
+          "superannuationOrPensionFund" -> "no",
+          "unincorporatedBuilder" -> "no",
+          "unincorporatedSoleTrader" -> "no"
         ),
         "isPurchaserActingAsTrustee" -> true,
         "purchaserAndVendorConnected" -> true,
@@ -403,9 +403,9 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
       purchaserID = purchaserID,
       returnID = Some("12345"),
       isCompany = isCompany,
-      isTrustee = Some("YES"),
-      isConnectedToVendor = Some("YES"),
-      isRepresentedByAgent = Some("NO"),
+      isTrustee = Some("yes"),
+      isConnectedToVendor = Some("yes"),
+      isRepresentedByAgent = Some("no"),
       title = None,
       surname = Some("Company"),
       forename1 = None,
@@ -439,21 +439,21 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
       purchaserID = Some(purchaserID),
       UTR = Some("UTR1234"),
       VATReference = Some("VAT123"),
-      companyTypeBank = Some("YES"),
-      companyTypeBuilder = Some("NO"),
-      companyTypeBuildsoc = Some("NO"),
-      companyTypeCentgov = Some("NO"),
-      companyTypeIndividual = Some("NO"),
-      companyTypeInsurance = Some("NO"),
-      companyTypeLocalauth = Some("NO"),
-      companyTypeOthercharity = Some("NO"),
-      companyTypeOthercompany = Some("NO"),
-      companyTypeOtherfinancial = Some("NO"),
-      companyTypePartnership = Some("NO"),
-      companyTypeProperty = Some("NO"),
-      companyTypePubliccorp = Some("NO"),
-      companyTypeSoletrader = Some("NO"),
-      companyTypePensionfund = Some("NO")
+      companyTypeBank = Some("yes"),
+      companyTypeBuilder = Some("no"),
+      companyTypeBuildsoc = Some("no"),
+      companyTypeCentgov = Some("no"),
+      companyTypeIndividual = Some("no"),
+      companyTypeInsurance = Some("no"),
+      companyTypeLocalauth = Some("no"),
+      companyTypeOthercharity = Some("no"),
+      companyTypeOthercompany = Some("no"),
+      companyTypeOtherfinancial = Some("no"),
+      companyTypePartnership = Some("no"),
+      companyTypeProperty = Some("no"),
+      companyTypePubliccorp = Some("no"),
+      companyTypeSoletrader = Some("no"),
+      companyTypePensionfund = Some("no")
     )
 
   private def createFullReturnInfo(mainPurchaserID: Option[String]): ReturnInfo =
@@ -590,7 +590,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
                 purchasers = Seq(
                   createPurchaser(
                     purchaserID = Some(testPurchaserId),
-                    isCompany = Some("NO"),
+                    isCompany = Some("no"),
                     purchaserResourceRef = Some(testPurchaserResourceRef),
                     nextPurchaserID = Some(testNextPurchaserId)
                   )
@@ -632,7 +632,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
                 purchasers = Seq(
                   createPurchaser(
                     purchaserID = Some(testPurchaserId),
-                    isCompany = Some("YES"),
+                    isCompany = Some("yes"),
                     purchaserResourceRef = Some(testPurchaserResourceRef),
                     nextPurchaserID = Some(testNextPurchaserId)
                   )
@@ -674,7 +674,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
                 purchasers = Seq(
                   createPurchaser(
                     purchaserID = Some(testmainPurchaserID),
-                    isCompany = Some("NO"),
+                    isCompany = Some("no"),
                     purchaserResourceRef = Some(testPurchaserResourceRef),
                     nextPurchaserID = Some(testNextPurchaserId)
                   )
@@ -716,7 +716,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
                   purchasers = Seq(
                     createPurchaser(
                       purchaserID = Some(testmainPurchaserID),
-                      isCompany = Some("YES"),
+                      isCompany = Some("yes"),
                       purchaserResourceRef = Some(testPurchaserResourceRef),
                       nextPurchaserID = Some(testNextPurchaserId)
                     )
@@ -761,7 +761,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
                   purchasers = Seq(
                     createPurchaser(
                       purchaserID = Some(testmainPurchaserID),
-                      isCompany = Some("YES"),
+                      isCompany = Some("yes"),
                       purchaserResourceRef = Some(testPurchaserResourceRef),
                       nextPurchaserID = Some(testNextPurchaserId)
                     )
@@ -803,7 +803,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
 
         val purchaser = createPurchaser(
           purchaserID = Some(testPurchaserId),
-          isCompany = Some("YES"),
+          isCompany = Some("yes"),
           purchaserResourceRef = Some(testPurchaserResourceRef),
           nextPurchaserID = Some(testNextPurchaserId)
         )
@@ -853,7 +853,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
               Some(testPurchaserId),
               purchaserResourceRef = None,
               nextPurchaserID = Some(testNextPurchaserId),
-              isCompany = Some("YES"))),
+              isCompany = Some("yes"))),
           returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))))
         val userAnswers = createPurchaserCompanyUserAnswers(fullReturn = Some(fullReturn))
 
@@ -881,7 +881,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
               Some(testPurchaserId),
               purchaserResourceRef = Some(testPurchaserResourceRef),
               nextPurchaserID = Some(testNextPurchaserId),
-              isCompany = Some("YES"))),
+              isCompany = Some("yes"))),
           returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))))
         val userAnswers = createPurchaserCompanyUserAnswers(fullReturn = Some(fullReturn))
 
@@ -907,7 +907,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
               Some(testPurchaserId),
               purchaserResourceRef = Some(testPurchaserResourceRef),
               nextPurchaserID = Some(testNextPurchaserId),
-              isCompany = Some("YES"))),
+              isCompany = Some("yes"))),
           returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))))
         val userAnswers = createPurchaserCompanyUserAnswers(fullReturn = Some(fullReturn))
 

@@ -130,13 +130,13 @@ class PopulateLandService {
   }
 
   private def sendingPlanByPostPage(land: Land, userAnswers: UserAnswers): Try[UserAnswers] = {
-    val willSendPlanByPost = land.willSendPlanByPost.exists(_.equalsIgnoreCase("YES"))
+    val willSendPlanByPost = land.willSendPlanByPost.exists(_.equalsIgnoreCase("yes"))
 
     userAnswers.set(LandSendingPlanByPostPage, willSendPlanByPost)
   }
 
   private def mineralsOrMineralRightsPage(land: Land, userAnswers: UserAnswers): Try[UserAnswers] = {
-    val mineralRights = land.mineralRights.exists(_.equalsIgnoreCase("YES"))
+    val mineralRights = land.mineralRights.exists(_.equalsIgnoreCase("yes"))
 
     userAnswers.set(LandMineralsOrMineralRightsPage, mineralRights)
   }

@@ -76,7 +76,7 @@ class SdltReturnPdf1c @Inject()(
     w.text(PURCHASER_NUMBER_PURCHASERS, Some(r.purchaser.getOrElse(Seq.empty).size.toString))
 
     mainPurchaser.foreach { p =>
-      val isCompany = p.isCompany.exists(_.equalsIgnoreCase("YES"))
+      val isCompany = p.isCompany.exists(_.equalsIgnoreCase("yes"))
 
       val (n1, n2, n3, n4, n5) = splitNino(p.nino)
       w.text(PURCHASER_NINO_1, n1)
@@ -108,12 +108,12 @@ class SdltReturnPdf1c @Inject()(
       w.text(PURCHASER_ADDRESS_LINE_4, p.address4)
 
       w.yesNo(PURCHASER_ACTING_TRUSTEE_YES, PURCHASER_ACTING_TRUSTEE_NO,
-        p.isTrustee.map(_.equalsIgnoreCase("YES")))
+        p.isTrustee.map(_.equalsIgnoreCase("yes")))
 
       w.text(PURCHASER_DAYTIME_PHONE_NUMBER, p.phone)
 
       w.yesNo(PURCHASER_CONNECTED_TO_VENDOR_YES, PURCHASER_CONNECTED_TO_VENDOR_NO,
-        p.isConnectedToVendor.map(_.equalsIgnoreCase("YES")))
+        p.isConnectedToVendor.map(_.equalsIgnoreCase("yes")))
 
     }
 
@@ -122,7 +122,7 @@ class SdltReturnPdf1c @Inject()(
     w.uncheck(LAND_CERTIFICATE_ADDRESS_AGENT)
 
     w.yesNo(PURCHASER_AGENT_AUTHORISED_YES, PURCHASER_AGENT_AUTHORISED_NO,
-      purchaserAgent.flatMap(_.isAuthorised).map(_.equalsIgnoreCase("YES")))
+      purchaserAgent.flatMap(_.isAuthorised).map(_.equalsIgnoreCase("yes")))
 
     w.text(PURCHASER_AGENT_NAME, purchaserAgent.flatMap(_.name))
   }

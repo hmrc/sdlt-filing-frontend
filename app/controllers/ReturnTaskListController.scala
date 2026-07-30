@@ -92,7 +92,7 @@ class ReturnTaskListController @Inject()(
               Some(LandTaskList.build(fullReturn, landStatus)),
               if (PropertyTypeHelper.isResidentialProperty(fullReturn)) Some(UkResidencyTaskList.build(fullReturn)) else None,
               Some(TransactionTaskList.build(fullReturn, transactionStatus)),
-              if (LeaseHelper.isLeaseDefined(fullReturn)) Some(LeaseTaskList.build(fullReturn, leaseStatus)) else None,
+              if (LeaseHelper.isLeaseType(fullReturn)) Some(LeaseTaskList.build(fullReturn, leaseStatus)) else None,
               Some(TaxCalculationTaskList.build(fullReturn)),
               Some(SubmissionTaskList.build(fullReturn))
             ).flatten

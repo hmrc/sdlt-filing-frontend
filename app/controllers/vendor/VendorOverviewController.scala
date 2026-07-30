@@ -18,7 +18,7 @@ package controllers.vendor
 
 import controllers.actions.*
 import forms.vendor.VendorOverviewFormProvider
-import models.{GetReturnByRefRequest, Mode, NormalMode, UserAnswers}
+import models.{FullReturn, GetReturnByRefRequest, Mode, NormalMode, UserAnswers}
 import pages.vendor.VendorOverviewRemovePage
 import play.api.Logging
 import play.api.data.Form
@@ -30,6 +30,7 @@ import services.vendor.PopulateVendorService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.Pagination
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.VendorPaginationHelper
+import viewmodels.tasklist.VendorTaskList
 import views.html.vendor.VendorOverview
 
 import javax.inject.{Inject, Singleton}
@@ -63,27 +64,30 @@ class VendorOverviewController @Inject()(
         Future.successful(Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad()))
       ) { id =>
         fullReturnService.getFullReturn(GetReturnByRefRequest(returnResourceRef = id, storn = request.userAnswers.storn))
-        .flatMap { fullReturn =>
+          .flatMap { fullReturn =>
             val userAnswers = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = request.userAnswers.storn)
             sessionRepository.set(userAnswers).map { _ =>
 
-              val vendorList = fullReturn.vendor.getOrElse(Seq.empty)
-              val purchaserList = fullReturn.purchaser.getOrElse(Seq.empty)
-              val errorCalc: Boolean = (vendorList.length + purchaserList.length) >= 99
+              incompleteVendorsRedirect(fullReturn).getOrElse {
 
-              vendorList match {
-                case Nil => Ok(view(None, None, None, postAction, form, NormalMode, errorCalc))
-                case vendors =>
-                  vendorPaginationHelper.generateVendorSummary(paginationIndex, vendors, userAnswers)
-                    .fold(
-                      Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-                    ) { summary =>
-                      val numberOfPages: Int = vendorPaginationHelper.getNumberOfPages(vendors)
-                      val pagination: Option[Pagination] = vendorPaginationHelper.generatePagination(paginationIndex, numberOfPages)
-                      val paginationText: Option[String] = vendorPaginationHelper.getPaginationInfoText(paginationIndex, vendors)
+                val vendorList = fullReturn.vendor.getOrElse(Seq.empty)
+                val purchaserList = fullReturn.purchaser.getOrElse(Seq.empty)
+                val errorCalc: Boolean = (vendorList.length + purchaserList.length) >= 99
 
-                      Ok(view(Some(summary), pagination, paginationText, postAction, form, NormalMode, errorCalc))
-                    }
+                vendorList match {
+                  case Nil => Ok(view(None, None, None, postAction, form, NormalMode, errorCalc))
+                  case vendors =>
+                    vendorPaginationHelper.generateVendorSummary(paginationIndex, vendors, userAnswers)
+                      .fold(
+                        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+                      ) { summary =>
+                        val numberOfPages: Int = vendorPaginationHelper.getNumberOfPages(vendors)
+                        val pagination: Option[Pagination] = vendorPaginationHelper.generatePagination(paginationIndex, numberOfPages)
+                        val paginationText: Option[String] = vendorPaginationHelper.getPaginationInfoText(paginationIndex, vendors)
+
+                        Ok(view(Some(summary), pagination, paginationText, postAction, form, NormalMode, errorCalc))
+                      }
+                }
               }
             }
           } recover {
@@ -93,6 +97,12 @@ class VendorOverviewController @Inject()(
         }
       }
     }
+
+  private def incompleteVendorsRedirect(fullReturn: FullReturn): Option[Result] =
+    if (VendorTaskList.incompleteVendors(fullReturn).nonEmpty)
+      Some(Redirect(controllers.vendor.routes.VendorIncompleteOverviewController.onPageLoad()))
+    else
+      None
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
@@ -153,6 +163,3 @@ class VendorOverviewController @Inject()(
 
 
 }
-
-
-

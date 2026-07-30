@@ -26,10 +26,16 @@ import services.crossflow.{CrossFlowTarget, Pages, ReturnSection, SectionStatus}
 
 class LeaseTaskListSpec extends SpecBase {
 
+  // The "grant of lease" flag is derived from the TRANSACTION description ("L"), not the lease's
+  // own leaseType. completeTransaction is a grant of lease, so the "not grant of lease" fixtures
+  // must override the transaction to a non-"L" type ("F") to only require the 7 general fields.
+  private val notGrantOfLeaseTransaction = Some(completeTransaction.copy(transactionDescription = Some("F")))
+
   private val fullReturnComplete        = completeFullReturn
   private val fullReturnIncompleteLease = fullReturnComplete.copy(
     lease = Some(completeLease.copy(leaseType = None)))
   private val fullReturnNotGrantOfLease = fullReturnComplete.copy(
+    transaction = notGrantOfLeaseTransaction,
     lease = Some(Lease(
       leaseType = Some("A"),
       contractStartDate = Some("02-02-2026"),
@@ -40,6 +46,7 @@ class LeaseTaskListSpec extends SpecBase {
       laterRentKnown = Some("NO")
     )))
   private val fullReturnSomeMandatoryFieldsMissing = fullReturnComplete.copy(
+    transaction = notGrantOfLeaseTransaction,
     lease = Some(Lease(
       leaseType = None,
       contractStartDate = Some("02-02-2026"),
@@ -50,6 +57,7 @@ class LeaseTaskListSpec extends SpecBase {
       laterRentKnown = None
     )))
   private val fullReturnAllMandatoryFieldsMissing = fullReturnComplete.copy(
+    transaction = notGrantOfLeaseTransaction,
     lease = None
   )
   private val fullReturnGrantOfLease = fullReturnComplete.copy(
@@ -91,6 +99,11 @@ class LeaseTaskListSpec extends SpecBase {
     messageKeys = Seq("crossflow.lease.Cf-5a.body"),
     targets     = Seq(CrossFlowTarget(Pages.LeaseType, "value"))
   )
+
+  // NOTE: evaluated inside each running(application) block (not as a class val) so the reverse
+  // route picks up the app's context path (/stamp-duty-land-tax-filing) — same as the other url
+  // assertions in this spec.
+  private def resumeUrl: String = controllers.routes.ResumeSectionController.resume("lease", None).url
 
   "LeaseTaskList" - {
 
@@ -173,6 +186,18 @@ class LeaseTaskListSpec extends SpecBase {
         val result = LeaseTaskList.mandatoryFieldsDefined(emptyFullReturn)
         result mustBe Seq(false, false, false, false, false, false, false)
       }
+
+      "must include the three grant-of-lease checks when the transaction is a grant of lease" in {
+        val result = LeaseTaskList.mandatoryFieldsDefined(fullReturnGrantOfLease)
+        result.size mustBe 10
+        result.forall(identity) mustBe true
+      }
+
+      "must include the three grant-of-lease checks (some false) when the grant-of-lease lease is partial" in {
+        val result = LeaseTaskList.mandatoryFieldsDefined(fullReturnGOTSomeMandatoryFieldsMissing)
+        result.size mustBe 10
+        result.contains(false) mustBe true
+      }
     }
 
     ".isLeaseComplete" - {
@@ -225,6 +250,41 @@ class LeaseTaskListSpec extends SpecBase {
       }
     }
 
+    ".hasStarted" - {
+
+      "must return false when the lease is absent" in {
+        LeaseTaskList.hasStarted(fullReturnMissingLease) mustBe false
+      }
+
+      "must return false when no mandatory fields are answered" in {
+        LeaseTaskList.hasStarted(fullReturnAllMandatoryFieldsMissing) mustBe false
+      }
+
+      "must return true when some mandatory fields are answered" in {
+        LeaseTaskList.hasStarted(fullReturnSomeMandatoryFieldsMissing) mustBe true
+      }
+
+      "must return true when the lease is complete" in {
+        LeaseTaskList.hasStarted(fullReturnComplete) mustBe true
+      }
+    }
+
+    ".isLeaseApplicable" - {
+
+      "must return true when the transaction is a grant of lease" in {
+        LeaseTaskList.isLeaseApplicable(fullReturnComplete) mustBe true
+      }
+
+      "must return false when the transaction is not a lease type" in {
+        val fr = fullReturnComplete.copy(transaction = notGrantOfLeaseTransaction)
+        LeaseTaskList.isLeaseApplicable(fr) mustBe false
+      }
+
+      "must return false when the transaction is absent" in {
+        LeaseTaskList.isLeaseApplicable(fullReturnComplete.copy(transaction = None)) mustBe false
+      }
+    }
+
     ".buildLeaseRow" - {
       "must return TaskListSectionRow with correct tag id and link text" in {
         val application = applicationBuilder().build()
@@ -264,12 +324,12 @@ class LeaseTaskListSpec extends SpecBase {
             val result = LeaseTaskList.buildLeaseRow(fullReturnAllMandatoryFieldsMissing, noFailures)
 
             result.url mustBe controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
-            
+
             result.status mustBe TLNotStarted
           }
         }
 
-        "must have Lease Before You Start url and show 'In progress' status when some mandatory fields are missing" in {
+        "must have Lease resume url and show 'In progress' status when some mandatory fields are missing" in {
           val application = applicationBuilder().build()
 
           running(application) {
@@ -277,8 +337,8 @@ class LeaseTaskListSpec extends SpecBase {
 
             val result = LeaseTaskList.buildLeaseRow(fullReturnSomeMandatoryFieldsMissing, noFailures)
 
-            result.url mustBe controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
-            
+            result.url mustBe resumeUrl
+
             result.status mustBe TLInProgress
           }
         }
@@ -292,7 +352,7 @@ class LeaseTaskListSpec extends SpecBase {
             val result = LeaseTaskList.buildLeaseRow(fullReturnNotGrantOfLease, noFailures)
 
             result.url mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad().url
-            
+
             result.status mustBe TLCompleted
           }
         }
@@ -309,12 +369,12 @@ class LeaseTaskListSpec extends SpecBase {
             val result = LeaseTaskList.buildLeaseRow(fullReturnGOLAllMandatoryFieldsMissing, noFailures)
 
             result.url mustBe controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
-            
+
             result.status mustBe TLNotStarted
           }
         }
 
-        "must have Lease Before You Start url and show 'In progress' status when some mandatory fields are missing" in {
+        "must have Lease resume url and show 'In progress' status when some mandatory fields are missing" in {
           val application = applicationBuilder().build()
 
           running(application) {
@@ -322,8 +382,8 @@ class LeaseTaskListSpec extends SpecBase {
 
             val result = LeaseTaskList.buildLeaseRow(fullReturnGOTSomeMandatoryFieldsMissing, noFailures)
 
-            result.url mustBe controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
-            
+            result.url mustBe resumeUrl
+
             result.status mustBe TLInProgress
           }
         }
@@ -337,12 +397,12 @@ class LeaseTaskListSpec extends SpecBase {
             val result = LeaseTaskList.buildLeaseRow(fullReturnGrantOfLease, noFailures)
 
             result.url mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad().url
-            
+
             result.status mustBe TLCompleted
           }
         }
       }
-      
+
       "must have Lease Single Entity url when cross-flow reports failures" in {
         val application = applicationBuilder().build()
 
@@ -355,16 +415,17 @@ class LeaseTaskListSpec extends SpecBase {
         }
       }
 
-      "must route to before you start controller when the lease is incomplete and there are failures" in {
+      "must route to the resume controller when the lease is incomplete and there are failures" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          // Failures take precedence over completion/start routing
+          // The Single-Entity (error) url only applies when the lease is COMPLETE and has failures.
+          // An incomplete-but-started lease resumes so the user can finish it on Check Your Answers.
           val result = LeaseTaskList.buildLeaseRow(fullReturnIncompleteLease, cf5aFailureStatus)
 
-          result.url mustBe controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
+          result.url mustBe resumeUrl
         }
       }
 
@@ -408,6 +469,21 @@ class LeaseTaskListSpec extends SpecBase {
           messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.leaseQuestion.details")
           row.status mustBe TLCompleted
           row.url mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad().url
+        }
+      }
+
+      "must build a TaskListSection with an 'In progress' row routed to resume when the lease is partial" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val section = LeaseTaskList.build(fullReturnSomeMandatoryFieldsMissing)
+          val row     = section.rows.head
+
+          row.status mustBe TLInProgress
+          row.url mustBe resumeUrl
         }
       }
 

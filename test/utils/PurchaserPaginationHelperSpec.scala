@@ -41,7 +41,7 @@ class PurchaserPaginationHelperSpec extends SpecBase {
     address3 = None,
     address4 = None,
     postcode = Some("L1 1AA"),
-    isCompany = Some("NO"),
+    isCompany = Some("no"),
     phone = Some("07123456789"),
     nino = Some("AB123456C"),
     dateOfBirth = Some("1985-03-15")
@@ -58,7 +58,7 @@ class PurchaserPaginationHelperSpec extends SpecBase {
     address3 = None,
     address4 = None,
     postcode = Some("L1 1AA"),
-    isCompany = Some("YES"),
+    isCompany = Some("yes"),
     phone = Some("07123456789"),
     nino = None,
     dateOfBirth = Some("1985-03-15")

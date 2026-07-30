@@ -30,7 +30,7 @@ class TransactionTaskListSpec extends SpecBase {
 
   private val fullReturnMixedResNotGrantOfLease = fullReturnComplete.copy(
     transaction = Some(Transaction(
-      transactionDescription = Some("A"), // not Grant of Lease
+      transactionDescription = Some("A"),
       effectiveDate = Some("01/02/2024"),
       isDependantOnFutureEvent = Some("YES"),
       agreedToDeferPayment = Some("YES"),
@@ -57,7 +57,7 @@ class TransactionTaskListSpec extends SpecBase {
 
   private val fullReturnMixedResGrantOfLease = fullReturnComplete.copy(
     transaction = Some(Transaction(
-      transactionDescription = Some("L"), // Grant of Lease
+      transactionDescription = Some("L"),
       effectiveDate = Some("01/02/2024"),
       isDependantOnFutureEvent = Some("YES"),
       agreedToDeferPayment = Some("YES"),
@@ -69,7 +69,7 @@ class TransactionTaskListSpec extends SpecBase {
       usedAsShop = Some("YES")
     )),
     land = Some(Seq(completeLand.copy(
-      propertyType = Some("02") // mixed
+      propertyType = Some("02")
     ))))
 
   private val fullReturnMixedResGrantOfLeaseMissing = fullReturnMixedResGrantOfLease.copy(
@@ -80,7 +80,7 @@ class TransactionTaskListSpec extends SpecBase {
 
   private val fullReturnNotMixedResNotGrantOfLease = fullReturnComplete.copy(
     transaction = Some(Transaction(
-      transactionDescription = Some("A"), // not Grant of Lease
+      transactionDescription = Some("A"),
       effectiveDate = Some("01/02/2024"),
       isDependantOnFutureEvent = Some("YES"),
       agreedToDeferPayment = Some("YES"),
@@ -93,7 +93,7 @@ class TransactionTaskListSpec extends SpecBase {
       considerationCash = Some("YES")
     )),
     land = Some(Seq(completeLand.copy(
-      propertyType = Some("01") // residential
+      propertyType = Some("01")
     )))
   )
 
@@ -106,7 +106,7 @@ class TransactionTaskListSpec extends SpecBase {
 
   private val fullReturnNotMixedResGrantOfLease = fullReturnComplete.copy(
     transaction = Some(Transaction(
-      transactionDescription = Some("L"), // Grant of Lease
+      transactionDescription = Some("L"),
       effectiveDate = Some("01/02/2024"),
       isDependantOnFutureEvent = Some("YES"),
       agreedToDeferPayment = Some("YES"),
@@ -117,8 +117,14 @@ class TransactionTaskListSpec extends SpecBase {
       isPursuantToPreviousOption = Some("NO")
     )),
     land = Some(Seq(completeLand.copy(
-      propertyType = Some("01") // residential
+      propertyType = Some("01")
     ))))
+
+  private val fullReturnPrelimOnly = fullReturnComplete.copy(
+    transaction = Some(Transaction(
+      transactionDescription = Some("A")
+    ))
+  )
 
   private val noFailures: SectionStatus =
     SectionStatus(ReturnSection.Transaction, hasFailures = false, ruleIds = Nil, messageKeys = Nil, targets = Nil)
@@ -143,6 +149,8 @@ class TransactionTaskListSpec extends SpecBase {
         CrossFlowTarget(Pages.EffectiveDate, "value")
       )
     )
+
+  private val resumeUrl = controllers.routes.ResumeSectionController.resume("transaction", None).url
 
   "TransactionTaskList" - {
 
@@ -310,21 +318,40 @@ class TransactionTaskListSpec extends SpecBase {
     ".isTransactionComplete" - {
 
       "must return true if transaction exists and mandatory fields are defined" in {
-          val result = TransactionTaskList.isTransactionComplete(fullReturnMixedResNotGrantOfLease)
+        val result = TransactionTaskList.isTransactionComplete(fullReturnMixedResNotGrantOfLease)
 
-          result mustBe true
+        result mustBe true
       }
 
       "must return false if transaction exists but some mandatory field are missing" in {
-          val result = TransactionTaskList.isTransactionComplete(fullReturnMixedResNotGrantOfLeaseMissing)
+        val result = TransactionTaskList.isTransactionComplete(fullReturnMixedResNotGrantOfLeaseMissing)
 
-          result mustBe false
+        result mustBe false
       }
 
       "must return false if transaction exists but all mandatory field are missing" in {
-          val result = TransactionTaskList.isTransactionComplete(emptyFullReturn)
+        val result = TransactionTaskList.isTransactionComplete(emptyFullReturn)
 
-          result mustBe false
+        result mustBe false
+      }
+    }
+
+    ".hasStartedBeyondPrelim" - {
+
+      "must return false when only the prelim (type of transaction) is answered" in {
+        TransactionTaskList.hasStartedBeyondPrelim(fullReturnPrelimOnly) mustBe false
+      }
+
+      "must return false when the transaction is absent" in {
+        TransactionTaskList.hasStartedBeyondPrelim(emptyFullReturn) mustBe false
+      }
+
+      "must return true when a mandatory field beyond the prelim is answered but the section is incomplete" in {
+        TransactionTaskList.hasStartedBeyondPrelim(fullReturnMixedResNotGrantOfLeaseMissing) mustBe true
+      }
+
+      "must return true when every mandatory field is answered" in {
+        TransactionTaskList.hasStartedBeyondPrelim(fullReturnMixedResNotGrantOfLease) mustBe true
       }
     }
 
@@ -370,7 +397,20 @@ class TransactionTaskListSpec extends SpecBase {
 
     ".buildTransactionRow status logic" - {
 
-      "must have Transaction Before You Start url and show 'In progress' status when some mandatory fields are present in transaction" in {
+      "must show 'Not yet started' status and route to Before You Start when only the prelim (type of transaction) is answered" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnPrelimOnly, noFailures)
+
+          result.status mustBe TLNotStarted
+          result.url mustBe controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
+        }
+      }
+
+      "must route to the resume url and show 'In progress' status when mandatory fields beyond the prelim are present but incomplete" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -378,7 +418,7 @@ class TransactionTaskListSpec extends SpecBase {
 
           val result = TransactionTaskList.buildTransactionRow(fullReturnMixedResNotGrantOfLeaseMissing, noFailures)
 
-          result.url mustBe controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
+          result.url mustBe resumeUrl
 
           result.status mustBe TLInProgress
         }
@@ -458,6 +498,30 @@ class TransactionTaskListSpec extends SpecBase {
           val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, noFailures)
 
           result.url mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
+        }
+      }
+
+      "must route to the resume url when started beyond the prelim but incomplete" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnMixedResNotGrantOfLeaseMissing, noFailures)
+
+          result.url mustBe resumeUrl
+        }
+      }
+
+      "must route to TransactionBeforeYouStart when only the prelim is answered" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnPrelimOnly, noFailures)
+
+          result.url mustBe controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
         }
       }
 
@@ -545,6 +609,21 @@ class TransactionTaskListSpec extends SpecBase {
           messagesInstance(row.messageKey)      mustBe messagesInstance("tasklist.transactionQuestion.details")
           row.status                            mustBe TLCompleted
           row.url                               mustBe controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url
+        }
+      }
+
+      "must build a TaskListSection with an in progress row routed to resume when started beyond the prelim but incomplete" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages           = messages(application)
+          implicit val appConfig:        FrontendAppConfig  = application.injector.instanceOf[FrontendAppConfig]
+
+          val section = TransactionTaskList.build(fullReturnMixedResNotGrantOfLeaseMissing, noFailures)
+          val row     = section.rows.head
+
+          row.status mustBe TLInProgress
+          row.url    mustBe resumeUrl
         }
       }
 

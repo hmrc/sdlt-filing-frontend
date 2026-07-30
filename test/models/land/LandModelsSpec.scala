@@ -74,9 +74,9 @@ class LandModelsSpec extends SpecBase {
         landArea = Some("500"),
         areaUnit = Some("SQUARE_METERS"),
         localAuthorityNumber = Some("LA12345"),
-        mineralRights = Some("YES"),
+        mineralRights = Some("yes"),
         nlpgUprn = Some("100012345678"),
-        willSendPlansByPost = Some("NO"),
+        willSendPlansByPost = Some("no"),
         titleNumber = Some("TN123456")
       )
 
@@ -95,9 +95,9 @@ class LandModelsSpec extends SpecBase {
       (json \ "landArea").as[String] mustBe "500"
       (json \ "areaUnit").as[String] mustBe "SQUARE_METERS"
       (json \ "localAuthorityNumber").as[String] mustBe "LA12345"
-      (json \ "mineralRights").as[String] mustBe "YES"
+      (json \ "mineralRights").as[String] mustBe "yes"
       (json \ "nlpgUprn").as[String] mustBe "100012345678"
-      (json \ "willSendPlansByPost").as[String] mustBe "NO"
+      (json \ "willSendPlansByPost").as[String] mustBe "no"
       (json \ "titleNumber").as[String] mustBe "TN123456"
     }
 
@@ -116,9 +116,9 @@ class LandModelsSpec extends SpecBase {
         landArea = Some("1000"),
         areaUnit = Some("SQUARE_FEET"),
         localAuthorityNumber = Some("LA99999"),
-        mineralRights = Some("NO"),
+        mineralRights = Some("no"),
         nlpgUprn = None,
-        willSendPlansByPost = Some("YES"),
+        willSendPlansByPost = Some("yes"),
         titleNumber = Some("TN999888")
       )
 
@@ -133,8 +133,8 @@ class LandModelsSpec extends SpecBase {
       (json \ "landArea").as[String] mustBe "1000"
       (json \ "areaUnit").as[String] mustBe "SQUARE_FEET"
       (json \ "localAuthorityNumber").as[String] mustBe "LA99999"
-      (json \ "mineralRights").as[String] mustBe "NO"
-      (json \ "willSendPlansByPost").as[String] mustBe "YES"
+      (json \ "mineralRights").as[String] mustBe "no"
+      (json \ "willSendPlansByPost").as[String] mustBe "yes"
       (json \ "titleNumber").as[String] mustBe "TN999888"
     }
 
@@ -153,9 +153,9 @@ class LandModelsSpec extends SpecBase {
         landArea = Some("750"),
         areaUnit = Some("SQUARE_METERS"),
         localAuthorityNumber = Some("LA88888"),
-        mineralRights = Some("YES"),
+        mineralRights = Some("yes"),
         nlpgUprn = Some("100099887766"),
-        willSendPlansByPost = Some("NO"),
+        willSendPlansByPost = Some("no"),
         titleNumber = Some("TN888777")
       )
 
@@ -223,9 +223,9 @@ class LandModelsSpec extends SpecBase {
         "landArea"                   -> "500",
         "areaUnit"                   -> "SQUARE_METERS",
         "localAuthorityNumber"       -> "LA12345",
-        "mineralRights"              -> "YES",
+        "mineralRights"              -> "yes",
         "nlpgUprn"                   -> "100012345678",
-        "willSendPlansByPost"        -> "NO",
+        "willSendPlansByPost"        -> "no",
         "titleNumber"                -> "TN123456"
       )
 
@@ -247,9 +247,9 @@ class LandModelsSpec extends SpecBase {
       request.landArea mustBe Some("500")
       request.areaUnit mustBe Some("SQUARE_METERS")
       request.localAuthorityNumber mustBe Some("LA12345")
-      request.mineralRights mustBe Some("YES")
+      request.mineralRights mustBe Some("yes")
       request.nlpgUprn mustBe Some("100012345678")
-      request.willSendPlansByPost mustBe Some("NO")
+      request.willSendPlansByPost mustBe Some("no")
       request.titleNumber mustBe Some("TN123456")
     }
 
@@ -404,9 +404,9 @@ class LandModelsSpec extends SpecBase {
         landArea = Some("750"),
         areaUnit = Some("SQUARE_METERS"),
         localAuthorityNumber = Some("LA54321"),
-        mineralRights = Some("NO"),
+        mineralRights = Some("no"),
         nlpgUprn = Some("100087654321"),
-        willSendPlansByPost = Some("YES"),
+        willSendPlansByPost = Some("yes"),
         titleNumber = Some("TN654321"),
         nextLandId = Some("100002")
       )
@@ -427,9 +427,9 @@ class LandModelsSpec extends SpecBase {
       (json \ "landArea").as[String] mustBe "750"
       (json \ "areaUnit").as[String] mustBe "SQUARE_METERS"
       (json \ "localAuthorityNumber").as[String] mustBe "LA54321"
-      (json \ "mineralRights").as[String] mustBe "NO"
+      (json \ "mineralRights").as[String] mustBe "no"
       (json \ "nlpgUprn").as[String] mustBe "100087654321"
-      (json \ "willSendPlansByPost").as[String] mustBe "YES"
+      (json \ "willSendPlansByPost").as[String] mustBe "yes"
       (json \ "titleNumber").as[String] mustBe "TN654321"
       (json \ "nextLandId").as[String] mustBe "100002"
     }
@@ -516,9 +516,9 @@ class LandModelsSpec extends SpecBase {
         "landArea"                   -> "750",
         "areaUnit"                   -> "SQUARE_METERS",
         "localAuthorityNumber"       -> "LA54321",
-        "mineralRights"              -> "NO",
+        "mineralRights"              -> "no",
         "nlpgUprn"                   -> "100087654321",
-        "willSendPlansByPost"        -> "YES",
+        "willSendPlansByPost"        -> "yes",
         "titleNumber"                -> "TN654321",
         "nextLandId"                 -> "100002"
       )

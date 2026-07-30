@@ -54,7 +54,7 @@ class LandTaskListSpec extends SpecBase {
 
   private val fullReturnIncompleteWithMultipleLand = fullReturnComplete.copy(
     land = Some(Seq(completeLand, completeLand.copy(landID = Some("LND002"), interestCreatedTransferred = None))))
-  
+
   private val fullReturnMissingLand = fullReturnComplete.copy(land = None)
   private val noFailuresStatus: SectionStatus =
     SectionStatus(ReturnSection.Land, hasFailures = false, ruleIds = Nil, messageKeys = Nil, targets = Nil)
@@ -210,13 +210,27 @@ class LandTaskListSpec extends SpecBase {
 
         result mustBe Seq(false, false, false, false, false, false)
       }
+
+      "must flatten the checks across every land when several are present" in {
+        val result = LandTaskList.mandatoryFieldsDefined(fullReturnIncompleteWithMultipleLand)
+
+        // land 1 (complete) => 6 trues, land 2 (interestCreatedTransferred missing) => one false
+        result.size mustBe 12
+        result.count(_ == false) mustBe 1
+      }
+
+      "must return six failing checks when there are no lands" in {
+        val result = LandTaskList.mandatoryFieldsDefined(fullReturnMissingLand)
+
+        result mustBe Seq(false, false, false, false, false, false)
+      }
     }
 
     ".isLandComplete" - {
 
       "must return true if land exists and mandatory fields are defined" in {
-          val result = LandTaskList.isLandComplete(fullReturnComplete)
-          result mustBe true
+        val result = LandTaskList.isLandComplete(fullReturnComplete)
+        result mustBe true
       }
 
       "must return true if land exists and mandatory fields are defined with multiple lands" in {
@@ -225,8 +239,8 @@ class LandTaskListSpec extends SpecBase {
       }
 
       "must return false if land exists but some mandatory field are missing from main land" in {
-          val result = LandTaskList.isLandComplete(fullReturnSomeMandatoryFieldsMissing)
-          result mustBe false
+        val result = LandTaskList.isLandComplete(fullReturnSomeMandatoryFieldsMissing)
+        result mustBe false
       }
 
       "must return false if land exists but some mandatory field are missing from other land" in {
@@ -238,6 +252,41 @@ class LandTaskListSpec extends SpecBase {
         val result = LandTaskList.isLandComplete(fullReturnAllMandatoryFieldsMissing)
 
         result mustBe false
+      }
+
+      "must return false when there are no lands" in {
+        val result = LandTaskList.isLandComplete(fullReturnMissingLand)
+
+        result mustBe false
+      }
+    }
+
+    ".incompleteLands" - {
+
+      "must return no lands when every land is complete" in {
+        LandTaskList.incompleteLands(fullReturnCompleteWithMultipleLand) mustBe empty
+      }
+
+      "must return the single incomplete land" in {
+        val result = LandTaskList.incompleteLands(fullReturnSomeMandatoryFieldsMissing)
+
+        result.size mustBe 1
+      }
+
+      "must return only the incomplete land when one of several is incomplete" in {
+        val result = LandTaskList.incompleteLands(fullReturnIncompleteWithMultipleLand)
+
+        result.map(_.landID) mustBe Seq(Some("LND002"))
+      }
+
+      "must return a land that exists but has no mandatory fields answered" in {
+        val result = LandTaskList.incompleteLands(fullReturnAllMandatoryFieldsMissing)
+
+        result.size mustBe 1
+      }
+
+      "must return no lands when there are no lands" in {
+        LandTaskList.incompleteLands(fullReturnMissingLand) mustBe empty
       }
     }
 
@@ -302,7 +351,7 @@ class LandTaskListSpec extends SpecBase {
 
           val result = LandTaskList.buildLandRow(fullReturnAllMandatoryFieldsMissing, noFailuresStatus)
 
-          result.url mustBe controllers.land.routes.LandOverviewController.onPageLoad().url
+          result.url mustBe controllers.land.routes.LandIncompleteOverviewController.onPageLoad().url
 
           result.status mustBe TLNotStarted
         }
@@ -316,7 +365,21 @@ class LandTaskListSpec extends SpecBase {
 
           val result = LandTaskList.buildLandRow(fullReturnSomeMandatoryFieldsMissing, noFailuresStatus)
 
-          result.url mustBe controllers.land.routes.LandOverviewController.onPageLoad().url
+          result.url mustBe controllers.land.routes.LandIncompleteOverviewController.onPageLoad().url
+
+          result.status mustBe TLInProgress
+        }
+      }
+
+      "must have Land Incomplete url and show 'In progress' status when one of several lands is incomplete" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.buildLandRow(fullReturnIncompleteWithMultipleLand, noFailuresStatus)
+
+          result.url mustBe controllers.land.routes.LandIncompleteOverviewController.onPageLoad().url
 
           result.status mustBe TLInProgress
         }
@@ -385,7 +448,19 @@ class LandTaskListSpec extends SpecBase {
 
           val result = LandTaskList.buildLandRow(fullReturnSomeMandatoryFieldsMissing, withFailuresStatus)
 
-          result.url mustBe controllers.land.routes.LandOverviewController.onPageLoad().url
+          result.url mustBe controllers.land.routes.LandIncompleteOverviewController.onPageLoad().url
+        }
+      }
+
+      "must route incomplete lands to the incomplete overview even when only Cf-6 failures are present" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.buildLandRow(fullReturnSomeMandatoryFieldsMissing, cf6OnlyStatus)
+
+          result.url mustBe controllers.land.routes.LandIncompleteOverviewController.onPageLoad().url
         }
       }
 
@@ -492,6 +567,21 @@ class LandTaskListSpec extends SpecBase {
           messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.landQuestion.details")
           row.status mustBe TLCompleted
           row.url mustBe controllers.land.routes.LandOverviewController.onPageLoad().url
+        }
+      }
+
+      "must build a TaskListSection routing an incomplete land to the incomplete overview" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val section = LandTaskList.build(fullReturnSomeMandatoryFieldsMissing)
+          val row = section.rows.head
+
+          row.status mustBe TLInProgress
+          row.url mustBe controllers.land.routes.LandIncompleteOverviewController.onPageLoad().url
         }
       }
 

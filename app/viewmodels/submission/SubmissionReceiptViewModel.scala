@@ -62,7 +62,7 @@ object SubmissionReceiptViewModel {
     fullReturn.purchaser.flatMap(_.headOption).map(displayName).getOrElse("")
 
   private def displayName(purchaser: Purchaser): String =
-    if (purchaser.isCompany.contains("YES")) {
+    if (purchaser.isCompany.contains("yes")) {
       purchaser.companyName.getOrElse("")
     } else {
       Seq(purchaser.forename1, purchaser.forename2, purchaser.surname).flatten.mkString(" ")

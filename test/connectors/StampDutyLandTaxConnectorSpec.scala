@@ -49,7 +49,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
 
   private val completePrelimReturn = PrelimReturn(
     stornId = "12345",
-    purchaserIsCompany = "YES",
+    purchaserIsCompany = "yes",
     surNameOrCompanyName = "Test Company",
     houseNumber = Some(23),
     addressLine1 = "Test Street",
@@ -62,7 +62,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
 
   private val minimalPrelimReturn = PrelimReturn(
     stornId = "12345",
-    purchaserIsCompany = "YES",
+    purchaserIsCompany = "yes",
     surNameOrCompanyName = "Test Company",
     houseNumber = None,
     addressLine1 = "Test Street",
@@ -971,7 +971,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           phoneNumber = Some("01234567890"),
           email = Some("agent@example.com"),
           agentReference = Some("AGT-001"),
-          isAuthorised = Some("YES")
+          isAuthorised = Some("yes")
         )
         val expectedResult = CreateReturnAgentReturn(returnAgentID = "AGID-001")
 
@@ -1098,7 +1098,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           phoneNumber = Some("01234567890"),
           email = Some("agent@example.com"),
           agentReference = Some("AGT-001"),
-          isAuthorised = Some("YES")
+          isAuthorised = Some("yes")
         )
         val expectedResult = UpdateReturnAgentReturn(updated = true)
 
@@ -1557,10 +1557,10 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val testRequest = models.purchaser.CreatePurchaserRequest(
           stornId = "12345",
           returnResourceRef = "RRF-2024-001",
-          isCompany = Some("NO"),
-          isTrustee = Some("NO"),
-          isConnectedToVendor = Some("NO"),
-          isRepresentedByAgent = Some("YES"),
+          isCompany = Some("no"),
+          isTrustee = Some("no"),
+          isConnectedToVendor = Some("no"),
+          isRepresentedByAgent = Some("yes"),
           title = Some("Mr"),
           surname = Some("Jones"),
           forename1 = Some("David"),
@@ -1594,10 +1594,10 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val testRequest = models.purchaser.CreatePurchaserRequest(
           stornId = "12345",
           returnResourceRef = "RRF-2024-001",
-          isCompany = Some("NO"),
-          isTrustee = Some("NO"),
-          isConnectedToVendor = Some("NO"),
-          isRepresentedByAgent = Some("YES"),
+          isCompany = Some("no"),
+          isTrustee = Some("no"),
+          isConnectedToVendor = Some("no"),
+          isRepresentedByAgent = Some("yes"),
           address1 = Some("Park Avenue")
         )
         val upstreamError = uk.gov.hmrc.http.UpstreamErrorResponse("Bad Request", 400)
@@ -1624,10 +1624,10 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val testRequest = models.purchaser.CreatePurchaserRequest(
           stornId = "12345",
           returnResourceRef = "RRF-2024-001",
-          isCompany = Some("NO"),
-          isTrustee = Some("NO"),
-          isConnectedToVendor = Some("NO"),
-          isRepresentedByAgent = Some("YES"),
+          isCompany = Some("no"),
+          isTrustee = Some("no"),
+          isConnectedToVendor = Some("no"),
+          isRepresentedByAgent = Some("yes"),
           address1 = Some("Park Avenue")
         )
         val runtimeException = new RuntimeException("Connection failed")
@@ -1655,10 +1655,10 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val testRequest = models.purchaser.CreatePurchaserRequest(
           stornId = "12345",
           returnResourceRef = "RRF-2024-001",
-          isCompany = Some("NO"),
-          isTrustee = Some("NO"),
-          isConnectedToVendor = Some("NO"),
-          isRepresentedByAgent = Some("YES"),
+          isCompany = Some("no"),
+          isTrustee = Some("no"),
+          isConnectedToVendor = Some("no"),
+          isRepresentedByAgent = Some("yes"),
           address1 = Some("Park Avenue")
         )
         val expectedResult = models.purchaser.CreatePurchaserReturn(
@@ -1688,10 +1688,10 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         val testRequest = models.purchaser.CreatePurchaserRequest(
           stornId = "12345",
           returnResourceRef = "RRF-2024-001",
-          isCompany = Some("NO"),
-          isTrustee = Some("NO"),
-          isConnectedToVendor = Some("NO"),
-          isRepresentedByAgent = Some("YES"),
+          isCompany = Some("no"),
+          isTrustee = Some("no"),
+          isConnectedToVendor = Some("no"),
+          isRepresentedByAgent = Some("yes"),
           address1 = Some("Park Avenue")
         )
         val expectedResult = models.purchaser.CreatePurchaserReturn(
@@ -1724,10 +1724,10 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           stornId = "12345",
           returnResourceRef = "RRF-2024-001",
           purchaserResourceRef = "PRF-001",
-          isCompany = Some("NO"),
-          isTrustee = Some("NO"),
-          isConnectedToVendor = Some("NO"),
-          isRepresentedByAgent = Some("YES"),
+          isCompany = Some("no"),
+          isTrustee = Some("no"),
+          isConnectedToVendor = Some("no"),
+          isRepresentedByAgent = Some("yes"),
           title = Some("Mr"),
           surname = Some("Jones Updated"),
           address1 = Some("Park Avenue"),
@@ -1758,10 +1758,10 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           stornId = "12345",
           returnResourceRef = "RRF-2024-001",
           purchaserResourceRef = "PRF-001",
-          isCompany = Some("NO"),
-          isTrustee = Some("NO"),
-          isConnectedToVendor = Some("NO"),
-          isRepresentedByAgent = Some("YES"),
+          isCompany = Some("no"),
+          isTrustee = Some("no"),
+          isConnectedToVendor = Some("no"),
+          isRepresentedByAgent = Some("yes"),
           address1 = Some("Park Avenue")
         )
         val upstreamError = uk.gov.hmrc.http.UpstreamErrorResponse("Not Found", 404)
@@ -1789,10 +1789,10 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           stornId = "12345",
           returnResourceRef = "RRF-2024-001",
           purchaserResourceRef = "PRF-001",
-          isCompany = Some("NO"),
-          isTrustee = Some("NO"),
-          isConnectedToVendor = Some("NO"),
-          isRepresentedByAgent = Some("YES"),
+          isCompany = Some("no"),
+          isTrustee = Some("no"),
+          isConnectedToVendor = Some("no"),
+          isRepresentedByAgent = Some("yes"),
           address1 = Some("Park Avenue")
         )
         val runtimeException = new RuntimeException("Connection failed")
@@ -1821,10 +1821,10 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           stornId = "12345",
           returnResourceRef = "RRF-2024-001",
           purchaserResourceRef = "PRF-001",
-          isCompany = Some("NO"),
-          isTrustee = Some("NO"),
-          isConnectedToVendor = Some("NO"),
-          isRepresentedByAgent = Some("YES"),
+          isCompany = Some("no"),
+          isTrustee = Some("no"),
+          isConnectedToVendor = Some("no"),
+          isRepresentedByAgent = Some("yes"),
           address1 = Some("Park Avenue")
         )
         val expectedResult = models.purchaser.UpdatePurchaserReturn(updated = true)
@@ -1962,7 +1962,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           purchaserResourceRef = "PRF-001",
           utr = Some("1234567890"),
           vatReference = Some("GB123456789"),
-          compTypeBank = Some("YES")
+          compTypeBank = Some("yes")
         )
         val expectedResult = models.purchaser.CreateCompanyDetailsReturn(companyDetailsId = "CID-001")
 
@@ -2098,7 +2098,7 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           purchaserResourceRef = "PRF-001",
           utr = Some("9876543210"),
           vatReference = Some("GB987654321"),
-          compTypeBuilder = Some("YES")
+          compTypeBuilder = Some("yes")
         )
         val expectedResult = models.purchaser.UpdateCompanyDetailsReturn(updated = true)
 
@@ -2412,9 +2412,9 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           mainPurchaserID = Some("PUR-001"),
           mainVendorID = Some("VEN-001"),
           mainLandID = Some("LAND-001"),
-          IRMarkGenerated = Some("YES"),
-          landCertForEachProp = Some("NO"),
-          declaration = Some("YES")
+          IRMarkGenerated = Some("yes"),
+          landCertForEachProp = Some("no"),
+          declaration = Some("yes")
         )
         val expectedResult = ReturnInfoReturn(updated = true)
 
@@ -2765,9 +2765,9 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           landArea = Some("500"),
           areaUnit = Some("SQFT"),
           localAuthorityNumber = Some("LA001"),
-          mineralRights = Some("YES"),
+          mineralRights = Some("yes"),
           nlpgUprn = Some("UPRN123"),
-          willSendPlansByPost = Some("NO"),
+          willSendPlansByPost = Some("no"),
           titleNumber = Some("TN123456")
         )
         val expectedResult = CreateLandReturn(landResourceRef = "LRF-001", landId = "LID-001")
@@ -3145,9 +3145,9 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
           landArea = Some("600"),
           areaUnit = Some("SQFT"),
           localAuthorityNumber = Some("LA001"),
-          mineralRights = Some("NO"),
+          mineralRights = Some("no"),
           nlpgUprn = Some("UPRN123"),
-          willSendPlansByPost = Some("YES"),
+          willSendPlansByPost = Some("yes"),
           titleNumber = Some("TN123456"),
           nextLandId = Some("LID-002")
         )
@@ -3808,9 +3808,9 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         stornId = "12345",
         returnResourceRef = "RRF-2024-001",
         residency = models.ukResidency.ResidencyPayload(
-          isNonUkResidents = "YES",
-          isCompany = "NO",
-          isCrownRelief = "NO"
+          isNonUkResidents = "yes",
+          isCompany = "no",
+          isCrownRelief = "no"
         )
       )
       val expectedResult = models.ukResidency.CreateResidencyReturn(created = true)
@@ -4047,9 +4047,9 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         stornId = "12345",
         returnResourceRef = "RRF-2024-001",
         residency = models.ukResidency.ResidencyPayload(
-          isNonUkResidents = "NO",
-          isCompany = "YES",
-          isCrownRelief = "YES"
+          isNonUkResidents = "no",
+          isCompany = "yes",
+          isCrownRelief = "yes"
         )
       )
       val expectedResult = models.ukResidency.UpdateResidencyReturn(updated = true)
@@ -4756,16 +4756,16 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         stornId = "12345",
         returnResourceRef = "RRF-2024-001",
         lease = models.lease.LeasePayload(
-          isAnnualRentOver1000 = Some("YES"),
+          isAnnualRentOver1000 = Some("yes"),
           contractEndDate = Some("2030-12-31"),
           contractStartDate = Some("2025-01-01"),
           leaseType = Some("COMMERCIAL"),
           netPresentValue = Some("50000"),
           totalPremiumPayable = Some("10000"),
-          rentFreePeriod = Some("NO"),
+          rentFreePeriod = Some("no"),
           startingRent = Some("12000"),
           startingRentEndDate = Some("2026-01-01"),
-          laterRentKnown = Some("YES"),
+          laterRentKnown = Some("yes"),
           vatAmount = Some("2400")
         )
       )
@@ -5003,16 +5003,16 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         stornId = "12345",
         returnResourceRef = "RRF-2024-001",
         lease = models.lease.LeasePayload(
-          isAnnualRentOver1000 = Some("YES"),
+          isAnnualRentOver1000 = Some("yes"),
           contractEndDate = Some("2030-12-31"),
           contractStartDate = Some("2025-01-01"),
           leaseType = Some("COMMERCIAL"),
           netPresentValue = Some("60000"),
           totalPremiumPayable = Some("15000"),
-          rentFreePeriod = Some("YES"),
+          rentFreePeriod = Some("yes"),
           startingRent = Some("13000"),
           startingRentEndDate = Some("2026-01-01"),
-          laterRentKnown = Some("NO"),
+          laterRentKnown = Some("no"),
           vatAmount = Some("2600")
         )
       )

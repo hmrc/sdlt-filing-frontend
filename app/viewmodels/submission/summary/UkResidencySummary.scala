@@ -41,7 +41,7 @@ object UkResidencySummary {
         ).withCard(
           messages(
             "submission.completedSdltReturn.ukResidency.header",
-            if isNonUkResident.equalsIgnoreCase("YES") then messages("ukResidency.nonUkResident")
+            if isNonUkResident.equalsIgnoreCase("yes") then messages("ukResidency.nonUkResident")
             else messages("ukResidency.ukResident")
           )
         )

@@ -216,8 +216,8 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
 
       "must fill only the selected business sale checkboxes" in {
         val r      = withTransaction(Transaction(
-          includesStock    = Some("YES"),
-          includesGoodwill = Some("NO"),
+          includesStock    = Some("yes"),
+          includesGoodwill = Some("no"),
           includesChattel  = Some("yes"),
           includesOther    = None
         ))
@@ -238,9 +238,9 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
       "must fill only the selected commercial use checkboxes" in {
         val r = withTransaction(Transaction(
           usedAsOffice     = Some("Yes"),
-          usedAsShop       = Some("YES"),
+          usedAsShop       = Some("yes"),
           usedAsFactory    = None,
-          usedAsHotel      = Some("NO"),
+          usedAsHotel      = Some("no"),
           usedAsWarehouse  = Some("yes"),
           usedAsIndustrial = Some("no"),
           usedAsOther      = Some("No")
@@ -257,7 +257,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
       }
 
       "must fill yes checkbox when postTransRulingApplied is yes" in {
-        val r = withTransaction(Transaction(postTransRulingApplied = Some("YES")))
+        val r = withTransaction(Transaction(postTransRulingApplied = Some("yes")))
         val result = fill(Some(baseLand), r, true)
         readField(result, "transaction_postTransactionRuling_yes") mustBe Some("Yes")
         readField(result, "transaction_postTransactionRuling_no")  mustBe Some("Off")
@@ -265,8 +265,8 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
 
       "must fill 'yes' checkbox when postTransRulingFollowed is yes" in {
         val r = withTransaction(Transaction(
-          postTransRulingApplied = Some("YES"),
-          postTransRulingFollowed = Some("YES")
+          postTransRulingApplied = Some("yes"),
+          postTransRulingFollowed = Some("yes")
         ))
         val result = fill(Some(baseLand), r, true)
         readField(result, "transaction_rulingFollowed_yes") mustBe Some("Yes")
@@ -276,8 +276,8 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
 
       "must fill 'no' checkbox when postTransRulingFollowed is no" in {
         val r = withTransaction(Transaction(
-          postTransRulingApplied  = Some("YES"),
-          postTransRulingFollowed = Some("NO")
+          postTransRulingApplied  = Some("yes"),
+          postTransRulingFollowed = Some("no")
         ))
         val result = fill(Some(baseLand), r, true)
         readField(result, "transaction_rulingFollowed_yes")    mustBe Some("Off")
@@ -287,7 +287,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
 
       "must fill ruling checkbox when postTransRulingFollowed is RulingNotRecieved" in {
         val r = withTransaction(Transaction(
-          postTransRulingApplied  = Some("YES"),
+          postTransRulingApplied  = Some("yes"),
           postTransRulingFollowed = Some("RulingNotReceived")
         ))
         val result = fill(Some(baseLand), r, true)
@@ -298,7 +298,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
 
       "must not fill postTransRulingFollowed checkbox when postTransRulingApplied is no" in {
         val r = withTransaction(Transaction(
-          postTransRulingApplied  = Some("NO"),
+          postTransRulingApplied  = Some("no"),
           postTransRulingFollowed = Some("RulingNotReceived")
         ))
         val result = fill(Some(baseLand), r, true)
@@ -308,14 +308,14 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
       }
 
       "must fill yes checkbox when isDependantOnFutureEvent is yes" in {
-        val r = withTransaction(Transaction(isDependantOnFutureEvent = Some("YES")))
+        val r = withTransaction(Transaction(isDependantOnFutureEvent = Some("yes")))
         val result = fill(Some(baseLand), r, true)
         readField(result, "transaction_dependsFutureEvent_yes") mustBe Some("Yes")
         readField(result, "transaction_dependsFutureEvent_no")  mustBe Some("Off")
       }
 
       "must fill no checkbox when agreedToDeferPayment is no" in {
-        val r = withTransaction(Transaction(agreedToDeferPayment = Some("NO")))
+        val r = withTransaction(Transaction(agreedToDeferPayment = Some("no")))
         val result = fill(Some(baseLand), r, true)
         readField(result, "transaction_payDeferred_yes") mustBe Some("Off")
         readField(result, "transaction_payDeferred_no")  mustBe Some("Yes")
@@ -336,7 +336,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
       "must write purchaser descriptions as 2 digit codes" in {
         val r = withCompanyDetails(CompanyDetails(
           companyTypeIndividual = Some("yes"),
-          companyTypeLocalauth = Some("YES"),
+          companyTypeLocalauth = Some("yes"),
           companyTypeBank = Some("Yes"),
           companyTypePensionfund = Some("Yes")
         ))
@@ -350,7 +350,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
 
       "must not fill any transaction section fields when firstTimeThrough is false" in {
         val r = withTransaction(Transaction(
-          includesStock    = Some("YES"),
+          includesStock    = Some("yes"),
           totalConsideration = Some("5000")
         ))
         val result = fill(Some(baseLand), r, false)
@@ -532,11 +532,11 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
 
       "must fill the selected relate to the lease checkboxes" in {
         val r = withLease(Lease(
-          optionToRenew = Some("YES"),
+          optionToRenew = Some("yes"),
           marketRent = Some("No"),
           turnoverRent = Some("yes"),
           unasertainableRent = None,
-          leaseContReservedRent = Some("NO")
+          leaseContReservedRent = Some("no")
         ))
         val result = fill(Some(baseLand), r, false)
 
@@ -573,7 +573,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
       "must write tenant to landlord considerations as 2 digit codes" in {
         val r = withLease(Lease(
           considToLndlrdDebt = Some("Yes"),
-          considToLndlrdOther = Some("YES"),
+          considToLndlrdOther = Some("yes"),
           considToLndlrdSharedQTD = Some("Yes"),
           considToLndlrdServices = Some("yes")
         ))
@@ -588,7 +588,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
       "must write landlord to tenant considerations as 2 digit codes" in {
         val r = withLease(Lease(
           considToTenantBuild = Some("Yes"),
-          considToTenantSharesUNQTD = Some("YES"),
+          considToTenantSharesUNQTD = Some("yes"),
           considToTenantServices = Some("Yes"),
           considToTenantContin = Some("yes")
         ))
@@ -606,7 +606,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           returnResourceRef = "RRF-999",
           returnInfo = Some(ReturnInfo(
             returnID = Some("RET999"),
-            landCertForEachProp = Some("YES"),
+            landCertForEachProp = Some("yes"),
             mainLandID = Some("LND001")
           )),
           submission = Some(Submission(UTRN = Some("UTR-1234"))),
@@ -615,22 +615,22 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
             effectiveDate = Some("25/12/2024"),
             contractDate = Some("01/11/2024"),
             totalConsideration = Some("500000"),
-            isLinked = Some("NO"),
-            restrictionsAffectInterest = Some("NO"),
-            isLandExchanged = Some("NO"),
-            isPursuantToPreviousOption = Some("NO"),
-            claimingRelief = Some("NO"),
-            includesGoodwill = Some("YES"),
-            includesOther = Some("YES"),
-            usedAsOffice = Some("YES"),
-            usedAsWarehouse = Some("YES"),
-            usedAsOther = Some("YES"),
-            postTransRulingApplied = Some("YES"),
+            isLinked = Some("no"),
+            restrictionsAffectInterest = Some("no"),
+            isLandExchanged = Some("no"),
+            isPursuantToPreviousOption = Some("no"),
+            claimingRelief = Some("no"),
+            includesGoodwill = Some("yes"),
+            includesOther = Some("yes"),
+            usedAsOffice = Some("yes"),
+            usedAsWarehouse = Some("yes"),
+            usedAsOther = Some("yes"),
+            postTransRulingApplied = Some("yes"),
             postTransRulingFollowed = Some("RulingNotReceived"),
-            isDependantOnFutureEvent = Some("YES"),
-            agreedToDeferPayment = Some("NO")
+            isDependantOnFutureEvent = Some("yes"),
+            agreedToDeferPayment = Some("no")
           )),
-          taxCalculation = Some(TaxCalculation(taxDue = Some("15000"), amountPaid = Some("15000"), includesPenalty = Some("NO"))),
+          taxCalculation = Some(TaxCalculation(taxDue = Some("15000"), amountPaid = Some("15000"), includesPenalty = Some("no"))),
           land = Some(Seq(
             Land(
             landID = Some("LND001"),
@@ -642,8 +642,8 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
             titleNumber = Some("AB123"),
             areaUnit = Some("Hectares"),
             landArea = Some("0.5"),
-            willSendPlanByPost = Some("NO"),
-            mineralRights = Some("YES"),
+            willSendPlanByPost = Some("no"),
+            mineralRights = Some("yes"),
             NLPGUPRN = Some("TEST1234"),
             interestCreatedTransferred = Some("OT")
             ),
@@ -657,8 +657,8 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
               titleNumber = Some("AB223"),
               areaUnit = Some("Hectares"),
               landArea = Some("0.5"),
-              willSendPlanByPost = Some("NO"),
-              mineralRights = Some("NO"),
+              willSendPlanByPost = Some("no"),
+              mineralRights = Some("no"),
               NLPGUPRN = Some("TEST2234"),
               interestCreatedTransferred = Some("OT")
             )
@@ -666,10 +666,10 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           vendor = Some(Seq(Vendor(name = Some("Vendor One"), postcode = Some("ST2 2BB")))),
           returnAgent = Some(Seq(ReturnAgent(name = Some("Agent Ltd")))),
           companyDetails = Some(CompanyDetails(
-            companyTypeBuilder = Some("YES"),
-            companyTypePartnership = Some("YES"),
-            companyTypePubliccorp = Some("YES"),
-            companyTypeOtherfinancial = Some("YES")
+            companyTypeBuilder = Some("yes"),
+            companyTypePartnership = Some("yes"),
+            companyTypePubliccorp = Some("yes"),
+            companyTypeOtherfinancial = Some("yes")
           )),
           lease = Some(Lease(
             leaseType = Some("R"),
@@ -688,15 +688,15 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
             rentChargeDate = Some("01/04/2021"),
             serviceCharge = Some("1000"),
             breakClauseType = Some("landlord"),
-            optionToRenew = Some("YES"),
+            optionToRenew = Some("yes"),
             reviewClauseType = Some("RPI"),
             serviceChargeFrequency = Some("Anually"),
             considToLndlrdDebt = Some("Yes"),
-            considToLndlrdOther = Some("YES"),
+            considToLndlrdOther = Some("yes"),
             considToLndlrdSharedQTD = Some("Yes"),
             considToLndlrdServices = Some("yes"),
             considToTenantBuild = Some("Yes"),
-            considToTenantSharesUNQTD = Some("YES"),
+            considToTenantSharesUNQTD = Some("yes"),
             considToTenantServices = Some("Yes"),
             considToTenantContin = Some("yes")
           ))
@@ -712,8 +712,8 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           titleNumber = Some("AB223"),
           areaUnit = Some("Hectares"),
           landArea = Some("0.5"),
-          willSendPlanByPost = Some("NO"),
-          mineralRights = Some("NO"),
+          willSendPlanByPost = Some("no"),
+          mineralRights = Some("no"),
           NLPGUPRN = Some("TEST2234"),
           interestCreatedTransferred = Some("OT")
         )

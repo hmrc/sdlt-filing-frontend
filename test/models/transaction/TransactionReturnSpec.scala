@@ -26,11 +26,11 @@ class TransactionReturnSpec extends AnyFreeSpec with Matchers with EitherValues 
   private val minimalTransactionPayload = TransactionPayload()
 
   private val completeTransactionPayload = TransactionPayload(
-    claimingRelief                = Some("YES"),
+    claimingRelief                = Some("yes"),
     reliefAmount                  = Some("10000"),
     reliefReason                  = Some("REASON"),
     reliefSchemeNumber            = Some("SCH-001"),
-    isLinked                      = Some("NO"),
+    isLinked                      = Some("no"),
     totalConsiderLinked           = Some("50000"),
     totalConsider                 = Some("200000"),
     considerBuild                 = Some("10000"),
@@ -44,36 +44,36 @@ class TransactionReturnSpec extends AnyFreeSpec with Matchers with EitherValues 
     considerSharesQtd             = Some("0"),
     considerSharesUnqtd           = Some("0"),
     considerVat                   = Some("0"),
-    includesChattel               = Some("NO"),
-    includesGoodwill              = Some("NO"),
-    includesOther                 = Some("NO"),
-    includesStock                 = Some("NO"),
-    usedAsFactory                 = Some("NO"),
-    usedAsHotel                   = Some("NO"),
-    usedAsIndustrial              = Some("NO"),
-    usedAsOffice                  = Some("YES"),
-    usedAsOther                   = Some("NO"),
-    usedAsShop                    = Some("NO"),
-    usedAsWarehouse               = Some("NO"),
+    includesChattel               = Some("no"),
+    includesGoodwill              = Some("no"),
+    includesOther                 = Some("no"),
+    includesStock                 = Some("no"),
+    usedAsFactory                 = Some("no"),
+    usedAsHotel                   = Some("no"),
+    usedAsIndustrial              = Some("no"),
+    usedAsOffice                  = Some("yes"),
+    usedAsOther                   = Some("no"),
+    usedAsShop                    = Some("no"),
+    usedAsWarehouse               = Some("no"),
     contractDate                  = Some("2024-01-15"),
-    isDependOnFutureEvent         = Some("NO"),
+    isDependOnFutureEvent         = Some("no"),
     transactionDescription        = Some("Purchase"),
     newTransactionDescription     = Some("New Purchase"),
     effectiveDate                 = Some("2024-02-01"),
-    isLandExchanged               = Some("NO"),
+    isLandExchanged               = Some("no"),
     exLandHouseNumber             = Some("10"),
     exLandAddress1                = Some("Exchange Street"),
     exLandAddress2                = Some("Floor 2"),
     exLandAddress3                = Some("Block A"),
     exLandAddress4                = Some("District"),
     exLandPostcode                = Some("EX12 3CH"),
-    agreedDeferPay                = Some("NO"),
-    postTransactionRulingApplied  = Some("NO"),
-    isPursuantToPreviousOption    = Some("NO"),
-    restAffectInt                 = Some("NO"),
+    agreedDeferPay                = Some("no"),
+    postTransactionRulingApplied  = Some("no"),
+    isPursuantToPreviousOption    = Some("no"),
+    restAffectInt                 = Some("no"),
     restDetails                   = Some("None"),
-    postTransactionRulingFollowed = Some("NO"),
-    isPartOfSaleOfBusiness        = Some("NO"),
+    postTransactionRulingFollowed = Some("no"),
+    isPartOfSaleOfBusiness        = Some("no"),
     totalConsiderationOfBusiness  = Some("0")
   )
 
@@ -117,12 +117,12 @@ class TransactionReturnSpec extends AnyFreeSpec with Matchers with EitherValues 
         val json   = Json.toJson(completeTransactionPayload)
         val result = Json.fromJson[TransactionPayload](json).asEither.value
 
-        result.claimingRelief                mustBe Some("YES")
+        result.claimingRelief                mustBe Some("yes")
         result.reliefAmount                  mustBe Some("10000")
         result.totalConsider                 mustBe Some("200000")
         result.contractDate                  mustBe Some("2024-01-15")
         result.effectiveDate                 mustBe Some("2024-02-01")
-        result.postTransactionRulingFollowed mustBe Some("NO")
+        result.postTransactionRulingFollowed mustBe Some("no")
         result.totalConsiderationOfBusiness  mustBe Some("0")
       }
 
@@ -154,7 +154,7 @@ class TransactionReturnSpec extends AnyFreeSpec with Matchers with EitherValues 
       "must serialize complete payload with all fields" in {
         val json = Json.toJson(completeTransactionPayload)
 
-        (json \ "claimingRelief").as[String]               mustBe "YES"
+        (json \ "claimingRelief").as[String]               mustBe "yes"
         (json \ "reliefAmount").as[String]                 mustBe "10000"
         (json \ "totalConsider").as[String]                mustBe "200000"
         (json \ "contractDate").as[String]                 mustBe "2024-01-15"
@@ -188,11 +188,11 @@ class TransactionReturnSpec extends AnyFreeSpec with Matchers with EitherValues 
 
       "must round-trip with mixed optional fields" in {
         val mixed = TransactionPayload(
-          claimingRelief  = Some("YES"),
+          claimingRelief  = Some("yes"),
           totalConsider   = Some("100000"),
           effectiveDate   = Some("2024-06-01"),
           contractDate    = None,
-          isLandExchanged = Some("NO")
+          isLandExchanged = Some("no")
         )
         val json   = Json.toJson(mixed)
         val result = Json.fromJson[TransactionPayload](json).asEither.value
@@ -207,14 +207,14 @@ class TransactionReturnSpec extends AnyFreeSpec with Matchers with EitherValues 
       }
 
       "must support copy with modifications" in {
-        val modified = minimalTransactionPayload.copy(claimingRelief = Some("YES"), totalConsider = Some("50000"))
-        modified.claimingRelief mustBe Some("YES")
+        val modified = minimalTransactionPayload.copy(claimingRelief = Some("yes"), totalConsider = Some("50000"))
+        modified.claimingRelief mustBe Some("yes")
         modified.totalConsider  mustBe Some("50000")
         modified.contractDate   mustBe None
       }
 
       "must not be equal when fields differ" in {
-        minimalTransactionPayload must not equal minimalTransactionPayload.copy(claimingRelief = Some("YES"))
+        minimalTransactionPayload must not equal minimalTransactionPayload.copy(claimingRelief = Some("yes"))
       }
     }
   }
@@ -276,7 +276,7 @@ class TransactionReturnSpec extends AnyFreeSpec with Matchers with EitherValues 
 
         (json \ "storn").as[String]                                    mustBe "12345"
         (json \ "returnResourceRef").as[String]                        mustBe "45678"
-        (json \ "transaction" \ "claimingRelief").as[String]           mustBe "YES"
+        (json \ "transaction" \ "claimingRelief").as[String]           mustBe "yes"
         (json \ "transaction" \ "totalConsider").as[String]            mustBe "200000"
         (json \ "transaction" \ "effectiveDate").as[String]            mustBe "2024-02-01"
       }

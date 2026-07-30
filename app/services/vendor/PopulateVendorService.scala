@@ -30,35 +30,42 @@ class PopulateVendorService {
                                id: String,
                                userAnswers: UserAnswers): Try[UserAnswers] = {
 
-    (vendor.address1, vendor.name, vendor.vendorID) match {
-      case (Some(line1), Some(name), Some(vendorId)) =>
-        val vendorName = VendorName(
-          forename1 = vendor.forename1,
-          forename2 = vendor.forename2,
-          name = name
-        )
+    vendor.vendorID match {
+      case Some(vendorId) =>
+        // Build only the answers we actually have. A vendor shown on the
+        // incomplete overview is, by definition, missing name and/or address,
+        // so anything not present is left unset for the user to fill in.
+        val maybeName: Option[VendorName] = vendor.name.map { name =>
+          VendorName(
+            forename1 = vendor.forename1,
+            forename2 = vendor.forename2,
+            name = name
+          )
+        }
 
-        val address = Address(
-          line1 = line1,
-          line2 = vendor.address2,
-          line3 = vendor.address3,
-          line4 = vendor.address4,
-          postcode = vendor.postcode
-        )
+        val maybeAddress: Option[Address] = vendor.address1.map { line1 =>
+          Address(
+            line1 = line1,
+            line2 = vendor.address2,
+            line3 = vendor.address3,
+            line4 = vendor.address4,
+            postcode = vendor.postcode
+          )
+        }
 
-        val whoIsTheVen = if (vendorName.forename1.isDefined || vendorName.forename2.isDefined) whoIsTheVendor.Individual else whoIsTheVendor.Company
+        val whoIsTheVen =
+          if (vendor.forename1.isDefined || vendor.forename2.isDefined) whoIsTheVendor.Individual
+          else whoIsTheVendor.Company
 
         for {
-          whoIsTheVendorPage <- userAnswers.set(WhoIsTheVendorPage, whoIsTheVen)
-          withName <- whoIsTheVendorPage.set(VendorOrCompanyNamePage, vendorName)
-          withAddress <- withName.set(VendorAddressPage, address)
+          withWho      <- userAnswers.set(WhoIsTheVendorPage, whoIsTheVen)
+          withName     <- maybeName.fold(Try(withWho))(name => withWho.set(VendorOrCompanyNamePage, name))
+          withAddress  <- maybeAddress.fold(Try(withName))(address => withName.set(VendorAddressPage, address))
           finalAnswers <- withAddress.set(VendorOverviewVendorIdPage, vendorId)
         } yield finalAnswers
 
-      case _ =>
-        Try(throw new IllegalStateException(s"Vendor ${vendor.vendorID} is missing required address line 1"))
+      case None =>
+        Try(throw new IllegalStateException(s"Vendor ${vendor.vendorID} is missing a vendorID"))
     }
   }
-  
-  
 }

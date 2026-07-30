@@ -70,7 +70,7 @@ class StampDutyLandTaxConnectorISpec
 
   private val completePrelimReturn = PrelimReturn(
     stornId = "12345",
-    purchaserIsCompany = "YES",
+    purchaserIsCompany = "yes",
     surNameOrCompanyName = "Test Company",
     houseNumber = Some(23),
     addressLine1 = "Test Street",
@@ -83,7 +83,7 @@ class StampDutyLandTaxConnectorISpec
 
   private val minimalPrelimReturn = PrelimReturn(
     stornId = "12345",
-    purchaserIsCompany = "YES",
+    purchaserIsCompany = "yes",
     surNameOrCompanyName = "Test Company",
     houseNumber = None,
     addressLine1 = "Test Street",
@@ -364,7 +364,7 @@ class StampDutyLandTaxConnectorISpec
 
       val createVendorRequestJson = Json.obj(
         "stornId" -> "STORN12345", "returnResourceRef" -> "RRF-2024-001", "title" -> "Mr",
-        "forename1" -> "John", "name" -> "Smith", "addressLine1" -> "Main Street", "isRepresentedByAgent" -> "YES"
+        "forename1" -> "John", "name" -> "Smith", "addressLine1" -> "Main Street", "isRepresentedByAgent" -> "yes"
       )
       val createVendorReturnJson = Json.obj("vendorResourceRef" -> "VRF-001", "vendorId" -> "VID-001")
 
@@ -412,7 +412,7 @@ class StampDutyLandTaxConnectorISpec
 
       val updateVendorRequestJson = Json.obj(
         "stornId" -> "STORN12345", "returnResourceRef" -> "RRF-2024-001", "vendorResourceRef" -> "VRF-001",
-        "name" -> "Smith Updated", "addressLine1" -> "Main Street", "isRepresentedByAgent" -> "YES"
+        "name" -> "Smith Updated", "addressLine1" -> "Main Street", "isRepresentedByAgent" -> "yes"
       )
       val updateVendorReturnJson = Json.obj("updated" -> true)
 
@@ -661,8 +661,8 @@ class StampDutyLandTaxConnectorISpec
     "createPurchaser()" - {
 
       val createPurchaserRequestJson = Json.obj(
-        "stornId" -> "STORN12345", "returnResourceRef" -> "RRF-2024-001", "isCompany" -> "NO", "isTrustee" -> "NO",
-        "isConnectedToVendor" -> "NO", "isRepresentedByAgent" -> "YES", "title" -> "Mr", "surname" -> "Jones",
+        "stornId" -> "STORN12345", "returnResourceRef" -> "RRF-2024-001", "isCompany" -> "no", "isTrustee" -> "no",
+        "isConnectedToVendor" -> "no", "isRepresentedByAgent" -> "yes", "title" -> "Mr", "surname" -> "Jones",
         "forename1" -> "David", "address1" -> "Park Avenue"
       )
       val createPurchaserReturnJson = Json.obj("purchaserResourceRef" -> "PRF-001", "purchaserId" -> "PID-001")
@@ -704,7 +704,7 @@ class StampDutyLandTaxConnectorISpec
 
       val updatePurchaserRequestJson = Json.obj(
         "stornId" -> "STORN12345", "returnResourceRef" -> "RRF-2024-001", "purchaserResourceRef" -> "PRF-001",
-        "isCompany" -> "NO", "isTrustee" -> "NO", "isConnectedToVendor" -> "NO", "isRepresentedByAgent" -> "YES",
+        "isCompany" -> "no", "isTrustee" -> "no", "isConnectedToVendor" -> "no", "isRepresentedByAgent" -> "yes",
         "address1" -> "Park Avenue"
       )
       val updatePurchaserReturnJson = Json.obj("updated" -> true)
@@ -1024,8 +1024,8 @@ class StampDutyLandTaxConnectorISpec
       "must handle request with all optional fields populated" in {
         val completeRequestJson = Json.obj(
           "returnResourceRef" -> "RRF-2024-001", "storn" -> "STORN12345", "mainPurchaserID" -> "PUR-001",
-          "mainVendorID" -> "VEN-001", "mainLandID" -> "LAND-001", "IRMarkGenerated" -> "YES",
-          "landCertForEachProp" -> "NO", "declaration" -> "YES"
+          "mainVendorID" -> "VEN-001", "mainLandID" -> "LAND-001", "IRMarkGenerated" -> "yes",
+          "landCertForEachProp" -> "no", "declaration" -> "yes"
         )
         server.stubFor(post(urlPathEqualTo("/stamp-duty-land-tax/filing/update/return-info")).willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(updateReturnInfoReturnJson.toString())))
         val request = completeRequestJson.as[ReturnInfoRequest]
@@ -1033,9 +1033,9 @@ class StampDutyLandTaxConnectorISpec
         result.updated mustBe true
         server.verify(
           postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax/filing/update/return-info"))
-            .withRequestBody(matchingJsonPath("$.IRMarkGenerated", equalTo("YES")))
-            .withRequestBody(matchingJsonPath("$.landCertForEachProp", equalTo("NO")))
-            .withRequestBody(matchingJsonPath("$.declaration", equalTo("YES")))
+            .withRequestBody(matchingJsonPath("$.IRMarkGenerated", equalTo("yes")))
+            .withRequestBody(matchingJsonPath("$.landCertForEachProp", equalTo("no")))
+            .withRequestBody(matchingJsonPath("$.declaration", equalTo("yes")))
         )
       }
 
@@ -1052,8 +1052,8 @@ class StampDutyLandTaxConnectorISpec
         "stornId" -> "STORN12345", "returnResourceRef" -> "100001", "propertyType" -> "RESIDENTIAL",
         "interestTransferredCreated" -> "FREEHOLD", "houseNumber" -> "42", "addressLine1" -> "High Street",
         "addressLine2" -> "Kensington", "addressLine3" -> "London", "postcode" -> "SW1A 1AA", "landArea" -> "500",
-        "areaUnit" -> "SQUARE_METERS", "localAuthorityNumber" -> "LA12345", "mineralRights" -> "YES",
-        "nlpgUprn" -> "100012345678", "willSendPlansByPost" -> "NO", "titleNumber" -> "TN123456"
+        "areaUnit" -> "SQUARE_METERS", "localAuthorityNumber" -> "LA12345", "mineralRights" -> "yes",
+        "nlpgUprn" -> "100012345678", "willSendPlansByPost" -> "no", "titleNumber" -> "TN123456"
       )
       val createLandReturnJson = Json.obj("landResourceRef" -> "100001", "landId" -> "1")
 
@@ -1164,8 +1164,8 @@ class StampDutyLandTaxConnectorISpec
         "propertyType" -> "RESIDENTIAL", "interestTransferredCreated" -> "FREEHOLD", "houseNumber" -> "42",
         "addressLine1" -> "High Street", "addressLine2" -> "Kensington", "addressLine3" -> "London",
         "postcode" -> "SW1A 1AA", "landArea" -> "500", "areaUnit" -> "SQUARE_METERS",
-        "localAuthorityNumber" -> "LA12345", "mineralRights" -> "YES", "nlpgUprn" -> "100012345678",
-        "willSendPlansByPost" -> "NO", "titleNumber" -> "TN123456", "nextLandId" -> "100002"
+        "localAuthorityNumber" -> "LA12345", "mineralRights" -> "yes", "nlpgUprn" -> "100012345678",
+        "willSendPlansByPost" -> "no", "titleNumber" -> "TN123456", "nextLandId" -> "100002"
       )
       val updateLandReturnJson = Json.obj("updated" -> true)
 
@@ -1372,7 +1372,7 @@ class StampDutyLandTaxConnectorISpec
 
       val createResidencyRequestJson = Json.obj(
         "stornId" -> "STORN12345", "returnResourceRef" -> "RRF-2024-001",
-        "residency" -> Json.obj("isNonUkResidents" -> "YES", "isCompany" -> "NO", "isCrownRelief" -> "NO")
+        "residency" -> Json.obj("isNonUkResidents" -> "yes", "isCompany" -> "no", "isCrownRelief" -> "no")
       )
       val createResidencyReturnJson = Json.obj("created" -> true)
 
@@ -1392,9 +1392,9 @@ class StampDutyLandTaxConnectorISpec
           postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax/filing/create/residency"))
             .withRequestBody(matchingJsonPath("$.stornId", equalTo("STORN12345")))
             .withRequestBody(matchingJsonPath("$.returnResourceRef", equalTo("RRF-2024-001")))
-            .withRequestBody(matchingJsonPath("$.residency.isNonUkResidents", equalTo("YES")))
-            .withRequestBody(matchingJsonPath("$.residency.isCompany", equalTo("NO")))
-            .withRequestBody(matchingJsonPath("$.residency.isCrownRelief", equalTo("NO")))
+            .withRequestBody(matchingJsonPath("$.residency.isNonUkResidents", equalTo("yes")))
+            .withRequestBody(matchingJsonPath("$.residency.isCompany", equalTo("no")))
+            .withRequestBody(matchingJsonPath("$.residency.isCrownRelief", equalTo("no")))
         )
       }
 
@@ -1455,7 +1455,7 @@ class StampDutyLandTaxConnectorISpec
 
       val updateResidencyRequestJson = Json.obj(
         "stornId" -> "STORN12345", "returnResourceRef" -> "RRF-2024-001",
-        "residency" -> Json.obj("isNonUkResidents" -> "NO", "isCompany" -> "YES", "isCrownRelief" -> "YES")
+        "residency" -> Json.obj("isNonUkResidents" -> "no", "isCompany" -> "yes", "isCrownRelief" -> "yes")
       )
       val updateResidencyReturnJson = Json.obj("updated" -> true)
 
@@ -1475,9 +1475,9 @@ class StampDutyLandTaxConnectorISpec
           postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax/filing/update/residency"))
             .withRequestBody(matchingJsonPath("$.stornId", equalTo("STORN12345")))
             .withRequestBody(matchingJsonPath("$.returnResourceRef", equalTo("RRF-2024-001")))
-            .withRequestBody(matchingJsonPath("$.residency.isNonUkResidents", equalTo("NO")))
-            .withRequestBody(matchingJsonPath("$.residency.isCompany", equalTo("YES")))
-            .withRequestBody(matchingJsonPath("$.residency.isCrownRelief", equalTo("YES")))
+            .withRequestBody(matchingJsonPath("$.residency.isNonUkResidents", equalTo("no")))
+            .withRequestBody(matchingJsonPath("$.residency.isCompany", equalTo("yes")))
+            .withRequestBody(matchingJsonPath("$.residency.isCrownRelief", equalTo("yes")))
         )
       }
 
@@ -1601,7 +1601,7 @@ class StampDutyLandTaxConnectorISpec
       val updateTransactionRequestJson = Json.obj(
         "storn" -> "STORN12345", "returnResourceRef" -> "RRF-2024-001",
         "transaction" -> Json.obj(
-          "claimingRelief" -> "NO", "totalConsider" -> "250000", "considerCash" -> "YES",
+          "claimingRelief" -> "no", "totalConsider" -> "250000", "considerCash" -> "yes",
           "contractDate" -> "2025-01-15", "effectiveDate" -> "2025-02-01", "transactionDescription" -> "RESIDENTIAL"
         )
       )
@@ -1692,11 +1692,11 @@ class StampDutyLandTaxConnectorISpec
         val completeTransactionJson = Json.obj(
           "storn" -> "STORN12345", "returnResourceRef" -> "RRF-2024-001",
           "transaction" -> Json.obj(
-            "claimingRelief" -> "YES", "reliefAmount" -> "5000", "reliefReason" -> "CHARITY",
-            "reliefSchemeNumber" -> "CIS123456", "isLinked" -> "NO", "totalConsider" -> "250000",
-            "considerCash" -> "YES", "contractDate" -> "2025-01-15", "effectiveDate" -> "2025-02-01",
+            "claimingRelief" -> "yes", "reliefAmount" -> "5000", "reliefReason" -> "CHARITY",
+            "reliefSchemeNumber" -> "CIS123456", "isLinked" -> "no", "totalConsider" -> "250000",
+            "considerCash" -> "yes", "contractDate" -> "2025-01-15", "effectiveDate" -> "2025-02-01",
             "transactionDescription" -> "RESIDENTIAL", "newTransactionDescription" -> "RESIDENTIAL",
-            "isLandExchanged" -> "NO", "agreedDeferPay" -> "NO", "isPartOfSaleOfBusiness" -> "NO"
+            "isLandExchanged" -> "no", "agreedDeferPay" -> "no", "isPartOfSaleOfBusiness" -> "no"
           )
         )
         server.stubFor(post(urlPathEqualTo("/stamp-duty-land-tax/filing/update/transaction")).willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(updateTransactionReturnJson.toString())))
@@ -1705,7 +1705,7 @@ class StampDutyLandTaxConnectorISpec
         result.updated mustBe true
         server.verify(
           postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax/filing/update/transaction"))
-            .withRequestBody(matchingJsonPath("$.transaction.claimingRelief", equalTo("YES")))
+            .withRequestBody(matchingJsonPath("$.transaction.claimingRelief", equalTo("yes")))
             .withRequestBody(matchingJsonPath("$.transaction.totalConsider", equalTo("250000")))
             .withRequestBody(matchingJsonPath("$.transaction.transactionDescription", equalTo("RESIDENTIAL")))
         )
@@ -1716,10 +1716,10 @@ class StampDutyLandTaxConnectorISpec
       val createLeaseRequestJson = Json.obj(
         "stornId" -> "STORN12345", "returnResourceRef" -> "RRF-2024-001",
         "lease" -> Json.obj(
-          "isAnnualRentOver1000" -> "YES", "contractEndDate" -> "2030-12-31", "contractStartDate" -> "2025-01-01",
+          "isAnnualRentOver1000" -> "yes", "contractEndDate" -> "2030-12-31", "contractStartDate" -> "2025-01-01",
           "leaseType" -> "COMMERCIAL", "netPresentValue" -> "50000", "totalPremiumPayable" -> "10000",
-          "rentFreePeriod" -> "NO", "startingRent" -> "12000", "startingRentEndDate" -> "2026-01-01",
-          "laterRentKnown" -> "YES", "vatAmount" -> "2400"
+          "rentFreePeriod" -> "no", "startingRent" -> "12000", "startingRentEndDate" -> "2026-01-01",
+          "laterRentKnown" -> "yes", "vatAmount" -> "2400"
         )
       )
       val createLeaseReturnJson = Json.obj("created" -> true)
@@ -1740,7 +1740,7 @@ class StampDutyLandTaxConnectorISpec
           postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax/filing/create/lease"))
             .withRequestBody(matchingJsonPath("$.stornId", equalTo("STORN12345")))
             .withRequestBody(matchingJsonPath("$.returnResourceRef", equalTo("RRF-2024-001")))
-            .withRequestBody(matchingJsonPath("$.lease.isAnnualRentOver1000", equalTo("YES")))
+            .withRequestBody(matchingJsonPath("$.lease.isAnnualRentOver1000", equalTo("yes")))
             .withRequestBody(matchingJsonPath("$.lease.leaseType", equalTo("COMMERCIAL")))
             .withRequestBody(matchingJsonPath("$.lease.startingRent", equalTo("12000")))
             .withRequestBody(matchingJsonPath("$.lease.vatAmount", equalTo("2400")))
@@ -1813,10 +1813,10 @@ class StampDutyLandTaxConnectorISpec
       val updateLeaseRequestJson = Json.obj(
         "stornId" -> "STORN12345", "returnResourceRef" -> "RRF-2024-001",
         "lease" -> Json.obj(
-          "isAnnualRentOver1000" -> "YES", "contractEndDate" -> "2030-12-31", "contractStartDate" -> "2025-01-01",
+          "isAnnualRentOver1000" -> "yes", "contractEndDate" -> "2030-12-31", "contractStartDate" -> "2025-01-01",
           "leaseType" -> "COMMERCIAL", "netPresentValue" -> "60000", "totalPremiumPayable" -> "15000",
-          "rentFreePeriod" -> "YES", "startingRent" -> "13000", "startingRentEndDate" -> "2026-01-01",
-          "laterRentKnown" -> "NO", "vatAmount" -> "2600"
+          "rentFreePeriod" -> "yes", "startingRent" -> "13000", "startingRentEndDate" -> "2026-01-01",
+          "laterRentKnown" -> "no", "vatAmount" -> "2600"
         )
       )
       val updateLeaseReturnJson = Json.obj("updated" -> true)
@@ -1837,10 +1837,10 @@ class StampDutyLandTaxConnectorISpec
           postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax/filing/update/lease"))
             .withRequestBody(matchingJsonPath("$.stornId", equalTo("STORN12345")))
             .withRequestBody(matchingJsonPath("$.returnResourceRef", equalTo("RRF-2024-001")))
-            .withRequestBody(matchingJsonPath("$.lease.isAnnualRentOver1000", equalTo("YES")))
+            .withRequestBody(matchingJsonPath("$.lease.isAnnualRentOver1000", equalTo("yes")))
             .withRequestBody(matchingJsonPath("$.lease.leaseType", equalTo("COMMERCIAL")))
             .withRequestBody(matchingJsonPath("$.lease.netPresentValue", equalTo("60000")))
-            .withRequestBody(matchingJsonPath("$.lease.rentFreePeriod", equalTo("YES")))
+            .withRequestBody(matchingJsonPath("$.lease.rentFreePeriod", equalTo("yes")))
         )
       }
 
@@ -1981,17 +1981,17 @@ class StampDutyLandTaxConnectorISpec
             returnID = Some("382966898"), storn = Some("STORN123456"), purchaserCounter = Some("1"),
             vendorCounter = Some("1"), landCounter = Some("1"), purgeDate = Some("2026-09-07 10:16:28"),
             version = Some("26"), mainPurchaserID = Some("382966899"), mainVendorID = Some("382966907"),
-            mainLandID = Some("382966901"), landCertForEachProp = Some("YES"),
+            mainLandID = Some("382966901"), landCertForEachProp = Some("yes"),
             returnResourceRef = Some("submitted"), status = Some("STARTED")
           )),
           purchaser = Some(Seq(Purchaser(
-            purchaserID = Some("382966899"), returnID = Some("382966898"), isCompany = Some("NO"),
-            isTrustee = Some("YES"), isConnectedToVendor = Some("YES"), isRepresentedByAgent = Some("NO"),
+            purchaserID = Some("382966899"), returnID = Some("382966898"), isCompany = Some("no"),
+            isTrustee = Some("yes"), isConnectedToVendor = Some("yes"), isRepresentedByAgent = Some("no"),
             title = Some("MR"), surname = Some("Jon"), forename1 = Some("Bone"), forename2 = Some("Jones"),
             houseNumber = Some("4"), address1 = Some("4 Purchaser Street"), address2 = Some("PurchaserTown"),
             address3 = Some("TestCounty"), address4 = Some("Address 4"), postcode = Some("AA00 0BB"),
             phone = Some("01234566"), purchaserResourceRef = Some("1"), createDate = Some("2026-06-09 10:06:49"),
-            lastUpdateDate = Some("2026-06-09 10:09:31"), isUkCompany = Some("NO"),
+            lastUpdateDate = Some("2026-06-09 10:09:31"), isUkCompany = Some("no"),
             registrationNumber = Some("123"), placeOfRegistration = Some("Germany")
           ))),
           companyDetails = Some(CompanyDetails(
@@ -2007,7 +2007,7 @@ class StampDutyLandTaxConnectorISpec
             vendorID = Some("382966907"), returnID = Some("382966898"), title = Some("Mr"),
             forename1 = Some("John"), forename2 = Some("James"), name = Some("Smith"), houseNumber = Some("1"),
             address1 = Some("1 Test Lane"), address2 = Some("TestTown"), address3 = Some("TestCounty"),
-            postcode = Some("AA00 0AA"), isRepresentedByAgent = Some("YES"), vendorResourceRef = Some("1"),
+            postcode = Some("AA00 0AA"), isRepresentedByAgent = Some("yes"), vendorResourceRef = Some("1"),
             lastUpdateDate = Some("2026-06-09 10:11:28")
           ))),
           land = Some(Seq(Land(

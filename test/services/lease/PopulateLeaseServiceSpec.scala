@@ -76,13 +76,15 @@ class PopulateLeaseServiceSpec extends SpecBase with MockitoSugar {
         result.get.get(TypeOfLeasePage) mustBe Some(TypeOfLease.R)
       }
 
-      "must return a Failure when lease type is missing" in {
+      // A lease being resumed may be partial, so a missing field is skipped (not a failure)
+      // and the user completes it on Check Your Answers.
+      "must succeed and leave TypeOfLeasePage unset when lease type is missing" in {
 
         val lease = leaseComplete.copy(leaseType = None)
         val result = service.populateLeaseInSession(lease, emptyUserAnswers)
 
-        result.isFailure mustBe true
-        result.failed.get.getMessage mustBe "Lease is missing required lease type"
+        result.isSuccess mustBe true
+        result.get.get(TypeOfLeasePage) mustBe None
       }
 
       "must populate leaseStartDatePage when a valid date is provided" in {
@@ -92,13 +94,13 @@ class PopulateLeaseServiceSpec extends SpecBase with MockitoSugar {
         result.get.get(LeaseStartDatePage) mustBe Some(LocalDate.of(2024, 01, 01))
       }
 
-      "must return a Failure when leaseStartDate is missing" in {
+      "must succeed and leave LeaseStartDatePage unset when leaseStartDate is missing" in {
 
         val lease = leaseComplete.copy(contractStartDate = None)
         val result = service.populateLeaseInSession(lease, emptyUserAnswers)
 
-        result.isFailure mustBe true
-        result.failed.get.getMessage mustBe "Lease is missing required contract start date"
+        result.isSuccess mustBe true
+        result.get.get(LeaseStartDatePage) mustBe None
       }
 
       "must populate leaseEndDatePage when a valid date is provided" in {
@@ -108,13 +110,13 @@ class PopulateLeaseServiceSpec extends SpecBase with MockitoSugar {
         result.get.get(LeaseEndDatePage) mustBe Some(LocalDate.of(2025, 01, 01))
       }
 
-      "must return a Failure when leaseEndDate is missing" in {
+      "must succeed and leave LeaseEndDatePage unset when leaseEndDate is missing" in {
 
         val lease = leaseComplete.copy(contractEndDate = None)
         val result = service.populateLeaseInSession(lease, emptyUserAnswers)
 
-        result.isFailure mustBe true
-        result.failed.get.getMessage mustBe "Lease is missing required contract end date"
+        result.isSuccess mustBe true
+        result.get.get(LeaseEndDatePage) mustBe None
       }
 
       "must populate rentFreePeriodPages when a valid answers are provided" in {
@@ -141,13 +143,13 @@ class PopulateLeaseServiceSpec extends SpecBase with MockitoSugar {
         result.get.get(AnnualStartingRentPage) mustBe Some("50.00")
       }
 
-      "must return a Failure when annualStartingRent is missing" in {
+      "must succeed and leave AnnualStartingRentPage unset when annualStartingRent is missing" in {
 
         val lease = leaseComplete.copy(startingRent = None)
         val result = service.populateLeaseInSession(lease, emptyUserAnswers)
 
-        result.isFailure mustBe true
-        result.failed.get.getMessage mustBe "Lease is missing required starting rent"
+        result.isSuccess mustBe true
+        result.get.get(AnnualStartingRentPage) mustBe None
       }
 
       "must populate leaseStartingRentEndDatePage when a valid date is provided" in {
@@ -157,13 +159,13 @@ class PopulateLeaseServiceSpec extends SpecBase with MockitoSugar {
         result.get.get(LeaseStartingRentEndDatePage) mustBe Some(LocalDate.of(2024, 12, 31))
       }
 
-      "must return a Failure when leaseStartingRentEndDate is missing" in {
+      "must succeed and leave LeaseStartingRentEndDatePage unset when leaseStartingRentEndDate is missing" in {
 
         val lease = leaseComplete.copy(startingRentEndDate = None)
         val result = service.populateLeaseInSession(lease, emptyUserAnswers)
 
-        result.isFailure mustBe true
-        result.failed.get.getMessage mustBe "Lease is missing required starting rent end date"
+        result.isSuccess mustBe true
+        result.get.get(LeaseStartingRentEndDatePage) mustBe None
       }
 
       "must populate laterRentPage when a valid YES is provided" in {
@@ -180,13 +182,13 @@ class PopulateLeaseServiceSpec extends SpecBase with MockitoSugar {
         result.get.get(LaterRentPage) mustBe Some(false)
       }
 
-      "must return a Failure when laterRent is missing" in {
+      "must succeed and leave LaterRentPage unset when laterRent is missing" in {
 
         val lease = leaseComplete.copy(laterRentKnown = None)
         val result = service.populateLeaseInSession(lease, emptyUserAnswers)
 
-        result.isFailure mustBe true
-        result.failed.get.getMessage mustBe "Lease is missing required later rent known"
+        result.isSuccess mustBe true
+        result.get.get(LaterRentPage) mustBe None
       }
 
       "must populate leaseThousandPoundsThresholdPage when a YES is provided" in {
@@ -237,22 +239,24 @@ class PopulateLeaseServiceSpec extends SpecBase with MockitoSugar {
         result.get.get(LeaseNetPresentValuePage) mustBe Some("100.00")
       }
 
-      "must return a Failure when leaseEnterTotalPremiumPayable is missing" in {
+      "must succeed and leave LeaseEnterTotalPremiumPayablePage unset when leaseEnterTotalPremiumPayable is missing" in {
 
         val lease = leaseComplete.copy(totalPremiumPayable = None)
         val result = service.populateLeaseInSession(lease, userAnswersTransactionTypeL)
 
-        result.isFailure mustBe true
-        result.failed.get.getMessage mustBe "Lease is missing required total premium payable"
+        result.isSuccess mustBe true
+        result.get.get(LeaseEnterTotalPremiumPayablePage) mustBe None
+        result.get.get(LeaseNetPresentValuePage) mustBe Some("100.00")
       }
 
-      "must return a Failure when leaseNetPresentValuePage is missing" in {
+      "must succeed and leave LeaseNetPresentValuePage unset when leaseNetPresentValuePage is missing" in {
 
         val lease = leaseComplete.copy(netPresentValue = None)
         val result = service.populateLeaseInSession(lease, userAnswersTransactionTypeL)
 
-        result.isFailure mustBe true
-        result.failed.get.getMessage mustBe "Lease is missing required net present value"
+        result.isSuccess mustBe true
+        result.get.get(LeaseNetPresentValuePage) mustBe None
+        result.get.get(LeaseEnterTotalPremiumPayablePage) mustBe Some("80.00")
       }
 
     }

@@ -477,12 +477,12 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
         val modified = minimalCreateReturnAgentRequest.copy(
           houseNumber = Some(99),
           email = Some("new@example.com"),
-          isAuthorised = Some("NO")
+          isAuthorised = Some("no")
         )
 
         modified.houseNumber mustBe Some(99)
         modified.email mustBe Some("new@example.com")
-        modified.isAuthorised mustBe Some("NO")
+        modified.isAuthorised mustBe Some("no")
         modified.stornId mustBe minimalCreateReturnAgentRequest.stornId
       }
 
@@ -1078,12 +1078,12 @@ class ReturnAgentSpec extends AnyFreeSpec with ScalaFutures with Matchers with E
         val modified = minimalUpdateReturnAgentRequest.copy(
           houseNumber = Some(99),
           email = Some("new@example.com"),
-          isAuthorised = Some("NO")
+          isAuthorised = Some("no")
         )
 
         modified.houseNumber mustBe Some(99)
         modified.email mustBe Some("new@example.com")
-        modified.isAuthorised mustBe Some("NO")
+        modified.isAuthorised mustBe Some("no")
         modified.stornId mustBe minimalUpdateReturnAgentRequest.stornId
       }
 

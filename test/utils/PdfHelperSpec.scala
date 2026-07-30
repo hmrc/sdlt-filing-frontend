@@ -33,7 +33,7 @@ class PdfHelperSpec extends SpecBase with Matchers {
     returnResourceRef = "RRF-999",
     returnInfo = Some(ReturnInfo(
       returnID = Some("RET999"),
-      landCertForEachProp = Some("YES"),
+      landCertForEachProp = Some("yes"),
       mainLandID = Some("LND001")
     )),
     transaction = Some(Transaction(
@@ -85,7 +85,7 @@ class PdfHelperSpec extends SpecBase with Matchers {
 
     "must return true when property type is mixed or non-res && has sale of business" in {
       val transactions = Seq(
-        Transaction(includesStock = Some("YES")),
+        Transaction(includesStock = Some("yes")),
         Transaction(includesGoodwill = Some("Yes")),
         Transaction(includesOther = Some("yes")),
         Transaction(includesChattel = Some("Yes"))
@@ -114,7 +114,7 @@ class PdfHelperSpec extends SpecBase with Matchers {
 
     "must return true when depends on future event or agreed to defer are yes" in {
       val transactions = Seq(
-        Transaction(isDependantOnFutureEvent = Some("YES")),
+        Transaction(isDependantOnFutureEvent = Some("yes")),
         Transaction(agreedToDeferPayment = Some("Yes"))
       )
 

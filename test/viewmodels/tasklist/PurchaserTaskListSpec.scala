@@ -182,25 +182,25 @@ class PurchaserTaskListSpec extends SpecBase {
       }
 
       "return correct sequence when purchaser is a company and companyDetails is not defined" in {
-          val mainPurchaser = Purchaser(
-            purchaserID = Some("PUR001"),
-            isCompany = Some("Yes"),
-            address1 =  Some("address 1"),
-            isTrustee = Some("YES"),
-            isConnectedToVendor = Some("YES"),
-            companyName = Some("Company Co")
-          )
+        val mainPurchaser = Purchaser(
+          purchaserID = Some("PUR001"),
+          isCompany = Some("Yes"),
+          address1 =  Some("address 1"),
+          isTrustee = Some("YES"),
+          isConnectedToVendor = Some("YES"),
+          companyName = Some("Company Co")
+        )
 
-          val fullReturn = completeFullReturn.copy(
-            returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR001"))),
-            purchaser = Some(Seq(mainPurchaser)),
-            companyDetails = None
-          )
+        val fullReturn = completeFullReturn.copy(
+          returnInfo = Some(ReturnInfo(mainPurchaserID = Some("PUR001"))),
+          purchaser = Some(Seq(mainPurchaser)),
+          companyDetails = None
+        )
 
-          val result = PurchaserTaskList.mandatoryFieldsDefined(fullReturn)
+        val result = PurchaserTaskList.mandatoryFieldsDefined(fullReturn)
 
-          result mustBe Seq(true, true, true, true, false)
-        }
+        result mustBe Seq(true, true, true, true, false)
+      }
 
       "return correct sequence when purchaser is a individual" in {
         val cases = Table(
@@ -280,6 +280,10 @@ class PurchaserTaskListSpec extends SpecBase {
           result mustBe expectedResult
         }
       }
+
+      "must return a single failing check when there are no purchasers" in {
+        PurchaserTaskList.mandatoryFieldsDefined(fullReturnMissingPurchaser) mustBe Seq(false)
+      }
     }
 
     ".isPurchaserComplete" - {
@@ -312,6 +316,41 @@ class PurchaserTaskListSpec extends SpecBase {
         val result = PurchaserTaskList.isPurchaserComplete(fullReturnAllMandatoryFieldsMissingOther)
 
         result mustBe false
+      }
+
+      "must return false when there are no purchasers" in {
+        val result = PurchaserTaskList.isPurchaserComplete(fullReturnMissingPurchaser)
+
+        result mustBe false
+      }
+    }
+
+    ".incompletePurchasers" - {
+
+      "must return no purchasers when every purchaser is complete" in {
+        PurchaserTaskList.incompletePurchasers(fullReturnCompleteWithMultiplePurchasers) mustBe empty
+      }
+
+      "must return the main purchaser when the main purchaser is incomplete" in {
+        val result = PurchaserTaskList.incompletePurchasers(fullReturnSomeMandatoryFieldsMissingMain)
+
+        result.map(_.purchaserID) mustBe Seq(Some("PUR001"))
+      }
+
+      "must return only the incomplete purchaser when an 'other' purchaser is incomplete" in {
+        val result = PurchaserTaskList.incompletePurchasers(fullReturnSomeMandatoryFieldsMissingOther)
+
+        result.size mustBe 1
+      }
+
+      "must return the purchaser that exists but has no mandatory fields answered" in {
+        val result = PurchaserTaskList.incompletePurchasers(fullReturnAllMandatoryFieldsMissingMain)
+
+        result.map(_.purchaserID) mustBe Seq(Some("PUR001"))
+      }
+
+      "must return no purchasers when there are no purchasers" in {
+        PurchaserTaskList.incompletePurchasers(fullReturnMissingPurchaser) mustBe empty
       }
     }
 
@@ -375,7 +414,7 @@ class PurchaserTaskListSpec extends SpecBase {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
           val result = PurchaserTaskList.buildPurchaserRow(fullReturnAllMandatoryFieldsMissingMain)
-          result.url mustBe controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
+          result.url mustBe controllers.purchaser.routes.PurchaserIncompleteOverviewController.onPageLoad().url
 
           result.status mustBe TLInProgress
         }
@@ -388,7 +427,7 @@ class PurchaserTaskListSpec extends SpecBase {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
           val result = PurchaserTaskList.buildPurchaserRow(fullReturnAllMandatoryFieldsMissingOther)
-          result.url mustBe controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
+          result.url mustBe controllers.purchaser.routes.PurchaserIncompleteOverviewController.onPageLoad().url
 
           result.status mustBe TLInProgress
         }
@@ -402,7 +441,7 @@ class PurchaserTaskListSpec extends SpecBase {
 
           val result = PurchaserTaskList.buildPurchaserRow(fullReturnSomeMandatoryFieldsMissingMain)
 
-          result.url mustBe controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
+          result.url mustBe controllers.purchaser.routes.PurchaserIncompleteOverviewController.onPageLoad().url
 
           result.status mustBe TLInProgress
         }
@@ -416,7 +455,7 @@ class PurchaserTaskListSpec extends SpecBase {
 
           val result = PurchaserTaskList.buildPurchaserRow(fullReturnSomeMandatoryFieldsMissingOther)
 
-          result.url mustBe controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
+          result.url mustBe controllers.purchaser.routes.PurchaserIncompleteOverviewController.onPageLoad().url
 
           result.status mustBe TLInProgress
         }
@@ -476,6 +515,21 @@ class PurchaserTaskListSpec extends SpecBase {
           messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.purchaserQuestion.details")
           row.status mustBe TLCompleted
           row.url mustBe controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
+        }
+      }
+
+      "must build a TaskListSection routing an incomplete purchaser to the incomplete overview" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val section = PurchaserTaskList.build(fullReturnSomeMandatoryFieldsMissingMain)
+          val row = section.rows.head
+
+          row.status mustBe TLInProgress
+          row.url mustBe controllers.purchaser.routes.PurchaserIncompleteOverviewController.onPageLoad().url
         }
       }
 

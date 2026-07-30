@@ -41,9 +41,9 @@ object SummaryUtil {
 
   def getOptYesNo(value: Option[String])(implicit messages: Messages): Option[String] =
     value match {
-      case Some(s) if s.equalsIgnoreCase("YES") =>
+      case Some(s) if s.equalsIgnoreCase("yes") =>
         Some(messages("site.yes"))
-      case Some(s) if s.equalsIgnoreCase("NO") =>
+      case Some(s) if s.equalsIgnoreCase("no") =>
         Some(messages("site.no"))
       case _ =>
         None

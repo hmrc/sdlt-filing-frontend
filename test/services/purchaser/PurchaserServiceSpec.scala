@@ -75,7 +75,7 @@ class PurchaserServiceSpec extends SpecBase {
 
   private def createPurchaser(
                              id: Option[String] = Some("1234"),
-                             isCompany: Option[String] = Some("NO")
+                             isCompany: Option[String] = Some("no")
                              ): Purchaser = Purchaser(
     purchaserID = id,
     forename1 = Some("forename1"),
@@ -84,9 +84,9 @@ class PurchaserServiceSpec extends SpecBase {
     companyName = None,
     isCompany = isCompany,
     nextPurchaserID = Some("nextPurchaserID"),
-    isTrustee = Some("YES"),
-    isConnectedToVendor = Some("NO"),
-    isRepresentedByAgent = Some("NO"),
+    isTrustee = Some("yes"),
+    isConnectedToVendor = Some("no"),
+    isRepresentedByAgent = Some("no"),
     address1 = Some("123 Test Street"),
     address2 = None,
     address3 = None,
@@ -171,7 +171,7 @@ class PurchaserServiceSpec extends SpecBase {
       }
 
       "must return Company when isCompany is 'YES'" in {
-        val result = service.whoIsMakingThePurchase(Some("YES"))
+        val result = service.whoIsMakingThePurchase(Some("yes"))
 
         result mustEqual WhoIsMakingThePurchase.Company
       }
@@ -183,7 +183,7 @@ class PurchaserServiceSpec extends SpecBase {
       }
 
       "must return Individual when isCompany is 'NO'" in {
-        val result = service.whoIsMakingThePurchase(Some("NO"))
+        val result = service.whoIsMakingThePurchase(Some("no"))
 
         result mustEqual WhoIsMakingThePurchase.Individual
       }
@@ -212,7 +212,7 @@ class PurchaserServiceSpec extends SpecBase {
             forename2 = None,
             surname = None,
             companyName = Some("ACME Corporation"),
-            isCompany = Some("YES"),
+            isCompany = Some("yes"),
             address1 = None,
             address2 = None,
             address3 = None,
@@ -250,7 +250,7 @@ class PurchaserServiceSpec extends SpecBase {
             forename2 = Some("Michael"),
             surname = Some("Smith"),
             companyName = None,
-            isCompany = Some("NO"),
+            isCompany = Some("no"),
             address1 = None,
             address2 = None,
             address3 = None,
@@ -324,7 +324,7 @@ class PurchaserServiceSpec extends SpecBase {
             forename2 = None,
             surname = Some("Madonna"),
             companyName = None,
-            isCompany = Some("NO"),
+            isCompany = Some("no"),
             address1 = None,
             address2 = None,
             address3 = None,
@@ -361,7 +361,7 @@ class PurchaserServiceSpec extends SpecBase {
             forename2 = None,
             surname = Some("Smith"),
             companyName = Some("Smith & Co Ltd"),
-            isCompany = Some("YES"),
+            isCompany = Some("yes"),
             address1 = None,
             address2 = None,
             address3 = None,
@@ -398,7 +398,7 @@ class PurchaserServiceSpec extends SpecBase {
             forename2 = None,
             surname = Some("Purchaser"),
             companyName = None,
-            isCompany = Some("NO"),
+            isCompany = Some("no"),
             address1 = None,
             address2 = None,
             address3 = None,
@@ -412,7 +412,7 @@ class PurchaserServiceSpec extends SpecBase {
             forename2 = None,
             surname = Some("Buyer"),
             companyName = None,
-            isCompany = Some("NO"),
+            isCompany = Some("no"),
             address1 = None,
             address2 = None,
             address3 = None,
@@ -446,7 +446,7 @@ class PurchaserServiceSpec extends SpecBase {
             forename2 = Some("Middle"),
             surname = None,
             companyName = None,
-            isCompany = Some("NO"),
+            isCompany = Some("no"),
             address1 = None,
             address2 = None,
             address3 = None,
@@ -511,7 +511,7 @@ class PurchaserServiceSpec extends SpecBase {
             forename2 = Some("Michael"),
             surname = Some("Smith"),
             companyName = None,
-            isCompany = Some("NO"),
+            isCompany = Some("no"),
             address1 = None,
             address2 = None,
             address3 = None,
@@ -602,7 +602,7 @@ class PurchaserServiceSpec extends SpecBase {
               "must stay on the page" in {
                 val singlePurchaser = Purchaser(
                   purchaserID = Some("PURCH001"),
-                  isCompany = Some("YES"),
+                  isCompany = Some("yes"),
                   companyName = Some("Test Company")
                 )
 
@@ -628,7 +628,7 @@ class PurchaserServiceSpec extends SpecBase {
               "must redirect to WhoIsMakingThePurchase page" in {
                 val singlePurchaser = Purchaser(
                   purchaserID = Some("PURCH001"),
-                  isCompany = Some("YES"),
+                  isCompany = Some("yes"),
                   companyName = Some("Test Company")
                 )
 
@@ -638,7 +638,7 @@ class PurchaserServiceSpec extends SpecBase {
                     returnResourceRef = "testref",
                     purchaser = Some(Seq(singlePurchaser)),
                     companyDetails = Some(CompanyDetails(
-                      companyTypePensionfund = Some("YES")
+                      companyTypePensionfund = Some("yes")
                     ))
                   )))
 
@@ -658,13 +658,13 @@ class PurchaserServiceSpec extends SpecBase {
               "must redirect to WhoIsMakingThePurchase page" in {
                 val firstPurchaser = Purchaser(
                   purchaserID = Some("PURCH001"),
-                  isCompany = Some("YES"),
+                  isCompany = Some("yes"),
                   companyName = Some("First Company")
                 )
 
                 val secondPurchaser = Purchaser(
                   purchaserID = Some("PURCH002"),
-                  isCompany = Some("YES"),
+                  isCompany = Some("yes"),
                   companyName = Some("Second Company")
                 )
 
@@ -821,7 +821,7 @@ class PurchaserServiceSpec extends SpecBase {
               "must stay on the page" in {
                 val singlePurchaser = Purchaser(
                   purchaserID = Some("PURCH001"),
-                  isCompany = Some("YES"),
+                  isCompany = Some("yes"),
                   companyName = Some("Test Company")
                 )
 
@@ -847,7 +847,7 @@ class PurchaserServiceSpec extends SpecBase {
               "must continue" in {
                 val singlePurchaser = Purchaser(
                   purchaserID = Some("PURCH001"),
-                  isCompany = Some("YES"),
+                  isCompany = Some("yes"),
                   companyName = Some("Test Company")
                 )
 
@@ -857,7 +857,7 @@ class PurchaserServiceSpec extends SpecBase {
                     returnResourceRef = "testref",
                     purchaser = Some(Seq(singlePurchaser)),
                     companyDetails = Some(CompanyDetails(
-                      companyTypePensionfund = Some("YES")
+                      companyTypePensionfund = Some("yes")
                     ))
                   )))
 
@@ -875,13 +875,13 @@ class PurchaserServiceSpec extends SpecBase {
               "must continue" in {
                 val firstPurchaser = Purchaser(
                   purchaserID = Some("PURCH001"),
-                  isCompany = Some("YES"),
+                  isCompany = Some("yes"),
                   companyName = Some("First Company")
                 )
 
                 val secondPurchaser = Purchaser(
                   purchaserID = Some("PURCH002"),
-                  isCompany = Some("YES"),
+                  isCompany = Some("yes"),
                   companyName = Some("Second Company")
                 )
 
@@ -992,7 +992,7 @@ class PurchaserServiceSpec extends SpecBase {
     "continueIfAddingMainPurchaser" - {
       val incompletePurchaser = Purchaser(
         purchaserID = Some("PURCH001"),
-        isCompany = Some("YES"),
+        isCompany = Some("yes"),
         companyName = Some("Test Company")
       )
 
@@ -1979,7 +1979,7 @@ class PurchaserServiceSpec extends SpecBase {
         "when only one purchaser in the list" in {
           val singlePurchaser = Purchaser(
             purchaserID = Some("PURCH001"),
-            isCompany = Some("YES"),
+            isCompany = Some("yes"),
             companyName = Some("Test Company")
           )
 
@@ -1995,13 +1995,13 @@ class PurchaserServiceSpec extends SpecBase {
         "when multiple purchasers in the list" in {
           val purchaser1 = Purchaser(
             purchaserID = Some("PURCH001"),
-            isCompany = Some("YES"),
+            isCompany = Some("yes"),
             companyName = Some("Test Company")
           )
 
           val purchaser2 = Purchaser(
             purchaserID = Some("PURCH002"),
-            isCompany = Some("YES"),
+            isCompany = Some("yes"),
             companyName = Some("Test Company")
           )
 
@@ -2020,7 +2020,7 @@ class PurchaserServiceSpec extends SpecBase {
         "when the mainPurchaserId doesn't match any in the purchaser list" in {
           val purchaser = Purchaser(
             purchaserID = Some("PURCH001"),
-            isCompany = Some("YES"),
+            isCompany = Some("yes"),
             companyName = Some("Test Company")
           )
 
@@ -2049,7 +2049,7 @@ class PurchaserServiceSpec extends SpecBase {
         "when all company required fields are present with UTR number" in {
           val purchaser = Purchaser(
             purchaserID = Some("PURCH001"),
-            isCompany = Some("YES"),
+            isCompany = Some("yes"),
             companyName = Some("Test Company"),
             address1 = Some("123 Test Street")
           )
@@ -2071,7 +2071,7 @@ class PurchaserServiceSpec extends SpecBase {
         "when all company required fields are present with VAT reference" in {
           val purchaser = Purchaser(
             purchaserID = Some("PURCH001"),
-            isCompany = Some("YES"),
+            isCompany = Some("yes"),
             companyName = Some("Test Company"),
             address1 = Some("123 Test Street")
           )
@@ -2093,7 +2093,7 @@ class PurchaserServiceSpec extends SpecBase {
         "when all company required fields are present with other form of ID" in {
           val purchaser = Purchaser(
             purchaserID = Some("PURCH001"),
-            isCompany = Some("YES"),
+            isCompany = Some("yes"),
             companyName = Some("Test Company"),
             address1 = Some("123 Test Street"),
             registrationNumber = Some("ID12345"),
@@ -2115,10 +2115,10 @@ class PurchaserServiceSpec extends SpecBase {
         "when all individual required fields are present with NINO" in {
           val purchaser = Purchaser(
             purchaserID = Some("PURCH001"),
-            isCompany = Some("NO"),
+            isCompany = Some("no"),
             surname = Some("Test Name"),
             address1 = Some("123 Test Street"),
-            hasNino = Some("YES"),
+            hasNino = Some("yes"),
             nino = Some("AA123456A"),
             dateOfBirth = Some("1985-05-15")
           )
@@ -2135,10 +2135,10 @@ class PurchaserServiceSpec extends SpecBase {
         "when all individual required fields are present without NINO" in {
           val purchaser = Purchaser(
             purchaserID = Some("PURCH001"),
-            isCompany = Some("NO"),
+            isCompany = Some("no"),
             surname = Some("Test Name"),
             address1 = Some("123 Test Street"),
-            hasNino = Some("NO"),
+            hasNino = Some("no"),
             registrationNumber = Some("ID12345"),
             placeOfRegistration = Some("country")
           )
@@ -2157,7 +2157,7 @@ class PurchaserServiceSpec extends SpecBase {
         "when required data is missing for an individual purchaser" in {
           val purchaser = Purchaser(
             purchaserID = Some("PURCH001"),
-            isCompany = Some("NO"),
+            isCompany = Some("no"),
             address1 = Some("123 Test Street")
           )
 
@@ -2173,7 +2173,7 @@ class PurchaserServiceSpec extends SpecBase {
         "when required data is missing for a company purchaser" in {
           val purchaser = Purchaser(
             purchaserID = Some("PURCH001"),
-            isCompany = Some("YES"),
+            isCompany = Some("yes"),
             address1 = Some("123 Test Street")
           )
 
@@ -2189,7 +2189,7 @@ class PurchaserServiceSpec extends SpecBase {
         "when no main purchaser is found" in {
           val purchaser = Purchaser(
             purchaserID = Some("PURCH001"),
-            isCompany = Some("NO"),
+            isCompany = Some("no"),
             surname = Some("Test Name"),
             address1 = Some("123 Test Street")
           )
@@ -2209,7 +2209,7 @@ class PurchaserServiceSpec extends SpecBase {
             isCompany = None,
             surname = Some("Test Name"),
             address1 = Some("123 Test Street"),
-            hasNino = Some("YES")
+            hasNino = Some("yes")
           )
 
           val userAnswers = emptyUserAnswers
@@ -2279,19 +2279,19 @@ class PurchaserServiceSpec extends SpecBase {
       "must return all purchasers when they exist" in {
         val purchaser1 = Purchaser(
           purchaserID = Some("PURCH001"),
-          isCompany = Some("NO"),
+          isCompany = Some("no"),
           forename1 = Some("John"),
           surname = Some("Smith"),
           address1 = Some("123 Test Street"),
-          hasNino = Some("YES")
+          hasNino = Some("yes")
         )
         val purchaser2 = Purchaser(
           purchaserID = Some("PURCH002"),
-          isCompany = Some("NO"),
+          isCompany = Some("no"),
           forename1 = Some("Jane"),
           surname = Some("Doe"),
           address1 = Some("123 Test Street"),
-          hasNino = Some("YES")
+          hasNino = Some("yes")
         )
         val fullReturn = emptyFullReturn.copy(purchaser = Some(Seq(purchaser1, purchaser2)))
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
@@ -2455,11 +2455,11 @@ class PurchaserServiceSpec extends SpecBase {
 
     "isMainPurchaserCompany" - {
       "must return true if main purchaser is Company" in {
-        val purchaser = createPurchaser(isCompany = Some("YES"))
+        val purchaser = createPurchaser(isCompany = Some("yes"))
         service.isMainPurchaserCompany(purchaser) mustBe true
       }
       "must return false if main purchaser is Individual" in {
-        val purchaser = createPurchaser(isCompany = Some("NO"))
+        val purchaser = createPurchaser(isCompany = Some("no"))
         service.isMainPurchaserCompany(purchaser) mustBe false
       }
     }

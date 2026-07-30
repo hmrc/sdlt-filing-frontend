@@ -69,8 +69,8 @@ class PurchaserService {
   def isMainPurchaserComplete(userAnswers: UserAnswers): Boolean = {
     getMainPurchaser(userAnswers).exists { mainPurchaser =>
       mainPurchaser.isCompany match {
-        case Some("YES") => isMainCompanyPurchaserComplete(mainPurchaser, getCompanyDetails(userAnswers))
-        case Some("NO") => isMainIndividualPurchaserComplete(mainPurchaser)
+        case Some("yes") => isMainCompanyPurchaserComplete(mainPurchaser, getCompanyDetails(userAnswers))
+        case Some("no") => isMainIndividualPurchaserComplete(mainPurchaser)
         case _ => false
       }
     }
@@ -87,9 +87,9 @@ class PurchaserService {
   }
 
   private def isMainIndividualPurchaserComplete(mainPurchaser: Purchaser): Boolean = {
-    val hasCompleteFormOfId = if (mainPurchaser.hasNino.exists(_.equalsIgnoreCase("YES"))) {
+    val hasCompleteFormOfId = if (mainPurchaser.hasNino.exists(_.equalsIgnoreCase("yes"))) {
       mainPurchaser.nino.isDefined && mainPurchaser.dateOfBirth.isDefined
-    } else if (mainPurchaser.hasNino.exists(_.equalsIgnoreCase("NO"))) {
+    } else if (mainPurchaser.hasNino.exists(_.equalsIgnoreCase("no"))) {
       mainPurchaser.registrationNumber.isDefined && mainPurchaser.placeOfRegistration.isDefined
     } else {
       false

@@ -30,7 +30,7 @@ object TaxCalcRequestValidator {
   private val APR2021_RESIDENTIAL_DATE = LocalDate.of(2021, 4, 1)
   private val FIRST_TIME_BUYER_RELIEF  = "32"
   private val GRANT_OF_LEASE           = "L"
-  private val YES                      = "YES"
+  private val YES                      = "yes"
   private val ANNUAL_RENT_THRESHOLD    = 1000
 
   def buildRequest(userAnswers: UserAnswers): Either[BuildRequestError, SdltCalculationRequest] =
@@ -63,7 +63,7 @@ object TaxCalcRequestValidator {
       leaseDetails        = leaseDetails,
       relevantRentDetails = fullReturn.lease.map(buildRelevantRentDetails),
       firstTimeBuyer      = Some(if (transaction.reliefReason.contains(FIRST_TIME_BUYER_RELIEF)) "Yes" else "No"),
-      isLinked            = Some(isLinkedRaw.toUpperCase == YES),
+      isLinked            = Some(isLinkedRaw.toLowerCase == YES),
       interestTransferred = Some(interestCode),
       taxReliefDetails    = taxReliefDetails,
       isMultipleLand      = fullReturn.land.map(_.size > 1),
@@ -80,7 +80,7 @@ object TaxCalcRequestValidator {
     }
 
   private def getTaxReliefDetails(transaction: Transaction): Either[BuildRequestError, Option[TaxReliefDetails]] =
-    transaction.claimingRelief.map(_.toUpperCase).toRight(MissingTransactionAnswerError("claimingRelief")).flatMap {
+    transaction.claimingRelief.map(_.toLowerCase).toRight(MissingTransactionAnswerError("claimingRelief")).flatMap {
       case YES =>
         for {
           reliefReason <- transaction.reliefReason.toRight(MissingTransactionAnswerError("reliefReason"))
@@ -162,7 +162,7 @@ object TaxCalcRequestValidator {
       contractPre201603        = Some("Yes"),
       contractVariedPost201603 = Some("No"),
       relevantRent             =
-        if (lease.isAnnualRentOver1000.map(_.toUpperCase).contains(YES)) Some(ANNUAL_RENT_THRESHOLD)
+        if (lease.isAnnualRentOver1000.map(_.toLowerCase).contains(YES)) Some(ANNUAL_RENT_THRESHOLD)
         else Some(BigDecimal(0))
     )
 }

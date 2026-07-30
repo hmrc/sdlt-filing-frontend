@@ -31,7 +31,7 @@ object CloseCompanySummary {
     val isCompany: Boolean = answers.fullReturn
       .flatMap(_.purchaser)
       .getOrElse(Seq.empty)
-      .exists(_.isCompany.exists(_.equalsIgnoreCase("YES")))
+      .exists(_.isCompany.exists(_.equalsIgnoreCase("yes")))
 
     if (!isCompany) None
     else Some(
