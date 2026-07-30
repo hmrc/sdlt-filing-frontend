@@ -57,7 +57,7 @@ class ConfirmChangeOfMainPurchaserControllerSpec extends SpecBase with MockitoSu
                                forename2: Option[String] = None,
                                surname: Option[String] = None,
                                companyName: Option[String] = None,
-                               isCompany: Option[String] = Some("NO"),
+                               isCompany: Option[String] = Some("no"),
                                nextPurchaserID: Option[String] = None,
                                purchaserRef: Option[String] = Some("1")
                              ): Purchaser = Purchaser(
@@ -68,9 +68,9 @@ class ConfirmChangeOfMainPurchaserControllerSpec extends SpecBase with MockitoSu
     companyName = companyName,
     isCompany = isCompany,
     nextPurchaserID = nextPurchaserID,
-    isTrustee = Some("YES"),
-    isConnectedToVendor = Some("NO"),
-    isRepresentedByAgent = Some("NO"),
+    isTrustee = Some("yes"),
+    isConnectedToVendor = Some("no"),
+    isRepresentedByAgent = Some("no"),
     address1 = Some("123 Test Street"),
     address2 = None,
     address3 = None,

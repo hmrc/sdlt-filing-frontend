@@ -140,7 +140,7 @@ class PurchaserAgentService @Inject(
           emailAddress = returnAgent.email
         )
 
-        val authorised = returnAgent.isAuthorised.exists(_.equalsIgnoreCase("YES"))
+        val authorised = returnAgent.isAuthorised.exists(_.equalsIgnoreCase("yes"))
 
         val hasContactDetails = returnAgent.phone.isDefined || returnAgent.email.isDefined
 

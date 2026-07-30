@@ -140,6 +140,119 @@ class VendorOverviewControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
+      "must redirect to the incomplete overview when a vendor is missing its name" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        val incompleteVendor = createVendor("VEN002", name = None, vendorResourceRef = Some("REF002"))
+        val fullReturnWithIncomplete = FullReturn(stornId = testStorn,
+          returnResourceRef = testReturnRef, vendor = Some(Seq(incompleteVendor)), purchaser = None)
+
+        when(mockFullReturnService.getFullReturn(any[GetReturnByRefRequest])(any(), any()))
+          .thenReturn(Future.successful(fullReturnWithIncomplete))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, vendorOverviewRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorIncompleteOverviewController.onPageLoad().url
+        }
+      }
+
+      "must redirect to the incomplete overview when a vendor is missing address1" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        val incompleteVendor = Vendor(vendorID = Some("VEN002"), name = Some("Jones"), address1 = None, vendorResourceRef = Some("REF002"))
+        val fullReturnWithIncomplete = FullReturn(stornId = testStorn,
+          returnResourceRef = testReturnRef, vendor = Some(Seq(incompleteVendor)), purchaser = None)
+
+        when(mockFullReturnService.getFullReturn(any[GetReturnByRefRequest])(any(), any()))
+          .thenReturn(Future.successful(fullReturnWithIncomplete))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, vendorOverviewRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorIncompleteOverviewController.onPageLoad().url
+        }
+      }
+
+      "must redirect to the incomplete overview when at least one of several vendors is incomplete" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        val completeV   = createVendor("VEN001", name = Some("Smith"), vendorResourceRef = Some("REF001"))
+        val incompleteV = createVendor("VEN002", name = None, vendorResourceRef = Some("REF002"))
+        val fullReturnMixed = FullReturn(stornId = testStorn,
+          returnResourceRef = testReturnRef, vendor = Some(Seq(completeV, incompleteV)), purchaser = None)
+
+        when(mockFullReturnService.getFullReturn(any[GetReturnByRefRequest])(any(), any()))
+          .thenReturn(Future.successful(fullReturnMixed))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, vendorOverviewRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorIncompleteOverviewController.onPageLoad().url
+        }
+      }
+
+      "must render the overview and not redirect to the incomplete overview when every vendor is complete" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockFullReturnService.getFullReturn(any[GetReturnByRefRequest])(any(), any()))
+          .thenReturn(Future.successful(testFullReturn))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, vendorOverviewRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          redirectLocation(result) mustBe None
+        }
+      }
+
       "must calculate errorCalc correctly when vendors + purchasers > 98" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]

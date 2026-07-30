@@ -108,7 +108,7 @@ class PdfFieldWriter(form: PDAcroForm, ctx: String) extends LoggingUtil {
   /** Set all checkboxes where fields have been set as Yes */
   def selectMultiple(fields: Seq[(String, Option[String])]): Unit =
     fields.foreach {
-      case (fieldName, Some(value)) if value.equalsIgnoreCase("YES") =>
+      case (fieldName, Some(value)) if value.equalsIgnoreCase("yes") =>
         check(fieldName)
       case (fieldName, _) =>
         uncheck(fieldName)
@@ -121,7 +121,7 @@ class PdfFieldWriter(form: PDAcroForm, ctx: String) extends LoggingUtil {
                          outputFields: Seq[String]): Unit = {
     val selectedCodes =
       selections.collect {
-        case (Some(answer), code) if answer.equalsIgnoreCase("YES") => code.toString
+        case (Some(answer), code) if answer.equalsIgnoreCase("yes") => code.toString
       }
 
     outputFields.zipWithIndex.foreach {

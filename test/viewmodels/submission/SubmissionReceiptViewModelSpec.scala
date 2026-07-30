@@ -53,7 +53,7 @@ class SubmissionReceiptViewModelSpec extends SpecBase {
     }
 
     "return the company name for a company purchaser" in {
-      val companyPurchaser = completePurchaser1.copy(isCompany = Some("YES"), companyName = Some("Acme Ltd"))
+      val companyPurchaser = completePurchaser1.copy(isCompany = Some("yes"), companyName = Some("Acme Ltd"))
       val fullReturn = completeFullReturn.copy(purchaser = Some(Seq(companyPurchaser)))
 
       val viewModel = SubmissionReceiptViewModel(fullReturn).value
@@ -95,7 +95,7 @@ class SubmissionReceiptViewModelSpec extends SpecBase {
         Text("123, Baker Street, Marylebone, London, NW1 6XE"),
         Text("John David Smith"),
         Text("Johnson"),
-        Text("prelim.transactionType.conveyanceTransfer"),
+        Text("prelim.transactionType.grantOfLease"),
         Text("1 October 2024"),
         Text("SP/2024/001"),
         Text("TGL123456"),

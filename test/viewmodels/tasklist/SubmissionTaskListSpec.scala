@@ -332,7 +332,10 @@ class SubmissionTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = SubmissionTaskList.buildSubmissionRow(fullReturnComplete.copy(submission = None, lease = None))
+          val result = SubmissionTaskList.buildSubmissionRow(fullReturnComplete.copy(
+            submission = None,
+            transaction = Some(completeTransaction.copy(transactionDescription = Some("F"))), // ← lease not required
+            lease = None))
 
           result.status mustBe TLNotStarted
           result.hint mustBe None
@@ -503,7 +506,9 @@ class SubmissionTaskListSpec extends SpecBase {
       "must return true when lease is not required" in {
         val application = applicationBuilder().build()
 
-        val fullReturn = fullReturnComplete.copy(lease = None)
+        val fullReturn = fullReturnComplete.copy(
+          transaction = Some(completeTransaction.copy(transactionDescription = Some("F"))), // ← lease not required
+          lease = None)
         running(application) {
           SubmissionTaskList.canStartSubmission(fullReturn) mustBe true
         }

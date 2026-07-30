@@ -99,14 +99,14 @@ class CrossFlowProjectionsSpec extends SpecBase with Matchers {
     }
 
     "must prefer the session answer over the committed snapshot" in {
-      val ua = withCommittedTransaction(claimingRelief = Some("YES"))
+      val ua = withCommittedTransaction(claimingRelief = Some("yes"))
         .set(PurchaserEligibleToClaimReliefPage, false).success.value
 
       isClaimingRelief(ua) mustBe false
     }
 
     "must fall back to the committed snapshot when no session answer exists" in {
-      val ua = withCommittedTransaction(claimingRelief = Some("YES"))
+      val ua = withCommittedTransaction(claimingRelief = Some("yes"))
 
       isClaimingRelief(ua) mustBe true
     }
@@ -723,7 +723,7 @@ class CrossFlowProjectionsSpec extends SpecBase with Matchers {
     }
 
     "must accept 'yes' case-insensitively in committed flags ('YES')" in {
-      val ua = withCommittedTransaction(usedAsFactory = Some("YES"))
+      val ua = withCommittedTransaction(usedAsFactory = Some("yes"))
 
       useOfPropertyAnswered(ua) mustBe true
     }
@@ -761,7 +761,7 @@ class CrossFlowProjectionsSpec extends SpecBase with Matchers {
 
     "must return true when the session-level use of property has 'yes' with mixed casing" in {
       val sessionUse = TransactionUseOfLandOrPropertyAnswers(
-        factory             = "YES",
+        factory             = "yes",
         hotel               = "no",
         otherIndustrialUnit = "no",
         office              = "no",

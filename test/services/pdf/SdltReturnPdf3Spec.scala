@@ -272,8 +272,8 @@ class SdltReturnPdf3Spec extends SpecBase with MockitoSugar {
           titleNumber          = Some("AB123"),
           areaUnit             = Some("Hectares"),
           landArea             = Some("0.5"),
-          willSendPlanByPost   = Some("NO"),
-          mineralRights        = Some("YES")
+          willSendPlanByPost   = Some("no"),
+          mineralRights        = Some("yes")
         )
         val r = FullReturn(
           stornId           = "STORN999",

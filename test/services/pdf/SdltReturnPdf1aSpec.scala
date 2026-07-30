@@ -239,7 +239,7 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
       }
 
       "must fill yes checkbox when transaction restrictions is yes" in {
-        val r = withTransaction(Transaction(restrictionsAffectInterest = Some("YES")))
+        val r = withTransaction(Transaction(restrictionsAffectInterest = Some("yes")))
         val result = fill(r)
         readField(result, "transaction_restrictionsAffecting_yes") mustBe Some("Yes")
         readField(result, "transaction_restrictionsAffecting_no") mustBe Some("Off")
@@ -299,10 +299,10 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
 
       "must write forms of consideration as 2 digit codes" in {
         val r      = withTransaction(Transaction(
-          considerationCash = Some("YES"),
-          considerationDebt = Some("YES"),
-          considerationLand = Some("YES"),
-          considerationContingent = Some("YES")
+          considerationCash = Some("yes"),
+          considerationDebt = Some("yes"),
+          considerationLand = Some("yes"),
+          considerationContingent = Some("yes")
         ))
         val result = fill(r)
         readField(result, "calculation_totalConsideration_1") mustBe Some("30")
@@ -313,7 +313,7 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
 
       "must not write forms of consideration when not present or NO" in {
         val r = withTransaction(Transaction(
-          considerationCash = Some("NO")
+          considerationCash = Some("no")
         ))
         val result = fill(r)
         readField(result, "calculation_totalConsideration_1") mustBe Some("")
@@ -482,20 +482,20 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
         val r = FullReturn(
           stornId           = "STORN999",
           returnResourceRef = "RRF-999",
-          returnInfo        = Some(ReturnInfo(returnID = Some("RET999"), landCertForEachProp = Some("YES"))),
+          returnInfo        = Some(ReturnInfo(returnID = Some("RET999"), landCertForEachProp = Some("yes"))),
           submission        = Some(Submission(UTRN = Some("UTR-1234"))),
           transaction       = Some(Transaction(
             transactionDescription  = Some("Freehold"),
             effectiveDate           = Some("25/12/2024"),
             contractDate            = Some("01/11/2024"),
             totalConsideration      = Some("500000"),
-            isLinked                = Some("NO"),
-            restrictionsAffectInterest = Some("NO"),
-            isLandExchanged         = Some("NO"),
-            isPursuantToPreviousOption = Some("NO"),
-            claimingRelief          = Some("NO")
+            isLinked                = Some("no"),
+            restrictionsAffectInterest = Some("no"),
+            isLandExchanged         = Some("no"),
+            isPursuantToPreviousOption = Some("no"),
+            claimingRelief          = Some("no")
           )),
-          taxCalculation = Some(TaxCalculation(taxDue = Some("15000"), amountPaid = Some("15000"), includesPenalty = Some("NO"))),
+          taxCalculation = Some(TaxCalculation(taxDue = Some("15000"), amountPaid = Some("15000"), includesPenalty = Some("no"))),
           land           = Some(Seq(Land(
             propertyType         = Some("01"),
             houseNumber          = Some("1"),
@@ -505,7 +505,7 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
             titleNumber          = Some("AB123"),
             areaUnit             = Some("Hectares"),
             landArea             = Some("0.5"),
-            willSendPlanByPost   = Some("NO")
+            willSendPlanByPost   = Some("no")
           ))),
           vendor         = Some(Seq(Vendor(name = Some("Vendor One"), postcode = Some("ST2 2BB")))),
           returnAgent    = Some(Seq(ReturnAgent(name = Some("Agent Ltd"))))

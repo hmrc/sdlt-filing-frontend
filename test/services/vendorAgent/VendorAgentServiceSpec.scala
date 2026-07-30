@@ -57,7 +57,7 @@ class VendorAgentServiceSpec extends SpecBase {
           phone = Some("07123456789"),
           email = Some("assigned@example.com"),
           reference = Some("ABF1241"),
-          isAuthorised = Some("NO")
+          isAuthorised = Some("no")
         )
 
         val expectedAddress = Address(

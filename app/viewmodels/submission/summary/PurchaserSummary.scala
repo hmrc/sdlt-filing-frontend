@@ -50,8 +50,8 @@ object PurchaserSummary {
     implicit val lang: Lang = messages.lang
     val firstPurchaserKeySuffix = if isFirstPurchaser then ".first" else ""
     val purchaserNameOpt = purchaser.isCompany match {
-      case Some(isCompany) if isCompany.equalsIgnoreCase("YES") => purchaser.companyName
-      case Some(isCompany) if isCompany.equalsIgnoreCase("NO") => FullName.optionalFullName(purchaser.forename1, purchaser.forename2, purchaser.surname)
+      case Some(isCompany) if isCompany.equalsIgnoreCase("yes") => purchaser.companyName
+      case Some(isCompany) if isCompany.equalsIgnoreCase("no") => FullName.optionalFullName(purchaser.forename1, purchaser.forename2, purchaser.surname)
       case _ => None
     }
 
@@ -61,7 +61,7 @@ object PurchaserSummary {
           getOptSummaryRow(
             messages("purchaser.whoIsMakingThePurchase.checkYourAnswersLabel"),
             purchaser.isCompany.map(isCompany =>
-              if isCompany.equalsIgnoreCase("YES") then messages(s"purchaser.whoIsMakingThePurchase.Company.checkYourAnswersLabel")
+              if isCompany.equalsIgnoreCase("yes") then messages(s"purchaser.whoIsMakingThePurchase.Company.checkYourAnswersLabel")
               else messages(s"purchaser.whoIsMakingThePurchase.Individual.checkYourAnswersLabel")
             )
           ),

@@ -54,7 +54,7 @@ class CloseCompanyController @Inject()(
         case Some(fullReturn) if isResidentialProperty(fullReturn) =>
           val isCompany: Boolean = fullReturn.purchaser
             .getOrElse(Seq.empty)
-            .exists(_.isCompany.contains("YES"))
+            .exists(_.isCompany.contains("yes"))
 
           if (isCompany) {
             val preparedForm = request.userAnswers.get(CloseCompanyPage) match {

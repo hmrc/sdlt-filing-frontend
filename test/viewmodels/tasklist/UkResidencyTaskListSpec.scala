@@ -55,6 +55,13 @@ class UkResidencyTaskListSpec extends SpecBase {
 
   private val fullReturnMissingResidency = fullReturnComplete.copy(residency = None)
 
+  // A company purchaser whose non-UK-resident answer is given but nothing else — the first
+  // question isn't in the mandatory-checks list for this branch, so this exercises the
+  // "started off any answer" behaviour (In Progress even though no mandatory check is true).
+  private val fullReturnOnlyFirstQuestionAnswered = fullReturnComplete.copy(
+    purchaser = Some(Seq(completePurchaser1.copy(isCompany = Some("YES")))),
+    residency = Some(Residency(isNonUkResidents = Some("YES"), isCloseCompany = None, isCrownRelief = None)))
+
   "UkResidencyTaskList" - {
 
     ".build" - {
@@ -213,6 +220,27 @@ class UkResidencyTaskListSpec extends SpecBase {
       }
     }
 
+    ".hasStarted" - {
+
+      "must return false when residency is absent" in {
+        UkResidencyTaskList.hasStarted(fullReturnMissingResidency) mustBe false
+      }
+
+      "must return false when no residency answers are present" in {
+        val fr = fullReturnComplete.copy(
+          residency = Some(Residency(isNonUkResidents = None, isCloseCompany = None, isCrownRelief = None)))
+        UkResidencyTaskList.hasStarted(fr) mustBe false
+      }
+
+      "must return true when only the first residency question is answered" in {
+        UkResidencyTaskList.hasStarted(fullReturnOnlyFirstQuestionAnswered) mustBe true
+      }
+
+      "must return true when the residency is complete" in {
+        UkResidencyTaskList.hasStarted(fullReturnComplete) mustBe true
+      }
+    }
+
     ".buildUkResidencyRow" - {
 
       "must return TaskListSectionRow with correct tag id and link text" in {
@@ -256,7 +284,7 @@ class UkResidencyTaskListSpec extends SpecBase {
         }
       }
 
-      "must have Uk Residency Before You Start url and show 'In progress' status when some mandatory fields are missing" in {
+      "must have Uk Residency Check Your Answers url and show 'In progress' status when some mandatory fields are missing" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -264,7 +292,21 @@ class UkResidencyTaskListSpec extends SpecBase {
 
           val result = UkResidencyTaskList.buildUkResidencyRow(fullReturnSomeMandatoryFieldsMissing)
 
-          result.url mustBe controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad().url
+          result.url mustBe controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
+
+          result.status mustBe TLInProgress
+        }
+      }
+
+      "must show 'In progress' status and route to Check Your Answers when only the first residency question is answered" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = UkResidencyTaskList.buildUkResidencyRow(fullReturnOnlyFirstQuestionAnswered)
+
+          result.url mustBe controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
 
           result.status mustBe TLInProgress
         }
@@ -324,6 +366,21 @@ class UkResidencyTaskListSpec extends SpecBase {
           section.heading mustBe messagesInstance("tasklist.ukResidencyQuestion.heading")
           messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.ukResidencyQuestion.details")
           row.status mustBe TLCompleted
+          row.url mustBe controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
+        }
+      }
+
+      "must build a TaskListSection with an in progress row routed to Check Your Answers when residency is partial" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val section = UkResidencyTaskList.build(fullReturnSomeMandatoryFieldsMissing)
+          val row = section.rows.head
+
+          row.status mustBe TLInProgress
           row.url mustBe controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
         }
       }

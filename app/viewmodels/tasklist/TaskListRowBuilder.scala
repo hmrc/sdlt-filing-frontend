@@ -29,12 +29,16 @@ case class TaskListRowBuilder(messageKey: FullReturn => String,
                               invalid: FullReturn => Boolean = _ => false,
                               canEdit: TaskListState => Boolean = _ => false,
                               isOptional: Boolean = false,
-                              hint: FullReturn => Option[String]= _ => None) {
+                              hint: FullReturn => Option[String]= _ => None,
+                              started: Option[FullReturn => Boolean] = None) {
 
   def isComplete(fullReturn: FullReturn): Boolean = {
     val result = checks(fullReturn)
     result.nonEmpty && result.forall(identity)
   }
+
+  private def isInProgress(fullReturn: FullReturn): Boolean =
+    started.fold(checks(fullReturn).contains(true))(_(fullReturn))
 
   def prerequisitesMet(fullReturn: FullReturn): Boolean = {
     @tailrec
@@ -54,7 +58,7 @@ case class TaskListRowBuilder(messageKey: FullReturn => String,
     val status = preCheck match {
       case true if error(fullReturn) => TLFailed
       case true if isComplete(fullReturn) => if (invalid(fullReturn)) TLInvalid else TLCompleted
-      case true if checks(fullReturn).contains(true) => TLInProgress
+      case true if isInProgress(fullReturn) => TLInProgress
       case true if isOptional => TLOptional
       case true => TLNotStarted
       case _ => TLCannotStart

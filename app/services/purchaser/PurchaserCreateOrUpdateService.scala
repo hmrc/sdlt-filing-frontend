@@ -91,7 +91,7 @@ class PurchaserCreateOrUpdateService {
                                            purchaserResourceRef: String)
                                           (implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Unit] = {
     userAnswers.fullReturn.map { fullReturn =>
-      val isCompany = purchaser.isCompany.exists(_.equalsIgnoreCase("YES"))
+      val isCompany = purchaser.isCompany.exists(_.equalsIgnoreCase("yes"))
       val doesMainPurchaserExist = fullReturn.returnInfo.flatMap(_.mainPurchaserID).isDefined
       val isMainPurchaser = (fullReturn.returnInfo.flatMap(_.mainPurchaserID), purchaser.purchaserID) match {
         case (Some(mainId), Some(purchaserId)) => mainId.equals(purchaserId)

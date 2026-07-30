@@ -76,11 +76,11 @@ class UkResidencyCheckYourAnswersController @Inject()(
         val isCompany: Boolean = userAnswers.fullReturn
             .flatMap(_.purchaser)
             .getOrElse(Seq.empty)
-            .exists(_.isCompany.exists(_.equalsIgnoreCase("YES")))
+            .exists(_.isCompany.exists(_.equalsIgnoreCase("yes")))
         (for {
-          ua  <- userAnswers.set(NonUkResidentPurchaserPage, residency.isNonUkResidents.exists(_.equalsIgnoreCase("YES")))
-          ua2 <- if (isCompany) ua.set(CloseCompanyPage, residency.isCloseCompany.exists(_.equalsIgnoreCase("YES"))) else Success(ua)
-          ua3 <- ua2.set(CrownEmploymentReliefPage, residency.isCrownRelief.exists(_.equalsIgnoreCase("YES")))
+          ua  <- userAnswers.set(NonUkResidentPurchaserPage, residency.isNonUkResidents.exists(_.equalsIgnoreCase("yes")))
+          ua2 <- if (isCompany) ua.set(CloseCompanyPage, residency.isCloseCompany.exists(_.equalsIgnoreCase("yes"))) else Success(ua)
+          ua3 <- ua2.set(CrownEmploymentReliefPage, residency.isCrownRelief.exists(_.equalsIgnoreCase("yes")))
         } yield ua3) match {
           case Success(populated) =>
             sessionRepository.set(populated).map(_ => Ok(view(buildSummaryList(populated))))

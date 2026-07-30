@@ -93,7 +93,7 @@ class SdltReturnPdf1a @Inject()(
       w.yesNo(
         TRANSACTION_RESTRICTIONS_YES,
         TRANSACTION_RESTRICTIONS_NO,
-        t.restrictionsAffectInterest.map(_.equalsIgnoreCase("YES"))
+        t.restrictionsAffectInterest.map(_.equalsIgnoreCase("yes"))
       )
       val (details1, details2) = splitLines(t.restrictionDetails, 39)
       w.text(TRANSACTION_RESTRICTIONS_DETAILS_1, details1)
@@ -107,7 +107,7 @@ class SdltReturnPdf1a @Inject()(
       w.yesNo(
         TRANSACTION_LAND_EXCHANGED_YES,
         TRANSACTION_LAND_EXCHANGED_NO,
-        t.isLandExchanged.map(_.equalsIgnoreCase("YES"))
+        t.isLandExchanged.map(_.equalsIgnoreCase("yes"))
       )
       w.postcode(TRANSACTION_LAND_EXCHANGED_POSTCODE_1, TRANSACTION_LAND_EXCHANGED_POSTCODE_2, t.exchangedLandPostcode)
       w.text(TRANSACTION_LAND_EXCHANGED_HOUSE_NUMBER, t.exchangedLandHouseNumber)
@@ -118,14 +118,14 @@ class SdltReturnPdf1a @Inject()(
       w.yesNo(
         TRANSACTION_PURSUANT_TO_OPTION_YES,
         TRANSACTION_PURSUANT_TO_OPTION_NO,
-        t.isPursuantToPreviousOption.map(_.equalsIgnoreCase("YES"))
+        t.isPursuantToPreviousOption.map(_.equalsIgnoreCase("yes"))
       )
     }
   }
 
   private def fillTaxCalculationFields(w: PdfFieldWriter, r: FullReturn): Unit = {
     r.transaction.foreach { t =>
-      val claimingRelief = t.claimingRelief.map(_.equalsIgnoreCase("YES"))
+      val claimingRelief = t.claimingRelief.map(_.equalsIgnoreCase("yes"))
       w.yesNo(CALCULATION_CLAIMING_RELIEF_YES, CALCULATION_CLAIMING_RELIEF_NO, claimingRelief)
       w.text(CALCULATION_CLAIMING_RELIEF_REASON, t.reliefReason)
       w.text(CALCULATION_CLAIMING_RELIEF_SCHEME_NUMBER, t.reliefSchemeNumber)
@@ -149,7 +149,7 @@ class SdltReturnPdf1a @Inject()(
       w.yesNo(
         CALCULATION_LINKED_TRANSACTION_YES,
         CALCULATION_LINKED_TRANSACTION_NO,
-        t.isLinked.map(_.equalsIgnoreCase("YES"))
+        t.isLinked.map(_.equalsIgnoreCase("yes"))
       )
       w.wholeDecimal(CALCULATION_LINKED_TRANSACTION_TOTAL, t.totalConsiderationLinked)
     }
@@ -159,7 +159,7 @@ class SdltReturnPdf1a @Inject()(
       w.yesNo(
         CALCULATION_AMOUNT_PAID_INCLUDES_PENALTIES_YES,
         CALCULATION_AMOUNT_PAID_INCLUDES_PENALTIES_NO,
-        tc.includesPenalty.map(_.equalsIgnoreCase("YES"))
+        tc.includesPenalty.map(_.equalsIgnoreCase("yes"))
       )
     }
   }
@@ -191,7 +191,7 @@ class SdltReturnPdf1a @Inject()(
       w.yesNo(
         LEASE_STARTING_RENT_LATER_KNOWN_YES,
         LEASE_STARTING_RENT_LATER_KNOWN_NO,
-        l.laterRentKnown.map(_.equalsIgnoreCase("YES"))
+        l.laterRentKnown.map(_.equalsIgnoreCase("yes"))
       )
       w.wholeDecimal(LEASE_VAT_AMOUNT, l.VATAmount)
       w.wholeDecimal(LEASE_PREMIUM_PAID, l.totalPremiumPayable)
@@ -209,7 +209,7 @@ class SdltReturnPdf1a @Inject()(
     w.yesNo(
       LAND_CERTIFICATE_FOR_EACH_YES,
       LAND_CERTIFICATE_FOR_EACH_NO,
-      r.returnInfo.flatMap(_.landCertForEachProp).map(_.equalsIgnoreCase("YES"))
+      r.returnInfo.flatMap(_.landCertForEachProp).map(_.equalsIgnoreCase("yes"))
     )
     mainLand.foreach { land =>
       w.postcode(LAND_POSTCODE_1, LAND_POSTCODE_2, land.postcode)
@@ -237,7 +237,7 @@ class SdltReturnPdf1a @Inject()(
       w.yesNo(
         LAND_PLAN_ATTACHED_YES,
         LAND_PLAN_ATTACHED_NO,
-        land.willSendPlanByPost.map(_.equalsIgnoreCase("YES"))
+        land.willSendPlanByPost.map(_.equalsIgnoreCase("yes"))
       )
     }
   }
@@ -271,7 +271,7 @@ class SdltReturnPdf1a @Inject()(
     var codesIdx: Int = 0
     val codes = Array.fill(4)("")
     formsOfConsideration.foreach { case (formOfConsideration, code) =>
-      if (formOfConsideration.exists(_.equalsIgnoreCase("YES"))) {
+      if (formOfConsideration.exists(_.equalsIgnoreCase("yes"))) {
         codes(codesIdx) = code.toString
         codesIdx += 1
       }

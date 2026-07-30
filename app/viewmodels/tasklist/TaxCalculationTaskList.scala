@@ -66,7 +66,7 @@ object TaxCalculationTaskList {
   }
 
   private def isLeaseRequired(fullReturn: FullReturn): Boolean = {
-    LeaseHelper.isLeaseDefined(fullReturn)
+    LeaseHelper.isLeaseType(fullReturn)
   }
 
   private def isResidencyRequired(fullReturn: FullReturn): Boolean = {

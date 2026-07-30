@@ -429,14 +429,16 @@ class TaxCalculationTaskListSpec extends SpecBase {
       }
 
       "must show 'Not yet started' status and hide hint when lease is not required" in {
-
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
           implicit val messagesInstance: Messages = messages(application)
 
-          val result = TaxCalculationTaskList.buildTaxCalculationRow(fullReturnComplete.copy(taxCalculation = None, lease = None))
+          val result = TaxCalculationTaskList.buildTaxCalculationRow(fullReturnComplete.copy(
+            taxCalculation = None,
+            transaction = Some(completeTransaction.copy(transactionDescription = Some("F"))),   // ← lease not required
+            lease = None))
 
           result.status mustBe TLNotStarted
           result.hint mustBe None

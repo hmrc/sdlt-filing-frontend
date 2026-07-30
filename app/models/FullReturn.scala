@@ -137,6 +137,7 @@ object Purchaser {
             case Some(false) => Some("no")
             case None => None
           },
+          isRepresentedByAgent = existingPurchaser.flatMap(_.isRepresentedByAgent),
           title = None,
           surname = if (purchaserSessionQuestions.purchaserCurrent.whoIsMakingThePurchase == "Individual") {
             Some(purchaserSessionQuestions.purchaserCurrent.nameOfPurchaser.name)
@@ -463,7 +464,7 @@ object Transaction {
     Future.successful(Transaction(
       transactionID = existingTransaction.flatMap(_.transactionID),
       returnID = userAnswers.returnId,
-      claimingRelief = if (transactionSessionQuestions.purchaserEligibleToClaimRelief.getOrElse(false)) Some("yes") else Some("no"),
+      claimingRelief = transactionSessionQuestions.purchaserEligibleToClaimRelief.map(eligible => if (eligible) "yes" else "no"),
       reliefAmount = transactionSessionQuestions.claimingPartialReliefAmount,
       reliefReason = transactionSessionQuestions.reasonForRelief.map(_.toString),
       reliefSchemeNumber = transactionSessionQuestions.reasonForRelief match {
@@ -471,7 +472,7 @@ object Transaction {
         case Some(CharitiesRelief) => transactionSessionQuestions.charityRegisteredNumber
         case _ => None
       },
-      isLinked = if (transactionSessionQuestions.isLinked.getOrElse(false)) Some("yes") else Some("no"),
+      isLinked = transactionSessionQuestions.isLinked.map(linked => if (linked) "yes" else "no"),
       totalConsiderationLinked = transactionSessionQuestions.totalConsiderationOfLinkedTransaction,
       totalConsideration = transactionSessionQuestions.totalConsiderationOfTransaction,
       considerationBuild = transactionSessionQuestions.transactionFormsOfConsideration.map(_.buildingWorks),
@@ -497,7 +498,7 @@ object Transaction {
       usedAsShop = transactionSessionQuestions.transactionUseOfLandOrProperty.map(_.shop),
       usedAsWarehouse = transactionSessionQuestions.transactionUseOfLandOrProperty.map(_.warehouse),
       contractDate = transactionSessionQuestions.transactionDateOfContract.map(_.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))),
-      isDependantOnFutureEvent = if (transactionSessionQuestions.considerationsAffectedUncertain.getOrElse(false)) Some("yes") else Some("no"),
+      isDependantOnFutureEvent = transactionSessionQuestions.considerationsAffectedUncertain.map(uncertain => if (uncertain) "yes" else "no"),
       transactionDescription = transactionSessionQuestions.typeOfTransaction.map {
         case TransactionType.ConveyanceTransfer => "F"
         case TransactionType.GrantOfLease => "L"
@@ -511,20 +512,20 @@ object Transaction {
         case TransactionType.OtherTransaction => "O"
       },
       effectiveDate = transactionSessionQuestions.transactionEffectiveDate.map(_.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))),
-      isLandExchanged = if (transactionSessionQuestions.isLandOrPropertyExchanged.getOrElse(false)) Some("yes") else Some("no"),
+      isLandExchanged = transactionSessionQuestions.isLandOrPropertyExchanged.map(exchanged => if (exchanged) "yes" else "no"),
       exchangedLandHouseNumber = transactionSessionQuestions.transactionAddress.flatMap(_.houseNumber),
       exchangedLandAddress1    = transactionSessionQuestions.transactionAddress.map(_.line1),
       exchangedLandAddress2    = transactionSessionQuestions.transactionAddress.flatMap(_.line2),
       exchangedLandAddress3    = transactionSessionQuestions.transactionAddress.flatMap(_.line3),
       exchangedLandAddress4    = transactionSessionQuestions.transactionAddress.flatMap(_.line4),
       exchangedLandPostcode    = transactionSessionQuestions.transactionAddress.flatMap(_.postcode),
-      agreedToDeferPayment = if (transactionSessionQuestions.transactionDeferringPayment.getOrElse(false)) Some("yes") else Some("no"),
-      postTransRulingApplied = if (transactionSessionQuestions.cap1OrNsbc.getOrElse(false)) Some("yes") else Some("no"),
-      isPursuantToPreviousOption = if (transactionSessionQuestions.transactionExercisingAnOption.getOrElse(false)) Some("yes") else Some("no"),
-      restrictionsAffectInterest = if (transactionSessionQuestions.transactionRestrictionsCovenantsAndConditions.getOrElse(false)) Some("yes") else Some("no"),
+      agreedToDeferPayment = transactionSessionQuestions.transactionDeferringPayment.map(deferring => if (deferring) "yes" else "no"),
+      postTransRulingApplied = transactionSessionQuestions.cap1OrNsbc.map(applied => if (applied) "yes" else "no"),
+      isPursuantToPreviousOption = transactionSessionQuestions.transactionExercisingAnOption.map(exercising => if (exercising) "yes" else "no"),
+      restrictionsAffectInterest = transactionSessionQuestions.transactionRestrictionsCovenantsAndConditions.map(restrictions => if (restrictions) "yes" else "no"),
       restrictionDetails = transactionSessionQuestions.descriptionOfRestrictions,
       postTransRulingFollowed = transactionSessionQuestions.transactionRulingFollowed.map(_.toString),
-      isPartOfSaleOfBusiness = if (transactionSessionQuestions.saleOfBusiness.getOrElse(false)) Some("yes") else Some("no"),
+      isPartOfSaleOfBusiness = transactionSessionQuestions.saleOfBusiness.map(sale => if (sale) "yes" else "no"),
       totalConsiderationBusiness = transactionSessionQuestions.totalAssetsConsideration
     ))
   }

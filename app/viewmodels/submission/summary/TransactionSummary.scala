@@ -208,9 +208,9 @@ object TransactionSummary {
 
   private def getIsClaimingPartialReliefYesNo(transaction: Transaction)(implicit messages: Messages): Option[String] =
     (transaction.claimingRelief, transaction.reliefAmount) match {
-      case (Some(claimingRelief), Some(_)) if claimingRelief.equalsIgnoreCase("YES") =>
+      case (Some(claimingRelief), Some(_)) if claimingRelief.equalsIgnoreCase("yes") =>
         Some(messages("site.yes"))
-      case (Some(claimingRelief), None) if claimingRelief.equalsIgnoreCase("YES") =>
+      case (Some(claimingRelief), None) if claimingRelief.equalsIgnoreCase("yes") =>
         Some(messages("site.no"))
       case _ =>
         None

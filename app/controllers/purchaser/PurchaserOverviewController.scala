@@ -19,7 +19,7 @@ package controllers.purchaser
 import controllers.actions.*
 import forms.purchaser.PurchaserOverviewFormProvider
 import models.purchaser.PurchaserAndCompanyId
-import models.{GetReturnByRefRequest, Mode, NormalMode, UserAnswers}
+import models.{FullReturn, GetReturnByRefRequest, Mode, NormalMode, UserAnswers}
 import pages.purchaser.PurchaserOverviewRemovePage
 import play.api.Logging
 import play.api.data.Form
@@ -31,6 +31,7 @@ import services.purchaser.{PopulatePurchaserService, PurchaserService}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.Pagination
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.PurchaserPaginationHelper
+import viewmodels.tasklist.PurchaserTaskList
 import views.html.purchaser.PurchaserOverview
 
 import javax.inject.{Inject, Singleton}
@@ -68,29 +69,32 @@ class PurchaserOverviewController @Inject()(val controllerComponents: MessagesCo
             val userAnswers = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = request.userAnswers.storn)
             sessionRepository.set(userAnswers).map { _ =>
 
-              val vendorList = fullReturn.vendor.getOrElse(Seq.empty)
-              val purchaserList = fullReturn.purchaser.getOrElse(Seq.empty)
-              val errorCalc: Boolean = (vendorList.length + purchaserList.length) >= 99
-              val isMainPurchaserComplete = purchaserService.isMainPurchaserComplete(userAnswers)
+              incompletePurchasersRedirect(fullReturn).getOrElse {
+
+                val vendorList = fullReturn.vendor.getOrElse(Seq.empty)
+                val purchaserList = fullReturn.purchaser.getOrElse(Seq.empty)
+                val errorCalc: Boolean = (vendorList.length + purchaserList.length) >= 99
+                val isMainPurchaserComplete = purchaserService.isMainPurchaserComplete(userAnswers)
 
 
-              purchaserList match {
-                case Nil => Ok(view(None, None, None, postAction, form, NormalMode, errorCalc, isMainPurchaserComplete))
-                case purchasers =>
-                  purchaserPaginationHelper.generatePurchaserSummary(paginationIndex, purchasers, userAnswers)
-                    .fold(
-                      Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-                    ) { summary =>
-                      val numberOfPages: Int = purchaserPaginationHelper.getNumberOfPages(purchasers)
-                      val pagination: Option[Pagination] = purchaserPaginationHelper.generatePagination(paginationIndex, numberOfPages)
-                      val paginationText: Option[String] = purchaserPaginationHelper.getPaginationInfoText(paginationIndex, purchasers)
+                purchaserList match {
+                  case Nil => Ok(view(None, None, None, postAction, form, NormalMode, errorCalc, isMainPurchaserComplete))
+                  case purchasers =>
+                    purchaserPaginationHelper.generatePurchaserSummary(paginationIndex, purchasers, userAnswers)
+                      .fold(
+                        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+                      ) { summary =>
+                        val numberOfPages: Int = purchaserPaginationHelper.getNumberOfPages(purchasers)
+                        val pagination: Option[Pagination] = purchaserPaginationHelper.generatePagination(paginationIndex, numberOfPages)
+                        val paginationText: Option[String] = purchaserPaginationHelper.getPaginationInfoText(paginationIndex, purchasers)
 
-                      val mainPurchaserId = purchaserService.getMainPurchaser(userAnswers).flatMap(_.purchaserID)
-                      val mainPurchaserName = purchaserService.mainPurchaserName(userAnswers).map(_.fullName)
-                      val showChangeLink = !(purchaserList.size == 1 && mainPurchaserId.isDefined)
-                      Ok(view(Some(summary), pagination, paginationText, postAction, form,
-                        NormalMode, errorCalc, isMainPurchaserComplete, showChangeLink, mainPurchaserId, mainPurchaserName))
-                    }
+                        val mainPurchaserId = purchaserService.getMainPurchaser(userAnswers).flatMap(_.purchaserID)
+                        val mainPurchaserName = purchaserService.mainPurchaserName(userAnswers).map(_.fullName)
+                        val showChangeLink = !(purchaserList.size == 1 && mainPurchaserId.isDefined)
+                        Ok(view(Some(summary), pagination, paginationText, postAction, form,
+                          NormalMode, errorCalc, isMainPurchaserComplete, showChangeLink, mainPurchaserId, mainPurchaserName))
+                      }
+                }
               }
             }
           } recover {
@@ -100,6 +104,12 @@ class PurchaserOverviewController @Inject()(val controllerComponents: MessagesCo
         }
       }
     }
+  
+  private def incompletePurchasersRedirect(fullReturn: FullReturn): Option[Result] =
+    if (PurchaserTaskList.incompletePurchasers(fullReturn).nonEmpty)
+      Some(Redirect(controllers.purchaser.routes.PurchaserIncompleteOverviewController.onPageLoad()))
+    else
+      None
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getData andThen requireData andThen statusCheck).async { implicit request =>
@@ -163,6 +173,3 @@ class PurchaserOverviewController @Inject()(val controllerComponents: MessagesCo
       } yield Redirect(controllers.purchaser.routes.PurchaserRemoveController.onPageLoad())
     }
 }
-
-
-

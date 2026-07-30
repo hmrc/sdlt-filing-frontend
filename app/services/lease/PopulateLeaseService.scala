@@ -14,22 +14,6 @@
  * limitations under the License.
  */
 
-/*
- * Copyright 2026 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package services.lease
 
 import models.lease.*
@@ -40,7 +24,7 @@ import pages.lease.*
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import scala.util.{Failure, Success, Try}
+import scala.util.{Success, Try}
 
 class PopulateLeaseService {
 
@@ -57,23 +41,24 @@ class PopulateLeaseService {
       withAnnualRentVat                         <- annualRentVatPages(lease, withLeaseThousandPoundsThreshold)
       finalAnswers                              <- grantOfLeasePages(lease, withAnnualRentVat)
     } yield finalAnswers
-
+  
+  
   private def typeOfLeasePage(lease: Lease, userAnswers: UserAnswers): Try[UserAnswers] =
     TypeOfLease.parse(lease.leaseType) match {
       case Some(leaseType) => userAnswers.set(TypeOfLeasePage, leaseType)
-      case None            => Failure(new IllegalStateException("Lease is missing required lease type"))
+      case None            => Success(userAnswers)
     }
 
   private def leaseStartDatePage(lease: Lease, userAnswers: UserAnswers): Try[UserAnswers] =
     lease.contractStartDate match {
       case Some(dateStr) => Try(LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"))).flatMap(userAnswers.set(LeaseStartDatePage, _))
-      case None          => Failure(new IllegalStateException("Lease is missing required contract start date"))
+      case None          => Success(userAnswers)
     }
 
   private def leaseEndDatePage(lease: Lease, userAnswers: UserAnswers): Try[UserAnswers] =
     lease.contractEndDate match {
       case Some(dateStr) => Try(LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"))).flatMap(userAnswers.set(LeaseEndDatePage, _))
-      case None          => Failure(new IllegalStateException("Lease is missing required contract end date"))
+      case None          => Success(userAnswers)
     }
 
   private def rentFreePeriodPages(lease: Lease, userAnswers: UserAnswers): Try[UserAnswers] =
@@ -90,28 +75,28 @@ class PopulateLeaseService {
   private def annualStartingRentPage(lease: Lease, userAnswers: UserAnswers): Try[UserAnswers] =
     lease.startingRent match {
       case Some(startingRent) => userAnswers.set(AnnualStartingRentPage, startingRent)
-      case None               => Failure(new IllegalStateException("Lease is missing required starting rent"))
+      case None               => Success(userAnswers)
     }
 
   private def leaseStartingRentEndDatePage(lease: Lease, userAnswers: UserAnswers): Try[UserAnswers] =
     lease.startingRentEndDate match {
       case Some(dateStr) => Try(LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"))).flatMap(userAnswers.set(LeaseStartingRentEndDatePage, _))
-      case None          => Failure(new IllegalStateException("Lease is missing required starting rent end date"))
+      case None          => Success(userAnswers)
     }
 
   private def laterRentPage(lease: Lease, userAnswers: UserAnswers): Try[UserAnswers] =
     lease.laterRentKnown match {
       case Some(str) if str.equalsIgnoreCase("yes") => userAnswers.set(LaterRentPage, true)
-      case Some(str) if str.equalsIgnoreCase("no") => userAnswers.set(LaterRentPage, false)
-      case _ => Failure(new IllegalStateException("Lease is missing required later rent known"))
+      case Some(str) if str.equalsIgnoreCase("no")  => userAnswers.set(LaterRentPage, false)
+      case _                                        => Success(userAnswers)
     }
 
   private def leaseThousandPoundsThresholdPage(lease: Lease, userAnswers: UserAnswers): Try[UserAnswers] =
     lease.isAnnualRentOver1000 match {
       case Some(str) if str.equalsIgnoreCase("yes") => userAnswers.set(LeaseThousandPoundsThresholdPage, true)
-      case Some(str) if str.equalsIgnoreCase("no") => userAnswers.set(LeaseThousandPoundsThresholdPage, false)
-      case _ => Success(userAnswers)
-  }
+      case Some(str) if str.equalsIgnoreCase("no")  => userAnswers.set(LeaseThousandPoundsThresholdPage, false)
+      case _                                        => Success(userAnswers)
+    }
 
   private def annualRentVatPages(lease: Lease, userAnswers: UserAnswers): Try[UserAnswers] =
     lease.VATAmount match {
@@ -134,21 +119,20 @@ class PopulateLeaseService {
     } else {
       for {
         withTotalPremiumPayable <- leaseEnterTotalPremiumPayablePage(lease, userAnswers)
-        finalAnswers <- leaseNetPresentValuePage(lease, withTotalPremiumPayable)
+        finalAnswers            <- leaseNetPresentValuePage(lease, withTotalPremiumPayable)
       } yield finalAnswers
     }
   }
 
-  private def leaseEnterTotalPremiumPayablePage(lease: Lease, userAnswers: UserAnswers): Try[UserAnswers] = {
+  private def leaseEnterTotalPremiumPayablePage(lease: Lease, userAnswers: UserAnswers): Try[UserAnswers] =
     lease.totalPremiumPayable match {
       case Some(premiumAmount) => userAnswers.set(LeaseEnterTotalPremiumPayablePage, premiumAmount)
-      case None => Failure(new IllegalStateException("Lease is missing required total premium payable"))
+      case None                => Success(userAnswers)
     }
-  }
 
-  private def leaseNetPresentValuePage(lease :Lease, userAnswers: UserAnswers): Try[UserAnswers] =
+  private def leaseNetPresentValuePage(lease: Lease, userAnswers: UserAnswers): Try[UserAnswers] =
     lease.netPresentValue match {
       case Some(npv) => userAnswers.set(LeaseNetPresentValuePage, npv)
-      case None => Failure(new IllegalStateException("Lease is missing required net present value"))
+      case None      => Success(userAnswers)
     }
 }

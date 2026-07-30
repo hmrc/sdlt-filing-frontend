@@ -450,6 +450,14 @@ vendor.vendorOverview.noVendor.p1                                               
 vendor.vendorOverview.noVendor.button                                               = Add a vendor
 vendor.vendorOverview.error.required                                                = Select yes if you need to add another vendor
 
+vendorIncompleteOverview.title            = Incomplete vendors
+vendorIncompleteOverview.caption          = About the vendor
+vendorIncompleteOverview.heading.single   = You must update 1 vendor
+vendorIncompleteOverview.heading.multiple = You must update {0} vendors
+vendorIncompleteOverview.p1               = This section contains incomplete information. Select ‘Update’ to provide the missing details.
+vendorIncompleteOverview.p2               = You must update or remove all vendors listed.
+vendorIncompleteOverview.vendor           = Vendor {0}
+
 vendor.whoIsTheVendor.title                                                         = Who is the vendor? - About the vendor
 vendor.whoIsTheVendor.heading                                                       = Who is the vendor?
 vendor.whoIsTheVendor.Individual                                                    = An individual
@@ -904,6 +912,14 @@ purchaserAgent.removePurchaserAgent.checkYourAnswersLabel                       
 purchaserAgent.removePurchaserAgent.error.required                                  = Select yes if you want to remove {0}
 purchaserAgent.removePurchaserAgent.change.hidden                                   = Remove purchaser agent
 
+purchaserIncompleteOverview.title            = Incomplete purchasers
+purchaserIncompleteOverview.caption          = About the purchaser
+purchaserIncompleteOverview.heading.single   = You must update 1 purchaser
+purchaserIncompleteOverview.heading.multiple = You must update {0} purchasers
+purchaserIncompleteOverview.p1               = This section contains incomplete information. Select ‘Update’ to provide the missing details.
+purchaserIncompleteOverview.p2               = You must update or remove all purchasers listed.
+purchaserIncompleteOverview.purchaser        = Purchaser {0}
+
 vendorAgent.BeforeYouStart.title                                                    = Before you start - About the vendor’s agent
 vendorAgent.BeforeYouStart.p1                                                       = In this section, you need to tell us about the vendor’s agent.
 vendorAgent.BeforeYouStart.p2                                                       = We will ask for:
@@ -1110,6 +1126,14 @@ land.landOverview.summaryInfo.text                                              
 land.landOverview.noLand.p1                                                         = You have no land or properties listed. You must add the land or property to complete this return.
 land.landOverview.noLand.button                                                     = Add the land or property
 land.landOverview.error.required                                                    = Select yes if you need to add another area of land or property
+
+
+landIncompleteOverview.title            = Incomplete properties
+landIncompleteOverview.heading.single   = You must update 1 interest
+landIncompleteOverview.heading.multiple = You must update {0} interests
+landIncompleteOverview.p1               = This section contains incomplete information. Select ‘Update’ to provide the missing details.
+landIncompleteOverview.p2               = You must update or remove all interests listed.
+landIncompleteOverview.property         = Property {0}
 
 ukResidency.nonUkResidentPurchaser.title                                            = Residency status
 ukResidency.nonUkResidentPurchaser.heading                                          = Residency status

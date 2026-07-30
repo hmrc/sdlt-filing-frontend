@@ -137,7 +137,7 @@ class PopulateVendorServiceSpec extends SpecBase {
         result mustBe a[Success[_]]
       }
 
-      "must fail when address1 is missing" in {
+      "must populate session when address1 is missing, leaving the address unset" in {
         val vendor = Vendor(
           vendorID = Some("VEN005"),
           name = Some("Smith"),
@@ -148,12 +148,20 @@ class PopulateVendorServiceSpec extends SpecBase {
 
         val result = service.populateVendorInSession(vendor, "VEN-REF-005", userAnswers)
 
-        result mustBe a[Failure[_]]
-        result.failed.get mustBe an[IllegalStateException]
-        result.failed.get.getMessage must include("is missing required address line 1")
+        result mustBe a[Success[_]]
+
+        val updatedAnswers = result.get
+
+        updatedAnswers.get(VendorOrCompanyNamePage) mustBe Some(VendorName(
+          forename1 = None,
+          forename2 = None,
+          name = "Smith"
+        ))
+        updatedAnswers.get(VendorAddressPage) mustBe None
+        updatedAnswers.get(VendorOverviewVendorIdPage) mustBe Some("VEN005")
       }
 
-      "must fail when name is missing" in {
+      "must populate session when name is missing, leaving the name unset" in {
         val vendor = Vendor(
           vendorID = Some("VEN006"),
           name = None,
@@ -164,8 +172,19 @@ class PopulateVendorServiceSpec extends SpecBase {
 
         val result = service.populateVendorInSession(vendor, "VEN-REF-006", userAnswers)
 
-        result mustBe a[Failure[_]]
-        result.failed.get mustBe an[IllegalStateException]
+        result mustBe a[Success[_]]
+
+        val updatedAnswers = result.get
+
+        updatedAnswers.get(VendorOrCompanyNamePage) mustBe None
+        updatedAnswers.get(VendorAddressPage) mustBe Some(Address(
+          line1 = "123 High Street",
+          line2 = None,
+          line3 = None,
+          line4 = None,
+          postcode = None
+        ))
+        updatedAnswers.get(VendorOverviewVendorIdPage) mustBe Some("VEN006")
       }
 
       "must fail when vendorID is missing" in {
@@ -238,7 +257,7 @@ class PopulateVendorServiceSpec extends SpecBase {
           address3 = Some("City Center"),
           address4 = Some("Greater Area"),
           postcode = Some("EC1A 1BB"),
-          isRepresentedByAgent = Some("YES")
+          isRepresentedByAgent = Some("yes")
         )
 
         val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")

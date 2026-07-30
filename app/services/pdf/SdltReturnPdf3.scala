@@ -97,7 +97,7 @@ class SdltReturnPdf3 @Inject()(
     w.yesNo(
       LAND_PLAN_ATTACHED_YES,
       LAND_PLAN_ATTACHED_NO,
-      land.willSendPlanByPost.map(_.equalsIgnoreCase("YES"))
+      land.willSendPlanByPost.map(_.equalsIgnoreCase("yes"))
     )
     w.text(LAND_ESTATE_OR_INTEREST_TRANSFERRED, land.interestCreatedTransferred.map(_.substring(0, 2)))
   }

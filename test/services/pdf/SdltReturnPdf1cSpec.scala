@@ -135,7 +135,7 @@ class SdltReturnPdf1cSpec extends SpecBase with MockitoSugar {
 
   private val mainPurchaser: Purchaser = Purchaser(
     purchaserID          = Some("PUR001"),
-    isCompany            = Some("NO"),
+    isCompany            = Some("no"),
     title                = Some("Mr"),
     surname              = Some("Smith"),
     forename1            = Some("John"),
@@ -148,9 +148,9 @@ class SdltReturnPdf1cSpec extends SpecBase with MockitoSugar {
     postcode             = Some("SW1A 1AA"),
     phone                = Some("020 7946 0958"),
     nino                 = Some("AB 123456 C"),
-    isTrustee            = Some("YES"),
-    isConnectedToVendor  = Some("NO"),
-    isRepresentedByAgent = Some("YES"),
+    isTrustee            = Some("yes"),
+    isConnectedToVendor  = Some("no"),
+    isRepresentedByAgent = Some("yes"),
     hasNino              = Some("yes"),
     dateOfBirth          = Some("1985-05-15"),
     registrationNumber   = None,
@@ -261,7 +261,7 @@ class SdltReturnPdf1cSpec extends SpecBase with MockitoSugar {
 
       "must write company name and leave title and forenames blank for a company purchaser" in {
         val company = mainPurchaser.copy(
-          isCompany   = Some("YES"),
+          isCompany   = Some("yes"),
           companyName = Some("Acme Ltd"),
           title       = Some("Mr"),
           forename1   = Some("John")
@@ -288,25 +288,25 @@ class SdltReturnPdf1cSpec extends SpecBase with MockitoSugar {
       }
 
       "must set trustee yes checkbox when isTrustee is YES" in {
-        val result = fill(withPurchaser(mainPurchaser.copy(isTrustee = Some("YES"))))
+        val result = fill(withPurchaser(mainPurchaser.copy(isTrustee = Some("yes"))))
         readField(result, "purchaser_actingTrustee_yes") mustBe Some("Yes")
         readField(result, "purchaser_actingTrustee_no")  mustBe Some("Off")
       }
 
       "must set trustee no checkbox when isTrustee is NO" in {
-        val result = fill(withPurchaser(mainPurchaser.copy(isTrustee = Some("NO"))))
+        val result = fill(withPurchaser(mainPurchaser.copy(isTrustee = Some("no"))))
         readField(result, "purchaser_actingTrustee_yes") mustBe Some("Off")
         readField(result, "purchaser_actingTrustee_no")  mustBe Some("Yes")
       }
 
       "must set connected to vendor yes when isConnectedToVendor is YES" in {
-        val result = fill(withPurchaser(mainPurchaser.copy(isConnectedToVendor = Some("YES"))))
+        val result = fill(withPurchaser(mainPurchaser.copy(isConnectedToVendor = Some("yes"))))
         readField(result, "purchaser_connectedToVendor_yes") mustBe Some("Yes")
         readField(result, "purchaser_connectedToVendor_no")  mustBe Some("Off")
       }
 
       "must set connected to vendor no when isConnectedToVendor is NO" in {
-        val result = fill(withPurchaser(mainPurchaser.copy(isConnectedToVendor = Some("NO"))))
+        val result = fill(withPurchaser(mainPurchaser.copy(isConnectedToVendor = Some("no"))))
         readField(result, "purchaser_connectedToVendor_yes") mustBe Some("Off")
         readField(result, "purchaser_connectedToVendor_no")  mustBe Some("Yes")
       }
@@ -320,7 +320,7 @@ class SdltReturnPdf1cSpec extends SpecBase with MockitoSugar {
 
       "must set agent authorised yes when ReturnAgent.isAuthorised is YES" in {
         val r = withPurchaser(mainPurchaser).copy(
-          returnAgent = Some(Seq(ReturnAgent(agentType = Some("PURCHASER"), isAuthorised = Some("YES"))))
+          returnAgent = Some(Seq(ReturnAgent(agentType = Some("PURCHASER"), isAuthorised = Some("yes"))))
         )
         val result = fill(r)
         readField(result, "purchaser_agentAuthorised_yes") mustBe Some("Yes")
@@ -329,7 +329,7 @@ class SdltReturnPdf1cSpec extends SpecBase with MockitoSugar {
 
       "must set agent authorised no when ReturnAgent.isAuthorised is NO" in {
         val r = withPurchaser(mainPurchaser).copy(
-          returnAgent = Some(Seq(ReturnAgent(agentType = Some("PURCHASER"), isAuthorised = Some("NO"))))
+          returnAgent = Some(Seq(ReturnAgent(agentType = Some("PURCHASER"), isAuthorised = Some("no"))))
         )
         val result = fill(r)
         readField(result, "purchaser_agentAuthorised_yes") mustBe Some("Off")

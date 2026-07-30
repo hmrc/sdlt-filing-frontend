@@ -82,7 +82,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
     address3 = None,
     address4 = None,
     postcode = Some("L1 1AA"),
-    isCompany = Some("NO"),
+    isCompany = Some("no"),
     phone = Some("07123456789"),
     nino = Some("AB123456C"),
     dateOfBirth = Some("10/03/1992")
@@ -96,7 +96,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
     address3 = Some("Manchester"),
     address4 = Some("Greater Manchester"),
     postcode = Some("M1 1AA"),
-    isCompany = Some("YES"),
+    isCompany = Some("yes"),
     phone = Some("01234567890")
   )
 
@@ -266,8 +266,8 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           updatedAnswers.get(DoesPurchaserHaveNIPage) mustBe Some(true)
           updatedAnswers.get(PurchaserNationalInsurancePage) mustBe Some("AB123456C")
           updatedAnswers.get(PurchaserDateOfBirthPage) mustBe Some(LocalDate.of(1992, 03, 10))
-          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(false)
-          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(false)
+          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe None
+          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe None
         }
 
         "must successfully populate session for main purchaser company with phone number" in {
@@ -301,8 +301,8 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           updatedAnswers.get(PurchaserAndCompanyIdPage) mustBe Some(PurchaserAndCompanyId("PUR002", Some("COMP001")))
           updatedAnswers.get(PurchaserConfirmIdentityPage) mustBe Some(PurchaserConfirmIdentity.VatRegistrationNumber)
           updatedAnswers.get(RegistrationNumberPage) mustBe Some("VAT123")
-          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(false)
-          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(false)
+          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe None
+          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe None
           updatedAnswers.get(PurchaserCompanyTypeKnownPage) mustBe Some(true)
         }
 
@@ -312,7 +312,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             purchaserID = Some("PUR005"),
             companyName = Some("Bank Company Ltd"),
             address1 = Some("70 Financial Street"),
-            isCompany = Some("YES"),
+            isCompany = Some("yes"),
             phone = Some("04012345678")
           )
 
@@ -348,8 +348,8 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           ))
           updatedAnswers.get(PurchaserUTRPage) mustBe Some("UTR456")
           updatedAnswers.get(PurchaserAndCompanyIdPage) mustBe Some(PurchaserAndCompanyId("PUR005", Some("COMP001")))
-          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(false)
-          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(false)
+          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe None
+          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe None
           updatedAnswers.get(PurchaserCompanyTypeKnownPage) mustBe Some(true)
         }
 
@@ -365,7 +365,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             address3 = None,
             address4 = None,
             postcode = Some("L1 1AA"),
-            isCompany = Some("NO"),
+            isCompany = Some("no"),
             phone = None,
             nino = Some("AB123456C"),
             dateOfBirth = Some("10/03/1992")
@@ -399,8 +399,8 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           updatedAnswers.get(DoesPurchaserHaveNIPage) mustBe Some(true)
           updatedAnswers.get(PurchaserNationalInsurancePage) mustBe Some("AB123456C")
           updatedAnswers.get(PurchaserDateOfBirthPage) mustBe Some(LocalDate.of(1992, 03, 10 ))
-          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(false)
-          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(false)
+          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe None
+          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe None
         }
 
         "must successfully populate session for non-main purchaser company" in {
@@ -429,8 +429,8 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             line4 = Some("Greater Manchester"),
             postcode = Some("M1 1AA")
           ))
-          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(false)
-          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(false)
+          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe None
+          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe None
         }
 
         "must successfully populate session for main purchaser company without phone number" in {
@@ -443,7 +443,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             address3 = Some("Manchester"),
             address4 = Some("Greater Manchester"),
             postcode = Some("M1 1AA"),
-            isCompany = Some("YES"),
+            isCompany = Some("yes"),
             phone = None
           )
 
@@ -481,8 +481,8 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           updatedAnswers.get(PurchaserAndCompanyIdPage) mustBe Some(PurchaserAndCompanyId("PUR002", Some("COMP001")))
           updatedAnswers.get(PurchaserConfirmIdentityPage) mustBe Some(PurchaserConfirmIdentity.VatRegistrationNumber)
           updatedAnswers.get(RegistrationNumberPage) mustBe Some("VAT123")
-          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(false)
-          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(false)
+          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe None
+          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe None
         }
 
         "must successfully populate session for purchaser company without phone number" in {
@@ -495,7 +495,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             address3 = Some("Manchester"),
             address4 = Some("Greater Manchester"),
             postcode = Some("M1 1AA"),
-            isCompany = Some("YES"),
+            isCompany = Some("yes"),
             phone = None
           )
 
@@ -530,8 +530,8 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           updatedAnswers.get(AddPurchaserPhoneNumberPage) mustBe None
           updatedAnswers.get(EnterPurchaserPhoneNumberPage) mustBe None
           updatedAnswers.get(PurchaserAndCompanyIdPage) mustBe Some(PurchaserAndCompanyId("PUR003", None))
-          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(false)
-          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(false)
+          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe None
+          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe None
         }
 
         "must successfully populate session for non-main purchaser individual" in {
@@ -552,8 +552,8 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             forename2 = Some("Michael"),
             name = "Smith"
           ))
-          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(false)
-          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(false)
+          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe None
+          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe None
         }
 
         "must successfully populate session for main purchaser individual with registration number instead of NINO" in {
@@ -563,7 +563,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             forename1 = Some("Robert"),
             surname = Some("Johnson"),
             address1 = Some("50 Park Lane"),
-            isCompany = Some("NO"),
+            isCompany = Some("no"),
             phone = Some("02012345678"),
             registrationNumber = Some("REG123"),
             placeOfRegistration = Some("London")
@@ -590,8 +590,8 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           updatedAnswers.get(PurchaserFormOfIdIndividualPage) mustBe Some(
             PurchaserFormOfIdIndividual("REG123", "London")
           )
-          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(false)
-          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(false)
+          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe None
+          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe None
         }
 
         "must successfully populate session for main purchaser individual with no NINO or registration number" in {
@@ -601,7 +601,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             forename1 = Some("Alice"),
             surname = Some("Williams"),
             address1 = Some("60 Main Street"),
-            isCompany = Some("NO"),
+            isCompany = Some("no"),
             phone = Some("03012345678")
           )
 
@@ -622,8 +622,8 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           val updatedAnswers = result.get
 
           updatedAnswers.get(DoesPurchaserHaveNIPage).isDefined mustBe false
-          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(false)
-          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(false)
+          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe None
+          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe None
         }
 
         "must successfully populate session for main purchaser company with UTR" in {
@@ -632,7 +632,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             purchaserID = Some("PUR005"),
             companyName = Some("Bank Company Ltd"),
             address1 = Some("70 Financial Street"),
-            isCompany = Some("YES"),
+            isCompany = Some("yes"),
             phone = Some("04012345678")
           )
 
@@ -656,8 +656,8 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           val updatedAnswers = result.get
 
           updatedAnswers.get(PurchaserUTRPage) mustBe Some("UTR456")
-          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(false)
-          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(false)
+          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe None
+          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe None
           updatedAnswers.get(PurchaserTypeOfCompanyPage) mustBe Some(typeOfCompany)
           updatedAnswers.get(PurchaserCompanyTypeKnownPage) mustBe Some(true)
         }
@@ -668,7 +668,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             purchaserID = Some("PUR006"),
             companyName = Some("Partnership Ltd"),
             address1 = Some("80 Commerce Street"),
-            isCompany = Some("YES"),
+            isCompany = Some("yes"),
             phone = Some("05012345678"),
             registrationNumber = Some("COMREG789"),
             placeOfRegistration = Some("Birmingham")
@@ -697,8 +697,8 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           updatedAnswers.get(CompanyFormOfIdPage) mustBe Some(
             CompanyFormOfId("COMREG789", "Birmingham")
           )
-          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(false)
-          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(false)
+          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe None
+          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe None
         }
 
         "must successfully populate session with trustee and connected vendor flags" in {
@@ -706,12 +706,12 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             purchaserID = Some("PUR006"),
             companyName = Some("Partnership Ltd"),
             address1 = Some("80 Commerce Street"),
-            isCompany = Some("YES"),
+            isCompany = Some("yes"),
             phone = Some("05012345678"),
             registrationNumber = Some("COMREG789"),
             placeOfRegistration = Some("Birmingham"),
-            isTrustee = Some("YES"),
-            isConnectedToVendor = Some("YES")
+            isTrustee = Some("yes"),
+            isConnectedToVendor = Some("yes")
           )
 
           val fullReturnWithIndividualPurchaserTrusteeVendor: FullReturn =
@@ -739,12 +739,12 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             purchaserID = Some("PUR007"),
             companyName = Some("Partnership Ltd"),
             address1 = Some("80 Commerce Street"),
-            isCompany = Some("YES"),
+            isCompany = Some("yes"),
             phone = Some("05012345678"),
             registrationNumber = Some("COMREG789"),
             placeOfRegistration = Some("Birmingham"),
-            isTrustee = Some("YES"),
-            isConnectedToVendor = Some("NO")
+            isTrustee = Some("yes"),
+            isConnectedToVendor = Some("no")
           )
 
           val fullReturnWithIndividualPurchaserTrustee: FullReturn =
@@ -777,12 +777,12 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             address3 = None,
             address4 = None,
             postcode = Some("L1 1AA"),
-            isCompany = Some("NO"),
+            isCompany = Some("no"),
             phone = Some("07123456789"),
             nino = Some("AB123456C"),
             dateOfBirth = Some("10/03/1992"),
-            isTrustee = Some("NO"),
-            isConnectedToVendor = Some("YES")
+            isTrustee = Some("no"),
+            isConnectedToVendor = Some("yes")
           )
 
           val fullReturn = fullReturnWithIndividualMainPurchaser.copy(
@@ -815,12 +815,12 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             address3 = None,
             address4 = None,
             postcode = Some("L1 1AA"),
-            isCompany = Some("NO"),
+            isCompany = Some("no"),
             phone = Some("07123456789"),
             nino = Some("AB123456C"),
             dateOfBirth = Some("10/03/1992"),
-            isTrustee = Some("NO"),
-            isConnectedToVendor = Some("NO")
+            isTrustee = Some("no"),
+            isConnectedToVendor = Some("no")
           )
 
           val fullReturn = fullReturnWithIndividualMainPurchaser.copy(
@@ -855,8 +855,8 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
 
           val updatedAnswers = result.get
 
-          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(false)
-          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(false)
+          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe None
+          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe None
         }
 
         "must not leak trustee/vendor flags from another purchaser in the full return" in {
@@ -866,12 +866,12 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             surname = Some("Goodwin"),
             address1 = Some("39 Silkmore Crescent"),
             postcode = Some("ST17 4JL"),
-            isCompany = Some("NO"),
+            isCompany = Some("no"),
             phone = Some("07123456789"),
             nino = Some("AB123456C"),
             dateOfBirth = Some("10/03/1992"),
-            isTrustee = Some("YES"),
-            isConnectedToVendor = Some("YES")
+            isTrustee = Some("yes"),
+            isConnectedToVendor = Some("yes")
           )
 
           val secondPurchaser = Purchaser(
@@ -880,9 +880,9 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             surname = Some("Goodwin"),
             address1 = Some("39 Silkmore Crescent"),
             postcode = Some("ST17 4JL"),
-            isCompany = Some("NO"),
-            isTrustee = Some("NO"),
-            isConnectedToVendor = Some("NO")
+            isCompany = Some("no"),
+            isTrustee = Some("no"),
+            isConnectedToVendor = Some("no")
           )
 
           val fullReturn = emptyFullReturn.copy(
@@ -910,7 +910,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             purchaserID = Some("PUR008"),
             surname = None,
             address1 = None,
-            isCompany = Some("YES")
+            isCompany = Some("yes")
           )
 
           val companyDetails = CompanyDetails(companyDetailsID = Some("CD001"))
@@ -933,8 +933,8 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           val updatedAnswers = result.get
           updatedAnswers.get(PurchaserAndCompanyIdPage) mustBe Some(PurchaserAndCompanyId("PUR008", Some("CD001")))
           updatedAnswers.get(WhoIsMakingThePurchasePage) mustBe Some(WhoIsMakingThePurchase.Company)
-          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(false)
-          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(false)
+          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe None
+          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe None
         }
 
         "must successfully populate session with incomplete individual purchaser" in {
@@ -942,7 +942,7 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
             purchaserID = Some("PUR008"),
             surname = None,
             address1 = None,
-            isCompany = Some("NO")
+            isCompany = Some("no")
           )
 
           val fullReturnWithNoAddress: FullReturn =
@@ -960,8 +960,8 @@ class PopulatePurchaserServiceSpec extends SpecBase with MockitoSugar {
           val updatedAnswers = result.get
           updatedAnswers.get(PurchaserAndCompanyIdPage) mustBe Some(PurchaserAndCompanyId("PUR008", None))
           updatedAnswers.get(WhoIsMakingThePurchasePage) mustBe Some(WhoIsMakingThePurchase.Individual)
-          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe Some(false)
-          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe Some(false)
+          updatedAnswers.get(IsPurchaserActingAsTrusteePage) mustBe None
+          updatedAnswers.get(PurchaserAndVendorConnectedPage) mustBe None
         }
 
         "must fail when isCompany is missing" in {

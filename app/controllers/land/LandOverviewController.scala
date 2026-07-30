@@ -18,7 +18,7 @@ package controllers.land
 
 import controllers.actions.*
 import forms.land.LandOverviewFormProvider
-import models.{GetReturnByRefRequest, Mode, NormalMode, UserAnswers}
+import models.{FullReturn, GetReturnByRefRequest, Mode, NormalMode, UserAnswers}
 import pages.land.LandOverviewRemovePage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -30,6 +30,7 @@ import services.land.PopulateLandService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.Pagination
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.LandPaginationHelper
+import viewmodels.tasklist.LandTaskList
 import views.html.land.LandOverviewView
 
 import javax.inject.{Inject, Singleton}
@@ -68,25 +69,27 @@ class LandOverviewController @Inject() (
             val userAnswers = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = request.userAnswers.storn)
             sessionRepository.set(userAnswers).map { _ =>
 
-              crossFlowRedirect(userAnswers).getOrElse {
-                val landList = fullReturn.land.getOrElse(Seq.empty)
-                val errorCalc: Boolean = landList.length >= 99
+              incompleteLandsRedirect(fullReturn)
+                .orElse(crossFlowRedirect(userAnswers))
+                .getOrElse {
+                  val landList = fullReturn.land.getOrElse(Seq.empty)
+                  val errorCalc: Boolean = landList.length >= 99
 
-                landList match {
-                  case Nil => Ok(view(None, None, None, postAction, form, NormalMode, errorCalc))
-                  case lands =>
-                    landPaginationHelper.generateLandSummary(paginationIndex, lands, userAnswers)
-                      .fold(
-                        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-                      ) { summary =>
-                        val numberOfPages: Int = landPaginationHelper.getNumberOfPages(lands)
-                        val pagination: Option[Pagination] = landPaginationHelper.generatePagination(paginationIndex, numberOfPages)
-                        val paginationText: Option[String] = landPaginationHelper.getPaginationInfoText(paginationIndex, lands)
+                  landList match {
+                    case Nil => Ok(view(None, None, None, postAction, form, NormalMode, errorCalc))
+                    case lands =>
+                      landPaginationHelper.generateLandSummary(paginationIndex, lands, userAnswers)
+                        .fold(
+                          Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+                        ) { summary =>
+                          val numberOfPages: Int = landPaginationHelper.getNumberOfPages(lands)
+                          val pagination: Option[Pagination] = landPaginationHelper.generatePagination(paginationIndex, numberOfPages)
+                          val paginationText: Option[String] = landPaginationHelper.getPaginationInfoText(paginationIndex, lands)
 
-                        Ok(view(Some(summary), pagination, paginationText, postAction, form, NormalMode, errorCalc))
-                      }
+                          Ok(view(Some(summary), pagination, paginationText, postAction, form, NormalMode, errorCalc))
+                        }
+                  }
                 }
-              }
             }
           } recover {
           case ex =>
@@ -95,6 +98,12 @@ class LandOverviewController @Inject() (
         }
       }
   }
+  
+  private def incompleteLandsRedirect(fullReturn: FullReturn): Option[Result] =
+    if (LandTaskList.incompleteLands(fullReturn).nonEmpty)
+      Some(Redirect(controllers.land.routes.LandIncompleteOverviewController.onPageLoad()))
+    else
+      None
 
   private def crossFlowRedirect(ua: UserAnswers): Option[Result] = {
     val failures = crossFlow.landFailuresGrouped(ua)

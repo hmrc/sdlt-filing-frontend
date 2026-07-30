@@ -108,11 +108,9 @@ object PurchaserTaskList {
     val url =
       if (isPurchaserComplete(fullReturn))
         controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
-      else if (incompletePurchasers(fullReturn).nonEmpty) {
-        //TODO send to incomplete overview
-        controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
-//        controllers.purchaser.routes.PurchaserIncompleteOverviewController.onPageLoad().url
-      } else
+      else if (incompletePurchasers(fullReturn).nonEmpty)
+        controllers.purchaser.routes.PurchaserIncompleteOverviewController.onPageLoad().url
+      else
         controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
 
     TaskListRowBuilder(

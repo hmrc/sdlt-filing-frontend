@@ -66,7 +66,7 @@ class VendorAgentSessionQuestionsSpec extends AnyFreeSpec with Matchers with Eit
       ),
       "addVendorAgentContactDetails" -> false,
       "vendorAgentsAddReference" -> false,
-      "vendorAgentAuthorised" -> "YES"
+      "vendorAgentAuthorised" -> "yes"
     )
   }
 

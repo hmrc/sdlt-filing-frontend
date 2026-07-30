@@ -17,11 +17,15 @@
 package utils
 
 import models.FullReturn
+import models.prelimQuestions.TransactionType
+import models.prelimQuestions.TransactionType.{ConveyanceTransferLease, GrantOfLease}
 
 object LeaseHelper {
 
-  def isLeaseDefined(fullReturn: FullReturn): Boolean = {
-    fullReturn.lease.isDefined
-  }
+  def isLeaseType(fullReturn: FullReturn): Boolean =
+    TransactionType.parse(fullReturn.transaction.flatMap(_.transactionDescription)) match {
+      case Some(GrantOfLease | ConveyanceTransferLease) => true
+      case _                                            => false
+    }
 
 }

@@ -50,6 +50,8 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar with Be
     reset(mockPopulatePurchaserService)
   }
 
+  // Sets every common mandatory field (isCompany / address1 / isTrustee / isConnectedToVendor)
+  // so a purchaser built here is complete unless a test explicitly removes one.
   def createPurchaser(id: String,
                       forename1: Option[String] = None,
                       forename2: Option[String] = None,
@@ -60,7 +62,10 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar with Be
       forename1 = forename1,
       forename2 = forename2,
       surname = name,
-      address1 = Some("123 Street")
+      address1 = Some("123 Street"),
+      isCompany = Some("no"),
+      isTrustee = Some("no"),
+      isConnectedToVendor = Some("no")
     )
   }
 
@@ -150,7 +155,7 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar with Be
         }
       }
 
-      "must return OK and the correct view with notification banner when main purchaser is incomplete" in {
+      "must redirect to the incomplete overview when the main purchaser is incomplete" in {
         val fullReturn = testFullReturn.copy(
           purchaser = Some(Seq(testIncompletePurchaser)),
           returnInfo = Some(ReturnInfo(mainPurchaserID = Some(testid)))
@@ -172,8 +177,83 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar with Be
 
           val result = route(application, request).value
 
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserIncompleteOverviewController.onPageLoad().url
+        }
+      }
+
+      "must redirect to the incomplete overview when a purchaser is missing a common field" in {
+        val incompletePurchaser = testPurchaser.copy(purchaserID = Some("PUR002"), isTrustee = None)
+        val fullReturn = FullReturn(stornId = testStorn,
+          returnResourceRef = testReturnRef, vendor = None, purchaser = Some(Seq(incompletePurchaser)))
+
+        when(mockFullReturnService.getFullReturn(any[GetReturnByRefRequest])(any(), any()))
+          .thenReturn(Future.successful(fullReturn))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers.copy(fullReturn = Some(fullReturn))))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, purchaserOverviewRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserIncompleteOverviewController.onPageLoad().url
+        }
+      }
+
+      "must redirect to the incomplete overview when at least one of several purchasers is incomplete" in {
+        val completeP   = createPurchaser("PUR001", name = Some("Smith"))
+        val incompleteP = createPurchaser("PUR002", name = Some("Jones")).copy(isCompany = None)
+        val fullReturn = FullReturn(stornId = testStorn,
+          returnResourceRef = testReturnRef, vendor = None, purchaser = Some(Seq(completeP, incompleteP)))
+
+        when(mockFullReturnService.getFullReturn(any[GetReturnByRefRequest])(any(), any()))
+          .thenReturn(Future.successful(fullReturn))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers.copy(fullReturn = Some(fullReturn))))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, purchaserOverviewRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.purchaser.routes.PurchaserIncompleteOverviewController.onPageLoad().url
+        }
+      }
+
+      "must render the overview and not redirect to the incomplete overview when every purchaser is complete" in {
+        when(mockFullReturnService.getFullReturn(any[GetReturnByRefRequest])(any(), any()))
+          .thenReturn(Future.successful(testFullReturn))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, purchaserOverviewRoute)
+
+          val result = route(application, request).value
+
           status(result) mustEqual OK
-          contentAsString(result) must include("update John Michael Smith’s details")
+          redirectLocation(result) mustBe None
         }
       }
 
@@ -276,12 +356,19 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar with Be
       }
 
       "must redirect to ReturnTaskList when purchasers missing PurchaserId" in {
-        val purchaserWithoutRef = Purchaser(purchaserID = None, surname = Some("Jones"))
-        val fullReturnWithBadVendor = FullReturn(stornId = testStorn,
+        val purchaserWithoutRef = Purchaser(
+          purchaserID = None,
+          surname = Some("Jones"),
+          address1 = Some("123 Street"),
+          isCompany = Some("no"),
+          isTrustee = Some("no"),
+          isConnectedToVendor = Some("no")
+        )
+        val fullReturnWithBadPurchaser = FullReturn(stornId = testStorn,
           returnResourceRef = testReturnRef, vendor = None, purchaser = Some(Seq(purchaserWithoutRef)))
 
         when(mockFullReturnService.getFullReturn(any[GetReturnByRefRequest])(any(), any()))
-          .thenReturn(Future.successful(fullReturnWithBadVendor))
+          .thenReturn(Future.successful(fullReturnWithBadPurchaser))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         val application = applicationBuilder(userAnswers = Some(testUserAnswers))

@@ -17,31 +17,33 @@
 package utils
 
 import base.SpecBase
-import constants.FullReturnConstants.{completeLease, emptyFullReturn}
+import constants.FullReturnConstants.{completeLease, completeTransaction, emptyFullReturn}
 import models.Lease
-import utils.LeaseHelper.isLeaseDefined
+import utils.LeaseHelper.isLeaseType
 
 class LeaseHelperSpec extends SpecBase {
 
-  "LeaseHelper.isLeaseDefined" - {
+  "LeaseHelper.isLeaseType" - {
 
     "must return true when lease is complete" in {
       val fullReturn = emptyFullReturn.copy(
+        transaction = Some(completeTransaction),
         lease = Some(completeLease)
       )
-      isLeaseDefined(fullReturn) mustBe true
+      isLeaseType(fullReturn) mustBe true
     }
 
     "must return true when lease is defined but empty" in {
       val fullReturn = emptyFullReturn.copy(
+        transaction = Some(completeTransaction),
         lease = Some(Lease())
       )
-      isLeaseDefined(fullReturn) mustBe true
+      isLeaseType(fullReturn) mustBe true
     }
 
     "must return false when lease is not defined" in {
       val fullReturn = emptyFullReturn
-      isLeaseDefined(fullReturn) mustBe false
+      isLeaseType(fullReturn) mustBe false
     }
   }
 }

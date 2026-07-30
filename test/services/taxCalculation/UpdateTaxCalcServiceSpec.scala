@@ -152,7 +152,10 @@ class UpdateTaxCalcServiceSpec extends SpecBase with MockitoSugar with BeforeAnd
 
       "must handle totalConsideration with commas" in {
         val fullReturn = FullReturnConstants.completeFullReturn.copy(
-          transaction = Some(FullReturnConstants.completeTransaction.copy(totalConsideration = Some("1,500,000.50"))),
+          transaction = Some(FullReturnConstants.completeTransaction.copy(
+            transactionDescription = Some("F"),
+            totalConsideration = Some("1,500,000.50")
+          )),
           taxCalculation = Some(FullReturnConstants.completeTaxCalculation)
         )
         val ua = UserAnswers(userAnswersId, storn = fullReturn.stornId)

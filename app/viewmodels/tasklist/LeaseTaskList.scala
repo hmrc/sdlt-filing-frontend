@@ -18,6 +18,8 @@ package viewmodels.tasklist
 
 import config.FrontendAppConfig
 import models.FullReturn
+import models.prelimQuestions.TransactionType
+import models.prelimQuestions.TransactionType.{ConveyanceTransferLease, GrantOfLease}
 import play.api.i18n.Messages
 import services.crossflow.{ReturnSection, SectionStatus}
 
@@ -28,6 +30,12 @@ object LeaseTaskList {
 
   val noFailures: SectionStatus =
     SectionStatus(ReturnSection.Lease, hasFailures = false, ruleIds = Nil, messageKeys = Nil, targets = Nil)
+
+  def isLeaseApplicable(fullReturn: FullReturn): Boolean =
+    TransactionType.parse(fullReturn.transaction.flatMap(_.transactionDescription)) match {
+      case Some(GrantOfLease | ConveyanceTransferLease) => true
+      case _                                            => false
+    }
 
   def build(fullReturn: FullReturn, status: SectionStatus = noFailures)
            (implicit messages: Messages,
@@ -40,7 +48,7 @@ object LeaseTaskList {
     )
 
   def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
-    
+
     val generalLeaseFields = Seq(
       fullReturn.lease.exists(_.leaseType.isDefined),
       fullReturn.lease.exists(_.contractStartDate.isDefined),
@@ -51,9 +59,8 @@ object LeaseTaskList {
       fullReturn.lease.exists(_.laterRentKnown.isDefined)
     )
 
-    // if transaction type is Grant of Lease
     val isTransactionTypeGrantOfLease = fullReturn.transaction.exists(_.transactionDescription.contains("L"))
-    
+
     val grantOfLeaseFields = Seq(
       fullReturn.lease.exists(_.totalPremiumPayable.isDefined),
       fullReturn.lease.exists(_.isAnnualRentOver1000.isDefined),
@@ -70,18 +77,22 @@ object LeaseTaskList {
   def isLeaseComplete(fullReturn: FullReturn): Boolean = {
     mandatoryFieldsDefined(fullReturn).forall(identity)
   }
-  
+
+  def hasStarted(fullReturn: FullReturn): Boolean =
+    mandatoryFieldsDefined(fullReturn).contains(true)
 
   def leaseRowBuilder(fullReturn: FullReturn, status: SectionStatus)
                      (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
-    val cyaUrl   = controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad().url
-    val startUrl = controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
-    val errorUrl = controllers.lease.routes.LeaseSingleEntityController.onPageLoad().url
+    val cyaUrl    = controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad().url
+    val startUrl  = controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
+    val errorUrl  = controllers.lease.routes.LeaseSingleEntityController.onPageLoad().url
+    val resumeUrl = controllers.routes.ResumeSectionController.resume("lease", None).url
 
     val url =
-      if isLeaseComplete(fullReturn) &&status.hasFailures then errorUrl
+      if isLeaseComplete(fullReturn) && status.hasFailures then errorUrl
       else if isLeaseComplete(fullReturn) then cyaUrl
+      else if hasStarted(fullReturn) then resumeUrl
       else startUrl
 
     TaskListRowBuilder(

@@ -181,10 +181,12 @@ class TaskListSectionSpec extends SpecBase {
           implicit val hc: HeaderCarrier = HeaderCarrier()
           implicit val ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
           implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-          
-          val result = TaskListSections.allComplete(fullReturnComplete)
 
-          result mustBe true
+          TaskListSections.sections(fullReturnComplete).foreach { s =>
+            println(s">>> ${s.heading} complete=${s.isComplete} rows=${s.rows.map(r => (r.tagId, r.status))}")
+          }
+
+          TaskListSections.allComplete(fullReturnComplete) mustBe true
         }
       }
 

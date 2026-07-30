@@ -31,7 +31,7 @@ class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
 
   private val validPrelimReturnJsonComplete = Json.obj(
     "stornId" -> "12345",
-    "purchaserIsCompany" -> "YES",
+    "purchaserIsCompany" -> "yes",
     "surNameOrCompanyName" -> "Test Company",
     "houseNumber" -> 23,
     "addressLine1" -> "Test Street",
@@ -44,7 +44,7 @@ class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
 
   private val validPrelimReturnJsonMinimal = Json.obj(
     "stornId" -> "12345",
-    "purchaserIsCompany" -> "YES",
+    "purchaserIsCompany" -> "yes",
     "surNameOrCompanyName" -> "Test Company",
     "addressLine1" -> "Test Street",
     "transactionType" -> "O"
@@ -52,7 +52,7 @@ class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
 
   private val completePrelimReturn = PrelimReturn(
     stornId = "12345",
-    purchaserIsCompany = "YES",
+    purchaserIsCompany = "yes",
     surNameOrCompanyName = "Test Company",
     houseNumber = Some(23),
     addressLine1 = "Test Street",
@@ -65,7 +65,7 @@ class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
 
   private val minimalPrelimReturn = PrelimReturn(
     stornId = "12345",
-    purchaserIsCompany = "YES",
+    purchaserIsCompany = "yes",
     surNameOrCompanyName = "Test Company",
     houseNumber = None,
     addressLine1 = "Test Street",
@@ -88,7 +88,7 @@ class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
         val result = Json.fromJson[PrelimReturn](validPrelimReturnJsonComplete).asEither.value
 
         result.stornId mustBe "12345"
-        result.purchaserIsCompany mustBe "YES"
+        result.purchaserIsCompany mustBe "yes"
         result.surNameOrCompanyName mustBe "Test Company"
         result.houseNumber mustBe Some(23)
         result.addressLine1 mustBe "Test Street"
@@ -103,7 +103,7 @@ class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
         val result = Json.fromJson[PrelimReturn](validPrelimReturnJsonMinimal).asEither.value
 
         result.stornId mustBe "12345"
-        result.purchaserIsCompany mustBe "YES"
+        result.purchaserIsCompany mustBe "yes"
         result.surNameOrCompanyName mustBe "Test Company"
         result.houseNumber must not be defined
         result.addressLine1 mustBe "Test Street"
@@ -117,7 +117,7 @@ class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
       "must deserialize JSON with null optional fields" in {
         val json = Json.obj(
           "stornId" -> "12345",
-          "purchaserIsCompany" -> "YES",
+          "purchaserIsCompany" -> "yes",
           "surNameOrCompanyName" -> "Test Company",
           "houseNumber" -> JsNull,
           "addressLine1" -> "Test Street",
@@ -210,7 +210,7 @@ class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
         val json = Json.toJson(completePrelimReturn)
 
         (json \ "stornId").as[String] mustBe "12345"
-        (json \ "purchaserIsCompany").as[String] mustBe "YES"
+        (json \ "purchaserIsCompany").as[String] mustBe "yes"
         (json \ "surNameOrCompanyName").as[String] mustBe "Test Company"
         (json \ "houseNumber").asOpt[Int] mustBe Some(23)
         (json \ "addressLine1").as[String] mustBe "Test Street"
@@ -225,7 +225,7 @@ class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
         val json = Json.toJson(minimalPrelimReturn)
 
         (json \ "stornId").as[String] mustBe "12345"
-        (json \ "purchaserIsCompany").as[String] mustBe "YES"
+        (json \ "purchaserIsCompany").as[String] mustBe "yes"
         (json \ "surNameOrCompanyName").as[String] mustBe "Test Company"
         (json \ "addressLine1").as[String] mustBe "Test Street"
         (json \ "transactionType").as[String] mustBe "O"
@@ -271,7 +271,7 @@ class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
       "must round-trip with mixed optional fields" in {
         val mixedPrelimReturn = PrelimReturn(
           stornId = "ABC123",
-          purchaserIsCompany = "NO",
+          purchaserIsCompany = "no",
           surNameOrCompanyName = "John Doe",
           houseNumber = Some(42),
           addressLine1 = "Main Street",
@@ -350,7 +350,7 @@ class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
           storn = "TESTSTORN",
           returnId = None,
           data = Json.obj(
-            "purchaserIsIndividual" -> "YES",
+            "purchaserIsIndividual" -> "yes",
             "purchaserSurnameOrCompanyName" -> "Test Company",
             "purchaserAddress" -> Json.obj(
               "houseNumber" -> 23,
@@ -384,7 +384,7 @@ class PrelimReturnSpec extends AnyFreeSpec with Matchers with EitherValues with 
           storn = "TESTSTORN",
           returnId = None,
           data = Json.obj(
-            "purchaserIsIndividual" -> "YES",
+            "purchaserIsIndividual" -> "yes",
             "purchaserSurnameOrCompanyName" -> "Test Company",
             "purchaserAddress" -> Json.obj(
               "houseNumber" -> JsNull,

@@ -43,7 +43,6 @@ object UkResidencyTaskList {
     val isNonUkResidentsDefined = fullReturn.residency.exists(_.isNonUkResidents.isDefined)
     val isCloseCompanyDefined = fullReturn.residency.exists(_.isCloseCompany.isDefined)
     val isCrownReliefDefined = fullReturn.residency.exists(_.isCrownRelief.isDefined)
-
     (isCompany, isNonUkResidents) match {
       case (true, true) =>
         Seq(isCloseCompanyDefined, isCrownReliefDefined)
@@ -60,26 +59,31 @@ object UkResidencyTaskList {
     mandatoryFieldsDefined(fullReturn).forall(identity)
   }
 
+  def hasStarted(fullReturn: FullReturn): Boolean =
+    fullReturn.residency.exists(r =>
+      r.isNonUkResidents.isDefined || r.isCloseCompany.isDefined || r.isCrownRelief.isDefined)
+
   def ukResidencyRowBuilder(fullReturn: FullReturn)
-                                 (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
+                           (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
+    val cyaUrl    = controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
+    val startUrl  = controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad().url
 
-    val url = if (isResidencyComplete(fullReturn)) {
-        controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
-      } else {
-        controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad().url
-      }
+    val url =
+      if (hasStarted(fullReturn)) cyaUrl
+      else startUrl
 
     TaskListRowBuilder(
       canEdit = {
         case TLCompleted => true
         case _ => true
       },
-      messageKey = _ => "tasklist.ukResidencyQuestion.details",
-      url = _ => _ => url,
-      tagId = "ukResidencyQuestionRow",
-      checks = _ => mandatoryFieldsDefined(fullReturn),
-      prerequisites = _ => Seq()
+      messageKey    = _ => "tasklist.ukResidencyQuestion.details",
+      url           = _ => _ => url,
+      tagId         = "ukResidencyQuestionRow",
+      checks        = _ => mandatoryFieldsDefined(fullReturn),
+      prerequisites = _ => Seq(),
+      started       = Some(fr => hasStarted(fr))
     )
   }
 

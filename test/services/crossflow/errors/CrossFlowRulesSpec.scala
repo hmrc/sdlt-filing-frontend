@@ -38,7 +38,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
   private val mdrContractCutOff  = LocalDate.of(2024,  3,  7)
 
   private def answersWith(
-                           claimingRelief:   Option[String]          = Some("YES"),
+                           claimingRelief:   Option[String]          = Some("yes"),
                            reliefReason:     Option[ReasonForRelief] = None,
                            effectiveDate:    Option[LocalDate]       = None,
                            contractDate:     Option[String]          = None,
@@ -128,7 +128,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
     }
 
     "must not apply when relief is not being claimed" in {
-      val ua = answersWith(claimingRelief = Some("NO"), reliefReason = Some(ReasonForRelief.FirstTimeBuyer), propertyType = Some("02"))
+      val ua = answersWith(claimingRelief = Some("no"), reliefReason = Some(ReasonForRelief.FirstTimeBuyer), propertyType = Some("02"))
 
       FirstTimeBuyerRelief.validate(ua) mustBe None
     }
@@ -369,7 +369,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
     val ftb500PostResetStart = LocalDate.of(2025, 4, 1)
 
     "must not apply when not claiming relief" in {
-      val ua = answersWith(claimingRelief = Some("NO"), reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2020, 6, 1)), totalPremium = Some("600000.00"))
+      val ua = answersWith(claimingRelief = Some("no"), reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2020, 6, 1)), totalPremium = Some("600000.00"))
 
       F28FtbCap500k.validate(ua) mustBe None
     }
@@ -447,7 +447,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
     val ftb500PostResetStart = LocalDate.of(2025, 4, 1)
 
     "must not apply when not claiming relief" in {
-      val ua = answersWith(claimingRelief = Some("NO"), reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2023, 9, 24)), totalPremium = Some("700000.00"))
+      val ua = answersWith(claimingRelief = Some("no"), reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2023, 9, 24)), totalPremium = Some("700000.00"))
 
       F28FtbCap625k.validate(ua) mustBe None
     }
@@ -511,7 +511,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must fire when main land is '01 - Residential' but lease type is not R" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("01"),
         mainLandId     = Some("LND001"),
         leaseType      = Some("N")
@@ -522,7 +522,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must fire when main land is '04 - Additional residential' but lease type is not R" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("04"),
         mainLandId     = Some("LND001"),
         leaseType      = Some("M")
@@ -533,7 +533,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must pass when main land is '01' and lease type is R" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("01"),
         mainLandId     = Some("LND001"),
         leaseType      = Some("R")
@@ -544,7 +544,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must pass when main land is '04' and lease type is R" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("04"),
         mainLandId     = Some("LND001"),
         leaseType      = Some("R")
@@ -555,7 +555,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must not apply when main land is '02 - Mixed'" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("02"),
         mainLandId     = Some("LND001"),
         leaseType      = Some("M")
@@ -566,7 +566,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must not apply when main land is '03 - Non-residential'" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("03"),
         mainLandId     = Some("LND001"),
         leaseType      = Some("N")
@@ -577,7 +577,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must not apply when no main land is configured" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("01"),
         mainLandId     = None,
         leaseType      = Some("N")
@@ -588,7 +588,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must not apply when main land has no property type" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         mainLandId     = Some("LND001"),
         leaseType      = Some("N")
       )
@@ -601,7 +601,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must fire when main land is '02 - Mixed' but lease type is not M" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("02"),
         mainLandId     = Some("LND001"),
         leaseType      = Some("R")
@@ -612,7 +612,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must pass when main land is '02' and lease type is M" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("02"),
         mainLandId     = Some("LND001"),
         leaseType      = Some("M")
@@ -623,7 +623,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must not apply when main land is '01 - Residential'" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("01"),
         mainLandId     = Some("LND001"),
         leaseType      = Some("R")
@@ -634,7 +634,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must not apply when main land is '03 - Non-residential'" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("03"),
         mainLandId     = Some("LND001"),
         leaseType      = Some("N")
@@ -645,7 +645,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must not apply when main land is '04 - Additional residential'" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("04"),
         mainLandId     = Some("LND001"),
         leaseType      = Some("R")
@@ -659,7 +659,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must fire when main land is '03 - Non-residential' but lease type is not N" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("03"),
         mainLandId     = Some("LND001"),
         leaseType      = Some("R")
@@ -670,7 +670,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must fire when main land is '03' and lease type is M" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("03"),
         mainLandId     = Some("LND001"),
         leaseType      = Some("M")
@@ -681,7 +681,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must pass when main land is '03' and lease type is N" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("03"),
         mainLandId     = Some("LND001"),
         leaseType      = Some("N")
@@ -692,7 +692,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must not apply when main land is '01 - Residential'" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("01"),
         mainLandId     = Some("LND001"),
         leaseType      = Some("R")
@@ -703,7 +703,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must not apply when main land is '02 - Mixed'" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("02"),
         mainLandId     = Some("LND001"),
         leaseType      = Some("M")
@@ -723,7 +723,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
       val land1 = Land(landID = Some("LND001"), propertyType = Some("01"))
       val land2 = Land(landID = Some("LND002"), propertyType = Some("03"))
       val ua    = answersWith(
-        claimingRelief  = Some("NO"),
+        claimingRelief  = Some("no"),
         propertyType    = Some("01"),
         mainLandId      = Some("LND001"),
         additionalLands = Seq(land2),
@@ -738,7 +738,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
       val land1 = Land(landID = Some("LND001"), propertyType = Some("01"))
       val land2 = Land(landID = Some("LND002"), propertyType = Some("01"))
       val ua    = answersWith(
-        claimingRelief  = Some("NO"),
+        claimingRelief  = Some("no"),
         propertyType    = Some("01"),
         mainLandId      = Some("LND001"),
         additionalLands = Seq(land2),
@@ -753,7 +753,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
       val land1 = Land(landID = Some("LND001"), propertyType = Some("01"))
       val land2 = Land(landID = Some("LND002"), propertyType = Some("03"))
       val ua    = answersWith(
-        claimingRelief  = Some("NO"),
+        claimingRelief  = Some("no"),
         propertyType    = Some("01"),
         mainLandId      = Some("LND001"),
         additionalLands = Seq(land2),
@@ -767,7 +767,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
     "must not apply when there is only one land" in {
       val land1 = Land(landID = Some("LND001"), propertyType = Some("01"))
       val ua    = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("01"),
         mainLandId     = Some("LND001"),
         leaseType      = Some("R")
@@ -785,7 +785,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must fire when property type is '02 - Mixed' and no use-of-property flags are set" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("02"),
         mainLandId     = Some("LND001")
       )
@@ -795,7 +795,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must fire when property type is '03 - Non-residential' and no use-of-property flags are set" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("03"),
         mainLandId     = Some("LND001")
       )
@@ -805,7 +805,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must pass when property type is '02' and at least one use-of-property flag is 'yes'" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("02"),
         mainLandId     = Some("LND001"),
         usedAsOffice   = Some("yes")
@@ -816,7 +816,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must pass when property type is '03' and multiple use-of-property flags are 'yes'" in {
       val ua = answersWith(
-        claimingRelief  = Some("NO"),
+        claimingRelief  = Some("no"),
         propertyType    = Some("03"),
         mainLandId      = Some("LND001"),
         usedAsFactory   = Some("yes"),
@@ -829,7 +829,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must fire when property type is '02' and all use-of-property flags are 'no'" in {
       val ua = answersWith(
-        claimingRelief   = Some("NO"),
+        claimingRelief   = Some("no"),
         propertyType     = Some("02"),
         mainLandId       = Some("LND001"),
         usedAsFactory    = Some("no"),
@@ -846,7 +846,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must not apply when property type is '01 - Residential'" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("01"),
         mainLandId     = Some("LND001")
       )
@@ -856,7 +856,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must not apply when property type is '04 - Additional residential'" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = Some("04"),
         mainLandId     = Some("LND001")
       )
@@ -866,7 +866,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must not apply when no land is configured" in {
       val ua = answersWith(
-        claimingRelief = Some("NO"),
+        claimingRelief = Some("no"),
         propertyType   = None
       )
 
@@ -876,7 +876,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
     "must fire when at least one of multiple lands has a triggering property type (02) and use-of-property is unanswered" in {
       val additionalLand = Land(landID = Some("LND002"), propertyType = Some("01"))
       val ua = answersWith(
-        claimingRelief  = Some("NO"),
+        claimingRelief  = Some("no"),
         propertyType    = Some("02"),
         mainLandId      = Some("LND001"),
         additionalLands = Seq(additionalLand)
@@ -895,7 +895,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
     }
 
     "must produce no failures for a baseline (no relief claimed)" in {
-      val ua = answersWith(claimingRelief = Some("NO"))
+      val ua = answersWith(claimingRelief = Some("no"))
 
       F23Rules.all.flatMap(_.validate(ua)) mustBe empty
     }
@@ -908,7 +908,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
     }
 
     "must produce no failures for a baseline (no relief claimed)" in {
-      val ua = answersWith(claimingRelief = Some("NO"))
+      val ua = answersWith(claimingRelief = Some("no"))
 
       F28Rules.all.flatMap(_.validate(ua)) mustBe empty
     }
@@ -921,7 +921,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
     }
 
     "must produce no failures when no lease and no land are configured" in {
-      val ua = answersWith(claimingRelief = Some("NO"))
+      val ua = answersWith(claimingRelief = Some("no"))
 
       F30Rules.all.flatMap(_.validate(ua)) mustBe empty
     }

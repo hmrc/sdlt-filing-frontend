@@ -784,3 +784,17 @@ GET       /submit-your-return/return-is-being-submitted/query                   
 
 GET       /task-list/save-and-exit                                                                   controllers.TaskListSaveExitController.onPageLoad(mode: Mode = NormalMode)
 POST      /task-list/save-and-exit                                                                   controllers.TaskListSaveExitController.onSubmit(mode: Mode = NormalMode)
+
+GET       /about-the-land/incomplete                                                                 controllers.land.LandIncompleteOverviewController.onPageLoad()
+GET       /about-the-land/incomplete/update/:landId                                                  controllers.land.LandIncompleteOverviewController.updateLand(landId: String)
+GET       /about-the-land/incomplete/remove/:landId                                                  controllers.land.LandIncompleteOverviewController.removeLand(landId: String)
+
+GET       /about-the-purchaser/incomplete                                                            controllers.purchaser.PurchaserIncompleteOverviewController.onPageLoad()
+GET       /about-the-purchaser/incomplete/update/:purchaserId                                        controllers.purchaser.PurchaserIncompleteOverviewController.updatePurchaser(purchaserId: String)
+GET       /about-the-purchaser/incomplete/remove/:purchaserId                                        controllers.purchaser.PurchaserIncompleteOverviewController.removePurchaser(purchaserId: String)
+
+GET       /about-the-vendor/incomplete                                                               controllers.vendor.VendorIncompleteOverviewController.onPageLoad()
+GET       /about-the-vendor/incomplete/update/:vendorId                                              controllers.vendor.VendorIncompleteOverviewController.updateVendor(vendorId: String)
+GET       /about-the-vendor/incomplete/remove/:vendorId                                              controllers.vendor.VendorIncompleteOverviewController.removeVendor(vendorId: String)
+
+GET       /resume/:section                                                                           controllers.ResumeSectionController.resume(section: String, id: Option[String])

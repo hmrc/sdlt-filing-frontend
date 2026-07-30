@@ -58,9 +58,9 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
       landArea                   = Some("250.5"),
       areaUnit                   = Some("SquareMetres"),
       localAuthorityNumber       = Some("5900"),
-      mineralRights              = Some("NO"),
+      mineralRights              = Some("no"),
       NLPGUPRN                   = Some("10012345678"),
-      willSendPlanByPost         = Some("NO"),
+      willSendPlanByPost         = Some("no"),
       titleNumber                = Some("TGL12456"),
       landResourceRef            = landResourceRef,
       nextLandID                 = None,
@@ -170,6 +170,101 @@ class LandOverviewControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           contentAsString(result) must include("Baker Street")
+        }
+      }
+
+      "must redirect to the incomplete overview when a land is incomplete" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        val incompleteLand = createLand(testStorn, address = None, landResourceRef = Some(testReturnRef))
+        val fullReturnIncomplete = FullReturn(stornId = testStorn,
+          returnResourceRef = testReturnRef, land = Some(Seq(incompleteLand)))
+
+        when(mockFullReturnService.getFullReturn(any[GetReturnByRefRequest])(any(), any()))
+          .thenReturn(Future.successful(fullReturnIncomplete))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, landOverviewRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.land.routes.LandIncompleteOverviewController.onPageLoad().url
+        }
+      }
+
+      "must redirect to the incomplete overview when at least one of several lands is incomplete" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        val completeLand   = createLand("LND001", address = Some("Baker Street"), landResourceRef = Some("LND-REF-001"))
+        val incompleteLand = createLand("LND002", address = None, landResourceRef = Some("LND-REF-002"))
+        val fullReturnMixed = FullReturn(stornId = testStorn,
+          returnResourceRef = testReturnRef, land = Some(Seq(completeLand, incompleteLand)))
+
+        when(mockFullReturnService.getFullReturn(any[GetReturnByRefRequest])(any(), any()))
+          .thenReturn(Future.successful(fullReturnMixed))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, landOverviewRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.land.routes.LandIncompleteOverviewController.onPageLoad().url
+        }
+      }
+
+      "must redirect to the incomplete overview before cross-flow when a land is both incomplete and has cross-flow failures" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockSessionRepository = mock[SessionRepository]
+
+        val incompleteLand = createLand(testStorn, address = None, landResourceRef = Some(testReturnRef))
+        val fullReturnIncomplete = FullReturn(stornId = testStorn,
+          returnResourceRef = testReturnRef, land = Some(Seq(incompleteLand)))
+
+        when(mockFullReturnService.getFullReturn(any[GetReturnByRefRequest])(any(), any()))
+          .thenReturn(Future.successful(fullReturnIncomplete))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        // Cross-flow would fire, but completeness is checked first and must win.
+        val crossFlow = new CrossFlowValidationService(Set.empty, Set.empty) {
+          override def landFailuresGrouped(ua: UserAnswers): Seq[(Land, Seq[CrossFlowFailure])] =
+            Seq((incompleteLand, Seq(authorityCodeFailure)))
+        }
+
+        val application = applicationBuilder(userAnswers = Some(testUserAnswers))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CrossFlowValidationService].toInstance(crossFlow)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, landOverviewRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.land.routes.LandIncompleteOverviewController.onPageLoad().url
         }
       }
 

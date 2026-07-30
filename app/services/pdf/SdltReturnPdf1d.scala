@@ -109,7 +109,7 @@ class SdltReturnPdf1d @Inject()(
       w.yesNo(
         PURCHASER_ACTING_TRUSTEE_YES,
         PURCHASER_ACTING_TRUSTEE_NO,
-        purchaser.isTrustee.map(_.equalsIgnoreCase("YES"))
+        purchaser.isTrustee.map(_.equalsIgnoreCase("yes"))
       )
     }
     w.text(PURCHASER_ADDITIONALDETAILS_SDLT2, Some(sdlt2Count.toString))

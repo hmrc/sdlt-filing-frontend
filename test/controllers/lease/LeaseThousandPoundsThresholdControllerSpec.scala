@@ -56,7 +56,8 @@ class LeaseThousandPoundsThresholdControllerSpec extends SpecBase with MockitoSu
   val userAnswersConveyanceTransfer: UserAnswers = emptyUserAnswers.copy(
     fullReturn = Some(completeFullReturn.copy(
       submission = None,
-      transaction = Some(completeTransaction))))
+      transaction = Some(completeTransaction.copy(
+        transactionDescription = Some("F"))))))
 
 
   "LeaseThousandPoundsThreshold Controller" - {

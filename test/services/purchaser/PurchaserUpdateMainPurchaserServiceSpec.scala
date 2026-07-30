@@ -68,7 +68,7 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
                                forename2: Option[String] = None,
                                surname: Option[String] = None,
                                companyName: Option[String] = None,
-                               isCompany: Option[String] = Some("NO"),
+                               isCompany: Option[String] = Some("no"),
                                nextPurchaserID: Option[String] = None,
                                purchaserRef: Option[String] = Some("1")
                              ): Purchaser = Purchaser(
@@ -79,9 +79,9 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
     companyName = companyName,
     isCompany = isCompany,
     nextPurchaserID = nextPurchaserID,
-    isTrustee = Some("YES"),
-    isConnectedToVendor = Some("NO"),
-    isRepresentedByAgent = Some("NO"),
+    isTrustee = Some("yes"),
+    isConnectedToVendor = Some("no"),
+    isRepresentedByAgent = Some("no"),
     address1 = Some("123 Test Street"),
     address2 = None,
     address3 = None,
@@ -154,7 +154,7 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
         val oldMainPurchaserId = "PUR001"
         val newMainPurchaserId = "PUR002"
 
-        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("YES"))
+        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("yes"))
         val purchaser2 = createPurchaser(newMainPurchaserId, forename1 = Some("Anthos"), surname = Some("Smith"))
 
         val returnInfoWithOldMainPurchaser: ReturnInfo = completeReturnInfo.copy(mainPurchaserID = Some(oldMainPurchaserId))
@@ -220,7 +220,7 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
         val oldMainPurchaserId = "PUR001"
         val newMainPurchaserId = "PUR002"
 
-        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("YES"))
+        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("yes"))
         val purchaser2 = createPurchaser(newMainPurchaserId, forename1 = Some("Anthos"), surname = Some("Smith"))
 
         val returnInfoWithOldMainPurchaser: ReturnInfo = completeReturnInfo.copy(mainPurchaserID = Some(oldMainPurchaserId))
@@ -282,7 +282,7 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
         val oldMainPurchaserId = "PUR001"
         val newMainPurchaserId = "PUR002"
 
-        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("YES"))
+        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("yes"))
         val purchaser2 = createPurchaser(newMainPurchaserId, forename1 = Some("Anthos"), surname = Some("Smith"))
 
         val returnInfoWithOldMainPurchaser: ReturnInfo = completeReturnInfo.copy(mainPurchaserID = Some(oldMainPurchaserId))
@@ -314,7 +314,7 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
         val oldMainPurchaserId = "PUR001"
         val newMainPurchaserId = "PUR002"
 
-        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("YES"))
+        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("yes"))
         val purchaser2 = createPurchaser(newMainPurchaserId, forename1 = Some("Anthos"), surname = Some("Smith"))
 
         val returnInfoWithOldMainPurchaser: ReturnInfo = completeReturnInfo.copy(mainPurchaserID = Some(oldMainPurchaserId))
@@ -351,7 +351,7 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
         val oldMainPurchaserId = "PUR001"
         val newMainPurchaserId = "PUR002"
 
-        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("YES"))
+        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("yes"))
         val purchaser2 = createPurchaser(newMainPurchaserId, forename1 = Some("Anthos"), surname = Some("Smith"))
 
         val returnInfoWithOldMainPurchaser: ReturnInfo = completeReturnInfo.copy(mainPurchaserID = Some(oldMainPurchaserId))
@@ -389,7 +389,7 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
         val oldMainPurchaserId = "PUR001"
         val newMainPurchaserId = "PUR002"
 
-        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("YES"))
+        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("yes"))
         val purchaser2 = createPurchaser(newMainPurchaserId, forename1 = Some("Anthos"), surname = Some("Smith"))
 
         val returnInfoWithOldMainPurchaser: ReturnInfo = completeReturnInfo.copy(mainPurchaserID = None)
@@ -428,7 +428,7 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
         val newMainPurchaserId = "PUR002"
         val randomPurchaserId = "PUR099"
 
-        val purchaser1 = createPurchaser(randomPurchaserId, companyName = Some("Company"), isCompany = Some("YES"))
+        val purchaser1 = createPurchaser(randomPurchaserId, companyName = Some("Company"), isCompany = Some("yes"))
         val purchaser2 = createPurchaser(newMainPurchaserId, forename1 = Some("Anthos"), surname = Some("Smith"))
 
         val returnInfoWithOldMainPurchaser: ReturnInfo = completeReturnInfo.copy(mainPurchaserID = Some(oldMainPurchaserId))
@@ -468,7 +468,7 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
         val oldMainPurchaserId = "PUR001"
         val newMainPurchaserId = "PUR002"
 
-        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("YES"))
+        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("yes"))
         val purchaser2 = createPurchaser(newMainPurchaserId, forename1 = Some("Anthos"), surname = Some("Smith"))
 
         val returnInfoWithOldMainPurchaser: ReturnInfo = completeReturnInfo.copy(mainPurchaserID = Some(oldMainPurchaserId))
@@ -510,7 +510,7 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
         val oldMainPurchaserId = "PUR001"
         val newMainPurchaserId = "PUR002"
 
-        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("YES"))
+        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("yes"))
         val purchaser2 = createPurchaser(newMainPurchaserId, forename1 = Some("Anthos"), surname = Some("Smith"))
 
         val returnInfoWithOldMainPurchaser: ReturnInfo = completeReturnInfo.copy(mainPurchaserID = Some(oldMainPurchaserId))
@@ -556,7 +556,7 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
         val oldMainPurchaserId = "PUR001"
         val newMainPurchaserId = "PUR002"
 
-        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("YES"))
+        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("yes"))
         val purchaser2 = createPurchaser(newMainPurchaserId, forename1 = Some("Anthos"), surname = Some("Smith"))
 
         val returnInfoWithOldMainPurchaser: ReturnInfo = completeReturnInfo.copy(mainPurchaserID = Some(oldMainPurchaserId))
@@ -604,7 +604,7 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
         val oldMainPurchaserId = "PUR001"
         val newMainPurchaserId = "PUR002"
 
-        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("YES"))
+        val purchaser1 = createPurchaser(oldMainPurchaserId, companyName = Some("Company"), isCompany = Some("yes"))
         val purchaser2 = createPurchaser(newMainPurchaserId, forename1 = Some("Anthos"), surname = Some("Smith"))
 
         val returnInfoWithOldMainPurchaser: ReturnInfo = completeReturnInfo.copy(mainPurchaserID = Some(oldMainPurchaserId))

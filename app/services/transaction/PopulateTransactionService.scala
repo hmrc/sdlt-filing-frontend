@@ -44,6 +44,12 @@ class PopulateTransactionService {
       finalAnswers                        <- optionPage(transaction, withExchangeLandPages)
     } yield finalAnswers
 
+  private val ukDateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+  
+  private def parseDate(value: String): Option[LocalDate] =
+    Try(LocalDate.parse(value, ukDateFormat)).toOption
+      .orElse(Try(LocalDate.parse(value)).toOption)
+
   private def typeOfTransactionPage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] =
     TransactionType.parse(transaction.transactionDescription) match {
       case Some(transactionType) => userAnswers.set(TypeOfTransactionPage, transactionType)
@@ -51,17 +57,16 @@ class PopulateTransactionService {
     }
 
   private def effectiveDatePage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] =
-    transaction.effectiveDate match {
-      case Some(dateStr) => Try(LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"))).flatMap(userAnswers.set(TransactionEffectiveDatePage, _))
-      case None          => Success(userAnswers)
+    transaction.effectiveDate.flatMap(parseDate) match {
+      case Some(date) => userAnswers.set(TransactionEffectiveDatePage, date)
+      case None       => Success(userAnswers)
     }
 
   private def contractDatePages(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] =
-    transaction.contractDate match {
-      case Some(dateStr) =>
+    transaction.contractDate.flatMap(parseDate) match {
+      case Some(date) =>
         for {
           withAddDateOfContract <- userAnswers.set(TransactionAddDateOfContractPage, true)
-          date                  <- Try(LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy")))
           finalAnswers          <- withAddDateOfContract.set(TransactionDateOfContractPage, date)
         } yield finalAnswers
       case None =>
@@ -106,7 +111,7 @@ class PopulateTransactionService {
   }
 
   private def linkedTransactionPages(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
-    val isLinked = transaction.isLinked.exists(_.equalsIgnoreCase("YES"))
+    val isLinked = transaction.isLinked.exists(_.equalsIgnoreCase("yes"))
     if (isLinked) {
       for {
         withLinked   <- userAnswers.set(TransactionLinkedTransactionsPage, true)
@@ -121,26 +126,29 @@ class PopulateTransactionService {
   }
 
   private def reliefPages(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
-    val isClaimingRelief = transaction.claimingRelief.exists(_.equalsIgnoreCase("YES"))
-    val reliefReason = transaction.reliefReason
+    val isClaimingRelief = transaction.claimingRelief.exists(_.equalsIgnoreCase("yes"))
+    val reliefReason     = transaction.reliefReason
 
-     (isClaimingRelief, reliefReason) match {
-       case (true, Some(reliefReason)) if ReasonForRelief.isValid(reliefReason) =>
-       for {
-        withEligible      <- userAnswers.set(PurchaserEligibleToClaimReliefPage, true)
-        withReliefReason  <- withEligible.set(ReasonForReliefPage, ReasonForRelief.fromString(reliefReason))
-        withReliefSchemePages <- reliefSchemePages(transaction, withReliefReason)
-        finalAnswers      <- partialReliefPages(transaction, withReliefSchemePages)
-      } yield finalAnswers
-       case (true, _) =>
-         for {
-           finalAnswers <- userAnswers.set(PurchaserEligibleToClaimReliefPage, true)
-         } yield finalAnswers
-       case _ =>
-         for {
-        withEligible <- userAnswers.set(PurchaserEligibleToClaimReliefPage, false)
-        finalAnswers <- withEligible.set(TransactionPartialReliefPage, false)
-      } yield finalAnswers
+    (isClaimingRelief, reliefReason) match {
+
+      case (true, Some(reliefReason)) if ReasonForRelief.isValid(reliefReason) =>
+        for {
+          withEligible      <- userAnswers.set(PurchaserEligibleToClaimReliefPage, true)
+          withReliefReason  <- withEligible.set(ReasonForReliefPage, ReasonForRelief.fromString(reliefReason))
+          withReliefSchemePages <- reliefSchemePages(transaction, withReliefReason)
+          finalAnswers      <- partialReliefPages(transaction, withReliefSchemePages)
+        } yield finalAnswers
+
+      case (true, _) =>
+        for {
+          finalAnswers <- userAnswers.set(PurchaserEligibleToClaimReliefPage, true)
+        } yield finalAnswers
+
+      case _ =>
+        for {
+          withEligible <- userAnswers.set(PurchaserEligibleToClaimReliefPage, false)
+          finalAnswers <- withEligible.set(TransactionPartialReliefPage, false)
+        } yield finalAnswers
     }
   }
 
@@ -177,8 +185,8 @@ class PopulateTransactionService {
   }
 
   private def considerationDeferringPages(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
-    val considerationCheck: Boolean = transaction.isDependantOnFutureEvent.exists(_.equalsIgnoreCase("YES"))
-    val deferringCheck: Boolean = transaction.agreedToDeferPayment.exists(_.equalsIgnoreCase("YES"))
+    val considerationCheck: Boolean = transaction.isDependantOnFutureEvent.exists(_.equalsIgnoreCase("yes"))
+    val deferringCheck: Boolean = transaction.agreedToDeferPayment.exists(_.equalsIgnoreCase("yes"))
 
     for {
       withConsideration <- userAnswers.set(ConsiderationsAffectedUncertainPage, considerationCheck)
@@ -188,13 +196,13 @@ class PopulateTransactionService {
   }
 
   private def propertyUsePage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
-  TransactionUseOfLandOrPropertyAnswers.fromTransaction(transaction) match {
-    case Some(answers) =>
-      userAnswers.set(TransactionUseOfLandOrPropertyPage, answers)
-    case _ =>
-      Success(userAnswers)
+    TransactionUseOfLandOrPropertyAnswers.fromTransaction(transaction) match {
+      case Some(answers) =>
+        userAnswers.set(TransactionUseOfLandOrPropertyPage, answers)
+      case _ =>
+        Success(userAnswers)
+    }
   }
-}
 
   private def includedSaleBusinessPage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
     TransactionSaleOfBusinessAssetsAnswers.fromTransaction(transaction) match {
@@ -266,8 +274,8 @@ class PopulateTransactionService {
     }
 
   private def optionPage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
-    val isPursuant = transaction.isPursuantToPreviousOption.exists(_.equalsIgnoreCase("YES"))
-    
+    val isPursuant = transaction.isPursuantToPreviousOption.exists(_.equalsIgnoreCase("yes"))
+
     if (isPursuant) {
       userAnswers.set(TransactionExercisingAnOptionPage, true)
     } else {
