@@ -53,7 +53,6 @@ object LeaseTaskList {
       fullReturn.lease.exists(_.leaseType.isDefined),
       fullReturn.lease.exists(_.contractStartDate.isDefined),
       fullReturn.lease.exists(_.contractEndDate.isDefined),
-      fullReturn.lease.exists(_.rentFreePeriod.isDefined),
       fullReturn.lease.exists(_.startingRent.isDefined),
       fullReturn.lease.exists(_.startingRentEndDate.isDefined),
       fullReturn.lease.exists(_.laterRentKnown.isDefined)
