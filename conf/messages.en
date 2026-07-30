@@ -2242,6 +2242,11 @@ submission.submissionFailed.p4.linkText                                         
 submission.submissionFailed.link1                                                   = View your return
 submission.submissionFailed.link2                                                   = Return to your Stamp Taxes Online account
 
+submission.resubmitYourReturn.heading                                               = Resubmit your return
+submission.resubmitYourReturn.p1                                                    = There was a problem with your submission.
+submission.resubmitYourReturn.p2                                                    = You must {0}
+submission.resubmitYourReturn.p2.linkText                                           = confirm and resubmit to file this return.
+
 submission.submissionReceipt.title                                                  = Submission receipt and electronic SDLT5 certificate
 submission.submissionReceipt.heading                                                = Submission Receipt and Electronic SDLT 5 Certificate
 submission.submissionReceipt.p1                                                     = The Stamp Duty Land Tax return for {0} was submitted to HMRC at {1} on {2}.

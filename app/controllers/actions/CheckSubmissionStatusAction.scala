@@ -38,12 +38,12 @@ class CheckSubmissionStatusAction @Inject()(
       case _ if(!submissionExists) =>
         Future.successful(None)
 
-      case _ if submissionExists && submissionStatus.isEmpty => //TODO update to resubmission page once created
-        Future.successful(Some(Redirect(controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad())))
-        
-      case Some(ReSubmit) => //TODO update to resubmission page once created
-        Future.successful(Some(Redirect(controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad())))
-        
+      case _ if submissionExists && submissionStatus.isEmpty =>
+        Future.successful(Some(Redirect(controllers.submission.routes.ResubmitYourReturnController.onPageLoad)))
+
+      case Some(ReSubmit) =>
+        Future.successful(Some(Redirect(controllers.submission.routes.ResubmitYourReturnController.onPageLoad)))
+
       case Some(AwaitingConfirmation) =>
         Future.successful(Some(Redirect(controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad())))
 
@@ -53,8 +53,8 @@ class CheckSubmissionStatusAction @Inject()(
       case Some(SubmissionFailed) =>
         Future.successful(Some(Redirect(controllers.submission.routes.SubmissionFailedController.onPageLoad())))
 
-      case _ => //TODO update to resubmission page once created
-        Future.successful(Some(Redirect(controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad())))
+      case _ =>
+        Future.successful(Some(Redirect(controllers.submission.routes.ResubmitYourReturnController.onPageLoad)))
     }
   }
 }

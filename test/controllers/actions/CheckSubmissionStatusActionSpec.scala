@@ -49,7 +49,7 @@ class CheckSubmissionStatusActionSpec extends SpecBase with MockitoSugar {
       result mustBe None
     }
 
-    "must redirect to submission before you start submission exists but submission status is empty" in {
+    "must redirect to resubmit your return page when submission exists but submission status is empty" in {
       val fullReturnWithNoSubmittedStatus = completeFullReturn.copy(
         submission = Some(completeSubmission.copy(
           submissionStatus = None
@@ -66,10 +66,10 @@ class CheckSubmissionStatusActionSpec extends SpecBase with MockitoSugar {
       redirectResult.header.status mustEqual SEE_OTHER
 
       redirectResult.header.headers("Location") mustEqual
-        controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad().url
+        controllers.submission.routes.ResubmitYourReturnController.onPageLoad.url
     }
 
-    "must redirect to submission before you start when submission status is STARTED" in {
+    "must redirect to resubmit your return page when submission status is STARTED" in {
       val fullReturn = completeFullReturn.copy(
         submission = Some(completeSubmission.copy(
           submissionStatus = Some("STARTED")
@@ -86,7 +86,7 @@ class CheckSubmissionStatusActionSpec extends SpecBase with MockitoSugar {
       redirectResult.header.status mustEqual SEE_OTHER
 
       redirectResult.header.headers("Location") mustEqual
-        controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad().url
+        controllers.submission.routes.ResubmitYourReturnController.onPageLoad.url
     }
 
     "must redirect to submission awaiting confirmation page when submission status is ACCEPTED" in {
@@ -185,7 +185,7 @@ class CheckSubmissionStatusActionSpec extends SpecBase with MockitoSugar {
         controllers.submission.routes.SubmissionFailedController.onPageLoad().url
     }
 
-    "must redirect to submission before you start when status does not match defined cases" in {
+    "must redirect to resubmit your return page when status does not match defined cases" in {
       val fullReturnWithSubmittedStatus = completeFullReturn.copy(
         submission = Some(completeSubmission.copy(
           submissionStatus = Some("BANANA")
@@ -201,7 +201,7 @@ class CheckSubmissionStatusActionSpec extends SpecBase with MockitoSugar {
       redirectResult.header.status mustEqual SEE_OTHER
 
       redirectResult.header.headers("Location") mustEqual
-        controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad().url
+        controllers.submission.routes.ResubmitYourReturnController.onPageLoad.url
     }
   }
 }
