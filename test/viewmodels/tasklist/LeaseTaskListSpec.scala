@@ -40,7 +40,6 @@ class LeaseTaskListSpec extends SpecBase {
       leaseType = Some("A"),
       contractStartDate = Some("02-02-2026"),
       contractEndDate = Some("07-07-2000"),
-      rentFreePeriod = Some("3 months"),
       startingRent = Some("12345.00"),
       startingRentEndDate = Some("01-08-2024"),
       laterRentKnown = Some("NO")
@@ -51,7 +50,6 @@ class LeaseTaskListSpec extends SpecBase {
       leaseType = None,
       contractStartDate = Some("02-02-2026"),
       contractEndDate = None,
-      rentFreePeriod = Some("3 months"),
       startingRent = None,
       startingRentEndDate = Some("01-08-2024"),
       laterRentKnown = None
@@ -65,7 +63,6 @@ class LeaseTaskListSpec extends SpecBase {
       leaseType = Some("L"),
       contractStartDate = Some("02-02-2026"),
       contractEndDate = Some("07-07-2000"),
-      rentFreePeriod = Some("3 months"),
       startingRent = Some("12345.00"),
       startingRentEndDate = Some("01-08-2024"),
       laterRentKnown = Some("NO"),
@@ -78,7 +75,6 @@ class LeaseTaskListSpec extends SpecBase {
       leaseType = Some("L"),
       contractStartDate = None,
       contractEndDate = Some("07-07-2000"),
-      rentFreePeriod = None,
       startingRent = Some("12345.00"),
       startingRentEndDate = Some("01-08-2024"),
       laterRentKnown = Some("NO"),
@@ -169,33 +165,33 @@ class LeaseTaskListSpec extends SpecBase {
     ".mandatoryFieldsDefined" - {
       "must return a sequence of true if lease exists and mandatory fields are defined" in {
         val result = LeaseTaskList.mandatoryFieldsDefined(fullReturnNotGrantOfLease)
-        result mustBe Seq(true, true, true, true, true, true, true)
+        result mustBe Seq(true, true, true, true, true, true)
       }
 
       "must return a sequence of true and false if lease exists but some mandatory field are missing" in {
         val result = LeaseTaskList.mandatoryFieldsDefined(fullReturnSomeMandatoryFieldsMissing)
-        result mustBe Seq(false, true, false, true, false, true, false)
+        result mustBe Seq(false, true, false, false, true, false)
       }
 
       "must return a sequence of false if lease exists but all mandatory fields are missing" in {
         val result = LeaseTaskList.mandatoryFieldsDefined(fullReturnAllMandatoryFieldsMissing)
-        result mustBe Seq(false, false, false, false, false, false, false)
+        result mustBe Seq(false, false, false, false, false, false)
       }
 
       "must return false if lease is absent" in {
         val result = LeaseTaskList.mandatoryFieldsDefined(emptyFullReturn)
-        result mustBe Seq(false, false, false, false, false, false, false)
+        result mustBe Seq(false, false, false, false, false, false)
       }
 
       "must include the three grant-of-lease checks when the transaction is a grant of lease" in {
         val result = LeaseTaskList.mandatoryFieldsDefined(fullReturnGrantOfLease)
-        result.size mustBe 10
+        result.size mustBe 9
         result.forall(identity) mustBe true
       }
 
       "must include the three grant-of-lease checks (some false) when the grant-of-lease lease is partial" in {
         val result = LeaseTaskList.mandatoryFieldsDefined(fullReturnGOTSomeMandatoryFieldsMissing)
-        result.size mustBe 10
+        result.size mustBe 9
         result.contains(false) mustBe true
       }
     }
