@@ -19,47 +19,44 @@ package viewmodels.checkAnswers.ukResidency
 import models.{CheckMode, UserAnswers}
 import pages.ukResidency.CloseCompanyPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.*
 
 object CloseCompanySummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] = {
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryRowResult] = {
+
+    val changeRoute = controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode)
 
     val isCompany: Boolean = answers.fullReturn
       .flatMap(_.purchaser)
       .getOrElse(Seq.empty)
       .exists(_.isCompany.exists(_.equalsIgnoreCase("yes")))
 
-    if (!isCompany) None
-    else Some(
-      answers.get(CloseCompanyPage).map {
-        answer =>
+    if (!isCompany) {None}
+    else {
+      Some(
+        answers.get(CloseCompanyPage).map {
+          answer =>
 
-          val value = if (answer) "site.yes" else "site.no"
+            val value = if (answer) "site.yes" else "site.no"
 
-          SummaryListRowViewModel(
-            key     = messages("ukResidency.closeCompany.checkYourAnswersLabel"),
-            value   = ValueViewModel(value),
-            actions = Seq(
-              ActionItemViewModel("site.change", controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode).url)
-                .withVisuallyHiddenText(messages("ukResidency.closeCompany.change.hidden"))
+            Row(
+              SummaryListRowViewModel(
+                key     = messages("ukResidency.closeCompany.checkYourAnswersLabel"),
+                value   = ValueViewModel(value),
+                actions = Seq(
+                  ActionItemViewModel("site.change", changeRoute.url)
+                    .withVisuallyHiddenText(messages("ukResidency.closeCompany.change.hidden"))
+                )
+              )
             )
-          )
-      }.getOrElse {
-
-        val value = ValueViewModel(
-          HtmlContent(
-            s"""<a href="${controllers.ukResidency.routes.CloseCompanyController.onPageLoad(CheckMode).url}" class="govuk-link">${messages("ukResidency.closeCompany.missing")}</a>""")
-        )
-
-        SummaryListRowViewModel(
-          key   = messages("ukResidency.closeCompany.checkYourAnswersLabel"),
-          value = value
-        )
-      }
-    )
+        }.getOrElse {
+          Missing(changeRoute)
+        }
+      )
+    }
   }
 }

@@ -22,6 +22,7 @@ import pages.ukResidency.NonUkResidentPurchaserPage
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class NonUkResidentPurchaserSummarySpec extends SpecBase {
 
@@ -38,7 +39,12 @@ class NonUkResidentPurchaserSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(NonUkResidentPurchaserPage, true).success.value
 
-          val result = NonUkResidentPurchaserSummary.row(userAnswers)
+          val row = NonUkResidentPurchaserSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString mustEqual msgs("ukResidency.nonUkResidentPurchaser.checkYourAnswersLabel")
 
@@ -64,7 +70,12 @@ class NonUkResidentPurchaserSummarySpec extends SpecBase {
 
           val userAnswers = emptyUserAnswers.set(NonUkResidentPurchaserPage, false).success.value
 
-          val result = NonUkResidentPurchaserSummary.row(userAnswers)
+          val row = NonUkResidentPurchaserSummary.row(userAnswers)
+
+          val result = row match {
+            case Row(r) => r
+            case _ => fail("Expected Row but got Missing")
+          }
 
           result.key.content.asHtml.toString mustEqual msgs("ukResidency.nonUkResidentPurchaser.checkYourAnswersLabel")
 
@@ -84,7 +95,7 @@ class NonUkResidentPurchaserSummarySpec extends SpecBase {
 
     "when non UK resident purchaser answer is not present" - {
 
-      "must return a SummaryListRow with a missing link" in {
+      "must return a Missing and redirect call to missing page when data is missing" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -93,14 +104,13 @@ class NonUkResidentPurchaserSummarySpec extends SpecBase {
 
           val result = NonUkResidentPurchaserSummary.row(emptyUserAnswers)
 
-          result.key.content.asHtml.toString mustEqual msgs("ukResidency.nonUkResidentPurchaser.checkYourAnswersLabel")
+          result match {
+            case Missing(call) =>
+              call mustEqual controllers.ukResidency.routes.NonUkResidentPurchaserController.onPageLoad(CheckMode)
 
-          val valueHtml = result.value.content.asHtml.toString
-          valueHtml must include(controllers.ukResidency.routes.NonUkResidentPurchaserController.onPageLoad(CheckMode).url)
-          valueHtml must include(msgs("ukResidency.nonUkResidentPurchaser.missing"))
-          valueHtml must include("govuk-link")
-
-          result.actions mustBe None
+            case Row(_) =>
+              fail("Expected Missing but got Row")
+          }
         }
       }
     }

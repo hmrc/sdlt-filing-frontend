@@ -22,6 +22,7 @@ import pages.ukResidency.{CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import viewmodels.checkAnswers.summary.SummaryRowResult.{Missing, Row}
 
 class CrownEmploymentReliefSummarySpec extends SpecBase {
 
@@ -42,7 +43,12 @@ class CrownEmploymentReliefSummarySpec extends SpecBase {
               .set(NonUkResidentPurchaserPage, true).success.value
               .set(CrownEmploymentReliefPage, true).success.value
 
-            val result = CrownEmploymentReliefSummary.row(userAnswers).value
+            val row = CrownEmploymentReliefSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+
+            val result = row match {
+              case Row(r) => r
+              case _ => fail("Expected Row but got Missing")
+            }
 
             result.key.content.asHtml.toString mustEqual msgs("ukResidency.crownEmploymentRelief.checkYourAnswersLabel")
 
@@ -70,7 +76,12 @@ class CrownEmploymentReliefSummarySpec extends SpecBase {
               .set(NonUkResidentPurchaserPage, true).success.value
               .set(CrownEmploymentReliefPage, false).success.value
 
-            val result = CrownEmploymentReliefSummary.row(userAnswers).value
+            val row = CrownEmploymentReliefSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
+
+            val result = row match {
+              case Row(r) => r
+              case _ => fail("Expected Row but got Missing")
+            }
 
             result.key.content.asHtml.toString mustEqual msgs("ukResidency.crownEmploymentRelief.checkYourAnswersLabel")
 
@@ -90,7 +101,7 @@ class CrownEmploymentReliefSummarySpec extends SpecBase {
 
       "and CrownEmploymentRelief has not been answered" - {
 
-        "must return Some SummaryListRow with a missing link" in {
+        "must return a Missing and redirect call to missing page when data is missing" in {
 
           val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -100,16 +111,15 @@ class CrownEmploymentReliefSummarySpec extends SpecBase {
             val userAnswers = emptyUserAnswers
               .set(NonUkResidentPurchaserPage, true).success.value
 
-            val result = CrownEmploymentReliefSummary.row(userAnswers).value
+            val result = CrownEmploymentReliefSummary.row(userAnswers).getOrElse(fail("Failed to get summary list row"))
 
-            result.key.content.asHtml.toString mustEqual msgs("ukResidency.crownEmploymentRelief.checkYourAnswersLabel")
+            result match {
+              case Missing(call) =>
+                call mustEqual controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode)
 
-            val valueHtml = result.value.content.asHtml.toString
-            valueHtml must include(controllers.ukResidency.routes.CrownEmploymentReliefController.onPageLoad(CheckMode).url)
-            valueHtml must include(msgs("ukResidency.crownEmploymentRelief.missing"))
-            valueHtml must include("govuk-link")
-
-            result.actions mustBe None
+              case Row(_) =>
+                fail("Expected Missing but got Row")
+            }
           }
         }
       }
