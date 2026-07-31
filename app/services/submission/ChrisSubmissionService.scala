@@ -18,14 +18,14 @@ package services.submission
 
 import connectors.StampDutyLandTaxConnector
 import models.{FullReturn, Purchaser, UserAnswers, Vendor}
-import models.purchaser.UpdatePurchaserRequest
-import models.vendor.UpdateVendorRequest
 import models.submission.{SubmissionResponse, SubmitRequest}
-import pages.submission.SubmissionFailedPage
+import models.ukResidency.DeleteResidencyRequest
+import pages.submission.{EmailConfirmationPage, SubmissionFailedPage}
 import play.api.Logging
 import play.api.mvc.Request
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.PropertyTypeHelper.isResidentialProperty
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,7 +33,8 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class ChrisSubmissionService @Inject()(connector: StampDutyLandTaxConnector,
-                                       sessionRepository: SessionRepository)
+                                       sessionRepository: SessionRepository,
+                                       backendConnector: StampDutyLandTaxConnector)
                                       (implicit ec: ExecutionContext) extends Logging {
 
   def submit(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[SubmissionResponse] =
@@ -43,26 +44,30 @@ class ChrisSubmissionService @Inject()(connector: StampDutyLandTaxConnector,
         Future.failed(new NoSuchElementException("No fullReturn present for submission"))
 
       case Some(fullReturn) =>
-        val agentTypes: Set[String] =
-          fullReturn.returnAgent.getOrElse(Nil).flatMap(_.agentType).map(_.trim.toUpperCase).toSet
+        val residentialPropertyCheck: Boolean = isResidentialProperty(fullReturn)
+        val residencyCheck: Boolean = fullReturn.residency.isDefined
+        val resetResidencyCheck: Boolean = !residentialPropertyCheck && residencyCheck
 
-        val vendorRepresented    = agentTypes.contains("VENDOR")
-        val purchaserRepresented = agentTypes.contains("PURCHASER")
-
-        val mainVendorId    = fullReturn.returnInfo.flatMap(_.mainVendorID)
-        val mainPurchaserId = fullReturn.returnInfo.flatMap(_.mainPurchaserID)
-
-        val persistFlags: Future[Unit] =
+        val deleteResidencyFuture = if (resetResidencyCheck) {
           for {
-            _ <- if (vendorRepresented) updateMainVendor(userAnswers, fullReturn, mainVendorId) else Future.unit
-            _ <- if (purchaserRepresented) updateMainPurchaser(userAnswers, fullReturn, mainPurchaserId) else Future.unit
+            req <- DeleteResidencyRequest.from(userAnswers, fullReturn.returnResourceRef)
+            _ <- backendConnector.deleteResidency(req)
           } yield ()
-
-        persistFlags.flatMap { _ =>
-          val withFlags     = applyAgentRepresentation(fullReturn, vendorRepresented, purchaserRepresented, mainVendorId, mainPurchaserId)
-          val submitRequest = SubmitRequest(email = None, fullReturn = withFlags)
-          connector.submit(submitRequest)
+        } else {
+          Future.unit
         }
+
+        val emailFullReturn = userAnswers.get(EmailConfirmationPage)
+        val submitRequest = if (resetResidencyCheck) {
+          SubmitRequest(email = emailFullReturn, fullReturn = fullReturn.copy(residency = None))
+        } else {
+          SubmitRequest(email = emailFullReturn, fullReturn = fullReturn)
+        }
+
+        for {
+          _ <- deleteResidencyFuture
+          result <- connector.submit(submitRequest)
+        } yield result
     }
 
   def submitInBackground(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Unit =
@@ -88,48 +93,4 @@ class ChrisSubmissionService @Inject()(connector: StampDutyLandTaxConnector,
         case re => logger.error("[ChrisSubmissionService] failed to persist SubmissionFailedPage", re)
       }
     )
-
-  private def updateMainVendor(userAnswers: UserAnswers, fullReturn: FullReturn, mainVendorId: Option[String])
-                              (implicit hc: HeaderCarrier, request: Request[_]): Future[Unit] =
-    fullReturn.vendor.getOrElse(Nil).find(_.vendorID == mainVendorId) match {
-      case Some(v) =>
-        val flagged = v.copy(isRepresentedByAgent = Some("yes"))
-        UpdateVendorRequest.from(userAnswers, flagged).flatMap { req =>
-          connector.updateVendor(req).map(_ => ())
-        }
-      case None =>
-        logger.warn("[ChrisSubmissionService] vendor agent present but no main vendor found")
-        Future.unit
-    }
-
-  private def updateMainPurchaser(userAnswers: UserAnswers, fullReturn: FullReturn, mainPurchaserId: Option[String])
-                                 (implicit hc: HeaderCarrier, request: Request[_]): Future[Unit] =
-    fullReturn.purchaser.getOrElse(Nil).find(_.purchaserID == mainPurchaserId) match {
-      case Some(p) =>
-        val flagged = p.copy(isRepresentedByAgent = Some("yes"))
-        UpdatePurchaserRequest.from(userAnswers, flagged).flatMap { req =>
-          connector.updatePurchaser(req).map(_ => ())
-        }
-      case None =>
-        logger.warn("[ChrisSubmissionService] purchaser agent present but no main purchaser found")
-        Future.unit
-    }
-
-  private def applyAgentRepresentation(fullReturn: FullReturn,
-                                       vendorRepresented: Boolean,
-                                       purchaserRepresented: Boolean,
-                                       mainVendorId: Option[String],
-                                       mainPurchaserId: Option[String]): FullReturn = {
-    val updatedVendors: Option[Seq[Vendor]] =
-      if (vendorRepresented)
-        fullReturn.vendor.map(_.map(v => if (v.vendorID == mainVendorId) v.copy(isRepresentedByAgent = Some("yes")) else v))
-      else fullReturn.vendor
-
-    val updatedPurchasers: Option[Seq[Purchaser]] =
-      if (purchaserRepresented)
-        fullReturn.purchaser.map(_.map(p => if (p.purchaserID == mainPurchaserId) p.copy(isRepresentedByAgent = Some("yes")) else p))
-      else fullReturn.purchaser
-
-    fullReturn.copy(vendor = updatedVendors, purchaser = updatedPurchasers)
-  }
 }
