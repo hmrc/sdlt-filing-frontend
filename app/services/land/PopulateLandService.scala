@@ -21,56 +21,71 @@ import models.land.{LandInterestTransferredOrCreated, LandSelectMeasurementUnit,
 import models.{Land, UserAnswers}
 import pages.land.*
 
-import scala.util.Try
+import scala.util.{Success, Try}
 
 class PopulateLandService {
 
   def populateLandInSession(land: Land, userAnswers: UserAnswers): Try[UserAnswers] = {
 
-    (land.address1, land.localAuthorityNumber, land.landID) match
-      case (Some(line1), Some(localAuthorityCode), Some(landId)) =>
-
-        val address = Address(
-          line1 = line1,
-          line2 = land.address2,
-          line3 = land.address3,
-          line4 = land.address4,
-          postcode = land.postcode
-        )
-
+    land.landID match {
+      case Some(landId) =>
         for {
           typeOfProperty <- typeOfPropertyPages(land, userAnswers)
           withInterestTransferredOrCreated <- interestTransferredOrCreatedPage(land, typeOfProperty)
-          withAddress <- withInterestTransferredOrCreated.set(LandAddressPage, address)
-          withLocalAuthorityCode <- withAddress.set(LocalAuthorityCodePage, localAuthorityCode)
+          withAddress <- addressPage(land, withInterestTransferredOrCreated)
+          withLocalAuthorityCode <- localAuthorityCodePage(land, withAddress)
           withTitleNumber <- titleNumberPages(land, withLocalAuthorityCode)
           withNlpgUprn <- nlpgUprnPages(land, withTitleNumber)
           withSendingPlanByPost <- sendingPlanByPostPage(land, withNlpgUprn)
           withMineralsOrMineralRights <- mineralsOrMineralRightsPage(land, withSendingPlanByPost)
           finalAnswers <- withMineralsOrMineralRights.set(LandOverviewPage, landId)
         } yield finalAnswers
-
       case _ =>
-        Try(throw new IllegalStateException(s"Land ${land.landID} is missing required data"))
+        Try(throw new IllegalStateException(s"Land ${land.landID} is missing a landID"))
+    }
+  }
+
+  private def addressPage(land: Land, userAnswers: UserAnswers): Try[UserAnswers] = {
+    land.address1 match {
+      case Some(address1) =>
+        val address = Address(
+          line1 = address1,
+          line2 = land.address2,
+          line3 = land.address3,
+          line4 = land.address4,
+          postcode = land.postcode
+        )
+
+        userAnswers.set(LandAddressPage, address)
+      case None =>
+        Success(userAnswers)
+    }
+  }
+
+  private def localAuthorityCodePage(land: Land, userAnswers: UserAnswers): Try[UserAnswers] = {
+    land.localAuthorityNumber match {
+      case Some(localAuthorityCode) =>
+        userAnswers.set(LocalAuthorityCodePage, localAuthorityCode)
+      case None =>
+        Success(userAnswers)
+    }
   }
 
   private def typeOfPropertyPages(land: Land, userAnswers: UserAnswers): Try[UserAnswers] = {
-    Try {
       land.propertyType.flatMap(LandTypeOfProperty.fromCode) match {
-        case Some(propertyType) => propertyType
-        case _ =>
-          throw new IllegalStateException(s"Land ${land.landID} is missing required property type")
+        case Some(propertyType @ (LandTypeOfProperty.Mixed | LandTypeOfProperty.NonResidential)) =>
+          for {
+            withPropertyType <- userAnswers.set(LandTypeOfPropertyPage, propertyType)
+            finalAnswer      <- landAreaAndUnitPages(land, withPropertyType)
+          } yield finalAnswer
+
+        case Some(propertyType) =>
+          userAnswers.set(LandTypeOfPropertyPage, propertyType)
+
+        case None =>
+          Success(userAnswers)
       }
-    }.flatMap {
-      case propertyType@(LandTypeOfProperty.Mixed | LandTypeOfProperty.NonResidential) =>
-        for {
-          propertyType <- userAnswers.set(LandTypeOfPropertyPage, propertyType)
-          finalAnswer <- landAreaAndUnitPages(land, propertyType)
-        } yield finalAnswer
-      case propertyType =>
-        userAnswers.set(LandTypeOfPropertyPage, propertyType)
     }
-  }
 
   private def landAreaAndUnitPages(land: Land, userAnswers: UserAnswers): Try[UserAnswers] = {
     (land.areaUnit, land.landArea) match {

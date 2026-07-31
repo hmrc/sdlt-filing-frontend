@@ -685,7 +685,7 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
       }
     }
     
-    "must fail when address1 is missing" in {
+    "must succeed and leave LandAddressPage unset when when address1 is missing" in {
       val land = Land(
         landID = Some("LDN001"),
         returnID = Some("RET123456789"),
@@ -712,12 +712,12 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
       val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
 
       val result = service.populateLandInSession(land, userAnswers)
-      
-      result mustBe a[Failure[_]]
-      result.failed.get mustBe an[IllegalStateException]
+
+      result.isSuccess mustBe true
+      result.get.get(LandAddressPage) mustBe None
     }
     
-    "must fail when property type is missing" in {
+    "must succeed and leave LandTypeOfPropertyPage unset when property type is missing" in {
       val land = Land(
         landID = Some("LDN001"),
         returnID = Some("RET123456789"),
@@ -744,12 +744,12 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
       val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN")
 
       val result = service.populateLandInSession(land, userAnswers)
-      
-      result mustBe a[Failure[_]]
-      result.failed.get mustBe an[IllegalStateException]
+
+      result.isSuccess mustBe true
+      result.get.get(LandTypeOfPropertyPage) mustBe None
     }
 
-    "must fail when localAuthorityNumber is missing" in {
+    "must succeed and leave LocalAuthorityCodePage unset when localAuthorityNumber is missing" in {
       val land = Land(
         landID = Some("LDN001"),
         returnID = Some("RET123456789"),
@@ -777,8 +777,8 @@ class PopulateLandServiceSpec extends SpecBase with MockitoSugar {
 
       val result = service.populateLandInSession(land, userAnswers)
 
-      result mustBe a[Failure[_]]
-      result.failed.get mustBe an[IllegalStateException]
+      result.isSuccess mustBe true
+      result.get.get(LocalAuthorityCodePage) mustBe None
     }
 
     "must fail when landID is missing" in {
