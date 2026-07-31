@@ -2351,3 +2351,9 @@ taskListSaveExit.subheading                                                     
 taskListSaveExit.p1                                                                 = Selecting ‘Save and exit’ will take you to your Stamp Taxes Online account.
 taskListSaveExit.p2                                                                 = You can view, edit and submit your return by selecting it within ‘Returns in progress’.
 taskListSaveExit.error.required                                                     = Select yes if you are sure you want to save and exit
+
+deleteReturn.title          = Deleting SDLT return
+deleteReturn.heading        = Deleting SDLT return
+deleteReturn.p1             = Deleting this return cannot be reversed. All the information you have entered will be permanently deleted. If you choose to file this return later, you will need to create a new return and start again.
+deleteReturn.h2             = Are you sure you want to permanently delete this return?
+deleteReturn.error.required = Select yes if you are sure you want to permanently delete this return

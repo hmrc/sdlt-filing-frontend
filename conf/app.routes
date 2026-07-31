@@ -800,3 +800,6 @@ GET       /about-the-vendor/incomplete/update/:vendorId                         
 GET       /about-the-vendor/incomplete/remove/:vendorId                                              controllers.vendor.VendorIncompleteOverviewController.removeVendor(vendorId: String)
 
 GET       /resume/:section                                                                           controllers.ResumeSectionController.resume(section: String, id: Option[String])
+
+GET       /task-list/deleting-SDLT-return                                                            controllers.DeleteReturnController.onPageLoad()
+POST      /task-list/deleting-SDLT-return                                                            controllers.DeleteReturnController.onSubmit()

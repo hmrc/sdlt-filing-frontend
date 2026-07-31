@@ -51,6 +51,7 @@
 
         @govukButton(
             ButtonViewModel(messages("site.delete.return")).asWarningButton()
+            .asLink(controllers.routes.DeleteReturnController.onPageLoad().url)
         )
     </div>
     <p>

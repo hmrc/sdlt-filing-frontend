@@ -360,6 +360,74 @@ class StampDutyLandTaxConnectorISpec
         result mustBe a[Throwable]
       }
     }
+    "deleteReturn()" - {
+
+      val deleteReturnRequest = DeleteReturnRequest(storn = testStorn, returnResourceRef = testReturnId)
+      val deleteReturnReturnJson = Json.obj("deleted" -> true)
+
+      "must return DeleteReturnResponse when the stub returns 200 OK" in {
+        server.stubFor(post(urlPathEqualTo("/stamp-duty-land-tax/filing/delete/return")).willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(deleteReturnReturnJson.toString())))
+        val result = connector.deleteReturn(deleteReturnRequest).futureValue
+        result.deleted mustBe true
+        server.verify(postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax/filing/delete/return")))
+      }
+
+      "must send correct request body with storn and returnResourceRef" in {
+        server.stubFor(post(urlPathEqualTo("/stamp-duty-land-tax/filing/delete/return")).willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(deleteReturnReturnJson.toString())))
+        connector.deleteReturn(deleteReturnRequest).futureValue
+        server.verify(
+          postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax/filing/delete/return"))
+            .withRequestBody(matchingJsonPath("$.storn", equalTo(testStorn)))
+            .withRequestBody(matchingJsonPath("$.returnResourceRef", equalTo(testReturnId)))
+        )
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 400 Bad Request" in {
+        server.stubFor(post(urlPathEqualTo("/stamp-duty-land-tax/filing/delete/return")).willReturn(aResponse().withStatus(400).withBody("Bad Request")))
+        val result = connector.deleteReturn(deleteReturnRequest).failed.futureValue
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 400
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 404 Not Found" in {
+        server.stubFor(post(urlPathEqualTo("/stamp-duty-land-tax/filing/delete/return")).willReturn(aResponse().withStatus(404).withBody("Not Found")))
+        val result = connector.deleteReturn(deleteReturnRequest).failed.futureValue
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 404
+      }
+
+      "must throw UpstreamErrorResponse when stub returns 500 Internal Server Error" in {
+        server.stubFor(post(urlPathEqualTo("/stamp-duty-land-tax/filing/delete/return")).willReturn(aResponse().withStatus(500).withBody("Internal Server Error")))
+        val result = connector.deleteReturn(deleteReturnRequest).failed.futureValue
+        result mustBe an[UpstreamErrorResponse]
+        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
+      }
+
+      "must make POST request to correct endpoint" in {
+        server.stubFor(post(urlPathEqualTo("/stamp-duty-land-tax/filing/delete/return")).willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(deleteReturnReturnJson.toString())))
+        connector.deleteReturn(deleteReturnRequest).futureValue
+        server.verify(1, postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax/filing/delete/return")))
+      }
+
+      "must include correct headers in the request" in {
+        server.stubFor(post(urlPathEqualTo("/stamp-duty-land-tax/filing/delete/return")).willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(deleteReturnReturnJson.toString())))
+        connector.deleteReturn(deleteReturnRequest).futureValue
+        server.verify(postRequestedFor(urlPathEqualTo("/stamp-duty-land-tax/filing/delete/return")).withHeader("Content-Type", containing("application/json")))
+      }
+
+      "must handle connection errors when service is unavailable" in {
+        server.stubFor(post(urlPathEqualTo("/stamp-duty-land-tax/filing/delete/return")).willReturn(aResponse().withFault(com.github.tomakehurst.wiremock.http.Fault.CONNECTION_RESET_BY_PEER)))
+        val result = connector.deleteReturn(deleteReturnRequest).failed.futureValue
+        result mustBe a[Throwable]
+      }
+
+      "must handle malformed JSON response" in {
+        server.stubFor(post(urlPathEqualTo("/stamp-duty-land-tax/filing/delete/return")).willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody("{invalid json}")))
+        val result = connector.deleteReturn(deleteReturnRequest).failed.futureValue
+        result mustBe a[Throwable]
+      }
+    }
+    
     "createVendor()" - {
 
       val createVendorRequestJson = Json.obj(

@@ -92,6 +92,25 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       }
   }
 
+  def deleteReturn(deleteReturnRequest: DeleteReturnRequest)(implicit hc: HeaderCarrier,
+                                               request: Request[_]): Future[DeleteReturnResponse] = {
+    http.post(url"$activeBase/filing/delete/return")
+      .withBody(Json.toJson(deleteReturnRequest))
+      .execute[Either[UpstreamErrorResponse, DeleteReturnResponse]]
+      .flatMap {
+        case Right(resp) =>
+          logger.info(s"[StampDutyLandTaxConnector][deleteReturn] response: $resp")
+          Future.successful(
+            resp)
+        case Left(error) =>
+          logResponse(error, "[StampDutyLandTaxConnector][deleteReturn]")
+          Future.failed(error)
+      }
+      .recover {
+        case e => throw logResponse(e, "[StampDutyLandTaxConnector][deleteReturn]")
+      }
+  }
+
   def createVendor(vendorRequest: CreateVendorRequest)(implicit hc: HeaderCarrier,
                                                request: Request[_]): Future[CreateVendorReturn] = {
     http.post(url"$activeBase/filing/create/vendor")
