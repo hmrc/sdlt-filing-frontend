@@ -19,13 +19,14 @@ package services.submission
 import base.SpecBase
 import connectors.StampDutyLandTaxConnector
 import models.submission.{SubmissionResponse, SubmitRequest}
-import models.{FullReturn, ReturnAgent, ReturnInfo, UserAnswers}
+import models.ukResidency.{DeleteResidencyRequest, DeleteResidencyReturn}
+import models.{FullReturn, Residency, ReturnAgent, ReturnInfo, UserAnswers}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{never, verify, when}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.submission.SubmissionFailedPage
+import pages.submission.{EmailConfirmationPage, SubmissionFailedPage}
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import repositories.SessionRepository
@@ -45,8 +46,6 @@ class ChrisSubmissionServiceSpec extends SpecBase with MockitoSugar with ScalaFu
         service.submit(userAnswers).failed.futureValue mustBe a[NoSuchElementException]
 
         verify(connector, never()).submit(any[SubmitRequest])(any[HeaderCarrier], any[Request[_]])
-        verify(connector, never()).updateVendor(any)(any[HeaderCarrier], any[Request[_]])
-        verify(connector, never()).updatePurchaser(any)(any[HeaderCarrier], any[Request[_]])
       }
 
       "when a fullReturn is present with no agents" - {
@@ -65,22 +64,24 @@ class ChrisSubmissionServiceSpec extends SpecBase with MockitoSugar with ScalaFu
           captor.getValue.fullReturn mustBe noAgentReturn
         }
 
-        "must never touch updateVendor or updatePurchaser" in new Setup {
+        "must include email in submit request when EmailConfirmationPage is set" in new Setup {
           when(connector.submit(any[SubmitRequest])(any[HeaderCarrier], any[Request[_]]))
             .thenReturn(Future.successful(submittedResponse))
 
           val userAnswers: UserAnswers = baseAnswers(fullReturn = Some(noAgentReturn))
+            .set(EmailConfirmationPage, "test@test.com").success.value
 
-          service.submit(userAnswers).futureValue
+          service.submit(userAnswers).futureValue mustBe submittedResponse
 
-          verify(connector, never()).updateVendor(any)(any[HeaderCarrier], any[Request[_]])
-          verify(connector, never()).updatePurchaser(any)(any[HeaderCarrier], any[Request[_]])
+          val captor: ArgumentCaptor[SubmitRequest] = ArgumentCaptor.forClass(classOf[SubmitRequest])
+          verify(connector).submit(captor.capture())(any[HeaderCarrier], any[Request[_]])
+          captor.getValue.email mustBe Some("test@test.com")
         }
       }
 
       "when a vendor agent is present but the main vendor cannot be resolved" - {
 
-        "must still submit, and must not call updateVendor (no main vendor to flag)" in new Setup {
+        "must still submit" in new Setup {
           when(connector.submit(any[SubmitRequest])(any[HeaderCarrier], any[Request[_]]))
             .thenReturn(Future.successful(submittedResponse))
 
@@ -95,7 +96,51 @@ class ChrisSubmissionServiceSpec extends SpecBase with MockitoSugar with ScalaFu
           service.submit(userAnswers).futureValue mustBe submittedResponse
 
           verify(connector).submit(any[SubmitRequest])(any[HeaderCarrier], any[Request[_]])
-          verify(connector, never()).updateVendor(any)(any[HeaderCarrier], any[Request[_]])
+        }
+      }
+
+      "when residency is present but property is non-residential" - {
+
+        "must delete residency and submit without residency in the request" in new Setup {
+          when(connector.submit(any[SubmitRequest])(any[HeaderCarrier], any[Request[_]]))
+            .thenReturn(Future.successful(submittedResponse))
+          when(connector.deleteResidency(any[DeleteResidencyRequest])(any[HeaderCarrier], any[Request[_]]))
+            .thenReturn(Future.successful(DeleteResidencyReturn(deleted = true)))
+
+          val returnWithResidency: FullReturn = noAgentReturn.copy(
+            residency = Some(Residency(residencyID = Some("REF-1")))
+          )
+
+          val userAnswers: UserAnswers = baseAnswers(fullReturn = Some(returnWithResidency))
+
+          service.submit(userAnswers).futureValue mustBe submittedResponse
+
+          verify(connector).deleteResidency(any[DeleteResidencyRequest])(any[HeaderCarrier], any[Request[_]])
+
+          val captor: ArgumentCaptor[SubmitRequest] = ArgumentCaptor.forClass(classOf[SubmitRequest])
+          verify(connector).submit(captor.capture())(any[HeaderCarrier], any[Request[_]])
+          captor.getValue.fullReturn.residency mustBe None
+        }
+      }
+
+      "when residency is present and property is residential" - {
+
+        "must submit with residency included in the request" in new Setup {
+          when(connector.submit(any[SubmitRequest])(any[HeaderCarrier], any[Request[_]]))
+            .thenReturn(Future.successful(submittedResponse))
+
+          val residentialReturn: FullReturn = noAgentReturn.copy(
+            residency = Some(Residency()),
+            land = Some(Seq(models.Land(propertyType = Some("01"))))
+          )
+
+          val userAnswers: UserAnswers = baseAnswers(fullReturn = Some(residentialReturn))
+
+          service.submit(userAnswers).futureValue mustBe submittedResponse
+
+          val captor: ArgumentCaptor[SubmitRequest] = ArgumentCaptor.forClass(classOf[SubmitRequest])
+          verify(connector).submit(captor.capture())(any[HeaderCarrier], any[Request[_]])
+          captor.getValue.fullReturn.residency mustBe Some(Residency())
         }
       }
     }
@@ -156,7 +201,7 @@ class ChrisSubmissionServiceSpec extends SpecBase with MockitoSugar with ScalaFu
         verify(sessionRepository, org.mockito.Mockito.timeout(1000)).set(flaggedAnswersMatcher)
       }
 
-      "must flag the submission as failed when there is no fullReturn (submit fails fast)" in new Setup {
+      "must flag the submission as failed when there is no fullReturn" in new Setup {
         service.submitInBackground(baseAnswers(fullReturn = None))
 
         verify(sessionRepository, org.mockito.Mockito.timeout(1000)).set(flaggedAnswersMatcher)
@@ -166,14 +211,14 @@ class ChrisSubmissionServiceSpec extends SpecBase with MockitoSugar with ScalaFu
   }
 
   private trait Setup {
-    implicit val ec: ExecutionContext         = ExecutionContext.global
-    implicit val hc: HeaderCarrier            = HeaderCarrier()
-    implicit val request: Request[?]          = FakeRequest()
+    implicit val ec: ExecutionContext = ExecutionContext.global
+    implicit val hc: HeaderCarrier   = HeaderCarrier()
+    implicit val request: Request[?] = FakeRequest()
 
-    val connector: StampDutyLandTaxConnector  = mock[StampDutyLandTaxConnector]
-    val sessionRepository: SessionRepository  = mock[SessionRepository]
+    val connector: StampDutyLandTaxConnector = mock[StampDutyLandTaxConnector]
+    val sessionRepository: SessionRepository = mock[SessionRepository]
 
-    val service = new ChrisSubmissionService(connector, sessionRepository)
+    val service = new ChrisSubmissionService(connector, sessionRepository, connector)
 
     val returnId          = "100001"
     val submittedResponse = SubmissionResponse.Submitted(returnId, "UTRN123", receipt = true)

@@ -96,6 +96,25 @@ case class DeleteResidencyRequest(
 
 object DeleteResidencyRequest {
   implicit val format: OFormat[DeleteResidencyRequest] = Json.format[DeleteResidencyRequest]
+
+  def from(userAnswers: UserAnswers, residencyId: String): Future[DeleteResidencyRequest] = {
+    userAnswers.fullReturn match {
+
+      case Some(fullReturn) =>
+
+        fullReturn.residency match {
+
+          case Some(residency) if residency.residencyID.contains(residencyId) => Future.successful(DeleteResidencyRequest(
+            storn = fullReturn.stornId,
+            returnResourceRef = fullReturn.returnResourceRef,
+          ))
+          case _ =>
+            Future.failed(new NoSuchElementException("Residency not found"))
+        }
+      case None =>
+        Future.failed(new NoSuchElementException("Full return not found"))
+    }
+  }
 }
 
 case class DeleteResidencyReturn(
