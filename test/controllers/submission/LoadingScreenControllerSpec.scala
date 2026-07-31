@@ -99,7 +99,7 @@ class LoadingScreenControllerSpec extends SpecBase with MockitoSugar {
         ("SUBMITTED",            "the submission complete page",       () => controllers.submission.routes.SubmissionCompleteController.onPageLoad()),
         ("SUBMITTED_NO_RECEIPT", "the submission complete page",       () => controllers.submission.routes.SubmissionCompleteController.onPageLoad()),
         ("ACCEPTED",             "the awaiting confirmation page",     () => controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad()),
-        ("STARTED",              "the before you start page",          () => controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad()),
+        ("STARTED",              "the resubmit your return page",      () => controllers.submission.routes.ResubmitYourReturnController.onPageLoad),
         ("DEPARTMENTAL_ERROR",   "the submission failed page",         () => controllers.submission.routes.SubmissionFailedController.onPageLoad()),
         ("FATAL_ERROR",          "the submission failed page",         () => controllers.submission.routes.SubmissionFailedController.onPageLoad())
       )

@@ -50,7 +50,7 @@ class ResubmissionCheckAction @Inject()(
       case Some(SubmissionFailed) =>
         Future.successful(Some(Redirect(controllers.submission.routes.SubmissionFailedController.onPageLoad())))
 
-      case _ => //TODO update to resubmission page once created
+      case _ =>
         Future.successful(None)
     }
   }

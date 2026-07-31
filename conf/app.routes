@@ -779,6 +779,8 @@ GET        /about-the-land/property-type-mismatch/:landId/update                
 
 GET        /submit-your-return/submission-failed                                                     controllers.submission.SubmissionFailedController.onPageLoad()
 
+GET        /submit-your-return/resubmit-your-return                                                  controllers.submission.ResubmitYourReturnController.onPageLoad
+
 GET       /submit-your-return/return-is-being-submitted                                              controllers.submission.LoadingScreenController.show
 GET       /submit-your-return/return-is-being-submitted/query                                        controllers.submission.LoadingScreenController.query
 

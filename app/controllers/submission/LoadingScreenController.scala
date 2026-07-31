@@ -66,7 +66,7 @@ class LoadingScreenController @Inject()(
           case Some(s) if Acknowledged.contains(s) =>
             Redirect(controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad())
           case Some(s) if Resubmitable.contains(s) =>
-            Redirect(controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad()) // TODO confirm page
+            Redirect(controllers.submission.routes.ResubmitYourReturnController.onPageLoad)
           case Some(s) if FailedStatuses.contains(s) =>
             Redirect(controllers.submission.routes.SubmissionFailedController.onPageLoad())
           case _ =>
