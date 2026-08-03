@@ -42,27 +42,12 @@
         @p("submission.submissionFailed.p1b")
     }
 
-
-    @paragraphWithLink(
-        messageKey = "submission.submissionFailed.p2.prefix",
-        linkKey = "submission.submissionFailed.p2.link",
-        textKey = "submission.submissionFailed.p2.linkText"
-    )
-
-    @p("submission.submissionFailed.p3")
-
     @paragraphWithLink(
         messageKey = "submission.submissionFailed.p4.prefix",
         linkKey = "submission.submissionFailed.p4.link",
         textKey = "submission.submissionFailed.p4.linkText"
     )
-
-    <div class ="govuk-body">
-        @link(
-            link = controllers.submission.routes.CompletedSdltReturnController.onPageLoad().url,
-            messageKey = "submission.submissionFailed.link1"
-        )
-    </div>
+    
 
     <div class ="govuk-body">
         @link(
