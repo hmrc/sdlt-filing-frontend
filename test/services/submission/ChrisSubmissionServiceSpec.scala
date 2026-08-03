@@ -183,13 +183,25 @@ class ChrisSubmissionServiceSpec extends SpecBase with MockitoSugar with ScalaFu
         verify(sessionRepository, org.mockito.Mockito.timeout(1000)).set(flaggedAnswersMatcher)
       }
 
-      "must flag the submission as failed when the outcome is Retryable" in new Setup {
+      "must clear the submission failed flag when the outcome is Retryable" in new Setup {
+        when(connector.submit(any[SubmitRequest])(any[HeaderCarrier], any[Request[_]]))
+          .thenReturn(Future.successful(SubmissionResponse.Retryable(returnId)))
+
+        val flaggedAnswers: UserAnswers =
+          baseAnswers(fullReturn = Some(noAgentReturn)).set(SubmissionFailedPage, true).success.value
+
+        service.submitInBackground(flaggedAnswers)
+
+        verify(sessionRepository, org.mockito.Mockito.timeout(1000)).set(clearedAnswersMatcher)
+      }
+
+      "must NOT touch the session when the outcome is Retryable and the flag was not set" in new Setup {
         when(connector.submit(any[SubmitRequest])(any[HeaderCarrier], any[Request[_]]))
           .thenReturn(Future.successful(SubmissionResponse.Retryable(returnId)))
 
         service.submitInBackground(baseAnswers(fullReturn = Some(noAgentReturn)))
 
-        verify(sessionRepository, org.mockito.Mockito.timeout(1000)).set(flaggedAnswersMatcher)
+        verify(sessionRepository, org.mockito.Mockito.after(500).never()).set(any[UserAnswers])
       }
 
       "must flag the submission as failed when the underlying submit fails" in new Setup {
@@ -234,6 +246,11 @@ class ChrisSubmissionServiceSpec extends SpecBase with MockitoSugar with ScalaFu
     def flaggedAnswersMatcher: UserAnswers =
       org.mockito.ArgumentMatchers.argThat[UserAnswers] { ua =>
         ua.get(SubmissionFailedPage).contains(true)
+      }
+
+    def clearedAnswersMatcher: UserAnswers =
+      org.mockito.ArgumentMatchers.argThat[UserAnswers] { ua =>
+        ua.get(SubmissionFailedPage).isEmpty
       }
   }
 }

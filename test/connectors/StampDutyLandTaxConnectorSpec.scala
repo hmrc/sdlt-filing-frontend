@@ -23,13 +23,15 @@ import models.*
 import models.land.*
 import models.lease.*
 import models.prelimQuestions.PrelimReturn
+import models.submission.{SubmissionResponse, SubmitRequest}
 import models.taxCalculation.{UpdateTaxCalculationRequest, UpdateTaxCalculationReturn}
 import models.vendor.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -5640,6 +5642,70 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         whenReady(connector.deleteReturn(testRequest).failed) { exception =>
           exception mustBe a[java.util.concurrent.TimeoutException]
           exception.getMessage mustBe "Request timeout"
+        }
+      }
+    }
+
+    "submit" - {
+
+      val testSubmitRequest = SubmitRequest(email = None, fullReturn = completeFullReturn)
+
+      def mockConnectorFor(status: Int, body: play.api.libs.json.JsValue): StampDutyLandTaxConnector = {
+        val mockHttpClient = mock[HttpClientV2]
+        val mockConfig = mock[FrontendAppConfig]
+        val mockRequestBuilder = mock[RequestBuilder]
+
+        when(mockConfig.baseUrl("stamp-duty-land-tax-stub")).thenReturn(testStubUrl)
+        when(mockConfig.baseUrl("stamp-duty-land-tax")).thenReturn(testBackendUrl)
+        when(mockConfig.stubBool).thenReturn(false)
+        when(mockHttpClient.post(any())(any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+        when(mockRequestBuilder.execute[HttpResponse](any(), any()))
+          .thenReturn(Future.successful(HttpResponse(status, body.toString())))
+
+        new StampDutyLandTaxConnector(mockHttpClient, mockConfig)
+      }
+
+      "must return Submitted for a 200 OK response" in {
+        val body = Json.obj("returnId" -> returnId, "utrn" -> "UTRN123", "receipt" -> true, "_type" -> "submitted")
+
+        mockConnectorFor(200, body).submit(testSubmitRequest).futureValue mustBe
+          SubmissionResponse.Submitted(returnId, "UTRN123", receipt = true)
+      }
+
+      "must return Acknowledged for a 202 Accepted response" in {
+        val body = Json.obj("returnId" -> returnId, "_type" -> "acknowledged")
+
+        mockConnectorFor(202, body).submit(testSubmitRequest).futureValue mustBe
+          SubmissionResponse.Acknowledged(returnId)
+      }
+
+      "must return Rejected for a 400 Bad Request response" in {
+        val body = Json.obj("returnId" -> returnId, "errors" -> Json.arr(), "_type" -> "rejected")
+
+        mockConnectorFor(400, body).submit(testSubmitRequest).futureValue mustBe
+          SubmissionResponse.Rejected(returnId, Nil)
+      }
+
+      "must return Retryable for a 503 Service Unavailable response" in {
+        val body = Json.obj("returnId" -> returnId, "_type" -> "retryable")
+
+        mockConnectorFor(503, body).submit(testSubmitRequest).futureValue mustBe
+          SubmissionResponse.Retryable(returnId)
+      }
+
+      "must return Failed for a 502 Bad Gateway response" in {
+        val body = Json.obj("returnId" -> returnId, "errors" -> Json.arr(), "_type" -> "failed")
+
+        mockConnectorFor(502, body).submit(testSubmitRequest).futureValue mustBe
+          SubmissionResponse.Failed(returnId, Nil)
+      }
+
+      "must fail the future for an unrecognised status such as 500" in {
+        val body = Json.obj("returnId" -> returnId, "_type" -> "retryable")
+
+        whenReady(mockConnectorFor(500, body).submit(testSubmitRequest).failed) { exception =>
+          exception mustBe a[uk.gov.hmrc.http.UpstreamErrorResponse]
         }
       }
     }

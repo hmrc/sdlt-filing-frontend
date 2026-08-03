@@ -2183,11 +2183,24 @@ class StampDutyLandTaxConnectorISpec
         result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 500
       }
 
-      "must throw UpstreamErrorResponse when the stub returns 503 Service Unavailable" in {
+      "must return a SubmissionResponse when the stub returns 503 Service Unavailable with a parseable Retryable body" in {
+        val retryableResponseJson: JsValue = Json.obj("_type" -> "retryable", "returnId" -> "382966898")
+        server.stubFor(post(urlPathEqualTo("/stamp-duty-land-tax/filing/chris/submission")).willReturn(aResponse().withStatus(503).withHeader("Content-Type", "application/json").withBody(retryableResponseJson.toString())))
+        val result = connector.submit(submitRequest).futureValue
+        result mustBe submission.SubmissionResponse.Retryable("382966898")
+      }
+
+      "must return a SubmissionResponse when the stub returns 502 Bad Gateway with a parseable Failed body" in {
+        val failedResponseJson: JsValue = Json.obj("_type" -> "failed", "returnId" -> "382966898", "errors" -> Json.arr())
+        server.stubFor(post(urlPathEqualTo("/stamp-duty-land-tax/filing/chris/submission")).willReturn(aResponse().withStatus(502).withHeader("Content-Type", "application/json").withBody(failedResponseJson.toString())))
+        val result = connector.submit(submitRequest).futureValue
+        result mustBe submission.SubmissionResponse.Failed("382966898", Nil)
+      }
+
+      "must fail when the stub returns 503 Service Unavailable with an unparseable body" in {
         server.stubFor(post(urlPathEqualTo("/stamp-duty-land-tax/filing/chris/submission")).willReturn(aResponse().withStatus(503).withBody("Service Unavailable")))
         val result = connector.submit(submitRequest).failed.futureValue
-        result mustBe an[UpstreamErrorResponse]
-        result.asInstanceOf[UpstreamErrorResponse].statusCode mustBe 503
+        result mustBe a[Throwable]
       }
 
       "must make POST request to correct endpoint" in {

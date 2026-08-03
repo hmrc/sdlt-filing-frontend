@@ -75,9 +75,9 @@ class ChrisSubmissionService @Inject()(connector: StampDutyLandTaxConnector,
       case Success(response) =>
         logger.info(s"[ChrisSubmissionService][submitInBackground] completed: $response")
         response match {
-          case _: SubmissionResponse.Submitted | _: SubmissionResponse.Acknowledged =>
-            ()
-          case _: SubmissionResponse.Rejected | _: SubmissionResponse.Failed | _: SubmissionResponse.Retryable =>
+          case _: SubmissionResponse.Submitted | _: SubmissionResponse.Acknowledged | _: SubmissionResponse.Retryable =>
+            clearSubmissionFailed(userAnswers)
+          case _: SubmissionResponse.Rejected | _: SubmissionResponse.Failed =>
             flagSubmissionFailed(userAnswers)
         }
 
@@ -93,4 +93,14 @@ class ChrisSubmissionService @Inject()(connector: StampDutyLandTaxConnector,
         case re => logger.error("[ChrisSubmissionService] failed to persist SubmissionFailedPage", re)
       }
     )
+
+  private def clearSubmissionFailed(userAnswers: UserAnswers): Unit =
+    if (userAnswers.get(SubmissionFailedPage).contains(true)) {
+      userAnswers.remove(SubmissionFailedPage).fold(
+        errs => logger.error(s"[ChrisSubmissionService] could not clear SubmissionFailedPage: $errs"),
+        ua   => sessionRepository.set(ua).recover {
+          case re => logger.error("[ChrisSubmissionService] failed to persist cleared SubmissionFailedPage", re)
+        }
+      )
+    }
 }
