@@ -69,7 +69,10 @@ object SubmissionTaskList {
         url
       },
       tagId  = "submissionQuestionDetailRow",
-      checks = scheme => Seq(fullReturn.submission.exists(_.submissionID.isDefined)),
+      checks = _ => Seq(
+        fullReturn.submission.exists(_.submissionID.isDefined),
+        fullReturn.submission.exists(_.submissionStatus.exists(_ != "STARTED"))
+      ),
       prerequisites = _ => {
         val mandatory = Seq(
           VendorTaskList.vendorRowBuilder(fullReturn),
