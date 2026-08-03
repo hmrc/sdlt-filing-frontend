@@ -120,7 +120,7 @@ class TransactionCheckYourAnswersController @Inject()(
 
       case ("deleteLease", Some(availableReturnResourceRef)) =>
         for {
-          req <- DeleteLeaseRequest.from(userAnswers, availableReturnResourceRef)
+          req <- DeleteLeaseRequest.from(userAnswers)
           _ <- backendConnector.deleteLease(req)
         } yield ()
 
