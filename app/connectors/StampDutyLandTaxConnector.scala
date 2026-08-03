@@ -588,7 +588,7 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[HttpResponse]
       .flatMap { resp =>
         resp.status match {
-          case OK | ACCEPTED | BAD_REQUEST =>
+          case OK | ACCEPTED | BAD_REQUEST | BAD_GATEWAY | SERVICE_UNAVAILABLE =>
             resp.json.validate[SubmissionResponse] match {
               case JsSuccess(submissionResponse, _) =>
                 logger.info(s"[StampDutyLandTaxConnector][submit] submit request: $submitRequest, response: $submissionResponse")
