@@ -125,14 +125,14 @@ case class DeleteLeaseRequest(
 object DeleteLeaseRequest {
   implicit val format: OFormat[DeleteLeaseRequest] = Json.format[DeleteLeaseRequest]
 
-  def from(userAnswers: UserAnswers, leaseId: String): Future[DeleteLeaseRequest] = {
+  def from(userAnswers: UserAnswers): Future[DeleteLeaseRequest] = {
     userAnswers.fullReturn match {
       
       case Some(fullReturn) =>
         
         fullReturn.lease match {
           
-          case Some(lease) if lease.leaseID.contains(leaseId) => Future.successful(DeleteLeaseRequest(
+          case Some(lease) => Future.successful(DeleteLeaseRequest(
             storn = fullReturn.stornId,
             returnResourceRef = fullReturn.returnResourceRef,
           ))
