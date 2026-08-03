@@ -92,7 +92,7 @@ class PopulateTransactionService {
 
   private def vatPages(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] =
     transaction.considerationVAT match {
-      case Some(vat) if vat.nonEmpty && vat.toDouble > 0 =>
+      case Some(vat) if vat.nonEmpty && vat.replace(",", "").toDouble > 0 =>
         for {
           withVatIncluded <- userAnswers.set(TransactionVatIncludedPage, true)
           finalAnswers <- withVatIncluded.set(TransactionVatAmountPage, vat)
