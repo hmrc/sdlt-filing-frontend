@@ -77,11 +77,9 @@ class TotalConsiderationOfTransactionController @Inject()(
   }
 
   private def buildForm(userAnswers: UserAnswers): Form[String] = {
-    val vatStr = userAnswers.get(TransactionVatAmountPage).map(_.replace(",", ""))
-    val vat: Option[BigDecimal] = vatStr.map(BigDecimal(_))
+    val vat: Option[BigDecimal] = userAnswers.get(TransactionVatAmountPage).map(BigDecimal(_))
     val isTransactionNonLeased = !userAnswers.get(TypeOfTransactionPage).contains(TransactionType.GrantOfLease)
-    val linkedTransactionConsiderationStr = userAnswers.get(TotalConsiderationOfLinkedTransactionPage).map(_.replace(",", ""))
-    val linkedTransactionConsideration: Option[BigDecimal] = linkedTransactionConsiderationStr.map(BigDecimal(_))
+    val linkedTransactionConsideration: Option[BigDecimal] = userAnswers.get(TotalConsiderationOfLinkedTransactionPage).map(BigDecimal(_))
 
     def validateVatIncludedInConsideration(totalConsideration: String): Boolean =
       !vat.exists(_ > BigDecimal(totalConsideration))

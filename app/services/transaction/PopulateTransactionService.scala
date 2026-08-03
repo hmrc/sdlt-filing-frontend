@@ -86,7 +86,7 @@ class PopulateTransactionService {
 
   private def totalConsiderationPage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] =
     transaction.totalConsideration match {
-      case Some(amount) => userAnswers.set(TotalConsiderationOfTransactionPage, amount)
+      case Some(amount) => userAnswers.set(TotalConsiderationOfTransactionPage, amount.replace(",", ""))
       case None         => Success(userAnswers)
     }
 
@@ -95,7 +95,7 @@ class PopulateTransactionService {
       case Some(vat) if vat.nonEmpty && vat.replace(",", "").toDouble > 0 =>
         for {
           withVatIncluded <- userAnswers.set(TransactionVatIncludedPage, true)
-          finalAnswers <- withVatIncluded.set(TransactionVatAmountPage, vat)
+          finalAnswers <- withVatIncluded.set(TransactionVatAmountPage, vat.replace(",", ""))
         } yield finalAnswers
       case _ =>
         userAnswers.set(TransactionVatIncludedPage, false)
@@ -116,7 +116,7 @@ class PopulateTransactionService {
       for {
         withLinked   <- userAnswers.set(TransactionLinkedTransactionsPage, true)
         finalAnswers <- transaction.totalConsiderationLinked match {
-          case Some(amount) => withLinked.set(TotalConsiderationOfLinkedTransactionPage, amount)
+          case Some(amount) => withLinked.set(TotalConsiderationOfLinkedTransactionPage, amount.replace(",", ""))
           case None         => Success(withLinked)
         }
       } yield finalAnswers
