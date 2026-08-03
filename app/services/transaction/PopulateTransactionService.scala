@@ -157,7 +157,7 @@ class PopulateTransactionService {
       case Some(amount) =>
         for {
           withPartialRelief <- userAnswers.set(TransactionPartialReliefPage, true)
-          finalAnswers      <- withPartialRelief.set(ClaimingPartialReliefAmountPage, amount)
+          finalAnswers      <- withPartialRelief.set(ClaimingPartialReliefAmountPage, amount.replace(",", ""))
         } yield finalAnswers
       case None =>
         userAnswers.set(TransactionPartialReliefPage, false)
@@ -220,7 +220,7 @@ class PopulateTransactionService {
         for {
           withSaleOfBusiness <- userAnswers.set(SaleOfBusinessPage, true)
           withIncludedSaleBusinessPage <- includedSaleBusinessPage(transaction, withSaleOfBusiness)
-          finalAnswers <- withIncludedSaleBusinessPage.set(TotalAssetsConsiderationPage, totalConsideration)
+          finalAnswers <- withIncludedSaleBusinessPage.set(TotalAssetsConsiderationPage, totalConsideration.replace(",", ""))
         } yield finalAnswers
       case None =>
         userAnswers.set(SaleOfBusinessPage, false)
