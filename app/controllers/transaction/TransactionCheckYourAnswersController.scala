@@ -22,6 +22,7 @@ import models.{CheckMode, Lease, ReturnVersionUpdateRequest, Transaction, UserAn
 import models.land.LandTypeOfProperty
 import models.lease.{CreateLeaseRequest, DeleteLeaseRequest}
 import models.prelimQuestions.TransactionType
+import models.prelimQuestions.TransactionType.GrantOfLease
 import models.transaction.{ReasonForRelief, TransactionSessionQuestions, UpdateTransactionRequest}
 import pages.transaction.*
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -99,26 +100,25 @@ class TransactionCheckYourAnswersController @Inject()(
   }
 
   private def handleLeaseDecision(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Unit] = {
-    val getReturnResourceRef = userAnswers.fullReturn.map(_.returnResourceRef)
     val isLeaseDefined = userAnswers.fullReturn.flatMap(_.lease).isDefined
-    val transactionType = userAnswers.fullReturn.flatMap(_.transaction).flatMap(_.transactionDescription)
+    val transactionType = userAnswers.get(TypeOfTransactionPage)
 
     val leaseDecision: String = transactionType match {
-      case Some("L") if isLeaseDefined => "noAction"
-      case Some("L") if !isLeaseDefined => "createLease"
+      case Some(GrantOfLease) if isLeaseDefined => "noAction"
+      case Some(GrantOfLease) if !isLeaseDefined => "createLease"
       case Some(_) if isLeaseDefined => "deleteLease"
       case _ => "noAction"
     }
 
-    (leaseDecision, getReturnResourceRef) match {
-      case ("createLease", _) =>
+    leaseDecision match {
+      case "createLease" =>
         for {
           lease <- Lease.from(userAnswers)
           createLeaseRequest <- CreateLeaseRequest.from(userAnswers, lease)
           _ <- backendConnector.createLease(createLeaseRequest)
         } yield ()
 
-      case ("deleteLease", Some(availableReturnResourceRef)) =>
+      case "deleteLease" =>
         for {
           req <- DeleteLeaseRequest.from(userAnswers)
           _ <- backendConnector.deleteLease(req)

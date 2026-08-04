@@ -97,14 +97,14 @@ case class DeleteResidencyRequest(
 object DeleteResidencyRequest {
   implicit val format: OFormat[DeleteResidencyRequest] = Json.format[DeleteResidencyRequest]
 
-  def from(userAnswers: UserAnswers, residencyId: String): Future[DeleteResidencyRequest] = {
+  def from(userAnswers: UserAnswers): Future[DeleteResidencyRequest] = {
     userAnswers.fullReturn match {
 
       case Some(fullReturn) =>
 
         fullReturn.residency match {
 
-          case Some(residency) if residency.residencyID.contains(residencyId) => Future.successful(DeleteResidencyRequest(
+          case Some(residency) => Future.successful(DeleteResidencyRequest(
             storn = fullReturn.stornId,
             returnResourceRef = fullReturn.returnResourceRef,
           ))
