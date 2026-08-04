@@ -597,8 +597,13 @@ class TransactionCheckYourAnswersControllerSpec
 
       "must redirect to task list when update succeeds" in {
 
+        val userAnswersForUpdate = userAnswersWithValidSession.copy(
+            fullReturn = userAnswersWithValidSession.fullReturn.map(_.copy(lease = None))
+          )
+          .set(TypeOfTransactionPage, TransactionType.ConveyanceTransfer).success.value
+
         when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(userAnswersWithValidSession)))
+          .thenReturn(Future.successful(Some(userAnswersForUpdate)))
 
         when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
           .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(2))))
@@ -606,7 +611,10 @@ class TransactionCheckYourAnswersControllerSpec
         when(mockBackendConnector.updateTransaction(any[UpdateTransactionRequest])(any(), any()))
           .thenReturn(Future.successful(UpdateTransactionReturn(updated = true)))
 
-        val application = applicationBuilder(userAnswers = Some(userAnswersWithValidSession))
+        when(mockBackendConnector.updateTaxCalculationInfo(any[UpdateTaxCalculationRequest])(any(), any()))
+          .thenReturn(Future.successful(UpdateTaxCalculationReturn(updated = true)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswersForUpdate))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
@@ -625,8 +633,13 @@ class TransactionCheckYourAnswersControllerSpec
 
       "must redirect back to cya when update fails" in {
 
+        val userAnswersForUpdate = completeUserAnswers.copy(
+            fullReturn = completeUserAnswers.fullReturn.map(_.copy(lease = None))
+          )
+          .set(TypeOfTransactionPage, TransactionType.ConveyanceTransfer).success.value  // Changed from GrantOfLease
+
         when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(completeUserAnswers)))
+          .thenReturn(Future.successful(Some(userAnswersForUpdate)))
 
         when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
           .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(2))))
@@ -634,7 +647,10 @@ class TransactionCheckYourAnswersControllerSpec
         when(mockBackendConnector.updateTransaction(any[UpdateTransactionRequest])(any(), any()))
           .thenReturn(Future.successful(UpdateTransactionReturn(updated = false)))
 
-        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+        when(mockBackendConnector.updateTaxCalculationInfo(any[UpdateTaxCalculationRequest])(any(), any()))
+          .thenReturn(Future.successful(UpdateTaxCalculationReturn(updated = true)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswersForUpdate))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
@@ -939,7 +955,7 @@ class TransactionCheckYourAnswersControllerSpec
           fullReturn = Some(fullReturnWithLease),
           data = combinedData
         )
-          .set(TypeOfTransactionPage, TransactionType.GrantOfLease).success.value
+          .set(TypeOfTransactionPage, TransactionType.ConveyanceTransfer).success.value
           .set(TransactionEffectiveDatePage, LocalDate.of(2024, 1, 1)).success.value
           .set(TransactionAddDateOfContractPage, false).success.value
           .set(TransactionLinkedTransactionsPage, false).success.value

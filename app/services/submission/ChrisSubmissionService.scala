@@ -50,7 +50,7 @@ class ChrisSubmissionService @Inject()(connector: StampDutyLandTaxConnector,
 
         val deleteResidencyFuture = if (resetResidencyCheck) {
           for {
-            req <- DeleteResidencyRequest.from(userAnswers, fullReturn.returnResourceRef)
+            req <- DeleteResidencyRequest.from(userAnswers)
             _ <- backendConnector.deleteResidency(req)
           } yield ()
         } else {
