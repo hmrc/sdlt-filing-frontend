@@ -50,9 +50,8 @@
 
     <div class="govuk-body govuk-!-margin-bottom-6">
         @link(
-            link       = "#",
-            messageKey = "taxCalculation.calculation.returnToTaxCalculation",
-            attributes = Map("data-module" -> "hmrc-back-link")
+            link       = viewModel.returnToTaxCalcUrl,
+            messageKey = "taxCalculation.calculation.returnToTaxCalculation"
         )
     </div>
 }
