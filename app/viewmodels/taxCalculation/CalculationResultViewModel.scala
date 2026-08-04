@@ -32,7 +32,8 @@ case class CalculationResultViewModel(
                                        rateCardSummary:       SummaryList,
                                        premiumRateTable:      Table,
                                        npvRateTable:          Option[Table],
-                                       totalTax:              Table
+                                       totalTax:              Table,
+                                       returnToTaxCalcUrl:    String
                                      )
 
 object CalculationResultViewModel extends CurrencyFormatter {
@@ -75,7 +76,8 @@ object CalculationResultViewModel extends CurrencyFormatter {
         ),
         premiumRateTable = getPremiumRateTable(premiumCalc, rentCalc.isDefined),
         npvRateTable = getNpvRateTable(rentCalc),
-        totalTax = getTotalTaxTable(result.totalTax.toCurrency, holdingType)
+        totalTax = getTotalTaxTable(result.totalTax.toCurrency, holdingType),
+        returnToTaxCalcUrl = getReturnToTaxCalcUrl(transactionDescription)
       )
     }
 
@@ -240,4 +242,8 @@ object CalculationResultViewModel extends CurrencyFormatter {
 
   private def getMessage(key: String, args: String*)(implicit messages: Messages): String =
     messages(s"taxCalculation.calculation.$key", args*)
+
+  private def getReturnToTaxCalcUrl(transactionDescription: String): String =
+    if (transactionDescription.equalsIgnoreCase("F")) controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdCalculatedSdltDueController.onPageLoad().url
+    else controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdCalculatedSdltDueController.onPageLoad().url
 }

@@ -338,6 +338,16 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
       vm.totalTax.rows.head.map(_.content).last mustBe Text("£7,500")
     }
 
+    "returns freehold tax calculated URL when transactionDescription is F" in {
+      val vm = toViewModel(freeholdResult, freeholdAnswers).value
+      vm.returnToTaxCalcUrl mustBe controllers.taxCalculation.freeholdTaxCalculated.routes.FreeholdCalculatedSdltDueController.onPageLoad().url
+    }
+
+    "returns leasehold tax calculated URL when transactionDescription is L" in {
+      val vm = toViewModel(leaseResult, leaseholdAnswers).value
+      vm.returnToTaxCalcUrl mustBe controllers.taxCalculation.leaseholdTaxCalculated.routes.LeaseholdCalculatedSdltDueController.onPageLoad().url
+    }
+
     "Left(MissingPremiumCalcError) for a self-assessed result with empty taxCalcs" in {
       val selfAssessed = TaxCalculationResult(0, Some("Self-assessed"), None, None, Seq.empty)
       toViewModel(selfAssessed, freeholdAnswers) mustBe Left(MissingPremiumCalcError)
