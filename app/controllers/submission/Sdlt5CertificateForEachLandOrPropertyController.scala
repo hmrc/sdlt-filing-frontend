@@ -16,15 +16,18 @@
 
 package controllers.submission
 
+import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
 import forms.submission.Sdlt5CertificateForEachLandOrPropertyFormProvider
-import models.Mode
+import models.{Mode, ReturnInfoRequest, UserAnswers}
 import navigation.Navigator
 import pages.submission.Sdlt5CertificateForEachLandOrPropertyPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.submission.Sdlt5CertificateForEachLandOrPropertyView
 
 import javax.inject.{Inject, Singleton}
@@ -40,6 +43,7 @@ class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
                                                                    requireData: DataRequiredAction,
                                                                    resubmissionCheck: ResubmissionCheckAction,
                                                                    formProvider: Sdlt5CertificateForEachLandOrPropertyFormProvider,
+                                                                   backendConnector: StampDutyLandTaxConnector,
                                                                    val controllerComponents: MessagesControllerComponents,
                                                                    view: Sdlt5CertificateForEachLandOrPropertyView
                                                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -64,6 +68,7 @@ class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData).async {
     implicit request =>
+      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
       val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)
 
@@ -75,11 +80,30 @@ class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(Sdlt5CertificateForEachLandOrPropertyPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(Sdlt5CertificateForEachLandOrPropertyPage, mode, updatedAnswers))
+              answersWithCert = withLandCertForEachProp(updatedAnswers, if (value) "YES" else "NO")
+              _              <- updateReturnInfo(answersWithCert)
+              _              <- sessionRepository.set(answersWithCert)
+            } yield Redirect(navigator.nextPage(Sdlt5CertificateForEachLandOrPropertyPage, mode, answersWithCert))
         )
       } else {
         Future.successful(Redirect(controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad()))
       }
   }
+
+  private def withLandCertForEachProp(userAnswers: UserAnswers, value: String): UserAnswers =
+    userAnswers.copy(fullReturn = userAnswers.fullReturn.map { fullReturn =>
+      fullReturn.copy(returnInfo = fullReturn.returnInfo.map(_.copy(landCertForEachProp = Some(value))))
+    })
+
+  private def updateReturnInfo(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Unit] =
+    userAnswers.fullReturn.flatMap(_.returnInfo) match {
+      case Some(returnInfo) =>
+        for {
+          req <- ReturnInfoRequest.from(userAnswers = userAnswers, returnInfo = returnInfo)
+          _   <- backendConnector.updateReturnInfo(req)
+        } yield ()
+
+      case None =>
+        Future.unit
+    }
 }

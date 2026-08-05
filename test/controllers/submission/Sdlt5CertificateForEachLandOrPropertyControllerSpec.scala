@@ -17,13 +17,15 @@
 package controllers.submission
 
 import base.SpecBase
+import connectors.StampDutyLandTaxConnector
 import constants.FullReturnConstants.completeFullReturn
 import controllers.routes
 import forms.submission.Sdlt5CertificateForEachLandOrPropertyFormProvider
-import models.{FullReturn, Land, NormalMode, Submission, UserAnswers}
+import models.{FullReturn, Land, NormalMode, ReturnInfo, ReturnInfoRequest, ReturnInfoReturn, Submission, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{never, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.submission.Sdlt5CertificateForEachLandOrPropertyPage
 import play.api.inject.bind
@@ -56,6 +58,36 @@ class Sdlt5CertificateForEachLandOrPropertyControllerSpec extends SpecBase with 
   val testUserAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn))
 
   val multipleLandUserAnswers: UserAnswers = emptyUserAnswers.copy(fullReturn = Some(multipleLandFullReturn))
+
+  private val multipleLandWithReturnInfo: UserAnswers =
+    emptyUserAnswers.copy(fullReturn = Some(multipleLandFullReturn.copy(returnInfo = Some(ReturnInfo(returnID = Some("R1"))))))
+
+  private def postAnswer(userAnswers: UserAnswers, answer: String)
+                        (check: (StampDutyLandTaxConnector, SessionRepository) => Unit): Unit = {
+    val mockSessionRepository = mock[SessionRepository]
+    val mockConnector         = mock[StampDutyLandTaxConnector]
+
+    when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+    when(mockConnector.updateReturnInfo(any())(any(), any())) thenReturn Future.successful(ReturnInfoReturn(true))
+
+    val application =
+      applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[StampDutyLandTaxConnector].toInstance(mockConnector)
+        )
+        .build()
+
+    running(application) {
+      val request =
+        FakeRequest(POST, sdlt5CertificateForEachLandOrPropertyRoute)
+          .withFormUrlEncodedBody(("value", answer))
+
+      status(route(application, request).value) mustEqual SEE_OTHER
+      check(mockConnector, mockSessionRepository)
+    }
+  }
 
   "Sdlt5CertificateForEachLandOrProperty Controller" - {
 
@@ -131,6 +163,36 @@ class Sdlt5CertificateForEachLandOrPropertyControllerSpec extends SpecBase with 
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+
+    "must send landCertForEachProp as YES to the backend when the user answers yes" in {
+      postAnswer(multipleLandWithReturnInfo, "true") { (connector, _) =>
+        val captor = ArgumentCaptor.forClass(classOf[ReturnInfoRequest])
+        verify(connector).updateReturnInfo(captor.capture())(any(), any())
+        captor.getValue.landCertForEachProp mustBe Some("YES")
+      }
+    }
+
+    "must send landCertForEachProp as NO to the backend when the user answers no" in {
+      postAnswer(multipleLandWithReturnInfo, "false") { (connector, _) =>
+        val captor = ArgumentCaptor.forClass(classOf[ReturnInfoRequest])
+        verify(connector).updateReturnInfo(captor.capture())(any(), any())
+        captor.getValue.landCertForEachProp mustBe Some("NO")
+      }
+    }
+
+    "must store the answer on the cached full return so the submission carries it" in {
+      postAnswer(multipleLandWithReturnInfo, "true") { (_, sessionRepository) =>
+        val captor = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(sessionRepository).set(captor.capture())
+        captor.getValue.fullReturn.flatMap(_.returnInfo).flatMap(_.landCertForEachProp) mustBe Some("YES")
+      }
+    }
+
+    "must not call the backend when the return has no return info" in {
+      postAnswer(multipleLandUserAnswers, "true") { (connector, _) =>
+        verify(connector, never()).updateReturnInfo(any())(any(), any())
       }
     }
 
