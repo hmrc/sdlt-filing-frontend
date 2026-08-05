@@ -21,14 +21,17 @@ import forms.submission.Sdlt5CertificateForEachLandOrPropertyFormProvider
 import models.Mode
 import navigation.Navigator
 import pages.submission.Sdlt5CertificateForEachLandOrPropertyPage
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.submission.CertificateForEachService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.submission.Sdlt5CertificateForEachLandOrPropertyView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 
 @Singleton
 class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
@@ -40,9 +43,10 @@ class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
                                                                    requireData: DataRequiredAction,
                                                                    resubmissionCheck: ResubmissionCheckAction,
                                                                    formProvider: Sdlt5CertificateForEachLandOrPropertyFormProvider,
+                                                                   certificateForEachService: CertificateForEachService,
                                                                    val controllerComponents: MessagesControllerComponents,
                                                                    view: Sdlt5CertificateForEachLandOrPropertyView
-                                                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
   val form = formProvider()
 
@@ -73,10 +77,16 @@ class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
             Future.successful(BadRequest(view(formWithErrors, mode))),
 
           value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(Sdlt5CertificateForEachLandOrPropertyPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(Sdlt5CertificateForEachLandOrPropertyPage, mode, updatedAnswers))
+            (for {
+              updatedAnswers  <- Future.fromTry(request.userAnswers.set(Sdlt5CertificateForEachLandOrPropertyPage, value))
+              answersWithCert <- certificateForEachService.store(updatedAnswers, value)
+              _               <- sessionRepository.set(answersWithCert)
+            } yield Redirect(navigator.nextPage(Sdlt5CertificateForEachLandOrPropertyPage, mode, answersWithCert)))
+              .recover { case NonFatal(e) =>
+                logger.warn(s"[Sdlt5CertificateForEachLandOrPropertyController][onSubmit] " +
+                  s"could not store the certificate answer: ${e.getMessage}. Redirecting to journey recovery")
+                Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+              }
         )
       } else {
         Future.successful(Redirect(controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad()))
