@@ -37,6 +37,7 @@ import views.html.land.LandCheckYourAnswersView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 
 @Singleton
 class LandCheckYourAnswersController @Inject() (
@@ -188,27 +189,39 @@ class LandCheckYourAnswersController @Inject() (
     for {
       land <- Land.from(userAnswers)
       updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
-      updateReturnVersionReturn <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
-      result <-
-        if (updateReturnVersionReturn.newVersion.isDefined) {
-          for {
-            updateLandRequest <- UpdateLandRequest.from(userAnswers, land)
-            updateLandReturn <- backendConnector.updateLand(updateLandRequest)
-            _ <- maybeUpdateTaxCalc(userAnswers)
-          } yield
-            if (updateLandReturn.updated)
-              Redirect(controllers.land.routes.LandOverviewController.onPageLoad())
-                .flashing("landUpdated" -> updateLandRequest.addressLine1)
-            else
+      updateReturnVersionResult <-
+        backendConnector
+          .updateReturnVersion(updateReturnVersionRequest)
+          .map(Right(_))
+          .recover { case NonFatal(_) =>
+            Left(Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad()))
+          }
+      result <- updateReturnVersionResult match {
+        case Left(errorRedirect) =>
+          Future.successful(errorRedirect)
+
+        case Right(updateReturnVersionReturn) =>
+          if (updateReturnVersionReturn.newVersion.isDefined) {
+            for {
+              updateLandRequest <- UpdateLandRequest.from(userAnswers, land)
+              updateLandReturn <- backendConnector.updateLand(updateLandRequest)
+              _ <- maybeUpdateTaxCalc(userAnswers)
+            } yield
+              if (updateLandReturn.updated)
+                Redirect(controllers.land.routes.LandOverviewController.onPageLoad())
+                  .flashing("landUpdated" -> updateLandRequest.addressLine1)
+              else
+                Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
+          } else {
+            Future.successful(
               Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
-        } else {
-          Future.successful(
-            Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
-          )
-        }
+            )
+          }
+      }
     } yield result
   }
-
+  
+  
   private def maybeUpdateTaxCalc(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Unit] =
     if (updateTaxCalcService.landDataMatches(userAnswers)) {
       for {

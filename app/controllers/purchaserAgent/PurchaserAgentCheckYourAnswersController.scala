@@ -33,6 +33,7 @@ import views.html.purchaserAgent.PurchaserAgentCheckYourAnswersView
 import uk.gov.hmrc.http.HeaderCarrier
 import services.checkAnswers.CheckAnswersService
 import viewmodels.checkAnswers.summary.SummaryRowResult
+import scala.util.control.NonFatal
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -113,17 +114,34 @@ class PurchaserAgentCheckYourAnswersController @Inject()(
   private def updateReturnAgent(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     for {
       updateRequest <- ReturnVersionUpdateRequest.from(userAnswers)
-      version <- backendConnector.updateReturnVersion(updateRequest)
-      updateReturnAgentRequest <- UpdateReturnAgentRequest.from(userAnswers, Purchaser) if version.newVersion.isDefined
-      updateReturnAgentReturn <- backendConnector.updateReturnAgent(updateReturnAgentRequest) if version.newVersion.isDefined
-    } yield {
-      if (updateReturnAgentReturn.updated) {
-        Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad())
-          .flashing("purchaserAgentUpdated" -> updateReturnAgentRequest.name)
-      } else {
-        Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad())
+      versionResult <-
+        backendConnector
+          .updateReturnVersion(updateRequest)
+          .map(Right(_))
+          .recover { case NonFatal(_) =>
+            Left(Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad()))
+          }
+      result <- versionResult match {
+        case Left(errorRedirect) =>
+          Future.successful(errorRedirect)
+
+        case Right(version) if version.newVersion.isDefined =>
+          for {
+            updateReturnAgentRequest <- UpdateReturnAgentRequest.from(userAnswers, Purchaser)
+            updateReturnAgentReturn  <- backendConnector.updateReturnAgent(updateReturnAgentRequest)
+          } yield
+            if (updateReturnAgentReturn.updated)
+              Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad())
+                .flashing("purchaserAgentUpdated" -> updateReturnAgentRequest.name)
+            else
+              Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad())
+
+        case Right(_) =>
+          Future.successful(
+            Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad())
+          )
       }
-    }
+    } yield result
   }
 
   private def createReturnAgent(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {

@@ -30,6 +30,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaserAgent.PurchaserAgentBeforeYouStartPage
 import play.api.inject.bind
 import play.api.mvc.Call
+import play.api.mvc.Results.Redirect
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
@@ -96,7 +97,7 @@ class PurchaserAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSu
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       when(mockPurchaserCreateOrUpdateService.updateIsRepresentedByAgent(any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(true))
+        .thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -119,6 +120,36 @@ class PurchaserAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSu
       }
     }
 
+    "must redirect to the update return version error page when the service reports a version bump failure" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      val mockPurchaserCreateOrUpdateService = mock[PurchaserCreateOrUpdateService]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockPurchaserCreateOrUpdateService.updateIsRepresentedByAgent(any(), any(), any())(any(), any(), any()))
+        .thenReturn(Future.successful(Left(Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad()))))
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[PurchaserCreateOrUpdateService].toInstance(mockPurchaserCreateOrUpdateService)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, purchaserAgentBeforeYouStartRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.UpdateReturnVersionErrorController.onPageLoad().url
+      }
+    }
+
     "must redirect to the Overview page when 'Yes' is selected and existing purchaser agent is found" in {
 
       val userAnswers = emptyUserAnswers.copy(
@@ -129,7 +160,6 @@ class PurchaserAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSu
 
       val mockSessionRepository = mock[SessionRepository]
       val mockBackendConnector = mock[StampDutyLandTaxConnector]
-      val mockPurchaserCreateOrUpdateService = mock[PurchaserCreateOrUpdateService]
 
       val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = Some(2))
       val updatePurchaserReturn = UpdatePurchaserReturn(true)
@@ -139,8 +169,6 @@ class PurchaserAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSu
         .thenReturn(Future.successful(returnVersionResponse))
       when(mockBackendConnector.updatePurchaser(any[UpdatePurchaserRequest])(any(), any()))
         .thenReturn(Future.successful(updatePurchaserReturn))
-      when(mockPurchaserCreateOrUpdateService.updateIsRepresentedByAgent(any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(true))
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
@@ -178,15 +206,12 @@ class PurchaserAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSu
 
       val mockSessionRepository = mock[SessionRepository]
       val mockBackendConnector = mock[StampDutyLandTaxConnector]
-      val mockPurchaserCreateOrUpdateService = mock[PurchaserCreateOrUpdateService]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
       when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
         .thenReturn(Future.successful(returnVersionResponse))
       when(mockBackendConnector.updatePurchaser(any[UpdatePurchaserRequest])(any(), any()))
         .thenReturn(Future.successful(updatePurchaserReturn))
-      when(mockPurchaserCreateOrUpdateService.updateIsRepresentedByAgent(any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(true))
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
@@ -224,7 +249,6 @@ class PurchaserAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSu
 
       val mockSessionRepository = mock[SessionRepository]
       val mockBackendConnector = mock[StampDutyLandTaxConnector]
-      val mockPurchaserCreateOrUpdateService = mock[PurchaserCreateOrUpdateService]
       val deleteReturnAgentReturn = DeleteReturnAgentReturn(true)
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -234,8 +258,6 @@ class PurchaserAgentBeforeYouStartControllerSpec extends SpecBase with MockitoSu
         .thenReturn(Future.successful(updatePurchaserReturn))
       when(mockBackendConnector.deleteReturnAgent(any[DeleteReturnAgentRequest])(any(), any()))
         .thenReturn(Future.successful(deleteReturnAgentReturn))
-      when(mockPurchaserCreateOrUpdateService.updateIsRepresentedByAgent(any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(true))
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))

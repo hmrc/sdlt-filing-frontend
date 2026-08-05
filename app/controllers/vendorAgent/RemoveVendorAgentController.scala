@@ -26,7 +26,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.vendorAgent.RemoveVendorAgentView
-
+import scala.util.control.NonFatal
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -98,19 +98,33 @@ class RemoveVendorAgentController @Inject()(
                 if (value) {
                   (for {
                     updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(request.userAnswers)
-                    returnVersion <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
-                    deleteVendorAgentRequest <- DeleteReturnAgentRequest.from(request.userAnswers, agentType = AgentType.Vendor)
-                    if returnVersion.newVersion.isDefined
-                    deleteVendorAgentReturn <- backendConnector.deleteReturnAgent(deleteVendorAgentRequest) if returnVersion.newVersion.isDefined
-                  } yield {
-                    Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad())
-                      .flashing("vendorAgentDeleted" -> maybeVendorAgentToDelete.flatMap(_.name).getOrElse(""))
-                  }).recover {
+                    versionResult <-
+                      backendConnector
+                        .updateReturnVersion(updateReturnVersionRequest)
+                        .map(Right(_))
+                        .recover { case NonFatal(_) =>
+                          Left(Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad()))
+                        }
+                    result <- versionResult match {
+                      case Left(errorRedirect) =>
+                        Future.successful(errorRedirect)
+
+                      case Right(returnVersion) if returnVersion.newVersion.isDefined =>
+                        for {
+                          deleteVendorAgentRequest <- DeleteReturnAgentRequest.from(request.userAnswers, agentType = AgentType.Vendor)
+                          _                        <- backendConnector.deleteReturnAgent(deleteVendorAgentRequest)
+                        } yield
+                          Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad())
+                            .flashing("vendorAgentDeleted" -> agent.name.getOrElse(""))
+
+                      case Right(_) =>
+                        Future.successful(Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad()))
+                    }
+                  } yield result).recover {
                     case _ =>
                       Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad())
                   }
-                }
-                else {
+                } else {
                   Future.successful(Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad()))
                 }
             )

@@ -24,7 +24,6 @@ import forms.vendor.RemoveVendorFormProvider
 import models.vendor.DeleteVendorReturn
 import models.{ReturnInfo, ReturnVersionUpdateReturn, UserAnswers, Vendor}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.vendor.VendorOverviewRemovePage
 import play.api.inject.bind
@@ -32,6 +31,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import uk.gov.hmrc.http.UpstreamErrorResponse
 import views.html.vendor.RemoveVendorView
+import org.mockito.Mockito.{when, verify, times}
 
 import scala.concurrent.Future
 
@@ -42,6 +42,43 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
   lazy val removeVendorRoute = controllers.vendor.routes.RemoveVendorController.onPageLoad().url
 
   "RemoveVendor Controller" - {
+
+    "must redirect to the update return version error page when updateReturnVersion fails" in {
+
+      val mockBackendConnector = mock[StampDutyLandTaxConnector]
+
+      val vendorResourceRef = "VEN-REF-001"
+      val fullReturn = completeFullReturn.copy(
+        submission = None,
+        returnInfo = Some(ReturnInfo(version = Some("1.00"))),
+        vendor = Some(Seq(Vendor(vendorResourceRef = Some("VEN-REF-001"))))
+      )
+      val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
+        .set(VendorOverviewRemovePage, vendorResourceRef).success.value
+
+      when(mockBackendConnector.updateReturnVersion(any)(any(), any()))
+        .thenReturn(Future.failed(UpstreamErrorResponse("Bad Request", 400)))
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, removeVendorRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.UpdateReturnVersionErrorController.onPageLoad().url
+
+        verify(mockBackendConnector, times(0)).deleteVendor(any)(any(), any())
+      }
+    }
 
     "must return OK and the correct view for a GET" in {
 
@@ -196,41 +233,6 @@ class RemoveVendorControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockBackendConnector.updateReturnVersion(any)(any(), any()))
           .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(1))))
-
-        val application =
-          applicationBuilder(userAnswers = Some(userAnswers))
-            .overrides(
-              bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
-            )
-            .build()
-
-        running(application) {
-          val request =
-            FakeRequest(POST, removeVendorRoute)
-              .withFormUrlEncodedBody(("value", "true"))
-
-          val result = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.vendor.routes.VendorOverviewController.onPageLoad().url
-        }
-      }
-
-      "when Yes is selected and updateReturnVersion fails" in {
-
-        val mockBackendConnector = mock[StampDutyLandTaxConnector]
-
-        val vendorResourceRef = "VEN-REF-001"
-        val fullReturn = completeFullReturn.copy(
-          submission = None,
-          returnInfo = Some(ReturnInfo(version = Some("1.00"))),
-          vendor = Some(Seq(Vendor(vendorResourceRef = Some("VEN-REF-001"))))
-        )
-        val userAnswers = UserAnswers(userAnswersId, storn = "TESTSTORN", fullReturn = Some(fullReturn))
-          .set(VendorOverviewRemovePage, vendorResourceRef).success.value
-
-        when(mockBackendConnector.updateReturnVersion(any)(any(), any()))
-          .thenReturn(Future.failed(UpstreamErrorResponse("Bad Request", 400)))
 
         val application =
           applicationBuilder(userAnswers = Some(userAnswers))

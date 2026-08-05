@@ -33,6 +33,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.lease.*
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import views.html.lease.LeaseCheckYourAnswersView
+import scala.util.control.NonFatal
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -122,27 +123,32 @@ class LeaseCheckYourAnswersController @Inject()(
     for {
       lease <- Lease.from(userAnswers)
       updateRequest <- ReturnVersionUpdateRequest.from(userAnswers)
-      version <- backendConnector.updateReturnVersion(updateRequest)
-      result <-
-        if (version.newVersion.isDefined) {
+      versionResult <-
+        backendConnector
+          .updateReturnVersion(updateRequest)
+          .map(Right(_))
+          .recover { case NonFatal(_) =>
+            Left(Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad()))
+          }
+      result <- versionResult match {
+        case Left(errorRedirect) =>
+          Future.successful(errorRedirect)
+
+        case Right(version) if version.newVersion.isDefined =>
           for {
             updateLeaseRequest <- UpdateLeaseRequest.from(userAnswers, lease)
             updateLeaseReturn <- backendConnector.updateLease(updateLeaseRequest)
             _ <- maybeUpdateLeaseTaxCalc(userAnswers)
           } yield
-            if (updateLeaseReturn.updated) {
-              Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-            } else {
-              Redirect(controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad())
-            }
-        } else {
-          Future.successful(
-            Redirect(controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad())
-          )
-        }
+            if (updateLeaseReturn.updated) Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+            else Redirect(controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad())
+
+        case Right(_) =>
+          Future.successful(Redirect(controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()))
+      }
     } yield result
   }
-
+  
   private def maybeUpdateLeaseTaxCalc(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Unit] =
     if (updateTaxCalcService.leaseDataMatches(userAnswers)) {
       for {

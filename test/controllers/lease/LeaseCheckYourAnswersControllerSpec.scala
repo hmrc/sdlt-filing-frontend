@@ -22,7 +22,7 @@ import constants.FullReturnConstants.{completeFullReturn, completeTransaction, e
 import models.lease.{CreateLeaseRequest, CreateLeaseReturn, UpdateLeaseRequest, UpdateLeaseReturn}
 import models.*
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, when}
+import org.mockito.Mockito.{reset, when, verify, never}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
@@ -585,6 +585,32 @@ class LeaseCheckYourAnswersControllerSpec
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
             controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+      "must redirect to the update return version error page when updateReturnVersion fails" in {
+
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(completeUserAnswers)))
+
+        when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+          .thenReturn(Future.failed(new RuntimeException("simulated backend failure")))
+
+        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, routes.LeaseCheckYourAnswersController.onSubmit().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual
+            controllers.routes.UpdateReturnVersionErrorController.onPageLoad().url
+
+          verify(mockBackendConnector, never).updateLease(any())(any(), any())
         }
       }
     }

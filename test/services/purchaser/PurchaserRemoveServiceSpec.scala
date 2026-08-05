@@ -937,10 +937,10 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
           flash(result).get("purchaserDeleted").value mustEqual "John Smith"
         }
 
-        "must redirect to JourneyRecovery when updateReturnVersion fails" in {
+        "must redirect to the update return version error page when updateReturnVersion fails" in {
           val purchaserId = "PURCH001"
           val purchaser = createPurchaser(purchaserId, forename1 = Some("John"), surname = Some("Smith"))
-          val returnInfo = ReturnInfo(mainPurchaserID = Some(purchaserId))
+          val returnInfo = ReturnInfo(version = Some("0"), mainPurchaserID = Some(purchaserId))
           val fullReturn = emptyFullReturn.copy(
             purchaser = Some(Seq(purchaser)),
             returnInfo = Some(returnInfo)
@@ -971,13 +971,13 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
           )
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.routes.UpdateReturnVersionErrorController.onPageLoad().url)
         }
 
-        "must redirect to JourneyRecovery when updateReturnVersion returns None for newVersion" in {
+        "must redirect to the update return version error page when updateReturnVersion returns None for newVersion" in {
           val purchaserId = "PURCH001"
           val purchaser = createPurchaser(purchaserId, forename1 = Some("John"), surname = Some("Smith"))
-          val returnInfo = ReturnInfo(mainPurchaserID = Some(purchaserId))
+          val returnInfo = ReturnInfo(version = Some("0"), mainPurchaserID = Some(purchaserId))
           val fullReturn = emptyFullReturn.copy(
             purchaser = Some(Seq(purchaser)),
             returnInfo = Some(returnInfo)
@@ -1008,9 +1008,9 @@ class PurchaserRemoveServiceSpec extends SpecBase with MockitoSugar with BeforeA
           )
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+          redirectLocation(result) mustBe Some(controllers.routes.UpdateReturnVersionErrorController.onPageLoad().url)
         }
-
+        
         "must redirect to JourneyRecovery when deletePurchaser fails" in {
           val purchaserId = "PURCH001"
           val purchaser = createPurchaser(purchaserId, forename1 = Some("John"), surname = Some("Smith"))

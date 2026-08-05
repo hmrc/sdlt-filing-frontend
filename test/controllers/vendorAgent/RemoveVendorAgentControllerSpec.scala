@@ -23,18 +23,17 @@ import controllers.routes
 import forms.vendorAgent.RemoveVendorAgentFormProvider
 import models.{DeleteReturnAgentReturn, FullReturn, ReturnAgent, ReturnInfo, ReturnVersionUpdateReturn, UserAnswers, Vendor}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.vendorAgent.{AgentNamePage, RemoveVendorAgentPage, VendorAgentOverviewPage}
 import play.api.data.Form
 import play.api.inject
 import play.api.inject.bind
-import play.api.mvc.{Call, Request}
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.http.HeaderCarrier
 import views.html.vendorAgent.RemoveVendorAgentView
+import org.mockito.Mockito.{when, verify, times}
 
 import scala.concurrent.Future
 
@@ -316,7 +315,7 @@ class RemoveVendorAgentControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must redirect to vendor agent overview when backend fails" in {
+      "must redirect to the update return version error page when updateReturnVersion fails" in {
         val singleVendorAgent = ReturnAgent(
           returnAgentID = Some("RA001"),
           returnID = Some("RET-PA-001"),
@@ -336,12 +335,14 @@ class RemoveVendorAgentControllerSpec extends SpecBase with MockitoSugar {
           .value
           .copy(storn = testStorn, fullReturn = Some(fullReturnWithSingleVendor))
 
-        when(mockConnector.updateReturnVersion(any())(any[HeaderCarrier], any[Request[_]]))
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
+
+        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
           .thenReturn(Future.failed(new RuntimeException("simulated backend failure")))
 
         val application = applicationBuilder(Some(userAnswers))
           .overrides(
-            bind[StampDutyLandTaxConnector].toInstance(mockConnector)
+            bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
           ).build()
 
         running(application) {
@@ -351,7 +352,9 @@ class RemoveVendorAgentControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.routes.UpdateReturnVersionErrorController.onPageLoad().url
+
+          verify(mockBackendConnector, times(0)).deleteReturnAgent(any())(any(), any())
         }
       }
 

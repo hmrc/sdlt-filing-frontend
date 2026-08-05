@@ -33,6 +33,7 @@ import viewmodels.checkAnswers.ukResidency.{CloseCompanySummary, CrownEmployment
 import views.html.ukResidency.UkResidencyCheckYourAnswersView
 import utils.PropertyTypeHelper.isResidentialProperty
 import viewmodels.checkAnswers.summary.SummaryRowResult
+import scala.util.control.NonFatal
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -159,27 +160,33 @@ class UkResidencyCheckYourAnswersController @Inject()(
   private def updateResidency(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     for {
       updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
-      updateReturnVersionReturn <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
-      result <-
-        if (updateReturnVersionReturn.newVersion.isDefined) {
+      versionResult <-
+        backendConnector
+          .updateReturnVersion(updateReturnVersionRequest)
+          .map(Right(_))
+          .recover { case NonFatal(_) =>
+            Left(Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad()))
+          }
+      result <- versionResult match {
+        case Left(errorRedirect) =>
+          Future.successful(errorRedirect)
+
+        case Right(updateReturnVersionReturn) if updateReturnVersionReturn.newVersion.isDefined =>
           for {
             updateResidencyRequest <- UpdateResidencyRequest.from(userAnswers)
             updateResidencyReturn <- backendConnector.updateResidency(updateResidencyRequest)
             _ <- maybeUpdateResidencyTaxCalc(userAnswers)
           } yield
-            if (updateResidencyReturn.updated) {
-              Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-            } else {
-              Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
-            }
-        } else {
+            if (updateResidencyReturn.updated) Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+            else Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
+
+        case Right(_) =>
           Future.successful(
             Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
           )
-        }
+      }
     } yield result
   }
-
   private def maybeUpdateResidencyTaxCalc(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Unit] =
     if (updateTaxCalcService.residencyDataMatches(userAnswers)) {
       for {

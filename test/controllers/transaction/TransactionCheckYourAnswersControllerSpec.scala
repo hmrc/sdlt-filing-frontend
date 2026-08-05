@@ -595,6 +595,62 @@ class TransactionCheckYourAnswersControllerSpec
 
     "onSubmit" - {
 
+      "must redirect back to cya when updateReturnVersion returns no new version" in {
+
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(completeUserAnswers)))
+
+        when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+          .thenReturn(Future.successful(ReturnVersionUpdateReturn(None)))
+
+        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, routes.TransactionCheckYourAnswersController.onSubmit().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual
+            routes.TransactionCheckYourAnswersController.onPageLoad().url
+
+          verify(mockBackendConnector, org.mockito.Mockito.never()).updateTransaction(any[UpdateTransactionRequest])(any(), any())
+        }
+      }
+
+      "must redirect to the update return version error page when updateReturnVersion fails" in {
+
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(completeUserAnswers)))
+
+        when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+          .thenReturn(Future.failed(new RuntimeException("simulated backend failure")))
+
+        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, routes.TransactionCheckYourAnswersController.onSubmit().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual
+            controllers.routes.UpdateReturnVersionErrorController.onPageLoad().url
+
+          verify(mockBackendConnector, org.mockito.Mockito.never()).updateTransaction(any[UpdateTransactionRequest])(any(), any())
+          verify(mockBackendConnector, org.mockito.Mockito.never()).createLease(any[CreateLeaseRequest])(any(), any())
+          verify(mockBackendConnector, org.mockito.Mockito.never()).deleteLease(any[DeleteLeaseRequest])(any(), any())
+        }
+      }
+
       "must redirect to task list when update succeeds" in {
 
         when(mockSessionRepository.get(any()))

@@ -154,7 +154,7 @@ class VendorCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar with Be
         verify(mockBackendConnector, times(1)).updateVendor(any())(any(), any())
       }
 
-      "must fail when version update does not return a new version" in {
+      "must redirect to CYA when version update does not return a new version" in {
         val userAnswers = userAnswersWithExistingVendor
 
         val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = None)
@@ -162,9 +162,12 @@ class VendorCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar with Be
         when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
           .thenReturn(Future.successful(returnVersionResponse))
 
-        whenReady(service.updateVendor(userAnswers).failed) { exception =>
-          exception mustBe a [NoSuchElementException]
-        }
+        val result = service.updateVendor(userAnswers).futureValue
+
+        status(Future.successful(result)) mustEqual SEE_OTHER
+        redirectLocation(Future.successful(result)).value mustEqual
+          controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad().url
+        verify(mockBackendConnector, never()).updateVendor(any())(any(), any())
       }
 
       "must fail when vendor is not found in full return" in {
@@ -193,16 +196,18 @@ class VendorCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar with Be
         }
       }
 
-      "must propagate backend connector updateReturnVersion failures" in {
+      "must redirect to the update return version error page when updateReturnVersion fails" in {
         val userAnswers = userAnswersWithExistingVendor
 
         when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
           .thenReturn(Future.failed(new RuntimeException("Backend failure")))
 
-        whenReady(service.updateVendor(userAnswers).failed) { exception =>
-          exception mustBe a [RuntimeException]
-          exception.getMessage mustBe "Backend failure"
-        }
+        val result = service.updateVendor(userAnswers).futureValue
+
+        status(Future.successful(result)) mustEqual SEE_OTHER
+        redirectLocation(Future.successful(result)).value mustEqual
+          controllers.routes.UpdateReturnVersionErrorController.onPageLoad().url
+        verify(mockBackendConnector, never()).updateVendor(any())(any(), any())
       }
 
       "must propagate backend connector updateVendor failures" in {
@@ -258,7 +263,7 @@ class VendorCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar with Be
 
           val result = service.updateIsRepresentedByAgent(true, userAnswers).futureValue
 
-          result mustEqual true
+          result mustEqual Right(true)
           verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
           verify(mockBackendConnector, times(1)).updateVendor(any())(any(), any())
           verify(mockBackendConnector, never()).deleteReturnAgent(any())(any(), any())
@@ -280,7 +285,7 @@ class VendorCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar with Be
 
           val result = service.updateIsRepresentedByAgent(false, userAnswers).futureValue
 
-          result mustEqual true
+          result mustEqual Right(true)
           verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
           verify(mockBackendConnector, times(1)).updateVendor(any())(any(), any())
           verify(mockBackendConnector, never()).deleteReturnAgent(any())(any(), any())
@@ -302,7 +307,7 @@ class VendorCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar with Be
 
           val result = service.updateIsRepresentedByAgent(false, userAnswers).futureValue
 
-          result mustEqual true
+          result mustEqual Right(true)
           verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
           verify(mockBackendConnector, times(1)).updateVendor(any())(any(), any())
           verify(mockBackendConnector, times(1)).deleteReturnAgent(any())(any(), any())
@@ -313,7 +318,7 @@ class VendorCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar with Be
 
           val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = Some(2))
           val updateVendorReturn = UpdateVendorReturn(true)
-          
+
           when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
             .thenReturn(Future.successful(returnVersionResponse))
           when(mockBackendConnector.updateVendor(any[UpdateVendorRequest])(any(), any()))
@@ -321,7 +326,7 @@ class VendorCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar with Be
 
           val result = service.updateIsRepresentedByAgent(false, userAnswers).futureValue
 
-          result mustEqual true
+          result mustEqual Right(true)
           verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
           verify(mockBackendConnector, times(1)).updateVendor(any())(any(), any())
           verify(mockBackendConnector, never()).deleteReturnAgent(any())(any(), any())
@@ -360,7 +365,7 @@ class VendorCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar with Be
         }
       }
 
-      "must fail when version update does not return a new version" - {
+      "must return Right(false) when version update does not return a new version" in {
         val userAnswers = userAnswersWithVendorAgent
 
         val returnVersionResponse = ReturnVersionUpdateReturn(newVersion = None)
@@ -368,21 +373,27 @@ class VendorCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar with Be
         when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
           .thenReturn(Future.successful(returnVersionResponse))
 
-        whenReady(service.updateIsRepresentedByAgent(true, userAnswers).failed) { exception =>
-          exception mustBe a [NoSuchElementException]
-        }
+        val result = service.updateIsRepresentedByAgent(true, userAnswers).futureValue
+
+        result mustEqual Right(false)
+        verify(mockBackendConnector, never()).updateVendor(any())(any(), any())
       }
 
-      "must propagate backend connector updateReturnVersion failures" in {
+      "must redirect to the update return version error page when updateReturnVersion fails" in {
         val userAnswers = userAnswersWithVendorAgent
 
         when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
           .thenReturn(Future.failed(new RuntimeException("Backend failure")))
 
-        whenReady(service.updateIsRepresentedByAgent(true, userAnswers).failed) { exception =>
-          exception mustBe a [RuntimeException]
-          exception.getMessage mustBe "Backend failure"
+        val result = service.updateIsRepresentedByAgent(true, userAnswers).futureValue
+
+        result match {
+          case Left(redirect) =>
+            redirectLocation(Future.successful(redirect)).value mustEqual
+              controllers.routes.UpdateReturnVersionErrorController.onPageLoad().url
+          case Right(_) => fail("expected Left with error redirect")
         }
+        verify(mockBackendConnector, never()).updateVendor(any())(any(), any())
       }
 
       "must propagate backend connector updateVendor failures" in {
@@ -402,7 +413,7 @@ class VendorCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar with Be
         }
       }
 
-      "must propagate backend connector deleteReturnAgent failures" - {
+      "must propagate backend connector deleteReturnAgent failures" in {
         val userAnswers = userAnswersWithVendorAgent
         val returnVersionResponse = ReturnVersionUpdateReturn(
           newVersion = Some(2)
@@ -413,7 +424,7 @@ class VendorCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar with Be
           .thenReturn(Future.successful(UpdateVendorReturn(true)))
         when(mockBackendConnector.deleteReturnAgent(any())(any(), any()))
           .thenReturn(Future.failed(new RuntimeException("Delete vendor agent failed")))
-        
+
         whenReady(service.updateIsRepresentedByAgent(false, userAnswers).failed) { exception =>
           exception mustBe a[RuntimeException]
           exception.getMessage mustBe "Delete vendor agent failed"
@@ -482,7 +493,7 @@ class VendorCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar with Be
         }
       }
     }
-    
+
     "isVendorPurchaserCountBelowMaximum" - {
 
       "must return true when vendor and purchaser combined count is 98" in {
@@ -506,7 +517,7 @@ class VendorCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar with Be
 
         service.isVendorPurchaserCountBelowMaximum(userAnswers) mustBe false
       }
-      
+
       "must return false when vendor and purchaser combined count is above 99" in {
         val vendors = (1 to 50).map(i => mock[models.Vendor])
         val purchasers = (1 to 50).map(i => mock[models.Purchaser])
@@ -523,10 +534,10 @@ class VendorCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar with Be
 
         service.isVendorPurchaserCountBelowMaximum(userAnswers) mustBe true
       }
-      
+
       "must return true when there is no fullReturn" in {
         val userAnswers = emptyUserAnswers
-        
+
         service.isVendorPurchaserCountBelowMaximum(userAnswers) mustBe true
       }
     }

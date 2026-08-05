@@ -31,6 +31,7 @@ import services.FullReturnService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 
 class PurchaserUpdateMainPurchaserService @Inject()(
                                                      backendConnector: StampDutyLandTaxConnector,
@@ -41,6 +42,9 @@ class PurchaserUpdateMainPurchaserService @Inject()(
                                                      navigator: Navigator
                                                    ) extends Logging {
 
+  private final case class ReturnVersionUpdateFailed(cause: Throwable)
+    extends RuntimeException("Return version update failed", cause)
+
   private def updateNewVersion(
                                 userAnswers: UserAnswers,
                                 version: Option[Int] = None)
@@ -50,13 +54,15 @@ class PurchaserUpdateMainPurchaserService @Inject()(
 
     for {
       updateReq <- ReturnVersionUpdateRequest.from(userAnswers, version)
-      versionResponse <- backendConnector.updateReturnVersion(updateReq)
+      versionResponse <- backendConnector.updateReturnVersion(updateReq).recoverWith {
+        case NonFatal(e) => Future.failed(ReturnVersionUpdateFailed(e))
+      }
       newVersion <- versionResponse.newVersion match {
         case Some(v) =>
           logger.info(s"[PurchaserUpdateMainPurchaserService][updateNewVersion] update return version response version: $v")
           Future.successful(v)
 
-        case None => Future.failed(new IllegalStateException("Return version was not updated (newVersion missing)"))
+        case None => Future.failed(ReturnVersionUpdateFailed(new IllegalStateException("Return version was not updated (newVersion missing)")))
       }
     } yield newVersion
   }
@@ -86,7 +92,7 @@ class PurchaserUpdateMainPurchaserService @Inject()(
       purchaserService.findById(purchasers, purchaserId) match {
         case Some(purchaserToBeUpdated) =>
           val isCompanyDetailsDefined = userAnswers.fullReturn.flatMap(_.companyDetails).isDefined
-          
+
           for {
             updateRequest <- UpdatePurchaserRequest.fromMainToEssential(userAnswers, purchaserToBeUpdated)
             updateResponse <- backendConnector.updatePurchaser(updateRequest)
@@ -105,8 +111,8 @@ class PurchaserUpdateMainPurchaserService @Inject()(
               )
           } yield {
             if updateResponse.updated then
-            logger.info(s"[PurchaserUpdateMainPurchaserService][updateOldMainPurchaserDetails] successfully updated main purchaser details with " +
-              s"UpdatePurchaserRequest: $updateRequest")
+              logger.info(s"[PurchaserUpdateMainPurchaserService][updateOldMainPurchaserDetails] successfully updated main purchaser details with " +
+                s"UpdatePurchaserRequest: $updateRequest")
           }
 
         case None =>
@@ -141,30 +147,33 @@ class PurchaserUpdateMainPurchaserService @Inject()(
   def updateMainPurchaser(userAnswers: UserAnswers)(implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
 
     val newMainPurchaserId: Option[String] = userAnswers.get(ChangePurchaserOnePage)
-      userAnswers.fullReturn
-        .flatMap(_.returnInfo)
-        .fold {
-          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-        } { returnInfo =>
-          newMainPurchaserId match {
-            case Some(purchId) =>
-              for {
-                _ <- updateNewVersion(userAnswers)
-                _ <- updateReturnInfo(userAnswers, returnInfo.copy(mainPurchaserID = Some(purchId)))
-                _ <- updateOldMainPurchaserDetails(userAnswers, oldMainPurchaserId = returnInfo.mainPurchaserID)
-                result <- populatePurchaser(userAnswers, purchId)
-              } yield {
-                logger.info(s"[PurchaserUpdateMainPurchaserService][updateMainPurchaser] successfully updated main purchaser " +
-                  s"from ${returnInfo.mainPurchaserID} to $purchId.")
-                result
-              }
-            case None =>
-              Future.successful(Redirect(controllers.purchaser.routes.ChangePurchaserOneController.onPageLoad()))
-          }
-        }.recover {
-          case e: Throwable =>
-            logger.info(s"[PurchaserUpdateMainPurchaserService][updateMainPurchaser] failed to update main purchaser: ${e.getMessage}. Redirecting to journey recovery")
-            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+    userAnswers.fullReturn
+      .flatMap(_.returnInfo)
+      .fold {
+        Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      } { returnInfo =>
+        newMainPurchaserId match {
+          case Some(purchId) =>
+            for {
+              _ <- updateNewVersion(userAnswers)
+              _ <- updateReturnInfo(userAnswers, returnInfo.copy(mainPurchaserID = Some(purchId)))
+              _ <- updateOldMainPurchaserDetails(userAnswers, oldMainPurchaserId = returnInfo.mainPurchaserID)
+              result <- populatePurchaser(userAnswers, purchId)
+            } yield {
+              logger.info(s"[PurchaserUpdateMainPurchaserService][updateMainPurchaser] successfully updated main purchaser " +
+                s"from ${returnInfo.mainPurchaserID} to $purchId.")
+              result
+            }
+          case None =>
+            Future.successful(Redirect(controllers.purchaser.routes.ChangePurchaserOneController.onPageLoad()))
         }
+      }.recover {
+        case _: ReturnVersionUpdateFailed =>
+          logger.info(s"[PurchaserUpdateMainPurchaserService][updateMainPurchaser] return version update failed. Redirecting to update return version error page")
+          Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad())
+        case e: Throwable =>
+          logger.info(s"[PurchaserUpdateMainPurchaserService][updateMainPurchaser] failed to update main purchaser: ${e.getMessage}. Redirecting to journey recovery")
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
   }
 }

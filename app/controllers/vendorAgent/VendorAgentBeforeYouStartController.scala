@@ -58,11 +58,11 @@ class VendorAgentBeforeYouStartController @Inject()(
         case None => form
         case Some(value) => form.fill(value)
       }
-      
+
       Ok(view(preparedForm, mode))
   }
-  
-  
+
+
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
 
@@ -77,18 +77,22 @@ class VendorAgentBeforeYouStartController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(VendorAgentBeforeYouStartPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
-            _ <- vendorCreateOrUpdateService.updateIsRepresentedByAgent(value, updatedAnswers)
-          } yield {
-            if (value) {
-              if(hasAgentTypeVendor) {
-                Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad())
+            _              <- sessionRepository.set(updatedAnswers)
+            agentResult    <- vendorCreateOrUpdateService.updateIsRepresentedByAgent(value, updatedAnswers)
+          } yield agentResult match {
+            case Left(errorRedirect) =>
+              errorRedirect
+
+            case Right(_) =>
+              if (value) {
+                if (hasAgentTypeVendor) {
+                  Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad())
+                } else {
+                  Redirect(navigator.nextPage(VendorAgentBeforeYouStartPage, mode, updatedAnswers))
+                }
               } else {
-                Redirect(navigator.nextPage(VendorAgentBeforeYouStartPage, mode, updatedAnswers))
+                Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
               }
-            } else {
-              Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-            }
           }
       )
   }

@@ -25,6 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaserAgent.RemovePurchaserAgentView
 import connectors.StampDutyLandTaxConnector
+import scala.util.control.NonFatal
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -96,19 +97,33 @@ class RemovePurchaserAgentController @Inject()(
                 if (value) {
                   (for {
                     updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(request.userAnswers)
-                    returnVersion <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
-                    deletePurchaserAgentRequest <- DeleteReturnAgentRequest.from(request.userAnswers, agentType = AgentType.Purchaser)
-                    if returnVersion.newVersion.isDefined
-                    deletePurchaserAgentReturn <- backendConnector.deleteReturnAgent(deletePurchaserAgentRequest) if returnVersion.newVersion.isDefined
-                  } yield {
-                    Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad())
-                      .flashing("purchaserAgentDeleted" -> maybePurchaserAgentToDelete.flatMap(_.name).getOrElse(""))
-                  }).recover {
+                    versionResult <-
+                      backendConnector
+                        .updateReturnVersion(updateReturnVersionRequest)
+                        .map(Right(_))
+                        .recover { case NonFatal(_) =>
+                          Left(Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad()))
+                        }
+                    result <- versionResult match {
+                      case Left(errorRedirect) =>
+                        Future.successful(errorRedirect)
+
+                      case Right(returnVersion) if returnVersion.newVersion.isDefined =>
+                        for {
+                          deletePurchaserAgentRequest <- DeleteReturnAgentRequest.from(request.userAnswers, agentType = AgentType.Purchaser)
+                          _                           <- backendConnector.deleteReturnAgent(deletePurchaserAgentRequest)
+                        } yield
+                          Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad())
+                            .flashing("purchaserAgentDeleted" -> agent.name.getOrElse(""))
+
+                      case Right(_) =>
+                        Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad()))
+                    }
+                  } yield result).recover {
                     case _ =>
                       Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad())
                   }
-                }
-                else {
+                } else {
                   Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad()))
                 }
             )

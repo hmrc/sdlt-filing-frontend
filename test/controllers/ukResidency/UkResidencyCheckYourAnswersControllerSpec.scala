@@ -313,6 +313,68 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
 
     "onSubmit" - {
 
+      "must redirect to the update return version error page when updateReturnVersion fails" in {
+
+        val userAnswers = UserAnswers(
+          id = userAnswersId,
+          storn = "TESTSTORN",
+          returnId = Some("12345"),
+          fullReturn = Some(completeFullReturn.copy(submission = None, residency = Some(Residency(residencyID = Some("234"))))),
+          data = ukResidencyData(nonUkResident = true, crownEmployment = true)
+        )
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+          .thenReturn(Future.failed(new RuntimeException("simulated backend failure")))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onSubmit().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.UpdateReturnVersionErrorController.onPageLoad().url
+          verify(mockBackendConnector, times(0)).updateResidency(any())(any(), any())
+        }
+      }
+
+      "must redirect back to UkResidencyCheckYourAnswers when updateReturnVersion returns no new version" in {
+
+        val userAnswers = UserAnswers(
+          id = userAnswersId,
+          storn = "TESTSTORN",
+          returnId = Some("12345"),
+          fullReturn = Some(completeFullReturn.copy(submission = None, residency = Some(Residency(residencyID = Some("234"))))),
+          data = ukResidencyData(nonUkResident = true, crownEmployment = true)
+        )
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+          .thenReturn(Future.successful(ReturnVersionUpdateReturn(None)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onSubmit().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url
+          verify(mockBackendConnector, times(0)).updateResidency(any())(any(), any())
+        }
+      }
+
       "must call createResidency and redirect to ReturnTaskList when no residencyID exists" in {
         val userAnswers = UserAnswers(
           id = userAnswersId,
