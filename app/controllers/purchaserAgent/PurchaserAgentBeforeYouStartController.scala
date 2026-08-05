@@ -77,17 +77,21 @@ class PurchaserAgentBeforeYouStartController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PurchaserAgentBeforeYouStartPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-            _              <- purchaserCreateOrUpdateService.updateIsRepresentedByAgent(backendConnector, value, updatedAnswers)
-          } yield {
-            if(value) {
-              if(hasAgentTypePurchaser) {
-                Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad())
+            agentResult    <- purchaserCreateOrUpdateService.updateIsRepresentedByAgent(backendConnector, value, updatedAnswers)
+          } yield agentResult match {
+            case Left(errorRedirect) =>
+              errorRedirect
+              
+            case Right(_) =>
+              if (value) {
+                if (hasAgentTypePurchaser) {
+                  Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad())
+                } else {
+                  Redirect(navigator.nextPage(PurchaserAgentBeforeYouStartPage, mode, updatedAnswers))
+                }
               } else {
-                Redirect(navigator.nextPage(PurchaserAgentBeforeYouStartPage, mode, updatedAnswers))
+                Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
               }
-            } else {
-              Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-            }
           }
       )
   }

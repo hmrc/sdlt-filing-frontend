@@ -281,7 +281,7 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must redirect to land overview when backend fails" in {
+      "must redirect to the update return version error page when updateReturnVersion fails" in {
         val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn)).set(RemoveLandPage, true).success.value
           .set(LandOverviewRemovePage, "LND-REF-001").success.value
 
@@ -300,7 +300,33 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.UpdateReturnVersionErrorController.onPageLoad().url
+        }
+      }
 
+      "must redirect to land overview when deleteLand fails" in {
+        val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn)).set(RemoveLandPage, true).success.value
+          .set(LandOverviewRemovePage, "LND-REF-001").success.value
+
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
+
+        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+          .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(2))))
+        when(mockBackendConnector.deleteLand(any())(any(), any()))
+          .thenReturn(Future.failed(new RuntimeException("simulated delete failure")))
+
+        val application = applicationBuilder(Some(userAnswers))
+          .overrides(
+            bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
+          ).build()
+
+        running(application) {
+          val request = FakeRequest(POST, removeLandRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.land.routes.LandOverviewController.onPageLoad().url
         }
       }

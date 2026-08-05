@@ -24,16 +24,15 @@ import forms.purchaserAgent.RemovePurchaserAgentFormProvider
 import models.{DeleteReturnAgentReturn, FullReturn, Purchaser, ReturnAgent, ReturnInfo, ReturnVersionUpdateReturn, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import play.api.inject.bind
-import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.purchaserAgent.{PurchaserAgentOverviewPage, RemovePurchaserAgentPage}
 import play.api.inject
-import play.api.mvc.{Call, Request}
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.http.HeaderCarrier
 import views.html.purchaserAgent.RemovePurchaserAgentView
+import org.mockito.Mockito.{when, verify, times}
 
 import scala.concurrent.Future
 
@@ -228,15 +227,55 @@ class RemovePurchaserAgentControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must redirect to purchaser agent overview when backend fails" in {
-        val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn))
+      "must redirect to the update return version error page when updateReturnVersion fails" in {
+        val agentId = testFullReturn.returnAgent.value.head.returnAgentID.value
 
-        when(mockConnector.updateReturnVersion(any())(any[HeaderCarrier], any[Request[_]]))
+        val userAnswers = emptyUserAnswers.set(PurchaserAgentOverviewPage, agentId)
+          .success
+          .value
+          .copy(storn = testStorn, fullReturn = Some(completeFullReturn.copy(submission = None)))
+
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
+
+        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
           .thenReturn(Future.failed(new RuntimeException("simulated backend failure")))
 
         val application = applicationBuilder(Some(userAnswers))
           .overrides(
-            bind[StampDutyLandTaxConnector].toInstance(mockConnector)
+            bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
+          ).build()
+
+        running(application) {
+          val request = FakeRequest(POST, removePurchaserAgentRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.UpdateReturnVersionErrorController.onPageLoad().url
+
+          verify(mockBackendConnector, times(0)).deleteReturnAgent(any())(any(), any())
+        }
+      }
+
+      "must redirect to purchaser agent overview when deleteReturnAgent fails" in {
+        val agentId = testFullReturn.returnAgent.value.head.returnAgentID.value
+
+        val userAnswers = emptyUserAnswers.set(PurchaserAgentOverviewPage, agentId)
+          .success
+          .value
+          .copy(storn = testStorn, fullReturn = Some(completeFullReturn.copy(submission = None)))
+
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
+
+        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+          .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(2))))
+        when(mockBackendConnector.deleteReturnAgent(any())(any(), any()))
+          .thenReturn(Future.failed(new RuntimeException("simulated delete failure")))
+
+        val application = applicationBuilder(Some(userAnswers))
+          .overrides(
+            bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
           ).build()
 
         running(application) {

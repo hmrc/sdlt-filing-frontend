@@ -26,6 +26,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.FullName
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
+
 class VendorCreateOrUpdateService @Inject()(backendConnector: StampDutyLandTaxConnector)(implicit ex: ExecutionContext){
 
   def createVendor(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
@@ -47,31 +49,65 @@ class VendorCreateOrUpdateService @Inject()(backendConnector: StampDutyLandTaxCo
     for {
       vendor <- Vendor.from(userAnswers)
       updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
-      updateReturnVersionReturn <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
-      updateVendorRequest <- UpdateVendorRequest.from(userAnswers, vendor) if updateReturnVersionReturn.newVersion.isDefined
-      updateVendorReturn <- backendConnector.updateVendor(updateVendorRequest) if updateReturnVersionReturn.newVersion.isDefined
-    } yield {
-      if (updateVendorReturn.updated) {
-        Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad())
-          .flashing("vendorUpdated" -> FullName.fullName(updateVendorRequest.forename1, updateVendorRequest.forename2, updateVendorRequest.name))
-      } else {
-        Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
+      versionResult <-
+        backendConnector
+          .updateReturnVersion(updateReturnVersionRequest)
+          .map(Right(_))
+          .recover { case NonFatal(_) =>
+            Left(Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad()))
+          }
+      result <- versionResult match {
+        case Left(errorRedirect) =>
+          Future.successful(errorRedirect)
+
+        case Right(updateReturnVersionReturn) if updateReturnVersionReturn.newVersion.isDefined =>
+          for {
+            updateVendorRequest <- UpdateVendorRequest.from(userAnswers, vendor)
+            updateVendorReturn  <- backendConnector.updateVendor(updateVendorRequest)
+          } yield
+            if (updateVendorReturn.updated)
+              Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad())
+                .flashing("vendorUpdated" -> FullName.fullName(updateVendorRequest.forename1, updateVendorRequest.forename2, updateVendorRequest.name))
+            else
+              Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
+
+        case Right(_) =>
+          Future.successful(
+            Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
+          )
       }
-    }
+    } yield result
   }
 
-  def updateIsRepresentedByAgent(value: Boolean, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Boolean] = {
+  def updateIsRepresentedByAgent(value: Boolean, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Either[Result, Boolean]] = {
 
     val hasVendorAgentDetails = userAnswers.fullReturn.exists(_.returnAgent.exists(_.exists(_.agentType.contains(AgentType.Vendor.toString))))
 
     for {
       mainVendor <- Vendor.mainVendorFrom(userAnswers)
       updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
-      updateReturnVersionReturn <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
-      updateVendorRequest <- UpdateVendorRequest.from(userAnswers, mainVendor.copy(isRepresentedByAgent = if value then Some("yes") else Some("no"))) if updateReturnVersionReturn.newVersion.isDefined
-      updateVendorReturn <- backendConnector.updateVendor(updateVendorRequest) if updateReturnVersionReturn.newVersion.isDefined
-      deleteVendorAgent <- deleteVendorAgentIfRequired(value, hasVendorAgentDetails, userAnswers)
-    } yield updateVendorReturn.updated
+      versionResult <-
+        backendConnector
+          .updateReturnVersion(updateReturnVersionRequest)
+          .map(Right(_))
+          .recover { case NonFatal(_) =>
+            Left(Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad()))
+          }
+      result <- versionResult match {
+        case Left(errorRedirect) =>
+          Future.successful(Left(errorRedirect))
+
+        case Right(updateReturnVersionReturn) if updateReturnVersionReturn.newVersion.isDefined =>
+          for {
+            updateVendorRequest <- UpdateVendorRequest.from(userAnswers, mainVendor.copy(isRepresentedByAgent = if value then Some("yes") else Some("no")))
+            updateVendorReturn  <- backendConnector.updateVendor(updateVendorRequest)
+            _                   <- deleteVendorAgentIfRequired(value, hasVendorAgentDetails, userAnswers)
+          } yield Right(updateVendorReturn.updated)
+
+        case Right(_) =>
+          Future.successful(Right(false))
+      }
+    } yield result
   }
 
   private def deleteVendorAgentIfRequired(value: Boolean, hasVendorAgentDetails: Boolean, userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Unit] = {

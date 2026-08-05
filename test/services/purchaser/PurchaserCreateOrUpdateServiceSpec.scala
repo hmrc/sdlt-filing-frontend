@@ -565,7 +565,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
       "must fail when fullReturn is missing" in {
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
         val mockPurchaserService = mock[PurchaserService]
-          val service = new PurchaserCreateOrUpdateService()
+        val service = new PurchaserCreateOrUpdateService()
 
         val userAnswers = createPurchaserCompanyUserAnswers(fullReturn = None)
 
@@ -796,10 +796,10 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must fail when version update does not return a new version" in {
+      "must redirect to the update return version error page when the version bump fails" in {
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
         val mockPurchaserService = mock[PurchaserService]
-          val service = new PurchaserCreateOrUpdateService()
+        val service = new PurchaserCreateOrUpdateService()
 
         val purchaser = createPurchaser(
           purchaserID = Some(testPurchaserId),
@@ -813,16 +813,18 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
           .thenReturn(Future.failed(new RuntimeException("Backend failure")))
 
-        whenReady(service.updatePurchaser(mockBackendConnector, mockPurchaserService, userAnswers).failed) { exception =>
-          exception mustBe an[RuntimeException]
-          exception.getMessage mustBe "Backend failure"
-        }
+        val result = service.updatePurchaser(mockBackendConnector, mockPurchaserService, userAnswers).futureValue
+
+        status(Future.successful(result)) mustEqual SEE_OTHER
+        redirectLocation(Future.successful(result)).value mustEqual
+          controllers.routes.UpdateReturnVersionErrorController.onPageLoad().url
+        verify(mockBackendConnector, never()).updatePurchaser(any())(any(), any())
       }
 
       "must fail when purchaser is not found in full return" in {
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
         val mockPurchaserService = mock[PurchaserService]
-          val service = new PurchaserCreateOrUpdateService()
+        val service = new PurchaserCreateOrUpdateService()
 
         val fullReturn = createFullReturn(
           purchasers = Seq.empty,
@@ -845,7 +847,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
       "must fail when purchaser resource ref is not found" in {
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
         val mockPurchaserService = mock[PurchaserService]
-          val service = new PurchaserCreateOrUpdateService()
+        val service = new PurchaserCreateOrUpdateService()
 
         val fullReturn = createFullReturn(
           purchasers = Seq(
@@ -868,32 +870,6 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
           exception mustBe an[NoSuchElementException]
           exception.getMessage must include("Purchaser mandatory Resources not found")
         }
-      }
-
-      "must propagate backend connector updateReturnVersion failures" in {
-        val mockBackendConnector = mock[StampDutyLandTaxConnector]
-        val mockPurchaserService = mock[PurchaserService]
-        val service = new PurchaserCreateOrUpdateService()
-
-        val fullReturn = createFullReturn(
-          purchasers = Seq(
-            createPurchaser(
-              Some(testPurchaserId),
-              purchaserResourceRef = Some(testPurchaserResourceRef),
-              nextPurchaserID = Some(testNextPurchaserId),
-              isCompany = Some("yes"))),
-          returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))))
-        val userAnswers = createPurchaserCompanyUserAnswers(fullReturn = Some(fullReturn))
-
-        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
-          .thenReturn(Future.failed(new RuntimeException("Backend failure")))
-
-        whenReady(service.updatePurchaser(mockBackendConnector, mockPurchaserService, userAnswers).failed) { exception =>
-          exception mustBe an[RuntimeException]
-          exception.getMessage mustBe "Backend failure"
-        }
-
-        verify(mockBackendConnector, never()).updatePurchaser(any())(any(), any())
       }
 
       "must propagate backend connector updatePurchaser failures" in {
@@ -948,7 +924,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
 
           val result = service.updateIsRepresentedByAgent(mockBackendConnector, true, userAnswers).futureValue
 
-          result mustEqual true
+          result mustEqual Right(true)
           verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
           verify(mockBackendConnector, times(1)).updatePurchaser(any())(any(), any())
           verify(mockBackendConnector, never()).deleteReturnAgent(any())(any(), any())
@@ -973,7 +949,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
 
           val result = service.updateIsRepresentedByAgent(mockBackendConnector, false, userAnswers).futureValue
 
-          result mustEqual true
+          result mustEqual Right(true)
           verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
           verify(mockBackendConnector, times(1)).updatePurchaser(any())(any(), any())
           verify(mockBackendConnector, never()).deleteReturnAgent(any())(any(), any())
@@ -998,7 +974,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
 
           val result = service.updateIsRepresentedByAgent(mockBackendConnector, false, userAnswers).futureValue
 
-          result mustEqual true
+          result mustEqual Right(true)
           verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
           verify(mockBackendConnector, times(1)).updatePurchaser(any())(any(), any())
           verify(mockBackendConnector, times(1)).deleteReturnAgent(any())(any(), any())
@@ -1020,7 +996,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
 
           val result = service.updateIsRepresentedByAgent(mockBackendConnector, false, userAnswers).futureValue
 
-          result mustEqual true
+          result mustEqual Right(true)
           verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
           verify(mockBackendConnector, times(1)).updatePurchaser(any())(any(), any())
           verify(mockBackendConnector, never()).deleteReturnAgent(any())(any(), any())
@@ -1065,7 +1041,7 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must fail when version update does not return a new version" in {
+      "must not update the purchaser when version update returns no new version" in {
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
         val service = new PurchaserCreateOrUpdateService()
 
@@ -1076,12 +1052,13 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
           .thenReturn(Future.successful(returnVersionResponse))
 
-        whenReady(service.updateIsRepresentedByAgent(mockBackendConnector, true, userAnswers).failed) { exception =>
-          exception mustBe a[NoSuchElementException]
-        }
-      }
+        val result = service.updateIsRepresentedByAgent(mockBackendConnector, true, userAnswers).futureValue
 
-      "must propagate backend connector updateReturnVersion failures" in {
+        result mustEqual Right(false)
+        verify(mockBackendConnector, never()).updatePurchaser(any())(any(), any())
+      }
+      
+      "must redirect to the update return version error page when updateReturnVersion fails" in {
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
         val service = new PurchaserCreateOrUpdateService()
 
@@ -1090,10 +1067,15 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
         when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
           .thenReturn(Future.failed(new RuntimeException("Backend failure")))
 
-        whenReady(service.updateIsRepresentedByAgent(mockBackendConnector, true, userAnswers).failed) { exception =>
-          exception mustBe a[RuntimeException]
-          exception.getMessage mustBe "Backend failure"
+        val result = service.updateIsRepresentedByAgent(mockBackendConnector, true, userAnswers).futureValue
+
+        result match {
+          case Left(redirect) =>
+            redirectLocation(Future.successful(redirect)).value mustEqual
+              controllers.routes.UpdateReturnVersionErrorController.onPageLoad().url
+          case Right(_) => fail("expected Left with error redirect")
         }
+        verify(mockBackendConnector, never()).updatePurchaser(any())(any(), any())
       }
 
       "must propagate backend connector updatePurchaser failures" in {

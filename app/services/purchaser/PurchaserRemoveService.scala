@@ -33,12 +33,16 @@ import views.html.purchaser.PurchaserRemoveView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 
-class PurchaserRemoveService @Inject()(
+  class PurchaserRemoveService @Inject()(
                                         view: PurchaserRemoveView,
                                         backendConnector: StampDutyLandTaxConnector,
                                         purchaserService: PurchaserService
                                       ) extends Logging {
+
+  private final case class ReturnVersionUpdateFailed(cause: Throwable)
+    extends RuntimeException("Return version update failed", cause)
 
   def purchaserRemoveView(
                            form: Form[PurchaserRemove],
@@ -92,9 +96,12 @@ class PurchaserRemoveService @Inject()(
   }
 
   private object PurchaserOps {
-        
+
     def journeyRecoveryRedirect: Result =
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+
+    def updateReturnVersionErrorRedirect: Result =
+      Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad())
 
     def purchaserOverviewRedirect(removedPurchaser: Option[Purchaser] = None): Result = {
       removedPurchaser match {
@@ -117,12 +124,15 @@ class PurchaserRemoveService @Inject()(
       logger.info(s"[PurchaserRemoveService][withNewVersion] version passed in: $version")
       for {
         updateReq <- ReturnVersionUpdateRequest.from(userAnswers, version)
-        versionResponse <- backendConnector.updateReturnVersion(updateReq)
+        versionResponse <- backendConnector.updateReturnVersion(updateReq).recoverWith {
+          case NonFatal(e) => Future.failed(ReturnVersionUpdateFailed(e))
+        }
         newVersion <- versionResponse.newVersion match {
           case Some(v) =>
             logger.info(s"[PurchaserRemoveService][withNewVersion] update return version response version: $v")
             Future.successful(v)
-          case None => Future.failed(new IllegalStateException("Return version was not updated (newVersion missing)"))
+          case None =>
+            Future.failed(ReturnVersionUpdateFailed(new IllegalStateException("Return version was not updated (newVersion missing)")))
         }
       } yield newVersion
 
@@ -205,26 +215,29 @@ class PurchaserRemoveService @Inject()(
     logger.info(s"[PurchaserRemoveService][handleRemovePurchaser] purchaser in session to remove: $removedPurchaser")
     logger.info(s"[PurchaserRemoveService][handleRemovePurchaser] chosen purchaser to promote: $promotingPurchaser")
 
-      userAnswers.fullReturn.flatMap(_.returnInfo).map { returnInfo =>
-        (for {
-          version <- PurchaserOps.withNewVersion(userAnswers)
-          _ <- PurchaserOps.deletePurchaser(userAnswers, purchaserIdSession)
-          _ <- PurchaserOps.deleteCompanyDetailsIfPresent(userAnswers, isMainPurchaser, companyDetailsIdInSession)
-          result <- if (isMainPurchaser) {
-            for {
-              newVersion <- PurchaserOps.withNewVersion(userAnswers, Some(version))
-              _ <- PurchaserOps.updateReturnInfo(userAnswers, returnInfo.copy(mainPurchaserID = promotingPurchaserId))
-            } yield PurchaserOps.purchaserOverviewRedirect(removedPurchaser)
-          } else {
-            Future.successful(PurchaserOps.purchaserOverviewRedirect(removedPurchaser))
-          }
-        } yield result)
-          .recover {
-            case _ =>
-              logger.info(s"[PurchaserRemoveService][handleRemovePurchaser] failed to delete purchaser. Redirecting to journey recovery")
-              PurchaserOps.journeyRecoveryRedirect
-          }
-      }.getOrElse(Future.successful(PurchaserOps.journeyRecoveryRedirect))
+    userAnswers.fullReturn.flatMap(_.returnInfo).map { returnInfo =>
+      (for {
+        version <- PurchaserOps.withNewVersion(userAnswers)
+        _ <- PurchaserOps.deletePurchaser(userAnswers, purchaserIdSession)
+        _ <- PurchaserOps.deleteCompanyDetailsIfPresent(userAnswers, isMainPurchaser, companyDetailsIdInSession)
+        result <- if (isMainPurchaser) {
+          for {
+            newVersion <- PurchaserOps.withNewVersion(userAnswers, Some(version))
+            _ <- PurchaserOps.updateReturnInfo(userAnswers, returnInfo.copy(mainPurchaserID = promotingPurchaserId))
+          } yield PurchaserOps.purchaserOverviewRedirect(removedPurchaser)
+        } else {
+          Future.successful(PurchaserOps.purchaserOverviewRedirect(removedPurchaser))
+        }
+      } yield result)
+        .recover {
+          case _: ReturnVersionUpdateFailed =>
+            logger.info(s"[PurchaserRemoveService][handleRemovePurchaser] return version update failed. Redirecting to update return version error page")
+            PurchaserOps.updateReturnVersionErrorRedirect
+          case _ =>
+            logger.info(s"[PurchaserRemoveService][handleRemovePurchaser] failed to delete purchaser. Redirecting to journey recovery")
+            PurchaserOps.journeyRecoveryRedirect
+        }
+    }.getOrElse(Future.successful(PurchaserOps.journeyRecoveryRedirect))
   }
 
   private def handleMultiplePurchasersWithNewMain(
@@ -251,10 +264,13 @@ class PurchaserRemoveService @Inject()(
         PurchaserOps.purchaserOverviewRedirect(removedPurchaser)
       })
         .recover {
+          case _: ReturnVersionUpdateFailed =>
+            logger.info(s"[PurchaserRemoveService][handleMultiplePurchasersWithNewMain] return version update failed. Redirecting to update return version error page")
+            PurchaserOps.updateReturnVersionErrorRedirect
           case _ =>
             logger.info(s"[PurchaserRemoveService][handleMultiplePurchasersWithNewMain] redirecting to journey recovery")
             PurchaserOps.journeyRecoveryRedirect
         }
-      }.getOrElse(Future.successful(PurchaserOps.journeyRecoveryRedirect))
+    }.getOrElse(Future.successful(PurchaserOps.journeyRecoveryRedirect))
   }
 }

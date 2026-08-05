@@ -35,6 +35,7 @@ import views.html.vendorAgent.VendorAgentCheckYourAnswersView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 
 @Singleton
 class VendorAgentCheckYourAnswersController @Inject()(
@@ -108,17 +109,34 @@ class VendorAgentCheckYourAnswersController @Inject()(
   private def updateReturnAgent(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     for {
       updateRequest <- ReturnVersionUpdateRequest.from(userAnswers)
-      version <- backendConnector.updateReturnVersion(updateRequest)
-      updateReturnAgentRequest <- UpdateReturnAgentRequest.from(userAnswers, Vendor) if version.newVersion.isDefined
-      updateReturnAgentReturn <- backendConnector.updateReturnAgent(updateReturnAgentRequest) if version.newVersion.isDefined
-    } yield {
-      if (updateReturnAgentReturn.updated) {
-        Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad())
-          .flashing("vendorAgentUpdated" -> updateReturnAgentRequest.name)
-      } else {
-        Redirect(controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad())
+      versionResult <-
+        backendConnector
+          .updateReturnVersion(updateRequest)
+          .map(Right(_))
+          .recover { case NonFatal(_) =>
+            Left(Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad()))
+          }
+      result <- versionResult match {
+        case Left(errorRedirect) =>
+          Future.successful(errorRedirect)
+
+        case Right(version) if version.newVersion.isDefined =>
+          for {
+            updateReturnAgentRequest <- UpdateReturnAgentRequest.from(userAnswers, Vendor)
+            updateReturnAgentReturn  <- backendConnector.updateReturnAgent(updateReturnAgentRequest)
+          } yield
+            if (updateReturnAgentReturn.updated)
+              Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad())
+                .flashing("vendorAgentUpdated" -> updateReturnAgentRequest.name)
+            else
+              Redirect(controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad())
+
+        case Right(_) =>
+          Future.successful(
+            Redirect(controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad())
+          )
       }
-    }
+    } yield result
   }
 
   private def createReturnAgent(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {

@@ -27,6 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.FullName
 import views.html.vendor.RemoveVendorView
+import scala.util.control.NonFatal
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -79,17 +80,33 @@ class RemoveVendorController @Inject()(
             if (value) {
               (for {
                 updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(request.userAnswers)
-                returnVersion <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
-                deleteVendorRequest <- DeleteVendorRequest.from(request.userAnswers, vendorResourceRef) if returnVersion.newVersion.isDefined
-                deleteVendorReturn <- backendConnector.deleteVendor(deleteVendorRequest) if returnVersion.newVersion.isDefined
-              } yield {
-                Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad()).flashing("vendorDeleted" -> vendorFullName.getOrElse(""))
-              }).recover {
+                versionResult <-
+                  backendConnector
+                    .updateReturnVersion(updateReturnVersionRequest)
+                    .map(Right(_))
+                    .recover { case NonFatal(_) =>
+                      Left(Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad()))
+                    }
+                result <- versionResult match {
+                  case Left(errorRedirect) =>
+                    Future.successful(errorRedirect)
+
+                  case Right(returnVersion) if returnVersion.newVersion.isDefined =>
+                    for {
+                      deleteVendorRequest <- DeleteVendorRequest.from(request.userAnswers, vendorResourceRef)
+                      _                   <- backendConnector.deleteVendor(deleteVendorRequest)
+                    } yield
+                      Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad())
+                        .flashing("vendorDeleted" -> vendorFullName.getOrElse(""))
+
+                  case Right(_) =>
+                    Future.successful(Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad()))
+                }
+              } yield result).recover {
                 case _ =>
                   Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad())
               }
-            }
-            else {
+            } else {
               Future.successful(Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad()))
             }
         )

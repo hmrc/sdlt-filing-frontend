@@ -41,6 +41,7 @@ import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.taxCalculation.*
 import viewmodels.taxCalculation.selfAssessedViewModels.CannotCalculateViewModel
 import views.html.taxCalculation.shared.{CannotCalculateSdltDueView, CheckYourAnswersView}
+import scala.util.control.NonFatal
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -182,20 +183,35 @@ class TaxCalculationCheckYourAnswersController @Inject()(
         val returnRef = userAnswers.returnId.getOrElse("unknown")
         for {
           versionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
-          _               = logger.info(s"[TaxCalculationCheckYourAnswersController][updateTaxCalculation] returnId=$returnRef: bumping return version, currentVersion=${versionRequest.currentVersion}")
-          versionReturn  <- backendConnector.updateReturnVersion(versionRequest)
-          _               = logger.info(s"[TaxCalculationCheckYourAnswersController][updateTaxCalculation] returnId=$returnRef: return version response, newVersion=${versionReturn.newVersion}")
-          taxCalcRequest <- UpdateTaxCalculationRequest.from(userAnswers, result, penalty) if versionReturn.newVersion.isDefined
-          _               = logger.info(s"[TaxCalculationCheckYourAnswersController][updateTaxCalculation] returnId=$returnRef: submitting tax calculation to BE: $taxCalcRequest")
-          taxCalcReturn  <- backendConnector.updateTaxCalculationInfo(taxCalcRequest) if versionReturn.newVersion.isDefined
-          _               = logger.info(s"[TaxCalculationCheckYourAnswersController][updateTaxCalculation] returnId=$returnRef: tax calculation submit response, updated=${taxCalcReturn.updated}")
-        } yield {
-          if (taxCalcReturn.updated) {
-            Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-          } else {
-            Redirect(routes.TaxCalculationCheckYourAnswersController.onPageLoad())
+          _ = logger.info(s"[TaxCalculationCheckYourAnswersController][updateTaxCalculation] returnId=$returnRef: bumping return version, currentVersion=${versionRequest.currentVersion}")
+          versionResult <-
+            backendConnector
+              .updateReturnVersion(versionRequest)
+              .map(Right(_))
+              .recover { case NonFatal(_) =>
+                Left(Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad()))
+              }
+          outcome <- versionResult match {
+            case Left(errorRedirect) =>
+              logger.error(s"[TaxCalculationCheckYourAnswersController][updateTaxCalculation] returnId=$returnRef: return version bump failed, routing to update-return-version error page")
+              Future.successful(errorRedirect)
+
+            case Right(versionReturn) if versionReturn.newVersion.isDefined =>
+              logger.info(s"[TaxCalculationCheckYourAnswersController][updateTaxCalculation] returnId=$returnRef: return version response, newVersion=${versionReturn.newVersion}")
+              for {
+                taxCalcRequest <- UpdateTaxCalculationRequest.from(userAnswers, result, penalty)
+                _ = logger.info(s"[TaxCalculationCheckYourAnswersController][updateTaxCalculation] returnId=$returnRef: submitting tax calculation to BE: $taxCalcRequest")
+                taxCalcReturn <- backendConnector.updateTaxCalculationInfo(taxCalcRequest)
+                _ = logger.info(s"[TaxCalculationCheckYourAnswersController][updateTaxCalculation] returnId=$returnRef: tax calculation submit response, updated=${taxCalcReturn.updated}")
+              } yield
+                if (taxCalcReturn.updated) Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+                else Redirect(routes.TaxCalculationCheckYourAnswersController.onPageLoad())
+
+            case Right(versionReturn) =>
+              logger.warn(s"[TaxCalculationCheckYourAnswersController][updateTaxCalculation] returnId=$returnRef: no new version returned (newVersion=${versionReturn.newVersion}), returning to CYA")
+              Future.successful(Redirect(routes.TaxCalculationCheckYourAnswersController.onPageLoad()))
           }
-        }
+        } yield outcome
     }
 
   private def penaltyFor(userAnswers: UserAnswers): Option[BigDecimal] =

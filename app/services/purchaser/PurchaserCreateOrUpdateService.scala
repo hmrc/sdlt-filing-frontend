@@ -25,39 +25,72 @@ import uk.gov.hmrc.http.HeaderCarrier
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 
 class PurchaserCreateOrUpdateService {
 
   val logger: Logger = LoggerFactory.getLogger(getClass)
-  
+
   def updatePurchaser(backendConnector: StampDutyLandTaxConnector,
-                          purchaserService: PurchaserService,
-                          userAnswers: UserAnswers)
-                         (implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Result] = {
+                      purchaserService: PurchaserService,
+                      userAnswers: UserAnswers)
+                     (implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Result] = {
 
     for {
       updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
-      returnVersion              <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
-      purchaser                  <- Purchaser.from(Some(userAnswers), logger)
-      updateRequest              <- UpdatePurchaserRequest.from(userAnswers, purchaser)
-      updateResponse             <- backendConnector.updatePurchaser(updateRequest)
-      _                          <- updateOrCreateCompanyDetails(backendConnector, userAnswers, purchaser, updateRequest.purchaserResourceRef)
-    } yield Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())
-      .flashing("purchaserUpdated" -> purchaserService.createPurchaserName(purchaser).map(_.fullName).getOrElse(""))
+      versionResult <-
+        backendConnector
+          .updateReturnVersion(updateReturnVersionRequest)
+          .map(Right(_))
+          .recover { case NonFatal(_) =>
+            Left(Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad()))
+          }
+      result <- versionResult match {
+        case Left(errorRedirect) =>
+          Future.successful(errorRedirect)
+
+        case Right(_) =>
+          for {
+            purchaser <- Purchaser.from(Some(userAnswers), logger)
+            updateRequest <- UpdatePurchaserRequest.from(userAnswers, purchaser)
+            updateResponse <- backendConnector.updatePurchaser(updateRequest)
+            _ <- updateOrCreateCompanyDetails(backendConnector, userAnswers, purchaser, updateRequest.purchaserResourceRef)
+          } yield Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())
+            .flashing("purchaserUpdated" -> purchaserService.createPurchaserName(purchaser).map(_.fullName).getOrElse(""))
+      }
+    } yield result
   }
 
-  def updateIsRepresentedByAgent(backendConnector: StampDutyLandTaxConnector, value: Boolean, userAnswers: UserAnswers)(implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Boolean] = {
+  def updateIsRepresentedByAgent(backendConnector: StampDutyLandTaxConnector, value: Boolean, userAnswers: UserAnswers)
+                                (implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Either[Result, Boolean]] = {
 
     val hasPurchaserAgentDetails = userAnswers.fullReturn.exists(_.returnAgent.exists(_.exists(_.agentType.contains(AgentType.Purchaser.toString))))
 
     for {
-      mainPurchaser <- Purchaser.mainPurchaserFrom(userAnswers)
+      mainPurchaser              <- Purchaser.mainPurchaserFrom(userAnswers)
       updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
-      updateReturnVersionReturn <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
-      updatePurchaserRequest <- UpdatePurchaserRequest.from(userAnswers, mainPurchaser.copy(isRepresentedByAgent = if value then Some("yes") else Some("no"))) if updateReturnVersionReturn.newVersion.isDefined
-      updatePurchaserReturn <- backendConnector.updatePurchaser(updatePurchaserRequest) if updateReturnVersionReturn.newVersion.isDefined
-      deletePurchaserAgent <- deletePurchaserAgentIfRequired(backendConnector, value, hasPurchaserAgentDetails, userAnswers)
-    } yield updatePurchaserReturn.updated
+      versionResult <-
+        backendConnector
+          .updateReturnVersion(updateReturnVersionRequest)
+          .map(Right(_))
+          .recover { case NonFatal(_) =>
+            Left(Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad()))
+          }
+      result <- versionResult match {
+        case Left(errorRedirect) =>
+          Future.successful(Left(errorRedirect))
+
+        case Right(updateReturnVersionReturn) if updateReturnVersionReturn.newVersion.isDefined =>
+          for {
+            updatePurchaserRequest <- UpdatePurchaserRequest.from(userAnswers, mainPurchaser.copy(isRepresentedByAgent = if value then Some("yes") else Some("no")))
+            updatePurchaserReturn  <- backendConnector.updatePurchaser(updatePurchaserRequest)
+            _                      <- deletePurchaserAgentIfRequired(backendConnector, value, hasPurchaserAgentDetails, userAnswers)
+          } yield Right(updatePurchaserReturn.updated)
+
+        case Right(_) =>
+          Future.successful(Right(false))
+      }
+    } yield result
   }
 
   private def deletePurchaserAgentIfRequired(backendConnector: StampDutyLandTaxConnector, value: Boolean, hasPurchaserAgentDetails: Boolean, userAnswers: UserAnswers)(implicit ec: ExecutionContext, hc: HeaderCarrier, request: Request[_]): Future[Unit] = {

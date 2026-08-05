@@ -803,3 +803,5 @@ GET       /resume/:section                                                      
 
 GET       /task-list/deleting-SDLT-return                                                            controllers.DeleteReturnController.onPageLoad()
 POST      /task-list/deleting-SDLT-return                                                            controllers.DeleteReturnController.onSubmit()
+
+GET        /update-return-version-error                                                              controllers.UpdateReturnVersionErrorController.onPageLoad()

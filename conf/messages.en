@@ -2353,3 +2353,8 @@ deleteReturn.heading        = Deleting SDLT return
 deleteReturn.p1             = Deleting this return cannot be reversed. All the information you have entered will be permanently deleted. If you choose to file this return later, you will need to create a new return and start again.
 deleteReturn.h2             = Are you sure you want to permanently delete this return?
 deleteReturn.error.required = Select yes if you are sure you want to permanently delete this return
+
+updateReturnVersionError.title = Sorry, there is a problem with the service
+updateReturnVersionError.heading = Sorry, there is a problem with the service
+updateReturnVersionError.p1 = We could not save your changes. Try again later.
+updateReturnVersionError.p2 = We saved your answers. You will be able to continue when the service is working again.

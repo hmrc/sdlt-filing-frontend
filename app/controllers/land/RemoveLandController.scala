@@ -20,99 +20,94 @@ import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
 import forms.land.RemoveLandFormProvider
 import models.land.DeleteLandRequest
+import models.requests.DataRequest
 import models.{Land, ReturnVersionUpdateRequest}
 import pages.land.{LandOverviewRemovePage, RemoveLandPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.land.RemoveLandView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 
 @Singleton
-class RemoveLandController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
-                                         statusCheck: CheckSubmissionStatusAction,
-                                         formProvider: RemoveLandFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         backendConnector: StampDutyLandTaxConnector,
-                                         view: RemoveLandView
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class RemoveLandController @Inject() (
+                                       override val messagesApi: MessagesApi,
+                                       identify:                 IdentifierAction,
+                                       getData:                  DataRetrievalAction,
+                                       requireData:              DataRequiredAction,
+                                       statusCheck:              CheckSubmissionStatusAction,
+                                       formProvider:             RemoveLandFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       backendConnector:         StampDutyLandTaxConnector,
+                                       view:                     RemoveLandView
+                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
-    implicit request =>
+  private val actions = identify andThen getData andThen requireData andThen statusCheck
 
-      request.userAnswers.get(LandOverviewRemovePage).map { removeLandId =>
+  private val landOverview: Result       = Redirect(controllers.land.routes.LandOverviewController.onPageLoad())
+  private val journeyRecovery: Result    = Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+  private val updateVersionError: Result = Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad())
 
-        val maybeReturnLandToRemove = request.userAnswers.fullReturn.flatMap(_.land.flatMap(_.find(_.landID.contains(removeLandId))))
+  private def landToRemove(request: DataRequest[_]): Option[Land] =
+    request.userAnswers.get(LandOverviewRemovePage).flatMap { removeLandId =>
+      request.userAnswers.fullReturn
+        .flatMap(_.land)
+        .flatMap(_.find(_.landID.contains(removeLandId)))
+    }
 
-        val maybeAddress = maybeReturnLandToRemove.flatMap(_.address1)
-        val addressLine1 = maybeAddress.getOrElse("")
-
-        maybeReturnLandToRemove match {
-          case None =>
-            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-
+  def onPageLoad(): Action[AnyContent] = actions { implicit request =>
+    request.userAnswers.get(LandOverviewRemovePage) match {
+      case None => landOverview
+      case Some(_) =>
+        landToRemove(request) match {
+          case None => journeyRecovery
           case Some(land) =>
-            val form = formProvider(maybeAddress)
-            val preparedForm = request.userAnswers.get(RemoveLandPage) match {
-              case None => form
-              case Some(value) => form.fill(value)
-            }
-            Ok(view(preparedForm, addressLine1))
+            val form     = formProvider(land.address1)
+            val prepared = request.userAnswers.get(RemoveLandPage).fold(form)(form.fill)
+            Ok(view(prepared, land.address1.getOrElse("")))
         }
-      }.getOrElse(
-        Redirect(controllers.land.routes.LandOverviewController.onPageLoad())
-      )
+    }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
-    implicit request =>
-
-      request.userAnswers.get(LandOverviewRemovePage).map { removeLandId =>
-        val maybeLandToDelete: Option[Land] = for {
-          fullReturn <- request.userAnswers.fullReturn
-          allLands <- fullReturn.land
-          returnLandToDelete <- allLands.find(_.landID.contains(removeLandId)) if returnLandToDelete.landResourceRef.isDefined
-        } yield returnLandToDelete
-
-        maybeLandToDelete match {
-
-          case None =>
-            Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-
-          case Some(maybeLandToDelete) =>
-            val addressLine1 = maybeLandToDelete.address1.getOrElse("")
-            val form = formProvider(maybeLandToDelete.address1)
-            form.bindFromRequest().fold(
-              formWithErrors =>
-                Future.successful(BadRequest(view(formWithErrors, addressLine1))),
-
-              value =>
-                if (value) {
-                  (for {
-                    updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(request.userAnswers)
-                    returnVersion <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
-                    deleteLandRequest <- DeleteLandRequest.from(request.userAnswers, maybeLandToDelete.landResourceRef.get)
-                    deleteLandReturn <- backendConnector.deleteLand(deleteLandRequest) if returnVersion.newVersion.isDefined
-                  } yield {
-                    Redirect(controllers.land.routes.LandOverviewController.onPageLoad()).flashing("landDeleted" -> addressLine1)
-                  }).recover {
-                    case _ =>
-                      Redirect(controllers.land.routes.LandOverviewController.onPageLoad())
-                  }
-
-                } else {
-                  Future.successful(Redirect(controllers.land.routes.LandOverviewController.onPageLoad()))
-                }
+  def onSubmit(): Action[AnyContent] = actions.async { implicit request =>
+    request.userAnswers.get(LandOverviewRemovePage) match {
+      case None => Future.successful(landOverview)
+      case Some(_) =>
+        landToRemove(request).filter(_.landResourceRef.isDefined) match {
+          case None => Future.successful(journeyRecovery)
+          case Some(land) =>
+            formProvider(land.address1).bindFromRequest().fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, land.address1.getOrElse("")))),
+              confirmed =>
+                if (confirmed) removeLand(land)
+                else Future.successful(landOverview)
             )
         }
-      }.getOrElse(
-        Future.successful(Redirect(controllers.land.routes.LandOverviewController.onPageLoad()))
-      )
+    }
+  }
+
+  private def removeLand(land: Land)(implicit request: DataRequest[_]): Future[Result] = {
+    val addressLine1 = land.address1.getOrElse("")
+
+    (for {
+      updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(request.userAnswers)
+      versionResult <-
+        backendConnector
+          .updateReturnVersion(updateReturnVersionRequest)
+          .map(Right(_))
+          .recover { case NonFatal(_) => Left(updateVersionError) }
+      result <- versionResult match {
+        case Left(error)                                => Future.successful(error)
+        case Right(version) if version.newVersion.isEmpty => Future.successful(landOverview)
+        case Right(_) =>
+          for {
+            deleteLandRequest <- DeleteLandRequest.from(request.userAnswers, land.landResourceRef.get)
+            _                 <- backendConnector.deleteLand(deleteLandRequest)
+          } yield landOverview.flashing("landDeleted" -> addressLine1)
+      }
+    } yield result).recover { case _ => landOverview }
   }
 }

@@ -310,7 +310,7 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
         redirectLocation(result) mustBe Some(controllers.purchaser.routes.ChangePurchaserOneController.onPageLoad().url)
       }
 
-      "must redirect to Journey Recovery when updating the version is unsuccessful" in {
+      "must redirect to the update return version error page when updating the version is unsuccessful" in {
         val oldMainPurchaserId = "PUR001"
         val newMainPurchaserId = "PUR002"
 
@@ -343,8 +343,7 @@ class PurchaserUpdateMainPurchaserServiceSpec extends SpecBase with MockitoSugar
         val result = service.updateMainPurchaser(userAnswers)
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
-
+        redirectLocation(result) mustBe Some(controllers.routes.UpdateReturnVersionErrorController.onPageLoad().url)
       }
 
       "must redirect to Journey Recovery when updating the ReturnInfo is unsuccessful" in {

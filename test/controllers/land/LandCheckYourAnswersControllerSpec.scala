@@ -673,6 +673,36 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
     "onSubmit" - {
 
+      "must redirect to UpdateReturnVersionError when updateReturnVersion fails" in {
+
+        val userAnswers = UserAnswers(
+          id = "test-session-id",
+          storn = "test-storn",
+          returnId = Some("12345"),
+          fullReturn = Some(completeLandFullReturn),
+          data = landCurrentData(Some("LAND001"))
+        ).set(LandOverviewPage, "LAND001").success.value
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+          .thenReturn(Future.failed(new RuntimeException("updateReturnVersion failed")))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.land.routes.LandCheckYourAnswersController.onSubmit().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.UpdateReturnVersionErrorController.onPageLoad().url
+          verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
+          verify(mockBackendConnector, times(0)).updateLand(any())(any(), any())
+        }
+      }
+
       "must create land and redirect to LandOverview when all required data is present and no land ID present" in {
 
         val userAnswers = UserAnswers(

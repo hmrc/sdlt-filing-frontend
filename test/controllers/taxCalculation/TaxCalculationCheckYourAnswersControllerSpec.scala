@@ -22,7 +22,6 @@ import models.requests.DataRequest
 import models.taxCalculation.{CalculationResponse, TaxCalculationFlow, TaxCalculationResult, UpdateTaxCalculationReturn}
 import models.{CheckMode, FullReturn, Land, Residency, ReturnInfo, ReturnVersionUpdateReturn, TaxCalculation, Transaction, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.taxCalculation.TaxCalculationFlowPage
 import pages.taxCalculation.freeholdSelfAssessed.{FreeholdSelfAssessedAmountPage, FreeholdSelfAssessedPenaltiesAndInterestPage, FreeholdSelfAssessedTotalAmountDuePage}
@@ -36,6 +35,7 @@ import repositories.SessionRepository
 import services.taxCalculation.PopulateTaxCalculationService
 import uk.gov.hmrc.http.UpstreamErrorResponse
 import utils.TimeMachine
+import org.mockito.Mockito.{when, verify, times}
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -308,6 +308,43 @@ class TaxCalculationCheckYourAnswersControllerSpec extends SpecBase with Mockito
           val result = route(app, FakeRequest(POST, routes.TaxCalculationCheckYourAnswersController.onSubmit().url)).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        }
+      }
+      "redirects to the update return version error page when the return version bump fails" in {
+        val connector = mock[SdltCalculationConnector]
+        val session = mock[SessionRepository]
+        val backend = mock[StampDutyLandTaxConnector]
+
+        when(connector.calculateStampDutyLandTax(any())(any()))
+          .thenReturn(Future.successful(CalculationResponse(Seq.empty)))
+        when(session.get(any())).thenReturn(Future.successful(Some(selfAssessedAnswers)))
+        when(session.set(any())).thenReturn(Future.successful(true))
+        when(backend.updateReturnVersion(any())(any(), any()))
+          .thenReturn(Future.failed(new RuntimeException("simulated backend failure")))
+
+        val app = applicationBuilder(userAnswers = Some(selfAssessedAnswers))
+          .overrides(
+            bind[SdltCalculationConnector].toInstance(connector),
+            bind[SessionRepository].toInstance(session),
+            bind[StampDutyLandTaxConnector].toInstance(backend)
+          )
+          .build()
+
+        running(app) {
+          val result = route(app, FakeRequest(POST, routes.TaxCalculationCheckYourAnswersController.onSubmit().url)).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.UpdateReturnVersionErrorController.onPageLoad().url
+
+          verify(backend, times(0)).updateTaxCalculationInfo(any())(any(), any())
+        }
+      }
+      "redirects back to check your answers when the return version bump returns no new version" in {
+        val app = appWith(selfAssessedAnswers, versionReturn = ReturnVersionUpdateReturn(newVersion = None))
+        running(app) {
+          val result = route(app, FakeRequest(POST, routes.TaxCalculationCheckYourAnswersController.onSubmit().url)).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.TaxCalculationCheckYourAnswersController.onPageLoad().url
         }
       }
     }

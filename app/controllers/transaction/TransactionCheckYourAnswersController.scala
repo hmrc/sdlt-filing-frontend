@@ -43,6 +43,7 @@ import services.taxCalculation.UpdateTaxCalcService
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
+import scala.util.control.NonFatal
 
 @Singleton
 class TransactionCheckYourAnswersController @Inject()(
@@ -132,28 +133,42 @@ class TransactionCheckYourAnswersController @Inject()(
     for {
       transaction <- Transaction.from(userAnswers)
       updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(userAnswers)
-      updateReturnVersionReturn <- backendConnector.updateReturnVersion(updateReturnVersionRequest)
-      _ <- handleLeaseDecision(userAnswers)
-      result <-
-        if (updateReturnVersionReturn.newVersion.isDefined) {
+      versionResult <-
+        backendConnector
+          .updateReturnVersion(updateReturnVersionRequest)
+          .map(Right(_))
+          .recover { case NonFatal(_) =>
+            Left(Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad()))
+          }
+      result <- versionResult match {
+        case Left(errorRedirect) =>
+          Future.successful(errorRedirect)
+
+        case Right(updateReturnVersionReturn) =>
           for {
-            updateTransactionRequest <- UpdateTransactionRequest.from(userAnswers, transaction)
-            updateTransactionReturn <- backendConnector.updateTransaction(updateTransactionRequest)
-            _ <- maybeUpdateTransactionTaxCalc(userAnswers)
-          } yield
-            if (updateTransactionReturn.updated) {
-              Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-            } else {
-              Redirect(controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad())
-            }
-        } else {
-          Future.successful(
-            Redirect(controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad())
-          )
-        }
+            _ <- handleLeaseDecision(userAnswers)
+            outcome <-
+              if (updateReturnVersionReturn.newVersion.isDefined) {
+                for {
+                  updateTransactionRequest <- UpdateTransactionRequest.from(userAnswers, transaction)
+                  updateTransactionReturn <- backendConnector.updateTransaction(updateTransactionRequest)
+                  _ <- maybeUpdateTransactionTaxCalc(userAnswers)
+                } yield
+                  if (updateTransactionReturn.updated) {
+                    Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+                  } else {
+                    Redirect(controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad())
+                  }
+              } else {
+                Future.successful(
+                  Redirect(controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad())
+                )
+              }
+          } yield outcome
+      }
     } yield result
   }
-
+  
   private def maybeUpdateTransactionTaxCalc(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Unit] =
     if (updateTaxCalcService.transactionDataMatches(userAnswers)) {
       for {

@@ -82,8 +82,8 @@ class VendorAgentCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockSessionRepository)
+    reset(mockBackendConnector)
   }
-
   "VendorAgentCheckYourAnswers Controller" - {
 
     "onPageLoad" - {
@@ -192,6 +192,54 @@ class VendorAgentCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
     }
 
     "onSubmit" - {
+
+      "must redirect back to check your answers when updateReturnVersion returns no new version" in {
+        val userAnswers = userAnswersWithCompleteAnswersAndReturnAgentId
+          .set(VendorAgentOverviewPage, "AGENT123").success.value
+
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(userAnswers)))
+        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+          .thenReturn(Future.successful(ReturnVersionUpdateReturn(None)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url
+          verify(mockBackendConnector, times(0)).updateReturnAgent(any[UpdateReturnAgentRequest])(any(), any())
+        }
+      }
+
+      "must redirect to the update return version error page when updateReturnVersion fails" in {
+        val userAnswers = userAnswersWithCompleteAnswersAndReturnAgentId
+          .set(VendorAgentOverviewPage, "AGENT123").success.value
+
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(userAnswers)))
+        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+          .thenReturn(Future.failed(new RuntimeException("simulated backend failure")))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.UpdateReturnVersionErrorController.onPageLoad().url
+          verify(mockBackendConnector, times(0)).updateReturnAgent(any[UpdateReturnAgentRequest])(any(), any())
+        }
+      }
 
       "must update return agent if data is valid and returnAgentId is set" in {
         val userAnswers = userAnswersWithCompleteAnswersAndReturnAgentId.set(VendorAgentOverviewPage, "AGENT123").success.value
