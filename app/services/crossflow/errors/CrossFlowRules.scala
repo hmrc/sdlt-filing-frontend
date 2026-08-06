@@ -474,8 +474,8 @@ object Cf16_ScottishPostcode extends LandGuardRule:
   protected override def inlineErrorKey = "crossflow.land.Cf-16.inline"
 
 
-  /** Cf-17 — Mural Business Function. Tr-11 (use of land or property) only appears when
-   * property type is '02 - Mixed' or '03 - Non-residential'. If the user committed the
+  /** Cf-17 — Business Function. Tr-11 (use of land or property) only appears when
+   * property type is '02 - Mixed' or '03 - Non-residential' for the main land. If the user committed the
    * transaction before choosing 02/03 on Lr-1, Tr-11 has never fired and no use-of-property
    * flags are set. Per BA spec, this is not technically a validation error — but the
    * section must be flagged as needing completion via a dedicated cross-flow screen.
@@ -492,7 +492,7 @@ object Cf17_UseOfPropertyMissing extends GuardRule:
     private val triggeringPropertyTypes: Set[String] = Set(Mixed, NonResidential)
 
     protected def appliesTo(ua: UserAnswers): Boolean =
-      anyLandPropertyType(ua, triggeringPropertyTypes)
+      mainLandPropertyType(ua).exists(triggeringPropertyTypes.contains)
 
     protected def isValid(ua: UserAnswers): Boolean =
       useOfPropertyAnswered(ua)
