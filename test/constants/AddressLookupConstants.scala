@@ -95,6 +95,7 @@ object AddressLookupConstants {
     version = 2,
     options = AddressLookupOptionsModel(
       continueUrl = testContinueUrl,
+      useNewGovUkServiceNavigation = Some(true),
       signOutHref = Some(testSignOutHref),
       phaseFeedbackLink = Some(testPhaseFeedbackLink),
       accessibilityFooterUrl = Some(testAcessibilityUrl),
