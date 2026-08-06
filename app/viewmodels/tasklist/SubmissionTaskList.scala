@@ -76,7 +76,9 @@ object SubmissionTaskList {
       prerequisites = _ => {
         val mandatory = Seq(
           VendorTaskList.vendorRowBuilder(fullReturn),
+          VendorAgentTaskList.vendorAgentRowBuilder(fullReturn),
           PurchaserTaskList.purchaserRowBuilder(fullReturn),
+          PurchaserAgentTaskList.purchaserAgentRowBuilder(fullReturn),
           LandTaskList.landRowBuilder(fullReturn, viewmodels.tasklist.LandTaskList.noFailures),
           TransactionTaskList.transactionRowBuilder(fullReturn, viewmodels.tasklist.TransactionTaskList.noFailures),
           TaxCalculationTaskList.taxCalculationRowBuilder(fullReturn)
@@ -86,12 +88,6 @@ object SubmissionTaskList {
           Option.when(isResidencyRequired(fullReturn))(UkResidencyTaskList.ukResidencyRowBuilder(fullReturn)),
           Option.when(isLeaseRequired(fullReturn))(
             LeaseTaskList.leaseRowBuilder(fullReturn, viewmodels.tasklist.LeaseTaskList.noFailures)
-          ),
-          Option.when(isPurchaserAgentStarted(fullReturn))(
-            PurchaserAgentTaskList.purchaserAgentRowBuilder(fullReturn)
-          ),
-          Option.when(isVendorAgentStarted(fullReturn))(
-            VendorAgentTaskList.vendorAgentRowBuilder(fullReturn)
           )
         ).flatten
 
@@ -106,8 +102,8 @@ object SubmissionTaskList {
     isLandComplete(fullReturn) &&
     isTransactionComplete(fullReturn) &&
     isTaxCalculationComplete(fullReturn) &&
-    (!isVendorAgentStarted(fullReturn) || isVendorAgentComplete(fullReturn)) &&
-    (!isPurchaserAgentStarted(fullReturn) || isPurchaserAgentComplete(fullReturn)) &&
+    isVendorAgentComplete(fullReturn) &&
+    isPurchaserAgentComplete(fullReturn) &&
     (!isLeaseRequired(fullReturn) || isLeaseComplete(fullReturn)) &&
     (!isResidencyRequired(fullReturn) || isResidencyComplete(fullReturn))
   }
