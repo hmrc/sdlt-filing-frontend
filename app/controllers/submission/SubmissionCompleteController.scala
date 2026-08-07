@@ -57,6 +57,8 @@ class SubmissionCompleteController @Inject()(
             sessionRepository.set(userAnswers).map { _ =>
               val utrn = fullReturn.submission.flatMap(_.UTRN)
               val submissionRequestDate = fullReturn.submission.flatMap(_.submissionRequestDate)
+              val submissionReceipt = fullReturn.submission.flatMap(_.submissionReceipt)
+              val isSubmittedNoReceipt = fullReturn.submission.flatMap(_.submissionStatus.map(_.equalsIgnoreCase("SUBMITTED_NO_RECEIPT"))).getOrElse(false)
               val maybeEmail = fullReturn.submission.flatMap(_.email)
               val totalTaxDue: Option[String] =
                 List(
@@ -79,7 +81,7 @@ class SubmissionCompleteController @Inject()(
                     DateTimeFormatter.ISO_OFFSET_DATE_TIME
                   ).plusDays(14).format(dateTimeFormat())
 
-                  Ok(view(utrn, deadline, totalTaxDue, maybeEmail))
+                  Ok(view(utrn, submissionReceipt, isSubmittedNoReceipt, deadline, totalTaxDue, maybeEmail))
                 case (_, _, _, _) =>
                   Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
               }

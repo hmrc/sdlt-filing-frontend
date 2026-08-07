@@ -21,7 +21,8 @@ import constants.FullReturnConstants
 import constants.FullReturnConstants.{completeFullReturn, completeSubmission, completeTaxCalculation}
 import models.{GetReturnByRefRequest, TaxCalculation, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, when}
+import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -33,7 +34,16 @@ import views.html.submission.SubmissionCompleteView
 import scala.concurrent.Future
 
 
-class SubmissionCompleteControllerSpec extends SpecBase with MockitoSugar {
+class SubmissionCompleteControllerSpec extends SpecBase with MockitoSugar with BeforeAndAfterEach {
+
+  val mockFullReturnService = mock[FullReturnService]
+  val mockSessionRepository = mock[SessionRepository]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockSessionRepository)
+    reset(mockFullReturnService)
+  }
 
   private val testReturnId = "123456"
 
@@ -44,9 +54,20 @@ class SubmissionCompleteControllerSpec extends SpecBase with MockitoSugar {
       taxDueNPV = None)),
     submission = Some(completeSubmission.copy(
       UTRN = Some("UTRN123456789012"),
+      submissionReceipt = Some("RECEIPT-001"),
       email = Some("john.smith@email.com"),
       submissionRequestDate = Some("2024-10-15T10:15:00Z"),
+      submissionStatus = Some("SUBMITTED")
     )))
+
+  private val fullReturnWithoutReceipt = fullReturnWithRequiredData.copy(
+    submission = Some(completeSubmission.copy(
+      UTRN = Some("UTRN123456789012"),
+      submissionReceipt = None,
+      submissionStatus = Some("SUBMITTED_NO_RECEIPT"),
+      submissionRequestDate = Some("2024-10-15T10:15:00Z")
+    ))
+  )
 
   private val fullReturnWithoutEmail = fullReturnWithRequiredData.copy(
     submission = Some(completeSubmission.copy(
@@ -86,9 +107,6 @@ class SubmissionCompleteControllerSpec extends SpecBase with MockitoSugar {
   "SubmissionComplete Controller" - {
 
     "must return OK and the correct view for a GET when all required data is present" in {
-      val mockFullReturnService = mock[FullReturnService]
-      val mockSessionRepository = mock[SessionRepository]
-
       val userAnswers = emptyUserAnswers.copy(returnId = Some(testReturnId), fullReturn = Some(fullReturnWithRequiredData))
 
       when(mockFullReturnService.getFullReturn(any[GetReturnByRefRequest])(any(), any()))
@@ -114,12 +132,57 @@ class SubmissionCompleteControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
           utrn = "UTRN123456789012",
+          submissionReceiptRef = Some("RECEIPT-001"),
+          isSubmittedNoReceipt = false,
           deadline = "29 October 2024",
           amount = "£15,000",
           maybeEmail = Some("john.smith@email.com")
         )(request, messages(application)).toString
 
         contentAsString(result) must include("UTRN123456789012")
+        contentAsString(result) must include("RECEIPT-001")
+        contentAsString(result) must include("29 October 2024")
+        contentAsString(result) must include("£15,000")
+        contentAsString(result) must include("HMRC have sent a confirmation email to john.smith@email.com.")
+      }
+    }
+
+    "must return OK and the correct view for a GET when submission has no receipt" in {
+      val userAnswers = emptyUserAnswers.copy(returnId = Some(testReturnId), fullReturn = Some(fullReturnWithoutReceipt))
+
+      when(mockFullReturnService.getFullReturn(any[GetReturnByRefRequest])(any(), any()))
+        .thenReturn(Future.successful(fullReturnWithoutReceipt))
+
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[FullReturnService].toInstance(mockFullReturnService),
+          bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
+
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.submission.routes.SubmissionCompleteController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[SubmissionCompleteView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(
+          utrn = "UTRN123456789012",
+          submissionReceiptRef = None,
+          isSubmittedNoReceipt = true,
+          deadline = "29 October 2024",
+          amount = "£15,000",
+          maybeEmail = Some("john.smith@email.com")
+        )(request, messages(application)).toString
+
+        contentAsString(result) must include("UTRN123456789012")
+        contentAsString(result) must not include "Your submission receipt reference number"
+        contentAsString(result) must include("There has been a problem generating the submission receipt")
         contentAsString(result) must include("29 October 2024")
         contentAsString(result) must include("£15,000")
         contentAsString(result) must include("HMRC have sent a confirmation email to john.smith@email.com.")
@@ -127,8 +190,6 @@ class SubmissionCompleteControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must return OK and the correct view for a GET when email is absent" in {
-      val mockFullReturnService = mock[FullReturnService]
-      val mockSessionRepository = mock[SessionRepository]
 
       val userAnswers = emptyUserAnswers.copy(returnId = Some(testReturnId), fullReturn = Some(fullReturnWithoutEmail))
 
@@ -154,12 +215,15 @@ class SubmissionCompleteControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
           utrn = "UTRN123456789012",
+          submissionReceiptRef = Some("RECEIPT-001"),
+          isSubmittedNoReceipt = false,
           deadline = "29 October 2024",
           amount = "£15,000",
           maybeEmail = None
         )(request, messages(application)).toString
 
         contentAsString(result) must include("UTRN123456789012")
+        contentAsString(result) must include("RECEIPT-001")
         contentAsString(result) must include("29 October 2024")
         contentAsString(result) must include("£15,000")
         contentAsString(result) must not include("HMRC have sent a confirmation email to")
@@ -167,8 +231,6 @@ class SubmissionCompleteControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must return OK and the correct view for a GET when only tax due is present" in {
-      val mockFullReturnService = mock[FullReturnService]
-      val mockSessionRepository = mock[SessionRepository]
 
       val userAnswers = emptyUserAnswers.copy(returnId = Some(testReturnId), fullReturn = Some(fullReturnWithRequiredData))
 
@@ -194,12 +256,15 @@ class SubmissionCompleteControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
           utrn = "UTRN123456789012",
+          submissionReceiptRef = Some("RECEIPT-001"),
+          isSubmittedNoReceipt = false,
           deadline = "29 October 2024",
           amount = "£15,000",
           maybeEmail = Some("john.smith@email.com")
         )(request, messages(application)).toString
 
         contentAsString(result) must include("UTRN123456789012")
+        contentAsString(result) must include("RECEIPT-001")
         contentAsString(result) must include("29 October 2024")
         contentAsString(result) must include("£15,000")
         contentAsString(result) must include("HMRC have sent a confirmation email to john.smith@email.com.")
@@ -207,8 +272,6 @@ class SubmissionCompleteControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must return OK and the correct view for a GET when only tax due premium and tax due NPV are present" in {
-      val mockFullReturnService = mock[FullReturnService]
-      val mockSessionRepository = mock[SessionRepository]
 
       val userAnswers = emptyUserAnswers.copy(returnId = Some(testReturnId), fullReturn = Some(fullReturnWithOnlyTaxDuePremiumAndTaxDueNPV))
 
@@ -234,6 +297,8 @@ class SubmissionCompleteControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
           utrn = "UTRN123456789012",
+          submissionReceiptRef = Some("RECEIPT-001"),
+          isSubmittedNoReceipt = false,
           deadline = "29 October 2024",
           amount = "£30,000",
           maybeEmail = Some("john.smith@email.com")
@@ -247,8 +312,6 @@ class SubmissionCompleteControllerSpec extends SpecBase with MockitoSugar {
     }
     
     "must redirect to ReturnTaskList for a GET when UTRN is absent" in {
-      val mockFullReturnService = mock[FullReturnService]
-      val mockSessionRepository = mock[SessionRepository]
 
       val userAnswers = emptyUserAnswers.copy(returnId = Some(testReturnId), fullReturn = Some(fullReturnWithoutUTRN))
 
@@ -275,8 +338,6 @@ class SubmissionCompleteControllerSpec extends SpecBase with MockitoSugar {
     }
     
     "must redirect to ReturnTaskList for a GET when Submission Request Date is absent" in {
-      val mockFullReturnService = mock[FullReturnService]
-      val mockSessionRepository = mock[SessionRepository]
 
       val userAnswers = emptyUserAnswers.copy(returnId = Some(testReturnId), fullReturn = Some(fullReturnWithoutSubmissionRequestDate))
 
@@ -303,8 +364,6 @@ class SubmissionCompleteControllerSpec extends SpecBase with MockitoSugar {
     }
     
     "must redirect to ReturnTaskList for a GET when all tax due amounts are absent" in {
-      val mockFullReturnService = mock[FullReturnService]
-      val mockSessionRepository = mock[SessionRepository]
 
       val userAnswers = emptyUserAnswers.copy(returnId = Some(testReturnId), fullReturn = Some(fullReturnWithoutAnyTaxDue))
 
