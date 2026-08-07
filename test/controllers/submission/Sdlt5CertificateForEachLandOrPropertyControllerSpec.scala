@@ -20,10 +20,10 @@ import base.SpecBase
 import constants.FullReturnConstants.completeFullReturn
 import controllers.routes
 import forms.submission.Sdlt5CertificateForEachLandOrPropertyFormProvider
-import models.{FullReturn, Land, NormalMode, Submission, UserAnswers}
+import models.{FullReturn, Land, NormalMode, ReturnInfo, Submission, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.{never, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.submission.Sdlt5CertificateForEachLandOrPropertyPage
 import play.api.inject.bind
@@ -31,6 +31,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
+import services.submission.CertificateForEachService
 import views.html.submission.Sdlt5CertificateForEachLandOrPropertyView
 
 import scala.concurrent.Future
@@ -56,6 +57,12 @@ class Sdlt5CertificateForEachLandOrPropertyControllerSpec extends SpecBase with 
   val testUserAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn))
 
   val multipleLandUserAnswers: UserAnswers = emptyUserAnswers.copy(fullReturn = Some(multipleLandFullReturn))
+
+  private val storedAnswers: UserAnswers =
+    emptyUserAnswers.copy(fullReturn = Some(multipleLandFullReturn.copy(returnInfo = Some(ReturnInfo(landCertForEachProp = Some("yes"))))))
+
+  private val multipleLandWithReturnInfo: UserAnswers =
+    emptyUserAnswers.copy(fullReturn = Some(multipleLandFullReturn.copy(returnInfo = Some(ReturnInfo(returnID = Some("R1"))))))
 
   "Sdlt5CertificateForEachLandOrProperty Controller" - {
 
@@ -131,6 +138,123 @@ class Sdlt5CertificateForEachLandOrPropertyControllerSpec extends SpecBase with 
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+
+    "must pass the answer to the service and save what it returns" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      val mockService           = mock[CertificateForEachService]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockService.store(any(), any())(any(), any(), any())) thenReturn Future.successful(storedAnswers)
+
+      val application =
+        applicationBuilder(userAnswers = Some(multipleLandWithReturnInfo))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CertificateForEachService].toInstance(mockService)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, sdlt5CertificateForEachLandOrPropertyRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        verify(mockService).store(any(), eqTo(true))(any(), any(), any())
+        verify(mockSessionRepository).set(storedAnswers)
+      }
+    }
+
+    "must pass a no answer through to the service" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      val mockService           = mock[CertificateForEachService]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockService.store(any(), any())(any(), any(), any())) thenReturn Future.successful(storedAnswers)
+
+      val application =
+        applicationBuilder(userAnswers = Some(multipleLandWithReturnInfo))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CertificateForEachService].toInstance(mockService)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, sdlt5CertificateForEachLandOrPropertyRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        verify(mockService).store(any(), eqTo(false))(any(), any(), any())
+      }
+    }
+
+    "must still save the answers when the service had no returnInfo to update" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      val mockService           = mock[CertificateForEachService]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockService.store(any(), any())(any(), any(), any())) thenReturn Future.successful(multipleLandUserAnswers)
+
+      val application =
+        applicationBuilder(userAnswers = Some(multipleLandUserAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CertificateForEachService].toInstance(mockService)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, sdlt5CertificateForEachLandOrPropertyRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        verify(mockSessionRepository).set(multipleLandUserAnswers)
+      }
+    }
+
+    "must redirect to Journey Recovery when the service fails" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+      val mockService           = mock[CertificateForEachService]
+
+      when(mockService.store(any(), any())(any(), any(), any()))
+        .thenReturn(Future.failed(new RuntimeException("formp is down")))
+
+      val application =
+        applicationBuilder(userAnswers = Some(multipleLandWithReturnInfo))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CertificateForEachService].toInstance(mockService)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, sdlt5CertificateForEachLandOrPropertyRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        verify(mockSessionRepository, never()).set(any())
       }
     }
 
