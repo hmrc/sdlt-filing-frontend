@@ -30,5 +30,7 @@
             govukTag(Tag(messages("submission.state.submitted")).green())
         case SubmissionFailed =>
             govukTag(Tag(messages("submission.state.submissionFailed")).red())
+        case _ =>
+            ""
     }
 }

@@ -23,6 +23,7 @@
         layout: templates.Layout,
         govukButton: GovukButton,
         govukPanel : GovukPanel,
+        govukWarningText : GovukWarningText,
         h2: h2,
         p: Paragraph,
         govukDetails : GovukDetails,
@@ -33,6 +34,8 @@
 
 @(
         utrn: String,
+        submissionReceiptRef: Option[String],
+        isSubmittedNoReceipt: Boolean,
         deadline: String,
         amount: String,
         maybeEmail: Option[String] = None
@@ -52,16 +55,36 @@
     )
 }
 
+@panelContent = {
+    @messages("submission.submissionComplete.panel.utrn")<br><strong>@utrn</strong>
+    @if(!isSubmittedNoReceipt) {
+        @submissionReceiptRef.map { submissionReceipt =>
+            <br><br>@messages("submission.submissionComplete.panel.submissionReceiptRef")<br><strong>@submissionReceipt</strong>
+        }
+    }
+}
+
 @layout(pageTitle = titleNoForm(messages("submission.submissionComplete.title"), section = Some(messages("site.submission.caption")))){
 
     @govukPanel(
         Panel(
             title = Text(messages("submission.submissionComplete.panel.heading")),
-            content = HtmlContent(
-                s"${messages("submission.submissionComplete.panel.body")}<br><strong>$utrn</strong>"
-            )
+            content = HtmlContent(panelContent)
         )
     )
+
+    @if(isSubmittedNoReceipt) {
+        @govukWarningText(WarningText(
+            iconFallbackText = Some(messages("submission.submissionComplete.warning.fallback")),
+            content = HtmlContent(
+                messages("submission.submissionComplete.warning.content",
+                    messages("submission.submissionComplete.warning.link"),
+                        messages("submission.submissionComplete.warning.linkText")
+                    )
+                )
+            )
+        )
+    }
 
     <div class="govuk-body">
         @link(

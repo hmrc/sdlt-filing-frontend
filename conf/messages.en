@@ -2212,7 +2212,12 @@ crossflow.lease.Cf-5c.cta                                                       
 
 submission.submissionComplete.title                                                 = Submission complete
 submission.submissionComplete.panel.heading                                         = Submission complete
-submission.submissionComplete.panel.body                                            = Your UTRN
+submission.submissionComplete.panel.utrn                                            = Your UTRN
+submission.submissionComplete.panel.submissionReceiptRef                            = Your submission receipt reference number
+submission.submissionComplete.warning.fallback                                      = Warning
+submission.submissionComplete.warning.content                                       = There has been a problem generating the submission receipt reference number. HMRC will contact you shortly. Contact the <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a> if you have any questions.
+submission.submissionComplete.warning.link                                          = https://www.gov.uk/find-hmrc-contacts/stamp-duty-land-tax-general-enquiries
+submission.submissionComplete.warning.linkText                                      = Stamp Taxes Helpline (opens in new tab)
 submission.submissionComplete.link1                                                 = View your submitted return
 submission.submissionComplete.link2                                                 = Print or save a copy of this page
 submission.submissionComplete.heading1                                              = What happens next
