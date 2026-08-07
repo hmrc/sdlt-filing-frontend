@@ -19,6 +19,7 @@ package models.address
 import play.api.libs.json.{Json, Writes}
 
 case class AddressLookupOptionsModel(continueUrl: String,
+                                     useNewGovUkServiceNavigation: Option[Boolean] = None,
                                      signOutHref: Option[String] = None,
                                      phaseFeedbackLink: Option[String] = None,
                                      accessibilityFooterUrl: Option[String] = None,

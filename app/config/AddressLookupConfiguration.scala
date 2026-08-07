@@ -36,6 +36,7 @@ class AddressLookupConfiguration @Inject()(implicit appConfig: FrontendAppConfig
       version = 2,
       options = AddressLookupOptionsModel(
         continueUrl = appConfig.sdltLookupHost + continueRoute.url,
+        useNewGovUkServiceNavigation = Some(true),
         signOutHref = Some(appConfig.contactUrl),
         phaseFeedbackLink = Some(appConfig.contactUrl),
         deskProServiceName = Some(appConfig.contactFormServiceIdentifier),
