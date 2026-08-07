@@ -33,7 +33,9 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
     claimingRelief: Option[String] = Some("no"),
     reliefReason: Option[String] = None,
     reliefAmount: Option[String] = None,
-    isNonUkResident: Option[String] = Some("no")
+    isNonUkResidents: Option[String] = Some("no"),
+    isCloseCompany: Option[String] = Some("no"),
+    isCrownRelief: Option[String] = Some("no")
   ): FullReturn = FullReturn(
     stornId = "STORN", returnResourceRef = "REF",
     returnInfo = Some(ReturnInfo(mainLandID = Some("L1"))),
@@ -43,7 +45,7 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
       totalConsideration = Some(consideration), isLinked = isLinked,
       claimingRelief = claimingRelief, reliefReason = reliefReason, reliefAmount = reliefAmount
     )),
-    residency = Some(Residency(isNonUkResidents = isNonUkResident))
+    residency = Some(Residency(isNonUkResidents = isNonUkResidents, isCloseCompany = isCloseCompany, isCrownRelief = isCrownRelief))
   )
 
   def leaseholdReturn(
@@ -54,21 +56,24 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
     npv: String = "100000",
     annualRentOver1000: Option[String] = Some("yes"),
     startingRent: Option[String] = None,
-    premium: Option[String] = Some("15000")
+    premium: Option[String] = Some("15000"),
+    isNonUkResidents: Option[String] = Some("no"),
+    isCrownRelief: Option[String] = Some("no"),
+    transactionDescription: Option[String] = Some("L")
   ): FullReturn = FullReturn(
     stornId = "STORN", returnResourceRef = "REF",
     returnInfo = Some(ReturnInfo(mainLandID = Some("L1"))),
     land = Some(Seq(Land(landID = Some("L1"), propertyType = Some("01"), interestCreatedTransferred = Some("LG")))),
     transaction = Some(Transaction(
-      transactionDescription = Some("L"), effectiveDate = Some(effectiveDate),
+      transactionDescription = transactionDescription, effectiveDate = Some(effectiveDate),
       totalConsideration = Some(consideration), isLinked = Some("no"),
       claimingRelief = Some("no")
     )),
-    residency = Some(Residency(isNonUkResidents = Some("no"))),
+    residency = Some(Residency(isNonUkResidents = isNonUkResidents, isCrownRelief = isCrownRelief)),
     lease = Some(Lease(
       contractStartDate = Some(startDate), contractEndDate = Some(endDate),
       isAnnualRentOver1000 = annualRentOver1000, netPresentValue = Some(npv),
-      startingRent = startingRent, totalPremiumPayable = premium
+      startingRent = startingRent, totalPremiumPayable = premium, leaseType = Some("R")
     ))
   )
 
@@ -266,16 +271,192 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
 
     "non-UK resident" - {
 
-      "must send None for residential before April 2021" in {
+      "must send None for residential property type before April 2021" in {
         val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
-          freeholdReturn(effectiveDate = "2021-03-31", isNonUkResident = Some("yes"))
+          freeholdReturn(effectiveDate = "2021-03-31", isNonUkResidents = Some("yes"))
         )).toOption.get
         request.nonUKResident mustBe None
       }
 
-      "must send capitalised value for residential after April 2021" in {
+      "must send None for non-residential property type before April 2021" in {
         val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
-          freeholdReturn(effectiveDate = "2025-06-15", isNonUkResident = Some("yes"))
+          freeholdReturn(
+            propertyType = "02",
+            effectiveDate = "2021-03-31",
+            isNonUkResidents = Some("yes"))
+        )).toOption.get
+        request.nonUKResident mustBe None
+      }
+
+      "must send None for mixed property type before April 2021" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          freeholdReturn(
+            propertyType = "03",
+            effectiveDate = "2021-03-31",
+            isNonUkResidents = Some("yes"))
+        )).toOption.get
+        request.nonUKResident mustBe None
+      }
+
+      "must send None for residential additional property type before April 2021" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          freeholdReturn(
+            propertyType = "04",
+            effectiveDate = "2021-03-31",
+            isNonUkResidents = Some("yes"))
+        )).toOption.get
+        request.nonUKResident mustBe None
+      }
+
+      "must send None when residency is missing" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          freeholdReturn().copy(residency = None))).toOption.get
+        request.nonUKResident mustBe None
+      }
+
+      "must send Yes for is non UK Resident, no crown relief & not exempt" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          freeholdReturn(isNonUkResidents = Some("yes"), isCrownRelief = Some("no"))
+        )).toOption.get
+        request.nonUKResident mustBe Some("Yes")
+      }
+
+      "must send Yes for is close company & not exempt" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          freeholdReturn(isCloseCompany = Some("yes"))
+        )).toOption.get
+        request.nonUKResident mustBe Some("Yes")
+      }
+
+      "must send Yes for is close company & crown relief" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          freeholdReturn(isCloseCompany = Some("yes"), isCrownRelief = Some("yes"))
+        )).toOption.get
+        request.nonUKResident mustBe Some("Yes")
+      }
+
+      "must send No for UK Resident" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          freeholdReturn(isNonUkResidents = Some("no"))
+        )).toOption.get
+        request.nonUKResident mustBe Some("No")
+      }
+
+      "must send No for non UK Resident & crown relief" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          freeholdReturn(isNonUkResidents = Some("yes"), isCrownRelief = Some("yes"))
+        )).toOption.get
+        request.nonUKResident mustBe Some("No")
+      }
+
+      "must send No for relief code exemption" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          freeholdReturn(
+            isNonUkResidents = Some("yes"),
+            isCrownRelief = Some("no"),
+            claimingRelief = Some("yes"),
+            reliefReason = Some("8")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("No")
+      }
+
+      "must send No for conveyence with lease involvement exemption - lease term is less than 7 years" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(
+            isNonUkResidents = Some("yes"),
+            isCrownRelief = Some("no"),
+            transactionDescription = Some("A"),
+            effectiveDate = "2021-06-15",
+            startDate = "2021-06-15",
+            endDate = "2025-06-15",
+            premium = Some("500000")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("No")
+      }
+
+      "must send Yes for conveyence with lease involvement when lease term is exactly 7 years" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(
+            isNonUkResidents = Some("yes"),
+            isCrownRelief = Some("no"),
+            transactionDescription = Some("A"),
+            effectiveDate = "2021-06-15",
+            startDate = "2021-06-15",
+            endDate = "2028-06-15",
+            premium = Some("500000")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("Yes")
+      }
+
+      "must send No for grant of lease exemption - lease term is less than 7 years" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(
+            isNonUkResidents = Some("yes"),
+            isCrownRelief = Some("no"),
+            effectiveDate = "2021-06-15",
+            startDate = "2021-06-15",
+            endDate = "2025-06-15",
+            premium = Some("500000")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("No")
+      }
+
+      "must send Yes for grant of lease when lease term is exactly 7 years" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(
+            isNonUkResidents = Some("yes"),
+            isCrownRelief = Some("no"),
+            effectiveDate = "2021-06-15",
+            startDate = "2021-06-15",
+            endDate = "2028-06-15",
+            premium = Some("500000")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("Yes")
+      }
+
+      "must send No for grant of lease exemption - premium less than 40000 & annual starting rent less than 1000" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(
+            isNonUkResidents = Some("yes"),
+            isCrownRelief = Some("no"),
+            startDate = "2021-06-15",
+            endDate = "2028-06-15",
+            premium = Some("30000"),
+            startingRent = Some("999")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("No")
+      }
+
+      "must send Yes for grant of lease when premium is exactly 40000" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(
+            isNonUkResidents = Some("yes"),
+            isCrownRelief = Some("no"),
+            startDate = "2021-06-15",
+            endDate = "2028-06-15",
+            premium = Some("40000"),
+            startingRent = Some("999")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("Yes")
+      }
+
+      "must send Yes for grant of lease when starting rent is exactly 1000" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(
+            isNonUkResidents = Some("yes"),
+            isCrownRelief = Some("no"),
+            startDate = "2021-06-15",
+            endDate = "2028-06-15",
+            premium = Some("30000"),
+            startingRent = Some("1000")
+          ),
         )).toOption.get
         request.nonUKResident mustBe Some("Yes")
       }
