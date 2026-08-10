@@ -58,6 +58,7 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
     startingRent: Option[String] = None,
     premium: Option[String] = Some("15000"),
     isNonUkResidents: Option[String] = Some("no"),
+    isCloseCompany: Option[String] = Some("no"),
     isCrownRelief: Option[String] = Some("no"),
     transactionDescription: Option[String] = Some("L")
   ): FullReturn = FullReturn(
@@ -69,7 +70,7 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
       totalConsideration = Some(consideration), isLinked = Some("no"),
       claimingRelief = Some("no")
     )),
-    residency = Some(Residency(isNonUkResidents = isNonUkResidents, isCrownRelief = isCrownRelief)),
+    residency = Some(Residency(isNonUkResidents = isNonUkResidents, isCloseCompany = isCloseCompany, isCrownRelief = isCrownRelief)),
     lease = Some(Lease(
       contractStartDate = Some(startDate), contractEndDate = Some(endDate),
       isAnnualRentOver1000 = annualRentOver1000, netPresentValue = Some(npv),
@@ -455,6 +456,66 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
             startDate = "2021-06-15",
             endDate = "2028-06-15",
             premium = Some("30000"),
+            startingRent = Some("1000")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("Yes")
+      }
+
+      "must send No for close company conveyance with lease involvement when premium is not collected and annual starting rent is less than 1000" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(
+            isNonUkResidents = Some("no"),
+            isCloseCompany = Some("yes"),
+            transactionDescription = Some("A"),
+            startDate = "2021-06-15",
+            endDate = "2028-06-15",
+            premium = None,
+            startingRent = Some("999")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("No")
+      }
+
+      "must send Yes for close company conveyance with lease involvement when annual starting rent has trailing characters and its numeric prefix is 1000 or more" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(
+            isNonUkResidents = Some("no"),
+            isCloseCompany = Some("yes"),
+            transactionDescription = Some("A"),
+            startDate = "2021-06-15",
+            endDate = "2028-06-15",
+            premium = None,
+            startingRent = Some("1000abc")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("Yes")
+      }
+
+      "must send No for close company conveyance with lease involvement when annual starting rent has trailing characters and its numeric prefix is under 1000" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(
+            isNonUkResidents = Some("no"),
+            isCloseCompany = Some("yes"),
+            transactionDescription = Some("A"),
+            startDate = "2021-06-15",
+            endDate = "2028-06-15",
+            premium = None,
+            startingRent = Some("999abc")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("No")
+      }
+
+      "must send Yes for close company conveyance with lease involvement when premium is not collected and annual starting rent is exactly 1000" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(
+            isNonUkResidents = Some("no"),
+            isCloseCompany = Some("yes"),
+            transactionDescription = Some("A"),
+            startDate = "2021-06-15",
+            endDate = "2028-06-15",
+            premium = None,
             startingRent = Some("1000")
           ),
         )).toOption.get
