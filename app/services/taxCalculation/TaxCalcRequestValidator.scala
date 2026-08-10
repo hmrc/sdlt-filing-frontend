@@ -20,6 +20,7 @@ import models.*
 import models.land.LandTypeOfProperty
 import models.taxCalculation.*
 import utils.DateTimeFormats.*
+import utils.PropertyTypeHelper
 
 import java.time.*
 import java.time.temporal.ChronoUnit
@@ -27,7 +28,6 @@ import scala.util.Try
 
 object TaxCalcRequestValidator {
 
-  private val APR2021_RESIDENTIAL_DATE           = LocalDate.of(2021, 4, 1)
   private val RIGHT_TO_BUY_RELIEF                = "22"
   private val FIRST_TIME_BUYER_RELIEF            = "32"
   private val RELIEF_FROM_17_PERCENT_RATE_RELIEF = "35"
@@ -67,7 +67,7 @@ object TaxCalcRequestValidator {
       effectiveDateDay    = parsedDate.getDayOfMonth,
       effectiveDateMonth  = parsedDate.getMonthValue,
       effectiveDateYear   = parsedDate.getYear,
-      nonUKResident       = handleNonUkResident(fullReturn, parsedDate, propertyType),
+      nonUKResident       = handleNonUkResident(fullReturn),
       premium             = parseAmount(premium),
       highestRent         = fullReturn.lease.flatMap(_.startingRent).flatMap(v => Try(parseAmount(v)).toOption).getOrElse(BigDecimal(0)),
       propertyDetails     = buildPropertyDetails(propertyCode),
@@ -103,12 +103,8 @@ object TaxCalcRequestValidator {
       case _   => Right(None)
     }
 
-  private def handleNonUkResident(
-                                   fullReturn: FullReturn,
-                                   effectiveDate: LocalDate,
-                                   propertyType: PropertyTypes.Value
-                                 ): Option[String] =
-    if (propertyType != PropertyTypes.residential || effectiveDate.isBefore(APR2021_RESIDENTIAL_DATE)) None
+  private def handleNonUkResident(fullReturn: FullReturn): Option[String] =
+    if (!PropertyTypeHelper.isResidentialProperty(fullReturn)) None
     else fullReturn.residency.map { r =>
       if (isLiable(r) && !isExemptFromNRSDLT(fullReturn.transaction, fullReturn.lease, r)) "Yes" else "No"
     }
@@ -121,18 +117,14 @@ object TaxCalcRequestValidator {
     val reliefCode      = transaction.filter(t => isYes(t.claimingRelief)).flatMap(_.reliefReason)
     val transactionType = transaction.flatMap(_.transactionDescription)
     val leaseType       = lease.flatMap(_.leaseType)
-    val leaseTerm       = lease.flatMap { l =>
-        getValidLeaseDates(l).toOption.map { dates =>
-          calculateLeaseTerm(dates.startDate, dates.endDate, dates.startDate)
-        }
-      }
+    val leaseDates      = lease.flatMap(l => getValidLeaseDates(l).toOption)
 
     val shortLease    =
-      leaseTerm.exists(_.years < LEASE_TERM_THRESHOLD)
+      leaseDates.exists(d => d.endDate.isBefore(d.startDate.plusYears(LEASE_TERM_THRESHOLD)))
 
     val lowValueLease =
-      lease.flatMap(_.totalPremiumPayable).map(parseAmount).exists(_ < PREMIUM_THRESHOLD) &&
-        lease.flatMap(_.startingRent).map(parseAmount).exists(_ < ANNUAL_RENT_THRESHOLD)
+      lease.flatMap(_.totalPremiumPayable).fold(true)(parseAmount(_) < PREMIUM_THRESHOLD) &&
+        lease.flatMap(_.startingRent).fold(true)(parseAmount(_) < ANNUAL_RENT_THRESHOLD)
 
     (leaseType, transactionType) match {
       case _ if reliefCode.exists(code => !NON_EXEMPT_RELIEF_CODES(code))                            => true
@@ -198,9 +190,9 @@ object TaxCalcRequestValidator {
   private def getValidLeaseDates(lease: Lease): Either[BuildRequestError, ValidLeaseDates] =
     for {
       contractStartDate <- lease.contractStartDate.toRight(MissingLeaseAnswerError("contractStartDate"))
-      contractEndDate <- lease.contractEndDate.toRight(MissingLeaseAnswerError("contractEndDate"))
-      startDate <- parseDate(contractStartDate).left.map(_ => InvalidDateError(contractStartDate))
-      endDate <- parseDate(contractEndDate).left.map(_ => InvalidDateError(contractEndDate))
+      contractEndDate   <- lease.contractEndDate.toRight(MissingLeaseAnswerError("contractEndDate"))
+      startDate         <- parseDate(contractStartDate).left.map(_ => InvalidDateError(contractStartDate))
+      endDate           <- parseDate(contractEndDate).left.map(_ => InvalidDateError(contractEndDate))
     } yield ValidLeaseDates(startDate, endDate)
 
   private def calculateLeaseTerm(
@@ -209,10 +201,15 @@ object TaxCalcRequestValidator {
                                   effectiveDate: LocalDate
                                 ): LeaseTerm = {
     val calculationStartDate = if (effectiveDate.isAfter(validStartDate)) effectiveDate else validStartDate
-    val years = Period.between(calculationStartDate, validEndDate.plusDays(1)).getYears
-    val partialStart = calculationStartDate.plusYears(years)
-    val days = ChronoUnit.DAYS.between(partialStart, validEndDate.plusDays(1)).toInt
-    val daysInPartialYear = if (years < 5 && days > 0) days else 0
+    val dayAfterEnd          = validEndDate.plusDays(1)
+    val wholeYears           = Period.between(calculationStartDate, dayAfterEnd).getYears
+    val years                = if (calculationStartDate.plusYears(wholeYears + 1).isAfter(dayAfterEnd)) wholeYears else wholeYears + 1
+    val partialStart         = calculationStartDate.plusYears(years)
+    val days                 = ChronoUnit.DAYS.between(partialStart, dayAfterEnd).toInt
+    val daysInPartialYear    =
+      if (days == 0) 0
+      else if (calculationStartDate.getMonthValue == 2 && calculationStartDate.getDayOfMonth == 29) 365
+      else ChronoUnit.DAYS.between(partialStart, calculationStartDate.plusYears(years + 1)).toInt
 
     LeaseTerm(
       years = years,
