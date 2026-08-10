@@ -22,7 +22,7 @@ import models.{FullReturn, Land, Lease, ReturnInfo, Transaction, UserAnswers}
 import org.scalatest.EitherValues
 import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Empty, Text}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import viewmodels.taxCalculation.CalculationResultViewModel.*
 
 class CalculationResultViewModelSpec extends SpecBase with EitherValues {
@@ -208,7 +208,7 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
       val table = getPremiumRateTable(premiumLeaseCalc, isLeasehold = true)
       table.caption mustBe Some("taxCalculation.calculation.rates.captionPremium")
       table.rows.last.map(_.content) mustEqual Seq(
-        Text("taxCalculation.calculation.rates.totalOnPremium"), Empty, Text("£8,000")
+        Text("taxCalculation.calculation.rates.totalOnPremium"), Text("£8,000")
       )
     }
 
@@ -219,7 +219,7 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
         Text("taxCalculation.calculation.rates.premium"), Text("3%"), Text("£7,500")
       )
       table.rows.last.map(_.content) mustEqual Seq(
-        Text("taxCalculation.calculation.rates.totalOnPremium"), Empty, Text("£7,500")
+        Text("taxCalculation.calculation.rates.totalOnPremium"), Text("£7,500")
       )
     }
   }
@@ -237,7 +237,7 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
       val table = getNpvRateTable(Some(rentCalc)).value
       table.caption mustBe Some("taxCalculation.calculation.rates.captionNpv")
       table.rows.last.map(_.content) mustEqual Seq(
-        Text("taxCalculation.calculation.rates.totalOnNpv"), Empty, Text("£3,000")
+        Text("taxCalculation.calculation.rates.totalOnNpv"), Text("£3,000")
       )
     }
 
@@ -247,7 +247,7 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
         Text("taxCalculation.calculation.rates.npv"), Text("1%"), Text("£2,500")
       )
       table.rows.last.map(_.content) mustEqual Seq(
-        Text("taxCalculation.calculation.rates.totalOnNpv"), Empty, Text("£2,500")
+        Text("taxCalculation.calculation.rates.totalOnNpv"), Text("£2,500")
       )
     }
 
@@ -257,7 +257,7 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
         Text("taxCalculation.calculation.rates.npv"), Text("0%"), Text("£0")
       )
       table.rows.last.map(_.content) mustEqual Seq(
-        Text("taxCalculation.calculation.rates.totalOnNpv"), Empty, Text("£0")
+        Text("taxCalculation.calculation.rates.totalOnNpv"), Text("£0")
       )
     }
   }
@@ -266,10 +266,10 @@ class CalculationResultViewModelSpec extends SpecBase with EitherValues {
 
     "renders the total with a bold label" in {
       getTotalTaxTable("£15,000", HoldingTypes.leasehold).rows.head.map(_.content) mustEqual Seq(
-        Text("taxCalculation.calculation.totalSdltDue"), Empty, Text("£15,000")
+        Text("taxCalculation.calculation.totalSdltDue"), Text("£15,000")
       )
       getTotalTaxTable("£15,000", HoldingTypes.freehold).rows.head.map(_.content) mustEqual Seq(
-        Text("taxCalculation.calculation.totalSdltDue"), Empty, Text("£15,000")
+        Text("taxCalculation.calculation.totalSdltDue"), Text("£15,000")
       )
     }
   }
