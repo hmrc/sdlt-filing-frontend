@@ -205,7 +205,6 @@ object CalculationResultViewModel extends CurrencyFormatter {
   private[taxCalculation] def totalRow(labelKey: String, amount: String)(implicit messages: Messages): Seq[TableRow] =
     Seq(
       TableRow(content = Text(getMessage(labelKey)), classes = bold),
-      TableRow(content = Empty,                      classes = ""),
       TableRow(content = Text(amount),               classes = numeric)
     )
 
@@ -219,7 +218,6 @@ object CalculationResultViewModel extends CurrencyFormatter {
   private[taxCalculation] def totalTaxTableHeader(implicit messages: Messages): Seq[HeadCell] =
     Seq(
       HeadCell(content = Text(getMessage("rates.column.description")), classes = ""),
-      HeadCell(content = Text(""), classes = numericHeader),
       HeadCell(content = Text(getMessage("rates.column.sdltDue")), classes = numericHeader)
     )
 
