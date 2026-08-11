@@ -594,19 +594,37 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
 
       "must calculate lease term correctly for a 5 year lease" in {
         val term = TaxCalcRequestValidator.buildRequest(userAnswersWith(
-          leaseholdReturn(startDate = "2025-06-15", endDate = "2030-06-14")
+          leaseholdReturn(startDate = "2025-06-15", endDate = "2030-06-15")
         )).toOption.get.leaseDetails.get.leaseTerm
         term.years mustBe 5
         term.days mustBe 0
+        term.daysInPartialYear mustBe 0
       }
 
       "must calculate lease term correctly for a partial year lease" in {
         val ld = TaxCalcRequestValidator.buildRequest(userAnswersWith(
-          leaseholdReturn(startDate = "2025-06-15", endDate = "2025-12-14")
+            leaseholdReturn(startDate = "2025-10-01", endDate = "2027-06-15")
+          )).toOption.get.leaseDetails.get
+        ld.leaseTerm.years mustBe 1
+        ld.leaseTerm.days mustBe 258
+        ld.leaseTerm.daysInPartialYear mustBe 365
+      }
+
+      "must calculate lease term correctly for a partial year lease containing leap day" in {
+        val ld = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(startDate = "2023-01-01", endDate = "2024-06-15", effectiveDate = "2023-01-01")
         )).toOption.get.leaseDetails.get
-        ld.leaseTerm.years mustBe 0
-        ld.leaseTerm.days mustBe 183
-        ld.leaseTerm.daysInPartialYear mustBe 183
+        ld.leaseTerm.years mustBe 1
+        ld.leaseTerm.days mustBe 167
+        ld.leaseTerm.daysInPartialYear mustBe 366
+      }
+
+      "must calculate lease term correctly for a partial year lease starting on leap day" in {
+        val ld = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(startDate = "2024-02-29", endDate = "2025-06-01", effectiveDate = "2024-02-29")
+        )).toOption.get.leaseDetails.get
+
+        ld.leaseTerm.daysInPartialYear mustBe 365
       }
 
       "must use the effective date as the calculation start when it falls after the contract start" in {

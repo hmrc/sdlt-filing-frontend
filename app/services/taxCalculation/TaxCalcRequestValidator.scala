@@ -217,10 +217,19 @@ object TaxCalcRequestValidator {
                                   effectiveDate: LocalDate
                                 ): LeaseTerm = {
     val calculationStartDate = if (effectiveDate.isAfter(validStartDate)) effectiveDate else validStartDate
-    val years = Period.between(calculationStartDate, validEndDate.plusDays(1)).getYears
-    val partialStart = calculationStartDate.plusYears(years)
-    val days = ChronoUnit.DAYS.between(partialStart, validEndDate.plusDays(1)).toInt
-    val daysInPartialYear = if (years < 5 && days > 0) days else 0
+    val years                = Period.between(calculationStartDate, validEndDate).getYears
+    val partialStart         = calculationStartDate.plusYears(years)
+    val days                 = if (partialStart.isEqual(validEndDate)) 0 else ChronoUnit.DAYS.between(partialStart, validEndDate).toInt + 1
+    val is29Feb              = calculationStartDate.getMonthValue == 2 && calculationStartDate.getDayOfMonth == 29
+    val daysInPartialYear    =
+      if (days > 0) {
+        val partialYearEndDate = calculationStartDate.plusYears(years + 1).minusDays(1)
+        val calculated = ChronoUnit.DAYS.between(partialStart, partialYearEndDate).toInt + 1
+
+        if (is29Feb) 365 else calculated
+      } else {
+        0
+      }
 
     LeaseTerm(
       years = years,
