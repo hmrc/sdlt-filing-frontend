@@ -84,6 +84,14 @@ object TaxCalcRequestValidator {
   private def parseAmount(value: String): BigDecimal =
     BigDecimal(value.replace(",", ""))
 
+  private val LEADING_AMOUNT = """-?[\d,]*(\.\d+)?""".r
+
+  private def amountOrZero(value: Option[String]): BigDecimal =
+    value
+      .flatMap(v => LEADING_AMOUNT.findPrefixOf(v.trim))
+      .flatMap(v => Try(parseAmount(v)).toOption)
+      .getOrElse(BigDecimal(0))
+
   private def premiumFor(holdingType: HoldingTypes.Value, transaction: Transaction, lease: Option[Lease]): Either[BuildRequestError, String] =
     holdingType match {
       case HoldingTypes.leasehold => lease.flatMap(_.totalPremiumPayable).toRight(MissingLeaseAnswerError("totalPremiumPayable"))
@@ -131,8 +139,8 @@ object TaxCalcRequestValidator {
       leaseTerm.exists(_.years < LEASE_TERM_THRESHOLD)
 
     val lowValueLease =
-      lease.flatMap(_.totalPremiumPayable).map(parseAmount).exists(_ < PREMIUM_THRESHOLD) &&
-        lease.flatMap(_.startingRent).map(parseAmount).exists(_ < ANNUAL_RENT_THRESHOLD)
+      amountOrZero(lease.flatMap(_.totalPremiumPayable)) < PREMIUM_THRESHOLD &&
+        amountOrZero(lease.flatMap(_.startingRent)) < ANNUAL_RENT_THRESHOLD
 
     (leaseType, transactionType) match {
       case _ if reliefCode.exists(code => !NON_EXEMPT_RELIEF_CODES(code))                            => true
