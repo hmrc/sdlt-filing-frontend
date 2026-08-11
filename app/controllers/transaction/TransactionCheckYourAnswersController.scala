@@ -22,7 +22,7 @@ import models.{CheckMode, Lease, ReturnVersionUpdateRequest, Transaction, UserAn
 import models.land.LandTypeOfProperty
 import models.lease.{CreateLeaseRequest, DeleteLeaseRequest}
 import models.prelimQuestions.TransactionType
-import models.prelimQuestions.TransactionType.GrantOfLease
+import models.prelimQuestions.TransactionType.{ConveyanceTransferLease, GrantOfLease}
 import models.transaction.{ReasonForRelief, TransactionSessionQuestions, UpdateTransactionRequest}
 import pages.transaction.*
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -105,8 +105,8 @@ class TransactionCheckYourAnswersController @Inject()(
     val transactionType = userAnswers.get(TypeOfTransactionPage)
 
     val leaseDecision: String = transactionType match {
-      case Some(GrantOfLease) if isLeaseDefined => "noAction"
-      case Some(GrantOfLease) if !isLeaseDefined => "createLease"
+      case Some(transaction) if (transaction == GrantOfLease || transaction == ConveyanceTransferLease) && isLeaseDefined => "noAction"
+      case Some(transaction) if (transaction == GrantOfLease || transaction == ConveyanceTransferLease) && !isLeaseDefined => "createLease"
       case Some(_) if isLeaseDefined => "deleteLease"
       case _ => "noAction"
     }
