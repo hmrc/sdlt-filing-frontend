@@ -43,6 +43,25 @@ object PurchaserTaskList {
       purchaser.isConnectedToVendor.isDefined
     )
 
+  private def prelimFieldsDefinedOnly(purchaser: Purchaser, companyDetails: Option[CompanyDetails]): Seq[Boolean] = {
+    val isCompany = purchaser.isCompany.exists(_.equalsIgnoreCase("YES"))
+    Seq(
+      purchaser.isCompany.isDefined,
+      if isCompany then purchaser.companyName.isDefined else purchaser.surname.isDefined,
+      purchaser.nino.isEmpty,
+      purchaser.dateOfBirth.isEmpty,
+      purchaser.registrationNumber.isEmpty,
+      purchaser.placeOfRegistration.isEmpty,
+      if (isCompany) {
+        companyDetails.exists(cd =>
+          cd.VATReference.isEmpty && cd.UTR.isEmpty
+        )
+      } else companyDetails.isEmpty,
+      purchaser.isTrustee.isEmpty,
+      purchaser.isConnectedToVendor.isEmpty
+    )
+  }
+
   def mainSpecificFieldsDefined(purchaser: Purchaser, companyDetails: Option[CompanyDetails]): Seq[Boolean] = {
     val isPurchaserCompany      = purchaser.isCompany.exists(_.equalsIgnoreCase("yes"))
     val isCompanyDetailsDefined = companyDetails.isDefined
@@ -73,6 +92,16 @@ object PurchaserTaskList {
   def mandatoryFieldsDefined(purchaser: Purchaser, isMainPurchaser: Boolean, companyDetails: Option[CompanyDetails]): Seq[Boolean] =
     if (isMainPurchaser) commonFieldsDefined(purchaser) ++ mainSpecificFieldsDefined(purchaser, companyDetails)
     else commonFieldsDefined(purchaser)
+
+  def isPrelimPurchaser(fullReturn: FullReturn): Boolean = {
+    if (purchasers(fullReturn).size == 1) {
+      val purchaser = purchasers(fullReturn).head
+      if isMainPurchaser(purchaser, fullReturn) && prelimFieldsDefinedOnly(purchaser, fullReturn.companyDetails).forall(identity) then true
+      else false
+    } else {
+      false
+    }
+  }
 
   def isPurchaserComplete(purchaser: Purchaser, isMainPurchaser: Boolean, companyDetails: Option[CompanyDetails]): Boolean =
     mandatoryFieldsDefined(purchaser, isMainPurchaser, companyDetails).forall(identity)
@@ -108,6 +137,8 @@ object PurchaserTaskList {
     val url =
       if (isPurchaserComplete(fullReturn))
         controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
+      else if (isPrelimPurchaser(fullReturn))
+        controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
       else if (incompletePurchasers(fullReturn).nonEmpty)
         controllers.purchaser.routes.PurchaserIncompleteOverviewController.onPageLoad().url
       else

@@ -19,6 +19,7 @@ package viewmodels.tasklist
 import base.SpecBase
 import config.FrontendAppConfig
 import constants.FullReturnConstants.*
+import models.Land
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 import services.crossflow.{ReturnSection, SectionStatus}
@@ -38,6 +39,13 @@ class LandTaskListSpec extends SpecBase {
       localAuthorityNumber = None,
       willSendPlanByPost = None,
       mineralRights = None,
+    ))))
+  private val fullReturnPrelimLand = fullReturnComplete.copy(
+    land = Some(Seq(Land(
+      landID = Some("LND001"),
+      returnID = Some("RET123456789"),
+      landResourceRef = Some("LND-REF-001"),
+      address1 = Some("123 Fake Street")
     ))))
   private val fullReturnSomeMandatoryFieldsMissing = fullReturnComplete.copy(
     land = Some(Seq(completeLand.copy(
@@ -354,6 +362,20 @@ class LandTaskListSpec extends SpecBase {
           result.url mustBe controllers.land.routes.LandIncompleteOverviewController.onPageLoad().url
 
           result.status mustBe TLNotStarted
+        }
+      }
+
+      "must have Before You Start url and show 'In Progress' status when only land data from prelim is present" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.buildLandRow(fullReturnPrelimLand, noFailuresStatus)
+
+          result.url mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
+
+          result.status mustBe TLInProgress
         }
       }
 

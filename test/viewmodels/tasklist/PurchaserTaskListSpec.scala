@@ -49,6 +49,34 @@ class PurchaserTaskListSpec extends SpecBase {
       dateOfBirth = None,
     ), completePurchaser2, completePurchaser3)))
 
+  private val fullReturnPrelimPurchaserCompany = fullReturnComplete.copy(
+    purchaser = Some(Seq(Purchaser(
+      isCompany = Some("YES"),
+      address1 = Some("123 Fake Street"),
+      companyName = Some("Company name"),
+      purchaserID = Some("PUR001"),
+      returnID = Some("RET123456789"),
+      purchaserResourceRef = Some("PUR-REF-001")
+    ))),
+    companyDetails = Some(CompanyDetails(
+      companyDetailsID = Some("CD001"),
+      returnID = Some("RET123456789"),
+      purchaserID = Some("PUR001")
+    ))
+  )
+
+  private val fullReturnPrelimPurchaserIndividual = fullReturnComplete.copy(
+    purchaser = Some(Seq(Purchaser(
+      isCompany = Some("NO"),
+      address1 = Some("123 Fake Street"),
+      surname = Some("Smith"),
+      purchaserID = Some("PUR001"),
+      returnID = Some("RET123456789"),
+      purchaserResourceRef = Some("PUR-REF-001")
+    ))),
+    companyDetails = None
+  )
+
   private val fullReturnSomeMandatoryFieldsMissingOther = fullReturnComplete.copy(
     purchaser = Some(Seq(completePurchaser1, completePurchaser2, completePurchaser3.copy(
       address1 = None
@@ -415,6 +443,32 @@ class PurchaserTaskListSpec extends SpecBase {
 
           val result = PurchaserTaskList.buildPurchaserRow(fullReturnAllMandatoryFieldsMissingMain)
           result.url mustBe controllers.purchaser.routes.PurchaserIncompleteOverviewController.onPageLoad().url
+
+          result.status mustBe TLInProgress
+        }
+      }
+
+      "must have Before You Start url and show 'In Progress' status when only prelim fields are present in main purchaser for individual" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = PurchaserTaskList.buildPurchaserRow(fullReturnPrelimPurchaserIndividual)
+          result.url mustBe controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
+
+          result.status mustBe TLInProgress
+        }
+      }
+
+      "must have Before You Start url and show 'In Progress' status when only prelim fields are present in main purchaser for company" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = PurchaserTaskList.buildPurchaserRow(fullReturnPrelimPurchaserCompany)
+          result.url mustBe controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
 
           result.status mustBe TLInProgress
         }

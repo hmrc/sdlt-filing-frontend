@@ -47,6 +47,16 @@ object LandTaskList {
       land.mineralRights.isDefined
     )
 
+  private def prelimFieldsDefinedOnly(land: Land): Seq[Boolean] =
+    Seq(
+      land.address1.isDefined,
+      land.propertyType.isEmpty,
+      land.interestCreatedTransferred.isEmpty,
+      land.localAuthorityNumber.isEmpty,
+      land.willSendPlanByPost.isEmpty,
+      land.mineralRights.isEmpty
+    )
+
   def isLandComplete(land: Land): Boolean =
     mandatoryFieldsDefined(land).forall(identity)
 
@@ -62,6 +72,18 @@ object LandTaskList {
     else all.flatMap(land => mandatoryFieldsDefined(land))
   }
 
+  def isPrelimLand(fullReturn: FullReturn): Boolean = {
+    if (lands(fullReturn).size == 1) {
+      val land = lands(fullReturn).head
+      val mainLandId: Option[String] = fullReturn.returnInfo.flatMap(_.mainLandID)
+      val isMainLand = land.landID.exists(landId => mainLandId.contains(landId))
+      if isMainLand && prelimFieldsDefinedOnly(land).forall(identity) then true
+      else false
+    } else {
+      false
+    }
+  }
+
   def isLandComplete(fullReturn: FullReturn): Boolean = {
     val all = lands(fullReturn)
     all.nonEmpty && all.forall(land => isLandComplete(land))
@@ -73,6 +95,8 @@ object LandTaskList {
     val defaultUrl =
       if (isLandComplete(fullReturn))
         controllers.land.routes.LandOverviewController.onPageLoad().url
+      else if (isPrelimLand(fullReturn))
+        controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
       else if (incompleteLands(fullReturn).nonEmpty)
         controllers.land.routes.LandIncompleteOverviewController.onPageLoad().url
       else
