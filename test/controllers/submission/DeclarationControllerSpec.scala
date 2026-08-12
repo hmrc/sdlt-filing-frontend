@@ -17,7 +17,7 @@
 package controllers.submission
 
 import base.SpecBase
-import constants.FullReturnConstants.completeFullReturn
+import constants.FullReturnConstants.{completeFullReturn, incompleteFullReturn}
 import models.{Submission, UserAnswers}
 import models.submission.WhoAreYouSubmittingFor
 import org.mockito.ArgumentMatchers.any
@@ -54,9 +54,45 @@ class DeclarationControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must return JourneyRecoveryController when empty userAnswers for a GET" in {
+    "must redirect to the task list when the return's prerequisite sections are not complete for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+
+        val request = FakeRequest(GET, declarationRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+
+      }
+    }
+
+    "must return OK when a submission already exists, even if the prerequisite sections are not complete" in {
+
+      val alreadyStartedIncompleteAnswers =
+        emptyUserAnswers.copy(fullReturn = Some(incompleteFullReturn.copy(submission = Some(Submission(None)))))
+          .set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.Myself).success.value
+
+      val application = applicationBuilder(userAnswers = Some(alreadyStartedIncompleteAnswers)).build()
+
+      running(application) {
+
+        val request = FakeRequest(GET, declarationRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+
+      }
+    }
+
+    "must return JourneyRecoveryController when WhoAreYouSubmittingForPage is not answered for a GET" in {
+
+      val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
 
       running(application) {
 
@@ -114,11 +150,32 @@ class DeclarationControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to JourneyRecoveryController page when empty userAnswers for POST" in {
+    "must redirect to the task list when the return's prerequisite sections are not complete for POST" in {
 
       val mockChrisSubmissionService = mock[ChrisSubmissionService]
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[ChrisSubmissionService].toInstance(mockChrisSubmissionService))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, submitRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+
+        verify(mockChrisSubmissionService, never).submitInBackground(any[UserAnswers])(any(), any())
+      }
+    }
+
+    "must redirect to JourneyRecoveryController page when WhoAreYouSubmittingForPage is not answered for POST" in {
+
+      val mockChrisSubmissionService = mock[ChrisSubmissionService]
+
+      val application = applicationBuilder(userAnswers = Some(testUserAnswers))
         .overrides(bind[ChrisSubmissionService].toInstance(mockChrisSubmissionService))
         .build()
 
@@ -139,7 +196,7 @@ class DeclarationControllerSpec extends SpecBase with MockitoSugar {
 
       val mockChrisSubmissionService = mock[ChrisSubmissionService]
 
-      val answers = emptyUserAnswers.set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.Myself).success.value
+      val answers = testUserAnswers.set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.Myself).success.value
 
       val application = applicationBuilder(userAnswers = Some(answers))
         .overrides(bind[ChrisSubmissionService].toInstance(mockChrisSubmissionService))
