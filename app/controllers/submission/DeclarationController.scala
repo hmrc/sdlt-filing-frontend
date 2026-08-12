@@ -25,6 +25,7 @@ import services.submission.ChrisSubmissionService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import viewmodels.tasklist.SubmissionTaskList
 import views.html.submission.DeclarationView
 
 import javax.inject.{Inject, Singleton}
@@ -45,27 +46,35 @@ class DeclarationController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck) {
     implicit request =>
 
-      request.userAnswers.get(WhoAreYouSubmittingForPage) match {
+      if (!request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+      } else {
+        request.userAnswers.get(WhoAreYouSubmittingForPage) match {
 
-        case Some(declarationFor) => Ok(view(declarationFor.toString, mode))
-        case None =>
-          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          case Some(declarationFor) => Ok(view(declarationFor.toString, mode))
+          case None =>
+            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        }
       }
 
   }
 
-  def onSubmit(): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData).async {
+  def onSubmit(): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck).async {
     implicit request =>
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-      request.userAnswers.get(WhoAreYouSubmittingForPage) match {
+      if (!request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+        Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
+      } else {
+        request.userAnswers.get(WhoAreYouSubmittingForPage) match {
 
-        case Some(_) =>
-          chrisSubmissionService.submitInBackground(request.userAnswers)
-          Future.successful(Redirect(controllers.submission.routes.LoadingScreenController.show))
+          case Some(_) =>
+            chrisSubmissionService.submitInBackground(request.userAnswers)
+            Future.successful(Redirect(controllers.submission.routes.LoadingScreenController.show))
 
-        case None =>
-          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+          case None =>
+            Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        }
       }
 
   }

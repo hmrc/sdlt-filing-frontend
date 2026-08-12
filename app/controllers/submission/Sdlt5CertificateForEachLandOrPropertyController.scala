@@ -27,6 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.submission.CertificateForEachService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.tasklist.SubmissionTaskList
 import views.html.submission.Sdlt5CertificateForEachLandOrPropertyView
 
 import javax.inject.{Inject, Singleton}
@@ -53,43 +54,51 @@ class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck ) {
     implicit request =>
 
-      val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)
-
-      if (landList.length > 1) {
-        val preparedForm = request.userAnswers.get(Sdlt5CertificateForEachLandOrPropertyPage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
-        }
-        Ok(view(preparedForm, mode))
+      if (!request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
-        Redirect(controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad())
+        val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)
+
+        if (landList.length > 1) {
+          val preparedForm = request.userAnswers.get(Sdlt5CertificateForEachLandOrPropertyPage) match {
+            case None        => form
+            case Some(value) => form.fill(value)
+          }
+          Ok(view(preparedForm, mode))
+        } else {
+          Redirect(controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad())
+        }
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck).async {
     implicit request =>
 
-      val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)
-
-      if (landList.length > 1) {
-        form.bindFromRequest().fold(
-          formWithErrors =>
-            Future.successful(BadRequest(view(formWithErrors, mode))),
-
-          value =>
-            (for {
-              updatedAnswers  <- Future.fromTry(request.userAnswers.set(Sdlt5CertificateForEachLandOrPropertyPage, value))
-              answersWithCert <- certificateForEachService.store(updatedAnswers, value)
-              _               <- sessionRepository.set(answersWithCert)
-            } yield Redirect(navigator.nextPage(Sdlt5CertificateForEachLandOrPropertyPage, mode, answersWithCert)))
-              .recover { case NonFatal(e) =>
-                logger.warn(s"[Sdlt5CertificateForEachLandOrPropertyController][onSubmit] " +
-                  s"could not store the certificate answer: ${e.getMessage}. Redirecting to journey recovery")
-                Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-              }
-        )
+      if (!request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+        Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       } else {
-        Future.successful(Redirect(controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad()))
+        val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)
+
+        if (landList.length > 1) {
+          form.bindFromRequest().fold(
+            formWithErrors =>
+              Future.successful(BadRequest(view(formWithErrors, mode))),
+
+            value =>
+              (for {
+                updatedAnswers  <- Future.fromTry(request.userAnswers.set(Sdlt5CertificateForEachLandOrPropertyPage, value))
+                answersWithCert <- certificateForEachService.store(updatedAnswers, value)
+                _               <- sessionRepository.set(answersWithCert)
+              } yield Redirect(navigator.nextPage(Sdlt5CertificateForEachLandOrPropertyPage, mode, answersWithCert)))
+                .recover { case NonFatal(e) =>
+                  logger.warn(s"[Sdlt5CertificateForEachLandOrPropertyController][onSubmit] " +
+                    s"could not store the certificate answer: ${e.getMessage}. Redirecting to journey recovery")
+                  Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+                }
+          )
+        } else {
+          Future.successful(Redirect(controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad()))
+        }
       }
   }
 }

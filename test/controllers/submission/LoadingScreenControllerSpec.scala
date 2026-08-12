@@ -63,6 +63,20 @@ class LoadingScreenControllerSpec extends SpecBase with MockitoSugar {
 
     "show" - {
 
+      "must redirect to the task list when the return's prerequisite sections are not complete" in {
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.submission.routes.LoadingScreenController.show.url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        }
+      }
+
       "must return OK and the correct view for a GET when there is no returnId" in {
 
         val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
@@ -125,7 +139,7 @@ class LoadingScreenControllerSpec extends SpecBase with MockitoSugar {
       redirectScenarios.foreach { case (statusValue, description, expectedCall) =>
         s"must redirect to $description when the submission status is $statusValue in lower case" in {
 
-          val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some("ret-123"))))
+          val application = applicationBuilder(userAnswers = Some(testUserAnswers.copy(returnId = Some("ret-123"))))
             .overrides(bind[StampDutyLandTaxConnector].toInstance(connectorReturning(Some(statusValue.toLowerCase))))
             .build()
 
