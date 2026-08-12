@@ -37,7 +37,9 @@ class SubmissionBeforeYouStartController @Inject()(
 
   def onPageLoad: Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck) {
     implicit request =>
-      if (!request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
+
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
         Ok(view())

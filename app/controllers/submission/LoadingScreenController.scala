@@ -57,7 +57,9 @@ class LoadingScreenController @Inject()(
     implicit request =>
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-      if (!request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
+
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
         Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       } else if (request.userAnswers.get(SubmissionFailedPage).contains(true)) {
         Future.successful(Redirect(controllers.submission.routes.SubmissionFailedController.onPageLoad()))

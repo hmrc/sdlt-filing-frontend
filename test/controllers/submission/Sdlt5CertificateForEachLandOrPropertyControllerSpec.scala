@@ -17,7 +17,7 @@
 package controllers.submission
 
 import base.SpecBase
-import constants.FullReturnConstants.{completeFullReturn, completeLand}
+import constants.FullReturnConstants.{completeFullReturn, completeLand, incompleteFullReturn}
 import controllers.routes
 import forms.submission.Sdlt5CertificateForEachLandOrPropertyFormProvider
 import models.{NormalMode, ReturnInfo, Submission, UserAnswers}
@@ -126,6 +126,23 @@ class Sdlt5CertificateForEachLandOrPropertyControllerSpec extends SpecBase with 
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
+    "must not redirect to the task list when a submission already exists, even if the prerequisite sections are not complete" in {
+
+      val alreadyStartedIncompleteAnswers =
+        emptyUserAnswers.copy(fullReturn = Some(incompleteFullReturn.copy(submission = Some(Submission(None)))))
+
+      val application = applicationBuilder(userAnswers = Some(alreadyStartedIncompleteAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, sdlt5CertificateForEachLandOrPropertyRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad().url
       }
     }
 

@@ -17,7 +17,7 @@
 package controllers.submission
 
 import base.SpecBase
-import constants.FullReturnConstants.completeFullReturn
+import constants.FullReturnConstants.{completeFullReturn, incompleteFullReturn}
 import controllers.routes
 import forms.submission.WhoAreYouSubmittingForFormProvider
 import models.submission.WhoAreYouSubmittingFor
@@ -111,6 +111,22 @@ class WhoAreYouSubmittingForControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
+    "must return OK when a submission already exists, even if the prerequisite sections are not complete" in {
+
+      val alreadyStartedIncompleteAnswers =
+        emptyUserAnswers.copy(fullReturn = Some(incompleteFullReturn.copy(submission = Some(Submission(None)))))
+
+      val application = applicationBuilder(userAnswers = Some(alreadyStartedIncompleteAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, whoAreYouSubmittingForRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
       }
     }
 

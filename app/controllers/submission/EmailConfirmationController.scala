@@ -49,7 +49,9 @@ class EmailConfirmationController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck) {
     implicit request =>
 
-      if (!request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
+
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
         val preparedForm = request.userAnswers.get(EmailConfirmationPage) match {
@@ -64,7 +66,9 @@ class EmailConfirmationController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck).async {
     implicit request =>
 
-      if (!request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
+
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
         Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       } else {
         form.bindFromRequest().fold(

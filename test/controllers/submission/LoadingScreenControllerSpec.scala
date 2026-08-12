@@ -18,7 +18,7 @@ package controllers.submission
 
 import base.SpecBase
 import connectors.StampDutyLandTaxConnector
-import constants.FullReturnConstants.completeFullReturn
+import constants.FullReturnConstants.{completeFullReturn, incompleteFullReturn}
 import models.{FullReturn, GetReturnByRefRequest, Submission}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -74,6 +74,22 @@ class LoadingScreenControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+        }
+      }
+
+      "must not redirect to the task list when a submission already exists, even if the prerequisite sections are not complete" in {
+
+        val alreadyStartedIncompleteAnswers =
+          emptyUserAnswers.copy(fullReturn = Some(incompleteFullReturn.copy(submission = Some(Submission(None)))))
+
+        val application = applicationBuilder(userAnswers = Some(alreadyStartedIncompleteAnswers)).build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.submission.routes.LoadingScreenController.show.url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
         }
       }
 

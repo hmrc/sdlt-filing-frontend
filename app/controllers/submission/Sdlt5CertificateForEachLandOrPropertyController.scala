@@ -54,7 +54,9 @@ class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck ) {
     implicit request =>
 
-      if (!request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
+
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
         val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)
@@ -74,7 +76,9 @@ class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck).async {
     implicit request =>
 
-      if (!request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
+
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
         Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       } else {
         val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)

@@ -46,7 +46,9 @@ class DeclarationController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck) {
     implicit request =>
 
-      if (!request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
+
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
         request.userAnswers.get(WhoAreYouSubmittingForPage) match {
@@ -63,7 +65,9 @@ class DeclarationController @Inject()(
     implicit request =>
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-      if (!request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
+
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
         Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       } else {
         request.userAnswers.get(WhoAreYouSubmittingForPage) match {
