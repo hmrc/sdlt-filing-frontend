@@ -17,7 +17,8 @@
 package controllers.submission
 
 import base.SpecBase
-import constants.FullReturnConstants.{completeFullReturn, completeSubmissionErrorDetails}
+import constants.FullReturnConstants.{completeFullReturn, completeSubmissionErrorDetails, incompleteFullReturn}
+import models.Submission
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.test.FakeRequest
 import play.api.inject.bind
@@ -86,6 +87,34 @@ class SubmissionFailedControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(None)(request, messages(application)).toString
         contentAsString(result) mustNot include ("The STORN supplied either is not of the correct length or type (10 numeric).")
+      }
+    }
+
+    "must redirect to the task list when no submission has started and the prerequisite sections are not complete" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(fullReturn = Some(incompleteFullReturn)))).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.submission.routes.SubmissionFailedController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
+    "must return OK and not redirect when a submission already exists, even if the prerequisite sections are not complete" in {
+
+      val alreadyStartedIncompleteReturn = incompleteFullReturn.copy(submission = Some(Submission(None)))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(fullReturn = Some(alreadyStartedIncompleteReturn)))).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.submission.routes.SubmissionFailedController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
       }
     }
   }

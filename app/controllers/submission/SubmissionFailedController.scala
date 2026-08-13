@@ -20,6 +20,7 @@ import controllers.actions.*
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.tasklist.SubmissionTaskList
 import views.html.submission.SubmissionFailedView
 
 import javax.inject.Inject
@@ -35,13 +36,19 @@ class SubmissionFailedController @Inject()(
 
   def onPageLoad: Action[AnyContent] = (activatedIdentify andThen getData andThen requireData) {
     implicit request =>
-      val maybeErrorMessage =
-        for {
-        fullReturn <- request.userAnswers.fullReturn
-        submissionErrorDetails <- fullReturn.submissionErrorDetails
-        message <- submissionErrorDetails.errorMessage
-      } yield message
+      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-      Ok(view(maybeErrorMessage))
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+      } else {
+        val maybeErrorMessage =
+          for {
+          fullReturn <- request.userAnswers.fullReturn
+          submissionErrorDetails <- fullReturn.submissionErrorDetails
+          message <- submissionErrorDetails.errorMessage
+        } yield message
+
+        Ok(view(maybeErrorMessage))
+      }
   }
 }
