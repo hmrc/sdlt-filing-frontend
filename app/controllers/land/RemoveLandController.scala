@@ -47,9 +47,9 @@ class RemoveLandController @Inject() (
 
   private val actions = identify andThen getData andThen requireData andThen statusCheck
 
-  private val landOverview: Result       = Redirect(controllers.land.routes.LandOverviewController.onPageLoad())
-  private val journeyRecovery: Result    = Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-  private val updateVersionError: Result = Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad())
+  private def landOverview: Result       = Redirect(controllers.land.routes.LandOverviewController.onPageLoad())
+  private def journeyRecovery: Result    = Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+  private def updateVersionError: Result = Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad())
 
   private def landToRemove(request: DataRequest[_]): Option[Land] =
     request.userAnswers.get(LandOverviewRemovePage).flatMap { removeLandId =>
