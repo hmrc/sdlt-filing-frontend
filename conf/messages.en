@@ -1129,7 +1129,7 @@ land.doYouKnowTheAreaOfLand.change.hidden                                       
 
 land.landOverview.title                                                             = Land or property overview - About the land
 land.landOverview.heading                                                           = Land or property overview
-land.landOverview.limitReached                                                      = You have reached the limit of 99 areas of land or property. To add a new area of land or property, you must delete one.
+land.landOverview.limitReached                                                      = You have reached the limit of 99 areas of land or properties. To add another, you must delete one first.
 land.landOverview.no-lands                                                          = You do not have any vendors added.
 land.landOverview.land-list                                                         = You do not have any vendors added.
 land.landOverview.noLand.subHeadingWithLands                                        = Do you want to add another area of land or property?
