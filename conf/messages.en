@@ -1023,8 +1023,23 @@ land.confirmLandOrPropertyAddress.change.hidden                                 
 land.confirmLandOrPropertyAddress.missing                                           = Enter land or property address
 
 
-land.localAuthorityCode.title                                                       = What is the local authority code? - About the land
-land.localAuthorityCode.heading                                                     = What is the local authority code?
+land.localAuthorityCode.title                                                       = Local authority code - About the land
+land.localAuthorityCode.heading                                                     = Local authority code
+land.localAuthorityCode.h2                                                          = What is the local authority code?
+land.localAuthorityCode.p1                                                          = Search the <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+land.localAuthorityCode.p1.linkText                                                 = list of local authority codes (opens in new tab)
+land.localAuthorityCode.p1.link                                                     = https://www.gov.uk/hmrc-internal-manuals/stamp-duty-land-tax-manual/sdltm62320
+land.localAuthorityCode.details.summary                                             = About Scottish and Welsh local authority codes
+land.localAuthorityCode.details.p1                                                  = SDLT no longer applies to land transactions in Scotland from 1 April 2015. These become subject to <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>. Scottish local authority codes will not be accepted by SDLT from this date, unless <a href="{2}" class="govuk-link" target="_blank" rel="noopener noreferrer">{3}</a>.
+land.localAuthorityCode.details.p1.link1Text                                        = Land and Buildings Transaction Tax (LBTT) (opens in new tab)
+land.localAuthorityCode.details.p1.link2Text                                        = one of these special cases (opens in new tab)
+land.localAuthorityCode.details.p1.link1                                            = https://www.revenue.scot/taxes/land-buildings-transaction-tax
+land.localAuthorityCode.details.p1.link2                                            = https://www.gov.uk/government/publications/transitional-land-and-building-transaction-tax-guidance
+land.localAuthorityCode.details.p2                                                  = SDLT no longer applies to land transactions in Wales from 1 April 2018. These become subject to <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>. Welsh local authority codes will not be accepted by SDLT from this date, unless <a href="{2}" class="govuk-link" target="_blank" rel="noopener noreferrer">{3}</a>.
+land.localAuthorityCode.details.p2.link1Text                                        = Land Transaction Tax (LTT) (opens in new tab)
+land.localAuthorityCode.details.p2.link2Text                                        = one of these special cases (opens in new tab)
+land.localAuthorityCode.details.p2.link1                                            = https://www.gov.wales/land-transaction-tax-overview
+land.localAuthorityCode.details.p2.link2                                            = https://www.gov.uk/guidance/stamp-duty-land-tax-welsh-transactions
 land.localAuthorityCode.checkYourAnswersLabel                                       = Local authority code
 land.localAuthorityCode.error.required                                              = Enter the local authority code
 land.localAuthorityCode.error.length                                                = The local authority code must be 4 characters
@@ -1034,9 +1049,6 @@ land.localAuthorityCode.error.invalidArea                                       
 land.localAuthorityCode.error.invalidAreaPostcode                                   = Enter a valid local authority code that matches your postcode in England or Northern Ireland
 land.localAuthorityCode.error.welsh                                                 = Welsh local authority codes are no longer recognised by SDLT when the effective date of the transaction is the same as or after 1 April 2018
 land.localAuthorityCode.change.hidden                                               = Local authority code
-land.localAuthorityCode.hint.prefix                                                 = Search the {0}
-land.localAuthorityCode.hint.suffix                                                 = list of local authority codes (opens in a new window).
-land.localAuthorityCode.hint.link                                                   = https://www.gov.uk/hmrc-internal-manuals/stamp-duty-land-tax-manual/sdltm62320
 land.localAuthorityCode.regexExp                                                    = Invalid local authority code
 land.localAuthorityCode.constraint.invalid                                          = Enter a valid local authority code for England or Northern Ireland
 
