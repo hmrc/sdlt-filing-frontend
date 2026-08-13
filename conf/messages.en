@@ -1027,7 +1027,7 @@ land.localAuthorityCode.title                                                   
 land.localAuthorityCode.heading                                                     = Local authority code
 land.localAuthorityCode.h2                                                          = What is the local authority code?
 land.localAuthorityCode.p1                                                          = Search the <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
-land.localAuthorityCode.p1.linkText                                                 = list of local authority codes (opens in a new tab)
+land.localAuthorityCode.p1.linkText                                                 = list of local authority codes (opens in new tab)
 land.localAuthorityCode.p1.link                                                     = https://www.gov.uk/hmrc-internal-manuals/stamp-duty-land-tax-manual/sdltm62320
 land.localAuthorityCode.details.summary                                             = About Scottish and Welsh local authority codes
 land.localAuthorityCode.details.p1                                                  = SDLT no longer applies to land transactions in Scotland from 1 April 2015. These become subject to <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>. Scottish local authority codes will not be accepted by SDLT from this date, unless <a href="{2}" class="govuk-link" target="_blank" rel="noopener noreferrer">{3}</a>.
