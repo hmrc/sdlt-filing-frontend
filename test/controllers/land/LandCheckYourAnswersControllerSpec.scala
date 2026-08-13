@@ -85,7 +85,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
     "landCurrent" -> Json.obj(
       "landId"                           -> Json.toJson(landId),
       "propertyType"                     -> "03",
-      "landInterestTransferredOrCreated" -> "FG",
+      "landInterestTransferredOrCreated" -> "FGS",
       "landAddress" -> Json.obj(
         "houseNumber"      -> JsNull,
         "line1"            -> "1 Test Street",
