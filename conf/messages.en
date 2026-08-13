@@ -2304,9 +2304,10 @@ submission.submissionReceipt.returnLink                                         
 
 submission.submissionAccountNotActivated.title                                      = Your SDLT account is not activated
 submission.submissionAccountNotActivated.heading                                    = Your SDLT account is not activated
-submission.submissionAccountNotActivated.p1                                         = You cannot submit an SDLT return until you have activated ‘Stamp Duty Land Tax (SDLT)’.
-submission.submissionAccountNotActivated.p2                                         = <a href="{0}" class="govuk-link">{1}</a> to find out how to activate your account.
-submission.submissionAccountNotActivated.p2.linkText                                = Visit your Business tax account
+submission.submissionAccountNotActivated.p1                                         = You must activate ‘Stamp Duty Land Tax (SDLT)’ before submitting your return.
+submission.submissionAccountNotActivated.p2                                         = HMRC will send your Activation Code in the post, usually within 7 to 10 days of enrolment. Once you’ve received your code, you can activate the service.
+submission.submissionAccountNotActivated.p3                                         = The code is valid for 28 days. If you don’t use it within that period, you must <a href="{0}" class="govuk-link">{1}</a> and enrol again.
+submission.submissionAccountNotActivated.p3.linkText                                = visit your Business tax account
 submission.submissionAccountNotActivated.link                                       = Return to your Stamp Taxes Online account
 
 submission.state.inProgress                                                         = In progress
