@@ -23,6 +23,7 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
+    govukWarningText: GovukWarningText,
     caption: Caption,
     paragraph: Paragraph,
     h1: h1,
@@ -45,11 +46,20 @@
 
         @caption(messages("site.taxCalculation.caption"))
         @h1(messages("taxCalculation.taxDueOnNpv.heading"))
-        @paragraph(messages("taxCalculation.taxDueOnNpv.p1", npv))
+
+        @paragraph(messages("taxCalculation.taxDueOnNpv.p1"))
+
+        @govukWarningText(WarningText(
+            iconFallbackText = Some(messages("site.warning")),
+            content = Text(messages("site.taxCalculation.warning"))
+        ))
+
+        @paragraph(messages("taxCalculation.taxDueOnNpv.p2", npv))
+
         @paragraphWithLink(
-            messageKey = "taxCalculation.taxDueOnNpv.p2",
-            linkKey    = "taxCalculation.taxDueOnNpv.p2.link",
-            textKey    = "taxCalculation.taxDueOnNpv.p2.linkText"
+            messageKey = "taxCalculation.taxDueOnNpv.p3",
+            linkKey    = "taxCalculation.taxDueOnNpv.p3.link",
+            textKey    = "taxCalculation.taxDueOnNpv.p3.linkText"
         )
 
         @govukInput(
@@ -57,11 +67,10 @@
                 field = form("value"),
                 label = LabelViewModel(messages("taxCalculation.taxDueOnNpv.h2")).asPageSubHeading()
             )
+            .asNumeric()
             .withWidth(Fixed10)
-            .withPrefix(PrefixOrSuffix(
-                content = Text(messages("site.money.prefix"))
-            ))
             .withHint(HintViewModel(HtmlContent(Html(messages("taxCalculation.taxDueOnNpv.hint")))))
+            .withPrefix(PrefixOrSuffix(content = Text(messages("site.money.prefix"))))
             .withAutocomplete("off")
         )
 
