@@ -437,16 +437,17 @@ vendor.remove.title                                                             
 vendor.remove.heading                                                               = Are you sure you want to remove {0}?
 vendor.remove.error.required                                                        = Select yes if you want to remove {0}
 
-vendor.vendorOverview.title                                                         = Vendor Overview - About the vendor
-vendor.vendorOverview.heading                                                       = Vendor Overview
+vendor.vendorOverview.title                                                         = Vendor overview - About the vendor
+vendor.vendorOverview.heading                                                       = Vendor overview
 vendor.vendorOverview.limitReached                                                  = You have reached the limit of 99 vendors and purchasers. To add another vendor, you must delete a vendor or purchaser.
+vendor.vendorOverview.p1                                                            = You can add up to 99 vendors and purchasers.
 vendor.vendorOverview.no-vendors                                                    = You do not have any vendors added.
 vendor.vendorOverview.vendor-list                                                   = You do not have any vendors added.
 vendor.vendorOverview.noVendor.subHeadingWithVendors                                = Do you need to add another vendor?
 vendor.vendorOverview.noVendor.subHeadingNoVendors                                  = Do you need to add another vendor?
 vendor.vendorOverview.noVendor.headingNoVendors                                     = You do not have any vendors added.
 vendor.vendorOverview.summaryInfo.text                                              = Showing <b>{0}</b> to <b>{1}</b> of <b>{2}</b> records
-vendor.vendorOverview.noVendor.p1                                                   = You have no vendors listed. You must add a vendor to complete this return
+vendor.vendorOverview.noVendor.p1                                                   = You have no vendors listed. You must add a vendor to complete this return.
 vendor.vendorOverview.noVendor.button                                               = Add a vendor
 vendor.vendorOverview.error.required                                                = Select yes if you need to add another vendor
 
