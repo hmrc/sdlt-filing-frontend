@@ -298,42 +298,56 @@ class F17RulesSpec extends SpecBase with Matchers {
   "Cf10_Welsh6998ContractDate" - {
 
     "must fire when code is 6998 and contract date is on the Wales Act effective date" in {
-      val ua   = answersWith(contractDate = Some(welshActEffective))
+      val ua   = answersWith(effectiveDate = Some(welshActEffective), contractDate = Some(welshActEffective))
       val land = landWithCode("6998")
 
       Cf10_Welsh6998ContractDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-10")
     }
 
     "must fire when code is 6998 and contract date is after the Wales Act effective date" in {
-      val ua   = answersWith(contractDate = Some(welshActEffective.plusDays(1)))
+      val ua   = answersWith(effectiveDate = Some(welshActEffective), contractDate = Some(welshActEffective.plusDays(1)))
       val land = landWithCode("6998")
 
       Cf10_Welsh6998ContractDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-10")
     }
 
     "must fire when code is 6998 and contract date is missing" in {
-      val ua   = answersWith(contractDate = None)
+      val ua   = answersWith(effectiveDate = Some(welshActEffective), contractDate = None)
       val land = landWithCode("6998")
 
-      Cf10_Welsh6998ContractDate.validate(land, ua).map(_.ruleId) mustBe None
+      Cf10_Welsh6998ContractDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-10")
     }
 
     "must pass when code is 6998 and contract date is before the Wales Act effective date" in {
-      val ua   = answersWith(contractDate = Some(welshActEffective.minusDays(1)))
+      val ua   = answersWith(effectiveDate = Some(welshActEffective), contractDate = Some(welshActEffective.minusDays(1)))
+      val land = landWithCode("6998")
+
+      Cf10_Welsh6998ContractDate.validate(land, ua) mustBe None
+    }
+
+    "must not apply when effective date is before the Wales Act effective date" in {
+      val ua   = answersWith(effectiveDate = Some(welshActEffective.minusDays(1)), contractDate = Some(welshActEffective.plusDays(1)))
+      val land = landWithCode("6998")
+
+      Cf10_Welsh6998ContractDate.validate(land, ua) mustBe None
+    }
+
+    "must not apply when effective date is missing" in {
+      val ua   = answersWith(effectiveDate = None, contractDate = Some(welshActEffective.plusDays(1)))
       val land = landWithCode("6998")
 
       Cf10_Welsh6998ContractDate.validate(land, ua) mustBe None
     }
 
     "must not apply when the code is 6999" in {
-      val ua   = answersWith(contractDate = Some(welshActEffective.plusDays(1)))
+      val ua   = answersWith(effectiveDate = Some(welshActEffective), contractDate = Some(welshActEffective.plusDays(1)))
       val land = landWithCode("6999")
 
       Cf10_Welsh6998ContractDate.validate(land, ua) mustBe None
     }
 
     "must not apply when the code is a regular Welsh code (6810)" in {
-      val ua   = answersWith(contractDate = Some(welshActEffective.plusDays(1)))
+      val ua   = answersWith(effectiveDate = Some(welshActEffective), contractDate = Some(welshActEffective.plusDays(1)))
       val land = landWithCode("6810")
 
       Cf10_Welsh6998ContractDate.validate(land, ua) mustBe None
@@ -390,42 +404,56 @@ class F17RulesSpec extends SpecBase with Matchers {
   "Cf11_Welsh6999ContractDate" - {
 
     "must fire when code is 6999 and contract date is after the Wales Act date (17/12/2014)" in {
-      val ua   = answersWith(contractDate = Some(welshActDate.plusDays(1)))
+      val ua   = answersWith(effectiveDate = Some(welshActEffective), contractDate = Some(welshActDate.plusDays(1)))
       val land = landWithCode("6999")
 
       Cf11_Welsh6999ContractDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-11")
     }
 
     "must fire when code is 6999 and contract date is missing" in {
-      val ua   = answersWith(contractDate = None)
+      val ua   = answersWith(effectiveDate = Some(welshActEffective), contractDate = None)
       val land = landWithCode("6999")
 
-      Cf11_Welsh6999ContractDate.validate(land, ua).map(_.ruleId) mustBe None
+      Cf11_Welsh6999ContractDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-11")
     }
 
     "must pass when code is 6999 and contract date is on the Wales Act date (17/12/2014)" in {
-      val ua   = answersWith(contractDate = Some(welshActDate))
+      val ua   = answersWith(effectiveDate = Some(welshActEffective), contractDate = Some(welshActDate))
       val land = landWithCode("6999")
 
       Cf11_Welsh6999ContractDate.validate(land, ua) mustBe None
     }
 
     "must pass when code is 6999 and contract date is before the Wales Act date" in {
-      val ua   = answersWith(contractDate = Some(welshActDate.minusDays(1)))
+      val ua   = answersWith(effectiveDate = Some(welshActEffective), contractDate = Some(welshActDate.minusDays(1)))
+      val land = landWithCode("6999")
+
+      Cf11_Welsh6999ContractDate.validate(land, ua) mustBe None
+    }
+
+    "must not apply when effective date is before the Wales Act effective date" in {
+      val ua   = answersWith(effectiveDate = Some(welshActEffective.minusDays(1)), contractDate = Some(welshActDate.plusDays(1)))
+      val land = landWithCode("6999")
+
+      Cf11_Welsh6999ContractDate.validate(land, ua) mustBe None
+    }
+
+    "must not apply when effective date is missing" in {
+      val ua   = answersWith(effectiveDate = None, contractDate = Some(welshActDate.plusDays(1)))
       val land = landWithCode("6999")
 
       Cf11_Welsh6999ContractDate.validate(land, ua) mustBe None
     }
 
     "must not apply when the code is 6996" in {
-      val ua   = answersWith(contractDate = Some(welshActDate.plusDays(1)))
+      val ua   = answersWith(effectiveDate = Some(welshActEffective), contractDate = Some(welshActDate.plusDays(1)))
       val land = landWithCode("6996")
 
       Cf11_Welsh6999ContractDate.validate(land, ua) mustBe None
     }
 
     "must not apply when the code is 6998" in {
-      val ua   = answersWith(contractDate = Some(welshActDate.plusDays(1)))
+      val ua   = answersWith(effectiveDate = Some(welshActEffective), contractDate = Some(welshActDate.plusDays(1)))
       val land = landWithCode("6998")
 
       Cf11_Welsh6999ContractDate.validate(land, ua) mustBe None
@@ -467,7 +495,7 @@ class F17RulesSpec extends SpecBase with Matchers {
       F17Rules.all.flatMap(_.validate(land, ua)).map(_.ruleId) must contain ("Cf-8")
     }
 
-    "must produce both eff-date and contract-date failures for 6998 when both dates are wrong" in {
+    "must produce only the eff-date failure for 6998 when both dates are wrong" in {
       val ua = answersWith(
         effectiveDate = Some(welshActEffective.minusDays(1)),
         contractDate  = Some(welshActEffective.plusDays(1))
@@ -475,10 +503,11 @@ class F17RulesSpec extends SpecBase with Matchers {
       val land = landWithCode("6998")
 
       val ids = F17Rules.all.flatMap(_.validate(land, ua)).map(_.ruleId)
-      ids must contain allOf ("Cf-9b", "Cf-10")
+      ids must contain ("Cf-9b")
+      ids must not contain "Cf-10"
     }
 
-    "must produce both eff-date and contract-date failures for 6999 when both dates are wrong" in {
+    "must produce only the eff-date failure for 6999 when both dates are wrong" in {
       val ua = answersWith(
         effectiveDate = Some(welshActEffective.minusDays(1)),
         contractDate  = Some(welshActDate.plusDays(1))
@@ -486,7 +515,15 @@ class F17RulesSpec extends SpecBase with Matchers {
       val land = landWithCode("6999")
 
       val ids = F17Rules.all.flatMap(_.validate(land, ua)).map(_.ruleId)
-      ids must contain allOf ("Cf-9c", "Cf-11")
+      ids must contain ("Cf-9c")
+      ids must not contain "Cf-11"
+    }
+
+    "must produce a contract-date failure for 6998 when the effective date is after the Wales Act effective date and no contract date was given" in {
+      val ua   = answersWith(effectiveDate = Some(welshActEffective.plusDays(1)), contractDate = None)
+      val land = landWithCode("6998")
+
+      F17Rules.all.flatMap(_.validate(land, ua)).map(_.ruleId) must contain ("Cf-10")
     }
   }
 }

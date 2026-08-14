@@ -338,10 +338,11 @@ object Cf10_Welsh6998ContractDate extends LandGuardRule:
   val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget)
 
   protected def appliesTo(land: Land, ua: UserAnswers): Boolean =
-    land.localAuthorityNumber.contains(welshSpecial6998)
+    land.localAuthorityNumber.contains(welshSpecial6998) &&
+      effectiveDate(ua).exists(!_.isBefore(Dates.welshActEffective))
 
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
-    contractDate(ua).forall(_.isBefore(Dates.welshActEffective))
+    contractDate(ua).exists(_.isBefore(Dates.welshActEffective))
 
   protected override def headingKey = "crossflow.land.heading"
   protected def messageKey              = "crossflow.land.Cf-10.body"
@@ -359,10 +360,11 @@ object Cf11_Welsh6999ContractDate extends LandGuardRule:
   val targets: Seq[CrossFlowTarget] = Seq(landAuthorityCodeTarget)
 
   protected def appliesTo(land: Land, ua: UserAnswers): Boolean =
-    land.localAuthorityNumber.contains(welshSpecial6999)
+    land.localAuthorityNumber.contains(welshSpecial6999) &&
+      effectiveDate(ua).exists(!_.isBefore(Dates.welshActEffective))
 
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
-    contractDate(ua).forall(!_.isAfter(Dates.welshActDate))
+    contractDate(ua).exists(!_.isAfter(Dates.welshActDate))
 
   protected override def headingKey = "crossflow.land.heading"
   protected def messageKey              = "crossflow.land.Cf-11.body"
