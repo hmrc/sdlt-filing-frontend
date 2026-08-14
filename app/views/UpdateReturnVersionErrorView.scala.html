@@ -19,7 +19,8 @@
 @this(
         layout: templates.Layout,
         h1: h1,
-        paragraph: Paragraph
+        p: Paragraph,
+        paragraphWithLink: ParagraphWithLink
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -27,6 +28,10 @@
 @layout(pageTitle = titleNoForm(messages("updateReturnVersionError.title")), showBackLink = false) {
 
     @h1(messages("updateReturnVersionError.heading"))
-    @paragraph(messages("updateReturnVersionError.p1"))
-    @paragraph(messages("updateReturnVersionError.p2"))
+    @p(messages("updateReturnVersionError.p1"))
+    @paragraphWithLink(
+        messageKey = "updateReturnVersionError.p2",
+        linkKey = controllers.routes.ReturnTaskListController.onPageLoad().url,
+        textKey = "updateReturnVersionError.p2.linkText"
+    )
 }
