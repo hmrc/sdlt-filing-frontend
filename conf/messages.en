@@ -2028,7 +2028,7 @@ lease.netPresentValue.error.invalidWholeNumber                                  
 lease.netPresentValue.error.maximum                                                 = The net present value upon which tax is calculated must be equal to or less than £9,999,999,999
 lease.netPresentValue.change.hidden                                                 = Net present value (NPV)
 
-submission.beforeYouStart.title                                                     = Before you start
+submission.beforeYouStart.title                                                     = Your return is ready for submission
 submission.beforeYouStart.heading                                                   = Your return is ready for submission
 submission.beforeYouStart.p1.text                                                   = You have now completed all sections of your SDLT return. You can {0}.
 submission.beforeYouStart.p1.linkText                                               = view and print this return for your client’s approval before submitting (opens in new tab)
