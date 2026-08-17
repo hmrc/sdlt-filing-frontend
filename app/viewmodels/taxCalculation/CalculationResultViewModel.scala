@@ -154,7 +154,7 @@ object CalculationResultViewModel extends CurrencyFormatter {
         case CalcTypes.slice => calc.slices.toSeq.flatten.map(sliceRow)
         case CalcTypes.slab  => Seq(slabRow("rates.premium", calc))
       }) ++ Option.when(isLeasehold)(
-        totalRow("rates.totalOnPremium", calc.taxDue.toCurrency)
+        totalRow3Columns("rates.totalOnPremium", calc.taxDue.toCurrency)
       ).toSeq
     )
 
@@ -169,7 +169,7 @@ object CalculationResultViewModel extends CurrencyFormatter {
           case CalcTypes.slice => calc.slices.toSeq.flatten.map(sliceRow)
           case CalcTypes.slab  => Seq(slabRow("rates.npv", calc))
         }) ++ Seq(
-          totalRow("rates.totalOnNpv", calc.taxDue.toCurrency)
+          totalRow3Columns("rates.totalOnNpv", calc.taxDue.toCurrency)
         )
       )
     }
@@ -206,6 +206,13 @@ object CalculationResultViewModel extends CurrencyFormatter {
     Seq(
       TableRow(content = Text(getMessage(labelKey)), classes = bold),
       TableRow(content = Text(amount),               classes = numeric)
+    )
+
+  private[taxCalculation] def totalRow3Columns(labelKey: String, amount: String)(implicit messages: Messages): Seq[TableRow] =
+    Seq(
+      TableRow(content = Text(getMessage(labelKey)), classes = bold),
+      TableRow(content = Empty),
+      TableRow(content = Text(amount), classes = numeric)
     )
 
   private[taxCalculation] def rateTableHeader(implicit messages: Messages): Seq[HeadCell] =
