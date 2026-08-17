@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import viewmodels.CaptionSize.Large
 @import services.crossflow.CrossFlowBody
+@import services.crossflow.CrossFlowBullet
 
 @this(
         layout: templates.Layout,
@@ -46,11 +47,29 @@
         case CrossFlowBody.Single(messageKey) => {
             @p(messageKey)
         }
-        case CrossFlowBody.WithBullets(leadKey, bulletKeys) => {
+        case CrossFlowBody.WithBullets(leadKey, bulletKeys, paragraph) => {
             @p(leadKey)
+            @paragraph.map { text =>
+                @p(text)
+            }
             <ul class="govuk-list govuk-list--bullet">
-            @for(key <- bulletKeys) {
-                <li>@messages(key)</li>
+            @for(bullet <- bulletKeys) {
+                @bullet match {
+                    case CrossFlowBullet.Text(messageKey) => {
+                        <li>@messages(messageKey)</li>
+                    }
+                    case CrossFlowBullet.Link(messageKey, linkText, href) => {
+                        <li>
+                            @Html(
+                                messages(
+                                    messageKey,
+                                    messages(href),
+                                    messages(linkText)
+                                )
+                            )
+                        </li>
+                    }
+                }
             }
             </ul>
         }

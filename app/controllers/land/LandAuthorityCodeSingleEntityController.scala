@@ -91,7 +91,7 @@ class LandAuthorityCodeSingleEntityController @Inject() (
 
     if (targets.contains(Pages.EffectiveDate))         "crossflow.land.cta.changeEffectiveDate"
     else if (targets.contains(Pages.LandPropertyType)) "crossflow.land.cta.changePropertyType"
-    else if (targets.contains(Pages.LandPostcode))     "crossflow.land.cta.enterDifferentPostcode"
+    else if (targets.contains(Pages.LandPostcode))     ""
     else                                               "crossflow.land.cta.enterDifferentCode"
   }
 }
