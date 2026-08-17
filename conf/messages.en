@@ -794,9 +794,10 @@ purchaser.confirmPurchaserAddress.missing                                       
 
 # Purchaser Overview
 purchaser.purchaserOverview.title                                                   = Purchaser overview - About the purchaser
-purchaser.purchaserOverview.heading                                                 = Purchaser Overview
+purchaser.purchaserOverview.heading                                                 = Purchaser overview
+purchaser.purchaserOverview.addMore                                                 = You can add up to 99 purchasers and vendors. 
+purchaser.purchaserOverview.limitReached.notification                               = You have reached the limit of 99 purchasers and vendors. To add another purchaser, you must delete a purchaser or vendor.
 purchaser.purchaserOverview.noPurchaser.subHeadingNoPurchasers                      = Do you need to add another purchaser?
-purchaser.purchaserOverview.limitReached                                            = To add a new purchaser, you must remove a purchaser or vendor
 purchaser.purchaserOverview.error.required                                          = Select yes if you need to add another purchaser
 purchaser.purchaserOverview.noPurchaser.button                                      = Add a purchaser
 purchaser.purchaserOverview.summaryInfo.text                                        = Showing <b>{0}</b> to <b>{1}</b> of <b>{2}</b> records

@@ -152,6 +152,7 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar with Be
 
           status(result) mustEqual OK
           contentAsString(result) must include("John Michael Smith")
+          contentAsString(result) must include("You can add up to 99 purchasers and vendors.")
         }
       }
 
@@ -285,7 +286,7 @@ class PurchaserOverviewControllerSpec extends SpecBase with MockitoSugar with Be
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          contentAsString(result) must include("To add a new purchaser, you must remove a purchaser or vendor")
+          contentAsString(result) must include("You have reached the limit of 99 purchasers and vendors. To add another purchaser, you must delete a purchaser or vendor.")
         }
       }
 
