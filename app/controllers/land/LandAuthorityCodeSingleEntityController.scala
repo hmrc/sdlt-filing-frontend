@@ -86,12 +86,12 @@ class LandAuthorityCodeSingleEntityController @Inject() (
     else                                               controllers.land.routes.LocalAuthorityCodeController.onPageLoad(CheckMode).url
   }
 
-  private def ctaKeyFor(failure: CrossFlowFailure): String = {
+  private def ctaKeyFor(failure: CrossFlowFailure): Option[String] = {
     val targets = failure.targets.map(_.page).toSet
 
-    if (targets.contains(Pages.EffectiveDate))         "crossflow.land.cta.changeEffectiveDate"
-    else if (targets.contains(Pages.LandPropertyType)) "crossflow.land.cta.changePropertyType"
-    else if (targets.contains(Pages.LandPostcode))     ""
-    else                                               "crossflow.land.cta.enterDifferentCode"
+    if (targets.contains(Pages.EffectiveDate))         Some("crossflow.land.cta.changeEffectiveDate")
+    else if (targets.contains(Pages.LandPropertyType)) Some("crossflow.land.cta.changePropertyType")
+    else if (targets.contains(Pages.LandPostcode))     None
+    else                                               Some("crossflow.land.cta.enterDifferentCode")
   }
 }

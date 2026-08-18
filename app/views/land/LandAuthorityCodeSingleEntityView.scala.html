@@ -31,7 +31,7 @@
 @(
         heading:     String,
         body:        CrossFlowBody,
-        ctaKey:      String,
+        ctaKey:      Option[String],
         continueUrl: String
 )(
         implicit request: Request[_],
@@ -75,7 +75,9 @@
         }
     }
 
-    @p(ctaKey)
+    @ctaKey.map { key =>
+        @p(key)
+    }
 
     @govukButton(
         ButtonViewModel(messages("site.continue")).asLink(continueUrl)
