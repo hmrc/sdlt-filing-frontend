@@ -19,6 +19,7 @@
 @import views.html.components.h1
 @import views.html.components.Caption
 @import views.html.components.Paragraph
+@import services.crossflow.CrossFlowBullet
 
 @this(
         layout: templates.Layout,
@@ -48,13 +49,28 @@
             <p class="govuk-body">@messages(messageKey)</p>
         }
 
-        case CrossFlowBody.WithBullets(leadKey, bulletKeys) => {
+        case CrossFlowBody.WithBullets(leadKey, bulletKeys, paragraph) => {
             @p(leadKey)
-                <ul class="govuk-list govuk-list--bullet">
-                @for(key <- bulletKeys) {
-                    <li>@messages(key)</li>
+            <ul class="govuk-list govuk-list--bullet">
+            @for(bullet <- bulletKeys) {
+                @bullet match {
+                    case CrossFlowBullet.Text(messageKey) => {
+                        <li>@messages(messageKey)</li>
+                    }
+                    case CrossFlowBullet.Link(messageKey, linkText, href) => {
+                        <li>
+                            @Html(
+                                messages(
+                                    messageKey,
+                                    messages(href),
+                                    messages(linkText)
+                                )
+                            )
+                        </li>
+                    }
                 }
-                </ul>
+            }
+            </ul>
             }
     }
 

@@ -139,6 +139,16 @@ abstract class LandGuardRule extends LandRule:
       ))
     else None
 
+sealed trait CrossFlowBullet
+object CrossFlowBullet:
+
+  case class Text(messageKey: String) extends CrossFlowBullet
+
+  case class Link(
+                   messageKey: String,
+                   linkText: String,
+                   href: String
+                 ) extends CrossFlowBullet
 
 sealed trait CrossFlowBody
 object CrossFlowBody:
@@ -147,5 +157,6 @@ object CrossFlowBody:
 
   case class WithBullets(
                           leadKey:    String,
-                          bulletKeys: Seq[String]
+                          bulletKeys: Seq[CrossFlowBullet],
+                          paragraph: Option[String] = None,
                         ) extends CrossFlowBody
