@@ -219,7 +219,7 @@ object TaxCalcRequestValidator {
     val calculationStartDate = if (effectiveDate.isAfter(validStartDate)) effectiveDate else validStartDate
     val years                = Period.between(calculationStartDate, validEndDate).getYears
     val partialStart         = calculationStartDate.plusYears(years)
-    val days                 = if (partialStart.isEqual(validEndDate)) 0 else ChronoUnit.DAYS.between(partialStart, validEndDate).toInt + 1
+    val days                 = if (partialStart.isEqual(validEndDate)) 1 else ChronoUnit.DAYS.between(partialStart, validEndDate).toInt + 1
     val is29Feb              = calculationStartDate.getMonthValue == 2 && calculationStartDate.getDayOfMonth == 29
     val daysInPartialYear    =
       if (days > 0) {
