@@ -241,7 +241,35 @@ class ConfirmNameOfThePurchaserControllerSpec extends SpecBase with MockitoSugar
 
     "when purchaser exists without address" - {
 
-      "must redirect to PurchaserAddress when user selects Yes and service succeeds" in {
+      "must redirect to PurchaserAddress when user selects Yes for company purchaser" in {
+        val mockSessionRepository = mock[SessionRepository]
+        val mockPopulateService = mock[PurchaserService]
+
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+        when(mockPopulateService.getMainPurchaser(any())) thenReturn Some(companyPurchaser)
+        when(mockPopulateService.populatePurchaserNameInSession(any(), any())) thenReturn
+          Success(userAnswersWithCompanyPurchaser)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswersWithCompanyPurchaser))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[PurchaserService].toInstance(mockPopulateService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, confirmNameOfThePurchaserRoute)
+            .withFormUrlEncodedBody("value" -> "true")
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual
+            controllers.purchaser.routes.ConfirmPurchaserAddressController.onPageLoad(NormalMode).url
+        }
+      }
+
+      "must redirect to purchaser name page when user selects Yes for individual purchaser" in {
         val mockSessionRepository = mock[SessionRepository]
         val mockPopulateService = mock[PurchaserService]
 
@@ -265,11 +293,11 @@ class ConfirmNameOfThePurchaserControllerSpec extends SpecBase with MockitoSugar
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
-            controllers.purchaser.routes.ConfirmPurchaserAddressController.onPageLoad(NormalMode).url
+            controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(NormalMode).url
         }
       }
 
-      "must redirect to WhoIsMakingThePurchase when user selects No and service succeeds" in {
+      "must redirect to WhoIsMakingThePurchase when user selects No" in {
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
         when(mockPopulateService.populatePurchaserNameInSession(any(), any())) thenReturn
           Success(userAnswersWithIndividualPurchaser)
