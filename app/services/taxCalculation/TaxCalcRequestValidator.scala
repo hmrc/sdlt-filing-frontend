@@ -222,13 +222,13 @@ object TaxCalcRequestValidator {
     val days                 = if (partialStart.isEqual(validEndDate)) 1 else ChronoUnit.DAYS.between(partialStart, validEndDate).toInt + 1
     val is29Feb              = calculationStartDate.getMonthValue == 2 && calculationStartDate.getDayOfMonth == 29
     val daysInPartialYear    =
-      if (days > 0) {
+      if (partialStart.isEqual(validEndDate)) {
+        0
+      } else {
         val partialYearEndDate = calculationStartDate.plusYears(years + 1).minusDays(1)
         val calculated = ChronoUnit.DAYS.between(partialStart, partialYearEndDate).toInt + 1
 
         if (is29Feb) 365 else calculated
-      } else {
-        0
       }
 
     LeaseTerm(

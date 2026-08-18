@@ -597,7 +597,7 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
           leaseholdReturn(startDate = "2025-06-15", endDate = "2030-06-15")
         )).toOption.get.leaseDetails.get.leaseTerm
         term.years mustBe 5
-        term.days mustBe 0
+        term.days mustBe 1
         term.daysInPartialYear mustBe 0
       }
 
