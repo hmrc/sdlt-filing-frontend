@@ -90,8 +90,11 @@ class ConfirmNameOfThePurchaserController @Inject()(
               ) match {
                 case Success(updatedAnswers) =>
                   sessionRepository.set(updatedAnswers).map { _ =>
-                    if (value) {
+                    if (value && isCompany) {
                       Redirect(navigator.nextPage(ConfirmNameOfThePurchaserPage, mode, updatedAnswers))
+                    }
+                    else if (value && !isCompany) {
+                      Redirect(controllers.purchaser.routes.NameOfPurchaserController.onPageLoad(mode))
                     } else {
                       Redirect(controllers.purchaser.routes.WhoIsMakingThePurchaseController.onPageLoad(NormalMode))
                     }
