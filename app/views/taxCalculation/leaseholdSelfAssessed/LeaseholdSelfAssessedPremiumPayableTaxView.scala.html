@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import viewmodels.InputWidth._
 @import views.html.components._
 
 @this(
@@ -21,9 +22,11 @@
         govukErrorSummary: GovukErrorSummary,
         formHelper: FormWithCSRF,
         govukInput: GovukInput,
+        govukWarningText: GovukWarningText,
         govukButton: GovukButton,
         h1: h1,
-        caption: Caption
+        caption: Caption,
+        p: Paragraph
 )
 
 @(form: Form[_], premiumPayable: String, mode: Mode)(implicit rh: RequestHeader, messages: Messages)
@@ -39,16 +42,22 @@
         @caption(messages("site.taxCalculation.caption"))
         @h1(messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.heading"))
 
+        @p(messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.p1"))
+
+        @govukWarningText(WarningText(
+            iconFallbackText = Some(messages("site.warning")),
+            content = Text(messages("site.taxCalculation.warning"))
+        ))
+
+        @p(messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.p2", premiumPayable))
+
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = Label(
-                    classes = "govuk-!-margin-bottom-4",
-                    content = messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.description", premiumPayable)),
-
+                label = LabelViewModel(messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.h2")).asPageSubHeading()
             )
             .asNumeric()
-            .withCssClass("govuk-input--width-10 govuk-label govuk-label--m")
+            .withWidth(Fixed10)
             .withHint(HintViewModel(HtmlContent(messages("taxCalculation.leaseholdSelfAssessed.premiumPayable.hint"))))
             .withPrefix(PrefixOrSuffix(content = Text(messages("site.money.prefix"))))
             .withAutocomplete("off")

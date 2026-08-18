@@ -20,6 +20,7 @@ import controllers.actions.*
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.tasklist.SubmissionTaskList
 import views.html.submission.SubmissionBeforeYouStartView
 
 import javax.inject.Inject
@@ -36,6 +37,12 @@ class SubmissionBeforeYouStartController @Inject()(
 
   def onPageLoad: Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck) {
     implicit request =>
-      Ok(view())
+      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
+
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+      } else {
+        Ok(view())
+      }
   }
 }

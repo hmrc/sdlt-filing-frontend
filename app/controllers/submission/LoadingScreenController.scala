@@ -26,6 +26,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import viewmodels.tasklist.SubmissionTaskList
 import views.html.submission.LoadingScreenView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -56,7 +57,11 @@ class LoadingScreenController @Inject()(
     implicit request =>
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-      if (request.userAnswers.get(SubmissionFailedPage).contains(true)) {
+      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
+
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+        Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
+      } else if (request.userAnswers.get(SubmissionFailedPage).contains(true)) {
         Future.successful(Redirect(controllers.submission.routes.SubmissionFailedController.onPageLoad()))
       } else {
         latestStatus(request.userAnswers.storn, request.userAnswers.returnId).map {

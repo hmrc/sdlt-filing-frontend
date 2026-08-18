@@ -17,7 +17,7 @@
 package controllers.submission
 
 import base.SpecBase
-import constants.FullReturnConstants.completeFullReturn
+import constants.FullReturnConstants.{completeFullReturn, incompleteFullReturn}
 import models.Submission
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -43,6 +43,34 @@ class ResubmitYourReturnControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to the task list when no submission has started and the prerequisite sections are not complete" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(fullReturn = Some(incompleteFullReturn)))).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.submission.routes.ResubmitYourReturnController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
+    "must return OK and not redirect when a submission already exists, even if the prerequisite sections are not complete" in {
+
+      val alreadyStartedIncompleteReturn = incompleteFullReturn.copy(submission = Some(Submission(None)))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(fullReturn = Some(alreadyStartedIncompleteReturn)))).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.submission.routes.ResubmitYourReturnController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
       }
     }
   }

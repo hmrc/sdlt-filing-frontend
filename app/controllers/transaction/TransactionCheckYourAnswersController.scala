@@ -103,6 +103,7 @@ class TransactionCheckYourAnswersController @Inject()(
   private def handleLeaseDecision(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Unit] = {
     val isLeaseDefined = userAnswers.fullReturn.flatMap(_.lease).isDefined
     val transactionType = userAnswers.get(TypeOfTransactionPage)
+    val leaseCurrentCheck = (userAnswers.data \ "leaseCurrent").asOpt[JsObject].exists(_.values.nonEmpty)
 
     val leaseDecision: String = transactionType match {
       case Some(transaction) if (transaction == GrantOfLease || transaction == ConveyanceTransferLease) && isLeaseDefined => "noAction"
@@ -114,7 +115,7 @@ class TransactionCheckYourAnswersController @Inject()(
     leaseDecision match {
       case "createLease" =>
         for {
-          lease <- Lease.from(userAnswers)
+          lease <- if (leaseCurrentCheck) Lease.from(userAnswers) else Future.successful(Lease())
           createLeaseRequest <- CreateLeaseRequest.from(userAnswers, lease)
           _ <- backendConnector.createLease(createLeaseRequest)
         } yield ()
@@ -128,7 +129,6 @@ class TransactionCheckYourAnswersController @Inject()(
       case _ => Future.unit
     }
   }
-
   private def updateTransaction(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     for {
       transaction <- Transaction.from(userAnswers)

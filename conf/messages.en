@@ -110,6 +110,8 @@ site.unauthorisedIndividual.heading                                             
 site.unauthorisedIndividual.guidance                                                = You are signed in with an individual account. You need an organisation account to use this service.
 site.unauthorisedIndividual.linkText                                                = Continue to your account
 
+site.taxCalculation.warning                                                         = HMRC expects each person to take reasonable care when calculating tax. This includes creating and preserving records to provide a complete and accurate return.
+
 date.day                                                                            = Day
 date.month                                                                          = Month
 date.year                                                                           = Year
@@ -437,16 +439,17 @@ vendor.remove.title                                                             
 vendor.remove.heading                                                               = Are you sure you want to remove {0}?
 vendor.remove.error.required                                                        = Select yes if you want to remove {0}
 
-vendor.vendorOverview.title                                                         = Vendor Overview - About the vendor
-vendor.vendorOverview.heading                                                       = Vendor Overview
+vendor.vendorOverview.title                                                         = Vendor overview - About the vendor
+vendor.vendorOverview.heading                                                       = Vendor overview
 vendor.vendorOverview.limitReached                                                  = You have reached the limit of 99 vendors and purchasers. To add another vendor, you must delete a vendor or purchaser.
+vendor.vendorOverview.p1                                                            = You can add up to 99 vendors and purchasers.
 vendor.vendorOverview.no-vendors                                                    = You do not have any vendors added.
 vendor.vendorOverview.vendor-list                                                   = You do not have any vendors added.
 vendor.vendorOverview.noVendor.subHeadingWithVendors                                = Do you need to add another vendor?
 vendor.vendorOverview.noVendor.subHeadingNoVendors                                  = Do you need to add another vendor?
 vendor.vendorOverview.noVendor.headingNoVendors                                     = You do not have any vendors added.
 vendor.vendorOverview.summaryInfo.text                                              = Showing <b>{0}</b> to <b>{1}</b> of <b>{2}</b> records
-vendor.vendorOverview.noVendor.p1                                                   = You have no vendors listed. You must add a vendor to complete this return
+vendor.vendorOverview.noVendor.p1                                                   = You have no vendors listed. You must add a vendor to complete this return.
 vendor.vendorOverview.noVendor.button                                               = Add a vendor
 vendor.vendorOverview.error.required                                                = Select yes if you need to add another vendor
 
@@ -794,9 +797,10 @@ purchaser.confirmPurchaserAddress.missing                                       
 
 # Purchaser Overview
 purchaser.purchaserOverview.title                                                   = Purchaser overview - About the purchaser
-purchaser.purchaserOverview.heading                                                 = Purchaser Overview
+purchaser.purchaserOverview.heading                                                 = Purchaser overview
+purchaser.purchaserOverview.addMore                                                 = You can add up to 99 purchasers and vendors. 
+purchaser.purchaserOverview.limitReached.notification                               = You have reached the limit of 99 purchasers and vendors. To add another purchaser, you must delete a purchaser or vendor.
 purchaser.purchaserOverview.noPurchaser.subHeadingNoPurchasers                      = Do you need to add another purchaser?
-purchaser.purchaserOverview.limitReached                                            = To add a new purchaser, you must remove a purchaser or vendor
 purchaser.purchaserOverview.error.required                                          = Select yes if you need to add another purchaser
 purchaser.purchaserOverview.noPurchaser.button                                      = Add a purchaser
 purchaser.purchaserOverview.summaryInfo.text                                        = Showing <b>{0}</b> to <b>{1}</b> of <b>{2}</b> records
@@ -974,14 +978,14 @@ land.landInterestTransferredOrCreated.heading                                   
 land.landInterestTransferredOrCreated.p1                                            = Interest is transferred when an existing interest in a property is moved from one party to another, like the transfer of freehold, beneficial rights or the assignment of an existing lease.
 land.landInterestTransferredOrCreated.p2                                            = Interest is created when a new right or share in the property is established for a new party, like the grant of a new lease, taking on a debt, or the creation of an easement such as right of way.
 land.landInterestTransferredOrCreated.subheading                                    = Which option best describes the transaction?
-land.landInterestTransferredOrCreated.FG                                            = FG - Freehold (in Scotland ownership) subject to one or more leases each reserving a ground or nominal rent
-land.landInterestTransferredOrCreated.FP                                            = FP - Freehold with vacant possession
-land.landInterestTransferredOrCreated.FP.hintText                                   = In Scotland owner’s interest with vacant possession
-land.landInterestTransferredOrCreated.FT                                            = FT - Freehold subject to a lease or tenancy
-land.landInterestTransferredOrCreated.FT.hintText                                   = In Scotland owner’s interest subject to tenancy
+land.landInterestTransferredOrCreated.FGS                                           = FG - Freehold (in Scotland ownership) subject to one or more leases each reserving a ground or nominal rent
+land.landInterestTransferredOrCreated.FPO                                           = FP - Freehold with vacant possession
+land.landInterestTransferredOrCreated.FPO.hintText                                  = In Scotland owner’s interest with vacant possession
+land.landInterestTransferredOrCreated.FTF                                           = FT - Freehold subject to a lease or tenancy
+land.landInterestTransferredOrCreated.FTF.hintText                                   = In Scotland owner’s interest subject to tenancy
 land.landInterestTransferredOrCreated.LG                                            = LG - Long leasehold at a ground or nominal rent with vacant possession
-land.landInterestTransferredOrCreated.LP                                            = LP - A lease to an occupier or with vacant possession and not a ground rent or nominal rent
-land.landInterestTransferredOrCreated.LP.hintText                                   = In Scotland tenant’s interest
+land.landInterestTransferredOrCreated.LPT                                           = LP - A lease to an occupier or with vacant possession and not a ground rent or nominal rent
+land.landInterestTransferredOrCreated.LPT.hintText                                  = In Scotland tenant’s interest
 land.landInterestTransferredOrCreated.LT                                            = LT - Leasehold subject to leases to an occupier
 land.landInterestTransferredOrCreated.OT                                            = OT - All other interests
 land.landInterestTransferredOrCreated.checkYourAnswersLabel                         = Interest transferred or created
@@ -1023,8 +1027,23 @@ land.confirmLandOrPropertyAddress.change.hidden                                 
 land.confirmLandOrPropertyAddress.missing                                           = Enter land or property address
 
 
-land.localAuthorityCode.title                                                       = What is the local authority code? - About the land
-land.localAuthorityCode.heading                                                     = What is the local authority code?
+land.localAuthorityCode.title                                                       = Local authority code - About the land
+land.localAuthorityCode.heading                                                     = Local authority code
+land.localAuthorityCode.h2                                                          = What is the local authority code?
+land.localAuthorityCode.p1                                                          = Search the <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+land.localAuthorityCode.p1.linkText                                                 = list of local authority codes (opens in new tab)
+land.localAuthorityCode.p1.link                                                     = https://www.gov.uk/hmrc-internal-manuals/stamp-duty-land-tax-manual/sdltm62320
+land.localAuthorityCode.details.summary                                             = About Scottish and Welsh local authority codes
+land.localAuthorityCode.details.p1                                                  = SDLT no longer applies to land transactions in Scotland from 1 April 2015. These become subject to <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>. Scottish local authority codes will not be accepted by SDLT from this date, unless <a href="{2}" class="govuk-link" target="_blank" rel="noopener noreferrer">{3}</a>.
+land.localAuthorityCode.details.p1.link1Text                                        = Land and Buildings Transaction Tax (LBTT) (opens in new tab)
+land.localAuthorityCode.details.p1.link2Text                                        = one of these special cases (opens in new tab)
+land.localAuthorityCode.details.p1.link1                                            = https://www.revenue.scot/taxes/land-buildings-transaction-tax
+land.localAuthorityCode.details.p1.link2                                            = https://www.gov.uk/government/publications/transitional-land-and-building-transaction-tax-guidance
+land.localAuthorityCode.details.p2                                                  = SDLT no longer applies to land transactions in Wales from 1 April 2018. These become subject to <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>. Welsh local authority codes will not be accepted by SDLT from this date, unless <a href="{2}" class="govuk-link" target="_blank" rel="noopener noreferrer">{3}</a>.
+land.localAuthorityCode.details.p2.link1Text                                        = Land Transaction Tax (LTT) (opens in new tab)
+land.localAuthorityCode.details.p2.link2Text                                        = one of these special cases (opens in new tab)
+land.localAuthorityCode.details.p2.link1                                            = https://www.gov.wales/land-transaction-tax-overview
+land.localAuthorityCode.details.p2.link2                                            = https://www.gov.uk/guidance/stamp-duty-land-tax-welsh-transactions
 land.localAuthorityCode.checkYourAnswersLabel                                       = Local authority code
 land.localAuthorityCode.error.required                                              = Enter the local authority code
 land.localAuthorityCode.error.length                                                = The local authority code must be 4 characters
@@ -1034,9 +1053,6 @@ land.localAuthorityCode.error.invalidArea                                       
 land.localAuthorityCode.error.invalidAreaPostcode                                   = Enter a valid local authority code that matches your postcode in England or Northern Ireland
 land.localAuthorityCode.error.welsh                                                 = Welsh local authority codes are no longer recognised by SDLT when the effective date of the transaction is the same as or after 1 April 2018
 land.localAuthorityCode.change.hidden                                               = Local authority code
-land.localAuthorityCode.hint.prefix                                                 = Search the {0}
-land.localAuthorityCode.hint.suffix                                                 = list of local authority codes (opens in a new window).
-land.localAuthorityCode.hint.link                                                   = https://www.gov.uk/hmrc-internal-manuals/stamp-duty-land-tax-manual/sdltm62320
 land.localAuthorityCode.regexExp                                                    = Invalid local authority code
 land.localAuthorityCode.constraint.invalid                                          = Enter a valid local authority code for England or Northern Ireland
 
@@ -1117,7 +1133,7 @@ land.doYouKnowTheAreaOfLand.change.hidden                                       
 
 land.landOverview.title                                                             = Land or property overview - About the land
 land.landOverview.heading                                                           = Land or property overview
-land.landOverview.limitReached                                                      = You have reached the limit of 99 areas of land or property. To add a new area of land or property, you must delete one.
+land.landOverview.limitReached                                                      = You have reached the limit of 99 areas of land or properties. To add another, you must delete one first.
 land.landOverview.no-lands                                                          = You do not have any vendors added.
 land.landOverview.land-list                                                         = You do not have any vendors added.
 land.landOverview.noLand.subHeadingWithLands                                        = Do you want to add another area of land or property?
@@ -1581,13 +1597,14 @@ taxCalculation.sdltSelfAssessment.error.maximum                                 
 taxCalculation.sdltSelfAssessment.error.length                                      = The self-assessed amount of SDLT must be 16 characters or fewer
 
 taxCalculation.taxDueOnNpv.title                                                    = What is the tax due on the NPV?
-taxCalculation.taxDueOnNpv.heading                                                  = Tax due on the NPV
-taxCalculation.taxDueOnNpv.p1                                                       = You entered the NPV as: {0}
-taxCalculation.taxDueOnNpv.p2                                                       = You can <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
-taxCalculation.taxDueOnNpv.p2.linkText                                              = use the SDLT calculator to work out the correct amount (opens in a new tab)
-taxCalculation.taxDueOnNpv.p2.link                                                  = https://www.tax.service.gov.uk/calculate-stamp-duty-land-tax/#!/intro
+taxCalculation.taxDueOnNpv.heading                                                  = SDLT self-assessment: NPV
+taxCalculation.taxDueOnNpv.p1                                                       = SDLT is a self-assessed tax. The purchaser of the land or property is responsible for calculating, reporting and paying the correct amount of tax.
+taxCalculation.taxDueOnNpv.p2                                                       = You entered the NPV as: {0}.
+taxCalculation.taxDueOnNpv.p3                                                       = Use the <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+taxCalculation.taxDueOnNpv.p3.linkText                                              = SDLT calculator to work out the correct amount (opens in a new tab)
+taxCalculation.taxDueOnNpv.p3.link                                                  = https://www.tax.service.gov.uk/calculate-stamp-duty-land-tax/#!/intro
 taxCalculation.taxDueOnNpv.h2                                                       = What is the tax due on the NPV?
-taxCalculation.taxDueOnNpv.hint                                                     = Enter the amount in whole pounds only, for example £10,000
+taxCalculation.taxDueOnNpv.hint                                                     = Enter the amount in whole pounds only, for example £10,000. Do not include any penalties or interest due.
 taxCalculation.taxDueOnNpv.error.required                                           = Enter the tax due on the NPV, in pounds
 taxCalculation.taxDueOnNpv.error.invalidNumeric                                     = The tax due on the NPV must only include commas and numbers 0 to 9
 taxCalculation.taxDueOnNpv.error.invalidWholeNumber                                 = Enter the tax due on the NPV in whole pounds
@@ -1599,7 +1616,6 @@ taxCalculation.taxDueOnNpv.change.hidden                                        
 taxCalculation.sdltSelfAssessment.title                                             = SDLT self-assessment
 taxCalculation.sdltSelfAssessment.heading                                           = SDLT self-assessment
 taxCalculation.sdltSelfAssessment.intro                                             = SDLT is a self-assessed tax. The legal responsibility for calculating, reporting and paying the correct amount rests with the purchaser of the land or property.
-taxCalculation.sdltSelfAssessment.warning                                           = HMRC expects each person to take reasonable care when calculating tax, including creating and preserving records, to provide a complete and accurate return.
 taxCalculation.sdltSelfAssessment.calculator                                        = You can <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
 taxCalculation.sdltSelfAssessment.calculator.link                                   = https://www.tax.service.gov.uk/calculate-stamp-duty-land-tax/
 taxCalculation.sdltSelfAssessment.calculator.text                                   = use the SDLT calculator to work out the correct amount (opens in a new tab)
@@ -1628,9 +1644,11 @@ taxCalculation.totalAmountDue.checkYourAnswersLabel                             
 taxCalculation.totalAmountDue.change.hidden                                         = Amount to be paid
 
 taxCalculation.leaseholdSelfAssessed.premiumPayable.title                           = What is the tax due on the total premium payable?
-taxCalculation.leaseholdSelfAssessed.premiumPayable.heading                         = What is the tax due on the total premium payable?
-taxCalculation.leaseholdSelfAssessed.premiumPayable.description                     = You entered the total premium payable as: {0}
-taxCalculation.leaseholdSelfAssessed.premiumPayable.hint                            = Enter the amount in whole pounds only, for example £10,000
+taxCalculation.leaseholdSelfAssessed.premiumPayable.heading                         = SDLT self-assessment: Total premium payable
+taxCalculation.leaseholdSelfAssessed.premiumPayable.p1                              = SDLT is a self-assessed tax. The purchaser of the land or property is responsible for calculating, reporting and paying the correct amount of tax.
+taxCalculation.leaseholdSelfAssessed.premiumPayable.p2                              = You entered the total premium payable as: {0}.
+taxCalculation.leaseholdSelfAssessed.premiumPayable.h2                              = What is the tax due on the total premium payable?
+taxCalculation.leaseholdSelfAssessed.premiumPayable.hint                            = Enter the amount in whole pounds only, for example £10,000. Do not include any penalties or interest due.
 
 taxCalculation.leaseholdSelfAssessed.premiumPayable.checkYourAnswers                = Tax due on premium payable
 taxCalculation.leaseholdSelfAssessed.premiumPayable.change.hidden                   = Tax due on premium payable
@@ -2010,7 +2028,7 @@ lease.netPresentValue.error.invalidWholeNumber                                  
 lease.netPresentValue.error.maximum                                                 = The net present value upon which tax is calculated must be equal to or less than £9,999,999,999
 lease.netPresentValue.change.hidden                                                 = Net present value (NPV)
 
-submission.beforeYouStart.title                                                     = Before you start
+submission.beforeYouStart.title                                                     = Your return is ready for submission
 submission.beforeYouStart.heading                                                   = Your return is ready for submission
 submission.beforeYouStart.p1.text                                                   = You have now completed all sections of your SDLT return. You can {0}.
 submission.beforeYouStart.p1.linkText                                               = view and print this return for your client’s approval before submitting (opens in new tab)
@@ -2292,9 +2310,10 @@ submission.submissionReceipt.returnLink                                         
 
 submission.submissionAccountNotActivated.title                                      = Your SDLT account is not activated
 submission.submissionAccountNotActivated.heading                                    = Your SDLT account is not activated
-submission.submissionAccountNotActivated.p1                                         = You cannot submit an SDLT return until you have activated ‘Stamp Duty Land Tax (SDLT)’.
-submission.submissionAccountNotActivated.p2                                         = <a href="{0}" class="govuk-link">{1}</a> to find out how to activate your account.
-submission.submissionAccountNotActivated.p2.linkText                                = Visit your Business tax account
+submission.submissionAccountNotActivated.p1                                         = You must activate ‘Stamp Duty Land Tax (SDLT)’ before submitting your return.
+submission.submissionAccountNotActivated.p2                                         = HMRC will send your Activation Code in the post, usually within 7 to 10 days of enrolment. Once you’ve received your code, you can activate the service.
+submission.submissionAccountNotActivated.p3                                         = The code is valid for 28 days. If you don’t use it within that period, you must <a href="{0}" class="govuk-link">{1}</a> and enrol again.
+submission.submissionAccountNotActivated.p3.linkText                                = visit your Business tax account
 submission.submissionAccountNotActivated.link                                       = Return to your Stamp Taxes Online account
 
 submission.state.inProgress                                                         = In progress
@@ -2353,13 +2372,14 @@ taskListSaveExit.p1                                                             
 taskListSaveExit.p2                                                                 = You can view, edit and submit your return by selecting it within ‘Returns in progress’.
 taskListSaveExit.error.required                                                     = Select yes if you are sure you want to save and exit
 
-deleteReturn.title          = Deleting SDLT return
-deleteReturn.heading        = Deleting SDLT return
-deleteReturn.p1             = Deleting this return cannot be reversed. All the information you have entered will be permanently deleted. If you choose to file this return later, you will need to create a new return and start again.
-deleteReturn.h2             = Are you sure you want to permanently delete this return?
-deleteReturn.error.required = Select yes if you are sure you want to permanently delete this return
+deleteReturn.title                                                                  = Deleting SDLT return
+deleteReturn.heading                                                                = Deleting SDLT return
+deleteReturn.p1                                                                     = Deleting this return cannot be reversed. All the information you have entered will be permanently deleted. If you choose to file this return later, you will need to create a new return and start again.
+deleteReturn.h2                                                                     = Are you sure you want to permanently delete this return?
+deleteReturn.error.required                                                         = Select yes if you are sure you want to permanently delete this return
 
-updateReturnVersionError.title = Sorry, there is a problem with the service
-updateReturnVersionError.heading = Sorry, there is a problem with the service
-updateReturnVersionError.p1 = We could not save your changes. Try again later.
-updateReturnVersionError.p2 = We saved your answers. You will be able to continue when the service is working again.
+updateReturnVersionError.title                                                      = Page update failed
+updateReturnVersionError.heading                                                    = Page update failed
+updateReturnVersionError.p1                                                         = Your latest changes have not been saved. This is because you were using a previous version of your SDLT return. Make sure you only use one browser tab when updating Stamp Taxes Online.
+updateReturnVersionError.p2                                                         = To use the latest version, <a href="{0}" class="govuk-link">{1}</a>.
+updateReturnVersionError.p2.linkText                                                = go to your Task list

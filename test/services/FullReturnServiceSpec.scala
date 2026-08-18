@@ -262,7 +262,7 @@ class FullReturnServiceSpec extends SpecBase with MockitoSugar {
       }
 
       "must keep interestCreatedTransferred for every recognised land interest value" in {
-        val validInterests = Seq("FG", "FP", "FT", "LG", "LP", "LT", "OT")
+        val validInterests = Seq("FGS", "FPO", "FTF", "LG", "LPT", "LT", "OT")
 
         validInterests.foreach { code =>
           val mockBackendConnector = mock[StampDutyLandTaxConnector]
@@ -285,7 +285,7 @@ class FullReturnServiceSpec extends SpecBase with MockitoSugar {
       "must strip only the lands with an invalid interest and leave valid lands untouched" in {
         val mockBackendConnector = mock[StampDutyLandTaxConnector]
 
-        val validLand = Land(landID = Some("L1"), interestCreatedTransferred = Some("FG"))
+        val validLand = Land(landID = Some("L1"), interestCreatedTransferred = Some("FGS"))
         val invalidLand = Land(landID = Some("L2"), interestCreatedTransferred = Some("XX"))
         val returnWithMixedLand = completeFullReturn.copy(land = Some(Seq(validLand, invalidLand)))
 
@@ -296,7 +296,7 @@ class FullReturnServiceSpec extends SpecBase with MockitoSugar {
         val result = service.getFullReturn(testGetReturnByRefRequest).futureValue
 
         result.land.get must have size 2
-        result.land.get.head.interestCreatedTransferred mustBe Some("FG")
+        result.land.get.head.interestCreatedTransferred mustBe Some("FGS")
         result.land.get(1).interestCreatedTransferred mustBe None
         result.land.get(1).landID mustBe Some("L2")
       }

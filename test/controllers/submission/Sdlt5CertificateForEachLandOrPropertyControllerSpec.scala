@@ -17,10 +17,10 @@
 package controllers.submission
 
 import base.SpecBase
-import constants.FullReturnConstants.completeFullReturn
+import constants.FullReturnConstants.{completeFullReturn, completeLand, incompleteFullReturn}
 import controllers.routes
 import forms.submission.Sdlt5CertificateForEachLandOrPropertyFormProvider
-import models.{FullReturn, Land, NormalMode, ReturnInfo, Submission, UserAnswers}
+import models.{NormalMode, ReturnInfo, Submission, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{never, verify, when}
@@ -46,10 +46,8 @@ class Sdlt5CertificateForEachLandOrPropertyControllerSpec extends SpecBase with 
   val formProvider = new Sdlt5CertificateForEachLandOrPropertyFormProvider()
   val form = formProvider()
 
-  private val multipleLandFullReturn = FullReturn(
-    stornId = "TESTSTORN",
-    returnResourceRef = "REF001",
-    land = Some(Seq(Land(), Land())),
+  private val multipleLandFullReturn = completeFullReturn.copy(
+    land = Some(Seq(completeLand, completeLand)),
     submission = Some(Submission(None))
   )
 
@@ -62,7 +60,9 @@ class Sdlt5CertificateForEachLandOrPropertyControllerSpec extends SpecBase with 
     emptyUserAnswers.copy(fullReturn = Some(multipleLandFullReturn.copy(returnInfo = Some(ReturnInfo(landCertForEachProp = Some("yes"))))))
 
   private val multipleLandWithReturnInfo: UserAnswers =
-    emptyUserAnswers.copy(fullReturn = Some(multipleLandFullReturn.copy(returnInfo = Some(ReturnInfo(returnID = Some("R1"))))))
+    emptyUserAnswers.copy(fullReturn = Some(multipleLandFullReturn.copy(
+      returnInfo = multipleLandFullReturn.returnInfo.map(_.copy(returnID = Some("R1")))
+    )))
 
   "Sdlt5CertificateForEachLandOrProperty Controller" - {
 
@@ -115,17 +115,67 @@ class Sdlt5CertificateForEachLandOrPropertyControllerSpec extends SpecBase with 
       }
     }
 
+    "must redirect to the task list when the return's prerequisite sections are not complete for a GET" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, sdlt5CertificateForEachLandOrPropertyRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
+    "must not redirect to the task list when a submission already exists, even if the prerequisite sections are not complete" in {
+
+      val alreadyStartedIncompleteAnswers =
+        emptyUserAnswers.copy(fullReturn = Some(incompleteFullReturn.copy(submission = Some(Submission(None)))))
+
+      val application = applicationBuilder(userAnswers = Some(alreadyStartedIncompleteAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, sdlt5CertificateForEachLandOrPropertyRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad().url
+      }
+    }
+
+    "must redirect to the task list when the return's prerequisite sections are not complete for POST" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, sdlt5CertificateForEachLandOrPropertyRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
     "must redirect to the next page when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
+      val mockService           = mock[CertificateForEachService]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockService.store(any(), any())(any(), any(), any())) thenReturn Future.successful(multipleLandUserAnswers)
 
       val application =
         applicationBuilder(userAnswers = Some(multipleLandUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CertificateForEachService].toInstance(mockService)
           )
           .build()
 
@@ -260,7 +310,7 @@ class Sdlt5CertificateForEachLandOrPropertyControllerSpec extends SpecBase with 
 
     "must redirect to WhoAreYouSubmittingForController for a POST when there is one or no land or property" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
 
       running(application) {
         val request =

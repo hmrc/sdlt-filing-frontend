@@ -113,6 +113,8 @@
         @maybeSummaryList match {
             case Some(summary) => {
 
+                @p("vendor.vendorOverview.p1")
+
                 @paginationInfoText.map(p(_))
 
                 @govukSummaryList(summary)

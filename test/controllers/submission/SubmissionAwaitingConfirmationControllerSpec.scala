@@ -17,17 +17,22 @@
 package controllers.submission
 
 import base.SpecBase
+import constants.FullReturnConstants.{completeFullReturn, incompleteFullReturn}
+import models.Submission
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import views.html.submission.SubmissionAwaitingConfirmationView
 
 class SubmissionAwaitingConfirmationControllerSpec extends SpecBase {
 
+  val testFullReturn = completeFullReturn.copy(submission = Some(Submission(None)))
+  val testUserAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn))
+
   "SubmissionAwaitingConfirmation Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad().url)
@@ -38,6 +43,34 @@ class SubmissionAwaitingConfirmationControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to the task list when no submission has started and the prerequisite sections are not complete" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(fullReturn = Some(incompleteFullReturn)))).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
+    "must return OK and not redirect when a submission already exists, even if the prerequisite sections are not complete" in {
+
+      val alreadyStartedIncompleteReturn = incompleteFullReturn.copy(submission = Some(Submission(None)))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(fullReturn = Some(alreadyStartedIncompleteReturn)))).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
       }
     }
   }

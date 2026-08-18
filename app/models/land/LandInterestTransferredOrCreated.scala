@@ -26,11 +26,11 @@ sealed trait LandInterestTransferredOrCreated
 
 object LandInterestTransferredOrCreated extends Enumerable.Implicits {
 
-  case object FG extends WithName("FG") with LandInterestTransferredOrCreated
-  case object FP extends WithName("FP") with LandInterestTransferredOrCreated
-  case object FT extends WithName("FT") with LandInterestTransferredOrCreated
+  case object FG extends WithName("FGS") with LandInterestTransferredOrCreated
+  case object FP extends WithName("FPO") with LandInterestTransferredOrCreated
+  case object FT extends WithName("FTF") with LandInterestTransferredOrCreated
   case object LG extends WithName("LG") with LandInterestTransferredOrCreated
-  case object LP extends WithName("LP") with LandInterestTransferredOrCreated
+  case object LP extends WithName("LPT") with LandInterestTransferredOrCreated
   case object LT extends WithName("LT") with LandInterestTransferredOrCreated
   case object OT extends WithName("OT") with LandInterestTransferredOrCreated
 
@@ -53,11 +53,11 @@ object LandInterestTransferredOrCreated extends Enumerable.Implicits {
   
   def fromCode(code: String): Option[LandInterestTransferredOrCreated] =
     code match {
-      case "FG" => Some(LandInterestTransferredOrCreated.FG)
-      case "FP" => Some(LandInterestTransferredOrCreated.FP)
-      case "FT" => Some(LandInterestTransferredOrCreated.FT)
+      case "FGS" => Some(LandInterestTransferredOrCreated.FG)
+      case "FPO" => Some(LandInterestTransferredOrCreated.FP)
+      case "FTF" => Some(LandInterestTransferredOrCreated.FT)
       case "LG" => Some(LandInterestTransferredOrCreated.LG)
-      case "LP" => Some(LandInterestTransferredOrCreated.LP)
+      case "LPT" => Some(LandInterestTransferredOrCreated.LP)
       case "LT" => Some(LandInterestTransferredOrCreated.LT)
       case "OT" => Some(LandInterestTransferredOrCreated.OT)
       case _ => None

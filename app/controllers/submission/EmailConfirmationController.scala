@@ -25,6 +25,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.tasklist.SubmissionTaskList
 import views.html.submission.EmailConfirmationView
 
 import javax.inject.Inject
@@ -48,26 +49,38 @@ class EmailConfirmationController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(EmailConfirmationPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-      Ok(view(preparedForm, mode))
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+      } else {
+        val preparedForm = request.userAnswers.get(EmailConfirmationPage) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+
+        Ok(view(preparedForm, mode))
+      }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck).async {
     implicit request =>
 
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailConfirmationPage, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(EmailConfirmationPage, mode, updatedAnswers))
-      )
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+        Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
+      } else {
+        form.bindFromRequest().fold(
+          formWithErrors =>
+            Future.successful(BadRequest(view(formWithErrors, mode))),
+
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(EmailConfirmationPage, value))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(EmailConfirmationPage, mode, updatedAnswers))
+        )
+      }
   }
 }

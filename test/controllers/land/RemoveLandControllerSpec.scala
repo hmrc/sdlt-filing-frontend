@@ -163,6 +163,24 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
+      "must redirect to the land overview URL starting with /stamp-duty-land-tax-filing, otherwise the user lands on page not found" in {
+
+        app.RoutesPrefix.setPrefix("/")
+
+        val userAnswers = emptyUserAnswers.copy(storn = testStorn, fullReturn = Some(testFullReturn))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.land.routes.RemoveLandController.onPageLoad().url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual "/stamp-duty-land-tax-filing/about-the-land/land-or-property-overview"
+        }
+      }
+
     }
 
     "onSubmit()" - {
