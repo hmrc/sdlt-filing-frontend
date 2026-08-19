@@ -129,14 +129,10 @@ object TaxCalcRequestValidator {
     val reliefCode      = transaction.filter(t => isYes(t.claimingRelief)).flatMap(_.reliefReason)
     val transactionType = transaction.flatMap(_.transactionDescription)
     val leaseType       = lease.flatMap(_.leaseType)
-    val leaseTerm       = lease.flatMap { l =>
-        getValidLeaseDates(l).toOption.map { dates =>
-          calculateLeaseTerm(dates.startDate, dates.endDate)
-        }
-      }
 
     val shortLease    =
-      leaseTerm.exists(_.years < LEASE_TERM_THRESHOLD)
+      lease.flatMap(getValidLeaseDates(_).toOption)
+        .exists(dates => dates.endDate.isBefore(dates.startDate.plusYears(LEASE_TERM_THRESHOLD)))
 
     val lowValueLease =
       amountOrZero(lease.flatMap(_.totalPremiumPayable)) < PREMIUM_THRESHOLD &&
@@ -187,7 +183,7 @@ object TaxCalcRequestValidator {
       calculationStartDate  = if (effectiveDate.isAfter(validDates.startDate)) effectiveDate else validDates.startDate
       leaseTerm             = calculateLeaseTerm(calculationStartDate, validDates.endDate)
       rentYears             = if (leaseTerm.years < 5 && leaseTerm.daysInPartialYear > 0) Math.min(leaseTerm.years + 1, 5) else Math.min(leaseTerm.years, 5)
-      adjustedEndDate       = if(leaseTerm.years == 8 && Period.between(calculationStartDate, validDates.endDate.plusDays(1)).getYears == 7) validDates.endDate.plusYears(1) else validDates.endDate
+      adjustedEndDate       = if(leaseTerm.years == 8 && Period.between(calculationStartDate, validDates.endDate.plusDays(1)).getYears == 7) calculationStartDate.plusYears(8).plusDays(leaseTerm.days - 1) else validDates.endDate
     } yield Option.when(transaction.transactionDescription.contains(GRANT_OF_LEASE))(
       LeaseDetails(
         startDateDay    = validDates.startDate.getDayOfMonth,
