@@ -26,17 +26,17 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
     UserAnswers(id = "id", storn = "STORN", fullReturn = Some(fr))
 
   def freeholdReturn(
-                      propertyType: String = "01",
-                      effectiveDate: String = "2025-06-15",
-                      consideration: String = "250000",
-                      isLinked: Option[String] = Some("no"),
-                      claimingRelief: Option[String] = Some("no"),
-                      reliefReason: Option[String] = None,
-                      reliefAmount: Option[String] = None,
-                      isNonUkResidents: Option[String] = Some("no"),
-                      isCloseCompany: Option[String] = Some("no"),
-                      isCrownRelief: Option[String] = Some("no")
-                    ): FullReturn = FullReturn(
+    propertyType: String = "01",
+    effectiveDate: String = "2025-06-15",
+    consideration: String = "250000",
+    isLinked: Option[String] = Some("no"),
+    claimingRelief: Option[String] = Some("no"),
+    reliefReason: Option[String] = None,
+    reliefAmount: Option[String] = None,
+    isNonUkResidents: Option[String] = Some("no"),
+    isCloseCompany: Option[String] = Some("no"),
+    isCrownRelief: Option[String] = Some("no")
+  ): FullReturn = FullReturn(
     stornId = "STORN", returnResourceRef = "REF",
     returnInfo = Some(ReturnInfo(mainLandID = Some("L1"))),
     land = Some(Seq(Land(landID = Some("L1"), propertyType = Some(propertyType), interestCreatedTransferred = Some("FPF")))),
@@ -49,19 +49,19 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
   )
 
   def leaseholdReturn(
-                       startDate: String = "2025-06-15",
-                       endDate: String = "2030-06-14",
-                       effectiveDate: String = "2025-06-15",
-                       consideration: String = "250000",
-                       npv: String = "100000",
-                       annualRentOver1000: Option[String] = Some("yes"),
-                       startingRent: Option[String] = None,
-                       premium: Option[String] = Some("15000"),
-                       isNonUkResidents: Option[String] = Some("no"),
-                       isCloseCompany: Option[String] = Some("no"),
-                       isCrownRelief: Option[String] = Some("no"),
-                       transactionDescription: Option[String] = Some("L")
-                     ): FullReturn = FullReturn(
+     startDate: String = "2025-06-15",
+     endDate: String = "2030-06-14",
+     effectiveDate: String = "2025-06-15",
+     consideration: String = "250000",
+     npv: String = "100000",
+     annualRentOver1000: Option[String] = Some("yes"),
+     startingRent: Option[String] = None,
+     premium: Option[String] = Some("15000"),
+     isNonUkResidents: Option[String] = Some("no"),
+     isCloseCompany: Option[String] = Some("no"),
+     isCrownRelief: Option[String] = Some("no"),
+     transactionDescription: Option[String] = Some("L")
+   ): FullReturn = FullReturn(
     stornId = "STORN", returnResourceRef = "REF",
     returnInfo = Some(ReturnInfo(mainLandID = Some("L1"))),
     land = Some(Seq(Land(landID = Some("L1"), propertyType = Some("01"), interestCreatedTransferred = Some("LG")))),
@@ -640,6 +640,25 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
       "must fail when lease end date is missing" in {
         val fr = leaseholdReturn().copy(lease = Some(Lease(contractStartDate = Some("2025-06-15"), totalPremiumPayable = Some("15000"))))
         TaxCalcRequestValidator.buildRequest(userAnswersWith(fr)) mustBe Left(MissingLeaseAnswerError("contractEndDate"))
+      }
+
+      // NRSDLT lease term re-work to match AS-IS with SDLTC
+      "must calculate lease term as an 8 year lease for a 7 year and 1 day lease" in {
+        val term = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(startDate = "2025-06-15", endDate = "2032-06-15")
+        )).toOption.get.leaseDetails.get.leaseTerm
+        term.years mustBe 8
+        term.days mustBe 1
+      }
+
+      "must update end date as an 8 year lease for a 7 year and 1 day lease" in {
+        val ld = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(startDate = "2025-06-15", endDate = "2032-06-15")
+        )).toOption.get.leaseDetails.get
+
+        ld.endDateDay mustBe 15
+        ld.endDateMonth mustBe 6
+        ld.endDateYear mustBe 2033
       }
     }
 
