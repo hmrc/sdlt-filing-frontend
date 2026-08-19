@@ -140,22 +140,22 @@ site.error.noReturnReference.change.hidden                                      
 # Task List
 taskList.title                                                                      = Task list
 taskList.heading                                                                    = SDLT return
-tasklist.vendorQuestion.details                                                     = Vendor Questions
-tasklist.vendorQuestion.heading                                                     = Vendor Questions
-tasklist.purchaserQuestion.details                                                  = Purchaser Questions
-tasklist.purchaserQuestion.heading                                                  = Purchaser Questions
+tasklist.vendorQuestion.details                                                     = About the vendor
+tasklist.vendorQuestion.heading                                                     = About the vendor
+tasklist.purchaserQuestion.details                                                  = About the purchaser
+tasklist.purchaserQuestion.heading                                                  = About the purchaser
 tasklist.complete                                                                   = Complete
 tasklist.notStarted                                                                 = Not yet started
-tasklist.purchaserAgentQuestion.details                                             = Purchaser Agent Questions
-tasklist.purchaserAgentQuestion.heading                                             = Purchaser Agent Questions
-tasklist.vendorAgentQuestion.details                                                = Vendor Agent Questions
-tasklist.vendorAgentQuestion.heading                                                = Vendor Agent Questions
-tasklist.landQuestion.details                                                       = Land Questions
-tasklist.landQuestion.heading                                                       = Land Questions
-tasklist.ukResidencyQuestion.details                                                = UK Residency Questions
-tasklist.ukResidencyQuestion.heading                                                = UK Residency Questions
-tasklist.leaseQuestion.heading                                                      = Lease Questions
-tasklist.leaseQuestion.details                                                      = Lease Questions
+tasklist.purchaserAgentQuestion.details                                             = About the purchaser’s agent
+tasklist.purchaserAgentQuestion.heading                                             = About the purchaser’s agent
+tasklist.vendorAgentQuestion.details                                                = About the vendor’s agent
+tasklist.vendorAgentQuestion.heading                                                = About the vendor’s agent
+tasklist.landQuestion.details                                                       = About the land
+tasklist.landQuestion.heading                                                       = About the land
+tasklist.ukResidencyQuestion.details                                                = About UK residency
+tasklist.ukResidencyQuestion.heading                                                = About UK residency
+tasklist.leaseQuestion.heading                                                      = About the lease
+tasklist.leaseQuestion.details                                                      = About the lease
 tasklist.submissionQuestion.heading                                                 = Submit your return
 tasklist.submissionQuestion.details                                                 = Submit your return
 tasklist.submissionQuestion.hint                                                    = You must complete all previous sections before starting
@@ -164,11 +164,12 @@ tasklist.inProgress                                                             
 tasklist.cannotStartYet                                                             = Cannot start yet
 tasklist.failed                                                                     = Failed
 tasklist.optional                                                                   = Optional
-tasklist.transactionQuestion.details                                                = Transaction Questions
-tasklist.transactionQuestion.heading                                                = Transaction Questions
-tasklist.taxCalculationQuestion.details                                             = Tax Calculation Questions
-tasklist.taxCalculationQuestion.heading                                             = Tax Calculation Questions
+tasklist.transactionQuestion.details                                                = About the transaction
+tasklist.transactionQuestion.heading                                                = About the transaction
+tasklist.taxCalculationQuestion.details                                             = Tax calculation
+tasklist.taxCalculationQuestion.heading                                             = Tax calculation
 tasklist.invalid                                                                    = There is a problem
+tasklist.downloadPdf                                                                = Download a PDF version of this return
 
 # Check Your Answers
 site.checkYourAnswers.heading                                                       = Check your answers
