@@ -29,6 +29,7 @@ import repositories.SessionRepository
 import services.FullReturnService
 import services.crossflow.*
 import services.crossflow.fields.CrossFlowValidationService
+import services.pdf.PDFGenerationService
 
 import scala.concurrent.Future
 
@@ -1351,5 +1352,117 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
         }
       }
     }
+
+    "downloadPdf" - {
+
+      val certifcateAnswered = testFullReturn.copy(
+        returnInfo = testFullReturn.returnInfo.map(_.copy(landCertForEachProp = Some("yes")))
+      )
+
+      "must return SEE_OTHER and redirect to NoReturnId error page when there is no returnId in UserAnswers" in {
+        val mockFullReturnService = mock[FullReturnService]
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(bind[FullReturnService].toInstance(mockFullReturnService))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.downloadPdf.url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.routes.NoReturnReferenceController.onPageLoad().url)
+
+          verify(mockFullReturnService, never()).getFullReturn(any())(any(), any())
+        }
+      }
+
+      "must fill the pdf from the return held by the backend and not the copy cached in session" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockPdfGenerationService = mock[PDFGenerationService]
+
+        val cachedBeforeTheAnswer = testFullReturn.copy(
+          returnInfo = testFullReturn.returnInfo.map(_.copy(landCertForEachProp = None))
+        )
+
+        when(mockFullReturnService.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
+          .thenReturn(Future.successful(certifcateAnswered))
+
+        when(mockPdfGenerationService.generatePdf(any())(any()))
+          .thenReturn(Future.successful("a filled pdf".getBytes))
+
+        val application = applicationBuilder(
+          userAnswers = Some(emptyUserAnswers.copy(
+            returnId = Some(testReturnId),
+            storn = testStorn,
+            fullReturn = Some(cachedBeforeTheAnswer))))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[PDFGenerationService].toInstance(mockPdfGenerationService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.downloadPdf.url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          verify(mockPdfGenerationService, times(1)).generatePdf(eqTo(certifcateAnswered))(any())
+        }
+      }
+
+      "must name the download after the return" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockPdfGenerationService = mock[PDFGenerationService]
+
+        when(mockFullReturnService.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
+          .thenReturn(Future.successful(certifcateAnswered))
+
+        when(mockPdfGenerationService.generatePdf(any())(any()))
+          .thenReturn(Future.successful("a filled pdf".getBytes))
+
+        val application = applicationBuilder(
+          userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[PDFGenerationService].toInstance(mockPdfGenerationService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.downloadPdf.url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          header("Content-Disposition", result) mustBe Some("""attachment; filename="sdlt-return-RET123456789.pdf"""")
+        }
+      }
+
+      "must return INTERNAL_SERVER_ERROR when the return cannot be fetched" in {
+        val mockFullReturnService = mock[FullReturnService]
+        val mockPdfGenerationService = mock[PDFGenerationService]
+
+        when(mockFullReturnService.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
+          .thenReturn(Future.failed(new RuntimeException("FormP is down")))
+
+        val application = applicationBuilder(
+          userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+          .overrides(
+            bind[FullReturnService].toInstance(mockFullReturnService),
+            bind[PDFGenerationService].toInstance(mockPdfGenerationService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.ReturnTaskListController.downloadPdf.url)
+          val result = route(application, request).value
+
+          status(result) mustEqual INTERNAL_SERVER_ERROR
+
+          verify(mockPdfGenerationService, never()).generatePdf(any())(any())
+        }
+      }
+    }
+
   }
 }
