@@ -420,6 +420,7 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
           val pdf3 = mockPdf3()
           val service = buildService(pdf3 = pdf3)
           service.generatePdf(completeFullReturn.copy(
+            transaction = Some(Transaction(transactionDescription = Some("F"))),
             land = Some(Seq(
               Land(landID = Some("LND001")),
               Land(landID = Some("LND002")),
@@ -435,8 +436,23 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
           val pdf3 = mockPdf3()
           val service = buildService(pdf3 = pdf3)
           service.generatePdf(completeFullReturn.copy(
+            transaction = Some(Transaction(transactionDescription = Some("F"))),
             land = Some(Seq(
               Land(landID = Some("LND001"))
+            )),
+            returnInfo = Some(ReturnInfo(mainLandID = Some("LND001")))
+          )).futureValue
+          verify(pdf3, never).fillPdf(any[FullReturn](), any[Land], any[Boolean])
+        }
+
+        "must not call pdf3Filler for a lease, however many lands" in {
+          val pdf3 = mockPdf3()
+          val service = buildService(pdf3 = pdf3)
+          service.generatePdf(completeFullReturn.copy(
+            land = Some(Seq(
+              Land(landID = Some("LND001")),
+              Land(landID = Some("LND002")),
+              Land(landID = Some("LND003"))
             )),
             returnInfo = Some(ReturnInfo(mainLandID = Some("LND001")))
           )).futureValue
@@ -515,7 +531,7 @@ class PDFGenerationServiceSpec extends SpecBase with MockitoSugar {
           val pdf4 = mockPdf4()
           val service = buildService(pdf1a, pdf4 = pdf4)
           service.generatePdf(completeFullReturn.copy(
-            lease = None,
+            transaction = Some(Transaction(transactionDescription = Some("F"))),
             land = Some(Seq(
               Land(landID = Some("LND001"), propertyType = Some("01")),
               Land(landID = Some("LND002")),

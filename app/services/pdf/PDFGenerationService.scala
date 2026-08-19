@@ -26,6 +26,7 @@ import org.apache.pdfbox.pdmodel.font.{PDType1Font, Standard14Fonts}
 import play.api.Environment
 import utils.LoggingUtil
 import utils.PdfHelper.hasSdlt4Answers
+import viewmodels.tasklist.LeaseTaskList
 
 import java.io.ByteArrayOutputStream
 import javax.inject.{Inject, Singleton}
@@ -88,7 +89,7 @@ class PDFGenerationService @Inject()(
     val (sdlt1AdditionalVendor, sdlt2AdditionalVendors) = computeAdditionalVendors(r, vendors)
 
     val lands      = r.land.getOrElse(Seq.empty)
-    val isLease    = r.lease.isDefined
+    val isLease    = LeaseTaskList.isLeaseApplicable(r)
 
     // ---- SDLT1: always present ----
     parts :+= pdf1aFiller.fillPdf(r)    
@@ -112,7 +113,7 @@ class PDFGenerationService @Inject()(
     }
 
 //    // ---- SDLT3: one per additional land ----
-    if (lands.size > 1) {
+    if (!isLease && lands.size > 1) {
       val mainLandId = r.returnInfo.flatMap(_.mainLandID)
       val otherLands = lands.filterNot(l => l.landID.equals(mainLandId))
       otherLands.zipWithIndex.foreach { case (land, idx) =>

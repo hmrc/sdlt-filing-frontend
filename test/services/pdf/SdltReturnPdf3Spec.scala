@@ -214,6 +214,20 @@ class SdltReturnPdf3Spec extends SpecBase with MockitoSugar {
         readField(result, "land_addressLine2") mustBe Some("Stafford")
       }
 
+      "must write mineral rights from the land it is given" in {
+        val land = Land(mineralRights = Some("yes"))
+        val r = withLand(land)
+        val result = fill(r, land)
+        readField(result, "land_mineralRights") mustBe Some("yes")
+      }
+
+      "must leave mineral rights blank when the question was not answered" in {
+        val land = Land(propertyType = Some("01"))
+        val r = withLand(land)
+        val result = fill(r, land)
+        readField(result, "land_mineralRights") mustBe Some("")
+      }
+
       "must write local authority number and title number" in {
         val land = Land(
           localAuthorityNumber = Some("5678"),

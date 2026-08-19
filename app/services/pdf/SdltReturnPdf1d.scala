@@ -31,6 +31,7 @@ import org.apache.pdfbox.cos.COSName
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont
 import org.apache.pdfbox.pdmodel.font.encoding.WinAnsiEncoding
 import utils.PdfHelper.hasSdlt4Answers
+import viewmodels.tasklist.LeaseTaskList
 
 @Singleton
 
@@ -77,7 +78,7 @@ class SdltReturnPdf1d @Inject()(
     val vendors = r.vendor.getOrElse(Seq.empty)
     val lands = r.land.getOrElse(Seq.empty)
     val sdlt2Count = (purchasers.size - 2).max(0) + (vendors.size - 2).max(0)
-    val sdlt3Count = (lands.size - 1).max(0)
+    val sdlt3Count = if (LeaseTaskList.isLeaseApplicable(r)) 0 else (lands.size - 1).max(0)
     val sdlt4Count = captureSDLT4Count(r)
 
     w.postcode(PURCHASER_AGENT_POSTCODE_1, PURCHASER_AGENT_POSTCODE_2, purchaserAgent.flatMap(_.postcode))

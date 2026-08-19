@@ -77,9 +77,6 @@ class SdltReturnPdf4 @Inject()(
   }
   
   private def fillTransactionFields(w: PdfFieldWriter, r: FullReturn): Unit = {
-    val mainLandId: Option[String] = r.returnInfo.flatMap(_.mainLandID)
-    val mainLand = r.land.flatMap(_.find(land => mainLandId.equals(land.landID)))
-
     r.transaction.foreach { t =>
       val postRulingApplied = t.postTransRulingApplied.map(_.equalsIgnoreCase("yes"))
 
@@ -129,10 +126,6 @@ class SdltReturnPdf4 @Inject()(
       )
     }
 
-    mainLand.foreach { land =>
-      w.text(LAND_MINERAL_RIGHTS, land.mineralRights)
-    }
-
     r.companyDetails.foreach { c =>
       w.fillSelectedCodes(
         w,
@@ -164,6 +157,7 @@ class SdltReturnPdf4 @Inject()(
   }
 
   private def fillLandFields(w: PdfFieldWriter, l: Land): Unit = {
+    w.text(LAND_MINERAL_RIGHTS, l.mineralRights)
     w.text(LAND_TYPE_PROPERTY, l.propertyType)
     w.postcode(LAND_POSTCODE_1, LAND_POSTCODE_2, l.postcode)
     w.text(LAND_HOUSE_NUMBER,  l.houseNumber)

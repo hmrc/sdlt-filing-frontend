@@ -407,6 +407,31 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
 
     }
 
+    "must write the additional land count for sdlt3 when the return is not a lease" in {
+      val r = baseReturn.copy(
+        land = Some(Seq(
+          Land(landID = Some("LND001")),
+          Land(landID = Some("LND002")),
+          Land(landID = Some("LND003"))
+        ))
+      )
+      val result = fill(r, None)
+      readField(result, "return_additionalDetailsSdlt3") mustBe Some("2")
+    }
+
+    "must write '0' for sdlt3 when the return is a lease" in {
+      val r = baseReturn.copy(
+        land = Some(Seq(
+          Land(landID = Some("LND001")),
+          Land(landID = Some("LND002")),
+          Land(landID = Some("LND003"))
+        )),
+        transaction = Some(Transaction(transactionDescription = Some("L")))
+      )
+      val result = fill(r, None)
+      readField(result, "return_additionalDetailsSdlt3") mustBe Some("0")
+    }
+
     "must write sdlt4Count value as 1 when no land in the fullReturn  " in {
       val r = FullReturn(
         stornId = "STORN999",
