@@ -31,7 +31,7 @@ class TaskListRowViewSpec extends SpecBase {
 
     "when status is TLCannotStart" - {
 
-      "must render with cannot start tag" in {
+      "must render as plain grey text with no tag or background" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -42,9 +42,11 @@ class TaskListRowViewSpec extends SpecBase {
           val html = view("Test Task", "/test-url", "testTagId", TLCannotStart)
           val doc = Jsoup.parse(html.toString())
 
-          val tag = doc.select("strong.govuk-tag").first()
-          tag.text() mustBe messagesInstance("tasklist.cannotStartYet")
-          tag.hasClass("govuk-tag--grey") mustBe true
+          doc.select("strong.govuk-tag").isEmpty mustBe true
+
+          val status = doc.getElementById("status-testTagId")
+          status.text() mustBe messagesInstance("tasklist.cannotStartYet")
+          status.hasClass("govuk-task-list__status--cannot-start-yet") mustBe true
         }
       }
 

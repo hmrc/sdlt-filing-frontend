@@ -56,7 +56,7 @@
     @{
         status match {
             case TLCannotStart =>
-                govukTag(Tag(Text(messages("tasklist.cannotStartYet")), classes = "app-task-list__task-completed govuk-tag--grey no-wrap", attributes = Map("id" -> {"status-" + tagId})))
+                <span id={s"status-$tagId"} class="app-task-list__task-completed govuk-task-list__status--cannot-start-yet govuk-body">{messages("tasklist.cannotStartYet")}</span>
             case TLNotStarted =>
                 govukTag(Tag(Text(messages("tasklist.notStarted")), classes = "app-task-list__task-completed govuk-tag--blue no-wrap", attributes = Map("id" -> {"status-" + tagId})))
             case TLInProgress =>
