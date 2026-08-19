@@ -49,19 +49,19 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
   )
 
   def leaseholdReturn(
-     startDate: String = "2025-06-15",
-     endDate: String = "2030-06-14",
-     effectiveDate: String = "2025-06-15",
-     consideration: String = "250000",
-     npv: String = "100000",
-     annualRentOver1000: Option[String] = Some("yes"),
-     startingRent: Option[String] = None,
-     premium: Option[String] = Some("15000"),
-     isNonUkResidents: Option[String] = Some("no"),
-     isCloseCompany: Option[String] = Some("no"),
-     isCrownRelief: Option[String] = Some("no"),
-     transactionDescription: Option[String] = Some("L")
-   ): FullReturn = FullReturn(
+    startDate: String = "2025-06-15",
+    endDate: String = "2030-06-14",
+    effectiveDate: String = "2025-06-15",
+    consideration: String = "250000",
+    npv: String = "100000",
+    annualRentOver1000: Option[String] = Some("yes"),
+    startingRent: Option[String] = None,
+    premium: Option[String] = Some("15000"),
+    isNonUkResidents: Option[String] = Some("no"),
+    isCloseCompany: Option[String] = Some("no"),
+    isCrownRelief: Option[String] = Some("no"),
+    transactionDescription: Option[String] = Some("L")
+  ): FullReturn = FullReturn(
     stornId = "STORN", returnResourceRef = "REF",
     returnInfo = Some(ReturnInfo(mainLandID = Some("L1"))),
     land = Some(Seq(Land(landID = Some("L1"), propertyType = Some("01"), interestCreatedTransferred = Some("LG")))),
@@ -163,7 +163,7 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
           leaseholdReturn(startDate = "01/01/2025", endDate = "31/12/2025", effectiveDate = "01/07/2025")
         )).flatMap(_.leaseDetails.toRight("missing leaseDetails")).map { ld =>
           (ld.startDateDay, ld.startDateMonth, ld.startDateYear,
-            ld.endDateDay,   ld.endDateMonth,   ld.endDateYear)
+           ld.endDateDay,   ld.endDateMonth,   ld.endDateYear)
         } mustBe Right((1, 1, 2025, 31, 12, 2025))
       }
 
