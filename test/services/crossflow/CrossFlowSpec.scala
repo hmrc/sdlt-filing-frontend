@@ -156,10 +156,10 @@ class CrossFlowSpec extends SpecBase {
     "WithBullets must carry a lead key and a list of bullet keys" in {
       val body = CrossFlowBody.WithBullets(
         leadKey    = "lead.key",
-        bulletKeys = Seq("opt1", "opt2")
+        bulletKeys = Seq(CrossFlowBullet.Text("opt1"),  CrossFlowBullet.Text("opt2"))
       )
 
-      body mustBe CrossFlowBody.WithBullets("lead.key", Seq("opt1", "opt2"))
+      body mustBe CrossFlowBody.WithBullets("lead.key", Seq(CrossFlowBullet.Text("opt1"), CrossFlowBullet.Text("opt2")))
     }
   }
 
@@ -331,10 +331,10 @@ class CrossFlowSpec extends SpecBase {
       val rule = new TestRule {
         protected def appliesTo(ua: UserAnswers)     = true
         protected def isValid(ua: UserAnswers)       = false
-        protected override def body: CrossFlowBody   = CrossFlowBody.WithBullets("intro", Seq("opt1", "opt2"))
+        protected override def body: CrossFlowBody   = CrossFlowBody.WithBullets("intro", Seq(CrossFlowBullet.Text("opt1"),  CrossFlowBullet.Text("opt2")))
       }
 
-      rule.validate(emptyUserAnswers).value.body mustBe CrossFlowBody.WithBullets("intro", Seq("opt1", "opt2"))
+      rule.validate(emptyUserAnswers).value.body mustBe CrossFlowBody.WithBullets("intro", Seq(CrossFlowBullet.Text("opt1"),  CrossFlowBullet.Text("opt2")))
     }
 
     "must pass args through to the produced failure" in {

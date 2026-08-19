@@ -202,8 +202,8 @@ object F28FtbCap500k extends GuardRule:
   protected override def body: CrossFlowBody = CrossFlowBody.WithBullets(
     leadKey = "crossflow.relief.firstTimeBuyer.over500k.intro",
     bulletKeys = Seq(
-      "crossflow.relief.firstTimeBuyer.over500k.option1",
-      "crossflow.relief.firstTimeBuyer.over500k.option2"
+      CrossFlowBullet.Text("crossflow.relief.firstTimeBuyer.over500k.option1"),
+      CrossFlowBullet.Text("crossflow.relief.firstTimeBuyer.over500k.option2")
     )
   )
 
@@ -237,8 +237,8 @@ object F28FtbCap625k extends GuardRule:
   protected override def body: CrossFlowBody = CrossFlowBody.WithBullets(
     leadKey = "crossflow.relief.firstTimeBuyer.over625k.intro",
     bulletKeys = Seq(
-      "crossflow.relief.firstTimeBuyer.over625k.option1",
-      "crossflow.relief.firstTimeBuyer.over625k.option2"
+      CrossFlowBullet.Text("crossflow.relief.firstTimeBuyer.over625k.option1"),
+      CrossFlowBullet.Text("crossflow.relief.firstTimeBuyer.over625k.option2")
     )
   )
 
@@ -475,6 +475,19 @@ object Cf16_ScottishPostcode extends LandGuardRule:
   protected def messageKey              = "crossflow.land.Cf-16.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-16.inline"
 
+  protected override def body: CrossFlowBody = WithBullets(
+    leadKey = messageKey,
+    paragraph = Some("crossflow.land.Cf-16.p2"),
+    bulletKeys = Seq(
+      CrossFlowBullet.Text("crossflow.land.Cf-16.bullet1"),
+      CrossFlowBullet.Link(
+        messageKey = "crossflow.land.Cf-16.bullet2",
+        linkText = "crossflow.land.Cf-16.linkText",
+        href = "crossflow.land.Cf-16.link"
+      )
+    )
+  )
+
 
   /** Cf-17 — Business Function. Tr-11 (use of land or property) only appears when
    * property type is '02 - Mixed' or '03 - Non-residential' for the main land. If the user committed the
@@ -510,8 +523,8 @@ object Cf17_UseOfPropertyMissing extends GuardRule:
     protected override def body: CrossFlowBody = CrossFlowBody.WithBullets(
       leadKey = "crossflow.transaction.Cf-17.body",
       bulletKeys = Seq(
-        "crossflow.transaction.Cf-17.bullet1",
-        "crossflow.transaction.Cf-17.bullet2"
+        CrossFlowBullet.Text("crossflow.transaction.Cf-17.bullet1"),
+        CrossFlowBullet.Text("crossflow.transaction.Cf-17.bullet2")
       )
     )
 
@@ -544,7 +557,10 @@ object Cf5a_LeaseRResidential extends GuardRule:
 
     protected override def body: CrossFlowBody = WithBullets(
       messageKey,
-      Seq("crossflow.lease.Cf-5a.bullet1", "crossflow.lease.Cf-5a.bullet2")
+      Seq(
+        CrossFlowBullet.Text("crossflow.lease.Cf-5a.bullet1"), 
+        CrossFlowBullet.Text("crossflow.lease.Cf-5a.bullet2")
+      )
     )
 
 
@@ -608,8 +624,10 @@ object Cf6_MultiLandPropertyTypeMismatch extends LandGuardRule:
 
   protected override def body: CrossFlowBody = WithBullets(
     messageKey,
-    Seq("crossflow.land.Cf-6.bullet1",
-      "crossflow.land.Cf-6.bullet2")
+    Seq(
+      CrossFlowBullet.Text("crossflow.land.Cf-6.bullet1"),
+      CrossFlowBullet.Text("crossflow.land.Cf-6.bullet2")
+    )
   )
 
 object F23Rules:

@@ -100,8 +100,8 @@ class TransactionSingleEntityControllerSpec extends SpecBase with MockitoSugar {
     body           = CrossFlowBody.WithBullets(
       leadKey    = "crossflow.transaction.Cf-17.body",
       bulletKeys = Seq(
-        "crossflow.transaction.Cf-17.bullet1",
-        "crossflow.transaction.Cf-17.bullet2"
+        CrossFlowBullet.Text("crossflow.transaction.Cf-17.bullet1"),
+        CrossFlowBullet.Text("crossflow.transaction.Cf-17.bullet2")
       )
     ),
     targets        = Seq(CrossFlowTarget(Pages.UseOfProperty, "value")),
