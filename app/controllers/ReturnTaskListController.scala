@@ -105,22 +105,25 @@ class ReturnTaskListController @Inject()(
 
   def downloadPdf: Action[AnyContent] = (activatedIdentify andThen getData).async {
     implicit request =>
-      request.userAnswers.flatMap(_.fullReturn) match {
+      request.userAnswers.flatMap(_.returnId) match {
         case None =>
           Future.successful(Redirect(controllers.routes.NoReturnReferenceController.onPageLoad()))
 
-        case Some(fullReturn) =>
-          val returnId = fullReturn.returnInfo.flatMap(_.returnID).getOrElse("sdlt-return")
-          pdfGenerationService.generatePdf(fullReturn)
-            .map { pdfBytes =>
-              Ok(pdfBytes)
-                .as("application/pdf")
-                .withHeaders(
-                  "Content-Disposition" -> s"""attachment; filename="sdlt-return-$returnId.pdf"""",
-                  "Content-Length"      -> pdfBytes.length.toString,
-                  "Cache-Control"       -> "",
-                  "Pragma"              -> ""
-                )
+        case Some(id) =>
+          fullReturnService.getFullReturn(GetReturnByRefRequest(returnResourceRef = id, storn = request.storn))
+            .flatMap { fullReturn =>
+              val returnId = fullReturn.returnInfo.flatMap(_.returnID).getOrElse("sdlt-return")
+              pdfGenerationService.generatePdf(fullReturn)
+                .map { pdfBytes =>
+                  Ok(pdfBytes)
+                    .as("application/pdf")
+                    .withHeaders(
+                      "Content-Disposition" -> s"""attachment; filename="sdlt-return-$returnId.pdf"""",
+                      "Content-Length"      -> pdfBytes.length.toString,
+                      "Cache-Control"       -> "",
+                      "Pragma"              -> ""
+                    )
+                }
             }
             .recover {
               case ex =>
