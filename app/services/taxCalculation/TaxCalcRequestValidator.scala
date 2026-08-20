@@ -187,7 +187,7 @@ object TaxCalcRequestValidator {
       calculationStartDate  = if (effectiveDate.isAfter(validDates.startDate)) effectiveDate else validDates.startDate
       leaseTerm             = calculateLeaseTerm(calculationStartDate, validDates.endDate)
       rentYears             = if (leaseTerm.years < 5 && leaseTerm.daysInPartialYear > 0) Math.min(leaseTerm.years + 1, 5) else Math.min(leaseTerm.years, 5)
-      adjustedEndDate       = if(leaseTerm.years == 8 && Period.between(calculationStartDate, validDates.endDate.plusDays(1)).getYears == 7) validDates.endDate.plusYears(1) else validDates.endDate
+      adjustedEndDate       = if(leaseTerm.years == 8 && getLeaseYears(calculationStartDate, validDates.endDate) == 7) calculationStartDate.plusYears(8).plusDays(leaseTerm.days - 1) else validDates.endDate
     } yield Option.when(transaction.transactionDescription.contains(GRANT_OF_LEASE))(
       LeaseDetails(
         startDateDay    = validDates.startDate.getDayOfMonth,
@@ -217,7 +217,7 @@ object TaxCalcRequestValidator {
                                   validStartDate: LocalDate,
                                   validEndDate: LocalDate,
                                 ): LeaseTerm = {
-    val years = Period.between(validStartDate, validEndDate.plusDays(1)).getYears
+    val years = getLeaseYears(validStartDate, validEndDate)
     val partialStart = validStartDate.plusYears(years)
     val days = ChronoUnit.DAYS.between(partialStart, validEndDate.plusDays(1)).toInt
     val daysInPartialYear = if (years < 5 && days > 0) days else 0
@@ -229,6 +229,9 @@ object TaxCalcRequestValidator {
       daysInPartialYear = daysInPartialYear
     )
   }
+
+  private def getLeaseYears(validStartDate: LocalDate, validEndDate: LocalDate): Int =
+    Period.between(validStartDate, validEndDate.plusDays(1)).getYears
 
   private def buildRelevantRentDetails(lease: Lease): RelevantRentDetails =
     RelevantRentDetails(
