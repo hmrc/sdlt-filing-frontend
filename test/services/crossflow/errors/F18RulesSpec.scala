@@ -129,11 +129,11 @@ class F18RulesSpec extends SpecBase with Matchers {
       Cf13_Dummy8999ContractDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-13")
     }
 
-    "must pass when code is 8999 and contract date is missing (None is valid)" in {
+    "must fire when code is 8999 and contract date is missing" in {
       val ua   = answersWith(contractDate = None)
       val land = landWithCode("8999")
 
-      Cf13_Dummy8999ContractDate.validate(land, ua) mustBe None
+      Cf13_Dummy8999ContractDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-13")
     }
 
     "must pass when code is 8999 and contract date is before the Scotland Act date" in {
@@ -174,11 +174,11 @@ class F18RulesSpec extends SpecBase with Matchers {
       Cf14_Dummy8998ContractDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-14")
     }
 
-    "must pass when code is 8998 and contract date is missing (None is valid)" in {
+    "must fire when code is 8998 and contract date is missing" in {
       val ua   = answersWith(contractDate = None)
       val land = landWithCode("8998")
 
-      Cf14_Dummy8998ContractDate.validate(land, ua) mustBe None
+      Cf14_Dummy8998ContractDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-14")
     }
 
     "must pass when code is 8998 and contract date is before CR223" in {

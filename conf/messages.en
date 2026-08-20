@@ -2177,11 +2177,11 @@ crossflow.land.Cf-8.body                                                        
 crossflow.land.Cf-9.welsh6996_6997.body                                             = This local authority code cannot be used when the effective date of transaction is before 1 April 2018.
 crossflow.land.Cf-9.welsh6998.body                                                  = This local authority code cannot be used when the effective date of transaction is before 1 April 2018.
 crossflow.land.Cf-9.welsh6999.body                                                  = This local authority code cannot be used when the effective date of transaction is before 1 April 2018.
-crossflow.land.Cf-10.body                                                           = This local authority code cannot be used when the date of contract is the same as or after 1 April 2018.
-crossflow.land.Cf-11.body                                                           = This local authority code cannot be used when the date of contract is after 17 December 2014.
+crossflow.land.Cf-10.body                                                           = This local authority code cannot be used when the date of contract is blank or the same as or after 1 April 2018.
+crossflow.land.Cf-11.body                                                           = This local authority code cannot be used when the date of contract is blank or after 17 December 2014.
 crossflow.land.Cf-12.body                                                           = This local authority code cannot be used when the effective date of the transaction is before 1 April 2015.
-crossflow.land.Cf-13.body                                                           = This local authority code cannot be used when the date of contract is the same as or after 1 May 2012.
-crossflow.land.Cf-14.body                                                           = This local authority code cannot be used when the date of contract is the same as or after 1 April 2015.
+crossflow.land.Cf-13.body                                                           = This local authority code cannot be used when the date of contract is blank or the same as or after 1 May 2012.
+crossflow.land.Cf-14.body                                                           = This local authority code cannot be used when the date of contract is blank or the same as or after 1 April 2015.
 crossflow.land.Cf-15.body                                                           = This local authority code is no longer recognised by SDLT when the effective date of the transaction is the same as or after 1 April 2015.
 crossflow.land.Cf-16.body                                                           = Areas of land or properties with a Scottish postcode are no longer recognised by SDLT when the effective date of the transaction is the same as or after 1 April 2015.
 crossflow.land.Cf-16.p2                                                             = You must either:
