@@ -174,7 +174,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           val content = contentAsString(result)
-          content must include("Vendor Questions")
+          content must include("About the vendor")
         }
       }
 
@@ -435,7 +435,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           val content = contentAsString(result)
-          content must include("Vendor Questions")
+          content must include("About the vendor")
         }
       }
 
@@ -462,7 +462,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           val content = contentAsString(result)
-          content must include("Vendor Agent Questions")
+          content must include("About the vendor’s agent")
         }
       }
 
@@ -489,8 +489,8 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           val content = contentAsString(result)
-          content must include("Vendor Questions")
-          content must not include("Vendor Agent Questions")
+          content must include("About the vendor")
+          content must not include("About the vendor’s agent")
         }
       }
 
@@ -518,10 +518,10 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual OK
           val content = contentAsString(result)
 
-          val vendorIndex = content.indexOf("Vendor Questions")
-          val PurchaserIndex = content.indexOf("Purchaser Questions")
+          val vendorIndex = content.indexOf("About the vendor")
+          val PurchaserIndex = content.indexOf("About the purchaser")
 
-          vendorIndex must be < PurchaserIndex
+          PurchaserIndex must be < vendorIndex
         }
       }
 
@@ -713,7 +713,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           val content = contentAsString(result)
-          content must include("Purchaser Questions")
+          content must include("About the purchaser")
         }
       }
 
@@ -740,7 +740,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           val content = contentAsString(result)
-          content must include("Purchaser Agent Questions")
+          content must include("About the purchaser’s agent")
         }
       }
 
@@ -767,7 +767,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           val content = contentAsString(result)
-          content must not include ("Purchaser Agent Questions")
+          content must not include ("About the purchaser’s agent")
         }
       }
 
@@ -796,13 +796,13 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           val content = contentAsString(result)
 
           val prelimIndex = content.indexOf("Prelim Questions")
-          val vendorIndex = content.indexOf("Vendor Questions")
-          val purchaserIndex = content.indexOf("Purchaser Questions")
-          val purchaserAgentIndex = content.indexOf("Purchaser Agent Questions")
+          val vendorIndex = content.indexOf("About the vendor")
+          val purchaserIndex = content.indexOf("About the purchaser")
+          val purchaserAgentIndex = content.indexOf("About the purchaser’s agent")
 
-          prelimIndex must be < vendorIndex
-          vendorIndex must be < purchaserIndex
+          prelimIndex must be < purchaserIndex
           purchaserIndex must be < purchaserAgentIndex
+          purchaserAgentIndex must be < vendorIndex
         }
       }
 
@@ -830,7 +830,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           val content = contentAsString(result)
-          content must include("Purchaser Questions")
+          content must include("About the purchaser")
         }
       }
 
@@ -858,7 +858,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           val content = contentAsString(result)
-          content must include("Purchaser Questions")
+          content must include("About the purchaser")
         }
       }
 
@@ -886,7 +886,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           val content = contentAsString(result)
-          content must include("Purchaser Agent Questions")
+          content must include("About the purchaser’s agent")
         }
       }
 
@@ -914,7 +914,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           val content = contentAsString(result)
-          content must include("Purchaser Agent Questions")
+          content must include("About the purchaser’s agent")
         }
       }
 
@@ -943,7 +943,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           val content = contentAsString(result)
-          content must include("Purchaser Agent Questions")
+          content must include("About the purchaser’s agent")
         }
       }
 
@@ -970,7 +970,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           val content = contentAsString(result)
-          content must include("Transaction Questions")
+          content must include("About the transaction")
         }
       }
 
@@ -997,7 +997,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           val content = contentAsString(result)
-          content must include("Tax Calculation Questions")
+          content must include("Tax calculation")
         }
       }
       
@@ -1030,7 +1030,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           val content = contentAsString(result)
-          content must include("Tax Calculation Questions")
+          content must include("Tax calculation")
           content must include("You must complete all previous sections before starting")
         }
       }
@@ -1072,7 +1072,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual OK
           val content = contentAsString(result)
 
-          content must include("Transaction Questions")
+          content must include("About the transaction")
           content must include(messages(application)("tasklist.invalid"))
         }
       }
@@ -1107,7 +1107,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual OK
           val content = contentAsString(result)
 
-          content must include("Transaction Questions")
+          content must include("About the transaction")
           content must not include messages(application)("tasklist.invalid")
         }
       }
@@ -1149,7 +1149,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual OK
           val content = contentAsString(result)
 
-          content must include("Land Questions")
+          content must include("About the land")
           content must include(messages(application)("tasklist.invalid"))
         }
       }
@@ -1184,7 +1184,7 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual OK
           val content = contentAsString(result)
 
-          content must include("Land Questions")
+          content must include("About the land")
           content must not include messages(application)("tasklist.invalid")
         }
       }
@@ -1310,8 +1310,8 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual OK
           val content = contentAsString(result)
 
-          content must include("Transaction Questions")
-          content must include("Land Questions")
+          content must include("About the transaction")
+          content must include("About the land")
 
           val invalidCount = messages(application)("tasklist.invalid").r.findAllMatchIn(content).size
           invalidCount must be >= 2

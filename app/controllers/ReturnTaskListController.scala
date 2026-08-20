@@ -85,10 +85,10 @@ class ReturnTaskListController @Inject()(
               SectionStatus(ReturnSection.Lease, false, Nil, Nil, Nil))
 
             val sections = List(
-              Some(VendorTaskList.build(fullReturn)),
-              if(VendorTaskList.isVendorComplete(fullReturn)) Some(VendorAgentTaskList.build(fullReturn)) else None,
               Some(PurchaserTaskList.build(fullReturn)),
               if(PurchaserTaskList.isPurchaserComplete(fullReturn)) Some(PurchaserAgentTaskList.build(fullReturn)) else None,
+              Some(VendorTaskList.build(fullReturn)),
+              if(VendorTaskList.isVendorComplete(fullReturn)) Some(VendorAgentTaskList.build(fullReturn)) else None,
               Some(LandTaskList.build(fullReturn, landStatus)),
               if (PropertyTypeHelper.isResidentialProperty(fullReturn)) Some(UkResidencyTaskList.build(fullReturn)) else None,
               Some(TransactionTaskList.build(fullReturn, transactionStatus)),
