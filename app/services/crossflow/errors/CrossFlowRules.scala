@@ -392,9 +392,10 @@ object Cf12_Dummy8998_8999EffDate extends LandGuardRule:
   protected override def inlineErrorKey = "crossflow.land.Cf-12.inline"
 
 
-/** Cf-13 — F18 dummy code 8999 must not be used when contract date is on/after
+/** Cf-13 — F18 dummy code 8999 must not be used when contract date is blank or on/after
  * the Scotland Act date (01/05/2012).
- * Spec: "if the date of contract is on or after the scotland act date (01 05 2012) then the code is invalid if it is 8999"
+ * Spec: "if the date of contract is on or after the scotland act date (01 05 2012) then the code is invalid if it is 8999.
+ * if the date of contract is blank then the code is invalid"
  */
 object Cf13_Dummy8999ContractDate extends LandGuardRule:
   val id      = "Cf-13"
@@ -406,16 +407,17 @@ object Cf13_Dummy8999ContractDate extends LandGuardRule:
     land.localAuthorityNumber.contains("8999")
 
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
-    contractDate(ua).forall(_.isBefore(Dates.scotlandActDate))
+    contractDate(ua).exists(_.isBefore(Dates.scotlandActDate))
 
   protected override def headingKey = "crossflow.land.heading"
   protected def messageKey              = "crossflow.land.Cf-13.body"
   protected override def inlineErrorKey = "crossflow.land.Cf-13.inline"
 
 
-/** Cf-14 — F18 dummy code 8998 must not be used when contract date is on/after
+/** Cf-14 — F18 dummy code 8998 must not be used when contract date is blank or is on/after
  * the CR223 date (01/04/2015).
- * Spec: "if the date of contract is on or after the CR223 date (01 04 2015) then the code is invalid if it is 8998"
+ * Spec: "if the date of contract is on or after the CR223 date (01 04 2015) then the code is invalid if it is 8998.
+ * if the date of contract is blank then the code is invalid"
  */
 object Cf14_Dummy8998ContractDate extends LandGuardRule:
   val id      = "Cf-14"
@@ -427,7 +429,7 @@ object Cf14_Dummy8998ContractDate extends LandGuardRule:
     land.localAuthorityNumber.contains("8998")
 
   protected def isValid(land: Land, ua: UserAnswers): Boolean =
-    contractDate(ua).forall(_.isBefore(Dates.cr223Effective))
+    contractDate(ua).exists(_.isBefore(Dates.cr223Effective))
 
   protected override def headingKey = "crossflow.land.heading"
   protected def messageKey              = "crossflow.land.Cf-14.body"
