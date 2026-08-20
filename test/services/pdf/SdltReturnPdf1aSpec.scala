@@ -291,10 +291,70 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
         readField(result, "land_postcode_2") mustBe Some("")
       }
 
-      "must write total consideration as whole number string" in {
+      "must write total consideration in whole pounds with thousand seperators" in {
         val r      = withTransaction(Transaction(totalConsideration = Some("250000.00")))
         val result = fill(r)
-        readField(result, "calculation_totalConsideration") mustBe Some("250000")
+        readField(result, "calculation_totalConsideration") mustBe Some("250,000")
+      }
+
+      "must write an amount under one thousand with no separator" in {
+        val r      = withTransaction(Transaction(totalConsideration = Some("999.00")))
+        val result = fill(r)
+        readField(result, "calculation_totalConsideration") mustBe Some("999")
+      }
+
+      "must write exactly one thousand with a separator" in {
+        val r      = withTransaction(Transaction(totalConsideration = Some("1000.00")))
+        val result = fill(r)
+        readField(result, "calculation_totalConsideration") mustBe Some("1,000")
+      }
+
+      "must write an amount in the millions with two separators" in {
+        val r      = withTransaction(Transaction(totalConsideration = Some("1250000.00")))
+        val result = fill(r)
+        readField(result, "calculation_totalConsideration") mustBe Some("1,250,000")
+      }
+
+      "must write the largest amount a user can enter" in {
+        val r      = withTransaction(Transaction(totalConsideration = Some("9999999999.00")))
+        val result = fill(r)
+        readField(result, "calculation_totalConsideration") mustBe Some("9,999,999,999")
+      }
+
+      "must write a zero amount as a single digit" in {
+        val r      = withTransaction(Transaction(totalConsideration = Some("0.00")))
+        val result = fill(r)
+        readField(result, "calculation_totalConsideration") mustBe Some("0")
+      }
+
+      "must leave the amount blank when it is not answered" in {
+        val r      = withTransaction(Transaction(totalConsideration = None))
+        val result = fill(r)
+        readField(result, "calculation_totalConsideration") mustBe Some("")
+      }
+
+      "must leave the amount blank when it is an empty string" in {
+        val r      = withTransaction(Transaction(totalConsideration = Some("")))
+        val result = fill(r)
+        readField(result, "calculation_totalConsideration") mustBe Some("")
+      }
+
+      "must write the relief amount with a separator" in {
+        val r      = withTransaction(Transaction(reliefAmount = Some("800000.00")))
+        val result = fill(r)
+        readField(result, "calculation_claimingReliefAmount") mustBe Some("800,000")
+      }
+
+      "must write the consideration vat amount with a separator" in {
+        val r      = withTransaction(Transaction(considerationVAT = Some("4000.00")))
+        val result = fill(r)
+        readField(result, "calculation_totalConsiderationVatAmount") mustBe Some("4,000")
+      }
+
+      "must write the linked transactions total with a separator" in {
+        val r      = withTransaction(Transaction(totalConsiderationLinked = Some("700000.00")))
+        val result = fill(r)
+        readField(result, "calculation_linkedTransactionTotalConsideration") mustBe Some("700,000")
       }
 
       "must write forms of consideration as 2 digit codes" in {
@@ -330,16 +390,16 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
           taxDueNPV = Some("1500.00")
         )))
         val result = fill(r)
-        readField(result, "calculation_taxDueUserEntered") mustBe Some("12500")
-        readField(result, "calculation_amountPaid") mustBe Some("1300")
-        readField(result, "lease_totalPremiumTax") mustBe Some("1400")
-        readField(result, "lease_totalNpvTax") mustBe Some("1500")
+        readField(result, "calculation_taxDueUserEntered") mustBe Some("12,500")
+        readField(result, "calculation_amountPaid") mustBe Some("1,300")
+        readField(result, "lease_totalPremiumTax") mustBe Some("1,400")
+        readField(result, "lease_totalNpvTax") mustBe Some("1,500")
       }
 
       "must write amount paid from taxCalculation" in {
-        val r = baseReturn.copy(taxCalculation = Some(TaxCalculation(amountPaid = Some("12500"))))
+        val r = baseReturn.copy(taxCalculation = Some(TaxCalculation(amountPaid = Some("12500.00"))))
         val result = fill(r)
-        readField(result, "calculation_amountPaid") mustBe Some("12500")
+        readField(result, "calculation_amountPaid") mustBe Some("12,500")
       }
 
       "must write lease type when lease is present" in {
@@ -488,14 +548,14 @@ class SdltReturnPdf1aSpec extends SpecBase with MockitoSugar {
             transactionDescription  = Some("Freehold"),
             effectiveDate           = Some("25/12/2024"),
             contractDate            = Some("01/11/2024"),
-            totalConsideration      = Some("500000"),
+            totalConsideration      = Some("500000.00"),
             isLinked                = Some("no"),
             restrictionsAffectInterest = Some("no"),
             isLandExchanged         = Some("no"),
             isPursuantToPreviousOption = Some("no"),
             claimingRelief          = Some("no")
           )),
-          taxCalculation = Some(TaxCalculation(taxDue = Some("15000"), amountPaid = Some("15000"), includesPenalty = Some("no"))),
+          taxCalculation = Some(TaxCalculation(taxDue = Some("15000.00"), amountPaid = Some("15000.00"), includesPenalty = Some("no"))),
           land           = Some(Seq(Land(
             propertyType         = Some("01"),
             houseNumber          = Some("1"),

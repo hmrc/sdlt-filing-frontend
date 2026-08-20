@@ -232,7 +232,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
       "must write total consideration for business" in {
         val r = withTransaction(Transaction(totalConsiderationBusiness = Some("5000.00")))
         val result = fill(Some(baseLand), r, true)
-        readField(result, "transaction_totalConsideration") mustBe Some("5000")
+        readField(result, "transaction_totalConsideration") mustBe Some("5,000")
       }
 
       "must fill only the selected commercial use checkboxes" in {
@@ -351,7 +351,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
       "must not fill any transaction section fields when firstTimeThrough is false" in {
         val r = withTransaction(Transaction(
           includesStock    = Some("yes"),
-          totalConsideration = Some("5000")
+          totalConsideration = Some("5000.00")
         ))
         val result = fill(Some(baseLand), r, false)
 
@@ -427,8 +427,8 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           landArea = Some("100.000")
         )
         val r = withLease(Lease(
-          startingRent = Some("2000"),
-          netPresentValue = Some("1897"),
+          startingRent = Some("2000.00"),
+          netPresentValue = Some("1897.00"),
           laterRentKnown = Some("No")
         ))
         val result = fill(Some(l), r, false, Sdlt4a)
@@ -450,11 +450,11 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
           contractStartDate = Some("01/04/2024"),
           contractEndDate = Some("01/04/2026"),
           rentFreePeriod = Some("5"),
-          startingRent = Some("2000"),
+          startingRent = Some("2000.00"),
           startingRentEndDate = Some("01/04/2025"),
-          VATAmount = Some("20"),
-          totalPremiumPayable = Some("500000"),
-          netPresentValue = Some("1897")
+          VATAmount = Some("20.00"),
+          totalPremiumPayable = Some("500000.00"),
+          netPresentValue = Some("1897.00")
         ))
         val result = fill(Some(baseLand), r, false)
 
@@ -466,13 +466,13 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
         readField(result, "lease_contractEndDate_month") mustBe Some("04")
         readField(result, "lease_contractEndDate_year") mustBe Some("2026")
         readField(result, "lease_rentFreePeriod") mustBe Some("5")
-        readField(result, "lease_startingRent") mustBe Some("2000")
+        readField(result, "lease_startingRent") mustBe Some("2,000")
         readField(result, "lease_startingRentEndDate_day") mustBe Some("01")
         readField(result, "lease_startingRentEndDate_month") mustBe Some("04")
         readField(result, "lease_startingRentEndDate_year") mustBe Some("2025")
         readField(result, "lease_vatAmount") mustBe Some("20")
-        readField(result, "lease_premiumPaid") mustBe Some("500000")
-        readField(result, "lease_netPresentValue") mustBe Some("1897")
+        readField(result, "lease_premiumPaid") mustBe Some("500,000")
+        readField(result, "lease_netPresentValue") mustBe Some("1,897")
       }
 
       "must fill no checkbox when startingRentLaterKnown is no" in {
@@ -491,8 +491,8 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
         )
         val result = fill(Some(baseLand), r, false)
 
-        readField(result, "lease_totalPremiumTax") mustBe Some("1400")
-        readField(result, "lease_totalNpvTax") mustBe Some("1500")
+        readField(result, "lease_totalPremiumTax") mustBe Some("1,400")
+        readField(result, "lease_totalNpvTax") mustBe Some("1,500")
       }
 
       "must write additional text lease fields" in {
@@ -614,7 +614,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
             transactionDescription = Some("Leasehold"),
             effectiveDate = Some("25/12/2024"),
             contractDate = Some("01/11/2024"),
-            totalConsideration = Some("500000"),
+            totalConsideration = Some("500000.00"),
             isLinked = Some("no"),
             restrictionsAffectInterest = Some("no"),
             isLandExchanged = Some("no"),
@@ -630,7 +630,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
             isDependantOnFutureEvent = Some("yes"),
             agreedToDeferPayment = Some("no")
           )),
-          taxCalculation = Some(TaxCalculation(taxDue = Some("15000"), amountPaid = Some("15000"), includesPenalty = Some("no"))),
+          taxCalculation = Some(TaxCalculation(taxDue = Some("15000.00"), amountPaid = Some("15000.00"), includesPenalty = Some("no"))),
           land = Some(Seq(
             Land(
             landID = Some("LND001"),
@@ -676,11 +676,11 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
             contractStartDate = Some("01/04/2024"),
             contractEndDate = Some("01/04/2026"),
             rentFreePeriod = Some("5"),
-            startingRent = Some("2000"),
+            startingRent = Some("2000.00"),
             startingRentEndDate = Some("01/04/2025"),
-            VATAmount = Some("20"),
-            totalPremiumPayable = Some("500000"),
-            netPresentValue = Some("1897"),
+            VATAmount = Some("20.00"),
+            totalPremiumPayable = Some("500000.00"),
+            netPresentValue = Some("1897.00"),
             termsSurrendered = Some("Surrender & Regrant"),
             breakClauseDate = Some("01/04/2022"),
             rentReviewFrequency = Some("12"),

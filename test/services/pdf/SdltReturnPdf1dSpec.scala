@@ -353,7 +353,7 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
         returnInfo = Some(ReturnInfo(returnID = Some("RET999"), landCertForEachProp = Some("yes"), mainPurchaserID = Some("PUR0001"))),
         submission = Some(Submission(UTRN = Some("UTR-1234"))),
         transaction = Some(Transaction(transactionDescription = Some("Freehold"), effectiveDate = Some("25/12/2024"), contractDate = Some("01/11/2024"),
-          totalConsideration = Some("500000"), isLinked = Some("no")
+          totalConsideration = Some("500000.00"), isLinked = Some("no")
         )),
         land = Some(Seq(Land(
           propertyType = Some("01"), houseNumber = Some("1"), address1 = Some("Test Street"),
@@ -414,7 +414,7 @@ class SdltReturnPdf1dSpec extends SpecBase with MockitoSugar {
         returnInfo = Some(ReturnInfo(returnID = Some("RET999"), landCertForEachProp = Some("yes"), mainPurchaserID = Some("PUR0001"))),
         submission = Some(Submission(UTRN = Some("UTR-1234"))),
         transaction = Some(Transaction(transactionDescription = Some("Freehold"), effectiveDate = Some("25/12/2024"), contractDate = Some("01/11/2024"),
-          totalConsideration = Some("500000"), isLinked = Some("no")
+          totalConsideration = Some("500000.00"), isLinked = Some("no")
         )),
         purchaser = Some(Seq(Purchaser(surname = Some("Purchaser One"), postcode = Some("ST2 2BB"), registrationNumber = Some("123456"), placeOfRegistration = Some("London"), purchaserID = Some("PUR0001")),
           Purchaser(title = Some("MR"), surname = Some("Jones"), forename1 = Some("Jane"), forename2 = Some("Mary"),
