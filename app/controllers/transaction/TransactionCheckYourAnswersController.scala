@@ -38,6 +38,7 @@ import viewmodels.checkAnswers.transaction.*
 import views.html.transaction.TransactionCheckYourAnswersView
 import services.crossflow.fields.CrossFlowValidationService
 import services.crossflow.*
+import services.lease.LeaseService
 import services.taxCalculation.UpdateTaxCalcService
 
 import javax.inject.{Inject, Singleton}
@@ -56,6 +57,7 @@ class TransactionCheckYourAnswersController @Inject()(
   checkAnswersService: CheckAnswersService,
   backendConnector: StampDutyLandTaxConnector,
   populateTransactionService: PopulateTransactionService,
+  leaseService: LeaseService,
   crossFlow: CrossFlowValidationService,
   val controllerComponents: MessagesControllerComponents,
   view: TransactionCheckYourAnswersView,
@@ -121,11 +123,25 @@ class TransactionCheckYourAnswersController @Inject()(
         } yield ()
 
       case "updateLease" =>
-        for {
-          lease <- Lease.from(userAnswers)
-          updateLeaseRequest <- UpdateLeaseRequest.from(userAnswers, lease)
-          _ <- backendConnector.updateLease(updateLeaseRequest)
-        } yield ()
+        userAnswers.fullReturn.flatMap(_.lease) match {
+          case Some(existingLease) =>
+            val lease =
+              if (leaseService.isOnOrAfterAnnualRentCutOff(userAnswers)) {
+                existingLease.copy(isAnnualRentOver1000 = Some("NO"))
+              } else {
+                existingLease
+              }
+
+            println(s"LEASE UPDATED $lease")
+
+            for {
+              updateLeaseRequest <- UpdateLeaseRequest.from(userAnswers, lease)
+              _ <- backendConnector.updateLease(updateLeaseRequest)
+            } yield ()
+
+          case None =>
+            Future.unit
+        }
 
       case "deleteLease" =>
         for {
