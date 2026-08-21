@@ -19,6 +19,7 @@ package controllers.submission
 import controllers.actions.*
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.crossflow.fields.CrossFlowValidationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.tasklist.SubmissionTaskList
 import views.html.submission.SubmissionFailedView
@@ -31,14 +32,15 @@ class SubmissionFailedController @Inject()(
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        val controllerComponents: MessagesControllerComponents,
-                                       view: SubmissionFailedView
+                                       view: SubmissionFailedView,
+                                       crossFlowValidationService: CrossFlowValidationService
                                      ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (activatedIdentify andThen getData andThen requireData) {
     implicit request =>
       val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(fullReturn => SubmissionTaskList.canStartSubmission(fullReturn, crossFlowValidationService.failureCount(request.userAnswers) > 0))) {
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
         val maybeErrorMessage =

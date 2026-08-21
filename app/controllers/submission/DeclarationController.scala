@@ -21,6 +21,7 @@ import models.Mode
 import pages.submission.WhoAreYouSubmittingForPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.crossflow.fields.CrossFlowValidationService
 import services.submission.ChrisSubmissionService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -39,6 +40,7 @@ class DeclarationController @Inject()(
                                        requireData: DataRequiredAction,
                                        resubmissionCheck: ResubmissionCheckAction,
                                        chrisSubmissionService: ChrisSubmissionService,
+                                       crossFlowValidationService: CrossFlowValidationService,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: DeclarationView
                                      ) extends FrontendBaseController with I18nSupport {
@@ -48,7 +50,7 @@ class DeclarationController @Inject()(
 
       val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(fullReturn => SubmissionTaskList.canStartSubmission(fullReturn, crossFlowValidationService.failureCount(request.userAnswers) > 0))) {
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
         request.userAnswers.get(WhoAreYouSubmittingForPage) match {
@@ -67,7 +69,7 @@ class DeclarationController @Inject()(
 
       val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(fullReturn => SubmissionTaskList.canStartSubmission(fullReturn, crossFlowValidationService.failureCount(request.userAnswers) > 0))) {
         Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       } else {
         request.userAnswers.get(WhoAreYouSubmittingForPage) match {
