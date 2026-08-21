@@ -61,7 +61,9 @@ class FreeholdSelfAssessedSdltSelfAssessmentController @Inject()(
     implicit request =>
       sdltCalculationService.whenInFlow(FreeholdSelfAssessed) {
         val prepared = request.userAnswers.get(FreeholdSelfAssessedAmountPage).fold(form)(form.fill)
-        Ok(view(prepared, postAction(mode), sectionKey))
+        val showLinkedTransactionNotification = request.userAnswers.fullReturn
+          .flatMap(_.transaction.flatMap(_.isLinked)).exists(_.equalsIgnoreCase("YES"))
+        Ok(view(prepared, postAction(mode), sectionKey, showLinkedTransactionNotification))
       }
   }
 

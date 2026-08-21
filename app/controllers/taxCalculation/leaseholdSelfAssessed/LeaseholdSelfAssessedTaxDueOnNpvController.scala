@@ -58,12 +58,14 @@ class LeaseholdSelfAssessedTaxDueOnNpvController @Inject()(
 
         npv match {
           case Some(npv) =>
+            val showLinkedTransactionNotification = request.userAnswers.fullReturn
+              .flatMap(_.transaction.flatMap(_.isLinked)).exists(_.equalsIgnoreCase("YES"))
             val preparedForm = request.userAnswers.get(LeaseholdSelfAssessedNpvTaxPage) match {
               case None => form
               case Some(value) => form.fill(value)
             }
 
-            Ok(view(preparedForm, npv, mode))
+            Ok(view(preparedForm, npv, mode, showLinkedTransactionNotification))
 
           case None =>
             Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
