@@ -145,15 +145,14 @@ class PdfFieldWriter(form: PDAcroForm, ctx: String) extends LoggingUtil {
     }
 
   /**
-   * Set a whole decimal field as a plain string, removing any 0s after the decimal point.
+   * Set a money field in whole pounds, so "400000.00" is written as "400,000".
    */
   def wholeDecimal(fieldName: String, value: Option[String]): Unit =
     value.map(_.trim).filter(_.nonEmpty) match {
       case None => text(fieldName, None)
-      case Some(s) =>
-        val idx = s.indexOf('.')
-        if (idx < 0) text(fieldName, Some(s))
-        else text(fieldName, Some(s.substring(0, idx)))
+      case Some(amount) =>
+        val pounds = Try(BigDecimal(amount).toBigInt).map(p => f"$p%,d").getOrElse(amount)
+        text(fieldName, Some(pounds))
     }
 
   /**
