@@ -17,7 +17,7 @@
 package services.lease
 
 import base.SpecBase
-import constants.FullReturnConstants.completeTransaction
+import constants.FullReturnConstants.{completeFullReturn, completeTransaction}
 import models.{FullReturn, UserAnswers}
 import models.prelimQuestions.TransactionType.{ConveyanceTransferLease, GrantOfLease}
 import org.scalatest.matchers.must.Matchers
@@ -135,6 +135,59 @@ class LeaseServiceSpec extends SpecBase with Matchers {
 
       service.leaseFlowValidationCheck(userAnswers) mustBe
         Some(controllers.routes.JourneyRecoveryController.onPageLoad())
+    }
+  }
+
+  "isOnOrAfterAnnualRentCutOff" - {
+
+    "must return true if transaction effective date is equal to annual rule cut off date" in {
+      val userAnswers = emptyUserAnswers.copy(
+        fullReturn = Some(completeFullReturn.copy(
+          submission = None,
+          transaction = Some(completeTransaction.copy(
+            effectiveDate = Some("2016-02-16"))))))
+
+      service.isOnOrAfterAnnualRentCutOff(userAnswers) mustBe true
+    }
+
+    "must return true if transaction effective date is equal to annual rule cut off date with alternate date format" in {
+      val userAnswers = emptyUserAnswers.copy(
+        fullReturn = Some(completeFullReturn.copy(
+          submission = None,
+          transaction = Some(completeTransaction.copy(
+            effectiveDate = Some("16/02/2016"))))))
+
+      service.isOnOrAfterAnnualRentCutOff(userAnswers) mustBe true
+    }
+
+    "must return true if transaction effective date is after annual rule cut off date" in {
+      val userAnswers = emptyUserAnswers.copy(
+        fullReturn = Some(completeFullReturn.copy(
+          submission = None,
+          transaction = Some(completeTransaction.copy(
+            effectiveDate = Some("2016-02-17"))))))
+
+      service.isOnOrAfterAnnualRentCutOff(userAnswers) mustBe true
+    }
+
+    "must return false if transaction effective date is before annual rule cut off date" in {
+      val userAnswers = emptyUserAnswers.copy(
+        fullReturn = Some(completeFullReturn.copy(
+          submission = None,
+          transaction = Some(completeTransaction.copy(
+            effectiveDate = Some("2016-02-15"))))))
+
+      service.isOnOrAfterAnnualRentCutOff(userAnswers) mustBe false
+    }
+
+    "must return false if transaction effective date is missing" in {
+      val userAnswers = emptyUserAnswers.copy(
+        fullReturn = Some(completeFullReturn.copy(
+          submission = None,
+          transaction = Some(completeTransaction.copy(
+            effectiveDate = None)))))
+
+      service.isOnOrAfterAnnualRentCutOff(userAnswers) mustBe false
     }
   }
 }

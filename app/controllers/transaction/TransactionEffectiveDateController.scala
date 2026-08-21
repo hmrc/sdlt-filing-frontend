@@ -20,12 +20,14 @@ import controllers.actions.*
 import forms.transaction.TransactionEffectiveDateFormProvider
 import models.Mode
 import navigation.Navigator
+import pages.lease.LeaseThousandPoundsThresholdPage
 import pages.transaction.TransactionEffectiveDatePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.transaction.TransactionEffectiveDateView
+import services.lease.LeaseService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,6 +42,7 @@ class TransactionEffectiveDateController @Inject()(
                                         requireData: DataRequiredAction,
                                         statusCheck: CheckSubmissionStatusAction,
                                         formProvider: TransactionEffectiveDateFormProvider,
+                                        leaseService: LeaseService,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: TransactionEffectiveDateView
                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
@@ -69,7 +72,14 @@ class TransactionEffectiveDateController @Inject()(
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(TransactionEffectiveDatePage, value))
-            _              <- sessionRepository.set(updatedAnswers)
+            finalAnswers <- Future.fromTry {
+              if (leaseService.isOnOrAfterAnnualRentCutOff(updatedAnswers)) {
+                updatedAnswers.set(LeaseThousandPoundsThresholdPage, false)
+              } else {
+                scala.util.Success(updatedAnswers)
+              }
+            }
+            _              <- sessionRepository.set(finalAnswers)
           } yield Redirect(navigator.nextPage(TransactionEffectiveDatePage, mode, updatedAnswers))
       )
   }
