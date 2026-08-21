@@ -35,17 +35,21 @@ import javax.inject.Singleton
 @Singleton
 object SubmissionTaskList {
 
-  def build(fullReturn: FullReturn)
+  def build(fullReturn: FullReturn,
+            crossFlowErrorCheck: Boolean)
            (implicit messages: Messages,
             appConfig: FrontendAppConfig): TaskListSection =
     TaskListSection(
       heading = messages("tasklist.submissionQuestion.heading"),
       rows = Seq(
-        buildSubmissionRow(fullReturn)
+        buildSubmissionRow(fullReturn, crossFlowErrorCheck)
       )
     )
-
-  def buildSubmissionRow(fullReturn: FullReturn)(implicit messages: Messages, appConfig: FrontendAppConfig): TaskListSectionRow = {
+  
+  def buildSubmissionRow(fullReturn: FullReturn,
+                         crossFlowErrorCheck: Boolean)
+                        (implicit messages: Messages,
+                         appConfig: FrontendAppConfig): TaskListSectionRow = {
     val url = fullReturn.submission match {
       case Some(submission) if submission.submissionID.isDefined =>
         controllers.submission.routes.SubmissionCompleteController.onPageLoad().url
@@ -60,7 +64,7 @@ object SubmissionTaskList {
       },
       messageKey = _ => "tasklist.submissionQuestion.details",
       hint = fullReturn => {
-        if (!canStartSubmission(fullReturn))
+        if (!canStartSubmission(fullReturn, crossFlowErrorCheck))
           Some("tasklist.submissionQuestion.hint")
         else
           None
@@ -83,20 +87,19 @@ object SubmissionTaskList {
           TransactionTaskList.transactionRowBuilder(fullReturn, viewmodels.tasklist.TransactionTaskList.noFailures),
           TaxCalculationTaskList.taxCalculationRowBuilder(fullReturn)
         )
-
         val conditional = Seq(
           Option.when(isResidencyRequired(fullReturn))(UkResidencyTaskList.ukResidencyRowBuilder(fullReturn)),
           Option.when(isLeaseRequired(fullReturn))(
             LeaseTaskList.leaseRowBuilder(fullReturn, viewmodels.tasklist.LeaseTaskList.noFailures)
           )
         ).flatten
-
         mandatory ++ conditional
       }
     ).build(fullReturn)
   }
 
-  def canStartSubmission(fullReturn: FullReturn): Boolean = {
+  def canStartSubmission(fullReturn: FullReturn,
+                         crossFlowErrorCheck: Boolean): Boolean = {
     isVendorComplete(fullReturn) &&
     isPurchaserComplete(fullReturn) &&
     isLandComplete(fullReturn) &&
@@ -105,7 +108,8 @@ object SubmissionTaskList {
     isVendorAgentComplete(fullReturn) &&
     isPurchaserAgentComplete(fullReturn) &&
     (!isLeaseRequired(fullReturn) || isLeaseComplete(fullReturn)) &&
-    (!isResidencyRequired(fullReturn) || isResidencyComplete(fullReturn))
+    (!isResidencyRequired(fullReturn) || isResidencyComplete(fullReturn)) &&
+      crossFlowErrorCheck
   }
 
   private def isLeaseRequired(fullReturn: FullReturn): Boolean = {

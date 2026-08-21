@@ -26,6 +26,7 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.crossflow.fields.CrossFlowValidationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.tasklist.SubmissionTaskList
 import views.html.submission.WhoAreYouSubmittingForView
@@ -44,7 +45,8 @@ class WhoAreYouSubmittingForController @Inject()(
                                                   resubmissionCheck: ResubmissionCheckAction,
                                                   formProvider: WhoAreYouSubmittingForFormProvider,
                                                   val controllerComponents: MessagesControllerComponents,
-                                                  view: WhoAreYouSubmittingForView
+                                                  view: WhoAreYouSubmittingForView,
+                                                  crossFlowValidationService: CrossFlowValidationService
                                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form: Form[WhoAreYouSubmittingFor] = formProvider()
@@ -54,7 +56,7 @@ class WhoAreYouSubmittingForController @Inject()(
 
       val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(fullReturn => SubmissionTaskList.canStartSubmission(fullReturn, crossFlowValidationService.failureCount(request.userAnswers) > 0))) {
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
         val preparedForm = request.userAnswers.get(WhoAreYouSubmittingForPage) match {
@@ -71,7 +73,7 @@ class WhoAreYouSubmittingForController @Inject()(
 
       val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(fullReturn => SubmissionTaskList.canStartSubmission(fullReturn, crossFlowValidationService.failureCount(request.userAnswers) > 0))) {
         Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       } else {
         form.bindFromRequest().fold(

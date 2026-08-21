@@ -23,6 +23,7 @@ import models.GetReturnByRefRequest
 import pages.submission.SubmissionFailedPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import services.crossflow.fields.CrossFlowValidationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -39,7 +40,8 @@ class LoadingScreenController @Inject()(
                                          resubmissionCheck: ResubmissionCheckAction,
                                          connector: StampDutyLandTaxConnector,
                                          view: LoadingScreenView,
-                                         val controllerComponents: MessagesControllerComponents
+                                         val controllerComponents: MessagesControllerComponents,
+                                         crossFlowValidationService: CrossFlowValidationService
                                        )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   private val SucceededStatuses = Set("SUBMITTED", "SUBMITTED_NO_RECEIPT")
@@ -59,7 +61,7 @@ class LoadingScreenController @Inject()(
 
       val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(fullReturn => SubmissionTaskList.canStartSubmission(fullReturn, crossFlowValidationService.failureCount(request.userAnswers) > 0))) {
         Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       } else if (request.userAnswers.get(SubmissionFailedPage).contains(true)) {
         Future.successful(Redirect(controllers.submission.routes.SubmissionFailedController.onPageLoad()))

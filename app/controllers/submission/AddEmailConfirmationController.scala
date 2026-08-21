@@ -24,6 +24,7 @@ import pages.submission.AddEmailConfirmationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.crossflow.fields.CrossFlowValidationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.tasklist.SubmissionTaskList
 import views.html.submission.AddEmailConfirmationView
@@ -42,7 +43,8 @@ class AddEmailConfirmationController @Inject()(
                                                   resubmissionCheck: ResubmissionCheckAction,
                                                   formProvider: AddEmailConfirmationFormProvider,
                                                   val controllerComponents: MessagesControllerComponents,
-                                                  view: AddEmailConfirmationView
+                                                  view: AddEmailConfirmationView,
+                                                  crossFlowValidationService: CrossFlowValidationService,
                                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
@@ -52,7 +54,7 @@ class AddEmailConfirmationController @Inject()(
 
       val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(fullReturn => SubmissionTaskList.canStartSubmission(fullReturn, crossFlowValidationService.failureCount(request.userAnswers) > 0))) {
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
         val preparedForm = request.userAnswers.get(AddEmailConfirmationPage) match {
@@ -69,7 +71,7 @@ class AddEmailConfirmationController @Inject()(
 
       val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(fullReturn => SubmissionTaskList.canStartSubmission(fullReturn, crossFlowValidationService.failureCount(request.userAnswers) > 0))) {
         Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       } else {
         form.bindFromRequest().fold(
