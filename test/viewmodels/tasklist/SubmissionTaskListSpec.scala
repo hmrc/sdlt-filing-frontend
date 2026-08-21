@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import constants.FullReturnConstants.*
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
+import services.crossflow.{CrossFlowTarget, PageId, ReturnSection, SectionStatus}
 
 class SubmissionTaskListSpec extends SpecBase {
 
@@ -28,6 +29,15 @@ class SubmissionTaskListSpec extends SpecBase {
   private val fullReturnIncompleteSubmission = fullReturnComplete.copy(
     submission = Some(completeSubmission.copy(submissionID = None)))
   private val fullReturnMissingSubmission= fullReturnComplete.copy(submission = None)
+
+  private def failingStatus(section: ReturnSection, ruleId: String): SectionStatus =
+    SectionStatus(
+      section     = section,
+      hasFailures = true,
+      ruleIds     = Seq(ruleId),
+      messageKeys = Seq(s"crossflow.$ruleId.message"),
+      targets     = Seq(CrossFlowTarget(PageId("page"), "value"))
+    )
 
   "SubmissionTaskList" - {
 
@@ -39,7 +49,7 @@ class SubmissionTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = SubmissionTaskList.build(fullReturnComplete)
+          val result = SubmissionTaskList.build(fullReturnComplete, LandTaskList.noFailures, TransactionTaskList.noFailures, LeaseTaskList.noFailures)
 
           result mustBe a[TaskListSection]
           result.heading mustBe messagesInstance("tasklist.submissionQuestion.heading")
@@ -54,7 +64,7 @@ class SubmissionTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = SubmissionTaskList.build(emptyFullReturn)
+          val result = SubmissionTaskList.build(emptyFullReturn, LandTaskList.noFailures, TransactionTaskList.noFailures, LeaseTaskList.noFailures)
 
           result mustBe a[TaskListSection]
           result.heading mustBe messagesInstance("tasklist.submissionQuestion.heading")
@@ -464,6 +474,53 @@ class SubmissionTaskListSpec extends SpecBase {
         }
       }
 
+      "must show 'Cannot start yet' status when land has crossflow errors" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = SubmissionTaskList.buildSubmissionRow(
+            fullReturnMissingSubmission,
+            landStatus = failingStatus(ReturnSection.Land, "F17-1")
+          )
+
+          result.status mustBe TLCannotStart
+        }
+      }
+
+      "must show 'Cannot start yet' status when the transaction has crossflow errors" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = SubmissionTaskList.buildSubmissionRow(
+            fullReturnMissingSubmission,
+            transactionStatus = failingStatus(ReturnSection.Transaction, "F23-32")
+          )
+
+          result.status mustBe TLCannotStart
+        }
+      }
+
+      "must show 'Cannot start yet' status when the lease has crossflow errors" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = SubmissionTaskList.buildSubmissionRow(
+            fullReturnMissingSubmission,
+            leaseStatus = failingStatus(ReturnSection.Lease, "F28-1")
+          )
+
+          result.status mustBe TLCannotStart
+        }
+      }
     }
 
     ".canStartSubmission" - {
@@ -678,7 +735,7 @@ class SubmissionTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val section = SubmissionTaskList.build(fullReturnComplete)
+          val section = SubmissionTaskList.build(fullReturnComplete, LandTaskList.noFailures, TransactionTaskList.noFailures, LeaseTaskList.noFailures)
           val row = section.rows.head
 
           section.heading mustBe messagesInstance("tasklist.submissionQuestion.heading")
@@ -695,7 +752,7 @@ class SubmissionTaskListSpec extends SpecBase {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val section = SubmissionTaskList.build(emptyFullReturn)
+          val section = SubmissionTaskList.build(emptyFullReturn, LandTaskList.noFailures, TransactionTaskList.noFailures, LeaseTaskList.noFailures)
           val row = section.rows.head
 
           section.heading mustBe messagesInstance("tasklist.submissionQuestion.heading")
