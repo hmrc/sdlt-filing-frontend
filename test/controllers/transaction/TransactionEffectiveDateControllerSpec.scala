@@ -19,16 +19,27 @@ package controllers.transaction
 import base.SpecBase
 import controllers.routes
 import forms.transaction.TransactionEffectiveDateFormProvider
+import models.prelimQuestions.TransactionType
 import models.{NormalMode, UserAnswers}
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{verify, when}
+import org.scalatestplus.mockito.MockitoSugar.mock
+import pages.lease.LeaseThousandPoundsThresholdPage
 import pages.transaction.TransactionEffectiveDatePage
 import play.api.i18n.Messages
+import play.api.inject
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import repositories.SessionRepository
+import services.lease.LeaseService
 import utils.TimeMachine
 import views.html.transaction.TransactionEffectiveDateView
+
 import java.time.{Instant, LocalDate, ZoneOffset}
+import scala.concurrent.Future
 
 class TransactionEffectiveDateControllerSpec extends SpecBase {
 
@@ -155,6 +166,114 @@ class TransactionEffectiveDateControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must set LeaseThousandPoundsThresholdPage to false when effect date is after cut off" in {
+      val mockLeaseService = mock[LeaseService]
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockLeaseService.transactionType(any()))
+        .thenReturn(Some(TransactionType.GrantOfLease))
+
+      when(mockLeaseService.leaseFlowValidationCheck(any()))
+        .thenReturn(None)
+
+      when(mockLeaseService.isOnOrAfterAnnualRentCutOff(any()))
+        .thenReturn(true)
+
+      when(mockSessionRepository.set(any()))
+        .thenReturn(Future.successful(true))
+
+      val userAnswers =
+        emptyUserAnswers
+          .set(LeaseThousandPoundsThresholdPage, true)
+          .success
+          .value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            inject.bind[LeaseService].toInstance(mockLeaseService),
+            inject.bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+
+        val request =
+          FakeRequest(POST, transactionEffectiveDateRoute)
+            .withFormUrlEncodedBody(
+              "value.day"   -> validAnswer.getDayOfMonth.toString,
+              "value.month" -> validAnswer.getMonthValue.toString,
+              "value.year"  -> validAnswer.getYear.toString)
+
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        val answersCaptor =
+          ArgumentCaptor.forClass(classOf[UserAnswers])
+
+        verify(mockSessionRepository).set(answersCaptor.capture())
+
+        answersCaptor.getValue
+          .get(LeaseThousandPoundsThresholdPage) mustBe Some(false)
+      }
+    }
+
+    "must not overwrite LeaseThousandPoundsThresholdPage when effect date is before cut off" in {
+      val mockLeaseService = mock[LeaseService]
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockLeaseService.transactionType(any()))
+        .thenReturn(Some(TransactionType.GrantOfLease))
+
+      when(mockLeaseService.leaseFlowValidationCheck(any()))
+        .thenReturn(None)
+
+      when(mockLeaseService.isOnOrAfterAnnualRentCutOff(any()))
+        .thenReturn(false)
+
+      when(mockSessionRepository.set(any()))
+        .thenReturn(Future.successful(true))
+
+      val userAnswers =
+        emptyUserAnswers
+          .set(LeaseThousandPoundsThresholdPage, true)
+          .success
+          .value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            inject.bind[LeaseService].toInstance(mockLeaseService),
+            inject.bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+
+        val request =
+          FakeRequest(POST, transactionEffectiveDateRoute)
+            .withFormUrlEncodedBody(
+              "value.day" -> validAnswer.getDayOfMonth.toString,
+              "value.month" -> validAnswer.getMonthValue.toString,
+              "value.year" -> validAnswer.getYear.toString)
+
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        val answersCaptor =
+          ArgumentCaptor.forClass(classOf[UserAnswers])
+
+        verify(mockSessionRepository).set(answersCaptor.capture())
+
+        answersCaptor.getValue
+          .get(LeaseThousandPoundsThresholdPage) mustBe Some(true)
       }
     }
   }

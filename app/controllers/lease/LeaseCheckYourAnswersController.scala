@@ -189,7 +189,7 @@ class LeaseCheckYourAnswersController @Inject()(
       Some(AnnualStartingRentSummary.row(ua)),
       Some(LeaseStartingRentEndDateSummary.row(ua)),
       Some(LaterRentSummary.row(ua)),
-      if (isGrantOfLease(ua)) Some(LeaseThousandPoundsThresholdSummary.row(ua)) else None,
+      if (isGrantOfLease(ua) && !leaseService.isOnOrAfterAnnualRentCutOff(ua)) Some(LeaseThousandPoundsThresholdSummary.row(ua)) else None,
       Some(LeaseIsVatPayableSummary.row(ua)),
       EnterAnnualRentVatSummary.row(ua),
       if (isGrantOfLease(ua)) Some(LeaseEnterTotalPremiumPayableSummary.row(ua)) else None,

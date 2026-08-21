@@ -23,8 +23,9 @@ import forms.lease.LeaseThousandPoundsThresholdFormProvider
 import models.prelimQuestions.TransactionType
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.lease.LeaseThousandPoundsThresholdPage
 import play.api.data.Form
@@ -62,9 +63,20 @@ class LeaseThousandPoundsThresholdControllerSpec extends SpecBase with MockitoSu
 
   "LeaseThousandPoundsThreshold Controller" - {
 
-    "must return OK and the correct view for a GET when transaction type is L - Grant of Lease" in {
+    "must return OK and the correct view for a GET when transaction type is L - Grant of Lease and isOnOrAfterAnnualRentCutOff returns false " in {
+      val mockLeaseService = mock[LeaseService]
+      when(mockLeaseService.transactionType(any()))
+        .thenReturn(Some(TransactionType.GrantOfLease))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersGrantOfLease)).build()
+      when(mockLeaseService.leaseFlowValidationCheck(any()))
+        .thenReturn(None)
+
+      when(mockLeaseService.isOnOrAfterAnnualRentCutOff(any()))
+        .thenReturn(false)
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(bind[LeaseService].toInstance(mockLeaseService))
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, leaseThousandPoundsThresholdRoute)
@@ -79,10 +91,21 @@ class LeaseThousandPoundsThresholdControllerSpec extends SpecBase with MockitoSu
     }
 
     "must populate the view correctly on a GET when the question has previously been answered and when transaction type is L - Grant of Lease" in {
+      val mockLeaseService = mock[LeaseService]
+      when(mockLeaseService.transactionType(any()))
+        .thenReturn(Some(TransactionType.GrantOfLease))
+
+      when(mockLeaseService.leaseFlowValidationCheck(any()))
+        .thenReturn(None)
+
+      when(mockLeaseService.isOnOrAfterAnnualRentCutOff(any()))
+        .thenReturn(false)
 
       val userAnswers = userAnswersGrantOfLease.set(LeaseThousandPoundsThresholdPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[LeaseService].toInstance(mockLeaseService))
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, leaseThousandPoundsThresholdRoute)
@@ -95,6 +118,48 @@ class LeaseThousandPoundsThresholdControllerSpec extends SpecBase with MockitoSu
         contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
       }
     }
+
+    "must redirect to next page and set LeaseThousandPoundsThresholdPage to false when isOnOrAfterAnnualRentCutOff returns true " in {
+      val mockLeaseService = mock[LeaseService]
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockLeaseService.transactionType(any()))
+        .thenReturn(Some(TransactionType.GrantOfLease))
+
+      when(mockLeaseService.leaseFlowValidationCheck(any()))
+        .thenReturn(None)
+
+      when(mockLeaseService.isOnOrAfterAnnualRentCutOff(any()))
+        .thenReturn(true)
+
+      when(mockSessionRepository.set(any()))
+        .thenReturn(Future.successful(true))
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[LeaseService].toInstance(mockLeaseService),
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, leaseThousandPoundsThresholdRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+
+        val answersCaptor =
+          ArgumentCaptor.forClass(classOf[UserAnswers])
+
+        verify(mockSessionRepository).set(answersCaptor.capture())
+
+        answersCaptor.getValue
+          .get(LeaseThousandPoundsThresholdPage) mustBe Some(false)
+      }
+    }
+
 
     "must redirect to the next page when valid data is submitted" in {
 
