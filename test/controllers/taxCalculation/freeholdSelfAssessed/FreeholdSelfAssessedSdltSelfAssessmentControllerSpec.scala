@@ -17,6 +17,7 @@
 package controllers.taxCalculation.freeholdSelfAssessed
 
 import base.SpecBase
+import constants.FullReturnConstants.{completeTransaction, emptyFullReturn}
 import forms.taxCalculation.SdltSelfAssessmentFormProvider
 import models.taxCalculation.TaxCalculationFlow
 import models.{NormalMode, UserAnswers}
@@ -71,6 +72,21 @@ class FreeholdSelfAssessedSdltSelfAssessmentControllerSpec extends SpecBase with
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual expected
+        }
+      }
+
+      "must display notification when linked transaction" in {
+        val app = appWith(freeholdAnswers.copy(fullReturn = Some(emptyFullReturn.copy(transaction = Some(completeTransaction.copy(isLinked = Some("yes")))))))
+
+        running(app) {
+          val request = FakeRequest(GET, onPageLoadRoute)
+          val result = route(app, request).value
+          val view = app.injector.instanceOf[SdltSelfAssessmentView]
+          val expected = view(form, routes.FreeholdSelfAssessedSdltSelfAssessmentController.onSubmit(NormalMode), sectionKey, true)(request, messages(app)).toString
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual expected
+          contentAsString(result) must include("You must only enter the allocated amount of SDLT due on this transaction.")
         }
       }
 

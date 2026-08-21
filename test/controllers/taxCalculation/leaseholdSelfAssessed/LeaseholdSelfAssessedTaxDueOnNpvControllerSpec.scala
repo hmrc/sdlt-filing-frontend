@@ -18,7 +18,7 @@ package controllers.taxCalculation.leaseholdSelfAssessed
 
 import base.SpecBase
 import config.CurrencyFormatter.StringToCurrency
-import constants.FullReturnConstants.{completeLease, emptyFullReturn}
+import constants.FullReturnConstants.{completeLease, completeTransaction, emptyFullReturn}
 import controllers.routes
 import forms.taxCalculation.TaxDueOnNpvFormProvider
 import models.NormalMode
@@ -74,6 +74,27 @@ class LeaseholdSelfAssessedTaxDueOnNpvControllerSpec extends SpecBase with Mocki
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, formattedNPV, NormalMode)(request, messages(application)).toString
+      }
+    }
+
+    "must display notification when linked transaction" in {
+
+      val userAnswers = emptyUserAnswers
+        .copy(fullReturn = Some(fullReturnWithLeaseData.copy(transaction = Some(completeTransaction.copy(isLinked = Some("yes"))))))
+        .set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdSelfAssessed).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, taxDueOnNpvRoute)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[LeaseholdSelfAssessedTaxDueOnNpvView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, formattedNPV, NormalMode, true)(request, messages(application)).toString
+        contentAsString(result) must include("You must only enter the allocated amount of SDLT due on this transaction.")
       }
     }
 

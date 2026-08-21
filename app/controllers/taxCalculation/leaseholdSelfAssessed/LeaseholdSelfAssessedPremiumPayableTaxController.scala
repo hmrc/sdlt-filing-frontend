@@ -60,7 +60,9 @@ class LeaseholdSelfAssessedPremiumPayableTaxController @Inject()(
             case None => form
             case Some(value) => form.fill(value)
           }
-          Ok(view(preparedForm, premiumPayable, mode))
+          val showLinkedTransactionNotification = request.userAnswers.fullReturn
+            .flatMap(_.transaction.flatMap(_.isLinked)).exists(_.equalsIgnoreCase("YES"))
+          Ok(view(preparedForm, premiumPayable, mode, showLinkedTransactionNotification))
 
         case None =>
           Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())

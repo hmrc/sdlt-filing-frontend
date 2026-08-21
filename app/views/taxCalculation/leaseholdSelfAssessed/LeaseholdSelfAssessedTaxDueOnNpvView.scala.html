@@ -16,6 +16,7 @@
 
 @import viewmodels.InputWidth._
 @import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukNotificationBanner
 
 @this(
     layout: templates.Layout,
@@ -27,14 +28,22 @@
     caption: Caption,
     paragraph: Paragraph,
     h1: h1,
-    paragraphWithLink: ParagraphWithLink
+    paragraphWithLink: ParagraphWithLink,
+    govukNotificationBanner: GovukNotificationBanner
 )
 
 @(
     form: Form[_],
     npv: String,
-    mode: Mode
+    mode: Mode,
+    showLinkedTransactionNotification: Boolean = false
  )(implicit request: Request[_], messages: Messages)
+
+@notificationBannerHtml = {
+    <p class="govuk-notification-banner__heading">
+        @messages("taxCalculation.linkedTransaction.allocatedAmountOnly.warningNotification")
+    </p>
+}
 
 @layout(pageTitle = title(form, messages("taxCalculation.taxDueOnNpv.title"), section = Some(messages("site.taxCalculation.leaseholdSelfAssessed.caption")))) {
 
@@ -42,6 +51,12 @@
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
+        } else if(showLinkedTransactionNotification){
+            @govukNotificationBanner(
+                NotificationBanner(
+                    content = HtmlContent(notificationBannerHtml)
+                )
+            )
         }
 
         @caption(messages("site.taxCalculation.caption"))
