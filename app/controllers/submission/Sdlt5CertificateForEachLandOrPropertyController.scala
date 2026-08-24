@@ -25,6 +25,7 @@ import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.crossflow.fields.CrossFlowValidationService
 import services.submission.CertificateForEachService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.tasklist.SubmissionTaskList
@@ -46,7 +47,8 @@ class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
                                                                    formProvider: Sdlt5CertificateForEachLandOrPropertyFormProvider,
                                                                    certificateForEachService: CertificateForEachService,
                                                                    val controllerComponents: MessagesControllerComponents,
-                                                                   view: Sdlt5CertificateForEachLandOrPropertyView
+                                                                   view: Sdlt5CertificateForEachLandOrPropertyView,
+                                                                   crossFlowValidationService: CrossFlowValidationService
                                                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
   val form = formProvider()
@@ -56,7 +58,7 @@ class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
 
       val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(fullReturn => SubmissionTaskList.canStartSubmission(fullReturn, crossFlowValidationService.failureCount(request.userAnswers) > 0))) {
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
         val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)
@@ -78,7 +80,7 @@ class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
 
       val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(fullReturn => SubmissionTaskList.canStartSubmission(fullReturn, crossFlowValidationService.failureCount(request.userAnswers) > 0))) {
         Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       } else {
         val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)

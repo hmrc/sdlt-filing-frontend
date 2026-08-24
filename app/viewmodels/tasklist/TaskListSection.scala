@@ -47,7 +47,7 @@ object TaskListSections {
     Some(TransactionTaskList.build(fullReturn)),
     Some(LeaseTaskList.build(fullReturn)),
     Some(TaxCalculationTaskList.build(fullReturn)),
-    Some(SubmissionTaskList.build(fullReturn))
+    Some(SubmissionTaskList.build(fullReturn, false))
   ).flatten
   def allComplete(fullReturn: FullReturn)
                  (implicit messagesApi: Messages, appConfig: FrontendAppConfig, hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Boolean =
