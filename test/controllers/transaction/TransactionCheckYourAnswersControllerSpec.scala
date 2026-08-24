@@ -1167,7 +1167,7 @@ class TransactionCheckYourAnswersControllerSpec
           verify(mockBackendConnector)
             .updateLease(leaseCaptor.capture())(any(), any())
 
-          leaseCaptor.getValue.lease.isAnnualRentOver1000 mustBe Some("NO")
+          leaseCaptor.getValue.lease.isAnnualRentOver1000 mustBe Some("no")
         }
       }
 
