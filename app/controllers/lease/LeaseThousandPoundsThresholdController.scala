@@ -50,20 +50,27 @@ class LeaseThousandPoundsThresholdController @Inject()(
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
     if (leaseService.transactionType(request.userAnswers).contains(TransactionType.GrantOfLease)) {
           leaseService.leaseFlowValidationCheck(request.userAnswers) match {
-            case Some(redirect) => Redirect(redirect)
+            case Some(redirect) => Future.successful(Redirect(redirect))
             case None =>
-              val preparedForm = request.userAnswers.get(LeaseThousandPoundsThresholdPage) match {
-                case None => form
-                case Some(value) => form.fill(value)
+              if(leaseService.isOnOrAfterAnnualRentCutOff(request.userAnswers)) {
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(LeaseThousandPoundsThresholdPage, false))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(navigator.nextPage(LeaseThousandPoundsThresholdPage, mode, updatedAnswers))
+              } else {
+                val preparedForm = request.userAnswers.get(LeaseThousandPoundsThresholdPage) match {
+                  case None => form
+                  case Some(value) => form.fill(value)
+                }
+                Future.successful(Ok(view(preparedForm, mode)))
               }
-              Ok(view(preparedForm, mode))
           }
         } else {
-          Redirect(controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(mode))
+          Future.successful(Redirect(controllers.lease.routes.LeaseIsVatPayableController.onPageLoad(mode)))
         }
   }
 

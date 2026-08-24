@@ -110,6 +110,24 @@ class LeaseCheckYourAnswersControllerSpec
     )
   )
 
+  private val leaseCurrentDataEffectiveDate = Json.obj(
+    "leaseCurrent" -> Json.obj(
+      "typeOfLease" -> "R",
+      "leaseStartDate" -> "2000-01-01",
+      "leaseEndDate" -> "2026-01-01",
+      "rentFreePeriod" -> true,
+      "leaseEnterRentFreePeriod" -> "50",
+      "annualStartingRent" -> "50.00",
+      "leaseStartingRentEndDate" -> "2024-01-01",
+      "laterRent" -> true,
+      "leaseThousandPoundsThreshold" -> false,
+      "leaseIsVatPayable" -> true,
+      "enterAnnualRentVat" -> "50.00",
+      "leaseEnterTotalPremiumPayable" -> "50.00",
+      "leaseNetPresentValue" -> "50.00"
+    )
+  )
+
   private val incompleteLeaseCurrentData = Json.obj(
     "leaseCurrent" -> Json.obj(
       "leaseStartDate" -> "2000-01-01",
@@ -213,6 +231,40 @@ class LeaseCheckYourAnswersControllerSpec
         )
       )
     )
+  )
+
+  private val completeUserAnswersEffectiveDate = UserAnswers(
+    id = "12345",
+    returnId = Some("AB2346"),
+    storn = "TESTSTORN",
+    data = leaseCurrentDataEffectiveDate,
+    fullReturn = Some(completeFullReturn.copy(
+      returnInfo = Some(ReturnInfo(
+        version = Some("1")
+      )),
+      lease = Some(incompleteLease),
+      submission = None,
+      transaction = Some(completeTransaction.copy(
+        effectiveDate = Some("16/02/2016"),
+        transactionDescription = Some("L")
+      ))))
+  )
+
+  private val completeUserAnswersEffectiveDateBefore = UserAnswers(
+    id = "12345",
+    returnId = Some("AB2346"),
+    storn = "TESTSTORN",
+    data = leaseCurrentDataEffectiveDate,
+    fullReturn = Some(completeFullReturn.copy(
+      returnInfo = Some(ReturnInfo(
+        version = Some("1")
+      )),
+      lease = Some(incompleteLease),
+      submission = None,
+      transaction = Some(completeTransaction.copy(
+        effectiveDate = Some("16/02/2000"),
+        transactionDescription = Some("L")
+      ))))
   )
 
   "LeaseCheckYourAnswersController" - {
@@ -430,6 +482,50 @@ class LeaseCheckYourAnswersControllerSpec
 
           val html = contentAsString(result)
           html must not include messages(application)("lease.leaseNetPresentValue.checkYourAnswersLabel")
+          html must include(messages(application)("Check your answers"))
+        }
+      }
+
+      "must not show the 1000 pound row when transaction effective date is on or later than cut off" in {
+
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(completeUserAnswersEffectiveDate)))
+
+        val application = applicationBuilder(userAnswers = Some(completeUserAnswersEffectiveDate))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.LeaseCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val html = contentAsString(result)
+          html must not include messages(application)("lease.leaseThousandPoundsThreshold.checkYourAnswersLabel")
+          html must include(messages(application)("Check your answers"))
+        }
+      }
+
+      "must show the 1000 pound row when transaction effective date is before the cut off" in {
+
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(completeUserAnswersEffectiveDateBefore)))
+
+        val application = applicationBuilder(userAnswers = Some(completeUserAnswersEffectiveDateBefore))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.LeaseCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val html = contentAsString(result)
+          html must include(messages(application)("lease.leaseThousandPoundsThreshold.checkYourAnswersLabel"))
           html must include(messages(application)("Check your answers"))
         }
       }
