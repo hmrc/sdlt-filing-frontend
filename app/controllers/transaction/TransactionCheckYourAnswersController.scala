@@ -20,7 +20,7 @@ import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
 import models.{CheckMode, Lease, ReturnVersionUpdateRequest, Transaction, UserAnswers}
 import models.land.LandTypeOfProperty
-import models.lease.{CreateLeaseRequest, DeleteLeaseRequest}
+import models.lease.{CreateLeaseRequest, DeleteLeaseRequest, UpdateLeaseRequest}
 import models.prelimQuestions.TransactionType
 import models.prelimQuestions.TransactionType.{ConveyanceTransferLease, GrantOfLease}
 import models.transaction.{ReasonForRelief, TransactionSessionQuestions, UpdateTransactionRequest}
@@ -38,6 +38,7 @@ import viewmodels.checkAnswers.transaction.*
 import views.html.transaction.TransactionCheckYourAnswersView
 import services.crossflow.fields.CrossFlowValidationService
 import services.crossflow.*
+import services.lease.LeaseService
 import services.taxCalculation.UpdateTaxCalcService
 
 import javax.inject.{Inject, Singleton}
@@ -56,6 +57,7 @@ class TransactionCheckYourAnswersController @Inject()(
   checkAnswersService: CheckAnswersService,
   backendConnector: StampDutyLandTaxConnector,
   populateTransactionService: PopulateTransactionService,
+  leaseService: LeaseService,
   crossFlow: CrossFlowValidationService,
   val controllerComponents: MessagesControllerComponents,
   view: TransactionCheckYourAnswersView,
@@ -106,7 +108,7 @@ class TransactionCheckYourAnswersController @Inject()(
     val leaseCurrentCheck = (userAnswers.data \ "leaseCurrent").asOpt[JsObject].exists(_.values.nonEmpty)
 
     val leaseDecision: String = transactionType match {
-      case Some(transaction) if (transaction == GrantOfLease || transaction == ConveyanceTransferLease) && isLeaseDefined => "noAction"
+      case Some(transaction) if (transaction == GrantOfLease || transaction == ConveyanceTransferLease) && isLeaseDefined => "updateLease"
       case Some(transaction) if (transaction == GrantOfLease || transaction == ConveyanceTransferLease) && !isLeaseDefined => "createLease"
       case Some(_) if isLeaseDefined => "deleteLease"
       case _ => "noAction"
@@ -119,6 +121,25 @@ class TransactionCheckYourAnswersController @Inject()(
           createLeaseRequest <- CreateLeaseRequest.from(userAnswers, lease)
           _ <- backendConnector.createLease(createLeaseRequest)
         } yield ()
+
+      case "updateLease" =>
+        userAnswers.fullReturn.flatMap(_.lease) match {
+          case Some(existingLease) =>
+            val lease =
+              if (leaseService.isOnOrAfterAnnualRentCutOff(userAnswers)) {
+                existingLease.copy(isAnnualRentOver1000 = Some("no"))
+              } else {
+                existingLease
+              }
+
+            for {
+              updateLeaseRequest <- UpdateLeaseRequest.from(userAnswers, lease)
+              _ <- backendConnector.updateLease(updateLeaseRequest)
+            } yield ()
+
+          case None =>
+            Future.unit
+        }
 
       case "deleteLease" =>
         for {
@@ -145,26 +166,23 @@ class TransactionCheckYourAnswersController @Inject()(
           Future.successful(errorRedirect)
 
         case Right(updateReturnVersionReturn) =>
-          for {
-            _ <- handleLeaseDecision(userAnswers)
-            outcome <-
-              if (updateReturnVersionReturn.newVersion.isDefined) {
-                for {
-                  updateTransactionRequest <- UpdateTransactionRequest.from(userAnswers, transaction)
-                  updateTransactionReturn <- backendConnector.updateTransaction(updateTransactionRequest)
-                  _ <- maybeUpdateTransactionTaxCalc(userAnswers)
-                } yield
-                  if (updateTransactionReturn.updated) {
-                    Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-                  } else {
-                    Redirect(controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad())
-                  }
-              } else {
-                Future.successful(
+            if (updateReturnVersionReturn.newVersion.isDefined) {
+              for {
+                _ <- handleLeaseDecision(userAnswers)
+                updateTransactionRequest <- UpdateTransactionRequest.from(userAnswers, transaction)
+                updateTransactionReturn <- backendConnector.updateTransaction(updateTransactionRequest)
+                _ <- maybeUpdateTransactionTaxCalc(userAnswers)
+              } yield
+                if (updateTransactionReturn.updated) {
+                  Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+                } else {
                   Redirect(controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad())
-                )
-              }
-          } yield outcome
+                }
+            } else {
+              Future.successful(
+                Redirect(controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad())
+              )
+            }
       }
     } yield result
   }

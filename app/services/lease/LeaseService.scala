@@ -19,7 +19,11 @@ package services.lease
 import models.UserAnswers
 import models.prelimQuestions.TransactionType
 import models.prelimQuestions.TransactionType.{ConveyanceTransferLease, GrantOfLease}
+import pages.transaction.TransactionEffectiveDatePage
 import play.api.mvc.Call
+
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class LeaseService {
 
@@ -28,7 +32,7 @@ class LeaseService {
       userAnswers.fullReturn.flatMap(_.transaction).flatMap(_.transactionDescription)
     )
 
-  def leaseFlowValidationCheck(userAnswers: UserAnswers): Option[Call] =
+  def leaseFlowValidationCheck(userAnswers: UserAnswers): Option[Call] = {
     transactionType(userAnswers) match {
       case Some(GrantOfLease | ConveyanceTransferLease) => None
       case _ if userAnswers.returnId.isDefined =>
@@ -36,4 +40,29 @@ class LeaseService {
       case _ =>
         Some(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
+  }
+
+  def parseDate(value: String): Option[LocalDate] = {
+    val formatters = Seq(
+      DateTimeFormatter.ISO_LOCAL_DATE,
+      DateTimeFormatter.ofPattern("d/M/yyyy")
+    )
+    formatters.view
+      .flatMap(formatter =>
+        scala.util.Try(LocalDate.parse(value, formatter)).toOption
+      )
+      .headOption
+  }
+
+  def isOnOrAfterAnnualRentCutOff(userAnswers: UserAnswers): Boolean = {
+    val cutoff = LocalDate.of(2016, 2, 16)
+    val effectiveDate = userAnswers.get(TransactionEffectiveDatePage)
+      .orElse(
+        userAnswers.fullReturn
+        .flatMap(_.transaction.map(_.effectiveDate))
+        .flatten
+        .flatMap(parseDate)
+      )
+    effectiveDate.exists(date => !date.isBefore(cutoff))
+  }
 }
