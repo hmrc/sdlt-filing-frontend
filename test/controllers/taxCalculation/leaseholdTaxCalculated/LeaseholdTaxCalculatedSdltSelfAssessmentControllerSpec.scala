@@ -48,6 +48,11 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentControllerSpec extends SpecBase wi
       .copy(fullReturn = Some(completeFullReturn.copy(submission = None)))
       .set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdTaxCalculated).success.value
 
+  private val sharedOwnershipAnswers: UserAnswers =
+    leaseholdAnswers.copy(fullReturn = leaseholdAnswers.fullReturn.map(fr =>
+      fr.copy(transaction = fr.transaction.map(_.copy(claimingRelief = Some("yes"), reliefReason = Some("32"))))
+    ))
+
   private val wrongFlowAnswers: UserAnswers =
     emptyUserAnswers.set(TaxCalculationFlowPage, TaxCalculationFlow.LeaseholdSelfAssessed).success.value
 
@@ -95,6 +100,32 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentControllerSpec extends SpecBase wi
           val body = contentAsString(result)
           body must include("value=\"9999\"")
           body mustNot include("value=\"43750\"")
+        }
+      }
+
+      "must show the shared ownership lease notification when the effective date, lease type, claiming relief and relief reason conditions are all met" in {
+        val app = appWith(sharedOwnershipAnswers)
+
+        running(app) {
+          val request = FakeRequest(GET, onPageLoadRoute)
+          val result  = route(app, request).value
+
+          status(result) mustEqual OK
+          val body = contentAsString(result)
+          body must include("Shared ownership leases")
+          body must include("https://www.gov.uk/stamp-duty-land-tax/shared-ownership-property")
+        }
+      }
+
+      "must not show the shared ownership lease notification when claiming relief is 'no'" in {
+        val app = appWith(leaseholdAnswers)
+
+        running(app) {
+          val request = FakeRequest(GET, onPageLoadRoute)
+          val result  = route(app, request).value
+
+          status(result) mustEqual OK
+          contentAsString(result) mustNot include("Shared ownership leases")
         }
       }
 
@@ -176,6 +207,18 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentControllerSpec extends SpecBase wi
           val result  = route(app, request).value
 
           status(result) mustEqual BAD_REQUEST
+        }
+      }
+
+      "must still show the shared ownership lease notification when the form is invalid and the conditions are met" in {
+        val app = appWith(sharedOwnershipAnswers)
+
+        running(app) {
+          val request = FakeRequest(POST, onSubmitRoute).withFormUrlEncodedBody("value" -> "")
+          val result  = route(app, request).value
+
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) must include("Shared ownership leases")
         }
       }
 

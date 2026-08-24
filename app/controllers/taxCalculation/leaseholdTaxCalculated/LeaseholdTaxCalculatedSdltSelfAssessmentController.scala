@@ -31,6 +31,7 @@ import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.taxCalculation.SdltCalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.SharedOwnershipLeaseHelper
 import views.html.taxCalculation.shared.SdltSelfAssessmentView
 
 import javax.inject.{Inject, Singleton}
@@ -62,6 +63,7 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(LeaseholdTaxCalculated) {
+        val showSharedOwnershipNotification = SharedOwnershipLeaseHelper.shouldDisplayNotification(request.userAnswers)
         sdltCalculationService.calculateStampDutyLandTax(request.userAnswers).map {
           case Right(Calculated(result)) =>
             val prepared = request.userAnswers.get(LeaseholdTaxCalculatedSelfAssessedAmountPage)
@@ -70,7 +72,7 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentController @Inject()(
               )(
                 form.fill
               )
-            Ok(view(prepared, postAction(mode), sectionKey))
+            Ok(view(prepared, postAction(mode), sectionKey, showSharedOwnershipNotification = showSharedOwnershipNotification))
           case Right(response) =>
             logger.warn(s"[LeaseholdTaxCalculatedSdltSelfAssessmentController] Failed to get a tax calculation result: $response")
             Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
@@ -84,9 +86,10 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(LeaseholdTaxCalculated) {
+        val showSharedOwnershipNotification = SharedOwnershipLeaseHelper.shouldDisplayNotification(request.userAnswers)
         form.bindFromRequest().fold(
           formWithErrors =>
-            Future.successful(BadRequest(view(formWithErrors, postAction(mode), sectionKey))),
+            Future.successful(BadRequest(view(formWithErrors, postAction(mode), sectionKey, showSharedOwnershipNotification = showSharedOwnershipNotification))),
           value =>
             for {
               updated <- Future.fromTry(request.userAnswers.set(LeaseholdTaxCalculatedSelfAssessedAmountPage, value))
