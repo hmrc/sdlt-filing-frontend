@@ -31,8 +31,10 @@ object HoldingTypes extends Enumeration {
       case _                            => freehold
     }
 
-  implicit val writes: Writes[HoldingTypes.Value] =
-    Writes(value => JsString(value.toString))
+  implicit val writes: Writes[HoldingTypes.Value] = Writes {
+    case `leasehold` => JsString("Leasehold")
+    case `freehold`  => JsString("Freehold")
+  }
 }
 
 object PropertyTypes extends Enumeration {

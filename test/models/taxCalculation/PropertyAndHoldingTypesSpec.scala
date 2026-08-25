@@ -18,6 +18,7 @@ package models.taxCalculation
 
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
+import play.api.libs.json.{JsString, Json}
 
 class PropertyAndHoldingTypesSpec extends AnyFreeSpec with Matchers {
 
@@ -41,6 +42,17 @@ class PropertyAndHoldingTypesSpec extends AnyFreeSpec with Matchers {
 
     "must return None for an unrecognised description" in {
       HoldingTypes.fromCode("X") mustBe None
+    }
+  }
+
+  "HoldingTypes.writes" - {
+
+    "must write leasehold as Leasehold" in {
+      Json.toJson(HoldingTypes.leasehold) mustBe JsString("Leasehold")
+    }
+
+    "must write freehold as Freehold" in {
+      Json.toJson(HoldingTypes.freehold) mustBe JsString("Freehold")
     }
   }
 
