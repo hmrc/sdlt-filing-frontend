@@ -60,7 +60,8 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
     isNonUkResidents: Option[String] = Some("no"),
     isCloseCompany: Option[String] = Some("no"),
     isCrownRelief: Option[String] = Some("no"),
-    transactionDescription: Option[String] = Some("L")
+    transactionDescription: Option[String] = Some("L"),
+    leaseType: Option[String] = Some("R")
   ): FullReturn = FullReturn(
     stornId = "STORN", returnResourceRef = "REF",
     returnInfo = Some(ReturnInfo(mainLandID = Some("L1"))),
@@ -74,7 +75,7 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
     lease = Some(Lease(
       contractStartDate = Some(startDate), contractEndDate = Some(endDate),
       isAnnualRentOver1000 = annualRentOver1000, netPresentValue = Some(npv),
-      startingRent = startingRent, totalPremiumPayable = premium, leaseType = Some("R")
+      startingRent = startingRent, totalPremiumPayable = premium, leaseType = leaseType
     ))
   )
 
@@ -160,7 +161,7 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
 
       "must accept lease contract dates in legacy UK format dd/MM/yyyy" in {
         TaxCalcRequestValidator.buildRequest(userAnswersWith(
-          leaseholdReturn(startDate = "01/01/2025", endDate = "31/12/2025", effectiveDate = "01/07/2025")
+          leaseholdReturn(startDate = "01/01/2025", endDate = "31/12/2025", effectiveDate = "01/01/2025")
         )).flatMap(_.leaseDetails.toRight("missing leaseDetails")).map { ld =>
           (ld.startDateDay, ld.startDateMonth, ld.startDateYear,
            ld.endDateDay,   ld.endDateMonth,   ld.endDateYear)
@@ -377,7 +378,7 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
         request.nonUKResident mustBe Some("No")
       }
 
-      "must send Yes for conveyence with lease involvement when lease term is exactly 7 years" in {
+      "must send Yes for conveyence with lease involvement when the term runs one day past 7 years" in {
         val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
           leaseholdReturn(
             isNonUkResidents = Some("yes"),
@@ -406,7 +407,21 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
         request.nonUKResident mustBe Some("No")
       }
 
-      "must send Yes for grant of lease when lease term is exactly 7 years" in {
+      "must send No for grant of lease when lease term is exactly 7 years" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(
+            isNonUkResidents = Some("yes"),
+            isCrownRelief = Some("no"),
+            effectiveDate = "2021-06-15",
+            startDate = "2021-06-15",
+            endDate = "2028-06-14",
+            premium = Some("500000")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("No")
+      }
+
+      "must send Yes for grant of lease when the term runs one day past 7 years" in {
         val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
           leaseholdReturn(
             isNonUkResidents = Some("yes"),
@@ -523,6 +538,187 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
       }
     }
 
+    "non UK resident - relief codes that do not exempt" - {
+
+      "must send Yes when right to buy relief is claimed" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          freeholdReturn(
+            isNonUkResidents = Some("yes"),
+            isCrownRelief = Some("no"),
+            claimingRelief = Some("yes"),
+            reliefReason = Some("22")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("Yes")
+      }
+
+      "must send Yes when first time buyers relief is claimed" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          freeholdReturn(
+            isNonUkResidents = Some("yes"),
+            isCrownRelief = Some("no"),
+            claimingRelief = Some("yes"),
+            reliefReason = Some("32")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("Yes")
+      }
+
+      "must send Yes when relief from the 17 percent rate is claimed" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          freeholdReturn(
+            isNonUkResidents = Some("yes"),
+            isCrownRelief = Some("no"),
+            claimingRelief = Some("yes"),
+            reliefReason = Some("35")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("Yes")
+      }
+
+      "must send Yes when a relief reason is recorded but relief is not being claimed" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          freeholdReturn(
+            isNonUkResidents = Some("yes"),
+            isCrownRelief = Some("no"),
+            claimingRelief = Some("no"),
+            reliefReason = Some("8")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("Yes")
+      }
+    }
+
+    "non UK resident - the 7 year lease boundary" - {
+
+      "must send No when a lease granted on 29 February ends the day before its seventh anniversary" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(
+            isNonUkResidents = Some("yes"),
+            isCrownRelief = Some("no"),
+            effectiveDate = "2021-06-15",
+            startDate = "2016-02-29",
+            endDate = "2023-02-27",
+            premium = Some("500000")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("No")
+      }
+
+      "must send Yes when a lease granted on 29 February ends on its seventh anniversary" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(
+            isNonUkResidents = Some("yes"),
+            isCrownRelief = Some("no"),
+            effectiveDate = "2021-06-15",
+            startDate = "2016-02-29",
+            endDate = "2023-02-28",
+            premium = Some("500000")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("Yes")
+      }
+
+      "must measure the term from the contract start when the lease began years before the effective date" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(
+            isNonUkResidents = Some("yes"),
+            isCrownRelief = Some("no"),
+            effectiveDate = "2021-06-15",
+            startDate = "2015-01-01",
+            endDate = "2023-01-01",
+            premium = Some("500000")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("Yes")
+      }
+    }
+
+    "non UK resident - premium and rent thresholds" - {
+
+      "must send No for a long lease when the premium and the annual rent are both under their thresholds" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(
+            isNonUkResidents = Some("yes"),
+            isCrownRelief = Some("no"),
+            effectiveDate = "2021-06-15",
+            startDate = "2015-01-01",
+            endDate = "2025-01-01",
+            premium = Some("15000"),
+            startingRent = Some("500")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("No")
+      }
+
+      "must send Yes for a long lease when the premium is under 40000 but the annual rent is not under 1000" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(
+            isNonUkResidents = Some("yes"),
+            isCrownRelief = Some("no"),
+            effectiveDate = "2021-06-15",
+            startDate = "2015-01-01",
+            endDate = "2025-01-01",
+            premium = Some("15000"),
+            startingRent = Some("2000")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("Yes")
+      }
+
+      "must send Yes for a conveyance with lease involvement by a non UK resident with a long lease, whatever the premium and rent" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(
+            isNonUkResidents = Some("yes"),
+            isCrownRelief = Some("no"),
+            transactionDescription = Some("A"),
+            effectiveDate = "2021-06-15",
+            startDate = "2015-01-01",
+            endDate = "2025-01-01",
+            premium = Some("15000"),
+            startingRent = Some("500")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("Yes")
+      }
+    }
+
+    "non UK resident - leases that are not residential" - {
+
+      "must send Yes for a grant of a non residential lease however short the term" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(
+            isNonUkResidents = Some("yes"),
+            isCrownRelief = Some("no"),
+            effectiveDate = "2021-06-15",
+            startDate = "2021-06-15",
+            endDate = "2023-06-15",
+            premium = Some("15000"),
+            startingRent = Some("500"),
+            leaseType = Some("N")
+          ),
+        )).toOption.get
+        request.nonUKResident mustBe Some("Yes")
+      }
+    }
+
+    "non UK resident - the date the surcharge starts" - {
+
+      "must send None on 31 March 2021, the day before the surcharge can apply" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          freeholdReturn(effectiveDate = "2021-03-31", isNonUkResidents = Some("yes"))
+        )).toOption.get
+        request.nonUKResident mustBe None
+      }
+
+      "must send Yes on 1 April 2021, the first day the surcharge can apply" in {
+        val request = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          freeholdReturn(effectiveDate = "2021-04-01", isNonUkResidents = Some("yes"))
+        )).toOption.get
+        request.nonUKResident mustBe Some("Yes")
+      }
+    }
+
     "first time buyer" - {
 
       "must be Yes when relief reason is 32" in {
@@ -609,12 +805,22 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
         ld.leaseTerm.daysInPartialYear mustBe 183
       }
 
-      "must use the effective date as the calculation start when it falls after the contract start" in {
+      "must calculate lease term from the contract dates when the effective date falls after the contract start" in {
         val ld = TaxCalcRequestValidator.buildRequest(userAnswersWith(
           leaseholdReturn(startDate = "2025-01-01", endDate = "2025-12-31", effectiveDate = "2025-07-01")
         )).toOption.get.leaseDetails.get
-        ld.leaseTerm.years mustBe 0
-        ld.leaseTerm.days  mustBe 184
+        ld.leaseTerm.years mustBe 1
+        ld.leaseTerm.days  mustBe 0
+      }
+
+      "must send an end date derived from the effective date when it falls after the contract start" in {
+        val ld = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(startDate = "2025-01-01", endDate = "2025-12-31", effectiveDate = "2025-07-01")
+        )).toOption.get.leaseDetails.get
+
+        ld.endDateDay mustBe 30
+        ld.endDateMonth mustBe 6
+        ld.endDateYear mustBe 2026
       }
 
       "must send correct number of rent entries for a 3 year lease" in {
@@ -637,9 +843,54 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
         TaxCalcRequestValidator.buildRequest(userAnswersWith(fr)) mustBe Left(MissingLeaseAnswerError("contractStartDate"))
       }
 
+      "must build lease details when the effective date is the lease end date" in {
+        val ld = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(startDate = "2020-01-01", endDate = "2024-06-30", effectiveDate = "2024-06-30")
+        )).toOption.get.leaseDetails.get
+        ld.leaseTerm.years mustBe 4
+        ld.leaseTerm.days mustBe 182
+      }
+
       "must fail when lease end date is missing" in {
         val fr = leaseholdReturn().copy(lease = Some(Lease(contractStartDate = Some("2025-06-15"), totalPremiumPayable = Some("15000"))))
         TaxCalcRequestValidator.buildRequest(userAnswersWith(fr)) mustBe Left(MissingLeaseAnswerError("contractEndDate"))
+      }
+
+      // NRSDLT lease term re-work to match AS-IS with SDLTC
+      "must calculate lease term as an 8 year lease for a 7 year and 1 day lease" in {
+        val term = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(startDate = "2025-06-15", endDate = "2032-06-15")
+        )).toOption.get.leaseDetails.get.leaseTerm
+        term.years mustBe 8
+        term.days mustBe 1
+      }
+
+      "must calculate lease term as a 7 year lease for an exactly 7 year lease" in {
+        val term = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(startDate = "2025-06-15", endDate = "2032-06-14")
+        )).toOption.get.leaseDetails.get.leaseTerm
+        term.years mustBe 7
+        term.days mustBe 0
+      }
+
+      "must update end date as an 8 year lease for a 7 year and 1 day lease" in {
+        val ld = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(startDate = "2025-06-15", endDate = "2032-06-15")
+        )).toOption.get.leaseDetails.get
+
+        ld.endDateDay mustBe 15
+        ld.endDateMonth mustBe 6
+        ld.endDateYear mustBe 2033
+      }
+
+      "must update end date to the leap day for a 7 year and 2 day lease" in {
+        val ld = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(effectiveDate = "2016-02-28", startDate = "2016-02-28", endDate = "2023-03-01")
+        )).toOption.get.leaseDetails.get
+
+        ld.endDateDay mustBe 29
+        ld.endDateMonth mustBe 2
+        ld.endDateYear mustBe 2024
       }
     }
 
