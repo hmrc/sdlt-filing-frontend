@@ -62,7 +62,7 @@ class ConfirmLandOrPropertyAddressController @Inject()(
       val totalLand = landList.length == 1
 
       (address1, address2, address3, address4, postcode, willSendPlanByPost, localAuthorityNumber, interestCreatedTransferred) match {
-        case (Some(add1), _, _, _, Some(post), None, None, None) if totalLand =>
+        case (Some(add1), _, _, _, _, None, None, None) if totalLand =>
           val preparedForm = request.userAnswers.get(ConfirmLandOrPropertyAddressPage) match {
           case None => form
           case Some(value) => form.fill(value)
@@ -89,7 +89,7 @@ class ConfirmLandOrPropertyAddressController @Inject()(
       val totalLand = landList.length == 1
       
       (landId, address1, address2, address3, address4, postcode, willSendPlanByPost, localAuthorityNumber, interestCreatedTransferred) match {
-        case (Some(landId), Some(add1), _, _, _, Some(post), None, None, None) if totalLand =>
+        case (Some(landId), Some(add1), _, _, _, _, None, None, None) if totalLand =>
           form.bindFromRequest().fold(
             formWithErrors =>
               Future.successful(BadRequest(view(formWithErrors, mode, address1, address2, address3, address4, postcode))),

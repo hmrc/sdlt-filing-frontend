@@ -191,7 +191,7 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
       }
     }
 
-    "must redirect to LandAddressController when postcode is missing" in {
+    "must return OK and the correct view for a GET when postcode is missing" in {
 
       val fullReturnMissingPostcode = FullReturn(
         stornId = testStorn,
@@ -207,10 +207,12 @@ class ConfirmLandOrPropertyAddressControllerSpec extends SpecBase with MockitoSu
       running(application) {
         val request = FakeRequest(GET, confirmLandOrPropertyAddressRoute)
 
+        val view = application.injector.instanceOf[ConfirmLandOrPropertyAddressView]
+
         val result = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.land.routes.LandAddressController.redirectToAddressLookupLand().url
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, NormalMode, testAddress1, testAddress2, testAddress3, testAddress4, None)(request, messages(application)).toString
       }
     }
 
