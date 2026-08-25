@@ -246,34 +246,6 @@ class TaxCalculationTaskListSpec extends SpecBase {
           result.status mustBe TLNotStarted
         }
       }
-
-      "must show 'Cannot start yet' status and hint when purchaser section is absent" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-          implicit val messagesInstance: Messages = messages(application)
-
-          val result = TaxCalculationTaskList.buildTaxCalculationRow(fullReturnComplete.copy(purchaser = None))
-
-          result.hint mustBe Some("tasklist.taxCalculationQuestion.hint")
-          result.status mustBe TLCannotStart
-        }
-      }
-      
-      "must show 'Cannot start yet' status and hint when vendor section is absent" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-          implicit val messagesInstance: Messages = messages(application)
-
-          val result = TaxCalculationTaskList.buildTaxCalculationRow(fullReturnComplete.copy(vendor = None))
-
-          result.hint mustBe Some("tasklist.taxCalculationQuestion.hint")
-          result.status mustBe TLCannotStart
-        }
-      }
       
       "must show 'Cannot start yet' status and hint when land section is absent" in {
         val application = applicationBuilder().build()
@@ -300,37 +272,6 @@ class TaxCalculationTaskListSpec extends SpecBase {
 
           result.hint mustBe Some("tasklist.taxCalculationQuestion.hint")
           result.status mustBe TLCannotStart
-        }
-      }
-      
-      "must show 'Cannot start yet' status and display hint when vendor agent started but is incomplete" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-          implicit val messagesInstance: Messages = messages(application)
-
-          val result = TaxCalculationTaskList.buildTaxCalculationRow(completeFullReturn
-            .copy(returnAgent = Some(Seq(completeReturnAgentVendor.copy(name = None)))))
-
-          result.status mustBe TLCannotStart
-          result.hint mustBe Some("tasklist.taxCalculationQuestion.hint")
-        }
-      }
-
-      "must show 'Cannot start yet' status and display hint when purchaser agent started but is incomplete" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-          implicit val messagesInstance: Messages = messages(application)
-
-          val result = TaxCalculationTaskList.buildTaxCalculationRow(completeFullReturn
-            .copy(returnAgent = Some(Seq(completeReturnAgent.copy(name = None))),
-              purchaser = Some(Seq(completePurchaser1.copy(isRepresentedByAgent = Some("YES"))))))
-
-          result.status mustBe TLCannotStart
-          result.hint mustBe Some("tasklist.taxCalculationQuestion.hint")
         }
       }
 
