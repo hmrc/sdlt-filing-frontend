@@ -18,7 +18,7 @@ package services.crossflow.errors
 
 import models.UserAnswers
 import models.land.LandSessionQuestions
-import models.transaction.ReasonForRelief
+import models.transaction.{ReasonForRelief, TransactionSessionQuestions}
 import play.api.libs.json.*
 import pages.transaction.*
 
@@ -111,6 +111,11 @@ object CrossFlowProjections:
 
   def totalPremium(ua: UserAnswers): Option[BigDecimal] =
     committedTotalPremium(ua)
+
+  def totalConsideration(ua: UserAnswers): Option[BigDecimal] = {
+    val sessionTotalConsideration = (ua.data \ "transactionCurrent").asOpt[TransactionSessionQuestions].flatMap(_.totalConsiderationOfTransaction)
+    sessionTotalConsideration.flatMap(s => Try(BigDecimal(s)).toOption)
+  }
 
   def currentSessionLand(ua: UserAnswers): Option[Land] =
     (ua.data \ "landCurrent").asOpt[LandSessionQuestions].map(landFromSession)

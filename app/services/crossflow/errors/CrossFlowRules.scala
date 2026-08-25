@@ -243,6 +243,63 @@ object F28FtbCap625k extends GuardRule:
   )
 
 
+// ============================================================================
+// F28 — First Time Buyer's Relief total consideration caps
+// ============================================================================
+
+/** F28 First Time Buyer's Relief — £500k cap.
+ * Applies when the effective date is in the original FTB window (22/11/2017 to 22/09/2022)
+ * OR on/after the post-2025 cap reset (01/04/2025). Total considerations must be £500k or less.
+ */
+object F28FtbCap500kTotalConsideration extends GuardRule:
+  val id      = "F28-cap500k-totalConsideration"
+  val affects: ReturnSection        = ReturnSection.Transaction
+  val inputs:  Set[ReturnSection]   = Set(ReturnSection.Transaction)
+  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget)
+
+  private val Cap: BigDecimal = 500000
+
+  protected def appliesTo(ua: UserAnswers): Boolean =
+    isClaimingRelief(ua) && isReason(ua, "32") && in500kWindow(ua)
+
+  protected def isValid(ua: UserAnswers): Boolean =
+    totalConsideration(ua).forall(_ <= Cap)
+
+  protected def messageKey = "crossflow.relief.firstTimeBuyer.over500k.totalConsideration"
+
+  private def in500kWindow(ua: UserAnswers): Boolean =
+    effectiveDate(ua).exists { d =>
+      val inOriginalWindow = !d.isBefore(Dates.ftbStart) && d.isBefore(Dates.ftbCap625FromSept2022)
+      val inPost2025Window = !d.isBefore(Dates.ftbCap500FromApril2025)
+      inOriginalWindow || inPost2025Window
+    }
+
+
+/** F28 First Time Buyer's Relief — £625k cap.
+ * Applies when the effective date is in the middle window (23/09/2022 to 31/03/2025).
+ * Total consideration must be £625k or less.
+ */
+object F28FtbCap625kTotalConsideration extends GuardRule:
+  val id      = "F28-cap625k-totalConsideration"
+  val affects: ReturnSection        = ReturnSection.Transaction
+  val inputs:  Set[ReturnSection]   = Set(ReturnSection.Transaction)
+  val targets: Seq[CrossFlowTarget] = Seq(reliefReasonTarget)
+
+  private val Cap: BigDecimal = 625000
+
+  protected def appliesTo(ua: UserAnswers): Boolean =
+    isClaimingRelief(ua) && isReason(ua, "32") && in625kWindow(ua)
+
+  protected def isValid(ua: UserAnswers): Boolean =
+    totalConsideration(ua).forall(_ <= Cap)
+
+  protected def messageKey = "crossflow.relief.firstTimeBuyer.over625k.totalConsideration"
+
+  private def in625kWindow(ua: UserAnswers): Boolean =
+    effectiveDate(ua).exists { d =>
+      !d.isBefore(Dates.ftbCap625FromSept2022) && d.isBefore(Dates.ftbCap500FromApril2025)
+    }
+
 /** Cf-8 — F17 regular Welsh codes (6805–6955 excluding specials) must not be used
  * for transactions on or after the Wales Act effective date (01/04/2018).
  * Spec: "If effective transaction date is blank or after or on the Wales act effective date, it is invalid"
@@ -657,7 +714,9 @@ object F25Rules:
 object F28Rules:
   val all: Set[CrossFlowRule] = Set(
     F28FtbCap500k,
-    F28FtbCap625k
+    F28FtbCap625k,
+    F28FtbCap500kTotalConsideration,
+    F28FtbCap625kTotalConsideration
   )
 
 object F17Rules:

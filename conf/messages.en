@@ -2110,6 +2110,9 @@ crossflow.relief.preCompletion.dateTooEarly.inline                              
 crossflow.relief.firstTimeBuyer.over500k                                            = When claiming ‘32 - First Time Buyer’s Relief’, the total premium payable must be £500,000 or less and the effective date of the transaction must be between 22 November 2017 to 22 September 2022, or the same as or after 1 April 2025
 crossflow.relief.firstTimeBuyer.over625k                                            = When claiming ‘32 - First Time Buyer’s Relief’, the total premium payable must be £625,000 or less and the effective date of the transaction must be between 23 September 2022 and 31 March 2025
 
+crossflow.relief.firstTimeBuyer.over500k.totalConsideration                         = When claiming ‘32 - First Time Buyer’s Relief’, the total consideration of the transaction must be £500,000 or less and the effective date of the transaction must be between 22 November 2017 to 22 September 2022, or the same as or after 1 April 2025
+crossflow.relief.firstTimeBuyer.over625k.totalConsideration                         = When claiming ‘32 - First Time Buyer’s Relief’, the total consideration of the transaction must be £625,000 or less and the effective date of the transaction must be between 23 September 2022 and 31 March 2025
+
 crossflow.land.Cf-3.heading                                                         = Update the type of property
 crossflow.land.Cf-3.body                                                            = When the type of property is ‘04 - Additional residential property liable to higher rate’, the effective date of the transaction cannot be before 1 April 2016.
 crossflow.land.Cf-3.inline                                                          = When the type of property is ‘04 - Additional residential property liable to higher rate’, the effective date of the transaction must be the same as or after 1 April 2016

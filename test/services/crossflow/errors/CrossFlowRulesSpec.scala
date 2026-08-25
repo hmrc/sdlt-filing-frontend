@@ -21,7 +21,7 @@ import constants.FullReturnConstants.emptyFullReturn
 import models.transaction.ReasonForRelief
 import models.{Land, Lease, ReturnInfo, Transaction, UserAnswers}
 import org.scalatest.matchers.must.Matchers
-import pages.transaction.{ReasonForReliefPage, TransactionEffectiveDatePage}
+import pages.transaction.{ReasonForReliefPage, TotalConsiderationOfTransactionPage, TransactionEffectiveDatePage}
 import services.crossflow.*
 
 import java.time.LocalDate
@@ -44,6 +44,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
                            contractDate:     Option[String]          = None,
                            propertyType:     Option[String]          = None,
                            totalPremium:     Option[String]          = None,
+                           totalConsideration: Option[String]        = None,
                            mainLandId:       Option[String]          = None,
                            additionalLands:  Seq[Land]               = Nil,
                            leaseType:        Option[String]          = None,
@@ -69,6 +70,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
       },
       effectiveDate    = effectiveDate.map(_.toString),
       contractDate     = contractDate,
+      totalConsideration = totalConsideration,
       usedAsFactory    = usedAsFactory,
       usedAsHotel      = usedAsHotel,
       usedAsIndustrial = usedAsIndustrial,
@@ -110,7 +112,8 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     val withReason = reliefReason.fold(base)(r => base.set(ReasonForReliefPage, r).success.value)
     val withDate   = effectiveDate.fold(withReason)(d => withReason.set(TransactionEffectiveDatePage, d).success.value)
-    withDate
+    val withTotalConsideration = totalConsideration.fold(withDate)(c => withDate.set(TotalConsiderationOfTransactionPage, c).success.value)
+    withTotalConsideration
   }
 
   "FirstTimeBuyerRelief" - {
@@ -504,6 +507,151 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
       val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(ftb500PostResetStart.minusDays(1)), totalPremium = Some("700000.00"))
 
       F28FtbCap625k.validate(ua).map(_.ruleId) mustBe Some("F28-cap625k")
+    }
+  }
+
+  "F28FtbCap500kTotalConsideration" - {
+
+    val ftbStart = LocalDate.of(2017, 11, 22)
+    val ftb625WindowStart = LocalDate.of(2022, 9, 23)
+    val ftb500PostResetStart = LocalDate.of(2025, 4, 1)
+
+    "must not apply when not claiming relief" in {
+      val ua = answersWith(claimingRelief = Some("no"), reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2020, 6, 1)), totalConsideration = Some("600000.00"))
+
+      F28FtbCap500kTotalConsideration.validate(ua) mustBe None
+    }
+
+    "must not apply when the relief reason is not 32" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.ReliefForFreeport), effectiveDate = Some(LocalDate.of(2020, 6, 1)), totalConsideration = Some("600000.00"))
+
+      F28FtbCap500kTotalConsideration.validate(ua) mustBe None
+    }
+
+    "must not apply when the effective date is in the middle window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2023, 9, 24)), totalConsideration = Some("600000.00"))
+
+      F28FtbCap500kTotalConsideration.validate(ua) mustBe None
+    }
+
+    "must not apply when the effective date is before FTB relief started" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(ftbStart.minusDays(1)), totalConsideration = Some("600000.00"))
+
+      F28FtbCap500kTotalConsideration.validate(ua) mustBe None
+    }
+
+    "must pass when total consideration is exactly £500,000 in the original window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2020, 6, 1)), totalConsideration = Some("500000.00"))
+
+      F28FtbCap500kTotalConsideration.validate(ua) mustBe None
+    }
+
+    "must pass when total consideration is under £500,000 in the original window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2020, 6, 1)), totalConsideration = Some("450000.00"))
+
+      F28FtbCap500kTotalConsideration.validate(ua) mustBe None
+    }
+
+    "must fire when total consideration is over £500,000 in the original window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2020, 6, 1)), totalConsideration = Some("600000.00"))
+
+      F28FtbCap500kTotalConsideration.validate(ua).map(_.ruleId) mustBe Some("F28-cap500k-totalConsideration")
+    }
+
+    "must fire when total consideration is over £500,000 in the post-2025 window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2025, 6, 1)), totalConsideration = Some("600000.00"))
+
+      F28FtbCap500kTotalConsideration.validate(ua).map(_.ruleId) mustBe Some("F28-cap500k-totalConsideration")
+    }
+
+    "must pass when totalConsideration is missing (incomplete, not in error)" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2020, 6, 1)))
+
+      F28FtbCap500kTotalConsideration.validate(ua) mustBe None
+    }
+
+    "must fire on the lower boundary of the original window (22/11/2017)" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(ftbStart), totalConsideration = Some("600000.00"))
+
+      F28FtbCap500kTotalConsideration.validate(ua).map(_.ruleId) mustBe Some("F28-cap500k-totalConsideration")
+    }
+
+    "must fire on the upper boundary of the original window (22/09/2022)" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(ftb625WindowStart.minusDays(1)), totalConsideration = Some("600000.00"))
+
+      F28FtbCap500kTotalConsideration.validate(ua).map(_.ruleId) mustBe Some("F28-cap500k-totalConsideration")
+    }
+
+    "must fire on the lower boundary of the post-2025 window (01/04/2025)" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(ftb500PostResetStart), totalConsideration = Some("600000.00"))
+
+      F28FtbCap500kTotalConsideration.validate(ua).map(_.ruleId) mustBe Some("F28-cap500k-totalConsideration")
+    }
+  }
+
+  "F28FtbCap625kTotalConsideration" - {
+
+    val ftb625WindowStart = LocalDate.of(2022, 9, 23)
+    val ftb500PostResetStart = LocalDate.of(2025, 4, 1)
+
+    "must not apply when not claiming relief" in {
+      val ua = answersWith(claimingRelief = Some("no"), reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2023, 9, 24)), totalConsideration = Some("700000.00"))
+
+      F28FtbCap625kTotalConsideration.validate(ua) mustBe None
+    }
+
+    "must not apply when the relief reason is not 32" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.ReliefForFreeport), effectiveDate = Some(LocalDate.of(2023, 9, 24)), totalConsideration = Some("700000.00"))
+
+      F28FtbCap625kTotalConsideration.validate(ua) mustBe None
+    }
+
+    "must not apply when the effective date is in the original window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2020, 6, 1)), totalConsideration = Some("700000.00"))
+
+      F28FtbCap625kTotalConsideration.validate(ua) mustBe None
+    }
+
+    "must not apply when the effective date is in the post-2025 window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2025, 6, 1)), totalConsideration = Some("700000.00"))
+
+      F28FtbCap625kTotalConsideration.validate(ua) mustBe None
+    }
+
+    "must pass when total consideration is exactly £625,000 in the middle window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2023, 9, 24)), totalConsideration = Some("625000.00"))
+
+      F28FtbCap625kTotalConsideration.validate(ua) mustBe None
+    }
+
+    "must pass when total consideration is under £625,000 in the middle window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2023, 9, 24)), totalConsideration = Some("600000.00"))
+
+      F28FtbCap625kTotalConsideration.validate(ua) mustBe None
+    }
+
+    "must fire when total consideration is over £625,000 in the middle window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2023, 9, 24)), totalConsideration = Some("700000.00"))
+
+      F28FtbCap625kTotalConsideration.validate(ua).map(_.ruleId) mustBe Some("F28-cap625k-totalConsideration")
+    }
+
+    "must pass when total consideration is missing (incomplete, not in error)" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2023, 9, 24)))
+
+      F28FtbCap625kTotalConsideration.validate(ua) mustBe None
+    }
+
+    "must fire on the lower boundary of the middle window (23/09/2022)" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(ftb625WindowStart), totalConsideration = Some("700000.00"))
+
+      F28FtbCap625kTotalConsideration.validate(ua).map(_.ruleId) mustBe Some("F28-cap625k-totalConsideration")
+    }
+
+    "must fire on the upper boundary of the middle window (31/03/2025)" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(ftb500PostResetStart.minusDays(1)), totalConsideration = Some("700000.00"))
+
+      F28FtbCap625kTotalConsideration.validate(ua).map(_.ruleId) mustBe Some("F28-cap625k-totalConsideration")
     }
   }
 
