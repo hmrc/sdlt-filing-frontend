@@ -61,9 +61,7 @@
                     content = HtmlContent(notificationBannerHtml)
                 )
             )
-        }
-
-        @if(showSharedOwnershipNotification) {
+        } else if(showSharedOwnershipNotification) {
             @govukNotificationBanner(
                 NotificationBanner(
                     content = HtmlContent(sharedOwnershipNotificationHtml)

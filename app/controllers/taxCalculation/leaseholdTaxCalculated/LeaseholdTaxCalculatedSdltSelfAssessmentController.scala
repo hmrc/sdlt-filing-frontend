@@ -86,10 +86,9 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
       sdltCalculationService.whenInFlowAsync(LeaseholdTaxCalculated) {
-        val showSharedOwnershipNotification = SharedOwnershipLeaseHelper.shouldDisplayNotification(request.userAnswers)
         form.bindFromRequest().fold(
           formWithErrors =>
-            Future.successful(BadRequest(view(formWithErrors, postAction(mode), sectionKey, showSharedOwnershipNotification = showSharedOwnershipNotification))),
+            Future.successful(BadRequest(view(formWithErrors, postAction(mode), sectionKey))),
           value =>
             for {
               updated <- Future.fromTry(request.userAnswers.set(LeaseholdTaxCalculatedSelfAssessedAmountPage, value))

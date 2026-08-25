@@ -210,7 +210,7 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentControllerSpec extends SpecBase wi
         }
       }
 
-      "must still show the shared ownership lease notification when the form is invalid and the conditions are met" in {
+      "must not show the shared ownership lease notification when the form is invalid, even when the conditions are met" in {
         val app = appWith(sharedOwnershipAnswers)
 
         running(app) {
@@ -218,7 +218,7 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentControllerSpec extends SpecBase wi
           val result  = route(app, request).value
 
           status(result) mustEqual BAD_REQUEST
-          contentAsString(result) must include("Shared ownership leases")
+          contentAsString(result) mustNot include("Shared ownership leases")
         }
       }
 

@@ -33,7 +33,7 @@ object SharedOwnershipLeaseHelper {
       .exists(!_.isBefore(firstTimeBuyerReliefStartDate))
 
     val isGrantOfLease         = transaction.flatMap(_.transactionDescription).contains("L")
-    val isClaimingRelief       = transaction.flatMap(_.claimingRelief).contains("yes")
+    val isClaimingRelief       = transaction.flatMap(_.claimingRelief).exists(_.equalsIgnoreCase("yes"))
     val isFirstTimeBuyerRelief = transaction.flatMap(_.reliefReason).contains("32")
 
     effectiveDateOnOrAfterCutoff && isGrantOfLease && isClaimingRelief && isFirstTimeBuyerRelief

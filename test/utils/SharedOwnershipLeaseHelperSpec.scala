@@ -46,6 +46,10 @@ class SharedOwnershipLeaseHelperSpec extends SpecBase {
       shouldDisplayNotification(answersWith()) mustBe true
     }
 
+    "must return true when claiming relief is 'YES' in a different case" in {
+      shouldDisplayNotification(answersWith(claimingRelief = Some("YES"))) mustBe true
+    }
+
     "must return true when the effective date is exactly on the cutoff date (22/11/2017)" in {
       shouldDisplayNotification(answersWith(effectiveDate = Some("2017-11-22"))) mustBe true
     }
