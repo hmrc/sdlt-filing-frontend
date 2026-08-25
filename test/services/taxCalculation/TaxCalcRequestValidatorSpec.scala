@@ -641,6 +641,25 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
         val fr = leaseholdReturn().copy(lease = Some(Lease(contractStartDate = Some("2025-06-15"), totalPremiumPayable = Some("15000"))))
         TaxCalcRequestValidator.buildRequest(userAnswersWith(fr)) mustBe Left(MissingLeaseAnswerError("contractEndDate"))
       }
+
+      // NRSDLT lease term re-work to match AS-IS with SDLTC
+      "must calculate lease term as an 8 year lease for a 7 year and 1 day lease" in {
+        val term = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(startDate = "2025-06-15", endDate = "2032-06-15")
+        )).toOption.get.leaseDetails.get.leaseTerm
+        term.years mustBe 8
+        term.days mustBe 1
+      }
+
+      "must update end date as an 8 year lease for a 7 year and 1 day lease" in {
+        val ld = TaxCalcRequestValidator.buildRequest(userAnswersWith(
+          leaseholdReturn(startDate = "2025-06-15", endDate = "2032-06-15")
+        )).toOption.get.leaseDetails.get
+
+        ld.endDateDay mustBe 15
+        ld.endDateMonth mustBe 6
+        ld.endDateYear mustBe 2033
+      }
     }
 
     "highest rent" - {
