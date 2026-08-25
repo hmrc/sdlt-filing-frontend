@@ -22,12 +22,8 @@ import play.api.i18n.Messages
 import utils.{LeaseHelper, PropertyTypeHelper}
 import viewmodels.tasklist.LandTaskList.isLandComplete
 import viewmodels.tasklist.LeaseTaskList.isLeaseComplete
-import viewmodels.tasklist.PurchaserAgentTaskList.{isPurchaserAgentComplete, isPurchaserAgentStarted}
-import viewmodels.tasklist.PurchaserTaskList.isPurchaserComplete
 import viewmodels.tasklist.TransactionTaskList.isTransactionComplete
 import viewmodels.tasklist.UkResidencyTaskList.isResidencyComplete
-import viewmodels.tasklist.VendorAgentTaskList.{isVendorAgentComplete, isVendorAgentStarted}
-import viewmodels.tasklist.VendorTaskList.isVendorComplete
 
 import javax.inject.Singleton
 
@@ -74,12 +70,8 @@ object TaxCalculationTaskList {
   }
 
   def canStartTaxCalculation(fullReturn: FullReturn): Boolean = {
-    isVendorComplete(fullReturn) &&
-      isPurchaserComplete(fullReturn) &&
       isLandComplete(fullReturn) &&
       isTransactionComplete(fullReturn) &&
-      (!isVendorAgentStarted(fullReturn) || isVendorAgentComplete(fullReturn)) &&
-      (!isPurchaserAgentStarted(fullReturn) || isPurchaserAgentComplete(fullReturn)) &&
       (!isLeaseRequired(fullReturn) || isLeaseComplete(fullReturn)) &&
       (!isResidencyRequired(fullReturn) || isResidencyComplete(fullReturn))
   }
@@ -107,8 +99,6 @@ object TaxCalculationTaskList {
       checks = scheme => mandatoryFieldsDefined(fullReturn),
       prerequisites = _ => {
         val mandatory = Seq(
-          VendorTaskList.vendorRowBuilder(fullReturn),
-          PurchaserTaskList.purchaserRowBuilder(fullReturn),
           LandTaskList.landRowBuilder(fullReturn, viewmodels.tasklist.LandTaskList.noFailures),
           TransactionTaskList.transactionRowBuilder(fullReturn, viewmodels.tasklist.TransactionTaskList.noFailures),
         )
@@ -119,15 +109,6 @@ object TaxCalculationTaskList {
           ),
           Option.when(isResidencyRequired(fullReturn))(
             UkResidencyTaskList.ukResidencyRowBuilder(fullReturn)
-          ),
-          Option.when(isLeaseRequired(fullReturn))(
-            LeaseTaskList.leaseRowBuilder(fullReturn, viewmodels.tasklist.LeaseTaskList.noFailures)
-          ),
-          Option.when(isPurchaserAgentStarted(fullReturn))(
-            PurchaserAgentTaskList.purchaserAgentRowBuilder(fullReturn)
-          ),
-          Option.when(isVendorAgentStarted(fullReturn))(
-            VendorAgentTaskList.vendorAgentRowBuilder(fullReturn)
           )
         ).flatten
 
