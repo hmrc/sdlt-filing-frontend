@@ -32,12 +32,21 @@
     govukNotificationBanner: GovukNotificationBanner
 )
 
-@(form: Form[String], postAction: Call, sectionKey: String, showLinkedTransactionNotification: Boolean = false)(implicit request: Request[_], messages: Messages)
+@(form: Form[String], postAction: Call, sectionKey: String, showLinkedTransactionNotification: Boolean = false, showSharedOwnershipNotification: Boolean = false)(implicit request: Request[_], messages: Messages)
 
 @notificationBannerHtml = {
     <p class="govuk-notification-banner__heading">
         @messages("taxCalculation.linkedTransaction.allocatedAmountOnly.warningNotification")
     </p>
+    }
+
+@sharedOwnershipNotificationHtml = {
+    <h3 class="govuk-notification-banner__heading">@messages("taxCalculation.sdltSelfAssessment.sharedOwnership.heading")</h3>
+    <p class="govuk-body">@Html(messages(
+        "taxCalculation.sdltSelfAssessment.sharedOwnership.p1",
+        messages("taxCalculation.sdltSelfAssessment.sharedOwnership.linkUrl"),
+        messages("taxCalculation.sdltSelfAssessment.sharedOwnership.linkText")
+    ))</p>
     }
 
 @layout(pageTitle = title(form, messages("taxCalculation.sdltSelfAssessment.title"), section = Some(messages(sectionKey)))) {
@@ -50,6 +59,12 @@
             @govukNotificationBanner(
                 NotificationBanner(
                     content = HtmlContent(notificationBannerHtml)
+                )
+            )
+        } else if(showSharedOwnershipNotification) {
+            @govukNotificationBanner(
+                NotificationBanner(
+                    content = HtmlContent(sharedOwnershipNotificationHtml)
                 )
             )
         }

@@ -1622,6 +1622,10 @@ taxCalculation.sdltSelfAssessment.calculator.link                               
 taxCalculation.sdltSelfAssessment.calculator.text                                   = use the SDLT calculator to work out the correct amount (opens in a new tab)
 taxCalculation.sdltSelfAssessment.h2                                                = What is the self-assessed amount of SDLT?
 taxCalculation.sdltSelfAssessment.hint                                              = Enter the amount in whole pounds only, for example £10,000. This amount should not include any penalties or interest due.
+taxCalculation.sdltSelfAssessment.sharedOwnership.heading                           = Shared ownership leases
+taxCalculation.sdltSelfAssessment.sharedOwnership.p1                                = The type of transaction is ‘L - Grant of lease’ and ‘32 - First Time Buyer’s Relief’ is being claimed. You must check if this is a <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>. If it is, you must review HMRC’s automatic calculation and amend if it’s incorrect.
+taxCalculation.sdltSelfAssessment.sharedOwnership.linkUrl                           = https://www.gov.uk/stamp-duty-land-tax/shared-ownership-property
+taxCalculation.sdltSelfAssessment.sharedOwnership.linkText                          = shared ownership lease (opens in new tab)
 
 taxCalculation.totalAmountDue.h2                                                    = What is the total amount you intend to pay with this return?
 taxCalculation.totalAmountDue.hint                                                  = Enter the amount in whole pounds only, for example £10,000
