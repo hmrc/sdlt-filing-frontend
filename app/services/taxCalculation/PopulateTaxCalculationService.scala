@@ -43,7 +43,7 @@ class PopulateTaxCalculationService {
       case LeaseholdSelfAssessed  => LeaseholdSelfAssessedTotalAmountDuePage
     }
     taxCalculation.amountPaid match {
-      case Some(amount) => userAnswers.set(page, amount)
+      case Some(amount) => userAnswers.set(page, withoutSeparators(amount))
       case None         => Success(userAnswers)
     }
   }
@@ -65,29 +65,31 @@ class PopulateTaxCalculationService {
     flow match {
       case FreeholdTaxCalculated =>
         taxCalculation.taxDue match {
-          case Some(amount) => userAnswers.set(FreeholdTaxCalculatedSelfAssessedAmountPage, amount)
+          case Some(amount) => userAnswers.set(FreeholdTaxCalculatedSelfAssessedAmountPage, withoutSeparators(amount))
           case None         => Success(userAnswers)
         }
       case FreeholdSelfAssessed =>
         taxCalculation.taxDue match {
-          case Some(amount) => userAnswers.set(FreeholdSelfAssessedAmountPage, amount)
+          case Some(amount) => userAnswers.set(FreeholdSelfAssessedAmountPage, withoutSeparators(amount))
           case None         => Success(userAnswers)
         }
       case LeaseholdTaxCalculated =>
         taxCalculation.taxDue match {
-          case Some(amount) => userAnswers.set(LeaseholdTaxCalculatedSelfAssessedAmountPage, amount)
+          case Some(amount) => userAnswers.set(LeaseholdTaxCalculatedSelfAssessedAmountPage, withoutSeparators(amount))
           case None         => Success(userAnswers)
         }
       case LeaseholdSelfAssessed =>
         for {
           withPremium  <- taxCalculation.taxDuePremium match {
-            case Some(premium) => userAnswers.set(LeaseholdSelfAssessedPremiumPayableTaxPage, premium)
+            case Some(premium) => userAnswers.set(LeaseholdSelfAssessedPremiumPayableTaxPage, withoutSeparators(premium))
             case None          => Success(userAnswers)
           }
           finalAnswers <- taxCalculation.taxDueNPV match {
-            case Some(npv) => withPremium.set(LeaseholdSelfAssessedNpvTaxPage, npv)
+            case Some(npv) => withPremium.set(LeaseholdSelfAssessedNpvTaxPage, withoutSeparators(npv))
             case None      => Success(withPremium)
           }
         } yield finalAnswers
     }
+
+  private def withoutSeparators(amount: String): String = amount.replace(",", "")
 }
