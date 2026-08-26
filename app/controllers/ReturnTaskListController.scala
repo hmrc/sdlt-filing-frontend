@@ -49,7 +49,8 @@ class ReturnTaskListController @Inject()(
                                           pdfGenerationService: PDFGenerationService,
                                           crossFlowService: CrossFlowValidationService,
                                           purchaserService: PurchaserService,
-                                          landService: LandService
+                                          landService: LandService,
+                                          crossFlowValidationService: CrossFlowValidationService
                                         )(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig)
   extends FrontendBaseController
     with I18nSupport {
@@ -65,6 +66,8 @@ class ReturnTaskListController @Inject()(
           userAnswers  = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = request.storn)
           _           <- sessionRepository.set(userAnswers)
         } yield {
+          val crossFlowErrorCheck: Boolean = crossFlowValidationService.failureCount(userAnswers) > 0
+
           val maybeSubmissionObject = userAnswers.fullReturn.flatMap(_.submission)
           val purchaserName: Option[String] = {
             purchaserService.getMainPurchaser(userAnswers).flatMap { purchaser => purchaser.companyName.orElse(
@@ -94,7 +97,7 @@ class ReturnTaskListController @Inject()(
               Some(TransactionTaskList.build(fullReturn, transactionStatus)),
               if (LeaseHelper.isLeaseType(fullReturn)) Some(LeaseTaskList.build(fullReturn, leaseStatus)) else None,
               Some(TaxCalculationTaskList.build(fullReturn)),
-              Some(SubmissionTaskList.build(fullReturn))
+              Some(SubmissionTaskList.build(fullReturn, crossFlowErrorCheck))
             ).flatten
 
             Ok(view(purchaserName, landAddress1, sections: _*))
