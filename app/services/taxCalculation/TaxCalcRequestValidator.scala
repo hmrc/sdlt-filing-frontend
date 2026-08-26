@@ -131,12 +131,12 @@ object TaxCalcRequestValidator {
     val leaseType       = lease.flatMap(_.leaseType)
     val leaseTerm       = lease.flatMap { l =>
         getValidLeaseDates(l).toOption.map { dates =>
-          calculateLeaseTerm(dates.startDate, dates.endDate, dates.startDate)
+          calculateLeaseTerm(dates.startDate, dates.endDate)
         }
       }
 
     val shortLease    =
-      leaseTerm.exists(_.years < LEASE_TERM_THRESHOLD)
+      leaseTerm.exists(_.years <= LEASE_TERM_THRESHOLD)
 
     val lowValueLease =
       amountOrZero(lease.flatMap(_.totalPremiumPayable)) < PREMIUM_THRESHOLD &&
@@ -184,16 +184,18 @@ object TaxCalcRequestValidator {
   private def buildLeaseDetails(lease: Lease, transaction: Transaction, effectiveDate: LocalDate): Either[BuildRequestError, Option[LeaseDetails]] =
     for {
       validDates            <- getValidLeaseDates(lease)
-      leaseTerm             = calculateLeaseTerm(validDates.startDate, validDates.endDate, effectiveDate)
+      calculationStartDate  = if (effectiveDate.isAfter(validDates.startDate)) effectiveDate else validDates.startDate
+      leaseTerm             = calculateLeaseTerm(validDates.startDate, validDates.endDate)
       rentYears             = if (leaseTerm.years < 5 && leaseTerm.daysInPartialYear > 0) Math.min(leaseTerm.years + 1, 5) else Math.min(leaseTerm.years, 5)
+      adjustedEndDate       = calculationStartDate.plus(Period.of(leaseTerm.years, 0, leaseTerm.days - 1))
     } yield Option.when(transaction.transactionDescription.contains(GRANT_OF_LEASE))(
       LeaseDetails(
         startDateDay    = validDates.startDate.getDayOfMonth,
         startDateMonth  = validDates.startDate.getMonthValue,
         startDateYear   = validDates.startDate.getYear,
-        endDateDay      = validDates.endDate.getDayOfMonth,
-        endDateMonth    = validDates.endDate.getMonthValue,
-        endDateYear     = validDates.endDate.getYear,
+        endDateDay      = adjustedEndDate.getDayOfMonth,
+        endDateMonth    = adjustedEndDate.getMonthValue,
+        endDateYear     = adjustedEndDate.getYear,
         leaseTerm       = leaseTerm,
         year1Rent = 0,
         year2Rent = Option.when(rentYears >= 2)(0),
@@ -214,16 +216,15 @@ object TaxCalcRequestValidator {
   private def calculateLeaseTerm(
                                   validStartDate: LocalDate,
                                   validEndDate: LocalDate,
-                                  effectiveDate: LocalDate
                                 ): LeaseTerm = {
-    val calculationStartDate = if (effectiveDate.isAfter(validStartDate)) effectiveDate else validStartDate
-    val years = Period.between(calculationStartDate, validEndDate.plusDays(1)).getYears
-    val partialStart = calculationStartDate.plusYears(years)
+    val years = Period.between(validStartDate, validEndDate.plusDays(1)).getYears
+    val partialStart = validStartDate.plusYears(years)
     val days = ChronoUnit.DAYS.between(partialStart, validEndDate.plusDays(1)).toInt
     val daysInPartialYear = if (years < 5 && days > 0) days else 0
+    val yearsForNrsdlt = if (years == 7 && days > 0) 8 else years
 
     LeaseTerm(
-      years = years,
+      years = yearsForNrsdlt,
       days = days,
       daysInPartialYear = daysInPartialYear
     )
