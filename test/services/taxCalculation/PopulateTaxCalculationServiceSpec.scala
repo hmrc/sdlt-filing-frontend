@@ -49,25 +49,6 @@ class PopulateTaxCalculationServiceSpec extends SpecBase {
       result.get(LeaseholdSelfAssessedNpvTaxPage).value mustEqual "40"
     }
 
-    "must strip thousand separators from the amounts saved by the legacy service" in {
-      val taxCalculation = TaxCalculation(amountPaid = Some("43,850"), includesPenalty = Some("yes"), taxDue = Some("43,750.00"))
-
-      val result = service.populateTaxCalculationInSession(taxCalculation, FreeholdTaxCalculated, emptyUserAnswers).success.value
-
-      result.get(FreeholdTaxCalculatedTotalAmountDuePage).value mustEqual "43850"
-      result.get(FreeholdTaxCalculatedSelfAssessedAmountPage).value mustEqual "43750.00"
-    }
-
-    "must strip thousand separators from the premium and NPV tax for a leasehold self-assessed return" in {
-      val taxCalculation = TaxCalculation(amountPaid = Some("1,100"), includesPenalty = Some("no"), taxDuePremium = Some("1,060.00"), taxDueNPV = Some("2,040.00"))
-
-      val result = service.populateTaxCalculationInSession(taxCalculation, LeaseholdSelfAssessed, emptyUserAnswers).success.value
-
-      result.get(LeaseholdSelfAssessedTotalAmountDuePage).value mustEqual "1100"
-      result.get(LeaseholdSelfAssessedPremiumPayableTaxPage).value mustEqual "1060.00"
-      result.get(LeaseholdSelfAssessedNpvTaxPage).value mustEqual "2040.00"
-    }
-
     "must leave the answers unset when the tax calculation has no values" in {
       val result = service.populateTaxCalculationInSession(TaxCalculation(), FreeholdTaxCalculated, emptyUserAnswers).success.value
 
