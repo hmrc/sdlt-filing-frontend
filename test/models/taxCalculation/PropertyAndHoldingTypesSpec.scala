@@ -24,19 +24,19 @@ class PropertyAndHoldingTypesSpec extends AnyFreeSpec with Matchers {
   "HoldingTypes.fromCode" - {
 
     "must map L (grant of lease) to leasehold" in {
-      HoldingTypes.fromCode("L") mustBe Some(HoldingTypes.leasehold)
+      HoldingTypes.fromCode("L") mustBe Some(HoldingTypes.Leasehold)
     }
 
     "must map F (conveyance transfer) to freehold" in {
-      HoldingTypes.fromCode("F") mustBe Some(HoldingTypes.freehold)
+      HoldingTypes.fromCode("F") mustBe Some(HoldingTypes.Freehold)
     }
 
     "must map A (conveyance transfer lease) to freehold" in {
-      HoldingTypes.fromCode("A") mustBe Some(HoldingTypes.freehold)
+      HoldingTypes.fromCode("A") mustBe Some(HoldingTypes.Freehold)
     }
 
     "must map O (other transaction) to freehold" in {
-      HoldingTypes.fromCode("O") mustBe Some(HoldingTypes.freehold)
+      HoldingTypes.fromCode("O") mustBe Some(HoldingTypes.Freehold)
     }
 
     "must return None for an unrecognised description" in {

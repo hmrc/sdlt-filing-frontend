@@ -44,8 +44,8 @@ object SelfAssessmentFallback {
 
     val selfAssessedFlowAndResult: Option[(TaxCalculationFlow, Result)] =
       TaxCalculationHelper.holdingType(answers).collect {
-        case HoldingTypes.freehold  => FreeholdSelfAssessed  -> render(freeholdSectionKey,  freeholdContinueUrl)
-        case HoldingTypes.leasehold => LeaseholdSelfAssessed -> render(leaseholdSectionKey, leaseholdContinueUrl)
+        case HoldingTypes.Freehold  => FreeholdSelfAssessed  -> render(freeholdSectionKey,  freeholdContinueUrl)
+        case HoldingTypes.Leasehold => LeaseholdSelfAssessed -> render(leaseholdSectionKey, leaseholdContinueUrl)
       }
 
     selfAssessedFlowAndResult match {

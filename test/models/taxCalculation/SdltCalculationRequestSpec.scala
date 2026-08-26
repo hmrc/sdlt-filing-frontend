@@ -23,7 +23,7 @@ import play.api.libs.json.*
 class SdltCalculationRequestSpec extends AnyFreeSpec with Matchers {
 
   private val minimalRequest = SdltCalculationRequest(
-    holdingType         = HoldingTypes.leasehold,
+    holdingType         = HoldingTypes.Leasehold,
     propertyType        = PropertyTypes.residential,
     effectiveDateDay    = 1,
     effectiveDateMonth  = 2,
@@ -43,7 +43,7 @@ class SdltCalculationRequestSpec extends AnyFreeSpec with Matchers {
   )
 
   private val minimalJson = Json.obj(
-    "holdingType"        -> "leasehold",
+    "holdingType"        -> "Leasehold",
     "propertyType"       -> "Residential",
     "effectiveDateDay"   -> 1,
     "effectiveDateMonth" -> 2,
@@ -71,8 +71,8 @@ class SdltCalculationRequestSpec extends AnyFreeSpec with Matchers {
       }
 
       "must serialize freehold holding type" in {
-        Json.toJson(minimalRequest.copy(holdingType = HoldingTypes.freehold)) mustBe
-          minimalJson ++ Json.obj("holdingType" -> "freehold")
+        Json.toJson(minimalRequest.copy(holdingType = HoldingTypes.Freehold)) mustBe
+          minimalJson ++ Json.obj("holdingType" -> "Freehold")
       }
 
       "must serialize NonResidential property type" in {
@@ -174,7 +174,7 @@ class SdltCalculationRequestSpec extends AnyFreeSpec with Matchers {
         )
 
         Json.toJson(request) mustBe Json.obj(
-          "holdingType"         -> "leasehold",
+          "holdingType"         -> "Leasehold",
           "propertyType"        -> "Residential",
           "effectiveDateDay"    -> 1,
           "effectiveDateMonth"  -> 2,

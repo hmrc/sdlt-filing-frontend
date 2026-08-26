@@ -94,7 +94,7 @@ object TaxCalcRequestValidator {
 
   private def premiumFor(holdingType: HoldingTypes.Value, transaction: Transaction, lease: Option[Lease]): Either[BuildRequestError, String] =
     holdingType match {
-      case HoldingTypes.leasehold => lease.flatMap(_.totalPremiumPayable).toRight(MissingLeaseAnswerError("totalPremiumPayable"))
+      case HoldingTypes.Leasehold => lease.flatMap(_.totalPremiumPayable).toRight(MissingLeaseAnswerError("totalPremiumPayable"))
       case _                      => transaction.totalConsideration.toRight(MissingTransactionAnswerError("totalConsideration"))
     }
 

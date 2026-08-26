@@ -221,11 +221,11 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
     "holding type" - {
 
       "must map F to freehold" in {
-        TaxCalcRequestValidator.buildRequest(userAnswersWith(freeholdReturn())).toOption.get.holdingType mustBe HoldingTypes.freehold
+        TaxCalcRequestValidator.buildRequest(userAnswersWith(freeholdReturn())).toOption.get.holdingType mustBe HoldingTypes.Freehold
       }
 
       "must map L to leasehold" in {
-        TaxCalcRequestValidator.buildRequest(userAnswersWith(leaseholdReturn())).toOption.get.holdingType mustBe HoldingTypes.leasehold
+        TaxCalcRequestValidator.buildRequest(userAnswersWith(leaseholdReturn())).toOption.get.holdingType mustBe HoldingTypes.Leasehold
       }
 
       "must map A to freehold" in {
@@ -233,7 +233,7 @@ class TaxCalcRequestValidatorSpec extends SpecBase {
           transactionDescription = Some("A"), effectiveDate = Some("2025-06-15"),
           totalConsideration = Some("250000"), isLinked = Some("no"), claimingRelief = Some("no")
         )))
-        TaxCalcRequestValidator.buildRequest(userAnswersWith(fr)).toOption.get.holdingType mustBe HoldingTypes.freehold
+        TaxCalcRequestValidator.buildRequest(userAnswersWith(fr)).toOption.get.holdingType mustBe HoldingTypes.Freehold
       }
     }
 
