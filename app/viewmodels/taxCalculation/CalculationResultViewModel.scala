@@ -83,7 +83,7 @@ object CalculationResultViewModel extends CurrencyFormatter {
 
   private def considerationFor(holdingType: HoldingTypes.Value, transaction: Transaction, lease: Option[Lease]): Either[BuildRequestError, String] =
     holdingType match {
-      case HoldingTypes.leasehold => lease.flatMap(_.totalPremiumPayable).toRight(MissingLeaseAnswerError("totalPremiumPayable"))
+      case HoldingTypes.Leasehold => lease.flatMap(_.totalPremiumPayable).toRight(MissingLeaseAnswerError("totalPremiumPayable"))
       case _                      => transaction.totalConsideration.toRight(MissingTransactionAnswerError("totalConsideration"))
     }
 
@@ -177,9 +177,9 @@ object CalculationResultViewModel extends CurrencyFormatter {
   private[taxCalculation] def getTotalTaxTable(totalSdltDue: String, holdingTypes: HoldingTypes.Value)(implicit messages: Messages): Table = {
     Table(
       caption = holdingTypes match {
-                  case HoldingTypes.freehold =>
+                  case HoldingTypes.Freehold =>
                     Some(getMessage("header.totalSdltDue"))
-                  case HoldingTypes.leasehold =>
+                  case HoldingTypes.Leasehold =>
                     Some(getMessage("header.totalSdltDueWithNpv"))
                 },
       captionClasses = mediumCaption,

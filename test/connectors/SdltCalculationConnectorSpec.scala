@@ -35,7 +35,7 @@ class SdltCalculationConnectorSpec extends SpecBase with MockitoSugar {
   private val testCalculationUrl = "http://localhost:10100/calculate"
 
   private val testRequest = SdltCalculationRequest(
-    holdingType         = HoldingTypes.leasehold,
+    holdingType         = HoldingTypes.Leasehold,
     propertyType        = PropertyTypes.residential,
     effectiveDateDay    = 1,
     effectiveDateMonth  = 2,

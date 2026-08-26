@@ -32,12 +32,12 @@ object TaxCalculationHelper {
 
   def flowFor(answers: UserAnswers, outcome: CalculationOutcome): Option[TaxCalculationFlow] =
     (holdingType(answers), outcome) match {
-      case (Some(HoldingTypes.freehold),  Calculated(_))   => Some(TaxCalculationFlow.FreeholdTaxCalculated)
-      case (Some(HoldingTypes.freehold),  SelfAssessed)    => Some(TaxCalculationFlow.FreeholdSelfAssessed)
-      case (Some(HoldingTypes.freehold),  PreMarch2012)    => Some(TaxCalculationFlow.FreeholdSelfAssessed)
-      case (Some(HoldingTypes.leasehold), Calculated(_))   => Some(TaxCalculationFlow.LeaseholdTaxCalculated)
-      case (Some(HoldingTypes.leasehold), SelfAssessed)    => Some(TaxCalculationFlow.LeaseholdSelfAssessed)
-      case (Some(HoldingTypes.leasehold), PreMarch2012)    => Some(TaxCalculationFlow.LeaseholdSelfAssessed)
+      case (Some(HoldingTypes.Freehold),  Calculated(_))   => Some(TaxCalculationFlow.FreeholdTaxCalculated)
+      case (Some(HoldingTypes.Freehold),  SelfAssessed)    => Some(TaxCalculationFlow.FreeholdSelfAssessed)
+      case (Some(HoldingTypes.Freehold),  PreMarch2012)    => Some(TaxCalculationFlow.FreeholdSelfAssessed)
+      case (Some(HoldingTypes.Leasehold), Calculated(_))   => Some(TaxCalculationFlow.LeaseholdTaxCalculated)
+      case (Some(HoldingTypes.Leasehold), SelfAssessed)    => Some(TaxCalculationFlow.LeaseholdSelfAssessed)
+      case (Some(HoldingTypes.Leasehold), PreMarch2012)    => Some(TaxCalculationFlow.LeaseholdSelfAssessed)
       case _                                               => None
     }
 

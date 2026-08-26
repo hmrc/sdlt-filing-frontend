@@ -22,13 +22,13 @@ import play.api.libs.json._
 
 object HoldingTypes extends Enumeration {
 
-  val leasehold = Value
-  val freehold  = Value
+  val Leasehold = Value
+  val Freehold  = Value
 
   def fromCode(description: String): Option[HoldingTypes.Value] =
     TransactionType.parse(Some(description)).map {
-      case TransactionType.GrantOfLease => leasehold
-      case _                            => freehold
+      case TransactionType.GrantOfLease => Leasehold
+      case _                            => Freehold
     }
 
   implicit val writes: Writes[HoldingTypes.Value] =

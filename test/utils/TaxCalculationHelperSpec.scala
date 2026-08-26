@@ -37,19 +37,19 @@ class TaxCalculationHelperSpec extends SpecBase {
   "holdingType" - {
 
     "must return Some(freehold) for transactionDescription F (conveyance transfer)" in {
-      holdingType(answersWith("F")) mustBe Some(HoldingTypes.freehold)
+      holdingType(answersWith("F")) mustBe Some(HoldingTypes.Freehold)
     }
 
     "must return Some(freehold) for transactionDescription A (conveyance transfer lease)" in {
-      holdingType(answersWith("A")) mustBe Some(HoldingTypes.freehold)
+      holdingType(answersWith("A")) mustBe Some(HoldingTypes.Freehold)
     }
 
     "must return Some(freehold) for transactionDescription O (other transaction)" in {
-      holdingType(answersWith("O")) mustBe Some(HoldingTypes.freehold)
+      holdingType(answersWith("O")) mustBe Some(HoldingTypes.Freehold)
     }
 
     "must return Some(leasehold) for transactionDescription L (grant of lease)" in {
-      holdingType(answersWith("L")) mustBe Some(HoldingTypes.leasehold)
+      holdingType(answersWith("L")) mustBe Some(HoldingTypes.Leasehold)
     }
 
     "must return None when no FullReturn is present" in {

@@ -53,7 +53,7 @@ class SdltCalculationConnectorISpec
   private val calculationPath = "/calculate-stamp-duty-land-tax/calculate"
 
   private val testRequest = SdltCalculationRequest(
-    holdingType         = HoldingTypes.leasehold,
+    holdingType         = HoldingTypes.Leasehold,
     propertyType        = PropertyTypes.residential,
     effectiveDateDay    = 1,
     effectiveDateMonth  = 2,
