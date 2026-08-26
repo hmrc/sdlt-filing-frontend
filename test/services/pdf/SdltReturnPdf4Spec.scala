@@ -321,18 +321,6 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
         readField(result, "transaction_payDeferred_no")  mustBe Some("Yes")
       }
 
-      "must write mineral rights" in {
-        val r = baseReturn.copy(
-          land = Some(Seq(
-            Land(landID = Some("LND001"), mineralRights = Some("Yes")),
-            Land(landID = Some("LND002"))
-          )),
-          returnInfo = Some(ReturnInfo(mainLandID = Some("LND001")))
-        )
-        val result = fill(Some(baseLand), r, true)
-        readField(result, "land_mineralRights") mustBe Some("Yes")
-      }
-
       "must write purchaser descriptions as 2 digit codes" in {
         val r = withCompanyDetails(CompanyDetails(
           companyTypeIndividual = Some("yes"),
@@ -413,6 +401,16 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
         readField(result, "land_landArea") mustBe Some("100.000")
       }
 
+      "must write mineral rights from the land being filled" in {
+        val l = baseLand.copy(mineralRights = Some("Yes"))
+        val r = baseReturn.copy(
+          land = Some(Seq(Land(landID = Some("LND002"), mineralRights = Some("No")))),
+          returnInfo = Some(ReturnInfo(mainLandID = Some("LND002")))
+        )
+        val result = fill(Some(l), r, true)
+        readField(result, "land_mineralRights") mustBe Some("Yes")
+      }
+
       "must fill yes checkbox when planAttached is yes" in {
         val l = baseLand.copy(willSendPlanByPost = Some("Yes"))
         val result = fill(Some(l), baseReturn, false)
@@ -424,7 +422,8 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
         val l = baseLand.copy(
           address1 = Some("Test Lane"),
           areaUnit = Some("SquareMetres"),
-          landArea = Some("100.000")
+          landArea = Some("100.000"),
+          mineralRights = Some("no")
         )
         val r = withLease(Lease(
           startingRent = Some("2000.00"),
@@ -433,6 +432,7 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
         ))
         val result = fill(Some(l), r, false, Sdlt4a)
 
+        readField(result, "land_mineralRights") mustBe Some("")
         readField(result, "land_addressLine1") mustBe Some("")
         readField(result, "land_landAreaType_Square_Metres") mustBe Some("Off")
         readField(result, "land_landArea") mustBe Some("")
@@ -440,6 +440,17 @@ class SdltReturnPdf4Spec extends SpecBase with MockitoSugar {
         readField(result, "lease_startingRent") mustBe Some("")
         readField(result, "lease_netPresentValue") mustBe Some("")
         readField(result, "lease_startingRentLaterKnown_no") mustBe Some("Off")
+      }
+
+      "must not write mineral rights when pdf4a is passed and firstTimeThrough is true" in {
+        val l = baseLand.copy(mineralRights = Some("no"))
+        val r = baseReturn.copy(
+          land = Some(Seq(l)),
+          returnInfo = Some(ReturnInfo(mainLandID = Some("LND001")))
+        )
+        val result = fill(Some(l), r, true, Sdlt4a)
+
+        readField(result, "land_mineralRights") mustBe Some("")
       }
 
       // Lease
