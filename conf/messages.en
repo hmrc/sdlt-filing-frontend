@@ -2279,6 +2279,7 @@ submission.submissionAwaitingConfirmation.title                                 
 submission.submissionAwaitingConfirmation.heading                                   = Your submission is awaiting confirmation
 submission.submissionAwaitingConfirmation.p1                                        = HMRC is processing your return. You can view it in <a href="{0}" class="govuk-link">{1}</a>.
 submission.submissionAwaitingConfirmation.p1.linkText                               = Returns in progress
+submission.submissionAwaitingConfirmation.link                                      = View your completed SDLT return
 submission.submissionAwaitingConfirmation.p2                                        = If your submission fails, the status will change to ‘Submission failed’. Select your return to find out why this happened and what to do next.
 submission.submissionAwaitingConfirmation.p3                                        = If your submission is successful, the status will change to ‘Submitted’ and your return will move to {0}. If you chose to receive email confirmation, HMRC will notify you when this happens. If you opted out, you need to check your {1} for a status update.
 submission.submissionAwaitingConfirmation.p3.linkText1                              = Submitted returns
@@ -2288,7 +2289,7 @@ submission.submissionAwaitingConfirmation.b1                                    
 submission.submissionAwaitingConfirmation.b2                                        = your SDLT5 certificate
 submission.submissionAwaitingConfirmation.b3                                        = what happens next
 submission.submissionAwaitingConfirmation.b4                                        = how to pay
-submission.submissionAwaitingConfirmation.link                                      = Return to your Stamp Taxes Online account
+submission.submissionAwaitingConfirmation.link2                                     = Return to your Stamp Taxes Online account
 
 submission.submissionFailed.heading                                                 = Submission failed
 submission.submissionFailed.p1a                                                     = Your return could not be submitted because:
@@ -2297,13 +2298,14 @@ submission.submissionFailed.reason                                              
 submission.submissionFailed.p4.prefix                                               = Contact the <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a> to speak to someone about your return.
 submission.submissionFailed.p4.link                                                 = https://www.gov.uk/find-hmrc-contacts/stamp-duty-land-tax-general-enquiries
 submission.submissionFailed.p4.linkText                                             = Stamp Taxes Helpline (opens in a new tab)
-submission.submissionFailed.link1                                                   = View your return
+submission.submissionFailed.link                                                    = View your completed SDLT return
 submission.submissionFailed.link2                                                   = Return to your Stamp Taxes Online account
 
 submission.resubmitYourReturn.heading                                               = Resubmit your return
 submission.resubmitYourReturn.p1                                                    = There was a problem with your submission.
 submission.resubmitYourReturn.p2                                                    = You must {0}
 submission.resubmitYourReturn.p2.linkText                                           = confirm and resubmit to file this return.
+submission.resubmitYourReturn.link                                                  = View your completed SDLT return
 
 submission.submissionReceipt.title                                                  = Submission receipt and electronic SDLT5 certificate
 submission.submissionReceipt.heading                                                = Submission Receipt and Electronic SDLT 5 Certificate

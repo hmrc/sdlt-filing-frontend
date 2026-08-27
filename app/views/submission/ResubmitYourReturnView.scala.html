@@ -40,4 +40,11 @@
             messageKey = "submission.resubmitYourReturn.p2.linkText"
         ))
     )
+
+    <div class ="govuk-body">
+        @link(
+            link       = controllers.submission.routes.CompletedSdltReturnController.onPageLoad().url,
+            messageKey = "submission.resubmitYourReturn.link"
+        )
+    </div>
 }

@@ -42,6 +42,13 @@
         textKey = "submission.submissionAwaitingConfirmation.p1.linkText"
     )
 
+    <div class ="govuk-body">
+        @link(
+            link       = controllers.submission.routes.CompletedSdltReturnController.onPageLoad().url,
+            messageKey = "submission.submissionAwaitingConfirmation.link"
+        )
+    </div>
+
     @p("submission.submissionAwaitingConfirmation.p2")
 
     @p(messages("submission.submissionAwaitingConfirmation.p3",
@@ -67,7 +74,7 @@
     <div class="govuk-body">
         @link(
             link = appConfig.sdltManagementRedirectUrl,
-            messageKey = "submission.submissionAwaitingConfirmation.link"
+            messageKey = "submission.submissionAwaitingConfirmation.link2"
         )
     </div>
 }
