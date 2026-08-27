@@ -560,7 +560,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
     }
 
     "when relief is not claimed" - {
-      "must set eligible to false and partial relief to false" in {
+      "must set eligible to false and partial relief to None" in {
         val transaction = Transaction(
           transactionDescription = Some("F"),
           effectiveDate          = Some("15/01/2024"),
@@ -575,7 +575,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
         val updatedAnswers = result.get
 
         updatedAnswers.get(PurchaserEligibleToClaimReliefPage) mustBe Some(false)
-        updatedAnswers.get(TransactionPartialReliefPage)        mustBe Some(false)
+        updatedAnswers.get(TransactionPartialReliefPage)        mustBe None
         updatedAnswers.get(ClaimingPartialReliefAmountPage)     mustBe None
         updatedAnswers.get(AddRegisteredCharityNumberPage)      mustBe None
         updatedAnswers.get(CharityRegisteredNumberPage)         mustBe None
@@ -668,7 +668,7 @@ class PopulateTransactionServiceSpec extends SpecBase with MockitoSugar {
           val updatedAnswers = result.get
 
           updatedAnswers.get(ConsiderationsAffectedUncertainPage) mustBe Some(false)
-          updatedAnswers.get(TransactionDeferringPaymentPage)     mustBe Some(false)
+          updatedAnswers.get(TransactionDeferringPaymentPage)     mustBe None
         }
       }
     }

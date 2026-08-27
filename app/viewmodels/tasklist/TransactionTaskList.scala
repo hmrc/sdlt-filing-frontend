@@ -44,7 +44,6 @@ object TransactionTaskList {
       fullReturn.transaction.exists(_.transactionDescription.isDefined),
       fullReturn.transaction.exists(_.effectiveDate.isDefined),
       fullReturn.transaction.exists(_.isDependantOnFutureEvent.isDefined),
-      fullReturn.transaction.exists(_.agreedToDeferPayment.isDefined),
       fullReturn.transaction.exists(_.isPartOfSaleOfBusiness.isDefined),
       fullReturn.transaction.exists(_.postTransRulingApplied.isDefined),
       fullReturn.transaction.exists(_.restrictionsAffectInterest.isDefined),

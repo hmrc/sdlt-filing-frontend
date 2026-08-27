@@ -139,15 +139,9 @@ class PopulateTransactionService {
           finalAnswers      <- partialReliefPages(transaction, withReliefSchemePages)
         } yield finalAnswers
 
-      case (true, _) =>
-        for {
-          finalAnswers <- userAnswers.set(PurchaserEligibleToClaimReliefPage, true)
-        } yield finalAnswers
-
       case _ =>
         for {
-          withEligible <- userAnswers.set(PurchaserEligibleToClaimReliefPage, false)
-          finalAnswers <- withEligible.set(TransactionPartialReliefPage, false)
+          finalAnswers <- userAnswers.set(PurchaserEligibleToClaimReliefPage, isClaimingRelief)
         } yield finalAnswers
     }
   }
@@ -186,13 +180,21 @@ class PopulateTransactionService {
 
   private def considerationDeferringPages(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
     val considerationCheck: Boolean = transaction.isDependantOnFutureEvent.exists(_.equalsIgnoreCase("yes"))
-    val deferringCheck: Boolean = transaction.agreedToDeferPayment.exists(_.equalsIgnoreCase("yes"))
+    val deferringCheck: Option[Boolean] = transaction.agreedToDeferPayment.map(_.equalsIgnoreCase("yes"))
 
-    for {
-      withConsideration <- userAnswers.set(ConsiderationsAffectedUncertainPage, considerationCheck)
-      withDeferring <- withConsideration.set(TransactionDeferringPaymentPage, deferringCheck)
-      finalAnswers <- propertyUsePage(transaction, withDeferring)
-    } yield finalAnswers
+    deferringCheck match {
+      case Some(deferringPayment) =>
+        for {
+          withConsideration <- userAnswers.set(ConsiderationsAffectedUncertainPage, considerationCheck)
+          withDeferring <- withConsideration.set(TransactionDeferringPaymentPage, deferringPayment)
+          finalAnswers <- propertyUsePage(transaction, withDeferring)
+        } yield finalAnswers
+      case _ =>
+        for {
+          withConsideration <- userAnswers.set(ConsiderationsAffectedUncertainPage, considerationCheck)
+          finalAnswers <- propertyUsePage(transaction, withConsideration)
+        } yield finalAnswers
+    }
   }
 
   private def propertyUsePage(transaction: Transaction, userAnswers: UserAnswers): Try[UserAnswers] = {
