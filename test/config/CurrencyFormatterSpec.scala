@@ -63,6 +63,10 @@ class CurrencyFormatterSpec extends AnyFreeSpec with Matchers {
       "500000.00".toCurrency mustEqual "£500,000"
     }
 
+    "removes commas from the string before formatting" in {
+      "5,000,000.00".toCurrency mustEqual "£5,000,000"
+    }
+
     "formats a whole-number string" in {
       "500000".toCurrency mustEqual "£500,000"
     }

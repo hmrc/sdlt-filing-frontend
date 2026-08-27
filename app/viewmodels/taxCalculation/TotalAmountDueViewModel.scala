@@ -42,7 +42,7 @@ object TotalAmountDueViewModel extends CurrencyFormatter {
       transaction      <- fullReturn.transaction.toRight(MissingAboutTheTransactionError)
       effectiveDateRaw <- transaction.effectiveDate.toRight(MissingTransactionAnswerError("effectiveDate"))
       effectiveDate    <- parseDate(effectiveDateRaw).left.map(_ => InvalidDateError(effectiveDateRaw))
-      sdltDue           = answers.get(selfAssessedAmountPage).map(BigDecimal(_)).getOrElse(BigDecimal(result.totalTax))
+      sdltDue           = answers.get(selfAssessedAmountPage).map(x => BigDecimal(x.replace(",", ""))).getOrElse(BigDecimal(result.totalTax))
       penalties         = TaxCalculationPenaltiesHelper.getPenalties(effectiveDate, timeMachine)
       total             = sdltDue + penalties
     } yield TotalAmountDueSummaryRowValues(
