@@ -19,33 +19,26 @@ package viewmodels.tasklist
 import config.FrontendAppConfig
 import models.FullReturn
 import play.api.i18n.Messages
-import utils.{LeaseHelper, PropertyTypeHelper}
-import viewmodels.tasklist.LandTaskList.isLandComplete
-import viewmodels.tasklist.LeaseTaskList.isLeaseComplete
-import viewmodels.tasklist.VendorTaskList.isVendorComplete
-import viewmodels.tasklist.PurchaserTaskList.isPurchaserComplete
-import viewmodels.tasklist.TaxCalculationTaskList.isTaxCalculationComplete
-import viewmodels.tasklist.TransactionTaskList.isTransactionComplete
-import viewmodels.tasklist.VendorAgentTaskList.*
-import viewmodels.tasklist.PurchaserAgentTaskList.*
-import viewmodels.tasklist.UkResidencyTaskList.isResidencyComplete
+import utils.LeaseHelper
+import viewmodels.tasklist.TaskListSections.allComplete
 
-import javax.inject.Singleton
-
-@Singleton
 object SubmissionTaskList {
 
-  def build(fullReturn: FullReturn)
-           (implicit messages: Messages,
-            appConfig: FrontendAppConfig): TaskListSection =
+  def build(fullReturn: FullReturn, precedingSections: Seq[TaskListSection])
+           (implicit messages: Messages, appConfig: FrontendAppConfig): TaskListSection = {
+
+    val readyToSubmit: Boolean = allComplete(precedingSections)
+
     TaskListSection(
       heading = messages("tasklist.submissionQuestion.heading"),
       rows = Seq(
-        buildSubmissionRow(fullReturn)
+        buildSubmissionRow(fullReturn, readyToSubmit)
       )
     )
+  }
 
-  def buildSubmissionRow(fullReturn: FullReturn)(implicit messages: Messages, appConfig: FrontendAppConfig): TaskListSectionRow = {
+  def buildSubmissionRow(fullReturn: FullReturn, readyToSubmit: Boolean)
+                        (implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
     val url = fullReturn.submission match {
       case Some(submission) if submission.submissionID.isDefined =>
         controllers.submission.routes.SubmissionCompleteController.onPageLoad().url
@@ -54,13 +47,10 @@ object SubmissionTaskList {
     }
 
     TaskListRowBuilder(
-      canEdit = {
-        case TLCompleted => true
-        case _           => true
-      },
+      canEdit = _ => true,
       messageKey = _ => "tasklist.submissionQuestion.details",
-      hint = fullReturn => {
-        if (!canStartSubmission(fullReturn))
+      hint = _ => {
+        if (!readyToSubmit)
           Some("tasklist.submissionQuestion.hint")
         else
           None
@@ -68,51 +58,17 @@ object SubmissionTaskList {
       url = _ => _ => {
         url
       },
-      tagId  = "submissionQuestionDetailRow",
+      tagId = "submissionQuestionDetailRow",
       checks = _ => Seq(
         fullReturn.submission.exists(_.submissionID.isDefined),
         fullReturn.submission.exists(_.submissionStatus.exists(_ != "STARTED"))
       ),
-      prerequisites = _ => {
-        val mandatory = Seq(
-          VendorTaskList.vendorRowBuilder(fullReturn),
-          VendorAgentTaskList.vendorAgentRowBuilder(fullReturn),
-          PurchaserTaskList.purchaserRowBuilder(fullReturn),
-          PurchaserAgentTaskList.purchaserAgentRowBuilder(fullReturn),
-          LandTaskList.landRowBuilder(fullReturn, viewmodels.tasklist.LandTaskList.noFailures),
-          TransactionTaskList.transactionRowBuilder(fullReturn, viewmodels.tasklist.TransactionTaskList.noFailures),
-          TaxCalculationTaskList.taxCalculationRowBuilder(fullReturn)
-        )
-
-        val conditional = Seq(
-          Option.when(isResidencyRequired(fullReturn))(UkResidencyTaskList.ukResidencyRowBuilder(fullReturn)),
-          Option.when(isLeaseRequired(fullReturn))(
-            LeaseTaskList.leaseRowBuilder(fullReturn, viewmodels.tasklist.LeaseTaskList.noFailures)
-          )
-        ).flatten
-
-        mandatory ++ conditional
-      }
+      prerequisites = _ => Seq.empty,
+      canStart = _ => readyToSubmit
     ).build(fullReturn)
   }
 
-  def canStartSubmission(fullReturn: FullReturn): Boolean = {
-    isVendorComplete(fullReturn) &&
-    isPurchaserComplete(fullReturn) &&
-    isLandComplete(fullReturn) &&
-    isTransactionComplete(fullReturn) &&
-    isTaxCalculationComplete(fullReturn) &&
-    isVendorAgentComplete(fullReturn) &&
-    isPurchaserAgentComplete(fullReturn) &&
-    (!isLeaseRequired(fullReturn) || isLeaseComplete(fullReturn)) &&
-    (!isResidencyRequired(fullReturn) || isResidencyComplete(fullReturn))
-  }
-
-  private def isLeaseRequired(fullReturn: FullReturn): Boolean = {
+  def isLeaseRequired(fullReturn: FullReturn): Boolean = {
     LeaseHelper.isLeaseType(fullReturn)
-  }
-
-  private def isResidencyRequired(fullReturn: FullReturn): Boolean = {
-    PropertyTypeHelper.isResidentialProperty(fullReturn)
   }
 }

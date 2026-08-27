@@ -83,6 +83,24 @@ class AddEmailConfirmationControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "must return OK and the correct view for a GET when no submission has started but the return is complete" in {
+
+      val completeNoSubmissionAnswers = emptyUserAnswers.copy(fullReturn = Some(completeFullReturn.copy(submission = None)))
+
+      val application = applicationBuilder(userAnswers = Some(completeNoSubmissionAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, addEmailConfirmationRoute)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[AddEmailConfirmationView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+      }
+    }
+
     "must redirect to the task list when the return's prerequisite sections are not complete for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -126,6 +144,34 @@ class AddEmailConfirmationControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
+    "must redirect to the next page when no submission has started, the return is complete, and valid data is submitted" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val completeNoSubmissionAnswers = emptyUserAnswers.copy(fullReturn = Some(completeFullReturn.copy(submission = None)))
+
+      val application =
+        applicationBuilder(userAnswers = Some(completeNoSubmissionAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, addEmailConfirmationRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
 

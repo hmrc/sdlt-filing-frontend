@@ -17,21 +17,8 @@
 package viewmodels.tasklist
 
 import base.SpecBase
-import config.FrontendAppConfig
-import constants.FullReturnConstants
-import constants.FullReturnConstants.emptyFullReturn
-import play.api.i18n.Messages
-import play.api.mvc.AnyContentAsEmpty
-import play.api.test.FakeRequest
-import play.api.test.Helpers.*
-import uk.gov.hmrc.http.HeaderCarrier
-
-import scala.concurrent.ExecutionContext
 
 class TaskListSectionSpec extends SpecBase {
-  
-  private val fullReturnComplete = FullReturnConstants.completeFullReturn
-  private val fullReturnIncomplete = FullReturnConstants.incompleteFullReturn
 
   "TaskListSection" - {
 
@@ -97,146 +84,47 @@ class TaskListSectionSpec extends SpecBase {
 
   "TaskListSections" - {
 
-    "sections" - {
-
-      "must return list with sections when FullReturn has data" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val messagesInstance: Messages = messages(application)
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-          implicit val hc: HeaderCarrier = HeaderCarrier()
-          implicit val ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
-          implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-
-          val result = TaskListSections.sections(fullReturnComplete)
-
-          result.size mustBe 10
-          result.head mustBe a[TaskListSection]
-        }
-      }
-
-      "must return list with sections when FullReturn is minimal" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val messagesInstance: Messages = messages(application)
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-          implicit val hc: HeaderCarrier = HeaderCarrier()
-          implicit val ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
-          implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-
-          val result = TaskListSections.sections(fullReturnIncomplete)
-
-          result.size mustBe 10
-          result.head mustBe a[TaskListSection]
-        }
-      }
-
-      "must flatten correctly to remove None values" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val messagesInstance: Messages = messages(application)
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-          implicit val hc: HeaderCarrier = HeaderCarrier()
-          implicit val ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
-          implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-
-          val result = TaskListSections.sections(fullReturnComplete)
-
-          result must not be empty
-          result.forall(_ != null) mustBe true
-        }
-      }
-
-      "must create sections with correct structure" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val messagesInstance: Messages = messages(application)
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-          implicit val hc: HeaderCarrier = HeaderCarrier()
-          implicit val ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
-          implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-
-          val result = TaskListSections.sections(fullReturnComplete)
-
-          result.foreach { section =>
-            section.heading must not be empty
-            section.rows must not be empty
-          }
-        }
-      }
-    }
-
     "allComplete" - {
 
       "must return true when all sections are complete" in {
-        val application = applicationBuilder().build()
+        val sections = Seq(
+          TaskListSection("Section 1", Seq(TaskListSectionRow("k1", "/url1", "tag1", TLCompleted))),
+          TaskListSection("Section 2", Seq(TaskListSectionRow("k2", "/url2", "tag2", TLCompleted)))
+        )
 
-        running(application) {
-          implicit val messagesInstance: Messages = messages(application)
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-          implicit val hc: HeaderCarrier = HeaderCarrier()
-          implicit val ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
-          implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-
-          TaskListSections.sections(fullReturnComplete).foreach { s =>
-            println(s">>> ${s.heading} complete=${s.isComplete} rows=${s.rows.map(r => (r.tagId, r.status))}")
-          }
-
-          TaskListSections.allComplete(fullReturnComplete) mustBe true
-        }
+        TaskListSections.allComplete(sections) mustBe true
       }
 
-      "must return false when sections are not complete" in {
-        val application = applicationBuilder().build()
+      "must return false when at least one section is incomplete" in {
+        val sections = Seq(
+          TaskListSection("Section 1", Seq(TaskListSectionRow("k1", "/url1", "tag1", TLCompleted))),
+          TaskListSection("Section 2", Seq(TaskListSectionRow("k2", "/url2", "tag2", TLNotStarted)))
+        )
 
-        running(application) {
-          implicit val messagesInstance: Messages = messages(application)
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-          implicit val hc: HeaderCarrier = HeaderCarrier()
-          implicit val ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
-          implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-
-          val result = TaskListSections.allComplete(fullReturnIncomplete)
-
-          result mustBe false
-        }
+        TaskListSections.allComplete(sections) mustBe false
       }
 
-      "must check all sections for completion" in {
-        val application = applicationBuilder().build()
-
-        running(application) {
-          implicit val messagesInstance: Messages = messages(application)
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-          implicit val hc: HeaderCarrier = HeaderCarrier()
-          implicit val ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
-          implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-
-          val sectionsResult = TaskListSections.sections(fullReturnComplete)
-          val allCompleteResult = TaskListSections.allComplete(fullReturnComplete)
-
-          allCompleteResult mustBe sectionsResult.forall(_.isComplete)
-        }
+      "must return true when there are no sections" in {
+        TaskListSections.allComplete(Seq.empty) mustBe true
       }
 
-      "must handle empty FullReturn correctly" in {
-        val application = applicationBuilder().build()
+      "must return false when all sections are incomplete" in {
+        val sections = Seq(
+          TaskListSection("Section 1", Seq(TaskListSectionRow("k1", "/url1", "tag1", TLNotStarted))),
+          TaskListSection("Section 2", Seq(TaskListSectionRow("k2", "/url2", "tag2", TLCannotStart)))
+        )
 
-        running(application) {
-          implicit val messagesInstance: Messages = messages(application)
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
-          implicit val hc: HeaderCarrier = HeaderCarrier()
-          implicit val ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
-          implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+        TaskListSections.allComplete(sections) mustBe false
+      }
 
-          val result = TaskListSections.allComplete(emptyFullReturn)
+      "must check every section, not just the first" in {
+        val sections = Seq(
+          TaskListSection("Section 1", Seq(TaskListSectionRow("k1", "/url1", "tag1", TLCompleted))),
+          TaskListSection("Section 2", Seq(TaskListSectionRow("k2", "/url2", "tag2", TLCompleted))),
+          TaskListSection("Section 3", Seq(TaskListSectionRow("k3", "/url3", "tag3", TLFailed)))
+        )
 
-          result mustBe a[Boolean]
-        }
+        TaskListSections.allComplete(sections) mustBe false
       }
     }
   }

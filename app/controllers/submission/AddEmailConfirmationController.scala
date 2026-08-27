@@ -16,6 +16,7 @@
 
 package controllers.submission
 
+import config.FrontendAppConfig
 import controllers.actions.*
 import forms.submission.AddEmailConfirmationFormProvider
 import models.Mode
@@ -25,7 +26,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.tasklist.SubmissionTaskList
+import viewmodels.tasklist.TaskListBuilder
 import views.html.submission.AddEmailConfirmationView
 
 import javax.inject.{Inject, Singleton}
@@ -33,17 +34,18 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddEmailConfirmationController @Inject()(
-                                                  override val messagesApi: MessagesApi,
-                                                  sessionRepository: SessionRepository,
-                                                  navigator: Navigator,
-                                                  activatedIdentify: ActivatedIdentifierAction,
-                                                  getData: DataRetrievalAction,
-                                                  requireData: DataRequiredAction,
-                                                  resubmissionCheck: ResubmissionCheckAction,
-                                                  formProvider: AddEmailConfirmationFormProvider,
-                                                  val controllerComponents: MessagesControllerComponents,
-                                                  view: AddEmailConfirmationView
-                                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                override val messagesApi: MessagesApi,
+                                                sessionRepository: SessionRepository,
+                                                navigator: Navigator,
+                                                activatedIdentify: ActivatedIdentifierAction,
+                                                getData: DataRetrievalAction,
+                                                requireData: DataRequiredAction,
+                                                resubmissionCheck: ResubmissionCheckAction,
+                                                formProvider: AddEmailConfirmationFormProvider,
+                                                taskListBuilder: TaskListBuilder,
+                                                val controllerComponents: MessagesControllerComponents,
+                                                view: AddEmailConfirmationView
+                                              )(implicit appConfig: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
@@ -52,7 +54,7 @@ class AddEmailConfirmationController @Inject()(
 
       val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      if (!submissionAlreadyStarted && !taskListBuilder.allComplete(request.userAnswers)) {
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
         val preparedForm = request.userAnswers.get(AddEmailConfirmationPage) match {
@@ -69,7 +71,7 @@ class AddEmailConfirmationController @Inject()(
 
       val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      if (!submissionAlreadyStarted && !taskListBuilder.allComplete(request.userAnswers)) {
         Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       } else {
         form.bindFromRequest().fold(

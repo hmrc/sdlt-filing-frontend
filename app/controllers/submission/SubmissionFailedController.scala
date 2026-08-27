@@ -16,37 +16,39 @@
 
 package controllers.submission
 
+import config.FrontendAppConfig
 import controllers.actions.*
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.tasklist.SubmissionTaskList
+import viewmodels.tasklist.TaskListBuilder
 import views.html.submission.SubmissionFailedView
 
 import javax.inject.Inject
 
 class SubmissionFailedController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       activatedIdentify: ActivatedIdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: SubmissionFailedView
-                                     ) extends FrontendBaseController with I18nSupport {
+                                            override val messagesApi: MessagesApi,
+                                            activatedIdentify: ActivatedIdentifierAction,
+                                            getData: DataRetrievalAction,
+                                            requireData: DataRequiredAction,
+                                            taskListBuilder: TaskListBuilder,
+                                            val controllerComponents: MessagesControllerComponents,
+                                            view: SubmissionFailedView
+                                          )(implicit appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (activatedIdentify andThen getData andThen requireData) {
     implicit request =>
       val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      if (!submissionAlreadyStarted && !taskListBuilder.allComplete(request.userAnswers)) {
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
         val maybeErrorMessage =
           for {
-          fullReturn <- request.userAnswers.fullReturn
-          submissionErrorDetails <- fullReturn.submissionErrorDetails
-          message <- submissionErrorDetails.errorMessage
-        } yield message
+            fullReturn <- request.userAnswers.fullReturn
+            submissionErrorDetails <- fullReturn.submissionErrorDetails
+            message <- submissionErrorDetails.errorMessage
+          } yield message
 
         Ok(view(maybeErrorMessage))
       }

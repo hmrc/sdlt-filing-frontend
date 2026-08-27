@@ -20,7 +20,6 @@ import controllers.actions.*
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.tasklist.SubmissionTaskList
 import views.html.submission.SubmissionAwaitingConfirmationView
 
 import javax.inject.Inject
@@ -36,12 +35,12 @@ class SubmissionAwaitingConfirmationController @Inject()(
 
   def onPageLoad: Action[AnyContent] = (activatedIdentify andThen getData andThen requireData) {
     implicit request =>
-      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
+      val submissionAlreadyStarted = request.userAnswers.fullReturn.flatMap(_.submission)
 
-      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-      } else {
-        Ok(view())
+      submissionAlreadyStarted match {
+        case Some(sub) if sub.submissionStatus.contains("ACCEPTED") => Ok(view())
+        case None => Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+        case Some(_) => Redirect(controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad())
       }
   }
 }

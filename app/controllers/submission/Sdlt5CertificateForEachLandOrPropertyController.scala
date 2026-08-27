@@ -16,6 +16,7 @@
 
 package controllers.submission
 
+import config.FrontendAppConfig
 import controllers.actions.*
 import forms.submission.Sdlt5CertificateForEachLandOrPropertyFormProvider
 import models.Mode
@@ -27,7 +28,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.submission.CertificateForEachService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.tasklist.SubmissionTaskList
+import viewmodels.tasklist.TaskListBuilder
 import views.html.submission.Sdlt5CertificateForEachLandOrPropertyView
 
 import javax.inject.{Inject, Singleton}
@@ -36,18 +37,19 @@ import scala.util.control.NonFatal
 
 @Singleton
 class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
-                                                                   override val messagesApi: MessagesApi,
-                                                                   sessionRepository: SessionRepository,
-                                                                   navigator: Navigator,
-                                                                   activatedIdentify: ActivatedIdentifierAction,
-                                                                   getData: DataRetrievalAction,
-                                                                   requireData: DataRequiredAction,
-                                                                   resubmissionCheck: ResubmissionCheckAction,
-                                                                   formProvider: Sdlt5CertificateForEachLandOrPropertyFormProvider,
-                                                                   certificateForEachService: CertificateForEachService,
-                                                                   val controllerComponents: MessagesControllerComponents,
-                                                                   view: Sdlt5CertificateForEachLandOrPropertyView
-                                                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
+                                                                 override val messagesApi: MessagesApi,
+                                                                 sessionRepository: SessionRepository,
+                                                                 navigator: Navigator,
+                                                                 activatedIdentify: ActivatedIdentifierAction,
+                                                                 getData: DataRetrievalAction,
+                                                                 requireData: DataRequiredAction,
+                                                                 resubmissionCheck: ResubmissionCheckAction,
+                                                                 formProvider: Sdlt5CertificateForEachLandOrPropertyFormProvider,
+                                                                 certificateForEachService: CertificateForEachService,
+                                                                 taskListBuilder: TaskListBuilder,
+                                                                 val controllerComponents: MessagesControllerComponents,
+                                                                 view: Sdlt5CertificateForEachLandOrPropertyView
+                                                               )(implicit appConfig: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
   val form = formProvider()
 
@@ -56,7 +58,7 @@ class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
 
       val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      if (!submissionAlreadyStarted && !taskListBuilder.allComplete(request.userAnswers)) {
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
         val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)
@@ -78,7 +80,7 @@ class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
 
       val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      if (!submissionAlreadyStarted && !taskListBuilder.allComplete(request.userAnswers)) {
         Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       } else {
         val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)
