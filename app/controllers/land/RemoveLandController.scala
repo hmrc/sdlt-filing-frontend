@@ -21,10 +21,11 @@ import controllers.actions.*
 import forms.land.RemoveLandFormProvider
 import models.land.DeleteLandRequest
 import models.requests.DataRequest
-import models.{Land, ReturnVersionUpdateRequest}
+import models.{Land, ReturnInfoRequest, ReturnVersionUpdateRequest}
 import pages.land.{LandOverviewRemovePage, RemoveLandPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.*
+import services.land.LandService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.land.RemoveLandView
 
@@ -42,6 +43,7 @@ class RemoveLandController @Inject() (
                                        formProvider:             RemoveLandFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        backendConnector:         StampDutyLandTaxConnector,
+                                       landService:              LandService,
                                        view:                     RemoveLandView
                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
@@ -91,6 +93,8 @@ class RemoveLandController @Inject() (
 
   private def removeLand(land: Land)(implicit request: DataRequest[_]): Future[Result] = {
     val addressLine1 = land.address1.getOrElse("")
+    val landId       = land.landID.getOrElse("")
+    val wasMainLand  = landService.isMainLand(request.userAnswers, landId)
 
     (for {
       updateReturnVersionRequest <- ReturnVersionUpdateRequest.from(request.userAnswers)
@@ -102,12 +106,33 @@ class RemoveLandController @Inject() (
       result <- versionResult match {
         case Left(error)                                => Future.successful(error)
         case Right(version) if version.newVersion.isEmpty => Future.successful(landOverview)
-        case Right(_) =>
+        case Right(version) =>
           for {
             deleteLandRequest <- DeleteLandRequest.from(request.userAnswers, land.landResourceRef.get)
             _                 <- backendConnector.deleteLand(deleteLandRequest)
+            _                 <- if (wasMainLand) promoteNewMainLand(landId, version.newVersion.get) else Future.unit
           } yield landOverview.flashing("landDeleted" -> addressLine1)
       }
     } yield result).recover { case _ => landOverview }
   }
+
+  private def promoteNewMainLand(removedLandId: String, currentVersion: Int)
+                                 (implicit request: DataRequest[_]): Future[Unit] =
+    request.userAnswers.fullReturn.flatMap(_.returnInfo) match {
+      case Some(returnInfo) =>
+        val newMainLandId = request.userAnswers.fullReturn
+          .flatMap(_.land)
+          .getOrElse(Seq.empty)
+          .filterNot(_.landID.contains(removedLandId))
+          .headOption
+          .flatMap(_.landID)
+
+        for {
+          newVersionRequest <- ReturnVersionUpdateRequest.from(request.userAnswers, Some(currentVersion))
+          _                 <- backendConnector.updateReturnVersion(newVersionRequest)
+          returnInfoRequest <- ReturnInfoRequest.from(request.userAnswers, returnInfo.copy(mainLandID = newMainLandId))
+          _                 <- backendConnector.updateReturnInfo(returnInfoRequest)
+        } yield ()
+      case None => Future.unit
+    }
 }

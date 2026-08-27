@@ -22,9 +22,9 @@ import constants.FullReturnConstants.completeFullReturn
 import controllers.routes
 import forms.land.RemoveLandFormProvider
 import models.land.DeleteLandReturn
-import models.{FullReturn, Land, ReturnInfo, ReturnVersionUpdateReturn, UserAnswers}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import models.{FullReturn, Land, ReturnInfo, ReturnInfoRequest, ReturnInfoReturn, ReturnVersionUpdateReturn, UserAnswers}
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.{never, times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.land.{LandOverviewRemovePage, RemoveLandPage}
 import play.api.inject.bind
@@ -435,6 +435,12 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
           Future.successful(DeleteLandReturn(true))
         )
 
+        when(
+          mockBackendConnector.updateReturnInfo(any())(any(), any())
+        ).thenReturn(
+          Future.successful(ReturnInfoReturn(true))
+        )
+
         val application = applicationBuilder(Some(userAnswers))
           .overrides(
             bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
@@ -449,6 +455,109 @@ class RemoveLandControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.land.routes.LandOverviewController.onPageLoad().url
           flash(result).get("landDeleted").value mustEqual testLand.address1.get
+        }
+      }
+
+      "must promote the next remaining land to be the main land when the main land is removed" in {
+        val mainLand = Land(
+          landID = Some("LND001"),
+          landResourceRef = Some("LND-REF-001"),
+          address1 = Some("Baker Street")
+        )
+        val otherLand = Land(
+          landID = Some("LND002"),
+          landResourceRef = Some("LND-REF-002"),
+          address1 = Some("Downing Street")
+        )
+
+        val fullReturnWithTwoLands = testFullReturn.copy(
+          returnInfo = Some(ReturnInfo(version = Some("2"), mainLandID = Some("LND001"))),
+          land = Some(Seq(mainLand, otherLand))
+        )
+
+        val userAnswers = emptyUserAnswers.set(LandOverviewRemovePage, "LND001")
+          .success
+          .value
+          .copy(storn = testStorn, fullReturn = Some(fullReturnWithTwoLands))
+
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
+
+        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+          .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(3))))
+        when(mockBackendConnector.deleteLand(any())(any(), any()))
+          .thenReturn(Future.successful(DeleteLandReturn(true)))
+        when(mockBackendConnector.updateReturnInfo(any())(any(), any()))
+          .thenReturn(Future.successful(ReturnInfoReturn(true)))
+
+        val application = applicationBuilder(Some(userAnswers))
+          .overrides(
+            bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
+          ).build()
+
+        running(application) {
+          val request = FakeRequest(POST, removeLandRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.land.routes.LandOverviewController.onPageLoad().url
+
+          val expectedReturnInfoRequest = ReturnInfoRequest(
+            returnResourceRef = fullReturnWithTwoLands.returnResourceRef,
+            storn = fullReturnWithTwoLands.stornId,
+            mainLandID = Some("LND002")
+          )
+
+          verify(mockBackendConnector, times(2)).updateReturnVersion(any())(any(), any())
+          verify(mockBackendConnector).updateReturnInfo(eqTo(expectedReturnInfoRequest))(any(), any())
+        }
+      }
+
+      "must not touch mainLandID when the removed land was not the main land" in {
+        val mainLand = Land(
+          landID = Some("LND001"),
+          landResourceRef = Some("LND-REF-001"),
+          address1 = Some("Baker Street")
+        )
+        val otherLand = Land(
+          landID = Some("LND002"),
+          landResourceRef = Some("LND-REF-002"),
+          address1 = Some("Downing Street")
+        )
+
+        val fullReturnWithTwoLands = testFullReturn.copy(
+          returnInfo = Some(ReturnInfo(version = Some("2"), mainLandID = Some("LND001"))),
+          land = Some(Seq(mainLand, otherLand))
+        )
+
+        val userAnswers = emptyUserAnswers.set(LandOverviewRemovePage, "LND002")
+          .success
+          .value
+          .copy(storn = testStorn, fullReturn = Some(fullReturnWithTwoLands))
+
+        val mockBackendConnector = mock[StampDutyLandTaxConnector]
+
+        when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+          .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(3))))
+        when(mockBackendConnector.deleteLand(any())(any(), any()))
+          .thenReturn(Future.successful(DeleteLandReturn(true)))
+
+        val application = applicationBuilder(Some(userAnswers))
+          .overrides(
+            bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
+          ).build()
+
+        running(application) {
+          val request = FakeRequest(POST, removeLandRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.land.routes.LandOverviewController.onPageLoad().url
+
+          verify(mockBackendConnector, never()).updateReturnInfo(any())(any(), any())
         }
       }
 
