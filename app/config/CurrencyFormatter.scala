@@ -30,7 +30,7 @@ trait CurrencyFormatter {
   }
 
   implicit class StringToCurrency(amt: String) {
-    def toCurrency: String = Try(BigDecimal(amt)).toOption.map(currencyFormat).getOrElse(amt)
+    def toCurrency: String = Try(BigDecimal(amt.replace(",", ""))).toOption.map(currencyFormat).getOrElse(amt)
   }
 
   implicit class IntToPercentage(amt: Int) {
