@@ -511,6 +511,19 @@ class LeaseTaskListSpec extends SpecBase {
           result.status mustBe TLInProgress
         }
       }
+
+      "must show 'In Progress' status when lease has isAnnualRentOver1000 and it's set to YES and another mandatory field" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+          val fullReturn = fullReturnComplete.copy(
+            lease = Some(incompleteLease.copy(isAnnualRentOver1000 = Some("yes"), leaseType = Some("N"))))
+          val result = LeaseTaskList.buildLeaseRow(fullReturn, noFailures)
+
+          result.status mustBe TLInProgress
+        }
+      }
     }
 
     "integration" - {
