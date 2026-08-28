@@ -219,25 +219,25 @@ class TransactionTaskListSpec extends SpecBase {
 
           val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnMixedResNotGrantOfLease)
 
-          result.length mustBe 12
+          result.length mustBe 11
 
-          // first 9 are general transaction fields (all true here)
-          result.take(9).forall(identity) mustBe true
+          // first 8 are general transaction fields (all true here)
+          result.take(8).forall(identity) mustBe true
 
-          result(9) mustBe true // isAnyUseOfLandYes
+          result(8) mustBe true // isAnyUseOfLandYes
 
-          result(10) mustBe true // isTotalConsiderationDefined
+          result(9) mustBe true // isTotalConsiderationDefined
 
-          result(11) mustBe true // isAnyFormsOfConsiderationDefined
+          result(10) mustBe true // isAnyFormsOfConsiderationDefined
         }
 
         "must return a sequence with false for consideration fields when they are missing" in {
 
           val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnMixedResNotGrantOfLeaseMissing)
 
-          result.length mustBe 12
-          result(10) mustBe false // isTotalConsiderationDefined
-          result(11) mustBe false // isAnyFormsOfConsiderationDefined
+          result.length mustBe 11
+          result(9) mustBe false // isTotalConsiderationDefined
+          result(10) mustBe false // isAnyFormsOfConsiderationDefined
         }
       }
 
@@ -247,69 +247,69 @@ class TransactionTaskListSpec extends SpecBase {
 
           val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnMixedResGrantOfLease)
 
-          result.length mustBe 10
+          result.length mustBe 9
 
-          // first 9 are general transaction fields (all true here)
-          result.take(9).forall(identity) mustBe true
+          // first 8 are general transaction fields (all true here)
+          result.take(8).forall(identity) mustBe true
 
-          result(9) mustBe true // isAnyUseOfLandYes
+          result(8) mustBe true // isAnyUseOfLandYes
         }
 
         "must return a sequence with false for use of land when it is missing" in {
           val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnMixedResGrantOfLeaseMissing)
 
-          result.length mustBe 10
-          result(9) mustBe false
+          result.length mustBe 9
+          result(8) mustBe false
         }
       }
 
       "when property type is not mixed or non residential and transaction is not Grant of Lease" - {
 
-        "must return a sequence of true including consideration fields but not use of land" - {
+        "must return a sequence of true including consideration fields but not use of land" in {
 
           val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnNotMixedResNotGrantOfLease)
 
-          result.length mustBe 11
+          result.length mustBe 10
 
           // first 9 are general transaction fields (all true here)
-          result.take(9).forall(identity) mustBe true
+          result.take(8).forall(identity) mustBe true
 
-          result(9) mustBe true // isTotalConsiderationDefined
+          result(8) mustBe true // isTotalConsiderationDefined
 
-          result(10) mustBe true // isAnyFormsOfConsiderationDefined
+          result(9) mustBe true // isAnyFormsOfConsiderationDefined
         }
 
         "must return a sequence with false for consideration fields when they are missing" in {
           val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnNotMixedResNotGrantOfLeaseMissing)
 
-          result.length mustBe 11
+          result.length mustBe 10
 
           // first 9 are general transaction fields (all true here)
-          result.take(9).forall(identity) mustBe true
+          result.take(8).forall(identity) mustBe true
 
-          result(9) mustBe false // isTotalConsiderationDefined
+          result(8) mustBe false // isTotalConsiderationDefined
 
-          result(10) mustBe false // isAnyFormsOfConsiderationDefined
+          result(9) mustBe false // isAnyFormsOfConsiderationDefined
         }
       }
 
       "when property type is not mixed or non residential and transaction is Grant of Lease" - {
 
-        "must return only the general transaction fields" - {
+        "must return only the general transaction fields" in {
 
           val result = TransactionTaskList.mandatoryFieldsDefined(fullReturnNotMixedResGrantOfLease)
 
-          result.length mustBe 9
+          result.length mustBe 8
 
-          // first 9 are general transaction fields (all true here)
-          result.take(9).forall(identity) mustBe true
+          // first 8 are general transaction fields (all true here)
+          result.take(8).forall(identity) mustBe true
         }
 
         "must return false for generic fields when they are missing" in {
 
           val result = TransactionTaskList.mandatoryFieldsDefined(emptyFullReturn)
 
-          result.length mustBe 9
+          result.length mustBe 8
           result.forall(identity) mustBe false
         }
       }
