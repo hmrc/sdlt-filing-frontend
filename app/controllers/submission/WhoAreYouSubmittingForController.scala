@@ -16,6 +16,7 @@
 
 package controllers.submission
 
+import config.FrontendAppConfig
 import controllers.actions.*
 import forms.submission.WhoAreYouSubmittingForFormProvider
 import models.Mode
@@ -27,7 +28,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.tasklist.SubmissionTaskList
+import viewmodels.tasklist.TaskListBuilder
 import views.html.submission.WhoAreYouSubmittingForView
 
 import javax.inject.{Inject, Singleton}
@@ -43,9 +44,10 @@ class WhoAreYouSubmittingForController @Inject()(
                                                   requireData: DataRequiredAction,
                                                   resubmissionCheck: ResubmissionCheckAction,
                                                   formProvider: WhoAreYouSubmittingForFormProvider,
+                                                  taskListBuilder: TaskListBuilder,
                                                   val controllerComponents: MessagesControllerComponents,
                                                   view: WhoAreYouSubmittingForView
-                                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                )(implicit appConfig: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form: Form[WhoAreYouSubmittingFor] = formProvider()
 
@@ -54,7 +56,7 @@ class WhoAreYouSubmittingForController @Inject()(
 
       val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      if (!submissionAlreadyStarted && !taskListBuilder.allComplete(request.userAnswers)) {
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
         val preparedForm = request.userAnswers.get(WhoAreYouSubmittingForPage) match {
@@ -71,7 +73,7 @@ class WhoAreYouSubmittingForController @Inject()(
 
       val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      if (!submissionAlreadyStarted && !taskListBuilder.allComplete(request.userAnswers)) {
         Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       } else {
         form.bindFromRequest().fold(

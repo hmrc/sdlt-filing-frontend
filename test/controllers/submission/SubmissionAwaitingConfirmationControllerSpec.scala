@@ -17,7 +17,7 @@
 package controllers.submission
 
 import base.SpecBase
-import constants.FullReturnConstants.{completeFullReturn, incompleteFullReturn}
+import constants.FullReturnConstants.completeFullReturn
 import models.Submission
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -25,12 +25,12 @@ import views.html.submission.SubmissionAwaitingConfirmationView
 
 class SubmissionAwaitingConfirmationControllerSpec extends SpecBase {
 
-  val testFullReturn = completeFullReturn.copy(submission = Some(Submission(None)))
-  val testUserAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn))
-
   "SubmissionAwaitingConfirmation Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET when submission status is ACCEPTED" in {
+
+      val testFullReturn = completeFullReturn.copy(submission = Some(Submission(None, submissionStatus = Some("ACCEPTED"))))
+      val testUserAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn))
 
       val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
 
@@ -46,9 +46,12 @@ class SubmissionAwaitingConfirmationControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the task list when no submission has started and the prerequisite sections are not complete" in {
+    "must redirect to the task list when no submission exists" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(fullReturn = Some(incompleteFullReturn)))).build()
+      val testFullReturn = completeFullReturn.copy(submission = None)
+      val testUserAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn))
+
+      val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad().url)
@@ -60,17 +63,53 @@ class SubmissionAwaitingConfirmationControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and not redirect when a submission already exists, even if the prerequisite sections are not complete" in {
+    "must redirect to the task list when fullReturn is absent" in {
 
-      val alreadyStartedIncompleteReturn = incompleteFullReturn.copy(submission = Some(Submission(None)))
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(fullReturn = Some(alreadyStartedIncompleteReturn)))).build()
+      val testUserAnswers = emptyUserAnswers.copy(fullReturn = None)
+
+      val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad().url)
 
         val result = route(application, request).value
 
-        status(result) mustEqual OK
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
+      }
+    }
+
+    "must redirect to submission before you start when a submission exists but status is not ACCEPTED" in {
+
+      val testFullReturn = completeFullReturn.copy(submission = Some(Submission(None, submissionStatus = Some("STARTED"))))
+      val testUserAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn))
+
+      val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad().url
+      }
+    }
+
+    "must redirect to submission before you start when a submission exists and status is empty" in {
+
+      val testFullReturn = completeFullReturn.copy(submission = Some(Submission(None, submissionStatus = None)))
+      val testUserAnswers = emptyUserAnswers.copy(fullReturn = Some(testFullReturn))
+
+      val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad().url
       }
     }
   }

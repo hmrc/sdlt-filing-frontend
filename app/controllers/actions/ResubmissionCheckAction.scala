@@ -17,22 +17,32 @@
 package controllers.actions
 
 import com.google.inject.Inject
+import config.FrontendAppConfig
 import models.requests.DataRequest
+import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionFilter, Result}
 import viewmodels.submission.SubmissionState
 import viewmodels.submission.SubmissionState.{AwaitingConfirmation, ReSubmit, SubmissionFailed, Submitted}
+import viewmodels.tasklist.TaskListBuilder
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class ResubmissionCheckAction @Inject()(
-  implicit val executionContext: ExecutionContext
-) extends ActionFilter[DataRequest] {
+                                         messagesApi: MessagesApi,
+                                         appConfig: FrontendAppConfig,
+                                         taskListBuilder: TaskListBuilder
+                                       )(implicit val executionContext: ExecutionContext) extends ActionFilter[DataRequest] {
 
   override protected def filter[A](request: DataRequest[A]): Future[Option[Result]] = {
+    implicit val messages: play.api.i18n.Messages = messagesApi.preferred(request)
+    implicit val implicitAppConfig: FrontendAppConfig = appConfig
+
     val submissionStatus = request.userAnswers.fullReturn.flatMap(_.submission).flatMap(_.submissionStatus)
     val submissionExists = request.userAnswers.fullReturn.flatMap(_.submission).isDefined
     val submissionState = SubmissionState.parse(submissionStatus)
+
+    val allComplete: Boolean = taskListBuilder.allComplete(request.userAnswers)
 
     submissionState match {
       case Some(ReSubmit) =>
@@ -49,6 +59,9 @@ class ResubmissionCheckAction @Inject()(
 
       case Some(SubmissionFailed) =>
         Future.successful(Some(Redirect(controllers.submission.routes.SubmissionFailedController.onPageLoad())))
+
+      case _ if !allComplete =>
+        Future.successful(Some(Redirect(controllers.routes.ReturnTaskListController.onPageLoad())))
 
       case _ =>
         Future.successful(None)

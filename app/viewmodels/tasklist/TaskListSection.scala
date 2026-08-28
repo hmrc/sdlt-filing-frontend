@@ -16,42 +16,13 @@
 
 package viewmodels.tasklist
 
-import config.FrontendAppConfig
-import models.FullReturn
-import play.api.i18n.Messages
-import play.api.mvc.Request
-import uk.gov.hmrc.http.HeaderCarrier
-
-import scala.concurrent.ExecutionContext
-
 case class TaskListSection(heading: String, rows: Seq[TaskListSectionRow]) {
-
   def isComplete: Boolean = rows.forall(_.status == TLCompleted)
-
 }
 
 object TaskListSections {
-
-
-  def sections(fullReturn: FullReturn)(implicit messagesApi: Messages,
-                                       appConfig: FrontendAppConfig,
-                                       hc: HeaderCarrier,
-                                       ec: ExecutionContext,
-                                       request: Request[_]) = List(
-    Some(VendorTaskList.build(fullReturn)),
-    Some(VendorAgentTaskList.build(fullReturn)),
-    Some(PurchaserTaskList.build(fullReturn)),
-    Some(PurchaserAgentTaskList.build(fullReturn)),
-    Some(LandTaskList.build(fullReturn)),
-    Some(UkResidencyTaskList.build(fullReturn)),
-    Some(TransactionTaskList.build(fullReturn)),
-    Some(LeaseTaskList.build(fullReturn)),
-    Some(TaxCalculationTaskList.build(fullReturn)),
-    Some(SubmissionTaskList.build(fullReturn))
-  ).flatten
-  def allComplete(fullReturn: FullReturn)
-                 (implicit messagesApi: Messages, appConfig: FrontendAppConfig, hc: HeaderCarrier, ec: ExecutionContext, request: Request[_]): Boolean =
-    sections(fullReturn).forall{x => x.isComplete}
+  def allComplete(sections: Seq[TaskListSection]): Boolean =
+    sections.forall(_.isComplete)
 }
 
 case class TaskListSectionRow(messageKey: String,

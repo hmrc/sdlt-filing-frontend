@@ -23,13 +23,11 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.FullReturnService
-import services.crossflow.fields.CrossFlowValidationService
-import services.crossflow.{ReturnSection, SectionStatus}
 import services.land.LandService
 import services.pdf.PDFGenerationService
 import services.purchaser.PurchaserService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.{FullName, LeaseHelper, PropertyTypeHelper}
+import utils.FullName
 import viewmodels.tasklist.*
 import views.html.ReturnTaskListView
 
@@ -47,9 +45,9 @@ class ReturnTaskListController @Inject()(
                                           view: ReturnTaskListView,
                                           sessionRepository: SessionRepository,
                                           pdfGenerationService: PDFGenerationService,
-                                          crossFlowService: CrossFlowValidationService,
                                           purchaserService: PurchaserService,
-                                          landService: LandService
+                                          landService: LandService,
+                                          taskListBuilder: TaskListBuilder
                                         )(implicit ec: ExecutionContext, frontendAppConfig: FrontendAppConfig)
   extends FrontendBaseController
     with I18nSupport {
@@ -76,28 +74,7 @@ class ReturnTaskListController @Inject()(
           if(maybeSubmissionObject.isDefined) {
             Redirect(controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad())
           } else {
-            val statuses = crossFlowService.sectionStatuses(userAnswers)
-            val transactionStatus = statuses.getOrElse(ReturnSection.Transaction,
-              SectionStatus(ReturnSection.Transaction, false, Nil, Nil, Nil))
-            val landStatus = statuses.getOrElse(ReturnSection.Land,
-              SectionStatus(ReturnSection.Land, false, Nil, Nil, Nil))
-            val leaseStatus = statuses.getOrElse(ReturnSection.Lease,
-              SectionStatus(ReturnSection.Lease, false, Nil, Nil, Nil))
-
-            val sections = List(
-              Some(PurchaserTaskList.build(fullReturn)),
-              if(PurchaserTaskList.isPurchaserComplete(fullReturn)) Some(PurchaserAgentTaskList.build(fullReturn)) else None,
-              Some(VendorTaskList.build(fullReturn)),
-              if(VendorTaskList.isVendorComplete(fullReturn)) Some(VendorAgentTaskList.build(fullReturn)) else None,
-              Some(LandTaskList.build(fullReturn, landStatus)),
-              if (PropertyTypeHelper.isResidentialProperty(fullReturn)) Some(UkResidencyTaskList.build(fullReturn)) else None,
-              Some(TransactionTaskList.build(fullReturn, transactionStatus)),
-              if (LeaseHelper.isLeaseType(fullReturn)) Some(LeaseTaskList.build(fullReturn, leaseStatus)) else None,
-              Some(TaxCalculationTaskList.build(fullReturn)),
-              Some(SubmissionTaskList.build(fullReturn))
-            ).flatten
-
-            Ok(view(purchaserName, landAddress1, sections: _*))
+            Ok(view(purchaserName, landAddress1, taskListBuilder.sections(userAnswers): _*))
           }
         }
       }

@@ -17,6 +17,7 @@
 package controllers.submission
 
 import com.google.inject.Inject
+import config.FrontendAppConfig
 import connectors.StampDutyLandTaxConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, ResubmissionCheckAction}
 import models.GetReturnByRefRequest
@@ -26,7 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import viewmodels.tasklist.SubmissionTaskList
+import viewmodels.tasklist.TaskListBuilder
 import views.html.submission.LoadingScreenView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,9 +39,10 @@ class LoadingScreenController @Inject()(
                                          requireData: DataRequiredAction,
                                          resubmissionCheck: ResubmissionCheckAction,
                                          connector: StampDutyLandTaxConnector,
+                                         taskListBuilder: TaskListBuilder,
                                          view: LoadingScreenView,
                                          val controllerComponents: MessagesControllerComponents
-                                       )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                       )(implicit appConfig: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   private val SucceededStatuses = Set("SUBMITTED", "SUBMITTED_NO_RECEIPT")
   private val FailedStatuses    = Set("DEPARTMENTAL_ERROR", "FATAL_ERROR")
@@ -59,7 +61,7 @@ class LoadingScreenController @Inject()(
 
       val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
 
-      if (!submissionAlreadyStarted && !request.userAnswers.fullReturn.exists(SubmissionTaskList.canStartSubmission)) {
+      if (!submissionAlreadyStarted && !taskListBuilder.allComplete(request.userAnswers)) {
         Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       } else if (request.userAnswers.get(SubmissionFailedPage).contains(true)) {
         Future.successful(Redirect(controllers.submission.routes.SubmissionFailedController.onPageLoad()))
