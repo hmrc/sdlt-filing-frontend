@@ -77,8 +77,24 @@ object LeaseTaskList {
     mandatoryFieldsDefined(fullReturn).forall(identity)
   }
 
-  def hasStarted(fullReturn: FullReturn): Boolean =
-    mandatoryFieldsDefined(fullReturn).contains(true)
+  def hasStarted(fullReturn: FullReturn): Boolean = {
+    val annualRentIsNo = fullReturn.lease.exists(
+      _.isAnnualRentOver1000.exists(_.trim.equalsIgnoreCase("no"))
+    )
+
+    val otherFieldsDefined = Seq(
+      fullReturn.lease.exists(_.leaseType.isDefined),
+      fullReturn.lease.exists(_.contractStartDate.isDefined),
+      fullReturn.lease.exists(_.contractEndDate.isDefined),
+      fullReturn.lease.exists(_.startingRent.isDefined),
+      fullReturn.lease.exists(_.startingRentEndDate.isDefined),
+      fullReturn.lease.exists(_.laterRentKnown.isDefined),
+      fullReturn.lease.exists(_.totalPremiumPayable.isDefined),
+      fullReturn.lease.exists(_.netPresentValue.isDefined)
+    ).exists(identity)
+
+    otherFieldsDefined || (!annualRentIsNo && fullReturn.lease.exists(_.isAnnualRentOver1000.isDefined))
+  }
 
   def leaseRowBuilder(fullReturn: FullReturn, status: SectionStatus)
                      (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
@@ -104,7 +120,8 @@ object LeaseTaskList {
       tagId         = "leaseQuestionDetailRow",
       checks        = _ => mandatoryFieldsDefined(fullReturn),
       invalid       = _ => status.hasFailures,
-      prerequisites = _ => Seq()
+      prerequisites = _ => Seq(),
+      started       = Some(hasStarted)
     )
   }
 

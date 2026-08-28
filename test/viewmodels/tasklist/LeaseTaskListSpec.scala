@@ -263,6 +263,30 @@ class LeaseTaskListSpec extends SpecBase {
       "must return true when the lease is complete" in {
         LeaseTaskList.hasStarted(fullReturnComplete) mustBe true
       }
+
+      "must return false when lease is empty except for isAnnualRentOver1000 and is set to NO" in {
+        val fullReturn = fullReturnComplete.copy(
+          lease = Some(incompleteLease.copy(isAnnualRentOver1000 = Some("no"))))
+        LeaseTaskList.hasStarted(fullReturn) mustBe false
+      }
+
+      "must return true when lease is empty except for isAnnualRentOver1000 and is set to YES" in {
+        val fullReturn = fullReturnComplete.copy(
+          lease = Some(incompleteLease.copy(isAnnualRentOver1000 = Some("yes"))))
+        LeaseTaskList.hasStarted(fullReturn) mustBe true
+      }
+
+      "must return true when lease contains isAnnualRentOver1000 and is set to NO and any other mandatory field" in {
+        val fullReturn = fullReturnComplete.copy(
+          lease = Some(incompleteLease.copy(isAnnualRentOver1000 = Some("no"), leaseType = Some("N"))))
+        LeaseTaskList.hasStarted(fullReturn) mustBe true
+      }
+
+      "must return true when lease contains isAnnualRentOver1000 and is set to YES and any other mandatory field" in {
+        val fullReturn = fullReturnComplete.copy(
+          lease = Some(incompleteLease.copy(isAnnualRentOver1000 = Some("yes"), leaseType = Some("N"))))
+        LeaseTaskList.hasStarted(fullReturn) mustBe true
+      }
     }
 
     ".isLeaseApplicable" - {
@@ -446,6 +470,45 @@ class LeaseTaskListSpec extends SpecBase {
           val result = LeaseTaskList.buildLeaseRow(fullReturnMissingLease, noFailures)
 
           result.status mustBe TLNotStarted
+        }
+      }
+
+      "must show 'Not yet started' status when lease only has isAnnualRentOver1000 and it's set to NO" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+          val fullReturn = fullReturnComplete.copy(
+            lease = Some(incompleteLease.copy(isAnnualRentOver1000 = Some("no"))))
+          val result = LeaseTaskList.buildLeaseRow(fullReturn, noFailures)
+
+          result.status mustBe TLNotStarted
+        }
+      }
+
+      "must show 'In Progress' status when lease only has isAnnualRentOver1000 and it's set to YES" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+          val fullReturn = fullReturnComplete.copy(
+            lease = Some(incompleteLease.copy(isAnnualRentOver1000 = Some("yes"))))
+          val result = LeaseTaskList.buildLeaseRow(fullReturn, noFailures)
+
+          result.status mustBe TLInProgress
+        }
+      }
+
+      "must show 'In Progress' status when lease has isAnnualRentOver1000 and it's set to NO and another mandatory field" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+          val fullReturn = fullReturnComplete.copy(
+            lease = Some(incompleteLease.copy(isAnnualRentOver1000 = Some("no"), leaseType = Some("N"))))
+          val result = LeaseTaskList.buildLeaseRow(fullReturn, noFailures)
+
+          result.status mustBe TLInProgress
         }
       }
     }
