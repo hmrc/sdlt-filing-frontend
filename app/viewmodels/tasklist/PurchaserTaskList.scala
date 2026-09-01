@@ -132,6 +132,10 @@ object PurchaserTaskList {
       isPurchaserComplete(purchaser, isMainPurchaser(purchaser, fullReturn), fullReturn.companyDetails))
   }
 
+  def purchaserChecks(fullReturn: FullReturn): Seq[Boolean] =
+    if (isPrelimPurchaser(fullReturn)) Seq(false)
+    else mandatoryFieldsDefined(fullReturn)
+
   def purchaserRowBuilder(fullReturn: FullReturn)(implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
     val url =
@@ -152,7 +156,7 @@ object PurchaserTaskList {
       messageKey = _ => "tasklist.purchaserQuestion.details",
       url = _ => _ => url,
       tagId = "purchaserQuestionDetailRow",
-      checks = scheme => mandatoryFieldsDefined(fullReturn),
+      checks = scheme => purchaserChecks(fullReturn),
       prerequisites = _ => Seq()
     )
   }

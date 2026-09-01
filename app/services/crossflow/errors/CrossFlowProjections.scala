@@ -238,6 +238,27 @@ object CrossFlowProjections:
   def anyLandPropertyType(ua: UserAnswers, types: Set[String]): Boolean =
     allLandPropertyTypes(ua).exists(types.contains)
 
+  val GrantOfLease = "L"
+
+  private def committedTransactionDescription(ua: UserAnswers): Option[String] =
+    committedTransaction(ua).flatMap(_.transactionDescription)
+
+  def transactionType(ua: UserAnswers): Option[String] =
+    committedTransactionDescription(ua).map(_.trim).filter(_.nonEmpty)
+
+  def isTransactionType(ua: UserAnswers, code: String): Boolean =
+    transactionType(ua).contains(code)
+
+  def annualRentOver1000Answered(ua: UserAnswers): Boolean = {
+    val committedAnswered =
+      committedLease(ua).flatMap(_.isAnnualRentOver1000).exists(_.trim.nonEmpty)
+
+    val sessionAnswered =
+      ua.get(pages.lease.LeaseThousandPoundsThresholdPage).isDefined
+
+    committedAnswered || sessionAnswered
+  }
+
   object Dates:
     val reliefFloor2013: LocalDate = LocalDate.of(2013, 3, 6)
     val freeportStart: LocalDate = LocalDate.of(2021, 10, 19)
@@ -255,3 +276,4 @@ object CrossFlowProjections:
     val scotlandActDate: LocalDate = LocalDate.of(2012, 5, 1)
     val cr223Effective: LocalDate = LocalDate.of(2015, 4, 1)
     val f24EffectiveFloor: LocalDate = LocalDate.of(2016, 4, 1)
+    val annualRentOver1000Cutoff: LocalDate = LocalDate.of(2016, 2, 16)

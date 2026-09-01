@@ -19,8 +19,8 @@ package controllers.lease
 import base.SpecBase
 import constants.FullReturnConstants.{completeLease, emptyFullReturn}
 import models.{CheckMode, Lease, UserAnswers}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito.{never, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -71,6 +71,14 @@ class LeaseSingleEntityControllerSpec extends SpecBase with MockitoSugar {
     body           = CrossFlowBody.Single("crossflow.lease.Cf-5c.body")
   )
 
+  /** Cf-18 — the only rule that sends the user to the £1,000 threshold page rather than lease type. */
+  private val cf18Failure = cf5aFailure.copy(
+    ruleId         = "Cf-18",
+    messageKey     = "crossflow.lease.Cf-18.body",
+    inlineErrorKey = "crossflow.lease.Cf-18.inline",
+    body           = CrossFlowBody.Single("crossflow.lease.Cf-18.body")
+  )
+
   /** Some other future lease rule used to exercise the default CTA fallback. */
   private val unknownLeaseFailure = cf5aFailure.copy(
     ruleId         = "Cf-99",
@@ -78,6 +86,10 @@ class LeaseSingleEntityControllerSpec extends SpecBase with MockitoSugar {
     inlineErrorKey = "crossflow.lease.Cf-99.inline",
     body           = CrossFlowBody.Single("crossflow.lease.Cf-99.body")
   )
+
+  /** A distinct instance so we can assert the POPULATED answers are what gets persisted. */
+  private val populatedAnswers: UserAnswers =
+    emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(lease = Some(testLease.copy(leaseType = Some("X"))))))
 
   private def crossFlowWith(failures: Seq[CrossFlowFailure]) =
     new CrossFlowValidationService(Set.empty, Set.empty) {
@@ -94,6 +106,10 @@ class LeaseSingleEntityControllerSpec extends SpecBase with MockitoSugar {
   private def failingPopulate: PopulateLeaseService = new PopulateLeaseService() {
     override def populateLeaseInSession(lease: Lease, ua: UserAnswers) =
       Failure(new RuntimeException("Exception"))
+  }
+
+  private def populateReturning(answers: UserAnswers): PopulateLeaseService = new PopulateLeaseService() {
+    override def populateLeaseInSession(lease: Lease, ua: UserAnswers) = Success(answers)
   }
 
   private def appWith(
@@ -193,6 +209,19 @@ class LeaseSingleEntityControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
+      "must use the Cf-18 CTA key when the failure is Cf-18" in {
+        val application = appWith(testUserAnswers, crossFlowWith(Seq(cf18Failure)))
+
+        running(application) {
+          val request = FakeRequest(GET, singleEntityRoute)
+          val result  = route(application, request).value
+          val content = contentAsString(result)
+
+          status(result) mustEqual OK
+          content must include(messages(application)("crossflow.lease.Cf-18.cta"))
+        }
+      }
+
       "must use the default change-lease-type CTA key for any other failure rule id" in {
         val application = appWith(testUserAnswers, crossFlowWith(Seq(unknownLeaseFailure)))
 
@@ -219,6 +248,33 @@ class LeaseSingleEntityControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
+      "must point the Continue button at the type-of-lease page for any rule other than Cf-18" in {
+        val application = appWith(testUserAnswers, crossFlowWith(Seq(unknownLeaseFailure)))
+
+        running(application) {
+          val request = FakeRequest(GET, singleEntityRoute)
+          val result  = route(application, request).value
+          val content = contentAsString(result)
+
+          status(result) mustEqual OK
+          content must include(controllers.lease.routes.TypeOfLeaseController.onPageLoad(CheckMode).url)
+        }
+      }
+
+      "must point the Continue button at the thousand-pounds threshold page in CheckMode for Cf-18" in {
+        val application = appWith(testUserAnswers, crossFlowWith(Seq(cf18Failure)))
+
+        running(application) {
+          val request = FakeRequest(GET, singleEntityRoute)
+          val result  = route(application, request).value
+          val content = contentAsString(result)
+
+          status(result) mustEqual OK
+          content must include(
+            controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(CheckMode).url)
+        }
+      }
+
       "must use the first failure when the cross-flow service returns multiple" in {
         // headOption: only the first failure should drive the rendered CTA.
         val application = appWith(testUserAnswers, crossFlowWith(Seq(cf5bFailure, cf5aFailure)))
@@ -230,6 +286,21 @@ class LeaseSingleEntityControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           content must include(messages(application)("crossflow.lease.Cf-5b.cta"))
+        }
+      }
+
+      "must use the first failure to choose the continue url when the service returns multiple" in {
+        // Cf-18 comes first, so the threshold page wins over the trailing Cf-5a.
+        val application = appWith(testUserAnswers, crossFlowWith(Seq(cf18Failure, cf5aFailure)))
+
+        running(application) {
+          val request = FakeRequest(GET, singleEntityRoute)
+          val result  = route(application, request).value
+          val content = contentAsString(result)
+
+          status(result) mustEqual OK
+          content must include(
+            controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(CheckMode).url)
         }
       }
 
@@ -252,6 +323,19 @@ class LeaseSingleEntityControllerSpec extends SpecBase with MockitoSugar {
         )
 
         val application = appWith(userAnswersNoLease, crossFlowSilent)
+
+        running(application) {
+          val request = FakeRequest(GET, singleEntityRoute)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual
+            controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
+        }
+      }
+
+      "must redirect to LeaseBeforeYouStart when there is no fullReturn at all" in {
+        val application = appWith(emptyUserAnswers.copy(fullReturn = None), crossFlowWith(Seq(cf5aFailure)))
 
         running(application) {
           val request = FakeRequest(GET, singleEntityRoute)
@@ -295,7 +379,66 @@ class LeaseSingleEntityControllerSpec extends SpecBase with MockitoSugar {
           val result  = route(application, request).value
 
           status(result) mustEqual OK
-          org.mockito.Mockito.verify(mockSessionRepository).set(any[UserAnswers])
+          verify(mockSessionRepository).set(any[UserAnswers])
+        }
+      }
+
+      "must persist the populated answers rather than the originals" in {
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val application = appWith(
+          testUserAnswers,
+          crossFlowWith(Seq(cf5aFailure)),
+          populate = populateReturning(populatedAnswers),
+          session  = mockSessionRepository
+        )
+
+        running(application) {
+          val request = FakeRequest(GET, singleEntityRoute)
+          val result  = route(application, request).value
+
+          status(result) mustEqual OK
+          verify(mockSessionRepository).set(eqTo(populatedAnswers))
+        }
+      }
+
+      "must not write to the session when populateLeaseInSession fails" in {
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val application = appWith(
+          testUserAnswers,
+          crossFlowWith(Seq(cf5aFailure)),
+          populate = failingPopulate,
+          session  = mockSessionRepository
+        )
+
+        running(application) {
+          val request = FakeRequest(GET, singleEntityRoute)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          verify(mockSessionRepository, never()).set(any[UserAnswers])
+        }
+      }
+
+      "must not write to the session when there is no lease to populate" in {
+        val mockSessionRepository = mock[SessionRepository]
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val application = appWith(
+          emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(lease = None))),
+          crossFlowWith(Seq(cf5aFailure)),
+          session = mockSessionRepository
+        )
+
+        running(application) {
+          val request = FakeRequest(GET, singleEntityRoute)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          verify(mockSessionRepository, never()).set(any[UserAnswers])
         }
       }
 

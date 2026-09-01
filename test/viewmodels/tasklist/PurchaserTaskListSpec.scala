@@ -49,32 +49,68 @@ class PurchaserTaskListSpec extends SpecBase {
       dateOfBirth = None,
     ), completePurchaser2, completePurchaser3)))
 
+  private val prelimPurchaserCompany = Purchaser(
+    isCompany = Some("YES"),
+    address1 = Some("123 Fake Street"),
+    companyName = Some("Company name"),
+    purchaserID = Some("PUR001"),
+    returnID = Some("RET123456789"),
+    purchaserResourceRef = Some("PUR-REF-001")
+  )
+
+  private val prelimCompanyDetails = CompanyDetails(
+    companyDetailsID = Some("CD001"),
+    returnID = Some("RET123456789"),
+    purchaserID = Some("PUR001")
+  )
+
+  private val prelimPurchaserIndividual = Purchaser(
+    isCompany = Some("NO"),
+    address1 = Some("123 Fake Street"),
+    surname = Some("Smith"),
+    purchaserID = Some("PUR001"),
+    returnID = Some("RET123456789"),
+    purchaserResourceRef = Some("PUR-REF-001")
+  )
+
   private val fullReturnPrelimPurchaserCompany = fullReturnComplete.copy(
-    purchaser = Some(Seq(Purchaser(
-      isCompany = Some("YES"),
-      address1 = Some("123 Fake Street"),
-      companyName = Some("Company name"),
-      purchaserID = Some("PUR001"),
-      returnID = Some("RET123456789"),
-      purchaserResourceRef = Some("PUR-REF-001")
-    ))),
-    companyDetails = Some(CompanyDetails(
-      companyDetailsID = Some("CD001"),
-      returnID = Some("RET123456789"),
-      purchaserID = Some("PUR001")
-    ))
+    purchaser = Some(Seq(prelimPurchaserCompany)),
+    companyDetails = Some(prelimCompanyDetails)
   )
 
   private val fullReturnPrelimPurchaserIndividual = fullReturnComplete.copy(
-    purchaser = Some(Seq(Purchaser(
-      isCompany = Some("NO"),
-      address1 = Some("123 Fake Street"),
-      surname = Some("Smith"),
-      purchaserID = Some("PUR001"),
-      returnID = Some("RET123456789"),
-      purchaserResourceRef = Some("PUR-REF-001")
-    ))),
+    purchaser = Some(Seq(prelimPurchaserIndividual)),
     companyDetails = None
+  )
+
+  private val fullReturnPrelimPurchaserNotMain = fullReturnComplete.copy(
+    purchaser = Some(Seq(prelimPurchaserIndividual.copy(purchaserID = Some("PUR999")))),
+    companyDetails = None
+  )
+
+  private val fullReturnPrelimPurchaserPlusNino = fullReturnComplete.copy(
+    purchaser = Some(Seq(prelimPurchaserIndividual.copy(nino = Some("AB123456C")))),
+    companyDetails = None
+  )
+
+  private val fullReturnPrelimPurchaserPlusTrustee = fullReturnComplete.copy(
+    purchaser = Some(Seq(prelimPurchaserIndividual.copy(isTrustee = Some("YES")))),
+    companyDetails = None
+  )
+
+  private val fullReturnPrelimPurchaserWithSecondPurchaser = fullReturnComplete.copy(
+    purchaser = Some(Seq(prelimPurchaserIndividual, completePurchaser2)),
+    companyDetails = None
+  )
+
+  private val fullReturnPrelimIndividualWithCompanyDetails = fullReturnComplete.copy(
+    purchaser = Some(Seq(prelimPurchaserIndividual)),
+    companyDetails = Some(prelimCompanyDetails)
+  )
+
+  private val fullReturnPrelimCompanyWithVat = fullReturnComplete.copy(
+    purchaser = Some(Seq(prelimPurchaserCompany)),
+    companyDetails = Some(prelimCompanyDetails.copy(VATReference = Some("VAT123")))
   )
 
   private val fullReturnSomeMandatoryFieldsMissingOther = fullReturnComplete.copy(
@@ -309,8 +345,96 @@ class PurchaserTaskListSpec extends SpecBase {
         }
       }
 
+      "must report the prelim answers as passing checks for an individual" in {
+        val result = PurchaserTaskList.mandatoryFieldsDefined(fullReturnPrelimPurchaserIndividual)
+
+        result mustBe Seq(true, true, false, false, true, false)
+      }
+
+      "must report the prelim answers as passing checks for a company" in {
+        val result = PurchaserTaskList.mandatoryFieldsDefined(fullReturnPrelimPurchaserCompany)
+
+        result mustBe Seq(true, true, false, false, true, false)
+      }
+
       "must return a single failing check when there are no purchasers" in {
         PurchaserTaskList.mandatoryFieldsDefined(fullReturnMissingPurchaser) mustBe Seq(false)
+      }
+    }
+
+    ".isPrelimPurchaser" - {
+
+      "must return true when the single main purchaser is an individual with only prelim answers" in {
+        PurchaserTaskList.isPrelimPurchaser(fullReturnPrelimPurchaserIndividual) mustBe true
+      }
+
+      "must return true when the single main purchaser is a company with only prelim answers" in {
+        PurchaserTaskList.isPrelimPurchaser(fullReturnPrelimPurchaserCompany) mustBe true
+      }
+
+      "must return false when the purchaser is not the main purchaser" in {
+        PurchaserTaskList.isPrelimPurchaser(fullReturnPrelimPurchaserNotMain) mustBe false
+      }
+
+      "must return false when an identity field beyond the prelim answers is present" in {
+        PurchaserTaskList.isPrelimPurchaser(fullReturnPrelimPurchaserPlusNino) mustBe false
+      }
+
+      "must return false when the trustee question has been answered" in {
+        PurchaserTaskList.isPrelimPurchaser(fullReturnPrelimPurchaserPlusTrustee) mustBe false
+      }
+
+      "must return false when an individual has company details attached" in {
+        PurchaserTaskList.isPrelimPurchaser(fullReturnPrelimIndividualWithCompanyDetails) mustBe false
+      }
+
+      "must return false when a company already has a VAT reference" in {
+        PurchaserTaskList.isPrelimPurchaser(fullReturnPrelimCompanyWithVat) mustBe false
+      }
+
+      "must return false when a second purchaser is present" in {
+        PurchaserTaskList.isPrelimPurchaser(fullReturnPrelimPurchaserWithSecondPurchaser) mustBe false
+      }
+
+      "must return false when the purchaser is complete" in {
+        PurchaserTaskList.isPrelimPurchaser(fullReturnComplete) mustBe false
+      }
+
+      "must return false when there are no purchasers" in {
+        PurchaserTaskList.isPrelimPurchaser(fullReturnMissingPurchaser) mustBe false
+      }
+    }
+
+    ".purchaserChecks" - {
+
+      "must return a single failing check when the individual purchaser is prelim only" in {
+        PurchaserTaskList.purchaserChecks(fullReturnPrelimPurchaserIndividual) mustBe Seq(false)
+      }
+
+      "must return a single failing check when the company purchaser is prelim only" in {
+        PurchaserTaskList.purchaserChecks(fullReturnPrelimPurchaserCompany) mustBe Seq(false)
+      }
+
+      "must fall through to the mandatory checks when the purchaser is not prelim" in {
+        val result = PurchaserTaskList.purchaserChecks(fullReturnSomeMandatoryFieldsMissingMain)
+
+        result mustBe PurchaserTaskList.mandatoryFieldsDefined(fullReturnSomeMandatoryFieldsMissingMain)
+      }
+
+      "must report progress once a field beyond the prelim answers is present" in {
+        val result = PurchaserTaskList.purchaserChecks(fullReturnPrelimPurchaserPlusNino)
+
+        result mustBe Seq(true, true, false, false, true, true, false)
+      }
+
+      "must return all passing checks when every purchaser is complete" in {
+        val result = PurchaserTaskList.purchaserChecks(fullReturnCompleteWithMultiplePurchasers)
+
+        result.forall(identity) mustBe true
+      }
+
+      "must return a single failing check when there are no purchasers" in {
+        PurchaserTaskList.purchaserChecks(fullReturnMissingPurchaser) mustBe Seq(false)
       }
     }
 
@@ -346,6 +470,12 @@ class PurchaserTaskListSpec extends SpecBase {
         result mustBe false
       }
 
+      "must return false when the purchaser is prelim only" in {
+        val result = PurchaserTaskList.isPurchaserComplete(fullReturnPrelimPurchaserIndividual)
+
+        result mustBe false
+      }
+
       "must return false when there are no purchasers" in {
         val result = PurchaserTaskList.isPurchaserComplete(fullReturnMissingPurchaser)
 
@@ -373,6 +503,12 @@ class PurchaserTaskListSpec extends SpecBase {
 
       "must return the purchaser that exists but has no mandatory fields answered" in {
         val result = PurchaserTaskList.incompletePurchasers(fullReturnAllMandatoryFieldsMissingMain)
+
+        result.map(_.purchaserID) mustBe Seq(Some("PUR001"))
+      }
+
+      "must return the prelim purchaser" in {
+        val result = PurchaserTaskList.incompletePurchasers(fullReturnPrelimPurchaserIndividual)
 
         result.map(_.purchaserID) mustBe Seq(Some("PUR001"))
       }
@@ -448,7 +584,7 @@ class PurchaserTaskListSpec extends SpecBase {
         }
       }
 
-      "must have Before You Start url and show 'In Progress' status when only prelim fields are present in main purchaser for individual" in {
+      "must have Before You Start url and show 'Not yet started' status when only prelim fields are present in main purchaser for individual" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -457,11 +593,11 @@ class PurchaserTaskListSpec extends SpecBase {
           val result = PurchaserTaskList.buildPurchaserRow(fullReturnPrelimPurchaserIndividual)
           result.url mustBe controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
 
-          result.status mustBe TLInProgress
+          result.status mustBe TLNotStarted
         }
       }
 
-      "must have Before You Start url and show 'In Progress' status when only prelim fields are present in main purchaser for company" in {
+      "must have Before You Start url and show 'Not yet started' status when only prelim fields are present in main purchaser for company" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -469,6 +605,45 @@ class PurchaserTaskListSpec extends SpecBase {
 
           val result = PurchaserTaskList.buildPurchaserRow(fullReturnPrelimPurchaserCompany)
           result.url mustBe controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
+
+          result.status mustBe TLNotStarted
+        }
+      }
+
+      "must move from 'Not yet started' to 'In Progress' once an identity field is answered" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = PurchaserTaskList.buildPurchaserRow(fullReturnPrelimPurchaserPlusNino)
+          result.url mustBe controllers.purchaser.routes.PurchaserIncompleteOverviewController.onPageLoad().url
+
+          result.status mustBe TLInProgress
+        }
+      }
+
+      "must show 'In Progress' status when the prelim-shaped purchaser is not the main purchaser" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = PurchaserTaskList.buildPurchaserRow(fullReturnPrelimPurchaserNotMain)
+          result.url mustBe controllers.purchaser.routes.PurchaserIncompleteOverviewController.onPageLoad().url
+
+          result.status mustBe TLInProgress
+        }
+      }
+
+      "must show 'In Progress' status when a prelim purchaser is joined by a second purchaser" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = PurchaserTaskList.buildPurchaserRow(fullReturnPrelimPurchaserWithSecondPurchaser)
+          result.url mustBe controllers.purchaser.routes.PurchaserIncompleteOverviewController.onPageLoad().url
 
           result.status mustBe TLInProgress
         }
@@ -584,6 +759,23 @@ class PurchaserTaskListSpec extends SpecBase {
 
           row.status mustBe TLInProgress
           row.url mustBe controllers.purchaser.routes.PurchaserIncompleteOverviewController.onPageLoad().url
+        }
+      }
+
+      "must build a TaskListSection with a not started row when only prelim purchaser data is present" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val section = PurchaserTaskList.build(fullReturnPrelimPurchaserIndividual)
+          val row = section.rows.head
+
+          section.heading mustBe messagesInstance("tasklist.purchaserQuestion.heading")
+          messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.purchaserQuestion.details")
+          row.status mustBe TLNotStarted
+          row.url mustBe controllers.purchaser.routes.PurchaserBeforeYouStartController.onPageLoad().url
         }
       }
 

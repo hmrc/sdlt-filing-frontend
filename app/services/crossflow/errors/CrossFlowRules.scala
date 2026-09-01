@@ -19,6 +19,7 @@ package services.crossflow.errors
 import models.{Land, UserAnswers}
 import services.crossflow.*
 import services.crossflow.CrossFlowBody.WithBullets
+import services.crossflow.errors.Cf6_MultiLandPropertyTypeMismatch.Cf18_AnnualRentOver1000Missing
 import services.crossflow.errors.CrossFlowProjections.*
 import services.crossflow.errors.Targets.*
 
@@ -31,6 +32,7 @@ private object Targets:
   val landPostcodeTarget:      CrossFlowTarget = CrossFlowTarget(Pages.LandPostcode,      Fields.LandPostcode)
   val leaseTypeTarget:         CrossFlowTarget = CrossFlowTarget(Pages.LeaseType,         Fields.LeaseType)
   val useOfPropertyTarget:     CrossFlowTarget = CrossFlowTarget(Pages.UseOfProperty, Fields.UseOfProperty)
+  val annualRentOver1000Target: CrossFlowTarget = CrossFlowTarget(Pages.AnnualRentOver1000, Fields.AnnualRentOver1000)
 
 
 /** Property type must be 01 (Residential). */
@@ -689,6 +691,34 @@ object Cf6_MultiLandPropertyTypeMismatch extends LandGuardRule:
     )
   )
 
+  object Cf18_AnnualRentOver1000Missing extends GuardRule:
+    val id = "Cf-18"
+    val affects: ReturnSection = ReturnSection.Lease
+    val inputs: Set[ReturnSection] = Set(ReturnSection.Lease)
+    val targets: Seq[CrossFlowTarget] = Seq(annualRentOver1000Target)
+
+    protected def appliesTo(ua: UserAnswers): Boolean =
+      hasLeaseInvolvement(ua) &&
+        isTransactionType(ua, GrantOfLease) &&
+        effectiveDate(ua).exists(_.isBefore(Dates.annualRentOver1000Cutoff))
+
+    protected def isValid(ua: UserAnswers): Boolean =
+      annualRentOver1000Answered(ua)
+
+    protected def messageKey = "crossflow.lease.Cf-18.body"
+
+    protected override def headingKey = "crossflow.lease.Cf-18.heading"
+
+    override val aggregateOnly: Boolean = true
+
+    protected override def body: CrossFlowBody = CrossFlowBody.WithBullets(
+      leadKey = "crossflow.lease.Cf-18.body",
+      bulletKeys = Seq(
+        CrossFlowBullet.Text("crossflow.lease.Cf-18.bullet1"),
+        CrossFlowBullet.Text("crossflow.lease.Cf-18.bullet2")
+      )
+    )
+
 object F23Rules:
   val all: Set[CrossFlowRule] = Set(
     FirstTimeBuyerRelief,
@@ -744,7 +774,8 @@ object F30Rules:
     Cf5a_LeaseRResidential,
     Cf5b_LeaseMMixed,
     Cf5c_LeaseNNonResidential,
-    Cf17_UseOfPropertyMissing
+    Cf17_UseOfPropertyMissing,
+    Cf18_AnnualRentOver1000Missing
   )
 
 object F30RulesLand:

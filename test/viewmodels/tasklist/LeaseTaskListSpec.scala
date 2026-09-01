@@ -144,6 +144,7 @@ class LeaseTaskListSpec extends SpecBase {
           val row    = result.rows.head
 
           row.url mustBe controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad().url
+          row.status mustBe TLCompleted
         }
       }
 
@@ -158,6 +159,7 @@ class LeaseTaskListSpec extends SpecBase {
           val row    = result.rows.head
 
           row.url mustBe controllers.lease.routes.LeaseSingleEntityController.onPageLoad().url
+          row.status mustBe TLInvalid
         }
       }
     }
@@ -244,6 +246,10 @@ class LeaseTaskListSpec extends SpecBase {
           result mustBe false
         }
       }
+
+      "must ignore cross-flow failures — it only reflects the mandatory fields" in {
+        LeaseTaskList.isLeaseComplete(fullReturnComplete) mustBe true
+      }
     }
 
     ".hasStarted" - {
@@ -302,6 +308,73 @@ class LeaseTaskListSpec extends SpecBase {
 
       "must return false when the transaction is absent" in {
         LeaseTaskList.isLeaseApplicable(fullReturnComplete.copy(transaction = None)) mustBe false
+      }
+    }
+
+    ".leaseRowBuilder" - {
+
+      ".isComplete" - {
+
+        "must return true when the lease is complete and there are no failures" in {
+          val application = applicationBuilder().build()
+
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+            LeaseTaskList.leaseRowBuilder(fullReturnComplete, noFailures)
+              .isComplete(fullReturnComplete) mustBe true
+          }
+        }
+
+        "must return false when the lease is complete but cross-flow reports failures" in {
+          val application = applicationBuilder().build()
+
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+            LeaseTaskList.leaseRowBuilder(fullReturnComplete, cf5aFailureStatus)
+              .isComplete(fullReturnComplete) mustBe false
+          }
+        }
+
+        "must return false when the lease is incomplete, with or without failures" in {
+          val application = applicationBuilder().build()
+
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+            LeaseTaskList.leaseRowBuilder(fullReturnSomeMandatoryFieldsMissing, noFailures)
+              .isComplete(fullReturnSomeMandatoryFieldsMissing) mustBe false
+
+            LeaseTaskList.leaseRowBuilder(fullReturnSomeMandatoryFieldsMissing, cf5aFailureStatus)
+              .isComplete(fullReturnSomeMandatoryFieldsMissing) mustBe false
+          }
+        }
+
+        "must return false when the lease is absent" in {
+          val application = applicationBuilder().build()
+
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+            LeaseTaskList.leaseRowBuilder(fullReturnMissingLease, noFailures)
+              .isComplete(fullReturnMissingLease) mustBe false
+          }
+        }
+      }
+
+      ".prerequisitesMet" - {
+
+        "must return true as the lease row has no prerequisites" in {
+          val application = applicationBuilder().build()
+
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+            LeaseTaskList.leaseRowBuilder(fullReturnComplete, noFailures)
+              .prerequisitesMet(fullReturnComplete) mustBe true
+          }
+        }
       }
     }
 
@@ -423,29 +496,57 @@ class LeaseTaskListSpec extends SpecBase {
         }
       }
 
-      "must have Lease Single Entity url when cross-flow reports failures" in {
-        val application = applicationBuilder().build()
+      "when cross-flow reports failures" - {
 
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+        "must have Lease Single Entity url and show 'Invalid' status when the lease is complete" in {
+          val application = applicationBuilder().build()
 
-          val result = LeaseTaskList.buildLeaseRow(fullReturnComplete, cf5aFailureStatus)
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          result.url mustBe controllers.lease.routes.LeaseSingleEntityController.onPageLoad().url
+            val result = LeaseTaskList.buildLeaseRow(fullReturnComplete, cf5aFailureStatus)
+
+            result.url mustBe controllers.lease.routes.LeaseSingleEntityController.onPageLoad().url
+            result.status mustBe TLInvalid
+          }
         }
-      }
 
-      "must route to the resume controller when the lease is incomplete and there are failures" in {
-        val application = applicationBuilder().build()
+        "must have Lease Single Entity url and show 'Invalid' status for a complete grant of lease" in {
+          val application = applicationBuilder().build()
 
-        running(application) {
-          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          // The Single-Entity (error) url only applies when the lease is COMPLETE and has failures.
-          // An incomplete-but-started lease resumes so the user can finish it on Check Your Answers.
-          val result = LeaseTaskList.buildLeaseRow(fullReturnIncompleteLease, cf5aFailureStatus)
+            val result = LeaseTaskList.buildLeaseRow(fullReturnGrantOfLease, cf5aFailureStatus)
 
-          result.url mustBe resumeUrl
+            result.url mustBe controllers.lease.routes.LeaseSingleEntityController.onPageLoad().url
+            result.status mustBe TLInvalid
+          }
+        }
+
+        "must show 'Invalid' status and route to the cross-flow target when the lease is incomplete" in {
+          val application = applicationBuilder().build()
+
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+            val result = LeaseTaskList.buildLeaseRow(fullReturnIncompleteLease, cf5aFailureStatus)
+
+            result.status mustBe TLInvalid
+            result.url must endWith("update-lease-type")
+          }
+        }
+
+        "must show 'Invalid' status even when nothing has been answered" in {
+          val application = applicationBuilder().build()
+
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+            val result = LeaseTaskList.buildLeaseRow(fullReturnAllMandatoryFieldsMissing, cf5aFailureStatus)
+
+            result.status mustBe TLInvalid
+          }
         }
       }
 
@@ -576,7 +677,7 @@ class LeaseTaskListSpec extends SpecBase {
         }
       }
 
-      "must build TaskListSection with single-entity url when cross-flow failures are reported" in {
+      "must build TaskListSection with single-entity url and 'Invalid' row when cross-flow failures are reported" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -588,6 +689,7 @@ class LeaseTaskListSpec extends SpecBase {
 
           section.heading mustBe messagesInstance("tasklist.leaseQuestion.heading")
           row.url mustBe controllers.lease.routes.LeaseSingleEntityController.onPageLoad().url
+          row.status mustBe TLInvalid
         }
       }
     }

@@ -80,19 +80,25 @@ class LeaseSingleEntityController @Inject() (
           headingKey  = failure.headingKey,
           body        = failure.body,
           ctaKey      = ctaKeyFor(failure),
-          continueUrl = controllers.lease.routes.TypeOfLeaseController.onPageLoad(CheckMode).url
+          continueUrl = continueUrlFor(failure)
         ))
 
       case None =>
         Redirect(controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad())
     }
-  
 
   private def ctaKeyFor(failure: CrossFlowFailure): String =
     failure.ruleId match {
       case "Cf-5a" => "crossflow.lease.Cf-5a.cta"
       case "Cf-5b" => "crossflow.lease.Cf-5b.cta"
       case "Cf-5c" => "crossflow.lease.Cf-5c.cta"
+      case "Cf-18" => "crossflow.lease.Cf-18.cta"
       case _       => "crossflow.lease.cta.changeLeaseType"
+    }
+
+  private def continueUrlFor(failure: CrossFlowFailure): String =
+    failure.ruleId match {
+      case "Cf-18" => controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(CheckMode).url
+      case _       => controllers.lease.routes.TypeOfLeaseController.onPageLoad(CheckMode).url
     }
 }
