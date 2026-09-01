@@ -16,7 +16,6 @@
 
 package controllers.submission
 
-import config.FrontendAppConfig
 import controllers.actions.*
 import forms.submission.AddEmailConfirmationFormProvider
 import models.Mode
@@ -26,7 +25,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.tasklist.TaskListBuilder
 import views.html.submission.AddEmailConfirmationView
 
 import javax.inject.{Inject, Singleton}
@@ -42,54 +40,39 @@ class AddEmailConfirmationController @Inject()(
                                                 requireData: DataRequiredAction,
                                                 resubmissionCheck: ResubmissionCheckAction,
                                                 formProvider: AddEmailConfirmationFormProvider,
-                                                taskListBuilder: TaskListBuilder,
                                                 val controllerComponents: MessagesControllerComponents,
                                                 view: AddEmailConfirmationView
-                                              )(implicit appConfig: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                              )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck) {
     implicit request =>
-
-      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
-
-      if (!submissionAlreadyStarted && !taskListBuilder.allComplete(request.userAnswers)) {
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-      } else {
-        val preparedForm = request.userAnswers.get(AddEmailConfirmationPage) match {
-          case None        => form
-          case Some(value) => form.fill(value)
-        }
-
-        Ok(view(preparedForm, mode))
+      val preparedForm = request.userAnswers.get(AddEmailConfirmationPage) match {
+        case None        => form
+        case Some(value) => form.fill(value)
       }
+
+      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck).async {
     implicit request =>
+      form.bindFromRequest().fold(
+        formWithErrors =>
+          Future.successful(BadRequest(view(formWithErrors, mode))),
 
-      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
-
-      if (!submissionAlreadyStarted && !taskListBuilder.allComplete(request.userAnswers)) {
-        Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
-      } else {
-        form.bindFromRequest().fold(
-          formWithErrors =>
-            Future.successful(BadRequest(view(formWithErrors, mode))),
-
-          value =>
-            for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(AddEmailConfirmationPage, value))
-              _              <- sessionRepository.set(updatedAnswers)
-            } yield {
-              if (value) {
-                Redirect(navigator.nextPage(AddEmailConfirmationPage, mode, updatedAnswers))
-              } else {
-                Redirect(controllers.submission.routes.Sdlt5CertificateForEachLandOrPropertyController.onPageLoad())
-              }
+        value =>
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(AddEmailConfirmationPage, value))
+            _              <- sessionRepository.set(updatedAnswers)
+          } yield {
+            if (value) {
+              Redirect(navigator.nextPage(AddEmailConfirmationPage, mode, updatedAnswers))
+            } else {
+              Redirect(controllers.submission.routes.Sdlt5CertificateForEachLandOrPropertyController.onPageLoad())
             }
-        )
-      }
+          }
+      )
   }
 }

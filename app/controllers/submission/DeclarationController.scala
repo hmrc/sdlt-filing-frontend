@@ -16,7 +16,6 @@
 
 package controllers.submission
 
-import config.FrontendAppConfig
 import controllers.actions.*
 import models.Mode
 import pages.submission.WhoAreYouSubmittingForPage
@@ -26,7 +25,6 @@ import services.submission.ChrisSubmissionService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import viewmodels.tasklist.TaskListBuilder
 import views.html.submission.DeclarationView
 
 import javax.inject.{Inject, Singleton}
@@ -40,38 +38,25 @@ class DeclarationController @Inject()(
                                        requireData: DataRequiredAction,
                                        resubmissionCheck: ResubmissionCheckAction,
                                        chrisSubmissionService: ChrisSubmissionService,
-                                       taskListBuilder: TaskListBuilder,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: DeclarationView
-                                     )(implicit appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+                                     ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck) {
     implicit request =>
 
-      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
-
-      if (!submissionAlreadyStarted && !taskListBuilder.allComplete(request.userAnswers)) {
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-      } else {
         request.userAnswers.get(WhoAreYouSubmittingForPage) match {
 
           case Some(declarationFor) => Ok(view(declarationFor.toString, mode))
           case None =>
             Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
         }
-      }
-
   }
 
   def onSubmit(): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck).async {
     implicit request =>
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
-
-      if (!submissionAlreadyStarted && !taskListBuilder.allComplete(request.userAnswers)) {
-        Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
-      } else {
         request.userAnswers.get(WhoAreYouSubmittingForPage) match {
 
           case Some(_) =>
@@ -81,7 +66,5 @@ class DeclarationController @Inject()(
           case None =>
             Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
         }
-      }
-
   }
 }

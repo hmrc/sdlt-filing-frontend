@@ -16,12 +16,10 @@
 
 package controllers.submission
 
-import config.FrontendAppConfig
 import controllers.actions.*
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.tasklist.TaskListBuilder
 import views.html.submission.ResubmitYourReturnView
 
 import javax.inject.Inject
@@ -32,19 +30,12 @@ class ResubmitYourReturnController @Inject()(
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction,
                                               resubmissionCheck: ResubmissionCheckAction,
-                                              taskListBuilder: TaskListBuilder,
                                               val controllerComponents: MessagesControllerComponents,
                                               view: ResubmitYourReturnView
-                                            )(implicit appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+                                            ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen resubmissionCheck) {
     implicit request =>
-      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
-
-      if (!submissionAlreadyStarted && !taskListBuilder.allComplete(request.userAnswers)) {
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-      } else {
         Ok(view())
-      }
   }
 }

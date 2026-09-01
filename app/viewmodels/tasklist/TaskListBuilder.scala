@@ -59,7 +59,7 @@ class TaskListBuilder @Inject()(crossFlowService: CrossFlowValidationService) {
         Some(LandTaskList.build(fullReturn, statusFor(userAnswers, ReturnSection.Land))),
         if (PropertyTypeHelper.isResidentialProperty(fullReturn)) Some(UkResidencyTaskList.build(fullReturn)) else None,
         Some(TransactionTaskList.build(fullReturn, statusFor(userAnswers, ReturnSection.Transaction))),
-        Some(LeaseTaskList.build(fullReturn, statusFor(userAnswers, ReturnSection.Lease))),
+        if (LeaseHelper.isLeaseType(fullReturn)) Some(LeaseTaskList.build(fullReturn, statusFor(userAnswers, ReturnSection.Lease))) else None,
         Some(TaxCalculationTaskList.build(fullReturn))
       ).flatten
     }
