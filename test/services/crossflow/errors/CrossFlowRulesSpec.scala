@@ -23,6 +23,8 @@ import models.{Land, Lease, ReturnInfo, Transaction, UserAnswers}
 import org.scalatest.matchers.must.Matchers
 import pages.transaction.{ReasonForReliefPage, TotalConsiderationOfTransactionPage, TransactionEffectiveDatePage}
 import services.crossflow.*
+import services.crossflow.errors.Cf6_MultiLandPropertyTypeMismatch.Cf18_AnnualRentOver1000Missing
+import services.crossflow.errors.CrossFlowProjections.Dates
 
 import java.time.LocalDate
 
@@ -37,6 +39,9 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
   private val mdrEffectiveCutOff = LocalDate.of(2024,  6,  1)
   private val mdrContractCutOff  = LocalDate.of(2024,  3,  7)
 
+  /** Transaction description for a grant of lease — the same "L" code LeaseTaskList keys off. */
+  private val GrantOfLeaseCode = "L"
+
   private def answersWith(
                            claimingRelief:   Option[String]          = Some("yes"),
                            reliefReason:     Option[ReasonForRelief] = None,
@@ -48,6 +53,8 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
                            mainLandId:       Option[String]          = None,
                            additionalLands:  Seq[Land]               = Nil,
                            leaseType:        Option[String]          = None,
+                           transactionDescription: Option[String]    = None,
+                           annualRentOver1000: Option[String]        = None,
                            usedAsFactory:    Option[String]          = None,
                            usedAsHotel:      Option[String]          = None,
                            usedAsIndustrial: Option[String]          = None,
@@ -71,6 +78,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
       effectiveDate    = effectiveDate.map(_.toString),
       contractDate     = contractDate,
       totalConsideration = totalConsideration,
+      transactionDescription = transactionDescription,
       usedAsFactory    = usedAsFactory,
       usedAsHotel      = usedAsHotel,
       usedAsIndustrial = usedAsIndustrial,
@@ -92,11 +100,12 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
       case (Some(l), ls)      => Some(Seq(l) ++ ls)
     }
 
-    val committedLease = (totalPremium, leaseType) match {
-      case (None, None) => None
+    val committedLease = (totalPremium, leaseType, annualRentOver1000) match {
+      case (None, None, None) => None
       case _ => Some(Lease(
-        totalPremiumPayable = totalPremium,
-        leaseType           = leaseType
+        totalPremiumPayable  = totalPremium,
+        leaseType            = leaseType,
+        isAnnualRentOver1000 = annualRentOver1000
       ))
     }
 
@@ -655,6 +664,365 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
     }
   }
 
+  "F24AdditionalResidentialEffDate" - {
+
+    "must fire when the land is '04 - Additional residential' and the effective date is before the F24 floor" in {
+      val land = Land(landID = Some("LND001"), propertyType = Some("04"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.f24EffectiveFloor.minusDays(1)))
+
+      F24AdditionalResidentialEffDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-3")
+    }
+
+    "must pass when the effective date is on the F24 floor" in {
+      val land = Land(landID = Some("LND001"), propertyType = Some("04"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.f24EffectiveFloor))
+
+      F24AdditionalResidentialEffDate.validate(land, ua) mustBe None
+    }
+
+    "must pass when the effective date is not yet answered" in {
+      val land = Land(landID = Some("LND001"), propertyType = Some("04"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = None)
+
+      F24AdditionalResidentialEffDate.validate(land, ua) mustBe None
+    }
+
+    "must not apply when the land is not '04'" in {
+      val land = Land(landID = Some("LND001"), propertyType = Some("01"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.f24EffectiveFloor.minusDays(1)))
+
+      F24AdditionalResidentialEffDate.validate(land, ua) mustBe None
+    }
+  }
+
+  "Cf8_RegularWelshCodes" - {
+
+    "must fire when a regular Welsh code is used on or after the Wales Act effective date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("6805"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.welshActEffective))
+
+      Cf8_RegularWelshCodes.validate(land, ua).map(_.ruleId) mustBe Some("Cf-8")
+    }
+
+    "must fire when a regular Welsh code is used and the effective date is blank" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("6805"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = None)
+
+      Cf8_RegularWelshCodes.validate(land, ua) mustBe None
+    }
+
+    "must pass when the effective date is before the Wales Act effective date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("6805"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.welshActEffective.minusDays(1)))
+
+      Cf8_RegularWelshCodes.validate(land, ua) mustBe None
+    }
+
+    "must not apply to a non-Welsh authority code" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("0114"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.welshActEffective))
+
+      Cf8_RegularWelshCodes.validate(land, ua) mustBe None
+    }
+  }
+
+  "Cf9a_Welsh6996_6997EffDate" - {
+
+    "must fire when 6996 is used before the Wales Act effective date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("6996"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.welshActEffective.minusDays(1)))
+
+      Cf9a_Welsh6996_6997EffDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-9a")
+    }
+
+    "must fire when 6997 is used before the Wales Act effective date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("6997"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.welshActEffective.minusDays(1)))
+
+      Cf9a_Welsh6996_6997EffDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-9a")
+    }
+
+    "must pass when the effective date is on the Wales Act effective date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("6996"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.welshActEffective))
+
+      Cf9a_Welsh6996_6997EffDate.validate(land, ua) mustBe None
+    }
+
+    "must not apply to any other authority code" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("6998"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.welshActEffective.minusDays(1)))
+
+      Cf9a_Welsh6996_6997EffDate.validate(land, ua) mustBe None
+    }
+  }
+
+  "Cf9b_Welsh6998EffDate" - {
+
+    "must fire when 6998 is used before the Wales Act effective date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("6998"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.welshActEffective.minusDays(1)))
+
+      Cf9b_Welsh6998EffDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-9b")
+    }
+
+    "must pass when the effective date is on the Wales Act effective date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("6998"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.welshActEffective))
+
+      Cf9b_Welsh6998EffDate.validate(land, ua) mustBe None
+    }
+
+    "must not apply to any other authority code" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("6999"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.welshActEffective.minusDays(1)))
+
+      Cf9b_Welsh6998EffDate.validate(land, ua) mustBe None
+    }
+  }
+
+  "Cf9c_Welsh6999EffDate" - {
+
+    "must fire when 6999 is used before the Wales Act effective date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("6999"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.welshActEffective.minusDays(1)))
+
+      Cf9c_Welsh6999EffDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-9c")
+    }
+
+    "must pass when the effective date is on the Wales Act effective date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("6999"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.welshActEffective))
+
+      Cf9c_Welsh6999EffDate.validate(land, ua) mustBe None
+    }
+  }
+
+  "Cf10_Welsh6998ContractDate" - {
+
+    "must fire when 6998 is used on/after the Wales Act date and the contract date is blank" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("6998"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.welshActEffective), contractDate = None)
+
+      Cf10_Welsh6998ContractDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-10")
+    }
+
+    "must fire when the contract date is on the Wales Act effective date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("6998"))
+      val ua   = answersWith(
+        claimingRelief = Some("no"),
+        effectiveDate  = Some(Dates.welshActEffective),
+        contractDate   = Some(Dates.welshActEffective.toString))
+
+      Cf10_Welsh6998ContractDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-10")
+    }
+
+    "must pass when the contract date is before the Wales Act effective date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("6998"))
+      val ua   = answersWith(
+        claimingRelief = Some("no"),
+        effectiveDate  = Some(Dates.welshActEffective),
+        contractDate   = Some(Dates.welshActEffective.minusDays(1).toString))
+
+      Cf10_Welsh6998ContractDate.validate(land, ua) mustBe None
+    }
+
+    "must not apply when the effective date is before the Wales Act effective date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("6998"))
+      val ua   = answersWith(
+        claimingRelief = Some("no"),
+        effectiveDate  = Some(Dates.welshActEffective.minusDays(1)),
+        contractDate   = None)
+
+      Cf10_Welsh6998ContractDate.validate(land, ua) mustBe None
+    }
+  }
+
+  "Cf11_Welsh6999ContractDate" - {
+
+    "must fire when 6999 is used on/after the Wales Act effective date and the contract date is blank" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("6999"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.welshActEffective), contractDate = None)
+
+      Cf11_Welsh6999ContractDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-11")
+    }
+
+    "must fire when the contract date is after the Wales Act passing date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("6999"))
+      val ua   = answersWith(
+        claimingRelief = Some("no"),
+        effectiveDate  = Some(Dates.welshActEffective),
+        contractDate   = Some(Dates.welshActDate.plusDays(1).toString))
+
+      Cf11_Welsh6999ContractDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-11")
+    }
+
+    "must pass when the contract date is on the Wales Act passing date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("6999"))
+      val ua   = answersWith(
+        claimingRelief = Some("no"),
+        effectiveDate  = Some(Dates.welshActEffective),
+        contractDate   = Some(Dates.welshActDate.toString))
+
+      Cf11_Welsh6999ContractDate.validate(land, ua) mustBe None
+    }
+  }
+
+  "Cf12_Dummy8998_8999EffDate" - {
+
+    "must fire when 8998 is used before the CR223 date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("8998"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.cr223Effective.minusDays(1)))
+
+      Cf12_Dummy8998_8999EffDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-12")
+    }
+
+    "must fire when 8999 is used before the CR223 date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("8999"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.cr223Effective.minusDays(1)))
+
+      Cf12_Dummy8998_8999EffDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-12")
+    }
+
+    "must pass when the effective date is on the CR223 date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("8998"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.cr223Effective))
+
+      Cf12_Dummy8998_8999EffDate.validate(land, ua) mustBe None
+    }
+
+    "must not apply to a non-dummy authority code" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("0114"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.cr223Effective.minusDays(1)))
+
+      Cf12_Dummy8998_8999EffDate.validate(land, ua) mustBe None
+    }
+  }
+
+  "Cf13_Dummy8999ContractDate" - {
+
+    "must fire when 8999 is used and the contract date is blank" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("8999"))
+      val ua   = answersWith(claimingRelief = Some("no"), contractDate = None)
+
+      Cf13_Dummy8999ContractDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-13")
+    }
+
+    "must fire when the contract date is on the Scotland Act date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("8999"))
+      val ua   = answersWith(claimingRelief = Some("no"), contractDate = Some(Dates.scotlandActDate.toString))
+
+      Cf13_Dummy8999ContractDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-13")
+    }
+
+    "must pass when the contract date is before the Scotland Act date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("8999"))
+      val ua   = answersWith(claimingRelief = Some("no"), contractDate = Some(Dates.scotlandActDate.minusDays(1).toString))
+
+      Cf13_Dummy8999ContractDate.validate(land, ua) mustBe None
+    }
+
+    "must not apply to 8998" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("8998"))
+      val ua   = answersWith(claimingRelief = Some("no"), contractDate = None)
+
+      Cf13_Dummy8999ContractDate.validate(land, ua) mustBe None
+    }
+  }
+
+  "Cf14_Dummy8998ContractDate" - {
+
+    "must fire when 8998 is used and the contract date is blank" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("8998"))
+      val ua   = answersWith(claimingRelief = Some("no"), contractDate = None)
+
+      Cf14_Dummy8998ContractDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-14")
+    }
+
+    "must fire when the contract date is on the CR223 date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("8998"))
+      val ua   = answersWith(claimingRelief = Some("no"), contractDate = Some(Dates.cr223Effective.toString))
+
+      Cf14_Dummy8998ContractDate.validate(land, ua).map(_.ruleId) mustBe Some("Cf-14")
+    }
+
+    "must pass when the contract date is before the CR223 date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("8998"))
+      val ua   = answersWith(claimingRelief = Some("no"), contractDate = Some(Dates.cr223Effective.minusDays(1).toString))
+
+      Cf14_Dummy8998ContractDate.validate(land, ua) mustBe None
+    }
+
+    "must not apply to 8999" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("8999"))
+      val ua   = answersWith(claimingRelief = Some("no"), contractDate = None)
+
+      Cf14_Dummy8998ContractDate.validate(land, ua) mustBe None
+    }
+  }
+
+  "Cf15_ScottishCodes" - {
+
+    "must fire when a Scottish-pattern code is used on the CR223 date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("9001"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.cr223Effective))
+
+      Cf15_ScottishCodes.validate(land, ua).map(_.ruleId) mustBe Some("Cf-15")
+    }
+
+    "must fire when the effective date is blank" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("9001"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = None)
+
+      Cf15_ScottishCodes.validate(land, ua) mustBe None
+    }
+
+    "must pass when the effective date is before the CR223 date" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("9001"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.cr223Effective.minusDays(1)))
+
+      Cf15_ScottishCodes.validate(land, ua) mustBe None
+    }
+
+    "must not apply to a code outside the Scottish pattern" in {
+      val land = Land(landID = Some("LND001"), localAuthorityNumber = Some("8999"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.cr223Effective))
+
+      Cf15_ScottishCodes.validate(land, ua) mustBe None
+    }
+  }
+
+  "Cf16_ScottishPostcode" - {
+
+    "must fire when a Scottish postcode is used on the CR223 date" in {
+      val land = Land(landID = Some("LND001"), postcode = Some("EH1 1AA"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.cr223Effective))
+
+      Cf16_ScottishPostcode.validate(land, ua).map(_.ruleId) mustBe Some("Cf-16")
+    }
+
+    "must pass when the effective date is before the CR223 date" in {
+      val land = Land(landID = Some("LND001"), postcode = Some("EH1 1AA"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.cr223Effective.minusDays(1)))
+
+      Cf16_ScottishPostcode.validate(land, ua) mustBe None
+    }
+
+    "must not apply to a non-Scottish postcode" in {
+      val land = Land(landID = Some("LND001"), postcode = Some("SW1A 1AA"))
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.cr223Effective))
+
+      Cf16_ScottishPostcode.validate(land, ua) mustBe None
+    }
+
+    "must not apply when there is no postcode" in {
+      val land = Land(landID = Some("LND001"), postcode = None)
+      val ua   = answersWith(claimingRelief = Some("no"), effectiveDate = Some(Dates.cr223Effective))
+
+      Cf16_ScottishPostcode.validate(land, ua) mustBe None
+    }
+  }
+
   "Cf5a_LeaseRResidential" - {
 
     "must fire when main land is '01 - Residential' but lease type is not R" in {
@@ -1034,6 +1402,71 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
     }
   }
 
+  "Cf18_AnnualRentOver1000Missing" - {
+    
+    def cf18Answers(
+                             leaseType:          Option[String] = Some("R"),
+                             transaction:        Option[String] = Some(GrantOfLeaseCode),
+                             effectiveDate:      Option[LocalDate] = Some(Dates.annualRentOver1000Cutoff.minusDays(1)),
+                             annualRentOver1000: Option[String] = None
+                           ): UserAnswers =
+      answersWith(
+        claimingRelief         = Some("no"),
+        leaseType              = leaseType,
+        transactionDescription = transaction,
+        effectiveDate          = effectiveDate,
+        annualRentOver1000     = annualRentOver1000
+      )
+
+    "must be flagged as aggregateOnly so it does not fire during inline form binding" in {
+      Cf18_AnnualRentOver1000Missing.aggregateOnly mustBe true
+    }
+
+    "must fire when a grant of lease before the cutoff has not answered the £1,000 question" in {
+      Cf18_AnnualRentOver1000Missing.validate(cf18Answers()).map(_.ruleId) mustBe Some("Cf-18")
+    }
+
+    "must pass when the £1,000 question is answered yes" in {
+      Cf18_AnnualRentOver1000Missing.validate(cf18Answers(annualRentOver1000 = Some("yes"))) mustBe None
+    }
+
+    "must pass when the £1,000 question is answered no" in {
+      Cf18_AnnualRentOver1000Missing.validate(cf18Answers(annualRentOver1000 = Some("no"))) mustBe None
+    }
+
+    "must not apply when the transaction is not a grant of lease" in {
+      Cf18_AnnualRentOver1000Missing.validate(cf18Answers(transaction = Some("F"))) mustBe None
+    }
+
+    "must not apply when the transaction description is absent" in {
+      Cf18_AnnualRentOver1000Missing.validate(cf18Answers(transaction = None)) mustBe None
+    }
+
+    "must not apply when the effective date is on the cutoff" in {
+      Cf18_AnnualRentOver1000Missing.validate(
+        cf18Answers(effectiveDate = Some(Dates.annualRentOver1000Cutoff))) mustBe None
+    }
+
+    "must not apply when the effective date is after the cutoff" in {
+      Cf18_AnnualRentOver1000Missing.validate(
+        cf18Answers(effectiveDate = Some(Dates.annualRentOver1000Cutoff.plusDays(1)))) mustBe None
+    }
+
+    "must not apply when the effective date is not yet answered" in {
+      Cf18_AnnualRentOver1000Missing.validate(cf18Answers(effectiveDate = None)) mustBe None
+    }
+
+    "must not apply when there is no lease involvement" in {
+      Cf18_AnnualRentOver1000Missing.validate(cf18Answers(leaseType = None)) mustBe None
+    }
+
+    "must fire on the day before the cutoff" in {
+      Cf18_AnnualRentOver1000Missing.validate(
+          cf18Answers(effectiveDate = Some(Dates.annualRentOver1000Cutoff.minusDays(1))))
+        .map(_.ruleId) mustBe Some("Cf-18")
+    }
+  }
+
   "F23Rules.all" - {
 
     "must contain all seven F23 rules" in {
@@ -1049,10 +1482,26 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
     }
   }
 
+  "F24Rules.all" - {
+
+    "must contain Cf-3" in {
+      F24Rules.all.map(_.id) must contain ("Cf-3")
+    }
+  }
+
+  "F25Rules.all" - {
+
+    "must contain both halves of F25" in {
+      F25Rules.all.map(_.id) must contain allOf ("F25-effective", "F25-contract")
+    }
+  }
+
   "F28Rules.all" - {
 
-    "must contain both F28 rules" in {
-      F28Rules.all.map(_.id) must contain allOf ("F28-cap500k", "F28-cap625k")
+    "must contain all four F28 rules" in {
+      F28Rules.all.map(_.id) must contain allOf (
+        "F28-cap500k", "F28-cap625k", "F28-cap500k-totalConsideration", "F28-cap625k-totalConsideration"
+      )
     }
 
     "must produce no failures for a baseline (no relief claimed)" in {
@@ -1062,10 +1511,24 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
     }
   }
 
+  "F17Rules.all" - {
+
+    "must contain the Welsh authority code rules" in {
+      F17Rules.all.map(_.id) must contain allOf ("Cf-8", "Cf-9a", "Cf-9b", "Cf-9c", "Cf-10", "Cf-11")
+    }
+  }
+
+  "F18Rules.all" - {
+
+    "must contain the dummy and Scottish code rules" in {
+      F18Rules.all.map(_.id) must contain allOf ("Cf-12", "Cf-13", "Cf-14", "Cf-15", "Cf-16")
+    }
+  }
+
   "F30Rules.all" - {
 
-    "must contain Cf-5a, Cf-5b, Cf-5c, and Cf-17" in {
-      F30Rules.all.map(_.id) must contain allOf ("Cf-5a", "Cf-5b", "Cf-5c", "Cf-17")
+    "must contain Cf-5a, Cf-5b, Cf-5c, Cf-17 and Cf-18" in {
+      F30Rules.all.map(_.id) must contain allOf ("Cf-5a", "Cf-5b", "Cf-5c", "Cf-17", "Cf-18")
     }
 
     "must produce no failures when no lease and no land are configured" in {

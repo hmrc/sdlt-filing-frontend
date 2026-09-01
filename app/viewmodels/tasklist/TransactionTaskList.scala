@@ -128,7 +128,7 @@ object TransactionTaskList {
     val resumeUrl = controllers.routes.ResumeSectionController.resume("transaction", None).url
 
     val url =
-      if isTransactionComplete(fullReturn) && status.hasFailures then errorUrl
+      if status.hasFailures then errorUrl
       else if isTransactionComplete(fullReturn) then cyaUrl
       else if hasStartedBeyondPrelim(fullReturn) then resumeUrl
       else startUrl

@@ -36,6 +36,7 @@ class CrossFlowProjectionsSpec extends SpecBase with Matchers {
                                         reliefReason:     Option[String] = None,
                                         effectiveDate:    Option[String] = None,
                                         contractDate:     Option[String] = None,
+                                        transactionDescription: Option[String] = None,
                                         usedAsFactory:    Option[String] = None,
                                         usedAsHotel:      Option[String] = None,
                                         usedAsIndustrial: Option[String] = None,
@@ -50,6 +51,7 @@ class CrossFlowProjectionsSpec extends SpecBase with Matchers {
         reliefReason     = reliefReason,
         effectiveDate    = effectiveDate,
         contractDate     = contractDate,
+        transactionDescription = transactionDescription,
         usedAsFactory    = usedAsFactory,
         usedAsHotel      = usedAsHotel,
         usedAsIndustrial = usedAsIndustrial,
@@ -65,9 +67,12 @@ class CrossFlowProjectionsSpec extends SpecBase with Matchers {
       land = Some(Seq(Land(propertyType = Some(propertyType))))
     )))
 
-  private def withCommittedLease(leaseType: Option[String] = None): UserAnswers =
+  private def withCommittedLease(
+                                  leaseType:            Option[String] = None,
+                                  isAnnualRentOver1000: Option[String] = None
+                                ): UserAnswers =
     emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(
-      lease = Some(Lease(leaseType = leaseType))
+      lease = Some(Lease(leaseType = leaseType, isAnnualRentOver1000 = isAnnualRentOver1000))
     )))
 
   private def withLands(lands: Land*): UserAnswers =
@@ -82,6 +87,26 @@ class CrossFlowProjectionsSpec extends SpecBase with Matchers {
       returnInfo = Some(returnInfoWithMain),
       land       = Some(lands)
     )))
+  }
+
+  "constants" - {
+
+    "must expose the property type codes used across the rules" in {
+      Residential           mustBe "01"
+      Mixed                 mustBe "02"
+      NonResidential        mustBe "03"
+      ResidentialAdditional mustBe "04"
+    }
+
+    "must expose the lease type codes used across the rules" in {
+      LeaseResidential    mustBe "R"
+      LeaseMixed          mustBe "M"
+      LeaseNonResidential mustBe "N"
+    }
+
+    "must expose the grant-of-lease transaction code" in {
+      GrantOfLease mustBe "L"
+    }
   }
 
   "isClaimingRelief" - {
@@ -113,7 +138,6 @@ class CrossFlowProjectionsSpec extends SpecBase with Matchers {
 
     "must accept yes / Yes / YES case-insensitively in the committed snapshot" in {
       val ua = withCommittedTransaction(claimingRelief = Some("yes"))
-
       isClaimingRelief(ua) mustBe true
     }
 
@@ -244,8 +268,87 @@ class CrossFlowProjectionsSpec extends SpecBase with Matchers {
       contractDate(ua) mustBe Some(date2024)
     }
 
+    "must parse the committed contract date in dd/MM/yyyy format" in {
+      val ua = withCommittedTransaction(contractDate = Some("15/01/2024"))
+
+      contractDate(ua) mustBe Some(date2024)
+    }
+
+    "must return None when the committed contract date is unparseable" in {
+      val ua = withCommittedTransaction(contractDate = Some("not-a-date"))
+
+      contractDate(ua) mustBe None
+    }
+
     "must return None when neither session nor committed date exists" in {
       contractDate(emptyUserAnswers) mustBe None
+    }
+  }
+
+  "transactionType" - {
+
+    "must return the committed transaction description" in {
+      transactionType(withCommittedTransaction(transactionDescription = Some("L"))) mustBe Some("L")
+    }
+
+    "must trim whitespace on the committed transaction description" in {
+      transactionType(withCommittedTransaction(transactionDescription = Some("  L  "))) mustBe Some("L")
+    }
+
+    "must return None when the committed transaction description is blank" in {
+      transactionType(withCommittedTransaction(transactionDescription = Some("   "))) mustBe None
+    }
+
+    "must return None when there is no transaction description" in {
+      transactionType(withCommittedTransaction()) mustBe None
+    }
+
+    "must return None when there is no transaction at all" in {
+      transactionType(emptyUserAnswers) mustBe None
+    }
+  }
+
+  "isTransactionType" - {
+
+    "must return true when the transaction is a grant of lease" in {
+      isTransactionType(withCommittedTransaction(transactionDescription = Some(GrantOfLease)), GrantOfLease) mustBe true
+    }
+
+    "must return false when the transaction is a different type" in {
+      isTransactionType(withCommittedTransaction(transactionDescription = Some("F")), GrantOfLease) mustBe false
+    }
+
+    "must return false when there is no transaction description" in {
+      isTransactionType(withCommittedTransaction(), GrantOfLease) mustBe false
+    }
+  }
+
+  "annualRentOver1000Answered" - {
+
+    "must return true when the committed lease answers yes" in {
+      annualRentOver1000Answered(withCommittedLease(isAnnualRentOver1000 = Some("yes"))) mustBe true
+    }
+
+    "must return true when the committed lease answers no" in {
+      annualRentOver1000Answered(withCommittedLease(isAnnualRentOver1000 = Some("no"))) mustBe true
+    }
+
+    "must return false when the committed answer is blank after trimming" in {
+      annualRentOver1000Answered(withCommittedLease(isAnnualRentOver1000 = Some("   "))) mustBe false
+    }
+
+    "must return false when the lease exists but the question is unanswered" in {
+      annualRentOver1000Answered(withCommittedLease(leaseType = Some("R"))) mustBe false
+    }
+
+    "must return false when there is no lease at all" in {
+      annualRentOver1000Answered(emptyUserAnswers) mustBe false
+    }
+
+    "must return true when only the session page is set" in {
+      val ua = emptyUserAnswers.set(pages.lease.LeaseThousandPoundsThresholdPage, true).success.value
+
+      annualRentOver1000Answered(ua) mustBe true
     }
   }
 
@@ -426,6 +529,14 @@ class CrossFlowProjectionsSpec extends SpecBase with Matchers {
     "must have the CR223 effective date at 01/04/2015" in {
       Dates.cr223Effective mustBe LocalDate.of(2015, 4, 1)
     }
+
+    "must have the F24 effective floor at 01/04/2016" in {
+      Dates.f24EffectiveFloor mustBe LocalDate.of(2016, 4, 1)
+    }
+
+    "must have the annual-rent-over-£1,000 cutoff at 16/02/2016" in {
+      Dates.annualRentOver1000Cutoff mustBe LocalDate.of(2016, 2, 16)
+    }
   }
 
   "totalPremium" - {
@@ -471,9 +582,49 @@ class CrossFlowProjectionsSpec extends SpecBase with Matchers {
     "must return None when there is no fullReturn at all" in {
       totalPremium(emptyUserAnswers) mustBe None
     }
+  }
 
-    "must have the F24 effective floor at 01/04/2016" in {
-      Dates.f24EffectiveFloor mustBe LocalDate.of(2016, 4, 1)
+  "totalConsideration" - {
+
+    "must return the session-answered total consideration" in {
+      val ua = emptyUserAnswers.set(TotalConsiderationOfTransactionPage, "500000.00").success.value
+
+      totalConsideration(ua) mustBe Some(BigDecimal(500000))
+    }
+
+    "must parse decimal values" in {
+      val ua = emptyUserAnswers.set(TotalConsiderationOfTransactionPage, "625000.50").success.value
+
+      totalConsideration(ua) mustBe Some(BigDecimal("625000.50"))
+    }
+
+    "must return None when the session value is unparseable" in {
+      val ua = emptyUserAnswers.set(TotalConsiderationOfTransactionPage, "not-a-number").success.value
+
+      totalConsideration(ua) mustBe None
+    }
+
+    "must return None when nothing has been answered" in {
+      totalConsideration(emptyUserAnswers) mustBe None
+    }
+
+    "must NOT read the committed snapshot — unlike totalPremium, it is session-only" in {
+      val ua = emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(
+        transaction = Some(Transaction(totalConsideration = Some("500000.00")))
+      )))
+
+      totalConsideration(ua) mustBe None
+    }
+  }
+
+  "currentSessionLand" - {
+
+    "must return None when there is no land in session" in {
+      currentSessionLand(emptyUserAnswers) mustBe None
+    }
+
+    "must return None when only committed land exists" in {
+      currentSessionLand(withCommittedPropertyType("01")) mustBe None
     }
   }
 
@@ -562,6 +713,12 @@ class CrossFlowProjectionsSpec extends SpecBase with Matchers {
 
     "must return false when there is no lease at all" in {
       hasLeaseInvolvement(emptyUserAnswers) mustBe false
+    }
+
+    "must ignore a session-only lease type — only the committed lease counts" in {
+      val ua = emptyUserAnswers.set(TypeOfLeasePage, models.lease.TypeOfLease.R).success.value
+
+      hasLeaseInvolvement(ua) mustBe false
     }
   }
 
@@ -723,7 +880,7 @@ class CrossFlowProjectionsSpec extends SpecBase with Matchers {
     }
 
     "must accept 'yes' case-insensitively in committed flags ('YES')" in {
-      val ua = withCommittedTransaction(usedAsFactory = Some("yes"))
+      val ua = withCommittedTransaction(usedAsFactory = Some("YES"))
 
       useOfPropertyAnswered(ua) mustBe true
     }
@@ -761,7 +918,7 @@ class CrossFlowProjectionsSpec extends SpecBase with Matchers {
 
     "must return true when the session-level use of property has 'yes' with mixed casing" in {
       val sessionUse = TransactionUseOfLandOrPropertyAnswers(
-        factory             = "yes",
+        factory             = "Yes",
         hotel               = "no",
         otherIndustrialUnit = "no",
         office              = "no",
@@ -855,6 +1012,115 @@ class CrossFlowProjectionsSpec extends SpecBase with Matchers {
       )
 
       anyLandPropertyType(ua, Set(Mixed, NonResidential)) mustBe true
+    }
+  }
+
+  "scottishCodePattern" - {
+
+    "must match a 9-prefixed four digit code" in {
+      scottishCodePattern.matches("9001") mustBe true
+      scottishCodePattern.matches("9999") mustBe true
+    }
+
+    "must not match codes outside the 9xxx range" in {
+      scottishCodePattern.matches("8999") mustBe false
+      scottishCodePattern.matches("6805") mustBe false
+    }
+
+    "must not match a code of the wrong length" in {
+      scottishCodePattern.matches("901")   mustBe false
+      scottishCodePattern.matches("90011") mustBe false
+    }
+  }
+
+  "dummyCodePattern" - {
+
+    "must match 8998 and 8999" in {
+      dummyCodePattern.matches("8998") mustBe true
+      dummyCodePattern.matches("8999") mustBe true
+    }
+
+    "must not match any other code" in {
+      dummyCodePattern.matches("8997") mustBe false
+      dummyCodePattern.matches("9998") mustBe false
+    }
+  }
+
+  "isScottishPostcode" - {
+
+    "must recognise an Edinburgh postcode" in {
+      isScottishPostcode("EH1 1AA") mustBe true
+    }
+
+    "must recognise a Glasgow postcode" in {
+      isScottishPostcode("G1 1AA") mustBe true
+    }
+
+    "must recognise a Motherwell postcode" in {
+      isScottishPostcode("ML1 1AA") mustBe true
+    }
+
+    "must be case-insensitive" in {
+      isScottishPostcode("eh1 1aa") mustBe true
+    }
+
+    "must ignore surrounding whitespace" in {
+      isScottishPostcode("  EH1 1AA  ") mustBe true
+    }
+
+    "must match on the outcode alone" in {
+      isScottishPostcode("EH1") mustBe true
+    }
+
+    "must reject an English postcode" in {
+      isScottishPostcode("SW1A 1AA") mustBe false
+    }
+
+    "must reject a Welsh postcode" in {
+      isScottishPostcode("CF10 1AA") mustBe false
+    }
+
+    "must reject an empty string" in {
+      isScottishPostcode("") mustBe false
+    }
+
+    "must reject a postcode with no space separating the outcode" in {
+      // the outcode is taken as everything before the first space, so an unspaced
+      // postcode never matches the anchored outcode patterns
+      isScottishPostcode("EH11AA") mustBe false
+    }
+  }
+
+  "Welsh authority code sets" - {
+
+    "must contain the regular Welsh codes at both ends of the range" in {
+      welshRegularCodes must contain ("6805")
+      welshRegularCodes must contain ("6955")
+    }
+
+    "must hold 26 regular Welsh codes" in {
+      welshRegularCodes.size mustBe 26
+    }
+
+    "must keep the special codes out of the regular set" in {
+      welshRegularCodes must not contain "6996"
+      welshRegularCodes must not contain "6997"
+      welshRegularCodes must not contain "6998"
+      welshRegularCodes must not contain "6999"
+    }
+
+    "must pair 6996 and 6997 as the shared special codes" in {
+      welshSpecial6996_6997 mustBe Set("6996", "6997")
+    }
+
+    "must identify 6998 and 6999 individually" in {
+      welshSpecial6998 mustBe "6998"
+      welshSpecial6999 mustBe "6999"
+    }
+
+    "must roll every code into welshAllCodes" in {
+      welshAllCodes must contain allOf ("6805", "6955", "6996", "6997", "6998", "6999")
+      welshAllCodes.size mustBe welshRegularCodes.size + 4
     }
   }
 }

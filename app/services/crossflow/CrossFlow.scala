@@ -32,8 +32,9 @@ object Pages:
   val ContractDate:      PageId = PageId("contractDate")
   val LandAuthorityCode: PageId = PageId("landAuthorityCode")
   val LandPostcode:      PageId = PageId("landPostcode")
-  val LeaseType: PageId = PageId("leaseType")
-  val UseOfProperty: PageId = PageId("useOfProperty")
+  val LeaseType:         PageId = PageId("leaseType")
+  val UseOfProperty:     PageId = PageId("useOfProperty")
+  val AnnualRentOver1000: PageId = PageId("isAnnualRentOver1000")
 
 object Fields:
   val ReliefReason      = "value"
@@ -42,8 +43,9 @@ object Fields:
   val ContractDate      = "value"
   val LandAuthorityCode = "value"
   val LandPostcode      = "value"
-  val LeaseType = "value"
-  val UseOfProperty = "value"
+  val LeaseType         = "value"
+  val UseOfProperty     = "value"
+  val AnnualRentOver1000 = "value"
 
 final case class CrossFlowTarget(page: PageId, field: String)
 

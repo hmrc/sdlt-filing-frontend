@@ -2243,6 +2243,13 @@ crossflow.lease.Cf-5a.cta                                                       
 crossflow.lease.Cf-5b.cta                                                           = Select ‘M - Mixed use’ as the type of lease.
 crossflow.lease.Cf-5c.cta                                                           = Select ‘N - Non-residential’ as the type of lease.
 
+crossflow.lease.Cf-18.heading                                                       = Tell us if the annual rent is £1,000 or more
+crossflow.lease.Cf-18.body                                                          = This return now contains the following information:
+crossflow.lease.Cf-18.bullet1                                                       = the type of transaction is ‘L - Grant of lease’
+crossflow.lease.Cf-18.bullet2                                                       = the effective date of the transaction is before 16 February 2016
+crossflow.lease.Cf-18.cta                                                            = This means you must tell us if the annual rent is £1,000 or more.
+
+
 submission.submissionComplete.title                                                 = Submission complete
 submission.submissionComplete.panel.heading                                         = Submission complete
 submission.submissionComplete.panel.utrn                                            = Your UTRN

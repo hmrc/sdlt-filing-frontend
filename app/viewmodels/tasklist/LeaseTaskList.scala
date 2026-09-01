@@ -105,7 +105,7 @@ object LeaseTaskList {
     val resumeUrl = controllers.routes.ResumeSectionController.resume("lease", None).url
 
     val url =
-      if isLeaseComplete(fullReturn) && status.hasFailures then errorUrl
+      if status.hasFailures then errorUrl
       else if isLeaseComplete(fullReturn) then cyaUrl
       else if hasStarted(fullReturn) then resumeUrl
       else startUrl
