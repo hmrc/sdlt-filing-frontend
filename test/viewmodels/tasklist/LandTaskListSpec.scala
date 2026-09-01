@@ -40,13 +40,26 @@ class LandTaskListSpec extends SpecBase {
       willSendPlanByPost = None,
       mineralRights = None,
     ))))
+
+  private val prelimLand = Land(
+    landID = Some("LND001"),
+    returnID = Some("RET123456789"),
+    landResourceRef = Some("LND-REF-001"),
+    address1 = Some("123 Fake Street")
+  )
+
   private val fullReturnPrelimLand = fullReturnComplete.copy(
-    land = Some(Seq(Land(
-      landID = Some("LND001"),
-      returnID = Some("RET123456789"),
-      landResourceRef = Some("LND-REF-001"),
-      address1 = Some("123 Fake Street")
-    ))))
+    land = Some(Seq(prelimLand)))
+
+  private val fullReturnPrelimLandNotMain = fullReturnComplete.copy(
+    land = Some(Seq(prelimLand.copy(landID = Some("LND999")))))
+
+  private val fullReturnPrelimLandPlusOneField = fullReturnComplete.copy(
+    land = Some(Seq(prelimLand.copy(propertyType = Some("01")))))
+
+  private val fullReturnPrelimLandWithSecondLand = fullReturnComplete.copy(
+    land = Some(Seq(prelimLand, completeLand.copy(landID = Some("LND002")))))
+
   private val fullReturnSomeMandatoryFieldsMissing = fullReturnComplete.copy(
     land = Some(Seq(completeLand.copy(
       propertyType = None,
@@ -232,6 +245,82 @@ class LandTaskListSpec extends SpecBase {
 
         result mustBe Seq(false, false, false, false, false, false)
       }
+
+      "must report the prelim address as a passing check" in {
+        val result = LandTaskList.mandatoryFieldsDefined(fullReturnPrelimLand)
+
+        result mustBe Seq(false, false, true, false, false, false)
+      }
+    }
+
+    ".isPrelimLand" - {
+
+      "must return true when the single main land has only the prelim address" in {
+        LandTaskList.isPrelimLand(fullReturnPrelimLand) mustBe true
+      }
+
+      "must return false when the land is not the main land" in {
+        LandTaskList.isPrelimLand(fullReturnPrelimLandNotMain) mustBe false
+      }
+
+      "must return false when a field beyond the prelim address is answered" in {
+        LandTaskList.isPrelimLand(fullReturnPrelimLandPlusOneField) mustBe false
+      }
+
+      "must return false when a second land is present" in {
+        LandTaskList.isPrelimLand(fullReturnPrelimLandWithSecondLand) mustBe false
+      }
+
+      "must return false when the land has no address at all" in {
+        LandTaskList.isPrelimLand(fullReturnAllMandatoryFieldsMissing) mustBe false
+      }
+
+      "must return false when there are no lands" in {
+        LandTaskList.isPrelimLand(fullReturnMissingLand) mustBe false
+      }
+
+      "must return false when the land is complete" in {
+        LandTaskList.isPrelimLand(fullReturnCompleteWithOneMainLand) mustBe false
+      }
+    }
+
+    ".landChecks" - {
+
+      "must return six failing checks when the land is prelim only" in {
+        val result = LandTaskList.landChecks(fullReturnPrelimLand)
+
+        result mustBe Seq(false, false, false, false, false, false)
+      }
+
+      "must fall through to the mandatory checks when the land is not prelim" in {
+        val result = LandTaskList.landChecks(fullReturnSomeMandatoryFieldsMissing)
+
+        result mustBe LandTaskList.mandatoryFieldsDefined(fullReturnSomeMandatoryFieldsMissing)
+      }
+
+      "must report the address check when the prelim-shaped land is not the main land" in {
+        val result = LandTaskList.landChecks(fullReturnPrelimLandNotMain)
+
+        result mustBe Seq(false, false, true, false, false, false)
+      }
+
+      "must report progress once a field beyond the prelim address is answered" in {
+        val result = LandTaskList.landChecks(fullReturnPrelimLandPlusOneField)
+
+        result mustBe Seq(true, false, true, false, false, false)
+      }
+
+      "must return a sequence of true when every land is complete" in {
+        val result = LandTaskList.landChecks(fullReturnCompleteWithOneMainLand)
+
+        result mustBe Seq(true, true, true, true, true, true)
+      }
+
+      "must return six failing checks when there are no lands" in {
+        val result = LandTaskList.landChecks(fullReturnMissingLand)
+
+        result mustBe Seq(false, false, false, false, false, false)
+      }
     }
 
     ".isLandComplete" - {
@@ -267,6 +356,12 @@ class LandTaskListSpec extends SpecBase {
 
         result mustBe false
       }
+
+      "must return false when the land is prelim only" in {
+        val result = LandTaskList.isLandComplete(fullReturnPrelimLand)
+
+        result mustBe false
+      }
     }
 
     ".incompleteLands" - {
@@ -291,6 +386,12 @@ class LandTaskListSpec extends SpecBase {
         val result = LandTaskList.incompleteLands(fullReturnAllMandatoryFieldsMissing)
 
         result.size mustBe 1
+      }
+
+      "must return the prelim land" in {
+        val result = LandTaskList.incompleteLands(fullReturnPrelimLand)
+
+        result.map(_.landID) mustBe Seq(Some("LND001"))
       }
 
       "must return no lands when there are no lands" in {
@@ -365,7 +466,7 @@ class LandTaskListSpec extends SpecBase {
         }
       }
 
-      "must have Before You Start url and show 'In Progress' status when only land data from prelim is present" in {
+      "must have Before You Start url and show 'Not yet started' status when only land data from prelim is present" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -374,6 +475,48 @@ class LandTaskListSpec extends SpecBase {
           val result = LandTaskList.buildLandRow(fullReturnPrelimLand, noFailuresStatus)
 
           result.url mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
+
+          result.status mustBe TLNotStarted
+        }
+      }
+
+      "must show 'In progress' status when the prelim-shaped land is not the main land" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.buildLandRow(fullReturnPrelimLandNotMain, noFailuresStatus)
+
+          result.url mustBe controllers.land.routes.LandIncompleteOverviewController.onPageLoad().url
+
+          result.status mustBe TLInProgress
+        }
+      }
+
+      "must move from 'Not yet started' to 'In progress' once a field beyond the prelim address is answered" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.buildLandRow(fullReturnPrelimLandPlusOneField, noFailuresStatus)
+
+          result.url mustBe controllers.land.routes.LandIncompleteOverviewController.onPageLoad().url
+
+          result.status mustBe TLInProgress
+        }
+      }
+
+      "must show 'In progress' status when a prelim land is joined by a second land" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.buildLandRow(fullReturnPrelimLandWithSecondLand, noFailuresStatus)
+
+          result.url mustBe controllers.land.routes.LandIncompleteOverviewController.onPageLoad().url
 
           result.status mustBe TLInProgress
         }
@@ -483,6 +626,18 @@ class LandTaskListSpec extends SpecBase {
           val result = LandTaskList.buildLandRow(fullReturnSomeMandatoryFieldsMissing, cf6OnlyStatus)
 
           result.url mustBe controllers.land.routes.LandIncompleteOverviewController.onPageLoad().url
+        }
+      }
+
+      "must route a prelim land to the before you start controller even when failures are present" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LandTaskList.buildLandRow(fullReturnPrelimLand, withFailuresStatus)
+
+          result.url mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
         }
       }
 
@@ -604,6 +759,23 @@ class LandTaskListSpec extends SpecBase {
 
           row.status mustBe TLInProgress
           row.url mustBe controllers.land.routes.LandIncompleteOverviewController.onPageLoad().url
+        }
+      }
+
+      "must build a TaskListSection with a not started row when only prelim land data is present" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val section = LandTaskList.build(fullReturnPrelimLand)
+          val row = section.rows.head
+
+          section.heading mustBe messagesInstance("tasklist.landQuestion.heading")
+          messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.landQuestion.details")
+          row.status mustBe TLNotStarted
+          row.url mustBe controllers.land.routes.LandBeforeYouStartController.onPageLoad().url
         }
       }
 

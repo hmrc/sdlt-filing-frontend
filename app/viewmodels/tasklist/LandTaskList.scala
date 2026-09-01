@@ -89,6 +89,10 @@ object LandTaskList {
     all.nonEmpty && all.forall(land => isLandComplete(land))
   }
 
+  def landChecks(fullReturn: FullReturn): Seq[Boolean] =
+    if (isPrelimLand(fullReturn)) Seq.fill(6)(false)
+    else mandatoryFieldsDefined(fullReturn)
+
   def landRowBuilder(fullReturn: FullReturn, status: SectionStatus)
                     (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
 
@@ -117,7 +121,7 @@ object LandTaskList {
       messageKey    = _ => "tasklist.landQuestion.details",
       url           = _ => _ => url,
       tagId         = "landQuestionDetailRow",
-      checks        = _ => mandatoryFieldsDefined(fullReturn),
+      checks        = _ => landChecks(fullReturn),
       invalid       = _ => status.hasFailures,
       prerequisites = _ => Seq()
     )
