@@ -16,7 +16,6 @@
 
 package controllers.submission
 
-import config.FrontendAppConfig
 import controllers.actions.*
 import forms.submission.Sdlt5CertificateForEachLandOrPropertyFormProvider
 import models.Mode
@@ -28,7 +27,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.submission.CertificateForEachService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.tasklist.TaskListBuilder
 import views.html.submission.Sdlt5CertificateForEachLandOrPropertyView
 
 import javax.inject.{Inject, Singleton}
@@ -46,21 +44,15 @@ class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
                                                                  resubmissionCheck: ResubmissionCheckAction,
                                                                  formProvider: Sdlt5CertificateForEachLandOrPropertyFormProvider,
                                                                  certificateForEachService: CertificateForEachService,
-                                                                 taskListBuilder: TaskListBuilder,
                                                                  val controllerComponents: MessagesControllerComponents,
                                                                  view: Sdlt5CertificateForEachLandOrPropertyView
-                                                               )(implicit appConfig: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
+                                                               )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck ) {
     implicit request =>
 
-      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
-
-      if (!submissionAlreadyStarted && !taskListBuilder.allComplete(request.userAnswers)) {
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-      } else {
         val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)
 
         if (landList.length > 1) {
@@ -72,17 +64,11 @@ class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
         } else {
           Redirect(controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad())
         }
-      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck).async {
     implicit request =>
 
-      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
-
-      if (!submissionAlreadyStarted && !taskListBuilder.allComplete(request.userAnswers)) {
-        Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
-      } else {
         val landList = request.userAnswers.fullReturn.flatMap(_.land).getOrElse(Seq.empty)
 
         if (landList.length > 1) {
@@ -105,6 +91,5 @@ class Sdlt5CertificateForEachLandOrPropertyController @Inject()(
         } else {
           Future.successful(Redirect(controllers.submission.routes.WhoAreYouSubmittingForController.onPageLoad()))
         }
-      }
   }
 }

@@ -16,7 +16,6 @@
 
 package controllers.submission
 
-import config.FrontendAppConfig
 import controllers.actions.*
 import forms.submission.EmailConfirmationFormProvider
 import models.Mode
@@ -26,7 +25,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.tasklist.TaskListBuilder
 import views.html.submission.EmailConfirmationView
 
 import javax.inject.Inject
@@ -41,38 +39,24 @@ class EmailConfirmationController @Inject()(
                                              requireData: DataRequiredAction,
                                              resubmissionCheck: ResubmissionCheckAction,
                                              formProvider: EmailConfirmationFormProvider,
-                                             taskListBuilder: TaskListBuilder,
                                              val controllerComponents: MessagesControllerComponents,
                                              view: EmailConfirmationView
-                                           )(implicit appConfig: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck) {
     implicit request =>
-
-      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
-
-      if (!submissionAlreadyStarted && !taskListBuilder.allComplete(request.userAnswers)) {
-        Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-      } else {
         val preparedForm = request.userAnswers.get(EmailConfirmationPage) match {
           case None => form
           case Some(value) => form.fill(value)
         }
 
         Ok(view(preparedForm, mode))
-      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck).async {
     implicit request =>
-
-      val submissionAlreadyStarted = request.userAnswers.fullReturn.exists(_.submission.isDefined)
-
-      if (!submissionAlreadyStarted && !taskListBuilder.allComplete(request.userAnswers)) {
-        Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
-      } else {
         form.bindFromRequest().fold(
           formWithErrors =>
             Future.successful(BadRequest(view(formWithErrors, mode))),
@@ -83,6 +67,5 @@ class EmailConfirmationController @Inject()(
               _              <- sessionRepository.set(updatedAnswers)
             } yield Redirect(navigator.nextPage(EmailConfirmationPage, mode, updatedAnswers))
         )
-      }
   }
 }
