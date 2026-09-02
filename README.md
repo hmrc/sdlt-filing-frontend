@@ -1,24 +1,26 @@
 # sdlt-filing-frontend
 
-This is the new sdlt-filing-frontend repository
+This is the frontend service responsible for the submission of returns, including both new returns and completion of existing in-progress returns.
+
+For more information please refer to the [documentation](https://confluence.tools.tax.service.gov.uk/spaces/RBD/pages/1081606211/3.+Stamp+Duty+Land+Tax+-+SDLT).
 
 ## Running the service
+Before starting, you will need to have  [service-manager](https://github.com/hmrc/service-manager) installed/configured
 
-Service Manager: `sm2 --start SDLT_ALL`
+### Dependencies
+All dependencies can be found in [AppDependencies.scala](https://github.com/hmrc/sdlt-filing-frontend/blob/main/project/AppDependencies.scala)
 
-To run all tests and coverage: `sbt clean compile coverage test it/test coverageOff coverageReport`
+### Running locally:
+Service Manager:
+- Start dependent services `sm2 --start SDLT_ALL`
+- Stop this service `sm2 --stop SDLT-FILING-FRONTEND`
+- Start the server locally on `port 10910` with `sbt run`
 
-To start the server locally on `port 10910`: `sbt run`
-
-## To run the service in test-only mode
-
-Run the command: `sbt run -Dapplication.router=testOnlyDoNotUseInAppConf.Routes`
-
-This allows access to the following test routes:
-
-```
-
-```
+### Testing:
+- Run unit tests: `sbt test`
+- Run integration tests: `sbt it/test`
+- To run all tests and coverage: `sbt clean compile coverage test it/test coverageOff coverageReport`
+- To run the service in test-only mode: `sbt run -Dapplication.router=testOnlyDoNotUseInAppConf.Routes`
 
 ## Adding New Pages
 
