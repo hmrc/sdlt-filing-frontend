@@ -104,22 +104,22 @@ object LeaseTaskList {
     val errorUrl  = controllers.lease.routes.LeaseSingleEntityController.onPageLoad().url
     val resumeUrl = controllers.routes.ResumeSectionController.resume("lease", None).url
 
+    val started = hasStarted(fullReturn)
+    val failed  = status.hasFailures && started
+
     val url =
-      if status.hasFailures then errorUrl
+      if failed then errorUrl
       else if isLeaseComplete(fullReturn) then cyaUrl
-      else if hasStarted(fullReturn) then resumeUrl
+      else if started then resumeUrl
       else startUrl
 
     TaskListRowBuilder(
-      canEdit = {
-        case TLCompleted => true
-        case _           => true
-      },
+      canEdit       = _ => true,
       messageKey    = _ => "tasklist.leaseQuestion.details",
       url           = _ => _ => url,
       tagId         = "leaseQuestionDetailRow",
       checks        = _ => mandatoryFieldsDefined(fullReturn),
-      invalid       = _ => status.hasFailures,
+      invalid       = _ => failed,
       prerequisites = _ => Seq(),
       started       = Some(hasStarted)
     )

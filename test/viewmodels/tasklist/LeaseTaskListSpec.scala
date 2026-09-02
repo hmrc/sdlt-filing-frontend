@@ -58,6 +58,13 @@ class LeaseTaskListSpec extends SpecBase {
     transaction = notGrantOfLeaseTransaction,
     lease = None
   )
+
+  // The backend creates a lease shell ({leaseID, returnID}) before the user answers anything,
+  // so "a lease exists" is not the same as "the section has been started".
+  private val fullReturnLeaseShell = fullReturnComplete.copy(
+    lease = Some(Lease(leaseID = Some("LSE001")))
+  )
+
   private val fullReturnGrantOfLease = fullReturnComplete.copy(
     lease = Some(Lease(
       leaseType = Some("L"),
@@ -94,6 +101,13 @@ class LeaseTaskListSpec extends SpecBase {
     ruleIds     = Seq("Cf-5a"),
     messageKeys = Seq("crossflow.lease.Cf-5a.body"),
     targets     = Seq(CrossFlowTarget(Pages.LeaseType, "value"))
+  )
+  private val cf18FailureStatus: SectionStatus = SectionStatus(
+    section     = ReturnSection.Lease,
+    hasFailures = true,
+    ruleIds     = Seq("Cf-18"),
+    messageKeys = Seq("crossflow.lease.Cf-18.body"),
+    targets     = Seq(CrossFlowTarget(Pages.AnnualRentOver1000, "value"))
   )
 
   // NOTE: evaluated inside each running(application) block (not as a class val) so the reverse
@@ -162,6 +176,21 @@ class LeaseTaskListSpec extends SpecBase {
           row.status mustBe TLInvalid
         }
       }
+
+      "must not propagate a failing status to a section the user has not started" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = LeaseTaskList.build(fullReturnLeaseShell, cf18FailureStatus)
+          val row    = result.rows.head
+
+          row.url mustBe controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
+          row.status mustBe TLNotStarted
+        }
+      }
     }
 
     ".mandatoryFieldsDefined" - {
@@ -183,6 +212,11 @@ class LeaseTaskListSpec extends SpecBase {
       "must return false if lease is absent" in {
         val result = LeaseTaskList.mandatoryFieldsDefined(emptyFullReturn)
         result mustBe Seq(false, false, false, false, false, false)
+      }
+
+      "must return all false for a lease shell that only carries its ids" in {
+        val result = LeaseTaskList.mandatoryFieldsDefined(fullReturnLeaseShell)
+        result.forall(identity) mustBe false
       }
 
       "must include the three grant-of-lease checks when the transaction is a grant of lease" in {
@@ -247,6 +281,10 @@ class LeaseTaskListSpec extends SpecBase {
         }
       }
 
+      "must return false for a lease shell that only carries its ids" in {
+        LeaseTaskList.isLeaseComplete(fullReturnLeaseShell) mustBe false
+      }
+
       "must ignore cross-flow failures — it only reflects the mandatory fields" in {
         LeaseTaskList.isLeaseComplete(fullReturnComplete) mustBe true
       }
@@ -256,6 +294,10 @@ class LeaseTaskListSpec extends SpecBase {
 
       "must return false when the lease is absent" in {
         LeaseTaskList.hasStarted(fullReturnMissingLease) mustBe false
+      }
+
+      "must return false for a lease shell that only carries its ids" in {
+        LeaseTaskList.hasStarted(fullReturnLeaseShell) mustBe false
       }
 
       "must return false when no mandatory fields are answered" in {
@@ -348,6 +390,17 @@ class LeaseTaskListSpec extends SpecBase {
 
             LeaseTaskList.leaseRowBuilder(fullReturnSomeMandatoryFieldsMissing, cf5aFailureStatus)
               .isComplete(fullReturnSomeMandatoryFieldsMissing) mustBe false
+          }
+        }
+
+        "must return false for an unstarted lease shell even when cross-flow reports failures" in {
+          val application = applicationBuilder().build()
+
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+            LeaseTaskList.leaseRowBuilder(fullReturnLeaseShell, cf18FailureStatus)
+              .isComplete(fullReturnLeaseShell) mustBe false
           }
         }
 
@@ -524,7 +577,7 @@ class LeaseTaskListSpec extends SpecBase {
           }
         }
 
-        "must show 'Invalid' status and route to the cross-flow target when the lease is incomplete" in {
+        "must show 'Invalid' status and route to the cross-flow target when the lease is started but incomplete" in {
           val application = applicationBuilder().build()
 
           running(application) {
@@ -537,13 +590,44 @@ class LeaseTaskListSpec extends SpecBase {
           }
         }
 
-        "must show 'Invalid' status even when nothing has been answered" in {
+        "must show 'Not yet started' and route to Before You Start when nothing has been answered" in {
           val application = applicationBuilder().build()
 
           running(application) {
             implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
             val result = LeaseTaskList.buildLeaseRow(fullReturnAllMandatoryFieldsMissing, cf5aFailureStatus)
+
+            result.status mustBe TLNotStarted
+            result.url mustBe controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
+          }
+        }
+
+        "must show 'Not yet started' for a lease shell that only carries its ids" in {
+          val application = applicationBuilder().build()
+
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+            // Cf-18 fires off the shell lease the backend creates up front; the row must not
+            // report an error against a section the user has never opened.
+            val result = LeaseTaskList.buildLeaseRow(fullReturnLeaseShell, cf18FailureStatus)
+
+            result.status mustBe TLNotStarted
+            result.url mustBe controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
+          }
+        }
+
+        "must flag the failure as soon as the user answers a single question" in {
+          val application = applicationBuilder().build()
+
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+            val started = fullReturnComplete.copy(
+              lease = Some(Lease(leaseID = Some("LSE001"), leaseType = Some("N"))))
+
+            val result = LeaseTaskList.buildLeaseRow(started, cf18FailureStatus)
 
             result.status mustBe TLInvalid
           }
@@ -625,6 +709,18 @@ class LeaseTaskListSpec extends SpecBase {
           result.status mustBe TLInProgress
         }
       }
+
+      "must always be editable, whatever the status" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          LeaseTaskList.buildLeaseRow(fullReturnComplete, noFailures).canEdit mustBe true
+          LeaseTaskList.buildLeaseRow(fullReturnLeaseShell, noFailures).canEdit mustBe true
+          LeaseTaskList.buildLeaseRow(fullReturnComplete, cf5aFailureStatus).canEdit mustBe true
+        }
+      }
     }
 
     "integration" - {
@@ -690,6 +786,21 @@ class LeaseTaskListSpec extends SpecBase {
           section.heading mustBe messagesInstance("tasklist.leaseQuestion.heading")
           row.url mustBe controllers.lease.routes.LeaseSingleEntityController.onPageLoad().url
           row.status mustBe TLInvalid
+        }
+      }
+
+      "must build a TaskListSection with a 'Not yet started' row when a failure is reported against an untouched lease" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages = messages(application)
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val section = LeaseTaskList.build(fullReturnLeaseShell, cf18FailureStatus)
+          val row     = section.rows.head
+
+          row.status mustBe TLNotStarted
+          row.url mustBe controllers.lease.routes.LeaseBeforeYouStartController.onPageLoad().url
         }
       }
     }
