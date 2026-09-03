@@ -399,8 +399,8 @@ vendor.beforeStart.bullet1                                                      
 vendor.beforeStart.bullet2                                                          = the vendor’s name
 vendor.beforeStart.bullet3                                                          = the vendor’s address
 
-vendor.checkYourAnswers.whoIsTheVendor.label                                        = Vendor type
-vendor.checkYourAnswers.whoIsTheVendor.hidden                                       = Vendor type
+vendor.checkYourAnswers.whoIsTheVendor.label                                        = Type of vendor
+vendor.checkYourAnswers.whoIsTheVendor.hidden                                       = Type of vendor
 vendor.checkYourAnswers.whoIsTheVendor.Individual                                   = Individual
 vendor.checkYourAnswers.whoIsTheVendor.Company                                      = Company
 vendor.checkYourAnswers.vendorName.label                                            = Vendor name
@@ -515,7 +515,7 @@ vendorAgent.vendorAgentsContactDetails.agentPhoneNumber                         
 vendorAgent.vendorAgentsContactDetails.agentEmailAddress                            = Agent email address
 vendorAgent.vendorAgentsContactDetails.agentPhoneNumber.caption                     = For international numbers include the country code, like 0049 for Germany (+49 on mobile)
 vendorAgent.vendorAgentsContactDetails.agentEmailAddress.caption                    = We’ll only use this to send a receipt
-vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel                        = Agent contact details
+vendorAgent.vendorAgentsContactDetails.checkYourAnswersLabel                        = Contact details
 vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.required              = Enter {0}’s phone number
 vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.required             = Enter {0}’s email address
 vendorAgent.vendorAgentsContactDetails.error.agentPhoneNumber.length                = {0}’s phone number must be 14 characters or fewer, not including brackets, dashes, hyphens and spaces
@@ -526,7 +526,7 @@ vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.invalid          
 vendorAgent.vendorAgentsContactDetails.agentPhoneNumber.change.hidden               = Agent phone number
 vendorAgent.vendorAgentsContactDetails.agentEmailAddress.change.hidden              = Agent email address
 vendorAgent.vendorAgentsContactDetails.error.oneRequired                            = Enter {0}’s phone number or email address
-vendorAgent.vendorAgentsContactDetails.change.hidden                                = Agent contact details
+vendorAgent.vendorAgentsContactDetails.change.hidden                                = Contact details
 vendorAgent.vendorAgentsContactDetails.error.agentEmailAddress.invalidFormat        = Enter {0}’s email address in the correct format, like name@example.com
 vendorAgent.removeVendorAgent.title                                                 = Are you sure you want to remove the vendor’s agent? - About the vendor’s agent
 vendorAgent.removeVendorAgent.heading                                               = Are you sure you want to remove {0}?
@@ -616,11 +616,11 @@ purchaser.doesPurchaserHaveNI.error.required                                    
 purchaser.enterPhoneNumber.title                                                    = What is the purchaser’s phone number? - About the purchaser
 purchaser.enterPhoneNumber.heading                                                  = What is {0}’s phone number?
 purchaser.enterPhoneNumber.hint                                                     = For international numbers include the country code, like 0049 for Germany (+49 on mobile)
-purchaser.enterPhoneNumber.checkYourAnswersLabel                                    = Contact number
+purchaser.enterPhoneNumber.checkYourAnswersLabel                                    = Phone number
 purchaser.enterPhoneNumber.error.required                                           = Enter {0}’s phone number
 purchaser.enterPhoneNumber.error.invalid                                            = {0}’s phone number must only include numbers 0 to 9, brackets, dashes, hyphens, plus signs and spaces
 purchaser.enterPhoneNumber.error.length                                             = {0}’s phone number must be 14 characters or fewer, not including brackets, dashes, hyphens and spaces
-purchaser.enterPhoneNumber.change.hidden                                            = Contact number
+purchaser.enterPhoneNumber.change.hidden                                            = Phone number
 
 purchaser.formOfIdIndividual.title                                                  = Provide a form of ID for the purchaser - About the purchaser
 purchaser.formOfIdIndividual.heading                                                = Provide a form of ID for {0}
@@ -869,7 +869,7 @@ purchaserAgent.contactDetails.heading                                           
 purchaserAgent.contactDetails.agentPhoneNumber                                      = Agent phone number
 purchaserAgent.contactDetails.agentPhoneNumber.caption                              = For international numbers include the country code, like 0049 for Germany (+49 on mobile)
 purchaserAgent.contactDetails.agentEmailAddress                                     = Agent email address
-purchaserAgent.contactDetails.checkYourAnswersLabel                                 = Agent contact details
+purchaserAgent.contactDetails.checkYourAnswersLabel                                 = Contact details
 purchaserAgent.contactDetails.error.agentPhoneNumber.invalid                        = {0}’s phone number must only include numbers 0 to 9, brackets, dashes, hyphens, plus signs and spaces
 purchaserAgent.contactDetails.error.agentEmailAddress.invalid                       = {0}’s email address must only include letters a to z, ampersands (&), at signs (@), forward slashes, full stops, hyphens, numbers 0-9, question marks and spaces
 purchaserAgent.contactDetails.error.agentPhoneNumber.length                         = {0}’s phone number must be 14 characters or fewer, not including brackets, dashes, hyphens and spaces
@@ -877,7 +877,7 @@ purchaserAgent.contactDetails.error.agentEmailAddress.length                    
 purchaserAgent.contactDetails.error.agentEmailAddress.invalidFormat                 = Enter {0}’s email address in the correct format, like name@example.com
 purchaserAgent.contactDetails.agentPhoneNumber.change.hidden                        = Agent phone number
 purchaserAgent.contactDetails.agentEmailAddress.change.hidden                       = Agent email address
-purchaserAgent.contactDetails.change.hidden                                         = Agent contact details
+purchaserAgent.contactDetails.change.hidden                                         = Contact details
 purchaserAgent.contactDetails.error.oneRequired                                     = Enter {0}’s phone number or email address
 
 purchaserAgent.addAgentReferenceNumber.title                                        = Do you want to add a reference for this return? - About the purchaser’s agent
@@ -1010,13 +1010,13 @@ land.titleNumber.heading                                                        
 land.titleNumber.p1                                                                 = A title number is a unique identifier assigned by HM Land Registry to a registered land or property in England and Wales. This is a combination of letters and numbers, like TGL312172. You can find it on property deeds or through the HM Land Registry service
 land.titleNumber.p2                                                                 = For Northern Ireland enter the folio number. This can be a series of numbers or a combination of letters and numbers. You can find it through the ‘Find property information’ (FPI) online service or visit the Land & Property Services (LPS).
 land.titleNumber.subheading                                                         = What is the title or folio number?
-land.titleNumber.checkYourAnswersLabel                                              = Title number
+land.titleNumber.checkYourAnswersLabel                                              = Title or folio number
 land.titleNumber.error.required                                                     = Enter the title or folio number
 land.titleNumber.error.invalid                                                      = The title or folio number must only include letters a to z, numbers 0 to 9, brackets, dashes, hyphens, plus signs and spaces
 land.titleNumber.error.length                                                       = The title or folio number must be 14 characters or fewer
 land.titleNumber.error.minLength                                                    = The title or folio number must be longer than 1 character
 land.titleNumber.error.invalidFormat                                                = Enter the title or folio number in the correct format
-land.titleNumber.change.hidden                                                      = Title number
+land.titleNumber.change.hidden                                                      = Title or folio number
 
 land.confirmLandOrPropertyAddress.title                                             = Confirm the address of the land or property - About the land
 land.confirmLandOrPropertyAddress.heading                                           = Confirm the address of the land or property
@@ -1108,9 +1108,9 @@ land.areaOfLand.Hectares                                                        
 land.landSendingPlanByPost.title                                                    = Sending a plan by post - About the land
 land.landSendingPlanByPost.heading                                                  = Sending a plan by post
 land.landSendingPlanByPost.subheading                                               = Will you be sending a plan by post?
-land.landSendingPlanByPost.checkYourAnswersLabel                                    = Sending a plan by post
+land.landSendingPlanByPost.checkYourAnswersLabel                                    = Will you be sending a plan?
 land.landSendingPlanByPost.error.required                                           = Select yes if you will be sending a plan by post
-land.landSendingPlanByPost.change.hidden                                            = Sending a plan by post
+land.landSendingPlanByPost.change.hidden                                            = Will you be sending a plan?
 land.landSendingPlanByPost.details.summary                                          = Sending your plan by post
 land.landSendingPlanByPost.details.content1                                         = The plan should indicate the scale used or be endorsed as ‘Not to Scale’. It must also show the return’s reference number, a description of the land and the local authority code.
 land.landSendingPlanByPost.details.content2                                         = Send the land or property plan to:
@@ -1176,9 +1176,9 @@ ukResidency.closeCompany.title                                                  
 ukResidency.closeCompany.heading                                                    = Close companies
 ukResidency.closeCompany.subheading                                                 = Are any of the purchasers a UK resident close company controlled directly or non-directly by non-UK residents?
 ukResidency.closeCompany.p1                                                         = A close company is broadly defined as a company controlled by five or fewer participators (usually shareholders), or where any number of directors are also shareholders. If the company is controlled by non-UK residents, then it will be treated as a non-UK resident for the purposes of SDLT.
-ukResidency.closeCompany.checkYourAnswersLabel                                      = Are any of the purchasers a UK resident close company controlled directly or non-directly by non-UK residents?
+ukResidency.closeCompany.checkYourAnswersLabel                                      = Are any of the purchasers a UK resident close company controlled directly or indirectly by non-UK residents?
 ukResidency.closeCompany.error.required                                             = Select yes if any of the purchasers are a UK resident close company controlled directly or non-directly by non-UK residents
-ukResidency.closeCompany.change.hidden                                              = Are any of the purchasers a UK resident close company controlled directly or non-directly by non-UK residents?
+ukResidency.closeCompany.change.hidden                                              = Are any of the purchasers a UK resident close company controlled directly or indirectly by non-UK residents?
 
 ukResidency.ukResident                                                              = UK resident
 ukResidency.nonUkResident                                                           = Non-UK resident
@@ -1232,12 +1232,12 @@ transaction.transactionEffectiveDate.details.summary                            
 transaction.transactionEffectiveDate.details.content                                = The effective date of transaction can be brought forward if the contract is substantially performed prior to completion. Substantial performance occurs when the purchaser pays 90% or more of the total price, occupies 90% or more of the property, or pays any rent.
 transaction.transactionEffectiveDate.p                                              = This is typically the date when the transaction is legally completed. This means the land or property has changed ownership and the purchaser becomes liable to pay SDLT.
 transaction.transactionEffectiveDate.hint                                           = For example, 27 3 2023
-transaction.transactionEffectiveDate.checkYourAnswersLabel                          = Effective date of transaction
+transaction.transactionEffectiveDate.checkYourAnswersLabel                          = Effective date of the transaction
 transaction.transactionEffectiveDate.error.required.all                             = Enter the effective date of the transaction
 transaction.transactionEffectiveDate.error.required.two                             = The effective date of transaction must include {0} and {1}
 transaction.transactionEffectiveDate.error.required                                 = The effective date of the transaction must include a {0}
 transaction.transactionEffectiveDate.error.invalid                                  = The effective date of the transaction must be a real date
-transaction.transactionEffectiveDate.change.hidden                                  = Effective date of transaction
+transaction.transactionEffectiveDate.change.hidden                                  = Effective date of the transaction
 transaction.transactionEffectiveDate.error.date.range.min                           = The effective date of transaction must be the same as or after 1 11 2003
 transaction.transactionEffectiveDate.error.date.range.max                           = The effective date of the transaction cannot be in the future
 transaction.transactionEffectiveDate.missing                                        = Provide Effective Date
@@ -1266,9 +1266,9 @@ transaction.addDateOfContract.title                                             
 transaction.addDateOfContract.heading                                               = Date of contract
 transaction.addDateOfContract.h2                                                    = Do you know the date of contract or conclusion of missives?
 transaction.addDateOfContract.p1                                                    = The date of contract (or conclusion of missives) is when the agreement of sale becomes a binding contract between the purchaser and vendor, usually through the exchange of contracts. Typically, this is not the same day as the effective date of transaction.
-transaction.addDateOfContract.checkYourAnswersLabel                                 = Contract or conclusion of missives
+transaction.addDateOfContract.checkYourAnswersLabel                                 = Do you know the date of contract?
 transaction.addDateOfContract.error.required                                        = Select yes if you know the date of contract or conclusion of missives
-transaction.addDateOfContract.change.hidden                                         = Contract or conclusion of missives
+transaction.addDateOfContract.change.hidden                                         = Do you know the date of contract?
 transaction.addDateOfContract.missing                                               = Select if you know the date of contract or conclusion of missives
 
 transaction.linkedTransactions.title                                                = Linked transactions
@@ -1442,9 +1442,9 @@ transaction.transactionPartialRelief.title                                      
 transaction.transactionPartialRelief.heading                                        = Partial relief
 transaction.transactionPartialRelief.subheading                                     = Is the purchaser claiming relief on part of the land or property?
 transaction.transactionPartialRelief.p                                              = Partial relief is available when a transaction meets most, but not all, conditions for full relief, like Freeport or Investment Zone Relief. This is where the land or property is partially located within a designated tax site, meaning a purchaser would only claim relief for the qualifying part.
-transaction.transactionPartialRelief.checkYourAnswersLabel                          = Is the purchaser claiming relief on part of the land or property?
+transaction.transactionPartialRelief.checkYourAnswersLabel                          = Is the purchaser claiming partial relief?
 transaction.transactionPartialRelief.error.required                                 = Select yes if the purchaser is claiming relief on part of the land or property
-transaction.transactionPartialRelief.change.hidden                                  = Is the purchaser claiming relief on part of the land or property?
+transaction.transactionPartialRelief.change.hidden                                  = Is the purchaser claiming partial relief?
 transaction.transactionPartialRelief.missing                                        = Select if the purchaser is claiming relief on part of the land or property
 
 transaction.claimingPartialReliefAmount.title                                       = Claiming partial relief
@@ -1452,12 +1452,12 @@ transaction.claimingPartialReliefAmount.heading                                 
 transaction.claimingPartialReliefAmount.p1                                          = When claiming relief on part of the land or property, only enter the amount that remains chargeable to SDLT.
 transaction.claimingPartialReliefAmount.h2                                          = How much relief is being claimed on part of the land or property?
 transaction.claimingPartialReliefAmount.hint                                        = Enter the value in whole pounds only, for example £200,000
-transaction.claimingPartialReliefAmount.checkYourAnswersLabel                       = Amount of partial relief being claimed
+transaction.claimingPartialReliefAmount.checkYourAnswersLabel                       = How much of the total consideration remains chargeable to SDLT?
 transaction.claimingPartialReliefAmount.error.required                              = Enter the amount of relief being claimed on part of the land or property, in pounds
 transaction.claimingPartialReliefAmount.error.invalidNumeric                        = The amount of relief being claimed on part of the land or property must only include numbers 0 to 9 and commas
 transaction.claimingPartialReliefAmount.error.invalidWholeNumber                    = Enter the amount of relief being claimed on part of the land or property in whole pounds
 transaction.claimingPartialReliefAmount.error.maximum                               = The amount of relief being claimed on part of the land or property must be equal to or less than £9,999,999,999
-transaction.claimingPartialReliefAmount.change.hidden                               = Amount of partial relief being claimed
+transaction.claimingPartialReliefAmount.change.hidden                               = How much of the total consideration remains chargeable to SDLT?
 transaction.claimingPartialReliefAmount.missing                                     = Enter the amount of relief being claimed on part of the land or property
 
 transaction.checkYourAnswers.title                                                  = Check your answers - About the transaction
@@ -1487,7 +1487,7 @@ taxCalculation.calculatedSdltDue.title                                          
 taxCalculation.calculatedSdltDue.heading                                            = Calculated SDLT due is {0}
 taxCalculation.calculatedSdltDue.p1                                                 = The amount of SDLT due is based on the information you have entered when filing this return.
 taxCalculation.calculatedSdltDue.linkText                                           = Check your SDLT breakdown
-taxCalculation.calculatedSdltDue.checkYourAnswersLabel                              = HMRC calculated SDLT due
+taxCalculation.calculatedSdltDue.checkYourAnswersLabel                              = HMRC-calculated SDLT due
 
 taxCalculation.cannotCalculateSdltDue.title                                         = HMRC cannot calculate the SDLT due
 taxCalculation.cannotCalculateSdltDue.heading                                       = HMRC cannot calculate the SDLT due
@@ -1707,9 +1707,9 @@ transaction.transactionUseOfLandOrProperty.factory                              
 transaction.transactionUseOfLandOrProperty.otherIndustrialUnit                      = Other industrial unit
 transaction.transactionUseOfLandOrProperty.other                                    = Other
 transaction.transactionUseOfLandOrProperty.error.required                           = Select at least one use for the land or property
-transaction.transactionUseOfLandOrProperty.change.hidden                            = How the land or property will be used
+transaction.transactionUseOfLandOrProperty.change.hidden                            = The use of the land or property
 transaction.transactionUseOfLandOrProperty.hint                                     = Select all that apply
-transaction.transactionUseOfLandOrProperty.checkYourAnswersLabel                    = How the land or property will be used
+transaction.transactionUseOfLandOrProperty.checkYourAnswersLabel                    = The use of the land or property
 transaction.transactionUseOfLandOrProperty.missing                                  = Select how the land or property will be used
 
 transaction.considerationsAffectedUncertain.title                                   = Considerations affected by uncertain future events - About the transaction
@@ -1728,10 +1728,10 @@ transaction.rulingFollowed.heading                                              
 transaction.rulingFollowed.yes                                                      = Yes
 transaction.rulingFollowed.no                                                       = No
 transaction.rulingFollowed.RulingNotReceived                                        = Ruling not yet received
-transaction.rulingFollowed.checkYourAnswersLabel                                    = CAP1 or NSBC ruling followed
+transaction.rulingFollowed.checkYourAnswersLabel                                    = CAP1 or NSBC ruling followed?
 transaction.rulingFollowed.hint                                                     = If you’ve received a ruling, confirm that you have followed that ruling when completing this return
 transaction.rulingFollowed.error.required                                           = Select yes or no if you have received the ruling under CAP1 or NSBC, or select ‘Ruling not yet received’
-transaction.rulingFollowed.change.hidden                                            = CAP1 or NSBC ruling followed
+transaction.rulingFollowed.change.hidden                                            = CAP1 or NSBC ruling followed?
 
 transaction.transactionSaleOfBusinessAssets.title                                   = What is included in the sale of the business?
 transaction.transactionSaleOfBusinessAssets.heading                                 = What is included in the sale of the business?
@@ -1740,9 +1740,9 @@ transaction.transactionSaleOfBusinessAssets.stock                               
 transaction.transactionSaleOfBusinessAssets.goodwill                                = Goodwill
 transaction.transactionSaleOfBusinessAssets.chattelsAndMoveables                    = Chattels and moveables
 transaction.transactionSaleOfBusinessAssets.others                                  = Others
-transaction.transactionSaleOfBusinessAssets.checkYourAnswersLabel                   = What is included in the sale of the business?
+transaction.transactionSaleOfBusinessAssets.checkYourAnswersLabel                   = What’s included in the sale of business?
 transaction.transactionSaleOfBusinessAssets.error.required                          = Select at least one type of asset that is included in the sale of the business
-transaction.transactionSaleOfBusinessAssets.change.hidden                           = What is included in the sale of the business?
+transaction.transactionSaleOfBusinessAssets.change.hidden                           = What’s included in the sale of business?
 
 transaction.saleOfBusiness.title                                                    = Sale of a business
 transaction.saleOfBusiness.heading                                                  = Sale of a business
@@ -1768,8 +1768,8 @@ transaction.cap1OrNsbc.heading                                                  
 transaction.cap1OrNsbc.subHeading                                                   = Have you applied for a CAP1 or NSBC in relation to this transaction?
 transaction.cap1OrNsbc.p1                                                           = Clearance Applications Phase 1 (CAP1) and Non-Statutory Business Clearance (NSBC) service both provide formal written confirmation of HMRC’s view on how tax law applies to a specific transaction. They can help mitigate risk and provide clarity when there is uncertainty over tax obligations.
 transaction.cap1OrNsbc.error.required                                               = Select yes if you have applied for a CAP1 or NSBC in relation to this transaction
-transaction.cap1OrNsbc.checkYourAnswersLabel                                        = Have you applied for a CAP1 or NSBC in relation to the transaction?
-transaction.cap1OrNsbc.change.hidden                                                = Have you applied for a CAP1 or NSBC in relation to the transaction?
+transaction.cap1OrNsbc.checkYourAnswersLabel                                        = Have you applied for a CAP1 or NSBC in relation to this transaction?
+transaction.cap1OrNsbc.change.hidden                                                = Have you applied for a CAP1 or NSBC in relation to this transaction?
 
 transaction.isLandOrPropertyExchanged.title                                         = The exchange or part exchange of the land or property
 transaction.isLandOrPropertyExchanged.heading                                       = The exchange or part exchange of the land or property
@@ -1781,7 +1781,7 @@ transaction.isLandOrPropertyExchanged.change.hidden                             
 
 transaction.totalAssetsConsideration.title                                          = Total consideration for all assets included in the sale of the business
 transaction.totalAssetsConsideration.heading                                        = Total consideration for all assets included in the sale of the business
-transaction.totalAssetsConsideration.checkYourAnswersLabel                          = The total consideration for the items included
+transaction.totalAssetsConsideration.checkYourAnswersLabel                          = Total consideration for the items included in the sale of the business
 transaction.totalAssetsConsideration.error.required                                 = Enter the total amount of consideration for the sale of the business, in pounds
 transaction.totalAssetsConsideration.p1                                             = The total consideration must be apportioned on a just and reasonable basis, specifically for the land and items that are legally considered part of the land (fixtures).
 transaction.totalAssetsConsideration.h2                                             = What is the total amount of consideration for the sale of the business apportioned to these items?
@@ -1789,20 +1789,19 @@ transaction.totalAssetsConsideration.hint                                       
 transaction.totalAssetsConsideration.error.invalidNumeric                           = The total amount of consideration for the sale of the business must only include numbers 0 to 9 and commas
 transaction.totalAssetsConsideration.error.invalidWholeNumber                       = Enter the total amount of consideration for the sale of the business in whole pounds
 transaction.totalAssetsConsideration.error.maximum                                  = The total amount of consideration for the sale of the business must be equal to or less than £9,999,999,999
-transaction.totalAssetsConsideration.change.hidden                                  = The total consideration for the items included
+transaction.totalAssetsConsideration.change.hidden                                  = Total consideration for the items included in the sale of the business
 
 transaction.cisNumber.title                                                         = What is the purchaser’s CIS registration number?
 transaction.cisNumber.heading                                                       = What is the purchaser’s CIS registration number?
 transaction.cisNumber.hint                                                          = This is typically their 10-digit Unique Taxpayer Reference (UTR)
-transaction.cisNumber.checkYourAnswersLabel                                         = What is the purchaser’s CIS registration number?
+transaction.cisNumber.checkYourAnswersLabel                                         = Purchaser’s CIS number
 transaction.cisNumber.error.required                                                = Enter the purchaser’s CIS registration number
 transaction.cisNumber.error.length                                                  = The purchaser’s CIS number must be 14 characters or less
 transaction.cisNumber.invalid                                                       = invalid error
-transaction.cisNumber.change.hidden                                                 = What is the purchaser’s CIS registration number?
+transaction.cisNumber.change.hidden                                                 = Purchaser’s CIS number
 
 transaction.descriptionOfRestrictions.title                                         = What are the restrictions, covenants or conditions affecting the value of the interest transferred or granted? - About the transaction
 transaction.descriptionOfRestrictions.heading                                       = What are the restrictions, covenants or conditions affecting the value of the interest transferred or granted?
-transaction.descriptionOfRestrictions.subHeading                                    = Have you applied for a CAP1 or NSBC in relation to this transaction?
 transaction.descriptionOfRestrictions.hint                                          = Provide a brief description, like a vendor’s right to buy back at less than market value
 transaction.descriptionOfRestrictions.error.required                                = Enter a brief description of the restrictions, covenants or conditions affecting the value of the interest transferred or granted
 transaction.descriptionOfRestrictions.error.regex                                   = The brief description of the restrictions, covenants or conditions must only include letters a to z, numbers 0 to 9, spaces and full stops
@@ -1814,9 +1813,9 @@ transaction.transactionExercisingAnOption.title                                 
 transaction.transactionExercisingAnOption.heading                                   = Exercising an option
 transaction.transactionExercisingAnOption.p                                         = This is when the transaction is the result of an option being exercised. The grant of an option and the subsequent purchase of the land or property are typically linked but considered two separate transactions.
 transaction.transactionExercisingAnOption.subheading                                = Is this transaction pursuant to a previous option agreement?
-transaction.transactionExercisingAnOption.checkYourAnswersLabel                     = Transaction pursuant to a previous option agreement?
+transaction.transactionExercisingAnOption.checkYourAnswersLabel                     = Is this transaction pursuant to a previous option agreement?
 transaction.transactionExercisingAnOption.error.required                            = Select yes if this transaction is pursuant to a previous option agreement
-transaction.transactionExercisingAnOption.change.hidden                             = Transaction pursuant to a previous option agreement?
+transaction.transactionExercisingAnOption.change.hidden                             = Is this transaction pursuant to a previous option agreement?
 
 lease.beforeYouStart.p1                                                             = In this section, you need to tell us about the lease on the land or property.
 lease.beforeYouStart.p2                                                             = We will ask for:
@@ -1892,9 +1891,9 @@ lease.laterRent.title                                                           
 lease.laterRent.heading                                                             = Later rent
 lease.laterRent.subheading                                                          = Is the later rent known?
 lease.laterRent.paragraph                                                           = This refers to any rent payable after the starting rent has ended. The later rent is only known if the full amount of all future rent payments is specified in the lease. If the rent is uncertain or no further rent is due, then the later rent is not known.
-lease.laterRent.checkYourAnswersLabel                                               = Later rent known
+lease.laterRent.checkYourAnswersLabel                                               = Is the later rent known?
 lease.laterRent.error.required                                                      = Select yes if the later rent is known
-lease.laterRent.change.hidden                                                       = Later rent known
+lease.laterRent.change.hidden                                                       = Is the later rent known?
 
 lease.leaseStartDate.title                                                          = Lease start date
 lease.leaseStartDate.heading                                                        = Lease start date
@@ -1918,9 +1917,9 @@ lease.leaseThousandPoundsThreshold.p                                            
 lease.leaseThousandPoundsThreshold.li1                                              = the annual rent is £1,000 or more
 lease.leaseThousandPoundsThreshold.li2                                              = the total premium (any payment other than rent) is £40,000 or more
 lease.leaseThousandPoundsThreshold.subheading                                       = Is the annual rent £1,000 or more?
-lease.leaseThousandPoundsThreshold.checkYourAnswersLabel                            = Annual rent £1,000 or more
+lease.leaseThousandPoundsThreshold.checkYourAnswersLabel                            = Is the annual rent £1,000 or more?
 lease.leaseThousandPoundsThreshold.error.required                                   = Select yes if the annual rent is £1,000 or more
-lease.leaseThousandPoundsThreshold.change.hidden                                    = Annual rent £1,000 or more
+lease.leaseThousandPoundsThreshold.change.hidden                                    = Is the annual rent £1,000 or more?
 
 lease.leaseStartingRentEndDate.title                                                = End of annual starting rent
 lease.leaseStartingRentEndDate.heading                                              = End of annual starting rent
@@ -1930,7 +1929,7 @@ lease.leaseStartingRentEndDate.l1.li2                                           
 lease.leaseStartingRentEndDate.p2                                                   = If a lease has been surrendered, this date will typically be the effective date of the transaction.
 lease.leaseStartingRentEndDate.subheading                                           = What is the end date for starting rent?
 lease.leaseStartingRentEndDate.hint                                                 = For example, 27 3 2023
-lease.leaseStartingRentEndDate.checkYourAnswersLabel                                = End of annual starting rent
+lease.leaseStartingRentEndDate.checkYourAnswersLabel                                = End date for starting rent
 lease.leaseStartingRentEndDate.error.required.all                                   = Enter the end date for starting rent
 lease.leaseStartingRentEndDate.error.required.two                                   = The end date for starting rent must include a {0} and {1}
 lease.leaseStartingRentEndDate.error.required                                       = The end date for starting rent must include a {0}
@@ -1939,7 +1938,7 @@ lease.leaseStartingRentEndDate.error.date.range.min                             
 lease.leaseStartingRentEndDate.error.date.range.max                                 = The end date for starting rent must be the same as or before 31 December 9999
 lease.leaseStartingRentEndDate.error.afterLeaseStartDate                            = The end date for starting rent must be after the start date as specified in the lease
 lease.leaseStartingRentEndDate.error.beforeLeaseEndDate                             = The end date for starting rent must be before the end date as specified in the lease
-lease.leaseStartingRentEndDate.change.hidden                                        = End of annual starting rent
+lease.leaseStartingRentEndDate.change.hidden                                        = End date for starting rent
 
 lease.doesLeaseIncludeRentFreePeriod.title                                          = Rent-free periods
 lease.doesLeaseIncludeRentFreePeriod.heading                                        = Rent-free periods
@@ -1959,13 +1958,13 @@ lease.annualStartingRent.li2                                                    
 lease.annualStartingRent.p2                                                         = You must include any VAT the landlord has opted to charge. If the rent is a token or nominal amount, like £1, or no rent is payable, enter ‘0’.
 lease.annualStartingRent.details.summary                                            = About variable or uncertain rent
 lease.annualStartingRent.details.content                                            = If the exact rent is uncertain (for example, linked to turnover), a reasonable estimate must be made. This should be based on available information, like a business plan or projected turnover, and used to calculate the Net Present Value (NPV) of the rent. Keep evidence of how the estimate was calculated in case requested by HMRC.
-lease.annualStartingRent.checkYourAnswersLabel                                      = Annual starting rent
+lease.annualStartingRent.checkYourAnswersLabel                                      = Annual starting rent including VAT
 lease.annualStartingRent.error.required                                             = Enter the annual starting rent including VAT, in pounds
 lease.annualStartingRent.error.invalidNumeric                                       = The annual starting rent including VAT must only include numbers 0 to 9 and commas
 lease.annualStartingRent.error.invalidWholeNumber                                   = Enter the annual starting rent including VAT in whole pounds
 lease.annualStartingRent.error.maximum                                              = The annual starting rent including VAT must be equal to or less than £99,999,999
 lease.annualStartingRent.error.maxLength                                            = The annual starting rent including VAT must be 13 characters or fewer
-lease.annualStartingRent.change.hidden                                              = Annual starting rent
+lease.annualStartingRent.change.hidden                                              = Annual starting rent including VAT
 
 lease.leaseIsVatPayable.title                                                       = Annual rent VAT
 lease.leaseIsVatPayable.heading                                                     = Annual rent VAT
