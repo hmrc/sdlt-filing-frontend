@@ -1748,9 +1748,9 @@ transaction.saleOfBusiness.title                                                
 transaction.saleOfBusiness.heading                                                  = Sale of a business
 transaction.saleOfBusiness.subheading                                               = Is this transaction part of the sale of a business?
 transaction.saleOfBusiness.paragraph                                                = If a transaction is part of the sale of a business, the land or property is separated from other assets that may not be liable for SDLT, like raw materials and machinery.
-transaction.saleOfBusiness.checkYourAnswersLabel                                    = Is the transaction part of the sale of a business?
+transaction.saleOfBusiness.checkYourAnswersLabel                                    = Is this transaction part of the sale of a business?
 transaction.saleOfBusiness.error.required                                           = Select yes if this transaction is part of the sale of a business
-transaction.saleOfBusiness.change.hidden                                            = Is the transaction part of the sale of a business?
+transaction.saleOfBusiness.change.hidden                                            = Is this transaction part of the sale of a business?
 
 transaction.restrictionsCovenantsAndConditions.title                                = Restrictions, covenants and conditions
 transaction.restrictionsCovenantsAndConditions.heading                              = Restrictions, covenants and conditions
