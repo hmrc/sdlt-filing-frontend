@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,9 @@ package repositories
 
 import config.FrontendAppConfig
 import constants.FullReturnConstants
-import models.{FullReturn, UserAnswers}
+import models.{FullReturn, UserAnswers, UserAnswersEncrypted}
 import org.mockito.Mockito.when
+import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.model.Filters
 import org.scalactic.source.Position
 import org.scalatest.OptionValues
@@ -29,6 +30,7 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import org.slf4j.MDC
 import play.api.libs.json.Json
+import uk.gov.hmrc.crypto.{Decrypter, Encrypter, SymmetricCryptoFactory}
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 import uk.gov.hmrc.play.bootstrap.dispatchers.MDCPropagatingExecutorService
 
@@ -40,7 +42,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class SessionRepositoryISpec
   extends AnyFreeSpec
     with Matchers
-    with DefaultPlayMongoRepositorySupport[UserAnswers]
+    with DefaultPlayMongoRepositorySupport[UserAnswersEncrypted]
     with ScalaFutures
     with IntegrationPatience
     with OptionValues
@@ -50,13 +52,23 @@ class SessionRepositoryISpec
   private val stubClock: Clock = Clock.fixed(instant, ZoneId.systemDefault)
   private val fullReturn: FullReturn = FullReturnConstants.completeFullReturn
 
+  private implicit val crypto: Encrypter with Decrypter =
+    SymmetricCryptoFactory.aesGcmCrypto("z9WMSuFsHqfY5F2wgIcEvcnwyRTRB4dyPWfMbCbCXfM=")
+
   private val testReturnId = "123456"
-  private val userAnswers = UserAnswers("id",  storn = "TESTSTORN", data = Json.obj("foo" -> "bar"), Instant.ofEpochSecond(1))
+
+  private val userAnswers =
+    UserAnswers("id", storn = "TESTSTORN", data = Json.obj("foo" -> "bar"), lastUpdated = Instant.ofEpochSecond(1))
+
   private val userAnswersWithReturnId =
-    UserAnswers("id", storn = "TESTSTORN",
-      Some(testReturnId), Some(fullReturn),
+    UserAnswers(
+      "id",
+      storn = "TESTSTORN",
+      Some(testReturnId),
+      Some(fullReturn),
       Json.obj("foo" -> "bar"),
-      Instant.ofEpochSecond(1))
+      Instant.ofEpochSecond(1)
+    )
 
   private val mockAppConfig = mock[FrontendAppConfig]
   when(mockAppConfig.cacheTtl) thenReturn 1L
@@ -64,8 +76,15 @@ class SessionRepositoryISpec
   protected override val repository: SessionRepository = new SessionRepository(
     mongoComponent = mongoComponent,
     appConfig      = mockAppConfig,
-    clock          = stubClock
+    clock          = stubClock,
+    crypto         = crypto
   )(scala.concurrent.ExecutionContext.Implicits.global)
+
+  private def rawDocument(id: String): Future[Option[BsonDocument]] =
+    mongoComponent.database
+      .getCollection[BsonDocument]("user-answers")
+      .find(Filters.equal("_id", id))
+      .headOption()
 
   ".set" - {
 
@@ -77,7 +96,58 @@ class SessionRepositoryISpec
 
       val updatedRecord = find(Filters.equal("_id", userAnswers.id)).futureValue.headOption.value
 
-      updatedRecord mustEqual expectedResult
+      updatedRecord.toUserAnswers mustEqual expectedResult
+    }
+
+    "must save the fullReturn and read it back intact" in {
+
+      repository.set(userAnswersWithReturnId).futureValue
+
+      val result = repository.get(userAnswersWithReturnId.id).futureValue
+
+      result.value.fullReturn.value mustEqual fullReturn
+    }
+
+    "must store data and fullReturn as encrypted strings" in {
+
+      repository.set(userAnswersWithReturnId).futureValue
+
+      val document = rawDocument(userAnswersWithReturnId.id).futureValue.value
+
+      document.get("data").isString mustBe true
+      document.get("fullReturn").isString mustBe true
+    }
+
+    "must not write the plaintext values to the database" in {
+
+      repository.set(userAnswersWithReturnId).futureValue
+
+      val raw = rawDocument(userAnswersWithReturnId.id).futureValue.value.toJson
+
+      raw must not include "bar"
+      raw must not include fullReturn.stornId
+    }
+
+    "must leave the queryable fields in plaintext" in {
+
+      repository.set(userAnswersWithReturnId).futureValue
+
+      val document = rawDocument(userAnswersWithReturnId.id).futureValue.value
+
+      document.getString("_id").getValue mustEqual "id"
+      document.getString("storn").getValue mustEqual "TESTSTORN"
+      document.getString("returnId").getValue mustEqual testReturnId
+    }
+
+    "must overwrite an existing record rather than duplicating it" in {
+
+      repository.set(userAnswersWithReturnId).futureValue
+      repository.set(userAnswers).futureValue
+
+      val result = repository.get(userAnswers.id).futureValue
+
+      result.value.fullReturn must not be defined
+      result.value.returnId must not be defined
     }
 
     mustPreserveMdc(repository.set(userAnswers))
@@ -89,7 +159,7 @@ class SessionRepositoryISpec
 
       "must update the lastUpdated time and get the record no return id" in {
 
-        insert(userAnswers).futureValue
+        insert(UserAnswersEncrypted.fromUserAnswers(userAnswers)).futureValue
 
         val result         = repository.get(userAnswers.id).futureValue
         val expectedResult = userAnswers copy (lastUpdated = instant)
@@ -99,13 +169,14 @@ class SessionRepositoryISpec
 
       "must update the lastUpdated time and get the record with return id" in {
 
-        insert(userAnswersWithReturnId).futureValue
+        insert(UserAnswersEncrypted.fromUserAnswers(userAnswersWithReturnId)).futureValue
 
         val result = repository.get(userAnswersWithReturnId.id).futureValue
         val expectedResult = userAnswersWithReturnId copy (lastUpdated = instant)
 
         result.value mustEqual expectedResult
         result.value.returnId mustBe Some(testReturnId)
+        result.value.fullReturn.value mustEqual fullReturn
       }
     }
 
@@ -124,7 +195,7 @@ class SessionRepositoryISpec
 
     "must remove a record" in {
 
-      insert(userAnswers).futureValue
+      insert(UserAnswersEncrypted.fromUserAnswers(userAnswers)).futureValue
 
       repository.clear(userAnswers.id).futureValue
 
@@ -146,14 +217,23 @@ class SessionRepositoryISpec
 
       "must update its lastUpdated to `now` and return true" in {
 
-        insert(userAnswers).futureValue
+        insert(UserAnswersEncrypted.fromUserAnswers(userAnswers)).futureValue
 
         repository.keepAlive(userAnswers.id).futureValue
 
         val expectedUpdatedAnswers = userAnswers copy (lastUpdated = instant)
 
         val updatedAnswers = find(Filters.equal("_id", userAnswers.id)).futureValue.headOption.value
-        updatedAnswers mustEqual expectedUpdatedAnswers
+        updatedAnswers.toUserAnswers mustEqual expectedUpdatedAnswers
+      }
+
+      "must not disturb the encrypted fields" in {
+
+        insert(UserAnswersEncrypted.fromUserAnswers(userAnswersWithReturnId)).futureValue
+
+        repository.keepAlive(userAnswersWithReturnId.id).futureValue
+
+        repository.get(userAnswersWithReturnId.id).futureValue.value.fullReturn.value mustEqual fullReturn
       }
     }
 
