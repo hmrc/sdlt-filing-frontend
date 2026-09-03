@@ -221,7 +221,7 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
         val doc: nodes.Document = Jsoup.parse(view(viewModel).toString())
         sharedViewTest(doc)
 
-        doc.text() must include("HMRC calculated SDLT due £27,500")
+        doc.text() must include("HMRC-calculated SDLT due £27,500")
         doc.text() must include("Self-assessed SDLT due £12,345")
         doc.text() must include("Self-assessed SDLT due Penalties due £200")
         doc.text() must include("Amount to be paid £43,950")
@@ -254,7 +254,7 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
         val doc = Jsoup.parse(view(viewModel).toString())
         sharedViewTest(doc)
 
-        doc.text() must include("HMRC calculated SDLT due £7,179")
+        doc.text() must include("HMRC-calculated SDLT due £7,179")
         doc.text() must include("Self-assessed SDLT due £1,191")
         doc.text() must include("Penalties due £100")
         doc.text() must include("Amount to be paid £389")
@@ -273,7 +273,7 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
         val doc = Jsoup.parse(view(viewModel).toString())
         sharedViewTest(doc)
 
-        doc.text() must include("HMRC calculated SDLT due £7,179")
+        doc.text() must include("HMRC-calculated SDLT due £7,179")
         doc.text() must include("Self-assessed SDLT due £1,191")
         doc.text() must include("Penalties due £100")
         doc.text() must include("Amount to be paid £389")
@@ -292,7 +292,7 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
         val doc = Jsoup.parse(view(viewModel).toString())
         sharedViewTest(doc)
 
-        doc.text() must include("HMRC calculated SDLT due £7,179")
+        doc.text() must include("HMRC-calculated SDLT due £7,179")
         doc.text() must include("Self-assessed SDLT due £1,191")
         doc.text() must include("Penalties due £100")
         doc.text() must include("Amount to be paid £389")
@@ -312,7 +312,7 @@ class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar 
         sharedViewTest(doc)
 
         doc.text() must include("Tax due on NPV £13,758")
-        doc.text() must include("HMRC calculated SDLT due £7,179")
+        doc.text() must include("HMRC-calculated SDLT due £7,179")
         doc.text() must include("Self-assessed SDLT due £1,191")
         doc.text() must include("Penalties due £100")
         doc.text() must include("Amount to be paid £389")

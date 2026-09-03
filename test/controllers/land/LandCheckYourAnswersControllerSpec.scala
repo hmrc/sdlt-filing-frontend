@@ -383,7 +383,7 @@ class LandCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluenc
 
           status(result) mustEqual OK
           contentAsString(result) must include("Is the land or property registered with HM Land Registry?")
-          contentAsString(result) must include("Title number")
+          contentAsString(result) must include("Title or folio number")
         }
       }
 
