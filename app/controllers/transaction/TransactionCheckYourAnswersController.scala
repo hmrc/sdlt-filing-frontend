@@ -132,12 +132,15 @@ class TransactionCheckYourAnswersController @Inject()(
             val newDateOnOrAfterCutOff =
               leaseService.isOnOrAfterAnnualRentCutOff(userAnswers)
 
+            val isGrantOfLease: Boolean =
+              transactionType.contains(GrantOfLease) || userAnswers.fullReturn.flatMap(_.transaction.map(_.transactionDescription)).toString.equalsIgnoreCase("L")
+
             val lease = {
-              (oldDateOnOrAfterCutOff, newDateOnOrAfterCutOff) match {
-                case (_, true) =>
+              (oldDateOnOrAfterCutOff, newDateOnOrAfterCutOff, isGrantOfLease) match {
+                case (_, true, true) =>
                   existingLease.copy(isAnnualRentOver1000 = Some("no"))
 
-                case (Some(true), false) =>
+                case (Some(true), false, true) =>
                   existingLease.copy(isAnnualRentOver1000 = None)
 
                 case _ =>
