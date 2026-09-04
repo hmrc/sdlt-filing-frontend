@@ -22,6 +22,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import repositories.SessionRepository
 import services.crossflow.{CrossFlowFailure, ReturnSection}
+import services.crossflow.errors.{Cf5a_LeaseRResidential, Cf5b_LeaseMMixed, Cf5c_LeaseNNonResidential, CrossFlowProjections}
 import services.crossflow.fields.CrossFlowValidationService
 import services.lease.PopulateLeaseService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -75,7 +76,8 @@ class LeaseSingleEntityController @Inject() (
   private def renderOrRedirect(userAnswers: UserAnswers)(implicit request: Request[_]): Result =
     crossFlow.failuresAffecting(ReturnSection.Lease, userAnswers).headOption match {
 
-      case Some(failure) =>
+      case Some(rawFailure) =>
+        val failure = resolve(rawFailure, userAnswers)
         Ok(view(
           headingKey  = failure.headingKey,
           body        = failure.body,
@@ -86,6 +88,24 @@ class LeaseSingleEntityController @Inject() (
       case None =>
         Redirect(controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad())
     }
+
+  private val leaseTypeMismatchRuleIds: Set[String] = Set("Cf-5a", "Cf-5b", "Cf-5c")
+
+  private def landDrivenLeaseFailure(userAnswers: UserAnswers): Option[CrossFlowFailure] =
+    CrossFlowProjections.mainLandPropertyType(userAnswers).collect {
+      case CrossFlowProjections.Residential | CrossFlowProjections.ResidentialAdditional =>
+        Cf5a_LeaseRResidential.describe
+      case CrossFlowProjections.Mixed =>
+        Cf5b_LeaseMMixed.describe
+      case CrossFlowProjections.NonResidential =>
+        Cf5c_LeaseNNonResidential.describe
+    }
+
+  private def resolve(failure: CrossFlowFailure, userAnswers: UserAnswers): CrossFlowFailure =
+    if (leaseTypeMismatchRuleIds.contains(failure.ruleId))
+      landDrivenLeaseFailure(userAnswers).getOrElse(failure)
+    else
+      failure
 
   private def ctaKeyFor(failure: CrossFlowFailure): String =
     failure.ruleId match {

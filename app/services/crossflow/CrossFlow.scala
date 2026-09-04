@@ -110,6 +110,20 @@ abstract class GuardRule extends CrossFlowRule:
       )
     )
 
+  /** This rule's own content, regardless of whether it currently applies. Lets a caller
+   * that already knows a mismatch exists via a different rule "borrow" this rule's
+   * message/heading instead — see Cf5a/b/c's use in LeaseSingleEntityController. */
+  final def describe: CrossFlowFailure =
+    CrossFlowFailure(
+      ruleId         = id,
+      affects        = affects,
+      messageKey     = messageKey,
+      inlineErrorKey = inlineErrorKey,
+      body           = body,
+      headingKey     = headingKey,
+      targets        = targets
+    )
+
 trait LandRule:
   def id: String
   def affects: ReturnSection
