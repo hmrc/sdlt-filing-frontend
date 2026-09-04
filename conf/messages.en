@@ -1090,7 +1090,7 @@ ukResidency.BeforeYouStart.bullet1                                              
 ukResidency.BeforeYouStart.bullet2                                                  = if any of the purchasers are claiming Crown employment relief
 
 land.areaOfLand.title                                                               = What is the area of land?
-land.areaOfLand.heading                                                             = What is the area of the land in {0}?
+land.areaOfLand.heading                                                             = What is the area of land in {0}?
 land.areaOfLand.checkYourAnswersLabel                                               = Area of land
 land.areaOfLand.error.required.Hectares                                             = Enter the area of land, in hectares
 land.areaOfLand.error.required.SquareMetres                                         = Enter the area of land, in square metres
