@@ -1401,6 +1401,63 @@ class TransactionCheckYourAnswersControllerSpec
 
         }
 
+        "must set isAnnualRentOver1000 to None when transaction type is not grant of lease" in {
+          val fullReturnWithLease = completeFullReturn.copy(
+            transaction = Some(completeTransaction.copy(transactionDescription = Some("A"), effectiveDate = Some("2016-02-17"))),
+            lease = Some(completeLease.copy(isAnnualRentOver1000 = Some("no"))),
+            submission = None
+          )
+
+          val userAnswers = completeUserAnswers.copy(fullReturn = Some(fullReturnWithLease))
+            .set(TransactionEffectiveDatePage, LocalDate.of(2016, 2, 15)).success.value
+
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+          when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+            .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(2))))
+
+          when(mockBackendConnector.updateLease(any[UpdateLeaseRequest])(any(), any()))
+            .thenReturn(Future.successful(UpdateLeaseReturn(updated = true)))
+
+          when(mockBackendConnector.updateTransaction(any[UpdateTransactionRequest])(any(), any()))
+            .thenReturn(Future.successful(UpdateTransactionReturn(updated = true)))
+
+          when(mockBackendConnector.updateTaxCalculationInfo(any[UpdateTaxCalculationRequest])(any(), any()))
+            .thenReturn(Future.successful(UpdateTaxCalculationReturn(updated = true)))
+
+
+          val application = applicationBuilder(userAnswers = Some(userAnswers))
+            .overrides(
+              bind[SessionRepository].toInstance(mockSessionRepository),
+              bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
+            )
+            .build()
+
+          running(application) {
+            val request = FakeRequest(POST, routes.TransactionCheckYourAnswersController.onSubmit().url)
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+
+            redirectLocation(result).value mustEqual
+              controllers.routes.ReturnTaskListController.onPageLoad().url
+
+            verify(mockBackendConnector, org.mockito.Mockito.never()).createLease(any[CreateLeaseRequest])(any(), any())
+            verify(mockBackendConnector, org.mockito.Mockito.never()).deleteLease(any[DeleteLeaseRequest])(any(), any())
+            verify(mockBackendConnector).updateLease(any[UpdateLeaseRequest])(any(), any())
+            verify(mockBackendConnector).updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any())
+            verify(mockBackendConnector).updateTransaction(any[UpdateTransactionRequest])(any(), any())
+            val leaseCaptor =
+              ArgumentCaptor.forClass(classOf[UpdateLeaseRequest])
+
+            verify(mockBackendConnector)
+              .updateLease(leaseCaptor.capture())(any(), any())
+
+            leaseCaptor.getValue.lease.isAnnualRentOver1000 mustBe None
+          }
+
+        }
+
         "must not set isAnnualRentOver1000 answer when first entering effective date before cut off" in {
           val fullReturnWithLease = completeFullReturn.copy(
             transaction = Some(completeTransaction.copy(transactionDescription = Some("L"), effectiveDate = None)),
