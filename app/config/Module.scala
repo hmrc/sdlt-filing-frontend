@@ -18,9 +18,10 @@ package config
 
 import com.google.inject.{AbstractModule, Provides}
 import controllers.actions.*
-import services.crossflow._
-import services.crossflow.errors._
+import services.crossflow.*
+import services.crossflow.errors.*
 import services.pdf.{ClasspathPdfTemplateLoader, PdfTemplateLoader}
+import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
 
 import java.time.{Clock, ZoneOffset}
 import javax.inject.Singleton
@@ -32,6 +33,8 @@ class Module extends AbstractModule {
     bind(classOf[DataRequiredAction]).to(classOf[DataRequiredActionImpl]).asEagerSingleton()
     bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction]).asEagerSingleton()
     bind(classOf[ActivatedIdentifierAction]).to(classOf[AuthenticatedActivatedIdentifierAction]).asEagerSingleton()
+    bind(classOf[Encrypter]).toProvider(classOf[CryptoProvider]).asEagerSingleton()
+    bind(classOf[Decrypter]).toProvider(classOf[CryptoProvider]).asEagerSingleton()
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone.withZone(ZoneOffset.UTC))
     bind(classOf[PdfTemplateLoader]).to(classOf[ClasspathPdfTemplateLoader])
   }
