@@ -102,6 +102,31 @@ class TransactionCheckYourAnswersController @Inject()(
     }
   }
 
+  private def applyAnnualRentCutOffLogic(lease:Lease, userAnswers: UserAnswers, transactionType: Option[TransactionType]): Lease = {
+    val oldDateOnOrAfterCutOff =
+      leaseService.isPreviousEffectiveDateOnOrAfterAnnualRentCutOff(userAnswers)
+
+    val newDateOnOrAfterCutOff =
+      leaseService.isOnOrAfterAnnualRentCutOff(userAnswers)
+
+    val isGrantOfLease: Boolean =
+      transactionType.contains(GrantOfLease) || userAnswers.fullReturn.flatMap(_.transaction.map(_.transactionDescription)).toString.equalsIgnoreCase("L")
+
+    (oldDateOnOrAfterCutOff, newDateOnOrAfterCutOff, isGrantOfLease) match {
+      case (_, true, true) =>
+        lease.copy(isAnnualRentOver1000 = Some("no"))
+
+      case (Some(true), false, true) =>
+        lease.copy(isAnnualRentOver1000 = None)
+
+      case (_, _, false) =>
+        lease.copy(isAnnualRentOver1000 = None)
+
+      case _ =>
+        lease
+    }
+  }
+
   private def handleLeaseDecision(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Unit] = {
     val isLeaseDefined = userAnswers.fullReturn.flatMap(_.lease).isDefined
     val transactionType = userAnswers.get(TypeOfTransactionPage)
@@ -118,7 +143,8 @@ class TransactionCheckYourAnswersController @Inject()(
       case "createLease" =>
         for {
           lease <- if (leaseCurrentCheck) Lease.from(userAnswers) else Future.successful(Lease())
-          createLeaseRequest <- CreateLeaseRequest.from(userAnswers, lease)
+          updatedLease = applyAnnualRentCutOffLogic(lease, userAnswers, transactionType)
+          createLeaseRequest <- CreateLeaseRequest.from(userAnswers, updatedLease)
           _ <- backendConnector.createLease(createLeaseRequest)
         } yield ()
 
@@ -126,30 +152,10 @@ class TransactionCheckYourAnswersController @Inject()(
         userAnswers.fullReturn.flatMap(_.lease) match {
           case Some(existingLease) =>
 
-            val oldDateOnOrAfterCutOff =
-              leaseService.isPreviousEffectiveDateOnOrAfterAnnualRentCutOff(userAnswers)
-
-            val newDateOnOrAfterCutOff =
-              leaseService.isOnOrAfterAnnualRentCutOff(userAnswers)
-
-            val isGrantOfLease: Boolean =
-              transactionType.contains(GrantOfLease) || userAnswers.fullReturn.flatMap(_.transaction.map(_.transactionDescription)).toString.equalsIgnoreCase("L")
-
-            val lease = {
-              (oldDateOnOrAfterCutOff, newDateOnOrAfterCutOff, isGrantOfLease) match {
-                case (_, true, true) =>
-                  existingLease.copy(isAnnualRentOver1000 = Some("no"))
-
-                case (Some(true), false, true) =>
-                  existingLease.copy(isAnnualRentOver1000 = None)
-
-                case _ =>
-                  existingLease
-              }
-            }
+            val updatedLease = applyAnnualRentCutOffLogic(existingLease, userAnswers, transactionType)
 
             for {
-              updateLeaseRequest <- UpdateLeaseRequest.from(userAnswers, lease)
+              updateLeaseRequest <- UpdateLeaseRequest.from(userAnswers, updatedLease)
               _ <- backendConnector.updateLease(updateLeaseRequest)
             } yield ()
 
