@@ -18,7 +18,7 @@ package controllers.lease
 
 import base.SpecBase
 import constants.FullReturnConstants.{completeLease, emptyFullReturn}
-import models.{CheckMode, Lease, UserAnswers}
+import models.{CheckMode, Land, Lease, ReturnInfo, UserAnswers}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{never, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
@@ -27,6 +27,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.crossflow.*
+import services.crossflow.errors.{Cf5a_LeaseRResidential, Cf5b_LeaseMMixed, Cf5c_LeaseNNonResidential}
 import services.crossflow.fields.CrossFlowValidationService
 import services.lease.PopulateLeaseService
 
@@ -90,6 +91,21 @@ class LeaseSingleEntityControllerSpec extends SpecBase with MockitoSugar {
   /** A distinct instance so we can assert the POPULATED answers are what gets persisted. */
   private val populatedAnswers: UserAnswers =
     emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(lease = Some(testLease.copy(leaseType = Some("X"))))))
+
+  private val mismatchedLand: Land = Land(landID = Some("LND001"), propertyType = Some("02"))
+
+  private val staleLeaseUserAnswers: UserAnswers =
+    emptyUserAnswers.copy(fullReturn = Some(emptyFullReturn.copy(
+      lease      = Some(testLease.copy(leaseType = Some("R"))),
+      land       = Some(Seq(mismatchedLand)),
+      returnInfo = Some(ReturnInfo(mainLandID = Some("LND001")))
+    )))
+
+  private val realLeaseCrossFlow: CrossFlowValidationService =
+    new CrossFlowValidationService(
+      Set(Cf5a_LeaseRResidential, Cf5b_LeaseMMixed, Cf5c_LeaseNNonResidential),
+      Set.empty
+    )
 
   private def crossFlowWith(failures: Seq[CrossFlowFailure]) =
     new CrossFlowValidationService(Set.empty, Set.empty) {
@@ -301,6 +317,22 @@ class LeaseSingleEntityControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual OK
           content must include(
             controllers.lease.routes.LeaseThousandPoundsThresholdController.onPageLoad(CheckMode).url)
+        }
+      }
+
+      "must show the Cf-5b message and CTA when the land's property type no longer matches " +
+        "the previously saved lease type, instead of the stale Cf-5a" in {
+        val application = appWith(staleLeaseUserAnswers, realLeaseCrossFlow)
+
+        running(application) {
+          val request = FakeRequest(GET, singleEntityRoute)
+          val result  = route(application, request).value
+          val content = contentAsString(result)
+
+          status(result) mustEqual OK
+          content must include(messages(application)("crossflow.lease.Cf-5b.body"))
+          content must include(messages(application)("crossflow.lease.Cf-5b.cta"))
+          content must not include messages(application)("crossflow.lease.Cf-5a.cta")
         }
       }
 

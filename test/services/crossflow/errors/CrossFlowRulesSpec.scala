@@ -1025,29 +1025,29 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
   "Cf5a_LeaseRResidential" - {
 
-    "must fire when main land is '01 - Residential' but lease type is not R" in {
+    "must fire when lease type is R but main land is '02 - Mixed'" in {
       val ua = answersWith(
         claimingRelief = Some("no"),
-        propertyType   = Some("01"),
+        propertyType   = Some("02"),
         mainLandId     = Some("LND001"),
-        leaseType      = Some("N")
+        leaseType      = Some("R")
       )
 
       Cf5a_LeaseRResidential.validate(ua).map(_.ruleId) mustBe Some("Cf-5a")
     }
 
-    "must fire when main land is '04 - Additional residential' but lease type is not R" in {
+    "must fire when lease type is R but main land is '03 - Non-residential'" in {
       val ua = answersWith(
         claimingRelief = Some("no"),
-        propertyType   = Some("04"),
+        propertyType   = Some("03"),
         mainLandId     = Some("LND001"),
-        leaseType      = Some("M")
+        leaseType      = Some("R")
       )
 
       Cf5a_LeaseRResidential.validate(ua).map(_.ruleId) mustBe Some("Cf-5a")
     }
 
-    "must pass when main land is '01' and lease type is R" in {
+    "must pass when lease type is R and main land is '01'" in {
       val ua = answersWith(
         claimingRelief = Some("no"),
         propertyType   = Some("01"),
@@ -1058,7 +1058,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
       Cf5a_LeaseRResidential.validate(ua) mustBe None
     }
 
-    "must pass when main land is '04' and lease type is R" in {
+    "must pass when lease type is R and main land is '04'" in {
       val ua = answersWith(
         claimingRelief = Some("no"),
         propertyType   = Some("04"),
@@ -1069,7 +1069,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
       Cf5a_LeaseRResidential.validate(ua) mustBe None
     }
 
-    "must not apply when main land is '02 - Mixed'" in {
+    "must not apply when lease type is M" in {
       val ua = answersWith(
         claimingRelief = Some("no"),
         propertyType   = Some("02"),
@@ -1080,7 +1080,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
       Cf5a_LeaseRResidential.validate(ua) mustBe None
     }
 
-    "must not apply when main land is '03 - Non-residential'" in {
+    "must not apply when lease type is N" in {
       val ua = answersWith(
         claimingRelief = Some("no"),
         propertyType   = Some("03"),
@@ -1091,22 +1091,22 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
       Cf5a_LeaseRResidential.validate(ua) mustBe None
     }
 
-    "must not apply when no main land is configured" in {
+    "must not apply when no lease type has been chosen" in {
       val ua = answersWith(
         claimingRelief = Some("no"),
-        propertyType   = Some("01"),
-        mainLandId     = None,
-        leaseType      = Some("N")
+        propertyType   = Some("02"),
+        mainLandId     = Some("LND001"),
+        leaseType      = None
       )
 
       Cf5a_LeaseRResidential.validate(ua) mustBe None
     }
 
-    "must not apply when main land has no property type" in {
+    "must pass when lease type is R and main land has no property type" in {
       val ua = answersWith(
         claimingRelief = Some("no"),
         mainLandId     = Some("LND001"),
-        leaseType      = Some("N")
+        leaseType      = Some("R")
       )
 
       Cf5a_LeaseRResidential.validate(ua) mustBe None
@@ -1115,18 +1115,18 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
   "Cf5b_LeaseMMixed" - {
 
-    "must fire when main land is '02 - Mixed' but lease type is not M" in {
+    "must fire when lease type is M but main land is '01 - Residential'" in {
       val ua = answersWith(
         claimingRelief = Some("no"),
-        propertyType   = Some("02"),
+        propertyType   = Some("01"),
         mainLandId     = Some("LND001"),
-        leaseType      = Some("R")
+        leaseType      = Some("M")
       )
 
       Cf5b_LeaseMMixed.validate(ua).map(_.ruleId) mustBe Some("Cf-5b")
     }
 
-    "must pass when main land is '02' and lease type is M" in {
+    "must pass when lease type is M and main land is '02'" in {
       val ua = answersWith(
         claimingRelief = Some("no"),
         propertyType   = Some("02"),
@@ -1137,7 +1137,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
       Cf5b_LeaseMMixed.validate(ua) mustBe None
     }
 
-    "must not apply when main land is '01 - Residential'" in {
+    "must not apply when lease type is R" in {
       val ua = answersWith(
         claimingRelief = Some("no"),
         propertyType   = Some("01"),
@@ -1148,7 +1148,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
       Cf5b_LeaseMMixed.validate(ua) mustBe None
     }
 
-    "must not apply when main land is '03 - Non-residential'" in {
+    "must not apply when lease type is N" in {
       val ua = answersWith(
         claimingRelief = Some("no"),
         propertyType   = Some("03"),
@@ -1159,12 +1159,11 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
       Cf5b_LeaseMMixed.validate(ua) mustBe None
     }
 
-    "must not apply when main land is '04 - Additional residential'" in {
+    "must pass when lease type is M and main land has no property type" in {
       val ua = answersWith(
         claimingRelief = Some("no"),
-        propertyType   = Some("04"),
         mainLandId     = Some("LND001"),
-        leaseType      = Some("R")
+        leaseType      = Some("M")
       )
 
       Cf5b_LeaseMMixed.validate(ua) mustBe None
@@ -1173,29 +1172,29 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
   "Cf5c_LeaseNNonResidential" - {
 
-    "must fire when main land is '03 - Non-residential' but lease type is not N" in {
+    "must fire when lease type is N but main land is '01 - Residential'" in {
       val ua = answersWith(
         claimingRelief = Some("no"),
-        propertyType   = Some("03"),
+        propertyType   = Some("01"),
         mainLandId     = Some("LND001"),
-        leaseType      = Some("R")
+        leaseType      = Some("N")
       )
 
       Cf5c_LeaseNNonResidential.validate(ua).map(_.ruleId) mustBe Some("Cf-5c")
     }
 
-    "must fire when main land is '03' and lease type is M" in {
+    "must fire when lease type is N but main land is '02 - Mixed'" in {
       val ua = answersWith(
         claimingRelief = Some("no"),
-        propertyType   = Some("03"),
+        propertyType   = Some("02"),
         mainLandId     = Some("LND001"),
-        leaseType      = Some("M")
+        leaseType      = Some("N")
       )
 
       Cf5c_LeaseNNonResidential.validate(ua).map(_.ruleId) mustBe Some("Cf-5c")
     }
 
-    "must pass when main land is '03' and lease type is N" in {
+    "must pass when lease type is N and main land is '03'" in {
       val ua = answersWith(
         claimingRelief = Some("no"),
         propertyType   = Some("03"),
@@ -1206,7 +1205,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
       Cf5c_LeaseNNonResidential.validate(ua) mustBe None
     }
 
-    "must not apply when main land is '01 - Residential'" in {
+    "must not apply when lease type is R" in {
       val ua = answersWith(
         claimingRelief = Some("no"),
         propertyType   = Some("01"),
@@ -1217,7 +1216,7 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
       Cf5c_LeaseNNonResidential.validate(ua) mustBe None
     }
 
-    "must not apply when main land is '02 - Mixed'" in {
+    "must not apply when lease type is M" in {
       val ua = answersWith(
         claimingRelief = Some("no"),
         propertyType   = Some("02"),
