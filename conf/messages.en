@@ -1865,7 +1865,7 @@ transaction.address.change.hidden                                               
 lease.typeOfLease.title                                                             = What is the type of lease?
 lease.typeOfLease.heading                                                           = What is the type of lease?
 lease.typeOfLease.R                                                                 = R - Residential
-lease.typeOfLease.R.hintText                                                        = A building used, suitable for use, or being constructed as a dwelling, including the garden, grounds and any right of way
+lease.typeOfLease.R.hintText                                                        = A building used, suitable for use, or being constructed as a dwelling – including the garden, grounds and any right of way
 lease.typeOfLease.N                                                                 = N - Non-residential
 lease.typeOfLease.N.hintText                                                        = Where the whole property is non-residential
 lease.typeOfLease.M                                                                 = M - Mixed use
