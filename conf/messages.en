@@ -567,7 +567,7 @@ purchaser.confirmIdentity.title                                                 
 purchaser.confirmIdentity.heading                                                   = What information can you provide about {0}?
 purchaser.confirmIdentity.hint                                                      = We need one form of ID to confirm {0}’s identity
 purchaser.confirmIdentity.vatRegistrationNumber                                     = VAT registration number
-purchaser.confirmIdentity.corporationTaxUniqueTaxpayerReference                     = Corporation tax Unique Taxpayer Reference (UTR)
+purchaser.confirmIdentity.corporationTaxUniqueTaxpayerReference                     = Corporation Tax Unique Taxpayer Reference (UTR)
 purchaser.confirmIdentity.partnershipUniqueTaxpayerReference                        = Partnership Unique Taxpayer Reference (UTR)
 purchaser.confirmIdentity.confirmIdentityDivider                                    = or
 purchaser.confirmIdentity.anotherFormOfId                                           = Another form of ID
@@ -625,12 +625,12 @@ purchaser.enterPhoneNumber.change.hidden                                        
 
 purchaser.formOfIdIndividual.title                                                  = Provide a form of ID for the purchaser - About the purchaser
 purchaser.formOfIdIndividual.heading                                                = Provide a form of ID for {0}
-purchaser.formOfIdIndividual.p1                                                     = We need to confirm {0}’s identity for this return
+purchaser.formOfIdIndividual.p1                                                     = We need to confirm {0}’s identity for this return.
 purchaser.formOfIdIndividual.p2                                                     = This could be:
 purchaser.formOfIdIndividual.li1                                                    = a passport number
 purchaser.formOfIdIndividual.li2                                                    = a driving licence number
 purchaser.formOfIdIndividual.li3                                                    = an identity card number
-purchaser.formOfIdIndividual.li4                                                    = any other reference issues by a recognised local or national authority
+purchaser.formOfIdIndividual.li4                                                    = any other reference issued by a recognised local or national authority
 purchaser.formOfIdIndividual.li5                                                    = an NHS reference can be used for UK residents or citizens without any other identification
 purchaser.formOfIdIndividual.p3                                                     = You must include country of issue
 purchaser.formOfIdIndividual.idNumberOrReference                                    = ID number or reference
@@ -698,7 +698,7 @@ purchaser.registrationNumber.error.length                                       
 purchaser.registrationNumber.change.hidden                                          = VAT registration number
 purchaser.registrationNumber.error.regex.invalid                                    = {0}’s VAT registration number must only include numbers 0 to 9
 purchaser.registrationNumber.error.invalid                                          = Enter {0}’s VAT registration number in the correct format
-purchaser.registrationNumber.hint                                                   = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate
+purchaser.registrationNumber.hint                                                   = This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789. You can find it on {0}’s VAT registration certificate.
 
 purchaser.whoIsMakingThePurchase.title                                              = Who is making the purchase? - About the purchaser
 purchaser.whoIsMakingThePurchase.heading                                            = Who is making the purchase?
@@ -769,7 +769,7 @@ purchaser.purchaserRemove.change.hidden                                         
 purchaser.purchaserRemove.double.heading                                            = Removing {0}
 purchaser.purchaserRemove.double.keep                                               = Keep {0}
 purchaser.purchaserRemove.double.remove                                             = Remove {0} and update {1}
-purchaser.purchaserRemove.double.hint                                               = If you remove {0}, then {1} will become the purchaser 1 for this return. You will then need to update {1}’s details.
+purchaser.purchaserRemove.double.hint                                               = If you remove {0}, then {1} will become purchaser 1 for this return. You will then need to update {1}’s details.
 purchaser.purchaserRemove.double.subheading                                         = What would you like to do?
 purchaser.purchaserRemove.multi.heading                                             = Removing {0}
 purchaser.purchaserRemove.multi.keep                                                = Keep {0}
