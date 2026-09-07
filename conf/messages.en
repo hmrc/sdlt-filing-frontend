@@ -2244,7 +2244,7 @@ crossflow.land.Cf-6.body                                                        
 crossflow.land.Cf-6.p2                                                              = Review the property type for all the interests listed and select either:
 crossflow.land.Cf-6.bullet1                                                         = the same property type for all interests
 crossflow.land.Cf-6.bullet2                                                         = ‘02 - Mixed’ if there are different property types
-crossflow.land.Cf-6.inline                                                          = Areas of land or property with lease involvement must share the same property type. If there are multiple property types, select ‘02 - Mixed’ for all areas of land or property added
+crossflow.land.Cf-6.inline                                                          = Areas of land or properties with lease involvement must share the same property type – if there are multiple property types, select ‘02 - Mixed’ for all areas of land or properties added
 
 crossflow.land.Cf-6.column.land                                                     = Land
 crossflow.land.Cf-6.column.propertyType                                             = Type of property
