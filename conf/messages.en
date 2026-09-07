@@ -424,7 +424,7 @@ vendor.confirmVendorAddress.error.required                                      
 vendor.individual.title                                                             = What is the vendor’s full name? - About the vendor
 vendor.individual.heading                                                           = What is the vendor’s full name?
 vendor.individual.firstName                                                         = First name
-vendor.individual.middleName                                                        = Middle name(s)
+vendor.individual.middleName                                                        = Middle names
 vendor.individual.surname                                                           = Surname
 vendor.individual.checkYourAnswersLabel                                             = Vendor name
 vendor.individual.change.hidden                                                     = Vendor name
