@@ -121,7 +121,7 @@ import scala.util.control.NonFatal
                       )(implicit hc: HeaderCarrier,
                         ec: ExecutionContext,
                         request: DataRequest[AnyContent]): Future[Int] =
-      logger.info(s"[PurchaserRemoveService][withNewVersion] version passed in: $version")
+      logger.debug(s"[PurchaserRemoveService][withNewVersion] version passed in: $version")
       for {
         updateReq <- ReturnVersionUpdateRequest.from(userAnswers, version)
         versionResponse <- backendConnector.updateReturnVersion(updateReq).recoverWith {
@@ -129,7 +129,7 @@ import scala.util.control.NonFatal
         }
         newVersion <- versionResponse.newVersion match {
           case Some(v) =>
-            logger.info(s"[PurchaserRemoveService][withNewVersion] update return version response version: $v")
+            logger.debug(s"[PurchaserRemoveService][withNewVersion] update return version response version: $v")
             Future.successful(v)
           case None =>
             Future.failed(ReturnVersionUpdateFailed(new IllegalStateException("Return version was not updated (newVersion missing)")))
@@ -212,8 +212,8 @@ import scala.util.control.NonFatal
     val promotingPurchaser = if purchasers.length == 2 && isMainPurchaser then purchasers.find(!_.purchaserID.contains(purchaserIdSession)) else None
     val promotingPurchaserId = promotingPurchaser.flatMap(_.purchaserID)
 
-    logger.info(s"[PurchaserRemoveService][handleRemovePurchaser] purchaser in session to remove: $removedPurchaser")
-    logger.info(s"[PurchaserRemoveService][handleRemovePurchaser] chosen purchaser to promote: $promotingPurchaser")
+    logger.debug(s"[PurchaserRemoveService][handleRemovePurchaser] purchaser in session to remove: $removedPurchaser")
+    logger.debug(s"[PurchaserRemoveService][handleRemovePurchaser] chosen purchaser to promote: $promotingPurchaser")
 
     userAnswers.fullReturn.flatMap(_.returnInfo).map { returnInfo =>
       (for {
@@ -250,8 +250,8 @@ import scala.util.control.NonFatal
     val purchasers = purchaserService.allPurchasers(userAnswers)
     val removedPurchaser = purchaserService.findById(purchasers, purchaserIdSession)
 
-    logger.info(s"[PurchaserRemoveService][handleMultiplePurchasersWithNewMain] purchaser in session to remove: $removedPurchaser")
-    logger.info(s"[PurchaserRemoveService][handleMultiplePurchasersWithNewMain] chosen purchaser ID to promote: $chosenPurchaserId")
+    logger.debug(s"[PurchaserRemoveService][handleMultiplePurchasersWithNewMain] purchaser in session to remove: $removedPurchaser")
+    logger.debug(s"[PurchaserRemoveService][handleMultiplePurchasersWithNewMain] chosen purchaser ID to promote: $chosenPurchaserId")
 
     userAnswers.fullReturn.flatMap(_.returnInfo).map { returnInfo =>
       (for {

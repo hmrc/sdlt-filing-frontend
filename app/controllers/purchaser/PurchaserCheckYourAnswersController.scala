@@ -102,7 +102,7 @@ class PurchaserCheckYourAnswersController @Inject()(
             case JsSuccess(sessionData, _) if purchaserService.purchaserSessionOptionalQuestionsValidation(sessionData, userAnswers) =>
               val hasPurchaserId = sessionData.purchaserCurrent.purchaserAndCompanyId.map(_.purchaserID).isDefined
               val vendorPurchaserCountBelowMax = purchaserCreateOrUpdateService.isVendorPurchaserCountBelowMaximum(userAnswers)
-              logger.info(s"[PurchaserCheckYourAnswersController][onSubmit] hasPurchaserId=$hasPurchaserId, vendorPurchaserCountBelowMax=$vendorPurchaserCountBelowMax")
+              logger.debug(s"[PurchaserCheckYourAnswersController][onSubmit] hasPurchaserId=$hasPurchaserId, vendorPurchaserCountBelowMax=$vendorPurchaserCountBelowMax")
               (hasPurchaserId, vendorPurchaserCountBelowMax) match {
                 case (true, _) =>
                   logger.info("[PurchaserCheckYourAnswersController][onSubmit] Routing to UPDATE purchaser")

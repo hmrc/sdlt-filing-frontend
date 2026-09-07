@@ -58,7 +58,7 @@ class FreeholdCalculatedSdltBreakdownController @Inject()(
                 Redirect(errorHandler(err))
             }
           case Right(response) =>
-            logger.warn(s"[FreeholdCalculatedSdltBreakdownController] Failed to get a tax calculation result: $response")
+            logger.warn(s"[FreeholdCalculatedSdltBreakdownController] Failed to get a tax calculation result")
             Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
           case Left(err) =>
             logger.warn(s"[FreeholdCalculatedSdltBreakdownController] sdltc reported missing data: ${err.message}")

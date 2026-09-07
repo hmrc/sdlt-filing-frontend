@@ -50,7 +50,7 @@ class PurchaserUpdateMainPurchaserService @Inject()(
                                 version: Option[Int] = None)
                               (implicit hc: HeaderCarrier, ec: ExecutionContext, request: DataRequest[AnyContent]): Future[Int] = {
 
-    logger.info(s"[PurchaserUpdateMainPurchaserService][updateNewVersion] version passed in: $version")
+    logger.debug(s"[PurchaserUpdateMainPurchaserService][updateNewVersion] version passed in")
 
     for {
       updateReq <- ReturnVersionUpdateRequest.from(userAnswers, version)
@@ -59,7 +59,7 @@ class PurchaserUpdateMainPurchaserService @Inject()(
       }
       newVersion <- versionResponse.newVersion match {
         case Some(v) =>
-          logger.info(s"[PurchaserUpdateMainPurchaserService][updateNewVersion] update return version response version: $v")
+          logger.info(s"[PurchaserUpdateMainPurchaserService][updateNewVersion] update return version")
           Future.successful(v)
 
         case None => Future.failed(ReturnVersionUpdateFailed(new IllegalStateException("Return version was not updated (newVersion missing)")))
@@ -76,7 +76,7 @@ class PurchaserUpdateMainPurchaserService @Inject()(
       returnInfoReturn <- backendConnector.updateReturnInfo(req)
     } yield {
       if returnInfoReturn.updated then
-        logger.info(s"[PurchaserUpdateMainPurchaserService][updateReturnInfo] ReturnInfo has been updated with : ${returnInfo.mainPurchaserID}")
+        logger.info(s"[PurchaserUpdateMainPurchaserService][updateReturnInfo] ReturnInfo has been updated")
     }
 
 
@@ -111,8 +111,9 @@ class PurchaserUpdateMainPurchaserService @Inject()(
               )
           } yield {
             if updateResponse.updated then
-              logger.info(s"[PurchaserUpdateMainPurchaserService][updateOldMainPurchaserDetails] successfully updated main purchaser details with " +
+              logger.debug(s"[PurchaserUpdateMainPurchaserService][updateOldMainPurchaserDetails] successfully updated main purchaser details with " +
                 s"UpdatePurchaserRequest: $updateRequest")
+              logger.info(s"[PurchaserUpdateMainPurchaserService][updateOldMainPurchaserDetails] successfully updated main purchaser")
           }
 
         case None =>
@@ -160,8 +161,9 @@ class PurchaserUpdateMainPurchaserService @Inject()(
               _ <- updateOldMainPurchaserDetails(userAnswers, oldMainPurchaserId = returnInfo.mainPurchaserID)
               result <- populatePurchaser(userAnswers, purchId)
             } yield {
-              logger.info(s"[PurchaserUpdateMainPurchaserService][updateMainPurchaser] successfully updated main purchaser " +
+              logger.debug(s"[PurchaserUpdateMainPurchaserService][updateMainPurchaser] successfully updated main purchaser " +
                 s"from ${returnInfo.mainPurchaserID} to $purchId.")
+              logger.info(s"[PurchaserUpdateMainPurchaserService][updateMainPurchaser] successfully updated main purchaser")
               result
             }
           case None =>
@@ -169,10 +171,10 @@ class PurchaserUpdateMainPurchaserService @Inject()(
         }
       }.recover {
         case _: ReturnVersionUpdateFailed =>
-          logger.info(s"[PurchaserUpdateMainPurchaserService][updateMainPurchaser] return version update failed. Redirecting to update return version error page")
+          logger.warn(s"[PurchaserUpdateMainPurchaserService][updateMainPurchaser] return version update failed. Redirecting to update return version error page")
           Redirect(controllers.routes.UpdateReturnVersionErrorController.onPageLoad())
         case e: Throwable =>
-          logger.info(s"[PurchaserUpdateMainPurchaserService][updateMainPurchaser] failed to update main purchaser: ${e.getMessage}. Redirecting to journey recovery")
+          logger.warn(s"[PurchaserUpdateMainPurchaserService][updateMainPurchaser] failed to update main purchaser: ${e.getMessage}. Redirecting to journey recovery")
           Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
   }

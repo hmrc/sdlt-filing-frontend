@@ -138,7 +138,8 @@ class PurchaserCreateOrUpdateService {
             updateCompanyDetailsReturn <- backendConnector.updateCompanyDetails(updateCompanyDetailsRequest)
           } yield {
             if updateCompanyDetailsReturn.updated then
-              logger.info(s"[updateOrCreateCompanyDetails] update company details request: $updateCompanyDetailsRequest")
+              logger.debug(s"[updateOrCreateCompanyDetails] update company details request: $updateCompanyDetailsRequest")
+              logger.info(s"[updateOrCreateCompanyDetails] update company details request updated")
           }
         } else {
           for {
@@ -146,7 +147,8 @@ class PurchaserCreateOrUpdateService {
             createCompanyDetailsReturn <- backendConnector.createCompanyDetails(createCompanyDetailsRequest)
           } yield {
             if !createCompanyDetailsReturn.companyDetailsId.isBlank then
-              logger.info(s"[updateOrCreateCompanyDetails] create company details request: $createCompanyDetailsRequest")
+              logger.debug(s"[updateOrCreateCompanyDetails] create company details request: $createCompanyDetailsRequest")
+              logger.info(s"[updateOrCreateCompanyDetails] create company details request is blank")
           }
         }
       } else {

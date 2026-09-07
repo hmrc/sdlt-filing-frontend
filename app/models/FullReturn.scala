@@ -119,7 +119,7 @@ object Purchaser {
       }
     }
 
-    logger.info(s"[Purchaser][from] existing purchaser found: \n $existingPurchaser")
+    logger.debug(s"[Purchaser][from] existing purchaser found: \n $existingPurchaser")
 
 
     Future.successful(

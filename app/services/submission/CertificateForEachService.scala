@@ -40,7 +40,7 @@ class CertificateForEachService @Inject()(backendConnector: StampDutyLandTaxConn
           returnInfoReturn <- backendConnector.updateReturnInfo(req)
         } yield {
           if returnInfoReturn.updated then
-            logger.info(s"[CertificateForEachService][store] ReturnInfo has been updated with : ${returnInfo.landCertForEachProp}")
+            logger.info(s"[CertificateForEachService][store] ReturnInfo has been updated")
           else
             logger.warn("[CertificateForEachService][store] backend did not update ReturnInfo")
           answersWithCert

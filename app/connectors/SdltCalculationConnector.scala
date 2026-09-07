@@ -39,7 +39,8 @@ class SdltCalculationConnector @Inject()(val http: HttpClientV2,
       .withBody(Json.toJson(request))
       .execute[CalculationResponse]
       .map { resp =>
-        logger.info(s"[SdltCalculationConnector][calculateStampDutyLandTax] response: $resp")
+        logger.debug(s"[SdltCalculationConnector][calculateStampDutyLandTax] response: $resp")
+        logger.info(s"[SdltCalculationConnector][calculateStampDutyLandTax] Response returned")
         resp
       }
       .recoverWith {

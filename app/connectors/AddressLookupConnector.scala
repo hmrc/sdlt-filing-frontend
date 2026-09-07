@@ -53,6 +53,7 @@ class AddressLookupConnector @Inject()(val http: HttpClientV2, appConfig: Fronte
             Future.failed(new ALFLocationHeaderNotSetException)
           }
         case Left(error) =>
+          errorLog(s"[getOnRampUrl] - ERROR: ${error.message}")
           Future.failed(error)
       }
 }

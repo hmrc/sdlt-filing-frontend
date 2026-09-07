@@ -74,7 +74,7 @@ class LeaseholdTaxCalculatedSdltSelfAssessmentController @Inject()(
               )
             Ok(view(prepared, postAction(mode), sectionKey, showSharedOwnershipNotification = showSharedOwnershipNotification))
           case Right(response) =>
-            logger.warn(s"[LeaseholdTaxCalculatedSdltSelfAssessmentController] Failed to get a tax calculation result: $response")
+            logger.warn(s"[LeaseholdTaxCalculatedSdltSelfAssessmentController] Failed to get a tax calculation result")
             Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
           case Left(err) =>
             logger.warn(s"[LeaseholdTaxCalculatedSdltSelfAssessmentController][onPageLoad] sdltc failed: ${err.message}")

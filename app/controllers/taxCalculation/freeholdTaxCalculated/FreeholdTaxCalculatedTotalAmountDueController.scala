@@ -117,7 +117,7 @@ class FreeholdTaxCalculatedTotalAmountDueController @Inject()(
     sdltCalculationService.calculateStampDutyLandTax(request.userAnswers).flatMap {
       case Right(Calculated(result)) => onCalculated(result)
       case Right(response) =>
-        logger.warn(s"[FreeholdTaxCalculatedTotalAmountDueController] Failed to get a tax calculation result: $response")
+        logger.warn(s"[FreeholdTaxCalculatedTotalAmountDueController] Failed to get a tax calculation result")
         Future.successful(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
       case Left(err) =>
         logger.warn(s"[FreeholdTaxCalculatedTotalAmountDueController] sdltc reported missing data: ${err.message}")

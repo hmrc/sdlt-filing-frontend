@@ -38,7 +38,7 @@ class FullReturnService @Inject()(backendConnector: StampDutyLandTaxConnector)(i
       fullReturn.land.map(_.map { land =>
         land.interestCreatedTransferred match {
           case Some(value) if !validLandInterests.contains(value) =>
-            logger.info(
+            logger.debug(
               s"[FullReturnService][stripInvalidLandInterest] Removing invalid " +
                 s"interestCreatedTransferred '$value' for landID: ${land.landID}"
             )
@@ -52,7 +52,7 @@ class FullReturnService @Inject()(backendConnector: StampDutyLandTaxConnector)(i
 
   def getFullReturn(getReturnByRefRequest: GetReturnByRefRequest)
                    (implicit hc: HeaderCarrier, request: Request[_]): Future[FullReturn] = {
-    logger.info("[getFullReturnBE] Getting Full Return")
+    logger.debug("[getFullReturnBE] Getting Full Return")
     backendConnector.getFullReturn(getReturnByRefRequest).map(stripInvalidLandInterest)
   }
 }
