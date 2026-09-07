@@ -69,7 +69,7 @@ class SdltReturnPdf4 @Inject()(
 
     }.fold(
       err => {
-        logger.error(s"[SdltReturn${variant}][fillPdf] Failed to fill ${variant} PDF", err)
+        logger.error(s"[SdltReturn][fillPdf] Failed to fill PDF", err)
         throw new SdltPdfFillException(s"Failed to fill $variant PDF", err)
       },
       identity

@@ -73,7 +73,7 @@ class ChrisSubmissionService @Inject()(connector: StampDutyLandTaxConnector,
   def submitInBackground(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Unit =
     submit(userAnswers).onComplete {
       case Success(response) =>
-        logger.info(s"[ChrisSubmissionService][submitInBackground] completed: $response")
+        logger.debug(s"[ChrisSubmissionService][submitInBackground] completed: $response")
         response match {
           case _: SubmissionResponse.Submitted | _: SubmissionResponse.Acknowledged | _: SubmissionResponse.Retryable =>
             clearSubmissionFailed(userAnswers)

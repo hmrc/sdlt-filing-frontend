@@ -53,7 +53,7 @@ class FreeholdCalculatedSdltDueController @Inject()(
               val formattedSdltDue = result.totalTax.toCurrency
               Ok(view(formattedSdltDue))
             case Right(response) =>
-              logger.warn(s"[FreeholdCalculatedSdltDueController] Failed to get a tax calculation result: $response")
+              logger.warn(s"[FreeholdCalculatedSdltDueController] Failed to get a tax calculation result")
               Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
             case Left(err) =>
               logger.warn(s"[FreeholdCalculatedSdltDueController] sdltc reported missing data: ${err.message}")

@@ -61,7 +61,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, FullReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[getFullReturn] \n $resp")
+          logger.debug(s"[getFullReturn] \n $resp")
+          logger.info(s"[getFullReturn] Successful ${resp.returnResourceRef}")
           Future.successful(
             resp)
         case Left(error) =>
@@ -80,7 +81,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, CreateReturnResult]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][createReturn] prelim return: $prelimReturn, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][createReturn] prelim return: $prelimReturn, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][createReturn] prelim return Success response: ${resp.returnResourceRef}")
           Future.successful(
             resp)
         case Left(error) =>
@@ -99,7 +101,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, DeleteReturnResponse]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][deleteReturn] response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][deleteReturn] response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][deleteReturn] Successful")
           Future.successful(
             resp)
         case Left(error) =>
@@ -118,7 +121,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, CreateVendorReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][createVendor] create vendor request: $vendorRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][createVendor] create vendor request: $vendorRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][createVendor] create vendor request successful")
           Future.successful(
             resp)
         case Left(error) =>
@@ -137,7 +141,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, UpdateVendorReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][updateVendor] update vendor request: $updateVendorRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][updateVendor] update vendor request: $updateVendorRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][updateVendor] update vendor Successful")
           Future.successful(
             resp)
         case Left(error) =>
@@ -156,7 +161,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, DeleteVendorReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][deleteVendor] delete vendor request: $deleteVendorRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][deleteVendor] delete vendor request: $deleteVendorRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][deleteVendor] delete vendor Successsful")
           Future.successful(
             resp)
         case Left(error) =>
@@ -175,7 +181,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, CreateReturnAgentReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][createReturnAgent] create return agent request: $createReturnAgentRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][createReturnAgent] create return agent request: $createReturnAgentRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][createReturnAgent] create return agent Successful")
           Future.successful(
             resp)
         case Left(error) =>
@@ -194,7 +201,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, UpdateReturnAgentReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][updateReturnAgent] update return agent request: $updateReturnAgentRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][updateReturnAgent] update return agent request: $updateReturnAgentRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][updateReturnAgent] update return agent request Successful")
           Future.successful(
             resp)
         case Left(error) =>
@@ -213,7 +221,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, DeleteReturnAgentReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][deleteReturnAgent] delete return agent request: $deleteReturnAgentRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][deleteReturnAgent] delete return agent request: $deleteReturnAgentRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][deleteReturnAgent] delete return agent Successful")
           Future.successful(
             resp)
         case Left(error) =>
@@ -232,7 +241,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, ReturnVersionUpdateReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][updateReturnVersion] update return version request: $updateReturnVersionRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][updateReturnVersion] update return version request: $updateReturnVersionRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][updateReturnVersion] update return version request Successful")
           Future.successful(
             resp)
         case Left(error) =>
@@ -251,7 +261,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, CreatePurchaserReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][createPurchaser] create purchaser request: $purchaserRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][createPurchaser] create purchaser request: $purchaserRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][createPurchaser] create purchaser request Successful")
           Future.successful(
             resp)
         case Left(error) =>
@@ -270,7 +281,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, UpdatePurchaserReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][updatePurchaser] update purchaser request: $updatePurchaserRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][updatePurchaser] update purchaser request: $updatePurchaserRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][updatePurchaser] update purchaser request Successful")
           Future.successful(
             resp)
         case Left(error) =>
@@ -289,7 +301,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, DeletePurchaserReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][deletePurchaser] delete purchaser request: $deletePurchaserRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][deletePurchaser] delete purchaser request: $deletePurchaserRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][deletePurchaser] delete purchaser request Succesful")
           Future.successful(
             resp)
         case Left(error) =>
@@ -308,7 +321,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, CreateCompanyDetailsReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][createCompanyDetails] create company details request: $companyDetailsRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][createCompanyDetails] create company details request: $companyDetailsRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][createCompanyDetails] create company details request Successful")
           Future.successful(
             resp)
         case Left(error) =>
@@ -327,7 +341,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, UpdateCompanyDetailsReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][updateCompanyDetails] update company details request: $updateCompanyDetailsRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][updateCompanyDetails] update company details request: $updateCompanyDetailsRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][updateCompanyDetails] update company details request Successful")
           Future.successful(
             resp)
         case Left(error) =>
@@ -346,7 +361,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, DeleteCompanyDetailsReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][deleteCompanyDetails] delete company details request: $deleteCompanyDetailsRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][deleteCompanyDetails] delete company details request: $deleteCompanyDetailsRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][deleteCompanyDetails] delete company details request Successful")
           Future.successful(
             resp)
         case Left(error) =>
@@ -365,7 +381,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, ReturnInfoReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][updateReturnInfo] update return info request: $returnInfoRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][updateReturnInfo] update return info request: $returnInfoRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][updateReturnInfo] update return info request Successful")
           Future.successful(
             resp)
         case Left(error) =>
@@ -385,7 +402,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, CreateLandReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][createLand] create land request: $createLandRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][createLand] create land request: $createLandRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][createLand] create land request Successful")
           Future.successful(
             resp)
         case Left(error) =>
@@ -404,7 +422,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, UpdateLandReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][updateLand] update land request: $updateLandRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][updateLand] update land request: $updateLandRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][updateLand] update land request Successful")
           Future.successful(
             resp)
         case Left(error) =>
@@ -423,7 +442,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, DeleteLandReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][deleteLand] delete land request: $deleteLandRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][deleteLand] delete land request: $deleteLandRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][deleteLand] delete land request Successful")
           Future.successful(
             resp)
         case Left(error) =>
@@ -443,7 +463,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, CreateResidencyReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][createResidency] create residency request: $createResidencyRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][createResidency] create residency request: $createResidencyRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][createResidency] create residency request Successful")
           Future.successful(resp)
         case Left(error) =>
           logResponse(error, "[StampDutyLandTaxConnector][createResidency]")
@@ -461,7 +482,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, UpdateResidencyReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][updateResidency] update residency request: $updateResidencyRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][updateResidency] update residency request: $updateResidencyRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][updateResidency] update residency request Successful")
           Future.successful(resp)
         case Left(error) =>
           logResponse(error, "[StampDutyLandTaxConnector][updateResidency]")
@@ -479,7 +501,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, DeleteResidencyReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][deleteResidency] delete residency request: $deleteResidencyRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][deleteResidency] delete residency request: $deleteResidencyRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][deleteResidency] delete residency request Successful")
           Future.successful(resp)
         case Left(error) =>
           logResponse(error, "[StampDutyLandTaxConnector][deleteResidency]")
@@ -497,7 +520,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, UpdateTransactionReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][updateTransaction] update transaction request: $updateTransactionRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][updateTransaction] update transaction request: $updateTransactionRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][updateTransaction] update transaction request Successful")
           Future.successful(resp)
         case Left(error) =>
           logResponse(error, "[StampDutyLandTaxConnector][updateTransaction]")
@@ -515,7 +539,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, UpdateTaxCalculationReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][updateTaxCalculationInfo] update tax calculation request: $updateTaxCalculationRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][updateTaxCalculationInfo] update tax calculation request: $updateTaxCalculationRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][updateTaxCalculationInfo] update tax calculation request Successful")
           Future.successful(resp)
         case Left(error) =>
           logResponse(error, "[StampDutyLandTaxConnector][updateTaxCalculationInfo]")
@@ -534,7 +559,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, CreateLeaseReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][createLease] create lease request: $createLeaseRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][createLease] create lease request: $createLeaseRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][createLease] create lease request Successful")
           Future.successful(resp)
         case Left(error) =>
           logResponse(error, "[StampDutyLandTaxConnector][createLease]")
@@ -552,7 +578,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, UpdateLeaseReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][updateLease] update lease request: $updateLeaseRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][updateLease] update lease request: $updateLeaseRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][updateLease] update lease request Successful")
           Future.successful(resp)
         case Left(error) =>
           logResponse(error, "[StampDutyLandTaxConnector][updateLease]")
@@ -570,7 +597,8 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
       .execute[Either[UpstreamErrorResponse, DeleteLeaseReturn]]
       .flatMap {
         case Right(resp) =>
-          logger.info(s"[StampDutyLandTaxConnector][deleteLease] delete lease request: $deleteLeaseRequest, response: $resp")
+          logger.debug(s"[StampDutyLandTaxConnector][deleteLease] delete lease request: $deleteLeaseRequest, response: $resp")
+          logger.info(s"[StampDutyLandTaxConnector][deleteLease] delete lease request Successful")
           Future.successful(resp)
         case Left(error) =>
           logResponse(error, "[StampDutyLandTaxConnector][deleteLease]")
@@ -591,10 +619,11 @@ class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
           case OK | ACCEPTED | BAD_REQUEST | BAD_GATEWAY | SERVICE_UNAVAILABLE =>
             resp.json.validate[SubmissionResponse] match {
               case JsSuccess(submissionResponse, _) =>
-                logger.info(s"[StampDutyLandTaxConnector][submit] submit request: $submitRequest, response: $submissionResponse")
+                logger.debug(s"[StampDutyLandTaxConnector][submit] submit request: $submitRequest, response: $submissionResponse")
+                logger.info(s"[StampDutyLandTaxConnector][submit] submit request Submitted Successfully")
                 Future.successful(submissionResponse)
               case JsError(errs) =>
-                logger.error(s"[StampDutyLandTaxConnector][submit] could not parse SubmissionResponse: $errs")
+                logger.error(s"[StampDutyLandTaxConnector][submit] could not parse SubmissionResponse")
                 Future.failed(new RuntimeException(s"Unparseable submission response: $errs"))
             }
           case _ =>

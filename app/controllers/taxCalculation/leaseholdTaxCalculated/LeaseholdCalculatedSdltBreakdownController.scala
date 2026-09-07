@@ -55,7 +55,7 @@ class LeaseholdCalculatedSdltBreakdownController @Inject()(
                 Redirect(errorHandler(err))
             }
           case Right(response) =>
-            logger.warn(s"[LeaseholdCalculatedSdltBreakdownController] Failed to get a tax calculation result: $response")
+            logger.warn(s"[LeaseholdCalculatedSdltBreakdownController] Failed to get a tax calculation result")
             Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
           case Left(err) =>
             logger.warn(s"[LeaseholdCalculatedSdltBreakdownController] sdltc reported missing data: ${err.message}")

@@ -72,7 +72,7 @@ class FreeholdTaxCalculatedSdltSelfAssessmentController @Inject()(
               )
             Ok(view(prepared, postAction(mode), sectionKey))
           case Right(response) =>
-            logger.warn(s"[FreeholdTaxCalculatedSdltSelfAssessmentController] Failed to get a tax calculation result: $response")
+            logger.warn(s"[FreeholdTaxCalculatedSdltSelfAssessmentController] Failed to get a tax calculation result")
             Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
           case Left(err) =>
             logger.warn(s"[FreeholdTaxCalculatedSdltSelfAssessmentController][onPageLoad] sdltc failed: ${err.message}")

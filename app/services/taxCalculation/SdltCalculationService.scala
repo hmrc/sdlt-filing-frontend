@@ -43,7 +43,7 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) exte
     if (request.userAnswers.get(TaxCalculationFlowPage).contains(expected)) {
       onAllowed
     } else {
-      logger.error(s"[SdltCalculationService][whenInFlow] not in the flow: ${expected}")
+      logger.error(s"[SdltCalculationService][whenInFlow] not in the flow")
       Redirect(ReturnTaskListController.onPageLoad())
     }
 
@@ -66,16 +66,16 @@ class SdltCalculationService @Inject()(connector: SdltCalculationConnector) exte
         logger.info(s"[SdltCalculationService][calculateStampDutyLandTax] returnId=$returnRef: effective date is before 22/03/2012, outcome=PreMarch2012 (self-assessed)")
         Future.successful(Right(PreMarch2012))
       case Right(request) =>
-        logger.info(s"[SdltCalculationService][calculateStampDutyLandTax] returnId=$returnRef: sending calculation request to SDLTC: $request")
+        logger.debug(s"[SdltCalculationService][calculateStampDutyLandTax] returnId=$returnRef: sending calculation request to SDLTC: $request")
         connector.calculateStampDutyLandTax(request).flatMap(_.result.headOption match {
           case Some(result) if result.resultHeading.contains(selfAssessedHeading) =>
-            logger.info(s"[SdltCalculationService][calculateStampDutyLandTax] returnId=$returnRef: SDLTC returned a self-assessed result (heading=${result.resultHeading})")
+            logger.info(s"[SdltCalculationService][calculateStampDutyLandTax] returnId=$returnRef: SDLTC returned a self-assessed result")
             Future.successful(Right(SelfAssessed))
           case Some(result) =>
-            logger.info(s"[SdltCalculationService][calculateStampDutyLandTax] returnId=$returnRef: SDLTC returned a calculated result, totalTax=${result.totalTax}, taxLines=[${result.taxCalcs.map(c => s"${c.taxType}=${c.taxDue}").mkString(", ")}]")
+            logger.info(s"[SdltCalculationService][calculateStampDutyLandTax] returnId=$returnRef: SDLTC returned a calculated result")
             Future.successful(Right(Calculated(result)))
           case None =>
-            logger.error(s"[SdltCalculationService][calculateStampDutyLandTax] returnId=$returnRef: SDLTC response contained no results for request: $request")
+            logger.error(s"[SdltCalculationService][calculateStampDutyLandTax] returnId=$returnRef: SDLTC response contained no results for request")
             Future.failed(new IllegalStateException("Calculation response contained no results"))
         })
       case Left(error: MissingDataError) =>
