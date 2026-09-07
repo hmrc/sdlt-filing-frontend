@@ -589,9 +589,9 @@ object Cf17_UseOfPropertyMissing extends GuardRule:
       )
     )
 
-  /** Cf-5a — When the main land is '01 - Residential' or '04 - Additional residential',
-   * the lease type must be 'R - Residential'. Fires when a residential-type main land
-   * exists but the lease type is something other than R.
+  /** Cf-5a — When the user selects lease type 'R - Residential', the main land's property
+   * type must be '01 - Residential' or '04 - Additional residential'. Fires when the user
+   * has just chosen R but the main land is some other property type.
    *
    * Cf-6 enforces all lands sharing a single property type, so checking the main land
    * is representative of the whole return.
@@ -602,13 +602,13 @@ object Cf5a_LeaseRResidential extends GuardRule:
     val inputs: Set[ReturnSection] = Set(ReturnSection.Lease, ReturnSection.Land)
     val targets: Seq[CrossFlowTarget] = Seq(leaseTypeTarget)
 
-    private val triggeringPropertyTypes: Set[String] = Set(Residential, ResidentialAdditional)
+    private val allowedPropertyTypes: Set[String] = Set(Residential, ResidentialAdditional)
 
     protected def appliesTo(ua: UserAnswers): Boolean =
-      mainLandPropertyType(ua).exists(triggeringPropertyTypes.contains)
+      isLeaseType(ua, LeaseResidential)
 
     protected def isValid(ua: UserAnswers): Boolean =
-      isLeaseType(ua, LeaseResidential)
+      mainLandPropertyType(ua).forall(allowedPropertyTypes.contains)
 
     protected def messageKey = "crossflow.lease.Cf-5a.body"
 
@@ -625,7 +625,8 @@ object Cf5a_LeaseRResidential extends GuardRule:
     )
 
 
-  /** Cf-5b — When the main land is '02 - Mixed', the lease type must be 'M - Mixed use'. */
+  /** Cf-5b — When the user selects lease type 'M - Mixed use', the main land's property
+   * type must be '02 - Mixed'. */
 object Cf5b_LeaseMMixed extends GuardRule:
     val id = "Cf-5b"
     val affects: ReturnSection = ReturnSection.Lease
@@ -633,10 +634,10 @@ object Cf5b_LeaseMMixed extends GuardRule:
     val targets: Seq[CrossFlowTarget] = Seq(leaseTypeTarget)
 
     protected def appliesTo(ua: UserAnswers): Boolean =
-      mainLandPropertyType(ua).contains(Mixed)
+      isLeaseType(ua, LeaseMixed)
 
     protected def isValid(ua: UserAnswers): Boolean =
-      isLeaseType(ua, LeaseMixed)
+      mainLandPropertyType(ua).forall(_ == Mixed)
 
     protected def messageKey = "crossflow.lease.Cf-5b.body"
 
@@ -645,7 +646,8 @@ object Cf5b_LeaseMMixed extends GuardRule:
     protected override def headingKey = "crossflow.lease.heading"
 
 
-  /** Cf-5c — When the main land is '03 - Non-residential', the lease type must be 'N - Non-residential'. */
+  /** Cf-5c — When the user selects lease type 'N - Non-residential', the main land's property
+   * type must be '03 - Non-residential'. */
 object Cf5c_LeaseNNonResidential extends GuardRule:
     val id = "Cf-5c"
     val affects: ReturnSection = ReturnSection.Lease
@@ -653,10 +655,10 @@ object Cf5c_LeaseNNonResidential extends GuardRule:
     val targets: Seq[CrossFlowTarget] = Seq(leaseTypeTarget)
 
     protected def appliesTo(ua: UserAnswers): Boolean =
-      mainLandPropertyType(ua).contains(NonResidential)
+      isLeaseType(ua, LeaseNonResidential)
 
     protected def isValid(ua: UserAnswers): Boolean =
-      isLeaseType(ua, LeaseNonResidential)
+      mainLandPropertyType(ua).forall(_ == NonResidential)
 
     protected def messageKey = "crossflow.lease.Cf-5c.body"
 
