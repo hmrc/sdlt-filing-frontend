@@ -175,6 +175,7 @@ class AddressLookupModelsSpec extends AnyFreeSpec with Matchers with EitherValue
       selectPageConfig = selectConfig,
       confirmPageConfig = confirmConfig,
       manualAddressEntryConfig = manualAddressEntryConfig,
+      timeoutConfig = TimeoutConfig(120, "/timeout", Some("/refresh")),
       pageHeadingStyle = "govuk-heading-l"
     )
 
@@ -183,6 +184,7 @@ class AddressLookupModelsSpec extends AnyFreeSpec with Matchers with EitherValue
       selectPageConfig = AddressLookupSelectConfigModel(),
       confirmPageConfig = AddressLookupConfirmConfigModel(),
       manualAddressEntryConfig = ManualAddressEntryConfig(mandatoryFields = MandatoryFieldsConfigModel()),
+      timeoutConfig = TimeoutConfig(120, "/timeout", Some("/refresh")),
       pageHeadingStyle = "govuk-heading-l"
     )
 
@@ -213,6 +215,7 @@ class AddressLookupModelsSpec extends AnyFreeSpec with Matchers with EitherValue
         (json \ "continueUrl").as[String] mustBe "/continue"
         (json \ "selectPageConfig").toOption mustBe defined
         (json \ "confirmPageConfig").toOption mustBe defined
+        (json \ "timeoutConfig").toOption mustBe defined
       }
 
       "must serialize nested configs" in {
@@ -220,6 +223,7 @@ class AddressLookupModelsSpec extends AnyFreeSpec with Matchers with EitherValue
 
         (json \ "selectPageConfig" \ "showSearchAgainLink").asOpt[Boolean] mustBe Some(true)
         (json \ "confirmPageConfig" \ "showChangeLinkcontinueUrl").asOpt[Boolean] mustBe Some(true)
+        (json \ "timeoutConfig" \ "timeoutAmount").as[Int] mustBe 120
       }
 
       "must produce valid JSON structure" in {
