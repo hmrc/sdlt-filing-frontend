@@ -37,7 +37,7 @@ class AddressLookupConfiguration @Inject()(implicit appConfig: FrontendAppConfig
       options = AddressLookupOptionsModel(
         continueUrl = appConfig.sdltLookupHost + continueRoute.url,
         useNewGovUkServiceNavigation = Some(true),
-        signOutHref = Some(appConfig.contactUrl),
+        signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
         phaseFeedbackLink = Some(appConfig.contactUrl),
         deskProServiceName = Some(appConfig.contactFormServiceIdentifier),
         showPhaseBanner = Some(true),
@@ -56,6 +56,11 @@ class AddressLookupConfiguration @Inject()(implicit appConfig: FrontendAppConfig
         ),
         manualAddressEntryConfig = ManualAddressEntryConfig(
           mandatoryFields = mandatoryFieldsConfigModel
+        ),
+        timeoutConfig = TimeoutConfig(
+          timeoutAmount = appConfig.timeout,
+          timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
+          timeoutKeepAliveUrl = Some(controllers.routes.KeepAliveController.keepAlive().url)
         ),
         pageHeadingStyle = "govuk-heading-l"
       ),

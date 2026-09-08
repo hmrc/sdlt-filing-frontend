@@ -25,7 +25,6 @@ object AddressLookupConstants {
   val testPhaseFeedbackLink = "phaseFeedbackLink"
   val testAcessibilityUrl = "accessibilityUrl"
   val testDeskproServiceName = "VATREG"
-  val testTimeoutUrl = "timeoutUrl"
 
   val testAppLevelMessages: AppLevelMessagesModel = AppLevelMessagesModel(
     navTitle = "test nav title"
@@ -117,6 +116,7 @@ object AddressLookupConstants {
       manualAddressEntryConfig = ManualAddressEntryConfig(
         mandatoryFields = testMandatoryFieldsConfigModel
       ),
+      timeoutConfig = TimeoutConfig(120, "/timeout", Some("/refresh")),
       pageHeadingStyle = "govuk-heading-l"
     ),
     labels = AddressMessageLanguageModel(

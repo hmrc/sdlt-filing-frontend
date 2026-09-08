@@ -32,6 +32,7 @@ case class AddressLookupOptionsModel(continueUrl: String,
                                      selectPageConfig: AddressLookupSelectConfigModel,
                                      confirmPageConfig: AddressLookupConfirmConfigModel,
                                      manualAddressEntryConfig: ManualAddressEntryConfig,
+                                     timeoutConfig: TimeoutConfig,
                                      pageHeadingStyle: String
                                     )
 
