@@ -29,7 +29,7 @@
         case Submitted =>
             govukTag(Tag(messages("submission.state.submitted")).green())
         case SubmittedNoReceipt =>
-            govukTag(Tag(messages("submission.state.submittedNoReceipt")).yellow())
+            govukTag(Tag(messages("submission.state.submittedNoReceipt")).turquoise())
         case SubmissionFailed =>
             govukTag(Tag(messages("submission.state.submissionFailed")).red())
         case _ =>
