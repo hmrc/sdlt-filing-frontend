@@ -22,6 +22,7 @@ object SubmissionState {
   case object InProgress extends SubmissionState
   case object AwaitingConfirmation extends SubmissionState
   case object Submitted extends SubmissionState
+  case object SubmittedNoReceipt extends SubmissionState
   case object SubmissionFailed extends SubmissionState
   case object ReSubmit extends SubmissionState
 
@@ -29,7 +30,8 @@ object SubmissionState {
     status match {
       case Some(s) if s.equalsIgnoreCase("STARTED") => Some(ReSubmit)
       case Some(s) if s.equalsIgnoreCase("ACCEPTED") => Some(AwaitingConfirmation)
-      case Some(s) if s.equalsIgnoreCase("SUBMITTED") || s.equalsIgnoreCase("SUBMITTED_NO_RECEIPT") => Some(Submitted)
+      case Some(s) if s.equalsIgnoreCase("SUBMITTED") => Some(Submitted)
+      case Some(s) if s.equalsIgnoreCase("SUBMITTED_NO_RECEIPT") => Some(SubmittedNoReceipt)
       case Some(s) if s.equalsIgnoreCase("DEPARTMENTAL_ERROR") || s.equalsIgnoreCase("FATAL_ERROR") => Some(SubmissionFailed)
       case None => Some(InProgress)
       case Some(_) => None

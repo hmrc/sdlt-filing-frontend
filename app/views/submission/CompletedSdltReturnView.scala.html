@@ -48,13 +48,14 @@
     @p(messages("submission.completedSdltReturn.details.content.inProgress", submissionStateTag(InProgress)))
     @p(messages("submission.completedSdltReturn.details.content.awaitingConfirmation", submissionStateTag(AwaitingConfirmation)))
     @p(messages("submission.completedSdltReturn.details.content.submitted", submissionStateTag(Submitted)))
+    @p(messages("submission.completedSdltReturn.details.content.submittedNoReceipt", submissionStateTag(SubmittedNoReceipt)))
     @p(messages("submission.completedSdltReturn.details.content.submissionFailed", submissionStateTag(SubmissionFailed)))
 }
 
 @insetContent = {
     @submissionRecieptRef.map { submissionRef =>
         @utrn.map { utr =>
-            @if(submissionState == Submitted) {
+            @if(submissionState == Submitted || submissionState == SubmittedNoReceipt) {
                 @p(messages("submission.completedSdltReturn.inset.utrn", utr))
             }
         }
@@ -62,7 +63,7 @@
     }
 }
 
-@defining(if (submissionState == Submitted) "submitted" else "completed") { submittedKey =>
+@defining(if (submissionState == Submitted || submissionState == SubmittedNoReceipt) "submitted" else "completed") { submittedKey =>
 
     @layout(pageTitle = titleNoForm(messages(s"submission.completedSdltReturn.$submittedKey.title"), section = Some(messages("site.submission.caption"))), showBackLink = false) {
 
@@ -79,7 +80,7 @@
 
         @{
             (utrn, purchaserName, submissionTime, submissionDate) match {
-                case (Some(utr), Some(name), Some(time), Some(date)) if (submissionState == Submitted) =>
+                case (Some(utr), Some(name), Some(time), Some(date)) if (submissionState == Submitted || submissionState == SubmittedNoReceipt) =>
                     p(messages("submission.completedSdltReturn.submittedTimeAndDate", utr, name, time, date))
                 case _ => ""
             }
