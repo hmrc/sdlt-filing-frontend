@@ -30,6 +30,7 @@ class PurchaserNationalInsuranceFormProvider @Inject() extends Mappings {
   def apply(purchaserName: String)(implicit messages: Messages): Form[String] =
     Form(
       "nationalInsuranceNumber" -> text(messages("purchaser.nationalInsurance.error.required", purchaserName))
+        .transform(_.replaceAll("\\s", ""), identity)
         .verifying(maxLength(nationalInsuranceNumberLength, "purchaser.nationalInsurance.error.length"))
         .verifying(regexp(formNumberRegex, messages("purchaser.nationalInsurance.error.invalid", purchaserName)))
     )
