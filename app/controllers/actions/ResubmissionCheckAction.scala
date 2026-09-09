@@ -23,7 +23,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionFilter, Result}
 import viewmodels.submission.SubmissionState
-import viewmodels.submission.SubmissionState.{AwaitingConfirmation, ReSubmit, SubmissionFailed, Submitted}
+import viewmodels.submission.SubmissionState._
 import viewmodels.tasklist.TaskListBuilder
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -54,7 +54,7 @@ class ResubmissionCheckAction @Inject()(
       case Some(AwaitingConfirmation) =>
         Future.successful(Some(Redirect(controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad())))
 
-      case Some(Submitted) =>
+      case Some(Submitted) | Some(SubmittedNoReceipt) =>
         Future.successful(Some(Redirect(controllers.submission.routes.SubmissionCompleteController.onPageLoad())))
 
       case Some(SubmissionFailed) =>

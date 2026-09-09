@@ -2354,6 +2354,7 @@ submission.submissionAccountNotActivated.link                                   
 submission.state.inProgress                                                         = In progress
 submission.state.awaitingConfirmation                                               = Awaiting confirmation
 submission.state.submitted                                                          = Submitted
+submission.state.submittedNoReceipt                                                 = Submitted - no receipt
 submission.state.submissionFailed                                                   = Submission failed
 
 submission.completedSdltReturn.submitted.title                                      = Your submitted SDLT return
@@ -2365,6 +2366,7 @@ submission.completedSdltReturn.details.summary                                  
 submission.completedSdltReturn.details.content.inProgress                           = {0}: this return has been created but not sent to HMRC.
 submission.completedSdltReturn.details.content.awaitingConfirmation                 = {0}: this return has been sent to HMRC and is now being processed.
 submission.completedSdltReturn.details.content.submitted                            = {0}: this return has been successfully submitted to HMRC.
+submission.completedSdltReturn.details.content.submittedNoReceipt                   = {0}: this return has been successfully submitted to HMRC but there was a problem generating the submission receipt reference number.
 submission.completedSdltReturn.details.content.submissionFailed                     = {0}: this return was sent to HMRC but could not be submitted due to an error.
 submission.completedSdltReturn.submittedTimeAndDate                                 = The Stamp Duty Land Tax return: {0} for {1} was submitted to HMRC at {2} on {3}.
 submission.completedSdltReturn.inset.utrn                                           = UTRN: <br><strong>{0}</strong>
