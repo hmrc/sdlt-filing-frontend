@@ -63,6 +63,28 @@ class PurchaserNationalInsuranceFormProviderSpec extends StringFieldBehaviours {
       }
     }
 
+    "must bind valid national insurance number form data with spaces" in {
+      val validNino = Seq(
+        "AA 123456A",
+        "AB98 7654C",
+        "CE1029 38D",
+        "GH564738 A",
+        "HJ 83 74 65 B",
+        " JK192837C",
+        "LM564738D ",
+        "   PR918273A   ",
+        "TW   11   22   33   B",
+        "W X 4 4 5 5 6 6"
+      )
+
+      validNino.foreach { nino =>
+        val result = form.bind(
+          Map(fieldName -> nino)
+        )
+        result.errors mustBe empty
+      }
+    }
+
     "must not bind empty strings" in {
       val result = form.bind(
         Map(
@@ -84,12 +106,6 @@ class PurchaserNationalInsuranceFormProviderSpec extends StringFieldBehaviours {
         "AA1234567",
         "AB12C456D",
         "QZ123456E",
-        " AA123456A",
-        "AA123456A ",
-        "A A123456A",
-        "AA 123456A",
-        "AA12 3456A",
-        "AA123456 A",
         "A@123456A",
         "AA123!56A",
         "AA123456#",
