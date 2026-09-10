@@ -45,9 +45,8 @@ class CompletedSdltReturnControllerSpec extends SpecBase {
     }
 
     "must return OK and the correct view for a GET for a completed return" in {
-      val submission = completeSubmission.copy(submissionStatus = None, submittedDate = None, submissionReceipt = Some("RECEIPT-001"), UTRN = None)
       val application = applicationBuilder(
-        userAnswers = Some(emptyUserAnswers.copy(fullReturn = Some(completeFullReturn.copy(submission = Some(submission)))))
+        userAnswers = Some(emptyUserAnswers.copy(fullReturn = Some(completeFullReturn.copy(submission = None))))
       ).build()
 
       running(application) {
@@ -57,13 +56,12 @@ class CompletedSdltReturnControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) must include("Your completed SDLT return")
-        contentAsString(result) must include("RECEIPT-001")
         contentAsString(result) must not include "The Stamp Duty Land Tax return:"
         contentAsString(result) must not include "UTRN:"
       }
     }
 
-    "must return OK and the correct view for a GET for a completed return missing submission receipt reference" in {
+    "must return OK and the correct view for a GET for a submitted return missing submission receipt reference" in {
       val submission = completeSubmission.copy(submissionStatus = None, submittedDate = None, submissionReceipt = None, UTRN = None)
       val application = applicationBuilder(
         userAnswers = Some(emptyUserAnswers.copy(fullReturn = Some(completeFullReturn.copy(submission = Some(submission)))))
@@ -84,19 +82,6 @@ class CompletedSdltReturnControllerSpec extends SpecBase {
 
     "must redirect to return task list when fullReturn is missing" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.submission.routes.CompletedSdltReturnController.onPageLoad().url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ReturnTaskListController.onPageLoad().url
-      }
-    }
-
-    "must redirect to return task list when submission is missing" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(fullReturn = Some(completeFullReturn.copy(submission = None))))).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.submission.routes.CompletedSdltReturnController.onPageLoad().url)

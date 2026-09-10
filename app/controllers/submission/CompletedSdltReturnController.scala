@@ -44,29 +44,28 @@ class CompletedSdltReturnController @Inject()(
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
       request.userAnswers.fullReturn.flatMap { fullReturn =>
-          fullReturn.submission.flatMap { submission =>
-            implicit val messages: Messages = messagesApi.preferred(request)
-            implicit val lang: Lang = messages.lang
-            SubmissionState.parse(submission.submissionStatus).map { submissionState =>
-              val submissionDateTime = submission.submittedDate.flatMap(dateStr =>
-                Try {
-                  val dateTime = ZonedDateTime.parse(dateStr, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-                  val submissionDate = dateTime.format(dateTimeFormat())
-                  val submissionTime = dateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
-                  (submissionDate, submissionTime)
-                }.toOption
-              )
-              Ok(view(
-                submissionState = submissionState,
-                submissionDate = submissionDateTime.map(_._1),
-                submissionTime = submissionDateTime.map(_._2),
-                purchaserName = purchaserService.mainPurchaserName(request.userAnswers).map(_.fullName),
-                utrn = submission.UTRN,
-                submissionRecieptRef = submission.submissionReceipt,
-                summaries = Summaries.from(fullReturn)
-              ))
-            }
-          }
+        val submission = fullReturn.submission
+        implicit val messages: Messages = messagesApi.preferred(request)
+        implicit val lang: Lang = messages.lang
+        SubmissionState.parse(submission.flatMap(_.submissionStatus)).map { submissionState =>
+          val submissionDateTime = submission.flatMap(_.submittedDate.flatMap(dateStr =>
+            Try {
+              val dateTime = ZonedDateTime.parse(dateStr, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+              val submissionDate = dateTime.format(dateTimeFormat())
+              val submissionTime = dateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+              (submissionDate, submissionTime)
+            }.toOption
+          ))
+          Ok(view(
+            submissionState = submissionState,
+            submissionDate = submissionDateTime.map(_._1),
+            submissionTime = submissionDateTime.map(_._2),
+            purchaserName = purchaserService.mainPurchaserName(request.userAnswers).map(_.fullName),
+            utrn = submission.flatMap(_.UTRN),
+            submissionRecieptRef = submission.flatMap(_.submissionReceipt),
+            summaries = Summaries.from(fullReturn)
+          ))
+        }
       }.getOrElse(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
   }
 }
