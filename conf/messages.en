@@ -2052,7 +2052,7 @@ submission.beforeYouStart.p1.text                                               
 submission.beforeYouStart.p1.linkText                                               = view and print this return for your client’s approval before submitting (opens in new tab)
 submission.beforeYouStart.p2                                                        = Once your return is submitted, you will receive:
 submission.beforeYouStart.li1                                                       = a Unique Transaction Reference Number (UTRN)
-submission.beforeYouStart.li2                                                       = an SDLT 5 certificate (the submission receipt)
+submission.beforeYouStart.li2                                                       = an SDLT5 certificate (the submission receipt)
 submission.beforeYouStart.p3                                                        = You cannot amend your return online once it’s submitted.
 
 submission.whoAreYouSubmittingFor.title                                             = Who are you submitting this return for?
