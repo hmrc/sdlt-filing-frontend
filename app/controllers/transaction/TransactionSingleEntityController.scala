@@ -93,7 +93,7 @@ class TransactionSingleEntityController @Inject() (
     else if (targets.contains(Pages.LandPropertyType)) controllers.transaction.routes.ReasonForReliefController.onPageLoad(CheckMode).url
     else if (targets.contains(Pages.EffectiveDate))    controllers.transaction.routes.TransactionEffectiveDateController.onPageLoad(CheckMode).url
     else if (targets.contains(Pages.ContractDate))     controllers.transaction.routes.TransactionDateOfContractController.onPageLoad(CheckMode).url
-    else                                               controllers.transaction.routes.ReasonForReliefController.onPageLoad(CheckMode).url
+    else                                               controllers.transaction.routes.PurchaserEligibleToClaimReliefController.onPageLoad(CheckMode).url
   }
 
   private def ctaKeyFor(failure: CrossFlowFailure): String = {
