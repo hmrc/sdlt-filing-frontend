@@ -24,9 +24,18 @@ import javax.inject.Inject
 
 class RegistrationNumberFormProvider @Inject() extends Mappings with Constraints{
 
-  def apply(purchaserName: String)(implicit messages: Messages): Form[String] =
+  def apply(purchaserName: String)(implicit messages: Messages): Form[String] = {
     Form(
       "registrationNumber" -> text(messages("purchaser.registrationNumber.error.required", purchaserName))
+        .transform(
+          raw => {
+            val up = Option(raw).getOrElse("").trim.toUpperCase
+            val noGb = if (up.startsWith("GB")) up.drop(2) else up
+            noGb.replaceAll("\\s+", "")
+          },
+          identity
+        )
         .verifying(vatCheckF16Validation("purchaser.registrationNumber.error", purchaserName))
     )
+  }
 }
