@@ -186,10 +186,10 @@ object F28FtbCap500k extends GuardRule:
   private val Cap: BigDecimal = 500000
 
   protected def appliesTo(ua: UserAnswers): Boolean =
-    isClaimingRelief(ua) && isReason(ua, "32") && in500kWindow(ua)
+    isClaimingRelief(ua) && isReason(ua, "32") && (inWindowBeforeFtbStart(ua) || in500kWindow(ua))
 
   protected def isValid(ua: UserAnswers): Boolean =
-    totalPremium(ua).forall(_ <= Cap)
+    totalPremium(ua).forall(_ <= Cap) && in500kWindow(ua)
 
   protected def messageKey              = "crossflow.relief.firstTimeBuyer.over500k"
   protected override def inlineErrorKey = "crossflow.relief.firstTimeBuyer.over500k.inline"
@@ -199,6 +199,11 @@ object F28FtbCap500k extends GuardRule:
       val inOriginalWindow = !d.isBefore(Dates.ftbStart) && d.isBefore(Dates.ftbCap625FromSept2022)
       val inPost2025Window = !d.isBefore(Dates.ftbCap500FromApril2025)
       inOriginalWindow || inPost2025Window
+    }
+
+  private def inWindowBeforeFtbStart(ua: UserAnswers): Boolean =
+    effectiveDate(ua).exists { d =>
+      d.isBefore(Dates.ftbStart)
     }
 
   protected override def body: CrossFlowBody = CrossFlowBody.WithBullets(
