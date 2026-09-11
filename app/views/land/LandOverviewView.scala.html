@@ -115,6 +115,8 @@
         @maybeSummaryList match {
             case Some(summary) => {
 
+                @p("land.landOverview.p1")
+
                 @paginationInfoText.map(p(_))
 
                 @govukSummaryList(summary)
@@ -125,7 +127,7 @@
                     @govukRadios(
                         RadiosViewModel.yesNo(
                             field = form("value"),
-                            legend = LegendViewModel(messages("land.landOverview.noLand.subHeadingNoLands")).asPageSubHeading()
+                            legend = LegendViewModel(messages("land.landOverview.subHeading")).asPageSubHeading()
                         )
                     )
 
