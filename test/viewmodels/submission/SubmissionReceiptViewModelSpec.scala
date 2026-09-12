@@ -22,6 +22,8 @@ import play.api.i18n.Messages
 import play.api.test.Helpers.stubMessages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 
+import java.time.LocalDateTime
+
 class SubmissionReceiptViewModelSpec extends SpecBase {
 
   private implicit val messages: Messages = stubMessages()
@@ -37,14 +39,28 @@ class SubmissionReceiptViewModelSpec extends SpecBase {
       SubmissionReceiptViewModel(fullReturn) mustBe None
     }
 
-    "return None when the submission has no submission receipt" in {
+    "return a view model with no receipt number when the submission has no submission receipt" in {
       val fullReturn = completeFullReturn.copy(submission = Some(completeSubmission.copy(submissionReceipt = None)))
-      SubmissionReceiptViewModel(fullReturn) mustBe None
+      val viewModel = SubmissionReceiptViewModel(fullReturn).value
+
+      viewModel.submissionReceiptNumber mustBe None
+      viewModel.table.rows.map(_.last.content) must contain(Text("UTRN123456789012"))
     }
 
-    "return None when the submission has no submission request date" in {
+    "return a view model with no time or date when the submission has no submission request date" in {
       val fullReturn = completeFullReturn.copy(submission = Some(completeSubmission.copy(submissionRequestDate = None)))
-      SubmissionReceiptViewModel(fullReturn) mustBe None
+      val viewModel = SubmissionReceiptViewModel(fullReturn).value
+
+      viewModel.submissionTime mustBe None
+      viewModel.submissionDate mustBe None
+    }
+
+    "return a view model with no time or date when the submission request date cannot be parsed" in {
+      val fullReturn = completeFullReturn.copy(submission = Some(completeSubmission.copy(submissionRequestDate = Some("not-a-date"))))
+      val viewModel = SubmissionReceiptViewModel(fullReturn).value
+
+      viewModel.submissionTime mustBe None
+      viewModel.submissionDate mustBe None
     }
 
     "return the purchaser's full name for an individual purchaser" in {
@@ -62,17 +78,33 @@ class SubmissionReceiptViewModelSpec extends SpecBase {
 
     "format the submission time as a lowercase 12-hour clock time" in {
       val viewModel = SubmissionReceiptViewModel(completeFullReturn).value
-      viewModel.submissionTime mustEqual "10:15am"
+      viewModel.submissionTime mustEqual Some("10:15am")
     }
 
     "format the submission date in the site-standard long date format" in {
       val viewModel = SubmissionReceiptViewModel(completeFullReturn).value
-      viewModel.submissionDate mustEqual "15 October 2024"
+      viewModel.submissionDate mustEqual Some("15 October 2024")
+    }
+
+    "format the time and date when the submission request date is in the backend timestamp format" in {
+      val fullReturn = completeFullReturn.copy(submission = Some(completeSubmission.copy(submissionRequestDate = Some("2024-10-15 10:15:00"))))
+      val viewModel = SubmissionReceiptViewModel(fullReturn).value
+
+      viewModel.submissionTime mustEqual Some("10:15am")
+      viewModel.submissionDate mustEqual Some("15 October 2024")
+    }
+
+    "format the time and date when the submission request date has fractional seconds" in {
+      val fullReturn = completeFullReturn.copy(submission = Some(completeSubmission.copy(submissionRequestDate = Some("2024-10-15 10:15:00.010"))))
+      val viewModel = SubmissionReceiptViewModel(fullReturn).value
+
+      viewModel.submissionTime mustEqual Some("10:15am")
+      viewModel.submissionDate mustEqual Some("15 October 2024")
     }
 
     "use the submission receipt field, not the UTRN, as the submission receipt number" in {
       val viewModel = SubmissionReceiptViewModel(completeFullReturn).value
-      viewModel.submissionReceiptNumber mustEqual "RECEIPT-001"
+      viewModel.submissionReceiptNumber mustEqual Some("RECEIPT-001")
     }
 
     "build a table with the UTRN, address, purchaser, vendor, transaction type, effective date, agent reference, title number and NLPG UPRN rows" in {
@@ -132,6 +164,38 @@ class SubmissionReceiptViewModelSpec extends SpecBase {
       val viewModel = SubmissionReceiptViewModel(fullReturn).value
 
       viewModel.table.rows.size mustEqual 6
+    }
+  }
+
+  ".parseSubmissionRequestDate" - {
+
+    "parse the backend timestamp format without fractional seconds" in {
+      SubmissionReceiptViewModel.parseSubmissionRequestDate("2026-08-27 17:10:20") mustBe
+        Some(LocalDateTime.of(2026, 8, 27, 17, 10, 20))
+    }
+
+    "parse the backend timestamp format with fractional seconds" in {
+      SubmissionReceiptViewModel.parseSubmissionRequestDate("2026-09-11 12:32:36.010") mustBe
+        Some(LocalDateTime.of(2026, 9, 11, 12, 32, 36, 10000000))
+    }
+
+    "parse an ISO local date time" in {
+      SubmissionReceiptViewModel.parseSubmissionRequestDate("2026-08-27T17:10:20") mustBe
+        Some(LocalDateTime.of(2026, 8, 27, 17, 10, 20))
+    }
+
+    "parse an ISO offset date time" in {
+      SubmissionReceiptViewModel.parseSubmissionRequestDate("2024-10-15T10:15:00Z") mustBe
+        Some(LocalDateTime.of(2024, 10, 15, 10, 15, 0))
+    }
+
+    "trim surrounding whitespace before parsing" in {
+      SubmissionReceiptViewModel.parseSubmissionRequestDate("  2026-08-27 17:10:20  ") mustBe
+        Some(LocalDateTime.of(2026, 8, 27, 17, 10, 20))
+    }
+
+    "return None when the value cannot be parsed" in {
+      SubmissionReceiptViewModel.parseSubmissionRequestDate("27/08/2026") mustBe None
     }
   }
 }

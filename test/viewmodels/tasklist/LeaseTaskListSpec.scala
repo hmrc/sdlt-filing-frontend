@@ -586,7 +586,7 @@ class LeaseTaskListSpec extends SpecBase {
             val result = LeaseTaskList.buildLeaseRow(fullReturnIncompleteLease, cf5aFailureStatus)
 
             result.status mustBe TLInvalid
-            result.url must endWith("update-lease-type")
+            result.url must endWith("/stamp-duty-land-tax-filing/update-about-the-lease")
           }
         }
 

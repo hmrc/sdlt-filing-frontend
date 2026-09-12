@@ -19,6 +19,7 @@ package controllers.submission
 import config.CurrencyFormatter.BigDecimalToCurrency
 import controllers.actions.*
 import models.{GetReturnByRefRequest, UserAnswers}
+import play.api.Logging
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -27,21 +28,24 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.DateTimeFormats.dateTimeFormat
 import views.html.submission.SubmissionCompleteView
 
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
+import java.time.format.{DateTimeFormatter, DateTimeFormatterBuilder}
+import java.time.{LocalDateTime, OffsetDateTime}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class SubmissionCompleteController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       activatedIdentify: ActivatedIdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       fullReturnService:        FullReturnService,
-                                       sessionRepository: SessionRepository,
-                                       view: SubmissionCompleteView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                              override val messagesApi: MessagesApi,
+                                              activatedIdentify: ActivatedIdentifierAction,
+                                              getData: DataRetrievalAction,
+                                              requireData: DataRequiredAction,
+                                              val controllerComponents: MessagesControllerComponents,
+                                              fullReturnService:        FullReturnService,
+                                              sessionRepository: SessionRepository,
+                                              view: SubmissionCompleteView
+                                            )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
+
+  import SubmissionCompleteController.*
 
   def onPageLoad: Action[AnyContent] = (activatedIdentify andThen getData andThen requireData).async {
     implicit request =>
@@ -55,11 +59,32 @@ class SubmissionCompleteController @Inject()(
           .flatMap { fullReturn =>
             val userAnswers = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = request.userAnswers.storn)
             sessionRepository.set(userAnswers).map { _ =>
+
+              implicit val messages: Messages = messagesApi.preferred(request)
+              implicit val lang: Lang = messages.lang
+
               val utrn = fullReturn.submission.flatMap(_.UTRN)
-              val submissionRequestDate = fullReturn.submission.flatMap(_.submissionRequestDate)
               val submissionReceipt = fullReturn.submission.flatMap(_.submissionReceipt)
               val isSubmittedNoReceipt = fullReturn.submission.flatMap(_.submissionStatus.map(_.equalsIgnoreCase("SUBMITTED_NO_RECEIPT"))).getOrElse(false)
               val maybeEmail = fullReturn.submission.flatMap(_.email)
+
+              val rawSubmissionRequestDate = fullReturn.submission.flatMap(_.submissionRequestDate)
+
+              if (rawSubmissionRequestDate.isEmpty) {
+                logger.warn(s"[SubmissionComplete][onPageLoad] no submissionRequestDate present for returnId=$id")
+              }
+
+              val deadline: Option[String] =
+                rawSubmissionRequestDate
+                  .flatMap { raw =>
+                    val parsed = parseSubmissionRequestDate(raw)
+                    if (parsed.isEmpty) {
+                      logger.warn(s"[SubmissionComplete][onPageLoad] unparseable submissionRequestDate:nfor returnId=$id")
+                    }
+                    parsed
+                  }
+                  .map(_.plusDays(14).format(dateTimeFormat()))
+
               val totalTaxDue: Option[String] =
                 List(
                   fullReturn.taxCalculation.flatMap(_.taxDue),
@@ -71,22 +96,32 @@ class SubmissionCompleteController @Inject()(
                   .reduceOption(_ + _)
                   .map(_.toCurrency)
 
-              (utrn, submissionRequestDate, totalTaxDue, maybeEmail) match {
-                case (Some(utrn), Some(submissionRequestDate), Some(totalTaxDue), maybeEmail) =>
-
-                  implicit val messages: Messages = messagesApi.preferred(request)
-                  implicit val lang: Lang = messages.lang
-                  val deadline = ZonedDateTime.parse(
-                    submissionRequestDate,
-                    DateTimeFormatter.ISO_OFFSET_DATE_TIME
-                  ).plusDays(14).format(dateTimeFormat())
-
-                  Ok(view(utrn, submissionReceipt, isSubmittedNoReceipt, deadline, totalTaxDue, maybeEmail))
-                case (_, _, _, _) =>
+              (utrn, totalTaxDue) match {
+                case (Some(utrn), Some(totalTaxDue)) =>
+                  Ok(view(utrn, submissionReceipt, isSubmittedNoReceipt, deadline.getOrElse(""), totalTaxDue, maybeEmail))
+                case _ =>
+                  logger.warn(s"[SubmissionComplete][onPageLoad] missing utrn or totalTaxDue for returnId=$id - redirecting to task list")
                   Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
               }
             }
           }
       }
+  }
+}
+
+object SubmissionCompleteController {
+
+  private val backendTimestampFormat: DateTimeFormatter =
+    new DateTimeFormatterBuilder()
+      .appendPattern("yyyy-MM-dd HH:mm:ss")
+      .appendFraction(java.time.temporal.ChronoField.NANO_OF_SECOND, 0, 9, true)
+      .toFormatter()
+
+  private[submission] def parseSubmissionRequestDate(raw: String): Option[LocalDateTime] = {
+    val trimmed = raw.trim
+    Try(LocalDateTime.parse(trimmed, backendTimestampFormat))
+      .orElse(Try(LocalDateTime.parse(trimmed)))
+      .orElse(Try(OffsetDateTime.parse(trimmed).toLocalDateTime))
+      .toOption
   }
 }

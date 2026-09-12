@@ -108,13 +108,7 @@
     @p("submission.submissionComplete.p2")
 
     <ul class="govuk-list govuk-list--bullet">
-        <li>
-            @paragraphWithLink(
-                messageKey = "submission.submissionComplete.b1",
-                linkKey = "submission.submissionComplete.b1.link",
-                textKey = "submission.submissionComplete.b1.linkText"
-            )
-        </li>
+        <li>@link(link = controllers.submission.routes.SubmissionReceiptController.onPageLoad().url, messageKey = "submission.submissionComplete.b1.linkText") @messages("submission.submissionComplete.b1")</li>
         <li>@messages("submission.submissionComplete.b2")</li>
         <li>@messages("submission.submissionComplete.b3")</li>
     </ul>
@@ -137,10 +131,15 @@
         content = HtmlContent(insetContent)
     ))
 
-    <div class="govuk-body">
-        @link(
-            link = appConfig.sdltManagementRedirectUrl,
-            messageKey = "submission.submissionComplete.link3"
+    <div class="govuk-button-group">
+        @govukButton(
+            ButtonViewModel(messages("site.exit.return")).asSecondaryButton()
+            .asLink(appConfig.sdltManagementRedirectUrl)
+        )
+
+        @govukButton(
+            ButtonViewModel(messages("site.delete.return")).asWarningButton()
+            .asLink(controllers.routes.DeleteReturnController.onPageLoad().url)
         )
     </div>
 
