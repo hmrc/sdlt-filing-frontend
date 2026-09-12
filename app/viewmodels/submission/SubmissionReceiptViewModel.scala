@@ -23,37 +23,52 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{Table, TableRow}
 import utils.DateTimeFormats.{dateTimeFormat, parseDate}
 
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
+import java.time.format.{DateTimeFormatter, DateTimeFormatterBuilder}
+import java.time.temporal.ChronoField
+import java.time.{LocalDateTime, OffsetDateTime}
+import scala.util.Try
 
 case class SubmissionReceiptViewModel(
-                                        purchaserName: String,
-                                        submissionTime: String,
-                                        submissionDate: String,
-                                        submissionReceiptNumber: String,
-                                        table: Table
-                                      )
+                                       purchaserName: String,
+                                       submissionTime: Option[String],
+                                       submissionDate: Option[String],
+                                       submissionReceiptNumber: Option[String],
+                                       table: Table
+                                     )
 
 object SubmissionReceiptViewModel {
 
   private val timeFormatter = DateTimeFormatter.ofPattern("h:mma")
   private val bold = "govuk-!-font-weight-bold"
 
+  private val backendTimestampFormat: DateTimeFormatter =
+    new DateTimeFormatterBuilder()
+      .appendPattern("yyyy-MM-dd HH:mm:ss")
+      .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)
+      .toFormatter()
+
+  private[submission] def parseSubmissionRequestDate(raw: String): Option[LocalDateTime] = {
+    val trimmed = raw.trim
+    Try(LocalDateTime.parse(trimmed, backendTimestampFormat))
+      .orElse(Try(LocalDateTime.parse(trimmed)))
+      .orElse(Try(OffsetDateTime.parse(trimmed).toLocalDateTime))
+      .toOption
+  }
+
   def apply(fullReturn: FullReturn)(implicit messages: Messages): Option[SubmissionReceiptViewModel] =
     for {
-      submission    <- fullReturn.submission
-      utrn          <- submission.UTRN
-      receiptNumber <- submission.submissionReceipt
-      requestDate   <- submission.submissionRequestDate
+      submission <- fullReturn.submission
+      utrn       <- submission.UTRN
     } yield {
       implicit val lang: Lang = messages.lang
-      val parsedDate = ZonedDateTime.parse(requestDate, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+
+      val parsedDate = submission.submissionRequestDate.flatMap(parseSubmissionRequestDate)
 
       SubmissionReceiptViewModel(
         purchaserName           = purchaserName(fullReturn),
-        submissionTime          = parsedDate.format(timeFormatter).toLowerCase,
-        submissionDate          = parsedDate.toLocalDate.format(dateTimeFormat()),
-        submissionReceiptNumber = receiptNumber,
+        submissionTime          = parsedDate.map(_.format(timeFormatter).toLowerCase),
+        submissionDate          = parsedDate.map(_.toLocalDate.format(dateTimeFormat())),
+        submissionReceiptNumber = submission.submissionReceipt,
         table                   = buildTable(fullReturn, utrn)
       )
     }

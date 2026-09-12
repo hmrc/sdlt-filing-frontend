@@ -19,6 +19,7 @@ site.govuk                                                                      
 site.save.continue                                                                  = Save and continue
 site.save.exit                                                                      = Save and exit
 site.delete.return                                                                  = Delete return
+site.exit.return                                                                    = Exit return
 site.confirm.submit                                                                 = Confirm and submit
 site.success                                                                        = Success
 site.section.prefix                                                                 = This section is
@@ -54,7 +55,7 @@ site.error.systemError.p3.linkText                                              
 
 # Section Captions
 site.beforeYouStart.heading                                                         = Before you start
-site.prelim.caption                                                                 = Preliminary Questions
+site.prelim.caption                                                                 = Preliminary questions
 site.vendor.caption                                                                 = About the vendor
 site.purchaser.caption                                                              = About the purchaser
 site.agent.caption                                                                  = About the agent
@@ -811,7 +812,7 @@ purchaser.purchaserOverview.mainPurchaserIncomplete.part1                       
 purchaser.purchaserOverview.mainPurchaserIncomplete.part2                           = update {0}’s details
 purchaser.purchaserOverview.purchaser1                                              = (purchaser 1)
 purchaser.purchaserOverview.hint.link                                               = /stamp-duty-land-tax-filing/about-the-purchaser/change-purchaser-1
-purchaser.purchaserOverview.hint.suffix                                             = Change Purchaser 1
+purchaser.purchaserOverview.hint.suffix                                             = Change purchaser 1
 
 purchaser.changePurchaserOne.title                                                  = Change purchaser 1 - About the purchaser
 purchaser.changePurchaserOne.heading                                                = Change purchaser 1
@@ -2272,8 +2273,7 @@ submission.submissionComplete.link2                                             
 submission.submissionComplete.heading1                                              = What happens next
 submission.submissionComplete.p1                                                    = HMRC have sent a confirmation email to {0}.
 submission.submissionComplete.p2                                                    = You must:
-submission.submissionComplete.b1                                                    = <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a> – this is official evidence that your return has been successfully submitted
-submission.submissionComplete.b1.link                                               = /stamp-duty-land-tax-filing/submit-your-return/submission-receipt-and-SDLT5
+submission.submissionComplete.b1                                                    = – this is official evidence that your return has been successfully submitted
 submission.submissionComplete.b1.linkText                                           = save your SDLT 5 certificate (opens in new tab)
 submission.submissionComplete.b2                                                    = send your SDLT5 to HM Land Registry when registering the land or property
 submission.submissionComplete.b3                                                    = pay the SDLT due within 14 days of submission
@@ -2326,6 +2326,7 @@ submission.resubmitYourReturn.link                                              
 submission.submissionReceipt.title                                                  = Submission receipt and electronic SDLT5 certificate
 submission.submissionReceipt.heading                                                = Submission Receipt and Electronic SDLT 5 Certificate
 submission.submissionReceipt.p1                                                     = The Stamp Duty Land Tax return for {0} was submitted to HMRC at {1} on {2}.
+submission.submissionReceipt.p4                                                     = The Stamp Duty Land Tax return for {0} was submitted to HMRC.
 submission.submissionReceipt.inset                                                  = Submission receipt reference number:
 submission.submissionReceipt.table.utrn                                             = UTRN
 submission.submissionReceipt.table.address                                          = Property address
