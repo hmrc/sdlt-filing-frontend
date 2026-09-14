@@ -392,18 +392,6 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
       F28FtbCap500k.validate(ua) mustBe None
     }
 
-    "must not apply when the effective date is in the middle window" in {
-      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2023, 9, 24)), totalPremium = Some("600000.00"))
-
-      F28FtbCap500k.validate(ua) mustBe None
-    }
-
-    "must not apply when the effective date is before FTB relief started" in {
-      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(ftbStart.minusDays(1)), totalPremium = Some("600000.00"))
-
-      F28FtbCap500k.validate(ua) mustBe None
-    }
-
     "must pass when premium is exactly £500,000 in the original window" in {
       val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2020, 6, 1)), totalPremium = Some("500000.00"))
 
@@ -424,6 +412,42 @@ class CrossFlowRulesSpec extends SpecBase with Matchers {
 
     "must fire when premium is over £500,000 in the post-2025 window" in {
       val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2025, 6, 1)), totalPremium = Some("600000.00"))
+
+      F28FtbCap500k.validate(ua).map(_.ruleId) mustBe Some("F28-cap500k")
+    }
+
+    "must pass when premium is exactly £500,000 in the post-2025 window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2025, 6, 1)), totalPremium = Some("500000.00"))
+
+      F28FtbCap500k.validate(ua) mustBe None
+    }
+
+    "must pass when premium is under £500,000 in the post-2025 window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2025, 6, 1)), totalPremium = Some("450000.00"))
+
+      F28FtbCap500k.validate(ua) mustBe None
+    }
+
+    "must fire when premium is over £500,000 and the effective date is in the original window" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(LocalDate.of(2020, 6, 1)), totalPremium = Some("600000.00"))
+
+      F28FtbCap500k.validate(ua).map(_.ruleId) mustBe Some("F28-cap500k")
+    }
+
+    "must fire when premium is over £500,000 and the effective date is before FTB relief started" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(ftbStart.minusDays(1)), totalPremium = Some("600000.00"))
+
+      F28FtbCap500k.validate(ua).map(_.ruleId) mustBe Some("F28-cap500k")
+    }
+
+    "must fire when premium is exactly £500,000 and the effective date is before FTB relief started" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(ftbStart.minusDays(1)), totalPremium = Some("500000.00"))
+
+      F28FtbCap500k.validate(ua).map(_.ruleId) mustBe Some("F28-cap500k")
+    }
+
+    "must fire when premium is under £500,000 and the effective date is before FTB relief started" in {
+      val ua = answersWith(reliefReason = Some(ReasonForRelief.FirstTimeBuyer), effectiveDate = Some(ftbStart.minusDays(1)), totalPremium = Some("450000.00"))
 
       F28FtbCap500k.validate(ua).map(_.ruleId) mustBe Some("F28-cap500k")
     }

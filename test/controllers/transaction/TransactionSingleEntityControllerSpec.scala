@@ -340,7 +340,7 @@ class TransactionSingleEntityControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "must default Continue to the relief reason page when targets don't match a date/property page" in {
+      "must default Continue to the claim relief page when targets don't match a date/property page" in {
 
         val crossFlow   = crossFlowWithFailures(Seq(reliefReasonOnlyFailure))
         val application = appWith(userAnswersWithCommittedTransaction, crossFlow)
@@ -351,7 +351,7 @@ class TransactionSingleEntityControllerSpec extends SpecBase with MockitoSugar {
           val content = contentAsString(result)
 
           status(result) mustEqual OK
-          content must include(controllers.transaction.routes.ReasonForReliefController.onPageLoad(CheckMode).url)
+          content must include(controllers.transaction.routes.PurchaserEligibleToClaimReliefController.onPageLoad(CheckMode).url)
         }
       }
     }
