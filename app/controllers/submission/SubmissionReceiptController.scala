@@ -17,7 +17,7 @@
 package controllers.submission
 
 import controllers.actions.*
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.submission.SubmissionReceiptViewModel
@@ -35,7 +35,7 @@ class SubmissionReceiptController @Inject()(
                                             ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (activatedIdentify andThen getData andThen requireData) { implicit request =>
-    implicit val messages = messagesApi.preferred(request)
+    implicit val messages: Messages = messagesApi.preferred(request)
 
     val maybeViewModel = for {
       fullReturn <- request.userAnswers.fullReturn
