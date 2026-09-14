@@ -1601,11 +1601,11 @@ taxCalculation.calculation.returnToTaxCalculation                               
 taxCalculation.sdltSelfAssessment.checkYourAnswersLabel                             = Self-assessed SDLT due
 taxCalculation.sdltSelfAssessment.change.hidden                                     = Self-assessed SDLT due
 
-taxCalculation.sdltSelfAssessment.error.required                                    = Enter the self-assessed amount of SDLT, in pounds
-taxCalculation.sdltSelfAssessment.error.invalidNumeric                              = The self-assessed amount of SDLT must only include commas and numbers 0 to 9
-taxCalculation.sdltSelfAssessment.error.invalidWholeNumber                          = Enter the self-assessed amount of SDLT in whole pounds
-taxCalculation.sdltSelfAssessment.error.maximum                                     = The self-assessed amount of SDLT must be equal to or less than £9,999,999,999
-taxCalculation.sdltSelfAssessment.error.length                                      = The self-assessed amount of SDLT must be 16 characters or fewer
+taxCalculation.sdltSelfAssessment.error.required                                    = Enter the self-assessed amount of SDLT due, in pounds
+taxCalculation.sdltSelfAssessment.error.invalidNumeric                              = The self-assessed amount of SDLT due must only include commas and numbers 0 to 9
+taxCalculation.sdltSelfAssessment.error.invalidWholeNumber                          = Enter the self-assessed amount of SDLT due in whole pounds
+taxCalculation.sdltSelfAssessment.error.maximum                                     = The self-assessed amount of SDLT due must be equal to or less than £9,999,999,999
+taxCalculation.sdltSelfAssessment.error.length                                      = The self-assessed amount of SDLT due must be 16 characters or fewer
 
 taxCalculation.taxDueOnNpv.title                                                    = What is the tax due on the NPV?
 taxCalculation.taxDueOnNpv.heading                                                  = SDLT self-assessment: NPV
@@ -1644,11 +1644,11 @@ taxCalculation.totalAmountDue.title                                             
 taxCalculation.totalAmountDue.sdltDue                                               = SDLT due
 taxCalculation.totalAmountDue.penalties                                             = Penalties
 taxCalculation.totalAmountDue.total                                                 = Total
-taxCalculation.totalAmountDue.error.required                                        = Enter the total amount you intend to pay, in pounds
-taxCalculation.totalAmountDue.error.invalidNumeric                                  = The amount you intend to pay must only include commas and numbers 0 to 9
-taxCalculation.totalAmountDue.error.invalidWholeNumber                              = Enter the amount you intend to pay in whole pounds
-taxCalculation.totalAmountDue.error.maximum                                         = The amount you intend to pay must be equal to or less than £9,999,999,999
-taxCalculation.totalAmountDue.error.length                                          = The amount you intend to pay must be 16 characters or fewer
+taxCalculation.totalAmountDue.error.required                                        = Enter the amount you intend to pay with this return, in pounds
+taxCalculation.totalAmountDue.error.invalidNumeric                                  = The amount you intend to pay with this return must only include commas and numbers 0 to 9
+taxCalculation.totalAmountDue.error.invalidWholeNumber                              = Enter the amount you intend to pay with this return in whole pounds
+taxCalculation.totalAmountDue.error.maximum                                         = The amount you intend to pay with this return must be equal to or less than £9,999,999,999
+taxCalculation.totalAmountDue.error.length                                          = The amount you intend to pay with this return must be 16 characters or fewer
 
 taxCalculation.confirmEffectiveDateOfTransaction.title                              = Is this the effective date of the transaction?
 taxCalculation.confirmEffectiveDateOfTransaction.heading                            = Is {0} the effective date of the transaction?
