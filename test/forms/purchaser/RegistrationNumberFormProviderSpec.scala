@@ -49,6 +49,26 @@ class RegistrationNumberFormProviderSpec extends StringFieldBehaviours {
       result.errors mustBe Nil
     }
 
+    "bind successfully when a valid registration number as GB at the start" in {
+      val result = form.bind(Map(fieldName -> "GB438573857"))
+      result.errors mustBe Nil
+    }
+
+    "bind successfully when a valid registration number has spaces" in {
+      val validVATs = Seq(
+        "GB 43 85 73 85 7",
+        "4 3 8 5 7 3 8 5 7",
+        "   438573857   ",
+        " 438573857",
+        "438573857 ",
+        "GB 438573857"
+      )
+
+      validVATs.foreach { vatNum =>
+        val result = form.bind(Map(fieldName -> vatNum))
+        result.errors mustBe Nil
+      }
+    }
 
     "fail with length error when fewer than exact length" in {
       val tooShortValues = Seq("1", "12", "123", "1234", "12345", "123456", "1234567", "12345678", "2345678")
@@ -59,7 +79,7 @@ class RegistrationNumberFormProviderSpec extends StringFieldBehaviours {
 
     }
     "fail with regex error for non-numeric input (ignoring args)" in {
-      val badValues = Seq("ABCDEFGHI", "12345ABCD", "12 345678", "1234-5678")
+      val badValues = Seq("ABCDEFGHI", "12345ABCD", "12£45678", "1234-5678")
       badValues.foreach { v =>
         val result = form.bind(Map(fieldName -> v))
         result.errors.map(_.message) must contain only "purchaser.registrationNumber.error.regex.invalid"
