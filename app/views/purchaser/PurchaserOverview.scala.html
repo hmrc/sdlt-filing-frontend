@@ -29,7 +29,8 @@
         govukRadios: GovukRadios,
         h1: h1,
         caption: Caption,
-        govukNotificationBanner: GovukNotificationBanner
+        govukNotificationBanner: GovukNotificationBanner,
+        link: link
 )
 @(
         maybeSummaryList: Option[SummaryList],
@@ -146,7 +147,7 @@
                 @pagination.map(govukPagination(_))
 
                 @if(showChangeLink) {
-                    @Html(s"""<div class="govuk-hint"><a href="${messages("purchaser.purchaserOverview.hint.link")}" class="govuk-link" rel="noopener noreferrer">${messages("purchaser.purchaserOverview.hint.suffix")}</a></div>""")
+                    <p>@link(link = controllers.purchaser.routes.ChangePurchaserOneController.onPageLoad().url, messages("purchaser.purchaserOverview.hint.suffix"))</p>
                 }
 
                 @if(!errorCalc) {

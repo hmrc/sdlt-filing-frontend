@@ -37,7 +37,14 @@
     @caption(messages("site.submission.caption"))
     @h1("submission.submissionReceipt.heading")
 
-    @p(messages("submission.submissionReceipt.p1", viewModel.purchaserName, viewModel.submissionTime, viewModel.submissionDate))
+    @(viewModel.submissionTime, viewModel.submissionDate) match {
+        case (Some(submissionTime), Some(submissionDate)) => {
+            @p(messages("submission.submissionReceipt.p1", viewModel.purchaserName, submissionTime, submissionDate))
+        }
+        case _ => {
+            @p(messages("submission.submissionReceipt.p4", viewModel.purchaserName))
+        }
+    }
 
     @govukInsetText(InsetText(
         content = HtmlContent(s"${messages("submission.submissionReceipt.inset")}<br><strong>${viewModel.submissionReceiptNumber}</strong>")
@@ -53,10 +60,10 @@
     </div>
 
     <div class="govuk-body">
-        @link(
-            link = appConfig.sdltManagementRedirectUrl,
-            messageKey = "submission.submissionReceipt.returnLink"
-        )
+    @link(
+        link = appConfig.sdltManagementRedirectUrl,
+        messageKey = "submission.submissionReceipt.returnLink"
+    )
     </div>
 
     <script nonce="@CSPNonce.get">
