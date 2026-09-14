@@ -210,14 +210,9 @@ trait Constraints {
 
     def vatF16Check(errorKey: String): Constraint[String] = {
 
-      def validateVAT(raw: String): Boolean = Try {
-        val normalized = {
-          val up = Option(raw).getOrElse("").trim.toUpperCase
-          val noGb = if (up.startsWith("GB")) up.drop(2) else up
-          noGb.replaceAll("\\s+", "")
-        }
-        val bodyDigits = normalized.substring(0, 7)
-        val checkDigitsValue = normalized.substring(7, 9).toInt
+      def validateVAT(value: String): Boolean = Try {
+        val bodyDigits = value.substring(0, 7)
+        val checkDigitsValue = value.substring(7, 9).toInt
 
         val weights = Array(8, 7, 6, 5, 4, 3, 2)
         val sum = bodyDigits
@@ -238,15 +233,15 @@ trait Constraints {
       }
 
       Constraint[String] { str =>
-        if (validateVAT(str)) Valid else Invalid(messages(s"${errorKey}.invalid", purchaserName))
+        if (validateVAT(str)) Valid else Invalid(messages(s"$errorKey.invalid", purchaserName))
       }
     }
 
     firstError(
-      regexp("^[0-9]*$", messages(s"${errorKey}.regex.invalid", purchaserName)),
-      minLength(9, messages(s"${errorKey}.length", purchaserName)),
-      maxLength(9, messages(s"${errorKey}.length", purchaserName)),
-      vatF16Check(s"${errorKey}")
+      regexp("^[0-9]*$", messages(s"$errorKey.regex.invalid", purchaserName)),
+      minLength(9, messages(s"$errorKey.length", purchaserName)),
+      maxLength(9, messages(s"$errorKey.length", purchaserName)),
+      vatF16Check(errorKey)
     )
   }
 
