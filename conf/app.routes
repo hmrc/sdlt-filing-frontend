@@ -19,11 +19,11 @@ GET         /account/sign-out-survey                                            
 GET         /account/sign-out                                                                        controllers.auth.AuthController.signOutNoSurvey()
 GET         /account/signed-out                                                                      controllers.auth.SignedOutController.onPageLoad()
 
-GET         /no-return-ref                                                                           controllers.NoReturnReferenceController.onPageLoad()
-POST        /no-return-ref                                                                           controllers.NoReturnReferenceController.onSubmit()
+GET         /cannot-reach-this-page                                                                  controllers.NoReturnReferenceController.onPageLoad()
+POST        /cannot-reach-this-page                                                                  controllers.NoReturnReferenceController.onSubmit()
 
 GET         /unauthorised                                                                            controllers.UnauthorisedController.onPageLoad()
-GET         /unauthorised-inividual                                                                  controllers.UnauthorisedIndividualController.onPageLoad()
+GET         /user-not-authorised                                                                     controllers.UnauthorisedIndividualController.onPageLoad()
 
 GET         /preliminary-questions/purchaser-name                                                    controllers.preliminary.PurchaserSurnameOrCompanyNameController.onPageLoad(mode: Mode = NormalMode)
 POST        /preliminary-questions/purchaser-name                                                    controllers.preliminary.PurchaserSurnameOrCompanyNameController.onSubmit(mode: Mode = NormalMode)
@@ -35,7 +35,7 @@ POST        /preliminary-questions/who-is-making-the-purchase                   
 GET         /preliminary-questions/who-is-making-the-purchase/change                                 controllers.preliminary.PurchaserIsIndividualController.onPageLoad(mode: Mode = CheckMode)
 POST        /preliminary-questions/who-is-making-the-purchase/change                                 controllers.preliminary.PurchaserIsIndividualController.onSubmit(mode: Mode = CheckMode)
 
-GET         /task-list                                                                          controllers.ReturnTaskListController.onPageLoad(returnId: Option[String] ?= None)
+GET         /task-list                                                                               controllers.ReturnTaskListController.onPageLoad(returnId: Option[String] ?= None)
 GET         /return/pdf                                                                              controllers.ReturnTaskListController.downloadPdf
 GET         /preliminary-questions/before-you-start                                                  controllers.preliminary.BeforeStartReturnController.onPageLoad()
 
@@ -226,7 +226,7 @@ POST        /about-the-purchasers-agent/enter-agent-contact-details             
 GET         /about-the-purchasers-agent/enter-agent-contact-details/change                           controllers.purchaserAgent.PurchaserAgentsContactDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST        /about-the-purchasers-agent/enter-agent-contact-details/change                           controllers.purchaserAgent.PurchaserAgentsContactDetailsController.onSubmit(mode: Mode = CheckMode)
 
-GET         /no-enrolment                                                                            controllers.NoSdltEnrolmentErrorPageController.onPageLoad()
+GET         /no-access                                                                               controllers.NoSdltEnrolmentErrorPageController.onPageLoad()
 
 GET         /about-the-purchasers-agent/add-agent-reference-number                                   controllers.purchaserAgent.AddPurchaserAgentReferenceNumberController.onPageLoad(mode: Mode = NormalMode)
 POST        /about-the-purchasers-agent/add-agent-reference-number                                   controllers.purchaserAgent.AddPurchaserAgentReferenceNumberController.onSubmit(mode: Mode = NormalMode)

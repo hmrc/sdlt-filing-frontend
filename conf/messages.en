@@ -41,9 +41,9 @@ site.error.pageNotFound.title                                                   
 site.error.pageNotFound.heading                                                     = Page not found
 site.error.pageNotFound.p1                                                          = If you typed the web address, check it is correct.
 site.error.pageNotFound.p2                                                          = If you pasted the web address, check you copied the entire address.
-site.error.pageNotFound.p3                                                          = If the web address is correct or you selected a link or button, contact the <a href="{0}" class="govuk-link">{1}</a> if you need to speak to someone.
+site.error.pageNotFound.p3                                                          = If the web address is correct or you selected a link or button, contact the <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a> if you need to speak to someone.
 site.error.pageNotFound.p3.link                                                     = https://www.gov.uk/find-hmrc-contacts/technical-support-with-hmrc-online-services
-site.error.pageNotFound.p3.linkText                                                 = HMRC Online Services Helpline
+site.error.pageNotFound.p3.linkText                                                 = HMRC Online Services Helpline (opens in new tab)
 
 site.error.systemError.title                                                        = Sorry, there is a problem with the service
 site.error.systemError.heading                                                      = Sorry, there is a problem with the service
@@ -845,7 +845,7 @@ purchaserAgent.BeforeYouStart.subheading                                        
 site.error.noReturnReference.title                                                  = You cannot reach this page
 site.error.noReturnReference.heading                                                = You cannot reach this page
 site.error.noReturnReference.hint                                                   = Select what you would like to do next
-site.error.noReturnReference.fileNewReturn                                          = File a new SDLT return
+site.error.noReturnReference.fileNewReturn                                          = File a new Stamp Duty Land Tax (SDLT) return
 site.error.noReturnReference.manageTaxes                                            = Manage your Stamp Taxes
 site.error.noReturnReference.checkYourAnswersLabel                                  = You cannot reach this page
 site.error.noReturnReference.error.required                                         = Please select an option
