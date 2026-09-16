@@ -65,11 +65,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
     s"$protocol://$host:$port"
   }
 
-  private val contactHost = configuration.get[String]("contact-frontend.host")
   val contactFormServiceIdentifier = "sdlt-filing-frontend"
-
-  def feedbackUrl(implicit request: RequestHeader): String =
-    s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${host + request.uri}"
 
   private val contactUrl = configuration.get[String]("contact-frontend.url")
   def contactUrl(implicit request: RequestHeader): String =
