@@ -20,7 +20,8 @@ import base.SpecBase
 import connectors.StampDutyLandTaxConnector
 import constants.FullReturnConstants.{completeFullReturn, completeLandAdditional, completeLandNonResidential}
 import models.{Residency, ReturnVersionUpdateRequest, ReturnVersionUpdateReturn, UserAnswers}
-import models.ukResidency.{CreateResidencyReturn, UpdateResidencyReturn}
+import models.ukResidency.{CreateResidencyRequest, CreateResidencyReturn, UpdateResidencyRequest, UpdateResidencyReturn}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.BeforeAndAfterEach
@@ -98,6 +99,105 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
 
           status(result) mustEqual OK
           contentAsString(result) must include("Check your answers")
+        }
+      }
+
+      "must not populate crown employment relief when the purchaser is not a non-UK resident" in {
+        val residency = Residency(
+          residencyID      = Some("234"),
+          isNonUkResidents = Some("no"),
+          isCrownRelief    = Some("no")
+        )
+
+        val userAnswers = emptyUserAnswers.copy(
+          returnId   = Some("12345"),
+          fullReturn = Some(completeFullReturn.copy(submission = None, residency = Some(residency)))
+        )
+
+        val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          contentAsString(result) must not include "Crown employment relief"
+
+          verify(mockSessionRepository, times(1)).set(captor.capture())
+          captor.getValue.get(CrownEmploymentReliefPage) mustBe None
+          captor.getValue.get(NonUkResidentPurchaserPage) mustBe Some(false)
+        }
+      }
+
+      "must populate crown employment relief when the purchaser is a non-UK resident" in {
+        val residency = Residency(
+          residencyID      = Some("234"),
+          isNonUkResidents = Some("yes"),
+          isCrownRelief    = Some("yes")
+        )
+
+        val userAnswers = emptyUserAnswers.copy(
+          returnId   = Some("12345"),
+          fullReturn = Some(completeFullReturn.copy(submission = None, residency = Some(residency)))
+        )
+
+        val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          contentAsString(result) must include("Crown employment relief")
+
+          verify(mockSessionRepository, times(1)).set(captor.capture())
+          captor.getValue.get(CrownEmploymentReliefPage) mustBe Some(true)
+        }
+      }
+
+      "must not populate crown employment relief when the non-UK resident answer is absent" in {
+        val residency = Residency(
+          residencyID      = Some("234"),
+          isNonUkResidents = None,
+          isCrownRelief    = Some("yes")
+        )
+
+        val userAnswers = emptyUserAnswers.copy(
+          returnId   = Some("12345"),
+          fullReturn = Some(completeFullReturn.copy(submission = None, residency = Some(residency)))
+        )
+
+        val captor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad().url)
+          val result = route(application, request).value
+
+          status(result) must (be(OK) or be(SEE_OTHER))
+
+          verify(mockSessionRepository, times(1)).set(captor.capture())
+          captor.getValue.get(CrownEmploymentReliefPage) mustBe None
         }
       }
 
@@ -404,6 +504,112 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
         }
       }
 
+      "must send crown relief as yes on create when the purchaser is a non-UK resident" in {
+        val userAnswers = UserAnswers(
+          id = userAnswersId,
+          storn = "TESTSTORN",
+          returnId = Some("12345"),
+          fullReturn = Some(completeFullReturn.copy(residency = None, submission = None)),
+          data = ukResidencyData(nonUkResident = true, crownEmployment = true)
+        )
+
+        val captor: ArgumentCaptor[CreateResidencyRequest] = ArgumentCaptor.forClass(classOf[CreateResidencyRequest])
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockBackendConnector.createResidency(any())(any(), any()))
+          .thenReturn(Future.successful(CreateResidencyReturn(created = true)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onSubmit().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+
+          verify(mockBackendConnector, times(1)).createResidency(captor.capture())(any(), any())
+          captor.getValue.residency.isNonUkResidents mustBe "yes"
+          captor.getValue.residency.isCrownRelief mustBe Some("yes")
+        }
+      }
+
+      "must omit crown relief on create when the purchaser is not a non-UK resident" in {
+        val staleCrownRelief = Json.obj(
+          "ukResidencyCurrent" -> Json.obj(
+            "nonUkResidentPurchaser" -> false,
+            "crownEmploymentRelief"  -> true
+          )
+        )
+
+        val userAnswers = UserAnswers(
+          id = userAnswersId,
+          storn = "TESTSTORN",
+          returnId = Some("12345"),
+          fullReturn = Some(completeFullReturn.copy(residency = None, submission = None)),
+          data = staleCrownRelief
+        )
+
+        val captor: ArgumentCaptor[CreateResidencyRequest] = ArgumentCaptor.forClass(classOf[CreateResidencyRequest])
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockBackendConnector.createResidency(any())(any(), any()))
+          .thenReturn(Future.successful(CreateResidencyReturn(created = true)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onSubmit().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+
+          verify(mockBackendConnector, times(1)).createResidency(captor.capture())(any(), any())
+          captor.getValue.residency.isNonUkResidents mustBe "no"
+          captor.getValue.residency.isCrownRelief mustBe None
+        }
+      }
+
+      "must omit close company on create when the close company question has not been answered" in {
+        val dataWithoutCloseCompany = Json.obj(
+          "ukResidencyCurrent" -> Json.obj("nonUkResidentPurchaser" -> true)
+        )
+
+        val userAnswers = UserAnswers(
+          id = userAnswersId,
+          storn = "TESTSTORN",
+          returnId = Some("12345"),
+          fullReturn = Some(completeFullReturn.copy(residency = None, submission = None)),
+          data = dataWithoutCloseCompany
+        )
+
+        val captor: ArgumentCaptor[CreateResidencyRequest] = ArgumentCaptor.forClass(classOf[CreateResidencyRequest])
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockBackendConnector.createResidency(any())(any(), any()))
+          .thenReturn(Future.successful(CreateResidencyReturn(created = true)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+          .overrides(bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector))
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onSubmit().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+
+          verify(mockBackendConnector, times(1)).createResidency(captor.capture())(any(), any())
+          captor.getValue.residency.isCompany mustBe None
+        }
+      }
+
       "must redirect back to UkResidencyCheckYourAnswers when createResidency returns created=false" in {
         val userAnswers = UserAnswers(
           id = userAnswersId,
@@ -471,6 +677,48 @@ class UkResidencyCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
         }
       }
 
+      "must omit crown relief on update when the purchaser is not a non-UK resident" in {
+        val staleCrownRelief = Json.obj(
+          "ukResidencyCurrent" -> Json.obj(
+            "nonUkResidentPurchaser" -> false,
+            "crownEmploymentRelief"  -> true
+          )
+        )
+
+        val userAnswers = UserAnswers(
+          id = userAnswersId,
+          storn = "TESTSTORN",
+          returnId = Some("12345"),
+          fullReturn = Some(completeFullReturn.copy(submission = None, residency = Some(Residency(residencyID = Some("234"))))),
+          data = staleCrownRelief
+        )
+
+        val captor: ArgumentCaptor[UpdateResidencyRequest] = ArgumentCaptor.forClass(classOf[UpdateResidencyRequest])
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockBackendConnector.updateReturnVersion(any[ReturnVersionUpdateRequest])(any(), any()))
+          .thenReturn(Future.successful(ReturnVersionUpdateReturn(Some(2))))
+        when(mockBackendConnector.updateResidency(any())(any(), any()))
+          .thenReturn(Future.successful(UpdateResidencyReturn(updated = true)))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[StampDutyLandTaxConnector].toInstance(mockBackendConnector)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onSubmit().url)
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+
+          verify(mockBackendConnector, times(1)).updateResidency(captor.capture())(any(), any())
+          captor.getValue.residency.isNonUkResidents mustBe "no"
+          captor.getValue.residency.isCrownRelief mustBe None
+        }
+      }
 
       "must redirect back to ReturnTaskList when updateResidency returns false" in {
 

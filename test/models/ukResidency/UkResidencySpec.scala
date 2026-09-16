@@ -38,8 +38,8 @@ class UkResidencySpec extends AnyFreeSpec with Matchers with EitherValues with O
     returnResourceRef = "RRF-2024-001",
     residency = ResidencyPayload(
       isNonUkResidents = "yes",
-      isCompany = "no",
-      isCrownRelief = "yes"
+      isCompany = Some("no"),
+      isCrownRelief = Some("yes")
     )
   )
 
@@ -66,8 +66,8 @@ class UkResidencySpec extends AnyFreeSpec with Matchers with EitherValues with O
     returnResourceRef = "RRF-2024-001",
     residency = ResidencyPayload(
       isNonUkResidents = "no",
-      isCompany = "yes",
-      isCrownRelief = "no"
+      isCompany = Some("yes"),
+      isCrownRelief = Some("no")
     )
   )
 
@@ -100,8 +100,8 @@ class UkResidencySpec extends AnyFreeSpec with Matchers with EitherValues with O
         result.stornId mustBe "STORN12345"
         result.returnResourceRef mustBe "RRF-2024-001"
         result.residency.isNonUkResidents mustBe "yes"
-        result.residency.isCompany mustBe "no"
-        result.residency.isCrownRelief mustBe "yes"
+        result.residency.isCompany mustBe Some("no")
+        result.residency.isCrownRelief mustBe Some("yes")
       }
 
       "must fail to deserialize when stornId is missing" in {
@@ -244,8 +244,8 @@ class UkResidencySpec extends AnyFreeSpec with Matchers with EitherValues with O
         result.stornId mustBe "STORN12345"
         result.returnResourceRef mustBe "RRF-2024-001"
         result.residency.isNonUkResidents mustBe "no"
-        result.residency.isCompany mustBe "yes"
-        result.residency.isCrownRelief mustBe "no"
+        result.residency.isCompany mustBe Some("yes")
+        result.residency.isCrownRelief mustBe Some("no")
       }
 
       "must fail to deserialize when stornId is missing" in {
@@ -421,8 +421,8 @@ class UkResidencySpec extends AnyFreeSpec with Matchers with EitherValues with O
         val result = Json.fromJson[ResidencyPayload](json).asEither.value
 
         result.isNonUkResidents mustBe "yes"
-        result.isCompany mustBe "no"
-        result.isCrownRelief mustBe "yes"
+        result.isCompany mustBe Some("no")
+        result.isCrownRelief mustBe Some("yes")
       }
 
       "must fail to deserialize when isNonUkResidents is missing" in {
@@ -439,7 +439,7 @@ class UkResidencySpec extends AnyFreeSpec with Matchers with EitherValues with O
       }
 
       "must serialize ResidencyPayload" in {
-        val payload = ResidencyPayload(isNonUkResidents = "yes", isCompany = "no", isCrownRelief = "yes")
+        val payload = ResidencyPayload(isNonUkResidents = "yes", isCompany = Some("no"), isCrownRelief = Some("yes"))
         val json = Json.toJson(payload)
 
         (json \ "isNonUkResidents").as[String] mustBe "yes"
@@ -455,7 +455,7 @@ class UkResidencySpec extends AnyFreeSpec with Matchers with EitherValues with O
       }
 
       "must round-trip serialize and deserialize" in {
-        val payload = ResidencyPayload(isNonUkResidents = "yes", isCompany = "no", isCrownRelief = "yes")
+        val payload = ResidencyPayload(isNonUkResidents = "yes", isCompany = Some("no"), isCrownRelief = Some("yes"))
         val json = Json.toJson(payload)
         val result = Json.fromJson[ResidencyPayload](json).asEither.value
 
