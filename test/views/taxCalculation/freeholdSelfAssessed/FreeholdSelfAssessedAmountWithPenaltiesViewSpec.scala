@@ -64,7 +64,10 @@ class FreeholdSelfAssessedAmountWithPenaltiesViewSpec extends SpecBase {
     }
 
     "must render the save and continue button" in new Fixture {
-      val application: Application = applicationBuilder().build()
+      val application: Application = applicationBuilder()
+        .configure("features.user-research-banner" -> false)
+        .build()
+
       running(application) {
         implicit val msgs: Messages = messages(application)
         implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
