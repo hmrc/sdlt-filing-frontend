@@ -31,7 +31,9 @@ class LeaseholdSelfAssessedAmountWithPenaltiesViewSpec extends SpecBase {
 
   trait Fixture {
     val form = new PenaltiesAndInterestFormProvider()()
-    val application: Application = applicationBuilder().build()
+    val application: Application = applicationBuilder()
+      .configure("features.user-research-banner" -> false)
+      .build()
     val postAction: Mode => Call = mode =>
       controllers.taxCalculation.leaseholdSelfAssessed.routes.LeaseholdSelfAssessedPenaltiesAndInterestController.onSubmit(mode)
   }
