@@ -38,11 +38,7 @@ object CreateResidencyRequest {
         Future.successful(CreateResidencyRequest(
           stornId           = fullReturn.stornId,
           returnResourceRef = fullReturn.returnResourceRef,
-          residency = ResidencyPayload(
-            isNonUkResidents = if (userAnswers.get(NonUkResidentPurchaserPage).contains(true)) "yes" else "no",
-            isCompany        = if (userAnswers.get(CloseCompanyPage).contains(true)) "yes" else "no",
-            isCrownRelief    = if (userAnswers.get(CrownEmploymentReliefPage).contains(true)) "yes" else "no"
-          )
+          residency         = ResidencyPayload.from(userAnswers)
         ))
       case None => Future.failed(new NoSuchElementException("Full return not found"))
     }
@@ -71,11 +67,7 @@ object UpdateResidencyRequest {
         Future.successful(UpdateResidencyRequest(
           stornId           = fullReturn.stornId,
           returnResourceRef = fullReturn.returnResourceRef,
-          residency = ResidencyPayload(
-            isNonUkResidents = if (userAnswers.get(NonUkResidentPurchaserPage).contains(true)) "yes" else "no",
-            isCompany        = if (userAnswers.get(CloseCompanyPage).contains(true)) "yes" else "no",
-            isCrownRelief    = if (userAnswers.get(CrownEmploymentReliefPage).contains(true)) "yes" else "no"
-          )
+          residency         = ResidencyPayload.from(userAnswers)
         ))
       case None => Future.failed(new NoSuchElementException("Full return not found"))
     }
@@ -128,10 +120,24 @@ object DeleteResidencyReturn {
 
 case class ResidencyPayload(
                              isNonUkResidents: String,
-                             isCompany: String,
-                             isCrownRelief: String
+                             isCompany: Option[String],
+                             isCrownRelief: Option[String]
                            )
 
 object ResidencyPayload {
   implicit val format: OFormat[ResidencyPayload] = Json.format[ResidencyPayload]
+
+  private def yesNo(answer: Boolean): String = if (answer) "yes" else "no"
+
+  def from(userAnswers: UserAnswers): ResidencyPayload = {
+    val isNonUkResident = userAnswers.get(NonUkResidentPurchaserPage)
+
+    ResidencyPayload(
+      isNonUkResidents = yesNo(isNonUkResident.contains(true)),
+      isCompany        = userAnswers.get(CloseCompanyPage).map(yesNo),
+      isCrownRelief    =
+        if (isNonUkResident.contains(true)) userAnswers.get(CrownEmploymentReliefPage).map(yesNo)
+        else None
+    )
+  }
 }

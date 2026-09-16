@@ -41,18 +41,18 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class UkResidencyCheckYourAnswersController @Inject()(
-                                                  override val messagesApi: MessagesApi,
-                                                  identify: IdentifierAction,
-                                                  getData: DataRetrievalAction,
-                                                  requireData: DataRequiredAction,
-                                                  statusCheck: CheckSubmissionStatusAction,
-                                                  sessionRepository: SessionRepository,
-                                                  checkAnswersService: CheckAnswersService,
-                                                  backendConnector: StampDutyLandTaxConnector,
-                                                  val controllerComponents: MessagesControllerComponents,
-                                                  view: UkResidencyCheckYourAnswersView,
-                                                  updateTaxCalcService: UpdateTaxCalcService
-                                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                       override val messagesApi: MessagesApi,
+                                                       identify: IdentifierAction,
+                                                       getData: DataRetrievalAction,
+                                                       requireData: DataRequiredAction,
+                                                       statusCheck: CheckSubmissionStatusAction,
+                                                       sessionRepository: SessionRepository,
+                                                       checkAnswersService: CheckAnswersService,
+                                                       backendConnector: StampDutyLandTaxConnector,
+                                                       val controllerComponents: MessagesControllerComponents,
+                                                       view: UkResidencyCheckYourAnswersView,
+                                                       updateTaxCalcService: UpdateTaxCalcService
+                                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
@@ -78,9 +78,11 @@ class UkResidencyCheckYourAnswersController @Inject()(
         Future.successful(Redirect(controllers.ukResidency.routes.UkResidencyBeforeYouStartController.onPageLoad()))
       case Some(residency) =>
         val isCompany: Boolean = userAnswers.fullReturn
-            .flatMap(_.purchaser)
-            .getOrElse(Seq.empty)
-            .exists(_.isCompany.exists(_.equalsIgnoreCase("yes")))
+          .flatMap(_.purchaser)
+          .getOrElse(Seq.empty)
+          .exists(_.isCompany.exists(_.equalsIgnoreCase("yes")))
+
+        val isNonUkResident: Boolean = residency.isNonUkResidents.exists(_.equalsIgnoreCase("yes"))
 
         val populatedResult = for {
           ua1  <- residency.isNonUkResidents match {
@@ -105,14 +107,18 @@ class UkResidencyCheckYourAnswersController @Inject()(
           } else {
             Success(ua1)
           }
-          ua3 <- residency.isCrownRelief match {
-            case Some(value) =>
-              ua2.set(
-                CrownEmploymentReliefPage,
-                value.equalsIgnoreCase("yes")
-              )
-            case None =>
-              Success(ua2)
+          ua3 <- if (isNonUkResident) {
+            residency.isCrownRelief match {
+              case Some(value) =>
+                ua2.set(
+                  CrownEmploymentReliefPage,
+                  value.equalsIgnoreCase("yes")
+                )
+              case None =>
+                Success(ua2)
+            }
+          } else {
+            ua2.remove(CrownEmploymentReliefPage)
           }
         } yield ua3
 

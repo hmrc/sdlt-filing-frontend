@@ -3810,9 +3810,9 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         stornId = "12345",
         returnResourceRef = "RRF-2024-001",
         residency = models.ukResidency.ResidencyPayload(
-          isNonUkResidents = "yes",
-          isCompany = "no",
-          isCrownRelief = "no"
+          isNonUkResidents = "no",
+          isCompany = Some("yes"),
+          isCrownRelief = None
         )
       )
       val expectedResult = models.ukResidency.CreateResidencyReturn(created = true)
@@ -4050,8 +4050,8 @@ class StampDutyLandTaxConnectorSpec extends SpecBase with MockitoSugar {
         returnResourceRef = "RRF-2024-001",
         residency = models.ukResidency.ResidencyPayload(
           isNonUkResidents = "no",
-          isCompany = "yes",
-          isCrownRelief = "yes"
+          isCompany = Some("yes"),
+          isCrownRelief = None
         )
       )
       val expectedResult = models.ukResidency.UpdateResidencyReturn(updated = true)
