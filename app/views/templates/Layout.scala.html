@@ -68,7 +68,7 @@
     ),
     banners = Banners(
         displayHmrcBanner = showHmrcBanner,
-        phaseBanner = Some(alphaBanner(appConfig.feedbackUrl))
+        phaseBanner = Some(alphaBanner(appConfig.contactUrl))
     ),
     isWelshTranslationAvailable = appConfig.languageTranslationEnabled,
     backLink = if(showBackLink) Some(BackLink.mimicsBrowserBackButtonViaJavaScript) else None
