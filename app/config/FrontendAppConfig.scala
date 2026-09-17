@@ -70,7 +70,13 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   private val contactUrl = configuration.get[String]("contact-frontend.url")
   def contactUrl(implicit request: RequestHeader): String =
     s"$contactUrl/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${host + request.uri}"
-  
+
+  def userResearchBannerEnabled: Boolean =
+    configuration.get[Boolean]("features.user-research-banner")
+
+  def userResearchBannerUrl: String =
+    configuration.get[String]("urls.user-research-banner")
+
   val loginUrl: String         = configuration.get[String]("urls.login")
   val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
   val signOutUrl: String       = configuration.get[String]("urls.signOut")
