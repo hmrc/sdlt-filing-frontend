@@ -103,6 +103,8 @@
 
         @maybeSummaryList match {
             case Some(summary) => {
+                @p(messages("vendorAgent.overview.p1"))
+
                 @govukSummaryList(summary)
 
                 @govukButton(
