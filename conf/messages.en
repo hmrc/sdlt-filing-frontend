@@ -823,6 +823,7 @@ purchaser.changePurchaserOne.error.required                                     
 # Purchaser Agent
 purchaserAgent.overview.title                                                       = Purchaser’s agent overview - About the purchaser’s agent
 purchaserAgent.overview.heading                                                     = Purchaser’s agent overview
+purchaserAgent.overview.p1                                                          = You can only add one agent for the purchaser.
 purchaserAgent.overview.noPurchaser.subHeadingNoPurchasers                          = Do you want to add an agent for the purchaser?
 purchaserAgent.overview.aPurchaserAgent                                             = a purchaser’s agent
 purchaserAgent.overview.error.required                                              = Select yes if you want to add an agent for the purchaser
@@ -942,6 +943,7 @@ vendorAgent.BeforeYouStart.change.hidden                                        
 
 vendorAgent.overview.title                                                          = Vendor’s agent overview
 vendorAgent.overview.heading                                                        = Vendor’s agent overview
+vendorAgent.overview.p1                                                             = You can only add one agent for the vendor.
 vendorAgent.overview.noVendor.subHeadingNoVendors                                   = Do you want to add an agent for the vendor?
 vendorAgent.overview.aVendorAgent                                                   = a vendor’s agent
 vendorAgent.overview.error.required                                                 = Select yes if you want to add an agent for the vendor
