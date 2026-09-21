@@ -544,7 +544,7 @@ object FullReturnConstants {
     lease = Some(completeLease),
     taxCalculation = Some(completeTaxCalculation),
     submission = Some(completeSubmission),
-    submissionErrorDetails = Some(completeSubmissionErrorDetails),
+    submissionErrorDetails = Some(Seq(completeSubmissionErrorDetails)),
     residency = Some(completeResidency)
   )
 
@@ -563,7 +563,7 @@ object FullReturnConstants {
     lease = Some(completeLease),
     taxCalculation = Some(completeTaxCalculation),
     submission = Some(completeSubmission),
-    submissionErrorDetails = Some(completeSubmissionErrorDetails),
+    submissionErrorDetails = Some(Seq(completeSubmissionErrorDetails)),
     residency = Some(completeResidency)
   )
 

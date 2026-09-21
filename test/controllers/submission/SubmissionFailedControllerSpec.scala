@@ -18,75 +18,118 @@ package controllers.submission
 
 import base.SpecBase
 import constants.FullReturnConstants.{completeFullReturn, completeSubmissionErrorDetails, incompleteFullReturn}
-import models.Submission
+import models.{FullReturn, Submission}
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.test.FakeRequest
 import play.api.inject.bind
+import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.submission.SubmissionFailedView
 
-
 class SubmissionFailedControllerSpec extends SpecBase {
 
-  private val fullReturnWithError = completeFullReturn.copy(
-    submissionErrorDetails = Some(completeSubmissionErrorDetails.copy(
-      errorMessage = Some("The STORN supplied either is not of the correct length or type (10 numeric).")
-    )))
+  private val summaryError =
+    "3001: Your submission failed due to business validation errors. Please see below for details."
 
-  private val fullReturnWithNoError = completeFullReturn.copy(
-    submissionErrorDetails = Some(completeSubmissionErrorDetails.copy(
-      errorMessage = None
-    )))
-      
-  private val errorMessage = Some("The STORN supplied either is not of the correct length or type (10 numeric).")
+  private val ruleError1 =
+    "421: As Box 52 part 2 has been completed No or left blank, part 4 must be left blank. Please delete"
+
+  private val ruleError2 =
+    "The STORN supplied either is not of the correct length or type (10 numeric)."
+
+  private def errorDetail(position: String, message: Option[String]) =
+    completeSubmissionErrorDetails.copy(position = Some(position), errorMessage = message)
+
+  private def fullReturnWith(errors: Seq[models.SubmissionErrorDetails]): FullReturn =
+    completeFullReturn.copy(submissionErrorDetails = Some(errors))
+
+  private def runPage(fullReturn: FullReturn) = {
+    val mockSessionRepository = mock[SessionRepository]
+    val userAnswers           = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
+
+    applicationBuilder(userAnswers = Some(userAnswers))
+      .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+      .build()
+  }
 
   "SubmissionFailed Controller" - {
 
-    "must return OK and the correct view for a GET when error message exists" in {
-      val mockSessionRepository = mock[SessionRepository]
-
-      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithError))
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
-        .build()
+    "must return OK and show every error message when multiple errors exist" in {
+      val application = runPage(fullReturnWith(Seq(
+        errorDetail("0", Some(summaryError)),
+        errorDetail("1", Some(ruleError1)),
+        errorDetail("2", Some(ruleError2))
+      )))
 
       running(application) {
         val request = FakeRequest(GET, controllers.submission.routes.SubmissionFailedController.onPageLoad().url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[SubmissionFailedView]
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[SubmissionFailedView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(errorMessage)(request, messages(application)).toString
+        contentAsString(result) mustEqual
+          view(Seq(summaryError, ruleError1, ruleError2))(request, messages(application)).toString
       }
     }
 
-    "must return OK and the correct view for a GET when error message does not exist" in {
-      val mockSessionRepository = mock[SessionRepository]
-
-      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNoError))
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository)
-        )
-        .build()
+    "must order error messages by position when they are returned out of order" in {
+      val application = runPage(fullReturnWith(Seq(
+        errorDetail("2", Some(ruleError2)),
+        errorDetail("0", Some(summaryError)),
+        errorDetail("1", Some(ruleError1))
+      )))
 
       running(application) {
         val request = FakeRequest(GET, controllers.submission.routes.SubmissionFailedController.onPageLoad().url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[SubmissionFailedView]
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[SubmissionFailedView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(None)(request, messages(application)).toString
-        contentAsString(result) mustNot include ("The STORN supplied either is not of the correct length or type (10 numeric).")
+        contentAsString(result) mustEqual
+          view(Seq(summaryError, ruleError1, ruleError2))(request, messages(application)).toString
+      }
+    }
+
+    "must return OK and the correct view when a single error message exists" in {
+      val application = runPage(fullReturnWith(Seq(errorDetail("0", Some(ruleError2)))))
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.submission.routes.SubmissionFailedController.onPageLoad().url)
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[SubmissionFailedView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(Seq(ruleError2))(request, messages(application)).toString
+      }
+    }
+
+    "must return OK with no error messages when error details have no message or a blank message" in {
+      val application = runPage(fullReturnWith(Seq(
+        errorDetail("0", None),
+        errorDetail("1", Some("   "))
+      )))
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.submission.routes.SubmissionFailedController.onPageLoad().url)
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[SubmissionFailedView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(Seq.empty)(request, messages(application)).toString
+        contentAsString(result) mustNot include(ruleError2)
+      }
+    }
+
+    "must return OK with no error messages when there are no submission error details" in {
+      val application = runPage(completeFullReturn.copy(submissionErrorDetails = None))
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.submission.routes.SubmissionFailedController.onPageLoad().url)
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[SubmissionFailedView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(Seq.empty)(request, messages(application)).toString
       }
     }
 
