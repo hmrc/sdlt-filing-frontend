@@ -47,7 +47,9 @@ import java.time.LocalDate
 class TaxCalculationCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
 
   trait Fixture {
-    val application: Application = applicationBuilder().build()
+    val application: Application = applicationBuilder()
+      .configure("features.user-research-banner" -> false)
+      .build()
 
     implicit val msgs: Messages = messages(application)
     implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
