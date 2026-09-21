@@ -43,14 +43,16 @@ class SubmissionFailedController @Inject()(
       if (!submissionAlreadyStarted && !taskListBuilder.allComplete(request.userAnswers)) {
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
-        val maybeErrorMessage =
-          for {
-            fullReturn <- request.userAnswers.fullReturn
-            submissionErrorDetails <- fullReturn.submissionErrorDetails
-            message <- submissionErrorDetails.errorMessage
-          } yield message
+      
+        val errorMessages: Seq[String] =
+          request.userAnswers.fullReturn
+            .flatMap(_.submissionErrorDetails)
+            .getOrElse(Seq.empty)
+            .sortBy(_.position.flatMap(_.trim.toIntOption).getOrElse(Int.MaxValue))
+            .flatMap(_.errorMessage)
+            .filter(_.trim.nonEmpty)
 
-        Ok(view(maybeErrorMessage))
+        Ok(view(errorMessages))
       }
   }
 }

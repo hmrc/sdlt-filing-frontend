@@ -28,18 +28,28 @@
         appConfig: FrontendAppConfig
 )
 
-
-@(maybeErrorMessage: Option[String])(implicit request: Request[_], messages: Messages)
+@(errorMessages: Seq[String])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("submission.submissionFailed.heading"), section = Some("site.submission.caption"))) {
     @caption(messages("site.submission.caption"))
     <h1 class="govuk-heading-l">@messages("submission.submissionFailed.heading")</h1>
 
-    @if(maybeErrorMessage.isDefined) {
-        @p("submission.submissionFailed.p1a")
-        @p(messages("submission.submissionFailed.reason", maybeErrorMessage.get))
-    } else {
-        @p("submission.submissionFailed.p1b")
+    @errorMessages.headOption match {
+        case Some(firstError) => {
+            @p("submission.submissionFailed.p1a")
+            @p(messages("submission.submissionFailed.reason", firstError))
+
+            @if(errorMessages.tail.nonEmpty) {
+                <ul class="govuk-list govuk-list--bullet">
+                @for(errorMessage <- errorMessages.tail) {
+                    <li>@errorMessage</li>
+                }
+                </ul>
+            }
+        }
+        case None => {
+            @p("submission.submissionFailed.p1b")
+        }
     }
 
     @paragraphWithLink(
@@ -48,17 +58,17 @@
         textKey = "submission.submissionFailed.p4.linkText"
     )
 
-    <div class ="govuk-body">
-        @link(
-            link       = controllers.submission.routes.CompletedSdltReturnController.onPageLoad().url,
-            messageKey = "submission.submissionFailed.link"
-        )
+    <div class="govuk-body">
+    @link(
+        link       = controllers.submission.routes.CompletedSdltReturnController.onPageLoad().url,
+        messageKey = "submission.submissionFailed.link"
+    )
     </div>
 
-    <div class ="govuk-body">
-        @link(
-            link = appConfig.sdltManagementRedirectUrl,
-            messageKey = "submission.submissionFailed.link2"
-        )
+    <div class="govuk-body">
+    @link(
+        link = appConfig.sdltManagementRedirectUrl,
+        messageKey = "submission.submissionFailed.link2"
+    )
     </div>
 }
