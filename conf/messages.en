@@ -469,8 +469,8 @@ vendor.whoIsTheVendor.Individual                                                
 vendor.whoIsTheVendor.Company                                                       = A company
 vendor.whoIsTheVendor.checkYourAnswersLabel                                         = Who is the vendor?
 vendor.whoIsTheVendor.change.hidden                                                 = Who is the vendor?
-vendor.whoIsTheVendor.Company.hintText                                              = This means any form of organisation, such as a company, council or charity
-vendor.whoIsTheVendor.Individual.hintText                                           = This means any person liable to pay Stamp Duty Land Tax (SDLT)
+vendor.whoIsTheVendor.Company.hintText                                              = This means any form of organisation, like a company, council or charity, selling or transferring land or property subject to SDLT
+vendor.whoIsTheVendor.Individual.hintText                                           = This means any person selling or transferring land or property subject to SDLT
 vendor.whoIsTheVendor.error.required                                                = Select the type of vendor
 
 # Agent Messages
