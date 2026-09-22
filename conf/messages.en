@@ -1570,7 +1570,7 @@ taxCalculation.calculation.rates.premium                                        
 taxCalculation.calculation.rates.npv                                                = NPV
 taxCalculation.calculation.rates.upTo                                               = Up to {0}
 taxCalculation.calculation.rates.aboveAndUpTo                                       = Above {0} and up to {1}
-taxCalculation.calculation.rates.aboveOpen                                          = Above {0}+
+taxCalculation.calculation.rates.aboveOpen                                          = Above {0}
 taxCalculation.calculation.totalSdltDue                                             = Total SDLT due
 taxCalculation.calculation.header.totalSdltDueWithNpv                               = Total premium payable + NPV
 taxCalculation.calculation.header.totalSdltDue                                      = Total
@@ -1631,12 +1631,12 @@ taxCalculation.taxDueOnNpv.change.hidden                                        
 
 taxCalculation.sdltSelfAssessment.title                                             = SDLT self-assessment
 taxCalculation.sdltSelfAssessment.heading                                           = SDLT self-assessment
-taxCalculation.sdltSelfAssessment.intro                                             = SDLT is a self-assessed tax. The legal responsibility for calculating, reporting and paying the correct amount rests with the purchaser of the land or property.
-taxCalculation.sdltSelfAssessment.calculator                                        = You can <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
+taxCalculation.sdltSelfAssessment.intro                                             = SDLT is a self-assessed tax. The purchaser of the land or property is responsible for calculating, reporting and paying the correct amount of tax.
+taxCalculation.sdltSelfAssessment.calculator                                        = Use the <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>.
 taxCalculation.sdltSelfAssessment.calculator.link                                   = https://www.tax.service.gov.uk/calculate-stamp-duty-land-tax/
-taxCalculation.sdltSelfAssessment.calculator.text                                   = use the SDLT calculator to work out the correct amount (opens in a new tab)
-taxCalculation.sdltSelfAssessment.h2                                                = What is the self-assessed amount of SDLT?
-taxCalculation.sdltSelfAssessment.hint                                              = Enter the amount in whole pounds only, for example £10,000. This amount should not include any penalties or interest due.
+taxCalculation.sdltSelfAssessment.calculator.text                                   = SDLT calculator to work out the correct amount (opens in new tab)
+taxCalculation.sdltSelfAssessment.h2                                                = What is the self-assessed amount of SDLT due?
+taxCalculation.sdltSelfAssessment.hint                                              = Enter the amount in whole pounds only, for example £10,000. Do not include any penalties or interest due.
 taxCalculation.sdltSelfAssessment.sharedOwnership.heading                           = Shared ownership leases
 taxCalculation.sdltSelfAssessment.sharedOwnership.p1                                = The type of transaction is ‘L - Grant of lease’ and ‘32 - First Time Buyer’s Relief’ is being claimed. You must check if this is a <a href="{0}" class="govuk-link" target="_blank" rel="noopener noreferrer">{1}</a>. If it is, you must review HMRC’s automatic calculation and amend if it’s incorrect.
 taxCalculation.sdltSelfAssessment.sharedOwnership.linkUrl                           = https://www.gov.uk/stamp-duty-land-tax/shared-ownership-property
@@ -1681,6 +1681,8 @@ taxCalculation.leaseholdSelfAssessed.premiumPayable.error.invalidNumeric        
 
 taxCalculation.leaseholdTaxCalculated.premiumPayable.checkYourAnswers               = Tax due on total premium payable
 taxCalculation.leaseholdTaxCalculated.taxDueOnNpv.checkYourAnswers                  = Tax due on NPV
+
+taxCalculation.selfAssessedSdltDue.checkYourAnswersLabel                            = Self-assessed SDLT due
 
 taxCalculation.confirm.effectiveDateOfTransaction.title                             = Confirm the effective date of the transaction
 taxCalculation.confirm.effectiveDateOfTransaction.heading                           = Confirm the effective date of the transaction

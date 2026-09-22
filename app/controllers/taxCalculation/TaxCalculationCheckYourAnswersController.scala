@@ -256,6 +256,7 @@ class TaxCalculationCheckYourAnswersController @Inject()(
       case Some(LeaseholdSelfAssessed) => Seq(
         PremiumPayableTaxSummary.row(Some(ua)),
         TaxDueOnNpvSummary.row(ua),
+        LeaseholdSelfAssessedSdltDueSummary.row(ua),
         PenaltiesDueSummary.row(Some(ua), timeMachine),
         LeaseholdSelfAssessedTotalAmountDueSummary.row(Some(ua)),
         LeaseholdSelfAssessedDoesAmountIncludePenaltiesSummary.row(Some(ua))
