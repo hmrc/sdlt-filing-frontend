@@ -39,7 +39,6 @@ object TransactionTaskList {
 
   def mandatoryFieldsDefined(fullReturn: FullReturn): Seq[Boolean] = {
 
-    // All transaction types
     val generalTransactionFields = Seq(
       fullReturn.transaction.exists(_.transactionDescription.isDefined),
       fullReturn.transaction.exists(_.effectiveDate.isDefined),
@@ -51,7 +50,6 @@ object TransactionTaskList {
       fullReturn.transaction.exists(_.isPursuantToPreviousOption.isDefined)
     )
 
-    // if property type is non-residential or mixed
     val isPropertyTypeMixedOrNonResidential: Boolean = {
       val mainLandId = fullReturn.returnInfo.flatMap(_.mainLandID)
       val typeOfProperty = fullReturn.land.flatMap(_.find(l => l.landID == mainLandId)).flatMap(_.propertyType)
@@ -75,10 +73,9 @@ object TransactionTaskList {
         ).exists(_.exists(_.equalsIgnoreCase("yes")))
     }
 
-    // if transaction type is not Grand of Lease
-    val isTransactionTypeNotGrandOfLease = fullReturn.transaction.exists(!_.transactionDescription.contains("L"))
+    val isTransactionTypeNotGrandOfLease: Boolean = fullReturn.transaction.exists(!_.transactionDescription.contains("L"))
 
-    val isTotalConsiderationDefined = fullReturn.transaction.exists(_.totalConsideration.isDefined)
+    val isTotalConsiderationDefined: Boolean = fullReturn.transaction.exists(_.totalConsideration.isDefined)
 
     val isAnyFormsOfConsiderationDefined = {
       fullReturn.transaction.exists {
@@ -110,14 +107,52 @@ object TransactionTaskList {
     }
   }
 
-  def isTransactionComplete(fullReturn: FullReturn): Boolean = {
+  def isTransactionComplete(fullReturn: FullReturn): Boolean =
     mandatoryFieldsDefined(fullReturn).forall(identity)
-  }
 
-  private val prelimIndices: Set[Int] = Set(0)
+  private def prelimFieldsDefined(fullReturn: FullReturn): Boolean =
+    fullReturn.transaction.exists(_.transactionDescription.isDefined)
+
+  private def nonPrelimAnswers(fullReturn: FullReturn): Seq[Option[Any]] =
+    fullReturn.transaction.toSeq.flatMap { t =>
+      Seq(
+        t.effectiveDate,
+        t.isDependantOnFutureEvent,
+        t.isPartOfSaleOfBusiness,
+        t.postTransRulingApplied,
+        t.restrictionsAffectInterest,
+        t.isLandExchanged,
+        t.isPursuantToPreviousOption,
+        t.totalConsideration,
+        t.usedAsFactory,
+        t.usedAsHotel,
+        t.usedAsIndustrial,
+        t.usedAsOffice,
+        t.usedAsOther,
+        t.usedAsShop,
+        t.usedAsWarehouse,
+        t.considerationCash,
+        t.considerationDebt,
+        t.considerationBuild,
+        t.considerationEmploy,
+        t.considerationOther,
+        t.considerationSharesQTD,
+        t.considerationSharesUNQTD,
+        t.considerationLand,
+        t.considerationServices,
+        t.considerationContingent
+      )
+    }
 
   def hasStartedBeyondPrelim(fullReturn: FullReturn): Boolean =
-    mandatoryFieldsDefined(fullReturn).zipWithIndex.exists { case (answered, idx) => answered && !prelimIndices.contains(idx) }
+    nonPrelimAnswers(fullReturn).exists(_.isDefined)
+
+  def isPrelimTransaction(fullReturn: FullReturn): Boolean =
+    prelimFieldsDefined(fullReturn) && !hasStartedBeyondPrelim(fullReturn)
+
+  def transactionChecks(fullReturn: FullReturn): Seq[Boolean] =
+    if isPrelimTransaction(fullReturn) then Seq(false)
+    else mandatoryFieldsDefined(fullReturn)
 
   def transactionRowBuilder(fullReturn: FullReturn, status: SectionStatus)
                            (implicit appConfig: FrontendAppConfig): TaskListRowBuilder = {
@@ -127,10 +162,13 @@ object TransactionTaskList {
     val errorUrl  = controllers.transaction.routes.TransactionSingleEntityController.onPageLoad().url
     val resumeUrl = controllers.routes.ResumeSectionController.resume("transaction", None).url
 
+    val started = hasStartedBeyondPrelim(fullReturn)
+    val failed  = status.hasFailures && started
+
     val url =
-      if status.hasFailures then errorUrl
+      if failed then errorUrl
       else if isTransactionComplete(fullReturn) then cyaUrl
-      else if hasStartedBeyondPrelim(fullReturn) then resumeUrl
+      else if started then resumeUrl
       else startUrl
 
     TaskListRowBuilder(
@@ -138,13 +176,12 @@ object TransactionTaskList {
       messageKey    = _ => "tasklist.transactionQuestion.details",
       url           = _ => _ => url,
       tagId         = "transactionQuestionDetailRow",
-      checks        = _ => mandatoryFieldsDefined(fullReturn),
-      invalid       = _ => status.hasFailures,
+      checks        = _ => transactionChecks(fullReturn),
+      invalid       = _ => failed,
       prerequisites = _ => Seq(),
-      started       = Some(fr => hasStartedBeyondPrelim(fr))
+      started       = Some(hasStartedBeyondPrelim)
     )
   }
-
 
   def buildTransactionRow(fullReturn: FullReturn, status: SectionStatus)
                          (implicit appConfig: FrontendAppConfig): TaskListSectionRow =

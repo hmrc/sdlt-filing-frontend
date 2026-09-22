@@ -142,6 +142,48 @@ class TransactionTaskListSpec extends SpecBase {
     ))
   )
 
+  private val fullReturnPrelimFromBackend = fullReturnComplete.copy(
+    transaction = Some(Transaction(
+      transactionID             = Some("221110172"),
+      returnID                  = Some("221110168"),
+      transactionDescription    = Some("F"),
+      newTransactionDescription = Some("F")
+    ))
+  )
+
+  private val fullReturnPrelimGrantOfLeaseMixedLand = fullReturnComplete.copy(
+    transaction = Some(Transaction(
+      transactionID             = Some("383100162"),
+      returnID                  = Some("383100158"),
+      transactionDescription    = Some("L"),
+      newTransactionDescription = Some("L")
+    )),
+    land = Some(Seq(completeLand.copy(
+      propertyType = Some("02")
+    )))
+  )
+
+  private val fullReturnPrelimPlusGeneralNo = fullReturnComplete.copy(
+    transaction = Some(Transaction(
+      transactionDescription = Some("A"),
+      isLandExchanged        = Some("NO")
+    ))
+  )
+
+  private val fullReturnPrelimPlusUseOfLandNo = fullReturnComplete.copy(
+    transaction = Some(Transaction(
+      transactionDescription = Some("A"),
+      usedAsShop             = Some("NO")
+    ))
+  )
+
+  private val fullReturnPrelimPlusConsiderationNo = fullReturnComplete.copy(
+    transaction = Some(Transaction(
+      transactionDescription = Some("A"),
+      considerationCash      = Some("NO")
+    ))
+  )
+
   private val fullReturnEffectiveDateOnly = fullReturnComplete.copy(
     transaction = Some(Transaction(
       effectiveDate = Some("01/02/2024")
@@ -173,6 +215,12 @@ class TransactionTaskListSpec extends SpecBase {
     )
 
   private def resumeUrl: String = controllers.routes.ResumeSectionController.resume("transaction", None).url
+
+  private def beforeYouStartUrl: String =
+    controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
+
+  private def singleEntityUrl: String =
+    controllers.transaction.routes.TransactionSingleEntityController.onPageLoad().url
 
   "TransactionTaskList" - {
 
@@ -381,6 +429,11 @@ class TransactionTaskListSpec extends SpecBase {
         result mustBe false
       }
 
+      "must return false when only the prelim is answered" in {
+        TransactionTaskList.isTransactionComplete(fullReturnPrelimOnly) mustBe false
+        TransactionTaskList.isTransactionComplete(fullReturnPrelimFromBackend) mustBe false
+      }
+
       "must ignore cross-flow failures — it only reflects the mandatory fields" in {
         TransactionTaskList.isTransactionComplete(fullReturnComplete) mustBe true
       }
@@ -392,6 +445,14 @@ class TransactionTaskListSpec extends SpecBase {
         TransactionTaskList.hasStartedBeyondPrelim(fullReturnPrelimOnly) mustBe false
       }
 
+      "must return false for the prelim payload as persisted (ids and newTransactionDescription are ignored)" in {
+        TransactionTaskList.hasStartedBeyondPrelim(fullReturnPrelimFromBackend) mustBe false
+      }
+
+      "must return false for a prelim-only grant of lease on mixed-use land" in {
+        TransactionTaskList.hasStartedBeyondPrelim(fullReturnPrelimGrantOfLeaseMixedLand) mustBe false
+      }
+
       "must return false when the transaction is absent" in {
         TransactionTaskList.hasStartedBeyondPrelim(emptyFullReturn) mustBe false
       }
@@ -400,12 +461,90 @@ class TransactionTaskListSpec extends SpecBase {
         TransactionTaskList.hasStartedBeyondPrelim(fullReturnEffectiveDateOnly) mustBe true
       }
 
+      "must return true when a general question beyond the prelim is answered NO" in {
+        TransactionTaskList.hasStartedBeyondPrelim(fullReturnPrelimPlusGeneralNo) mustBe true
+      }
+
+      "must return true when a use of land question is answered NO" in {
+        TransactionTaskList.hasStartedBeyondPrelim(fullReturnPrelimPlusUseOfLandNo) mustBe true
+      }
+
+      "must return true when a form of consideration question is answered NO" in {
+        TransactionTaskList.hasStartedBeyondPrelim(fullReturnPrelimPlusConsiderationNo) mustBe true
+      }
+
       "must return true when a mandatory field beyond the prelim is answered but the section is incomplete" in {
         TransactionTaskList.hasStartedBeyondPrelim(fullReturnMixedResNotGrantOfLeaseMissing) mustBe true
       }
 
       "must return true when every mandatory field is answered" in {
         TransactionTaskList.hasStartedBeyondPrelim(fullReturnMixedResNotGrantOfLease) mustBe true
+      }
+    }
+
+    ".isPrelimTransaction" - {
+
+      "must return true when only the transaction description is answered" in {
+        TransactionTaskList.isPrelimTransaction(fullReturnPrelimOnly) mustBe true
+      }
+
+      "must return true for the prelim payload as persisted" in {
+        TransactionTaskList.isPrelimTransaction(fullReturnPrelimFromBackend) mustBe true
+      }
+
+      "must return false when the transaction is absent" in {
+        TransactionTaskList.isPrelimTransaction(emptyFullReturn) mustBe false
+      }
+
+      "must return false when the transaction description is not answered" in {
+        TransactionTaskList.isPrelimTransaction(fullReturnEffectiveDateOnly) mustBe false
+      }
+
+      "must return false when any question beyond the prelim is answered, even with NO" in {
+        TransactionTaskList.isPrelimTransaction(fullReturnPrelimPlusGeneralNo) mustBe false
+        TransactionTaskList.isPrelimTransaction(fullReturnPrelimPlusUseOfLandNo) mustBe false
+        TransactionTaskList.isPrelimTransaction(fullReturnPrelimPlusConsiderationNo) mustBe false
+      }
+
+      "must return false when the section is partially complete" in {
+        TransactionTaskList.isPrelimTransaction(fullReturnMixedResNotGrantOfLeaseMissing) mustBe false
+      }
+
+      "must return false when the section is complete" in {
+        TransactionTaskList.isPrelimTransaction(fullReturnMixedResNotGrantOfLease) mustBe false
+      }
+    }
+
+    ".transactionChecks" - {
+
+      "must return Seq(false) when only the prelim is answered" in {
+        TransactionTaskList.transactionChecks(fullReturnPrelimOnly) mustBe Seq(false)
+      }
+
+      "must return Seq(false) for the prelim payload as persisted" in {
+        TransactionTaskList.transactionChecks(fullReturnPrelimFromBackend) mustBe Seq(false)
+      }
+
+      "must return the mandatory field checks when started beyond the prelim" in {
+        TransactionTaskList.transactionChecks(fullReturnPrelimPlusGeneralNo) mustBe
+          TransactionTaskList.mandatoryFieldsDefined(fullReturnPrelimPlusGeneralNo)
+
+        TransactionTaskList.transactionChecks(fullReturnMixedResNotGrantOfLeaseMissing) mustBe
+          TransactionTaskList.mandatoryFieldsDefined(fullReturnMixedResNotGrantOfLeaseMissing)
+      }
+
+      "must return the mandatory field checks when the section is complete" in {
+        val result = TransactionTaskList.transactionChecks(fullReturnMixedResNotGrantOfLease)
+
+        result mustBe TransactionTaskList.mandatoryFieldsDefined(fullReturnMixedResNotGrantOfLease)
+        result.forall(identity) mustBe true
+      }
+
+      "must return the mandatory field checks when the transaction is absent" in {
+        val result = TransactionTaskList.transactionChecks(emptyFullReturn)
+
+        result mustBe TransactionTaskList.mandatoryFieldsDefined(emptyFullReturn)
+        result.exists(identity) mustBe false
       }
     }
 
@@ -457,6 +596,28 @@ class TransactionTaskListSpec extends SpecBase {
 
             TransactionTaskList.transactionRowBuilder(fullReturnMixedResNotGrantOfLeaseMissing, withFailure(Pages.ReliefReason))
               .isComplete(fullReturnMixedResNotGrantOfLeaseMissing) mustBe false
+          }
+        }
+
+        "must return false when only the prelim is answered" in {
+          val application = applicationBuilder().build()
+
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+            TransactionTaskList.transactionRowBuilder(fullReturnPrelimFromBackend, noFailures)
+              .isComplete(fullReturnPrelimFromBackend) mustBe false
+          }
+        }
+
+        "must return false when only the prelim is answered and cross-flow reports failures" in {
+          val application = applicationBuilder().build()
+
+          running(application) {
+            implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+            TransactionTaskList.transactionRowBuilder(fullReturnPrelimFromBackend, multipleFailures)
+              .isComplete(fullReturnPrelimFromBackend) mustBe false
           }
         }
 
@@ -535,7 +696,9 @@ class TransactionTaskListSpec extends SpecBase {
 
           TransactionTaskList.buildTransactionRow(fullReturnComplete, noFailures).canEdit mustBe true
           TransactionTaskList.buildTransactionRow(fullReturnPrelimOnly, noFailures).canEdit mustBe true
+          TransactionTaskList.buildTransactionRow(fullReturnPrelimFromBackend, noFailures).canEdit mustBe true
           TransactionTaskList.buildTransactionRow(fullReturnComplete, multipleFailures).canEdit mustBe true
+          TransactionTaskList.buildTransactionRow(fullReturnPrelimFromBackend, multipleFailures).canEdit mustBe true
         }
       }
     }
@@ -551,7 +714,40 @@ class TransactionTaskListSpec extends SpecBase {
           val result = TransactionTaskList.buildTransactionRow(fullReturnPrelimOnly, noFailures)
 
           result.status mustBe TLNotStarted
-          result.url mustBe controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
+          result.url mustBe beforeYouStartUrl
+        }
+      }
+
+      "must show 'Not yet started' status and route to Before You Start for the prelim payload as persisted" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnPrelimFromBackend, noFailures)
+
+          result.status mustBe TLNotStarted
+          result.url mustBe beforeYouStartUrl
+        }
+      }
+
+      "must show 'In progress' status and route to resume when a question beyond the prelim is answered NO" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val general = TransactionTaskList.buildTransactionRow(fullReturnPrelimPlusGeneralNo, noFailures)
+          general.status mustBe TLInProgress
+          general.url    mustBe resumeUrl
+
+          val useOfLand = TransactionTaskList.buildTransactionRow(fullReturnPrelimPlusUseOfLandNo, noFailures)
+          useOfLand.status mustBe TLInProgress
+          useOfLand.url    mustBe resumeUrl
+
+          val consideration = TransactionTaskList.buildTransactionRow(fullReturnPrelimPlusConsiderationNo, noFailures)
+          consideration.status mustBe TLInProgress
+          consideration.url    mustBe resumeUrl
         }
       }
 
@@ -640,11 +836,24 @@ class TransactionTaskListSpec extends SpecBase {
           val result = TransactionTaskList.buildTransactionRow(fullReturnMixedResNotGrantOfLeaseMissing, withFailure(Pages.ReliefReason))
 
           result.status mustBe TLInvalid
-          result.url mustBe controllers.transaction.routes.TransactionSingleEntityController.onPageLoad().url
+          result.url mustBe singleEntityUrl
         }
       }
 
-      "must mark the row as invalid when nothing has been answered and there are failures" in {
+      "must NOT mark the row as invalid when only the prelim is answered and there are failures" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnPrelimFromBackend, withFailure(Pages.EffectiveDate))
+
+          result.status mustBe TLNotStarted
+          result.url mustBe beforeYouStartUrl
+        }
+      }
+
+      "must NOT mark the row as invalid when nothing has been answered and there are failures" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -652,7 +861,131 @@ class TransactionTaskListSpec extends SpecBase {
 
           val result = TransactionTaskList.buildTransactionRow(fullReturnComplete.copy(transaction = None), withFailure(Pages.ReliefReason))
 
+          result.status mustBe TLNotStarted
+          result.url mustBe beforeYouStartUrl
+        }
+      }
+    }
+
+    ".buildTransactionRow cross-flow failures before the section is started" - {
+
+      "must show 'Not yet started' and route to Before You Start when only the prelim is answered, with a single failure" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnPrelimOnly, withFailure(Pages.ReliefReason))
+
+          result.status mustNot be(TLInvalid)
+          result.status mustBe TLNotStarted
+          result.url    mustBe beforeYouStartUrl
+        }
+      }
+
+      "must show 'Not yet started' and route to Before You Start when only the prelim is answered, with multiple failures" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnPrelimFromBackend, multipleFailures)
+
+          result.status mustNot be(TLInvalid)
+          result.status mustBe TLNotStarted
+          result.url    mustBe beforeYouStartUrl
+        }
+      }
+
+      "must show 'Not yet started' for a prelim-only grant of lease on mixed-use land with failures" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnPrelimGrantOfLeaseMixedLand, multipleFailures)
+
+          result.status mustNot be(TLInvalid)
+          result.status mustBe TLNotStarted
+          result.url    mustBe beforeYouStartUrl
+        }
+      }
+
+      "must ignore failures whatever page they target while only the prelim is answered" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          Seq(Pages.EffectiveDate, Pages.ContractDate, Pages.LandPropertyType, Pages.ReliefReason).foreach { page =>
+            val result = TransactionTaskList.buildTransactionRow(fullReturnPrelimFromBackend, withFailure(page))
+
+            result.status mustBe TLNotStarted
+            result.url    mustBe beforeYouStartUrl
+          }
+        }
+      }
+
+      "must show 'Not yet started' when the transaction is absent and there are multiple failures" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnComplete.copy(transaction = None), multipleFailures)
+
+          result.status mustBe TLNotStarted
+          result.url    mustBe beforeYouStartUrl
+        }
+      }
+
+      "must mark the row as invalid once a single question beyond the prelim is answered NO and there are failures" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          Seq(fullReturnPrelimPlusGeneralNo, fullReturnPrelimPlusUseOfLandNo, fullReturnPrelimPlusConsiderationNo).foreach { fr =>
+            val result = TransactionTaskList.buildTransactionRow(fr, withFailure(Pages.ReliefReason))
+
+            result.status mustBe TLInvalid
+            result.url    mustBe singleEntityUrl
+          }
+        }
+      }
+
+      "must mark the row as invalid when only a non-prelim field is answered and there are failures" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnEffectiveDateOnly, withFailure(Pages.EffectiveDate))
+
           result.status mustBe TLInvalid
+          result.url    mustBe singleEntityUrl
+        }
+      }
+
+      "must start surfacing failures as soon as the user moves beyond the prelim" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val prelimOnly = fullReturnPrelimGrantOfLeaseMixedLand
+          val oneAnswer  = prelimOnly.copy(
+            transaction = prelimOnly.transaction.map(_.copy(effectiveDate = Some("01/02/2024")))
+          )
+
+          val before = TransactionTaskList.buildTransactionRow(prelimOnly, withFailure(Pages.EffectiveDate))
+          val after  = TransactionTaskList.buildTransactionRow(oneAnswer, withFailure(Pages.EffectiveDate))
+
+          before.status mustBe TLNotStarted
+          before.url    mustBe beforeYouStartUrl
+
+          after.status  mustBe TLInvalid
+          after.url     mustBe singleEntityUrl
         }
       }
     }
@@ -689,9 +1022,19 @@ class TransactionTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = TransactionTaskList.buildTransactionRow(fullReturnPrelimOnly, noFailures)
+          TransactionTaskList.buildTransactionRow(fullReturnPrelimOnly, noFailures).url mustBe beforeYouStartUrl
+          TransactionTaskList.buildTransactionRow(fullReturnPrelimFromBackend, noFailures).url mustBe beforeYouStartUrl
+        }
+      }
 
-          result.url mustBe controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
+      "must route to TransactionBeforeYouStart when only the prelim is answered, even with failures" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          TransactionTaskList.buildTransactionRow(fullReturnPrelimOnly, withFailure(Pages.ReliefReason)).url mustBe beforeYouStartUrl
+          TransactionTaskList.buildTransactionRow(fullReturnPrelimFromBackend, multipleFailures).url mustBe beforeYouStartUrl
         }
       }
 
@@ -703,7 +1046,7 @@ class TransactionTaskListSpec extends SpecBase {
 
           val result = TransactionTaskList.buildTransactionRow(fullReturnComplete.copy(transaction = None), noFailures)
 
-          result.url mustBe controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
+          result.url mustBe beforeYouStartUrl
         }
       }
 
@@ -715,7 +1058,7 @@ class TransactionTaskListSpec extends SpecBase {
 
           val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, withFailure(Pages.ReliefReason))
 
-          result.url mustBe controllers.transaction.routes.TransactionSingleEntityController.onPageLoad().url
+          result.url mustBe singleEntityUrl
         }
       }
 
@@ -727,7 +1070,7 @@ class TransactionTaskListSpec extends SpecBase {
 
           val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, multipleFailures)
 
-          result.url mustBe controllers.transaction.routes.TransactionSingleEntityController.onPageLoad().url
+          result.url mustBe singleEntityUrl
         }
       }
 
@@ -741,15 +1084,13 @@ class TransactionTaskListSpec extends SpecBase {
           val contractDateResult  = TransactionTaskList.buildTransactionRow(fullReturnComplete, withFailure(Pages.ContractDate))
           val propertyTypeResult  = TransactionTaskList.buildTransactionRow(fullReturnComplete, withFailure(Pages.LandPropertyType))
 
-          val expected = controllers.transaction.routes.TransactionSingleEntityController.onPageLoad().url
-
-          effectiveDateResult.url mustBe expected
-          contractDateResult.url  mustBe expected
-          propertyTypeResult.url  mustBe expected
+          effectiveDateResult.url mustBe singleEntityUrl
+          contractDateResult.url  mustBe singleEntityUrl
+          propertyTypeResult.url  mustBe singleEntityUrl
         }
       }
 
-      "must route to TransactionSingleEntity for a failure even when nothing has been answered" in {
+      "must route to TransactionBeforeYouStart for a failure when nothing has been answered" in {
         val application = applicationBuilder().build()
 
         running(application) {
@@ -757,7 +1098,7 @@ class TransactionTaskListSpec extends SpecBase {
 
           val result = TransactionTaskList.buildTransactionRow(fullReturnComplete.copy(transaction = None), withFailure(Pages.ReliefReason))
 
-          result.url mustBe controllers.transaction.routes.TransactionSingleEntityController.onPageLoad().url
+          result.url mustBe beforeYouStartUrl
         }
       }
 
@@ -769,8 +1110,21 @@ class TransactionTaskListSpec extends SpecBase {
 
           val result = TransactionTaskList.buildTransactionRow(fullReturnComplete, withFailure(Pages.ReliefReason))
 
-          result.url       mustBe controllers.transaction.routes.TransactionSingleEntityController.onPageLoad().url
+          result.url       mustBe singleEntityUrl
           result.url mustNot be(controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad().url)
+        }
+      }
+
+      "must prioritise failure routing over resume routing once started" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = TransactionTaskList.buildTransactionRow(fullReturnMixedResNotGrantOfLeaseMissing, withFailure(Pages.ReliefReason))
+
+          result.url mustBe singleEntityUrl
+          result.url mustNot be(resumeUrl)
         }
       }
     }
@@ -809,6 +1163,39 @@ class TransactionTaskListSpec extends SpecBase {
         }
       }
 
+      "must build a TaskListSection with a not started row routed to Before You Start when only the prelim is answered" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages           = messages(application)
+          implicit val appConfig:        FrontendAppConfig  = application.injector.instanceOf[FrontendAppConfig]
+
+          val section = TransactionTaskList.build(fullReturnPrelimFromBackend, noFailures)
+          val row     = section.rows.head
+
+          section.heading                  mustBe messagesInstance("tasklist.transactionQuestion.heading")
+          messagesInstance(row.messageKey) mustBe messagesInstance("tasklist.transactionQuestion.details")
+          row.status                       mustBe TLNotStarted
+          row.url                          mustBe beforeYouStartUrl
+        }
+      }
+
+      "must build a TaskListSection with a not started row when only the prelim is answered and cross-flow reports failures" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val messagesInstance: Messages           = messages(application)
+          implicit val appConfig:        FrontendAppConfig  = application.injector.instanceOf[FrontendAppConfig]
+
+          val section = TransactionTaskList.build(fullReturnPrelimGrantOfLeaseMixedLand, multipleFailures)
+          val row     = section.rows.head
+
+          section.heading mustBe messagesInstance("tasklist.transactionQuestion.heading")
+          row.status      mustBe TLNotStarted
+          row.url         mustBe beforeYouStartUrl
+        }
+      }
+
       "must build a TaskListSection with not started row when transaction is absent" in {
         val application = applicationBuilder().build()
 
@@ -822,7 +1209,7 @@ class TransactionTaskListSpec extends SpecBase {
           section.heading                       mustBe messagesInstance("tasklist.transactionQuestion.heading")
           messagesInstance(row.messageKey)      mustBe messagesInstance("tasklist.transactionQuestion.details")
           row.status                            mustBe TLNotStarted
-          row.url                               mustBe controllers.transaction.routes.TransactionBeforeYouStartController.onPageLoad().url
+          row.url                               mustBe beforeYouStartUrl
         }
       }
 
@@ -838,7 +1225,7 @@ class TransactionTaskListSpec extends SpecBase {
 
           section.heading                       mustBe messagesInstance("tasklist.transactionQuestion.heading")
           row.status                            mustBe TLInvalid
-          row.url                               mustBe controllers.transaction.routes.TransactionSingleEntityController.onPageLoad().url
+          row.url                               mustBe singleEntityUrl
         }
       }
     }
