@@ -1290,7 +1290,7 @@ transaction.linkedTransactions.title                                            
 transaction.linkedTransactions.heading                                              = Linked transactions
 transaction.linkedTransactions.h2                                                   = Is this transaction linked to another?
 transaction.linkedTransactions.p1                                                   = A transaction is linked when it forms part of an arrangement, scheme or series of transactions between the same vendor and purchaser or connected persons.
-transaction.linkedTransactions.checkYourAnswersLabel                                = Is this transaction linked to another?
+transaction.linkedTransactions.checkYourAnswersLabel                                = Is this transaction linked to any others?
 transaction.linkedTransactions.error.required                                       = Select yes if this transaction is linked to another
 transaction.linkedTransactions.change.hidden                                        = Is this transaction linked to another?
 transaction.linkedTransactions.missing                                              = Select if this transaction is linked to another
@@ -2055,7 +2055,7 @@ lease.netPresentValue.change.hidden                                             
 submission.beforeYouStart.title                                                     = Your return is ready for submission
 submission.beforeYouStart.heading                                                   = Your return is ready for submission
 submission.beforeYouStart.p1.text                                                   = You have now completed all sections of your SDLT return. You can {0}.
-submission.beforeYouStart.p1.linkText                                               = view and print this return for your client’s approval before submitting (opens in new tab)
+submission.beforeYouStart.p1.linkText                                               = view and print this return for your client’s approval before submitting
 submission.beforeYouStart.p2                                                        = Once your return is submitted, you will receive:
 submission.beforeYouStart.li1                                                       = a Unique Transaction Reference Number (UTRN)
 submission.beforeYouStart.li2                                                       = an SDLT5 certificate (the submission receipt)
