@@ -55,11 +55,11 @@
 @insetContent = {
     @submissionRecieptRef.map { submissionRef =>
         @utrn.map { utr =>
-            @if(submissionState == Submitted || submissionState == SubmittedNoReceipt) {
                 @p(messages("submission.completedSdltReturn.inset.utrn", utr))
-            }
         }
-        @p(messages("submission.completedSdltReturn.inset.submissionRef", submissionRef))
+        @if(submissionState == Submitted){
+            @p(messages("submission.completedSdltReturn.inset.submissionRef", submissionRef))
+        }
     }
 }
 
@@ -86,10 +86,12 @@
             }
         }
 
-        @submissionRecieptRef.map { _ =>
-            @govukInsetText(InsetText(
-                content = HtmlContent(insetContent)
-            ))
+        @if(submissionState == Submitted || submissionState == SubmittedNoReceipt){
+            @submissionRecieptRef.map { _ =>
+                @govukInsetText(InsetText(
+                    content = HtmlContent(insetContent)
+                ))
+            }
         }
 
         <p class="govuk-body">
