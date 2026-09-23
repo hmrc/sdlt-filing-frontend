@@ -1714,8 +1714,7 @@ transaction.deferringPayment.change.hidden                                      
 transaction.transactionUseOfLandOrProperty.title                                    = The use of the land or property
 transaction.transactionUseOfLandOrProperty.heading                                  = The use of the land or property
 transaction.transactionUseOfLandOrProperty.subheading                               = What is the land or property to be used for?
-transaction.transactionUseOfLandOrProperty.p1                                       = You have indicated that the land or property being purchased is either for non-residential or mixed use.
-transaction.transactionUseOfLandOrProperty.p2                                       = The classification for this return depends on the actual use, or suitability for use, on the effective date of the transaction.
+transaction.transactionUseOfLandOrProperty.p1                                       = You have indicated that the land or property being purchased is either for non-residential or mixed use. The classification for this return depends on the actual use, or suitability for use, on the effective date of the transaction.
 transaction.transactionUseOfLandOrProperty.office                                   = Office
 transaction.transactionUseOfLandOrProperty.hotel                                    = Hotel
 transaction.transactionUseOfLandOrProperty.shop                                     = Shop
