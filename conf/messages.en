@@ -1291,8 +1291,8 @@ transaction.linkedTransactions.heading                                          
 transaction.linkedTransactions.h2                                                   = Is this transaction linked to any others?
 transaction.linkedTransactions.p1                                                   = A transaction is linked when it forms part of an arrangement, scheme or series of transactions between the same vendor and purchaser or connected persons.
 transaction.linkedTransactions.checkYourAnswersLabel                                = Is this transaction linked to any others?
-transaction.linkedTransactions.error.required                                       = Select yes if this transaction is linked to another
-transaction.linkedTransactions.change.hidden                                        = Is this transaction linked to another?
+transaction.linkedTransactions.error.required                                       = Select yes if this transaction is linked to any others
+transaction.linkedTransactions.change.hidden                                        = Is this transaction linked to any others?
 transaction.linkedTransactions.missing                                              = Select if this transaction is linked to another
 
 transaction.transactionVatIncluded.title                                            = Is VAT included in the total consideration?
@@ -1714,8 +1714,8 @@ transaction.deferringPayment.change.hidden                                      
 transaction.transactionUseOfLandOrProperty.title                                    = The use of the land or property
 transaction.transactionUseOfLandOrProperty.heading                                  = The use of the land or property
 transaction.transactionUseOfLandOrProperty.subheading                               = What is the land or property to be used for?
-transaction.transactionUseOfLandOrProperty.p1                                       = Non-residential property is defined by exclusion, which means any land or property that does not meet the specific definition of residential property.
-transaction.transactionUseOfLandOrProperty.p2                                       = As a non-residential property, the classification for this return depends on the actual use, or suitability for use, on the effective date of the transaction.
+transaction.transactionUseOfLandOrProperty.p1                                       = You have indicated that the land or property being purchased is either for non-residential or mixed use.
+transaction.transactionUseOfLandOrProperty.p2                                       = The classification for this return depends on the actual use, or suitability for use, on the effective date of the transaction.
 transaction.transactionUseOfLandOrProperty.office                                   = Office
 transaction.transactionUseOfLandOrProperty.hotel                                    = Hotel
 transaction.transactionUseOfLandOrProperty.shop                                     = Shop
