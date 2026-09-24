@@ -24,19 +24,20 @@ import models.{CreateReturnAgentRequest, NormalMode, ReturnVersionUpdateRequest,
 import pages.purchaserAgent.PurchaserAgentOverviewPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, JsSuccess}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc.*
 import repositories.SessionRepository
-import services.purchaserAgent.PurchaserAgentService
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.purchaserAgent.*
-import views.html.purchaserAgent.PurchaserAgentCheckYourAnswersView
-import uk.gov.hmrc.http.HeaderCarrier
 import services.checkAnswers.CheckAnswersService
+import services.purchaserAgent.PurchaserAgentService
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.LoggingUtil
+import viewmodels.checkAnswers.purchaserAgent.*
 import viewmodels.checkAnswers.summary.SummaryRowResult
-import scala.util.control.NonFatal
+import views.html.purchaserAgent.PurchaserAgentCheckYourAnswersView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 
 @Singleton
 class PurchaserAgentCheckYourAnswersController @Inject()(
@@ -51,7 +52,7 @@ class PurchaserAgentCheckYourAnswersController @Inject()(
                                                           view: PurchaserAgentCheckYourAnswersView,
                                                           purchaserAgentService: PurchaserAgentService,
                                                           checkAnswersService: CheckAnswersService
-                                                        )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                        )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport with LoggingUtil {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
@@ -129,12 +130,16 @@ class PurchaserAgentCheckYourAnswersController @Inject()(
           for {
             updateReturnAgentRequest <- UpdateReturnAgentRequest.from(userAnswers, Purchaser)
             updateReturnAgentReturn  <- backendConnector.updateReturnAgent(updateReturnAgentRequest)
-          } yield
-            if (updateReturnAgentReturn.updated)
+          } yield {
+            logger.debug(s"[PurchaserAgentCheckYourAnswersController][updateReturnAgent] purchaser return agent update request: $updateReturnAgentRequest")
+            if (updateReturnAgentReturn.updated) {
+              infoLog(s"[PurchaserAgentCheckYourAnswersController][updateReturnAgent] purchaser return agent has succesfully been updated. ReturnId=${updateReturnAgentRequest.returnResourceRef}")
               Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad())
                 .flashing("purchaserAgentUpdated" -> updateReturnAgentRequest.name)
-            else
+            } else
+              warnLog(s"[PurchaserAgentCheckYourAnswersController][updateReturnAgent] purchaser return agent has not been updated. ReturnId=${updateReturnAgentRequest.returnResourceRef}")
               Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad())
+          }
 
         case Right(_) =>
           Future.successful(
@@ -149,10 +154,14 @@ class PurchaserAgentCheckYourAnswersController @Inject()(
       createReturnAgentRequest <- CreateReturnAgentRequest.from(userAnswers, Purchaser)
       createReturnAgentReturn <- backendConnector.createReturnAgent(createReturnAgentRequest)
     } yield {
+      logger.debug(s"[PurchaserAgentCheckYourAnswersController][createReturnAgent] purchaser return agent create request: $createReturnAgentRequest")
       if (createReturnAgentReturn.returnAgentID.nonEmpty) {
+        infoLog(s"[PurchaserAgentCheckYourAnswersController][createReturnAgent] purchaser return agent has successfully been created:" +
+          s" ReturnAgentID=${createReturnAgentReturn.returnAgentID}. ReturnId=${createReturnAgentRequest.returnResourceRef}")
         Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad())
           .flashing("purchaserAgentCreated" -> createReturnAgentRequest.name)
       } else {
+        warnLog(s"[PurchaserAgentCheckYourAnswersController][createReturnAgent] purchaser return agent has not been created. ReturnId=${createReturnAgentRequest.returnResourceRef}")
         Redirect(controllers.purchaserAgent.routes.PurchaserAgentCheckYourAnswersController.onPageLoad())
       }
     }

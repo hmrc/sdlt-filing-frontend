@@ -18,8 +18,8 @@ package controllers.ukResidency
 
 import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
-import models.{ReturnVersionUpdateRequest, UserAnswers}
 import models.ukResidency.{CreateResidencyRequest, UpdateResidencyRequest}
+import models.{ReturnVersionUpdateRequest, UserAnswers}
 import pages.ukResidency.{CloseCompanyPage, CrownEmploymentReliefPage, NonUkResidentPurchaserPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.JsObject
@@ -29,14 +29,15 @@ import services.checkAnswers.CheckAnswersService
 import services.taxCalculation.UpdateTaxCalcService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.ukResidency.{CloseCompanySummary, CrownEmploymentReliefSummary, NonUkResidentPurchaserSummary}
-import views.html.ukResidency.UkResidencyCheckYourAnswersView
+import utils.LoggingUtil
 import utils.PropertyTypeHelper.isResidentialProperty
 import viewmodels.checkAnswers.summary.SummaryRowResult
-import scala.util.control.NonFatal
+import viewmodels.checkAnswers.ukResidency.{CloseCompanySummary, CrownEmploymentReliefSummary, NonUkResidentPurchaserSummary}
+import views.html.ukResidency.UkResidencyCheckYourAnswersView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 import scala.util.{Failure, Success}
 
 @Singleton
@@ -52,7 +53,7 @@ class UkResidencyCheckYourAnswersController @Inject()(
                                                        val controllerComponents: MessagesControllerComponents,
                                                        view: UkResidencyCheckYourAnswersView,
                                                        updateTaxCalcService: UpdateTaxCalcService
-                                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with LoggingUtil {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
@@ -155,9 +156,12 @@ class UkResidencyCheckYourAnswersController @Inject()(
       createResidencyRequest <- CreateResidencyRequest.from(userAnswers)
       createResidencyReturn  <- backendConnector.createResidency(createResidencyRequest)
     } yield {
+      logger.debug(s"[UkResidencyCheckYourAnswersController][createResidency] create residency request: $createResidencyReturn")
       if (createResidencyReturn.created) {
+        infoLog(s"[UkResidencyCheckYourAnswersController][createResidency] residency has been successfully created. ReturnId=${createResidencyRequest.returnResourceRef}")
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
+        warnLog(s"[UkResidencyCheckYourAnswersController][createResidency] residency has not been created. ReturnId=${createResidencyRequest.returnResourceRef}")
         Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
       }
     }
@@ -182,9 +186,15 @@ class UkResidencyCheckYourAnswersController @Inject()(
             updateResidencyRequest <- UpdateResidencyRequest.from(userAnswers)
             updateResidencyReturn <- backendConnector.updateResidency(updateResidencyRequest)
             _ <- maybeUpdateResidencyTaxCalc(userAnswers)
-          } yield
-            if (updateResidencyReturn.updated) Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-            else Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
+          } yield {
+            logger.debug(s"[UkResidencyCheckYourAnswersController][updateResidency] update residency request: $updateResidencyReturn")
+            if (updateResidencyReturn.updated)
+              infoLog(s"[UkResidencyCheckYourAnswersController][updateResidency] residency has been successfully updated. ReturnId=${updateResidencyRequest.returnResourceRef}")
+              Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+            else
+              warnLog(s"[UkResidencyCheckYourAnswersController][updateResidency] residency has not been updated. ReturnId=${updateResidencyRequest.returnResourceRef}")
+              Redirect(controllers.ukResidency.routes.UkResidencyCheckYourAnswersController.onPageLoad())
+          }
 
         case Right(_) =>
           Future.successful(
@@ -197,8 +207,15 @@ class UkResidencyCheckYourAnswersController @Inject()(
     if (updateTaxCalcService.residencyDataMatches(userAnswers)) {
       for {
         req <- updateTaxCalcService.updateTaxCalcRequest(userAnswers)
-        _ <- backendConnector.updateTaxCalculationInfo(req)
-      } yield ()
+        updateTaxCalculationReturn <- backendConnector.updateTaxCalculationInfo(req)
+      } yield {
+        logger.debug(s"[UkResidencyCheckYourAnswersController][maybeUpdateResidencyTaxCalc] update residency tax calculation request: $updateTaxCalculationReturn")
+        if (updateTaxCalculationReturn.updated) {
+          infoLog(s"[UkResidencyCheckYourAnswersController][maybeUpdateResidencyTaxCalc] residency tax calculation has been successfully updated. ReturnId=${req.returnResourceRef}")
+        } else {
+          warnLog(s"[UkResidencyCheckYourAnswersController][maybeUpdateResidencyTaxCalc] residency tax calculation has not been updated. ReturnId=${req.returnResourceRef}")
+        }
+      }
     } else {
       Future.successful(())
     }

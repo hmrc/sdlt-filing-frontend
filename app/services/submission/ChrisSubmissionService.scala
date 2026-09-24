@@ -17,14 +17,14 @@
 package services.submission
 
 import connectors.StampDutyLandTaxConnector
-import models.{FullReturn, Purchaser, UserAnswers, Vendor}
 import models.submission.{SubmissionResponse, SubmitRequest}
 import models.ukResidency.DeleteResidencyRequest
+import models.{FullReturn, Purchaser, UserAnswers, Vendor}
 import pages.submission.{EmailConfirmationPage, SubmissionFailedPage}
-import play.api.Logging
 import play.api.mvc.Request
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.LoggingUtil
 import utils.PropertyTypeHelper.isResidentialProperty
 
 import javax.inject.{Inject, Singleton}
@@ -35,12 +35,12 @@ import scala.util.{Failure, Success}
 class ChrisSubmissionService @Inject()(connector: StampDutyLandTaxConnector,
                                        sessionRepository: SessionRepository,
                                        backendConnector: StampDutyLandTaxConnector)
-                                      (implicit ec: ExecutionContext) extends Logging {
+                                      (implicit ec: ExecutionContext) extends LoggingUtil {
 
   def submit(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[SubmissionResponse] =
     userAnswers.fullReturn match {
       case None =>
-        logger.error("[ChrisSubmissionService][submit] no fullReturn in userAnswers")
+        errorLog("[ChrisSubmissionService][submit] no fullReturn in userAnswers")
         Future.failed(new NoSuchElementException("No fullReturn present for submission"))
 
       case Some(fullReturn) =>
@@ -51,8 +51,14 @@ class ChrisSubmissionService @Inject()(connector: StampDutyLandTaxConnector,
         val deleteResidencyFuture = if (resetResidencyCheck) {
           for {
             req <- DeleteResidencyRequest.from(userAnswers)
-            _ <- backendConnector.deleteResidency(req)
-          } yield ()
+            deleteResidencyReturn <- backendConnector.deleteResidency(req)
+          } yield {
+            logger.debug(s"[ChrisSubmissionService][submit] delete residency request: $req")
+            if deleteResidencyReturn.deleted then
+              infoLog(s"[ChrisSubmissionService][submit] residency has been deleted. ReturnId=${req.returnResourceRef}")
+            else
+              warnLog(s"[ChrisSubmissionService][submit] residency has not been deleted. ReturnId=${req.returnResourceRef}")
+          }
         } else {
           Future.unit
         }

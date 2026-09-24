@@ -26,11 +26,12 @@ import play.api.libs.json.{JsObject, JsSuccess}
 import play.api.mvc.*
 import repositories.SessionRepository
 import services.checkAnswers.CheckAnswersService
-import services.crossflow.{CrossFlowFailure, Pages}
 import services.crossflow.fields.CrossFlowValidationService
+import services.crossflow.{CrossFlowFailure, Pages}
 import services.taxCalculation.UpdateTaxCalcService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.LoggingUtil
 import viewmodels.checkAnswers.land.*
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import views.html.land.LandCheckYourAnswersView
@@ -53,7 +54,7 @@ class LandCheckYourAnswersController @Inject() (
                                                  val controllerComponents: MessagesControllerComponents,
                                                  view:                     LandCheckYourAnswersView,
                                                  updateTaxCalcService: UpdateTaxCalcService
-                                               )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                               )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport with LoggingUtil {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck andThen statusCheck).async {
     implicit request =>
@@ -207,10 +208,13 @@ class LandCheckYourAnswersController @Inject() (
               updateLandReturn <- backendConnector.updateLand(updateLandRequest)
               _ <- maybeUpdateTaxCalc(userAnswers)
             } yield
-              if (updateLandReturn.updated)
+              logger.debug(s"[LandCheckYourAnswersController][updateLand] update land request: $updateLandRequest")
+              if (updateLandReturn.updated) {
+                infoLog(s"[LandCheckYourAnswersController][updateLand] land has successfully been updated. ReturnId=${updateLandRequest.returnResourceRef}")
                 Redirect(controllers.land.routes.LandOverviewController.onPageLoad())
                   .flashing("landUpdated" -> updateLandRequest.addressLine1)
-              else
+              } else
+                warnLog(s"[LandCheckYourAnswersController][updateLand] land has not been updated. ReturnId=${updateLandRequest.returnResourceRef}")
                 Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
           } else {
             Future.successful(
@@ -226,8 +230,14 @@ class LandCheckYourAnswersController @Inject() (
     if (updateTaxCalcService.landDataMatches(userAnswers)) {
       for {
         req <- updateTaxCalcService.updateTaxCalcRequest(userAnswers)
-        _ <- backendConnector.updateTaxCalculationInfo(req)
-      } yield ()
+        updateTaxCalculationReturn <- backendConnector.updateTaxCalculationInfo(req)
+      } yield {
+        logger.debug(s"[LandCheckYourAnswersController][maybeUpdateTaxCalc] update tax calculation request: $req")
+        if updateTaxCalculationReturn.updated then
+          infoLog(s"[LandCheckYourAnswersController][maybeUpdateTaxCalc] tax calculation has successfully been updated. ReturnId=${req.returnResourceRef}")
+        else
+          warnLog(s"[LandCheckYourAnswersController][maybeUpdateTaxCalc] tax calculation has not been updated. ReturnId=${req.returnResourceRef}")
+      }
     } else {
       Future.successful(())
     }
@@ -238,10 +248,13 @@ class LandCheckYourAnswersController @Inject() (
       createLandRequest <- CreateLandRequest.from(userAnswers, land)
       createLandReturn  <- backendConnector.createLand(createLandRequest)
     } yield {
+      logger.debug(s"[LandCheckYourAnswersController][createLand] create land request: $createLandReturn")
       if (createLandReturn.landId.nonEmpty) {
+        infoLog(s"[LandCheckYourAnswersController][createLand] land has successfully been created. LandID=${createLandReturn.landId}. ReturnId=${createLandRequest.returnResourceRef}")
         Redirect(controllers.land.routes.LandOverviewController.onPageLoad())
           .flashing("landCreated" -> createLandRequest.addressLine1)
       } else {
+        warnLog(s"[LandCheckYourAnswersController][createLand] land has not been created. ReturnId=${createLandRequest.returnResourceRef}")
         Redirect(controllers.land.routes.LandCheckYourAnswersController.onPageLoad())
       }
     }

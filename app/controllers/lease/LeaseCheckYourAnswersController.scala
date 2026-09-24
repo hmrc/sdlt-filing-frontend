@@ -18,9 +18,9 @@ package controllers.lease
 
 import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
-import models.{Lease, ReturnVersionUpdateRequest, UserAnswers}
 import models.lease.{CreateLeaseRequest, LeaseSessionQuestions, UpdateLeaseRequest}
 import models.prelimQuestions.TransactionType
+import models.{Lease, ReturnVersionUpdateRequest, UserAnswers}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, JsSuccess}
 import play.api.mvc.*
@@ -30,13 +30,14 @@ import services.lease.*
 import services.taxCalculation.UpdateTaxCalcService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.LoggingUtil
 import viewmodels.checkAnswers.lease.*
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import views.html.lease.LeaseCheckYourAnswersView
-import scala.util.control.NonFatal
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 import scala.util.{Failure, Success}
 
 class LeaseCheckYourAnswersController @Inject()(
@@ -53,7 +54,7 @@ class LeaseCheckYourAnswersController @Inject()(
                                                           populateLeaseService: PopulateLeaseService,
                                                           checkAnswersService: CheckAnswersService,
                                                           updateTaxCalcService: UpdateTaxCalcService
-                                                        )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                        )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport with LoggingUtil {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
@@ -111,9 +112,12 @@ class LeaseCheckYourAnswersController @Inject()(
       createLeaseRequest <- CreateLeaseRequest.from(userAnswers, lease)
       createLeaseReturn <- backendConnector.createLease(createLeaseRequest)
     } yield {
+      logger.debug(s"[LeaseCheckYourAnswersController][createLease] create lease request: $createLeaseRequest")
       if (createLeaseReturn.created) {
+        infoLog(s"[LeaseCheckYourAnswersController][createLease] lease has been successfully created. ReturnId=${createLeaseRequest.returnResourceRef}")
         Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
       } else {
+        warnLog(s"[LeaseCheckYourAnswersController][createLease] lease has not been created. ReturnId=${createLeaseRequest.returnResourceRef}")
         Redirect(controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad())
       }
     }
@@ -139,9 +143,16 @@ class LeaseCheckYourAnswersController @Inject()(
             updateLeaseRequest <- UpdateLeaseRequest.from(userAnswers, lease)
             updateLeaseReturn <- backendConnector.updateLease(updateLeaseRequest)
             _ <- maybeUpdateLeaseTaxCalc(userAnswers)
-          } yield
-            if (updateLeaseReturn.updated) Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
-            else Redirect(controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad())
+          } yield {
+            logger.debug(s"[LeaseCheckYourAnswersController][updateLease] update lease request: $updateLeaseRequest")
+            if (updateLeaseReturn.updated) {
+              infoLog(s"[LeaseCheckYourAnswersController][updateLease] lease has been successfully updated. ReturnId=${updateLeaseRequest.returnResourceRef}")
+              Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
+            } else {
+              warnLog(s"[LeaseCheckYourAnswersController][updateLease] lease has not been updated. ReturnId=${updateLeaseRequest.returnResourceRef}")
+              Redirect(controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad())
+            }
+          }
 
         case Right(_) =>
           Future.successful(Redirect(controllers.lease.routes.LeaseCheckYourAnswersController.onPageLoad()))
@@ -153,8 +164,14 @@ class LeaseCheckYourAnswersController @Inject()(
     if (updateTaxCalcService.leaseDataMatches(userAnswers)) {
       for {
         req <- updateTaxCalcService.updateTaxCalcRequest(userAnswers)
-        _ <- backendConnector.updateTaxCalculationInfo(req)
-      } yield ()
+        updateTaxCalculationReturn <- backendConnector.updateTaxCalculationInfo(req)
+      } yield {
+        logger.debug(s"[LeaseCheckYourAnswersController][maybeUpdateLeaseTaxCalc] update tax calculation request: $req")
+        if updateTaxCalculationReturn.updated then
+          infoLog(s"[LeaseCheckYourAnswersController][maybeUpdateLeaseTaxCalc] tax calculation has been successfully updated. ReturnId=${req.returnResourceRef}")
+        else
+          warnLog(s"[LeaseCheckYourAnswersController][maybeUpdateLeaseTaxCalc] tax calculation has not been updated. ReturnId=${req.returnResourceRef}")
+      }
     } else {
       Future.successful(())
     }
