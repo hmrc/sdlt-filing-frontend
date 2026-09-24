@@ -18,7 +18,7 @@ package viewmodels.submission.summary
 
 import models.address.Address
 import models.address.Address.toHtml
-import models.land.LandTypeOfProperty.{Mixed, Residential}
+import models.land.LandTypeOfProperty.{Mixed, NonResidential}
 import models.land.{LandInterestTransferredOrCreated, LandTypeOfProperty}
 import models.{FullReturn, Land}
 import play.api.i18n.Messages
@@ -123,9 +123,9 @@ object LandSummary {
   private def getLandAreaKnownYesNo(land: Land)(implicit messages: Messages): Option[String] = {
     val propertyType = land.propertyType.flatMap(LandTypeOfProperty.fromCode)
     (propertyType, land.areaUnit, land.landArea) match {
-      case (Some(propertyType), Some(_), Some(_)) if propertyType == Mixed || propertyType == Residential =>
+      case (Some(propertyType), Some(_), Some(_)) if propertyType == Mixed || propertyType == NonResidential =>
         Some(messages("site.yes"))
-      case (Some(propertyType), _, _) if !(propertyType == Mixed || propertyType == Residential) =>
+      case (Some(propertyType), _, _) if !(propertyType == Mixed || propertyType == NonResidential) =>
         Some(messages("site.no"))
       case _ =>
         None
