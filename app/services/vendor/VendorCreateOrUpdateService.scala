@@ -23,12 +23,12 @@ import models.{AgentType, DeleteReturnAgentRequest, ReturnVersionUpdateRequest, 
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.FullName
+import utils.{FullName, LoggingUtil}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
-class VendorCreateOrUpdateService @Inject()(backendConnector: StampDutyLandTaxConnector)(implicit ex: ExecutionContext){
+class VendorCreateOrUpdateService @Inject()(backendConnector: StampDutyLandTaxConnector)(implicit ex: ExecutionContext) extends LoggingUtil {
 
   def createVendor(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     for {
@@ -36,10 +36,15 @@ class VendorCreateOrUpdateService @Inject()(backendConnector: StampDutyLandTaxCo
       createVendorRequest <- CreateVendorRequest.from(userAnswers, vendor)
       createVendorReturn <- backendConnector.createVendor(createVendorRequest)
     } yield {
+      logger.debug(s"[VendorCreateOrUpdateService][createVendor] create vendor request: $createVendorRequest")
       if (createVendorReturn.vendorId.nonEmpty) {
+        infoLog(s"[VendorCreateOrUpdateService][createVendor] vendor has been successfully created." +
+          s" VendorId=${createVendorReturn.vendorId}. ReturnId=${createVendorRequest.returnResourceRef}")
         Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad())
           .flashing("vendorCreated" -> FullName.fullName(createVendorRequest.forename1, createVendorRequest.forename2, createVendorRequest.name))
       } else {
+        warnLog(s"[VendorCreateOrUpdateService][createVendor] vendor has not been created." +
+          s" VendorId=${createVendorReturn.vendorId}. ReturnId=${createVendorRequest.returnResourceRef}")
         Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
       }
     }
@@ -65,10 +70,13 @@ class VendorCreateOrUpdateService @Inject()(backendConnector: StampDutyLandTaxCo
             updateVendorRequest <- UpdateVendorRequest.from(userAnswers, vendor)
             updateVendorReturn  <- backendConnector.updateVendor(updateVendorRequest)
           } yield
+            logger.debug(s"[VendorCreateOrUpdateService][updateVendor] update vendor request: $updateVendorRequest")
             if (updateVendorReturn.updated)
+              infoLog(s"[VendorCreateOrUpdateService][updateVendor] vendor has been successfully updated. ReturnId=${updateVendorRequest.returnResourceRef}")
               Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad())
                 .flashing("vendorUpdated" -> FullName.fullName(updateVendorRequest.forename1, updateVendorRequest.forename2, updateVendorRequest.name))
             else
+              warnLog(s"[VendorCreateOrUpdateService][updateVendor] vendor has not been updated. ReturnId=${updateVendorRequest.returnResourceRef}")
               Redirect(controllers.vendor.routes.VendorCheckYourAnswersController.onPageLoad())
 
         case Right(_) =>
@@ -102,7 +110,14 @@ class VendorCreateOrUpdateService @Inject()(backendConnector: StampDutyLandTaxCo
             updateVendorRequest <- UpdateVendorRequest.from(userAnswers, mainVendor.copy(isRepresentedByAgent = if value then Some("yes") else Some("no")))
             updateVendorReturn  <- backendConnector.updateVendor(updateVendorRequest)
             _                   <- deleteVendorAgentIfRequired(value, hasVendorAgentDetails, userAnswers)
-          } yield Right(updateVendorReturn.updated)
+          } yield {
+            logger.debug(s"[VendorCreateOrUpdateService][updateIsRepresentedByAgent] update vendor request: $updateVendorRequest")
+            if updateVendorReturn.updated then
+              infoLog(s"[VendorCreateOrUpdateService][updateIsRepresentedByAgent] vendor has been successfully updated with isRepresentedByAgent. ReturnId=${updateVendorRequest.returnResourceRef}")
+            else
+              warnLog(s"[VendorCreateOrUpdateService][updateIsRepresentedByAgent] vendor has not been updated. ReturnId=${updateVendorRequest.returnResourceRef}")
+            Right(updateVendorReturn.updated)
+          }
 
         case Right(_) =>
           Future.successful(Right(false))
@@ -114,8 +129,14 @@ class VendorCreateOrUpdateService @Inject()(backendConnector: StampDutyLandTaxCo
     if (!value && hasVendorAgentDetails) {
       for {
         deleteVendorAgentRequest <- DeleteReturnAgentRequest.from(userAnswers, agentType = AgentType.Vendor)
-        _ <- backendConnector.deleteReturnAgent(deleteVendorAgentRequest)
-      } yield ()
+        deleteReturnAgentReturn <- backendConnector.deleteReturnAgent(deleteVendorAgentRequest)
+      } yield {
+        logger.debug(s"[VendorCreateOrUpdateService][deleteVendorAgentIfRequired] delete vendor agent request: $deleteVendorAgentRequest")
+        if deleteReturnAgentReturn.deleted then
+          infoLog(s"[VendorCreateOrUpdateService][deleteVendorAgentIfRequired] vendor agent has been successfully deleted. ReturnId=${deleteVendorAgentRequest.returnResourceRef}")
+        else
+          warnLog(s"[VendorCreateOrUpdateService][deleteVendorAgentIfRequired] vendor agent has not been deleted. ReturnId=${deleteVendorAgentRequest.returnResourceRef}")
+      }
     } else {
       Future.unit
     }

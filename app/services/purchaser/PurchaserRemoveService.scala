@@ -21,14 +21,13 @@ import models.purchaser.*
 import models.requests.DataRequest
 import models.{Mode, Purchaser, ReturnInfo, ReturnInfoRequest, ReturnVersionUpdateRequest, UserAnswers}
 import pages.purchaser.{PurchaserOverviewRemovePage, PurchaserRemovePage}
-import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{AnyContent, Result}
 import play.twirl.api.Html
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.FullName
+import utils.{FullName, LoggingUtil}
 import views.html.purchaser.PurchaserRemoveView
 
 import javax.inject.Inject
@@ -39,7 +38,7 @@ import scala.util.control.NonFatal
                                         view: PurchaserRemoveView,
                                         backendConnector: StampDutyLandTaxConnector,
                                         purchaserService: PurchaserService
-                                      ) extends Logging {
+                                      ) extends LoggingUtil {
 
   private final case class ReturnVersionUpdateFailed(cause: Throwable)
     extends RuntimeException("Return version update failed", cause)
@@ -130,9 +129,11 @@ import scala.util.control.NonFatal
         newVersion <- versionResponse.newVersion match {
           case Some(v) =>
             logger.debug(s"[PurchaserRemoveService][withNewVersion] update return version response version: $v")
+            infoLog(s"[PurchaserRemoveService][withNewVersion] return version has been successfully updated")
             Future.successful(v)
           case None =>
-            Future.failed(ReturnVersionUpdateFailed(new IllegalStateException("Return version was not updated (newVersion missing)")))
+            warnLog(s"[PurchaserRemoveService][withNewVersion] return version has not been updated (newVersion missing)")
+            Future.failed(ReturnVersionUpdateFailed(new IllegalStateException("Return version has not been updated (newVersion missing)")))
         }
       } yield newVersion
 
@@ -142,8 +143,14 @@ import scala.util.control.NonFatal
                        )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
       for {
         req <- DeletePurchaserRequest.from(userAnswers, purchaserIdSession)
-        _ <- backendConnector.deletePurchaser(req)
-      } yield ()
+        deletePurchaserReturn <- backendConnector.deletePurchaser(req)
+      } yield {
+        logger.debug(s"[PurchaserRemoveService][deletePurchaser] purchaser delete request: $req")
+        if deletePurchaserReturn.deleted then
+          infoLog(s"[PurchaserRemoveService][deletePurchaser] purchaser with ID $purchaserIdSession has been successfully deleted. ReturnId=${req.returnResourceRef}")
+        else
+          warnLog(s"[PurchaserRemoveService][deletePurchaser] purchaser with ID $purchaserIdSession has not been deleted. ReturnId=${req.returnResourceRef}")
+      }
 
     def deleteCompanyDetailsIfPresent(
                                        userAnswers: UserAnswers,
@@ -154,8 +161,14 @@ import scala.util.control.NonFatal
         case Some(companyId) if isMainPurchaser =>
           for {
             req <- DeleteCompanyDetailsRequest.from(userAnswers, companyId)
-            _ <- backendConnector.deleteCompanyDetails(req)
-          } yield ()
+            deleteCompanyDetailsReturn <- backendConnector.deleteCompanyDetails(req)
+          } yield {
+            logger.debug(s"[PurchaserRemoveService][deleteCompanyDetailsIfPresent] company details delete request: $req")
+            if deleteCompanyDetailsReturn.deleted then
+              infoLog(s"[PurchaserRemoveService][deleteCompanyDetailsIfPresent] company details with ID $companyId has been successfully deleted. ReturnId=${req.returnResourceRef}")
+            else
+              warnLog(s"[PurchaserRemoveService][deleteCompanyDetailsIfPresent] company details with ID $companyId has not been deleted. ReturnId=${req.returnResourceRef}")
+          }
         case _ =>
           Future.successful(())
       }
@@ -166,8 +179,14 @@ import scala.util.control.NonFatal
                         )(implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] =
       for {
         req <- ReturnInfoRequest.from(userAnswers = userAnswers, returnInfo = returnInfo)
-        _ <- backendConnector.updateReturnInfo(req)
-      } yield ()
+        returnInfoReturn <- backendConnector.updateReturnInfo(req)
+      } yield {
+        logger.debug(s"[PurchaserRemoveService][updateReturnInfo] return info update request: $req")
+        if returnInfoReturn.updated then
+          infoLog(s"[PurchaserRemoveService][updateReturnInfo] return info has been successfully updated. ReturnId=${req.returnResourceRef}}")
+        else
+          warnLog(s"[PurchaserRemoveService][updateReturnInfo] return info has not been updated. ReturnId=${req.returnResourceRef}}")
+      }
   }
 
   def handleRemoval(
@@ -231,10 +250,10 @@ import scala.util.control.NonFatal
       } yield result)
         .recover {
           case _: ReturnVersionUpdateFailed =>
-            logger.info(s"[PurchaserRemoveService][handleRemovePurchaser] return version update failed. Redirecting to update return version error page")
+            infoLog(s"[PurchaserRemoveService][handleRemovePurchaser] return version update failed. Redirecting to update return version error page")
             PurchaserOps.updateReturnVersionErrorRedirect
           case _ =>
-            logger.info(s"[PurchaserRemoveService][handleRemovePurchaser] failed to delete purchaser. Redirecting to journey recovery")
+            infoLog(s"[PurchaserRemoveService][handleRemovePurchaser] failed to delete purchaser. Redirecting to journey recovery")
             PurchaserOps.journeyRecoveryRedirect
         }
     }.getOrElse(Future.successful(PurchaserOps.journeyRecoveryRedirect))
@@ -265,10 +284,10 @@ import scala.util.control.NonFatal
       })
         .recover {
           case _: ReturnVersionUpdateFailed =>
-            logger.info(s"[PurchaserRemoveService][handleMultiplePurchasersWithNewMain] return version update failed. Redirecting to update return version error page")
+            infoLog(s"[PurchaserRemoveService][handleMultiplePurchasersWithNewMain] return version update failed. Redirecting to update return version error page")
             PurchaserOps.updateReturnVersionErrorRedirect
           case _ =>
-            logger.info(s"[PurchaserRemoveService][handleMultiplePurchasersWithNewMain] redirecting to journey recovery")
+            infoLog(s"[PurchaserRemoveService][handleMultiplePurchasersWithNewMain] redirecting to journey recovery")
             PurchaserOps.journeyRecoveryRedirect
         }
     }.getOrElse(Future.successful(PurchaserOps.journeyRecoveryRedirect))

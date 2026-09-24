@@ -25,11 +25,12 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsError, JsSuccess}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.preliminary.*
-import views.html.preliminary.CheckYourAnswersView
-import viewmodels.checkAnswers.summary.SummaryRowResult
 import services.checkAnswers.CheckAnswersService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.LoggingUtil
+import viewmodels.checkAnswers.preliminary.*
+import viewmodels.checkAnswers.summary.SummaryRowResult
+import views.html.preliminary.CheckYourAnswersView
 
 import scala.concurrent.*
 
@@ -45,7 +46,7 @@ class CheckYourAnswersController @Inject()(
                                             val controllerComponents: MessagesControllerComponents,
                                             view: CheckYourAnswersView,
                                             checkAnswersService: CheckAnswersService
-                                          )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                          )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport with LoggingUtil {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
@@ -91,9 +92,12 @@ class CheckYourAnswersController @Inject()(
                 returnId <- backendConnector.createReturn(prelimReturn)
                 _ <- sessionRepository.set(userAnswers.copy(returnId = Some(returnId.returnResourceRef)))
               } yield {
+                logger.debug(s"[CheckYourAnswersController][onSubmit] create return request: $prelimReturn")
                 if (returnId.returnResourceRef.nonEmpty) {
+                  infoLog(s"[CheckYourAnswersController][onSubmit] return has been successfully created. ReturnID=${returnId.returnResourceRef}")
                   Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
                 } else {
+                  warnLog(s"[CheckYourAnswersController][onSubmit] return creation failed")
                   Redirect(controllers.preliminary.routes.CheckYourAnswersController.onPageLoad())
                 }
               }

@@ -30,6 +30,7 @@ import services.checkAnswers.CheckAnswersService
 import services.vendorAgent.VendorAgentService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.LoggingUtil
 import viewmodels.checkAnswers.vendorAgent.*
 import views.html.vendorAgent.VendorAgentCheckYourAnswersView
 
@@ -50,7 +51,7 @@ class VendorAgentCheckYourAnswersController @Inject()(
                                                        view: VendorAgentCheckYourAnswersView,
                                                        vendorAgentService: VendorAgentService,
                                                        checkAnswersService: CheckAnswersService
-                                                     )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                     )(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport with LoggingUtil {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
@@ -124,12 +125,16 @@ class VendorAgentCheckYourAnswersController @Inject()(
           for {
             updateReturnAgentRequest <- UpdateReturnAgentRequest.from(userAnswers, Vendor)
             updateReturnAgentReturn  <- backendConnector.updateReturnAgent(updateReturnAgentRequest)
-          } yield
-            if (updateReturnAgentReturn.updated)
+          } yield {
+            logger.debug(s"[VendorAgentCheckYourAnswersController][updateReturnAgent] vendor return agent update request: $updateReturnAgentRequest")
+            if (updateReturnAgentReturn.updated) {
+              infoLog(s"[VendorAgentCheckYourAnswersController][updateReturnAgent] vendor return agent has succesfully been updated. ReturnId=${updateReturnAgentRequest.returnResourceRef}")
               Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad())
                 .flashing("vendorAgentUpdated" -> updateReturnAgentRequest.name)
-            else
+            } else
+              warnLog(s"[VendorAgentCheckYourAnswersController][updateReturnAgent] vendor return agent has not been updated. ReturnId=${updateReturnAgentRequest.returnResourceRef}")
               Redirect(controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad())
+          }
 
         case Right(_) =>
           Future.successful(
@@ -144,10 +149,15 @@ class VendorAgentCheckYourAnswersController @Inject()(
       createReturnAgentRequest <- CreateReturnAgentRequest.from(userAnswers, Vendor)
       createReturnAgentReturn <- backendConnector.createReturnAgent(createReturnAgentRequest)
     } yield {
+      logger.debug(s"[VendorAgentCheckYourAnswersController][createReturnAgent] vendor return agent create request: $createReturnAgentRequest")
       if (createReturnAgentReturn.returnAgentID.nonEmpty) {
+        infoLog(s"[VendorAgentCheckYourAnswersController][createReturnAgent] vendor return agent has successfully been created:" +
+          s" ReturnAgentID=${createReturnAgentReturn.returnAgentID}. ReturnId=${createReturnAgentRequest.returnResourceRef}")
         Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad())
           .flashing("vendorAgentCreated" -> createReturnAgentRequest.name)
       } else {
+        warnLog(s"[VendorAgentCheckYourAnswersController][createReturnAgent] vendor return agent has not been created." +
+          s" ReturnId=${createReturnAgentRequest.returnResourceRef}")
         Redirect(controllers.vendorAgent.routes.VendorAgentCheckYourAnswersController.onPageLoad())
       }
     }

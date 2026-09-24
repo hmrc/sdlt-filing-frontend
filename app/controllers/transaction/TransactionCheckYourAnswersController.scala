@@ -18,33 +18,34 @@ package controllers.transaction
 
 import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
-import models.{CheckMode, Lease, ReturnVersionUpdateRequest, Transaction, UserAnswers}
 import models.land.LandTypeOfProperty
 import models.lease.{CreateLeaseRequest, DeleteLeaseRequest, UpdateLeaseRequest}
 import models.prelimQuestions.TransactionType
 import models.prelimQuestions.TransactionType.{ConveyanceTransferLease, GrantOfLease}
 import models.transaction.{ReasonForRelief, TransactionSessionQuestions, UpdateTransactionRequest}
+import models.{CheckMode, Lease, ReturnVersionUpdateRequest, Transaction, UserAnswers}
 import pages.transaction.*
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.{JsObject, JsSuccess}
 import play.api.mvc.*
 import repositories.SessionRepository
 import services.checkAnswers.CheckAnswersService
+import services.crossflow.*
+import services.crossflow.fields.CrossFlowValidationService
+import services.lease.LeaseService
+import services.taxCalculation.UpdateTaxCalcService
 import services.transaction.PopulateTransactionService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.LoggingUtil
 import viewmodels.checkAnswers.summary.SummaryRowResult
 import viewmodels.checkAnswers.transaction.*
 import views.html.transaction.TransactionCheckYourAnswersView
-import services.crossflow.fields.CrossFlowValidationService
-import services.crossflow.*
-import services.lease.LeaseService
-import services.taxCalculation.UpdateTaxCalcService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 import scala.util.control.NonFatal
+import scala.util.{Failure, Success}
 
 @Singleton
 class TransactionCheckYourAnswersController @Inject()(
@@ -62,7 +63,7 @@ class TransactionCheckYourAnswersController @Inject()(
   val controllerComponents: MessagesControllerComponents,
   view: TransactionCheckYourAnswersView,
   updateTaxCalcService: UpdateTaxCalcService
-)(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport {
+)(implicit ex: ExecutionContext) extends FrontendBaseController with I18nSupport with LoggingUtil {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
@@ -145,8 +146,14 @@ class TransactionCheckYourAnswersController @Inject()(
           lease <- if (leaseCurrentCheck) Lease.from(userAnswers) else Future.successful(Lease())
           updatedLease = applyAnnualRentCutOffLogic(lease, userAnswers, transactionType)
           createLeaseRequest <- CreateLeaseRequest.from(userAnswers, updatedLease)
-          _ <- backendConnector.createLease(createLeaseRequest)
-        } yield ()
+          createLeaseReturn <- backendConnector.createLease(createLeaseRequest)
+        } yield {
+          logger.debug(s"[TransactionCheckYourAnswersController][handleLeaseDecision] create lease request: $createLeaseReturn")
+          if createLeaseReturn.created then
+            infoLog(s"[TransactionCheckYourAnswersController][handleLeaseDecision] lease has been successfully created. ReturnId=${createLeaseRequest.returnResourceRef}")
+          else
+            warnLog(s"[TransactionCheckYourAnswersController][handleLeaseDecision] lease has not been created. ReturnId=${createLeaseRequest.returnResourceRef}")
+        }
 
       case "updateLease" =>
         userAnswers.fullReturn.flatMap(_.lease) match {
@@ -156,8 +163,14 @@ class TransactionCheckYourAnswersController @Inject()(
 
             for {
               updateLeaseRequest <- UpdateLeaseRequest.from(userAnswers, updatedLease)
-              _ <- backendConnector.updateLease(updateLeaseRequest)
-            } yield ()
+              updateLeaseReturn<- backendConnector.updateLease(updateLeaseRequest)
+            } yield {
+              logger.debug(s"[TransactionCheckYourAnswersController][handleLeaseDecision] update lease request: $updateLeaseReturn")
+              if updateLeaseReturn.updated then
+                infoLog(s"[TransactionCheckYourAnswersController][handleLeaseDecision] lease has been successfully updated. ReturnId=${updateLeaseRequest.returnResourceRef}")
+              else
+                warnLog(s"[TransactionCheckYourAnswersController][handleLeaseDecision] lease has not been updated. ReturnId=${updateLeaseRequest.returnResourceRef}")
+            }
 
           case None =>
             Future.unit
@@ -166,8 +179,14 @@ class TransactionCheckYourAnswersController @Inject()(
       case "deleteLease" =>
         for {
           req <- DeleteLeaseRequest.from(userAnswers)
-          _ <- backendConnector.deleteLease(req)
-        } yield ()
+          deleteLeaseReturn <- backendConnector.deleteLease(req)
+        } yield {
+          logger.debug(s"[TransactionCheckYourAnswersController][handleLeaseDecision] delete lease request: $deleteLeaseReturn")
+          if deleteLeaseReturn.deleted then
+            infoLog(s"[TransactionCheckYourAnswersController][handleLeaseDecision] lease has been successfully deleted. ReturnId=${req.returnResourceRef}")
+          else
+            warnLog(s"[TransactionCheckYourAnswersController][handleLeaseDecision] lease has not been deleted. ReturnId=${req.returnResourceRef}")
+        }
 
       case _ => Future.unit
     }
@@ -194,12 +213,16 @@ class TransactionCheckYourAnswersController @Inject()(
                 updateTransactionRequest <- UpdateTransactionRequest.from(userAnswers, transaction)
                 updateTransactionReturn <- backendConnector.updateTransaction(updateTransactionRequest)
                 _ <- maybeUpdateTransactionTaxCalc(userAnswers)
-              } yield
+              } yield {
+                logger.debug(s"[TransactionCheckYourAnswersController][updateTransaction] update transaction request: $updateTransactionReturn")
                 if (updateTransactionReturn.updated) {
+                  infoLog(s"[TransactionCheckYourAnswersController][updateTransaction] transaction has been successfully updated. ReturnId=${updateTransactionRequest.returnResourceRef}")
                   Redirect(controllers.routes.ReturnTaskListController.onPageLoad())
                 } else {
+                  warnLog(s"[TransactionCheckYourAnswersController][updateTransaction] transaction has not been updated. ReturnId=${updateTransactionRequest.returnResourceRef}")
                   Redirect(controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad())
                 }
+              }
             } else {
               Future.successful(
                 Redirect(controllers.transaction.routes.TransactionCheckYourAnswersController.onPageLoad())
@@ -213,8 +236,15 @@ class TransactionCheckYourAnswersController @Inject()(
     if (updateTaxCalcService.transactionDataMatches(userAnswers)) {
       for {
         req <- updateTaxCalcService.updateTaxCalcRequest(userAnswers)
-        _ <- backendConnector.updateTaxCalculationInfo(req)
-      } yield ()
+        updateTaxCalculationReturn <- backendConnector.updateTaxCalculationInfo(req)
+      } yield {
+        logger.debug(s"[TransactionCheckYourAnswersController][maybeUpdateTransactionTaxCalc] update tax calculation request: $updateTaxCalculationReturn")
+        if (updateTaxCalculationReturn.updated) {
+          infoLog(s"[TransactionCheckYourAnswersController][maybeUpdateTransactionTaxCalc] tax calculation has been successfully updated. ReturnId=${req.returnResourceRef}")
+        } else {
+          warnLog(s"[TransactionCheckYourAnswersController][maybeUpdateTransactionTaxCalc] tax calculation has not been updated. ReturnId=${req.returnResourceRef}")
+        }
+      }
     } else {
       Future.successful(())
     }
