@@ -25,10 +25,10 @@ import pages.vendor.VendorOverviewRemovePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.FullName
+import utils.{FullName, LoggingUtil}
 import views.html.vendor.RemoveVendorView
-import scala.util.control.NonFatal
 
+import scala.util.control.NonFatal
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,7 +43,7 @@ class RemoveVendorController @Inject()(
                                          val controllerComponents: MessagesControllerComponents,
                                          view: RemoveVendorView,
                                          backendConnector: StampDutyLandTaxConnector
-                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                 )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with LoggingUtil {
   
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
@@ -94,8 +94,16 @@ class RemoveVendorController @Inject()(
                   case Right(returnVersion) if returnVersion.newVersion.isDefined =>
                     for {
                       deleteVendorRequest <- DeleteVendorRequest.from(request.userAnswers, vendorResourceRef)
-                      _                   <- backendConnector.deleteVendor(deleteVendorRequest)
+                      deleteVendorReturn  <- backendConnector.deleteVendor(deleteVendorRequest)
                     } yield
+                      logger.debug(s"[RemoveVendorController][onSubmit] delete vendor request: $deleteVendorRequest")
+                      if deleteVendorReturn.deleted then
+                        infoLog(s"[RemoveVendorController][onSubmit] vendor with reference: ${deleteVendorRequest.vendorResourceRef} has been successfully deleted." +
+                          s" ReturnId=${deleteVendorRequest.returnResourceRef}")
+                      else
+                        warnLog(s"[RemoveVendorController][onSubmit] vendor with reference: ${deleteVendorRequest.vendorResourceRef} has not been deleted." +
+                          s" ReturnId=${deleteVendorRequest.returnResourceRef}")
+
                       Redirect(controllers.vendor.routes.VendorOverviewController.onPageLoad())
                         .flashing("vendorDeleted" -> vendorFullName.getOrElse(""))
 

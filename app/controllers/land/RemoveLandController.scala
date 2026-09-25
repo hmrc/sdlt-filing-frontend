@@ -27,6 +27,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.*
 import services.land.LandService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.LoggingUtil
 import views.html.land.RemoveLandView
 
 import javax.inject.{Inject, Singleton}
@@ -45,7 +46,7 @@ class RemoveLandController @Inject() (
                                        backendConnector:         StampDutyLandTaxConnector,
                                        landService:              LandService,
                                        view:                     RemoveLandView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with LoggingUtil {
 
   private val actions = identify andThen getData andThen requireData andThen statusCheck
 
@@ -109,9 +110,17 @@ class RemoveLandController @Inject() (
         case Right(version) =>
           for {
             deleteLandRequest <- DeleteLandRequest.from(request.userAnswers, land.landResourceRef.get)
-            _                 <- backendConnector.deleteLand(deleteLandRequest)
+            deleteLandReturn  <- backendConnector.deleteLand(deleteLandRequest)
             _                 <- if (wasMainLand) promoteNewMainLand(landId, version.newVersion.get) else Future.unit
-          } yield landOverview.flashing("landDeleted" -> addressLine1)
+          } yield {
+            logger.debug(s"[RemoveLandController][removeLand] delete land request: $deleteLandRequest")
+            if deleteLandReturn.deleted then
+              infoLog(s"[RemoveLandController][removeLand] land with reference: ${deleteLandRequest.landResourceRef} has been successfully deleted. ReturnId=${deleteLandRequest.returnResourceRef}")
+            else
+              warnLog(s"[RemoveLandController][removeLand] land with reference: ${deleteLandRequest.landResourceRef} has not been deleted. ReturnId=${deleteLandRequest.returnResourceRef}")
+
+            landOverview.flashing("landDeleted" -> addressLine1)
+          }
       }
     } yield result).recover { case _ => landOverview }
   }
@@ -131,8 +140,14 @@ class RemoveLandController @Inject() (
           newVersionRequest <- ReturnVersionUpdateRequest.from(request.userAnswers, Some(currentVersion))
           _                 <- backendConnector.updateReturnVersion(newVersionRequest)
           returnInfoRequest <- ReturnInfoRequest.from(request.userAnswers, returnInfo.copy(mainLandID = newMainLandId))
-          _                 <- backendConnector.updateReturnInfo(returnInfoRequest)
-        } yield ()
+          returnInfoReturn  <- backendConnector.updateReturnInfo(returnInfoRequest)
+        } yield {
+          logger.debug(s"[RemoveLandController][promoteNewMainLand] update return info request: $returnInfoRequest")
+          if returnInfoReturn.updated then
+            infoLog(s"[RemoveLandController][promoteNewMainLand] main land has been successfully updated to ${newMainLandId.getOrElse("")}. ReturnId=${returnInfoRequest.returnResourceRef}")
+          else
+            warnLog(s"[RemoveLandController][promoteNewMainLand] main land has not been updated. ReturnId=${returnInfoRequest.returnResourceRef}")
+        }
       case None => Future.unit
     }
 }

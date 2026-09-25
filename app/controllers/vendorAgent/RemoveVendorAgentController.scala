@@ -25,7 +25,9 @@ import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.LoggingUtil
 import views.html.vendorAgent.RemoveVendorAgentView
+
 import scala.util.control.NonFatal
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +44,7 @@ class RemoveVendorAgentController @Inject()(
                                                 view: RemoveVendorAgentView,
                                                 backendConnector: StampDutyLandTaxConnector
 
-                                              )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                              )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with LoggingUtil {
 
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
@@ -112,10 +114,17 @@ class RemoveVendorAgentController @Inject()(
                       case Right(returnVersion) if returnVersion.newVersion.isDefined =>
                         for {
                           deleteVendorAgentRequest <- DeleteReturnAgentRequest.from(request.userAnswers, agentType = AgentType.Vendor)
-                          _                        <- backendConnector.deleteReturnAgent(deleteVendorAgentRequest)
-                        } yield
+                          deleteReturnAgentReturn  <- backendConnector.deleteReturnAgent(deleteVendorAgentRequest)
+                        } yield {
+                          logger.debug(s"[RemoveVendorAgentController][onSubmit] deleted vendor agent request: $deleteVendorAgentRequest")
+                          if deleteReturnAgentReturn.deleted then
+                            infoLog(s"[RemoveVendorAgentController][onSubmit] vendor agent has been successfully deleted. ReturnId=${deleteVendorAgentRequest.returnResourceRef}")
+                          else
+                            warnLog(s"[RemoveVendorAgentController][onSubmit] vendor agent has not been deleted. ReturnId=${deleteVendorAgentRequest.returnResourceRef}")
+
                           Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad())
                             .flashing("vendorAgentDeleted" -> agent.name.getOrElse(""))
+                        }
 
                       case Right(_) =>
                         Future.successful(Redirect(controllers.vendorAgent.routes.VendorAgentOverviewController.onPageLoad()))
