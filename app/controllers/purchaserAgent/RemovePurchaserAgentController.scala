@@ -25,8 +25,9 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.purchaserAgent.RemovePurchaserAgentView
 import connectors.StampDutyLandTaxConnector
-import scala.util.control.NonFatal
+import utils.LoggingUtil
 
+import scala.util.control.NonFatal
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,7 +43,7 @@ class RemovePurchaserAgentController @Inject()(
                                                 view: RemovePurchaserAgentView,
                                                 backendConnector: StampDutyLandTaxConnector
 
-                                              )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                              )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with LoggingUtil {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
@@ -111,10 +112,17 @@ class RemovePurchaserAgentController @Inject()(
                       case Right(returnVersion) if returnVersion.newVersion.isDefined =>
                         for {
                           deletePurchaserAgentRequest <- DeleteReturnAgentRequest.from(request.userAnswers, agentType = AgentType.Purchaser)
-                          _                           <- backendConnector.deleteReturnAgent(deletePurchaserAgentRequest)
-                        } yield
+                          deleteReturnAgentReturn     <- backendConnector.deleteReturnAgent(deletePurchaserAgentRequest)
+                        } yield {
+                          logger.debug(s"[RemovePurchaserAgentController][onSubmit] delete return purchaser agent request: $deletePurchaserAgentRequest")
+                          if deleteReturnAgentReturn.deleted then
+                            infoLog(s"[RemovePurchaserAgentController][onSubmit] purchaser agent has been successfully deleted. ReturnId=${deletePurchaserAgentRequest.returnResourceRef}")
+                          else
+                            warnLog(s"[RemovePurchaserAgentController][onSubmit] purchaser agent has not been deleted. ReturnId=${deletePurchaserAgentRequest.returnResourceRef}")
+                         
                           Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad())
                             .flashing("purchaserAgentDeleted" -> agent.name.getOrElse(""))
+                        }
 
                       case Right(_) =>
                         Future.successful(Redirect(controllers.purchaserAgent.routes.PurchaserAgentOverviewController.onPageLoad()))

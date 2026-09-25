@@ -52,6 +52,16 @@ class PurchaserCreateOrUpdateService extends LoggingUtil {
             purchaser <- Purchaser.from(Some(userAnswers), logger)
             updateRequest <- UpdatePurchaserRequest.from(userAnswers, purchaser)
             updateResponse <- backendConnector.updatePurchaser(updateRequest)
+            _ <- {
+              logger.debug(s"[PurchaserCreateOrUpdateService][updatePurchaser] update purchaser request: $updateRequest")
+              if updateResponse.updated then
+                infoLog(s"[PurchaserCreateOrUpdateService][updatePurchaser] purchaser with reference: ${updateRequest.purchaserResourceRef} has been successfully updated." +
+                  s" ReturnId=${updateRequest.returnResourceRef}")
+              else
+                warnLog(s"[PurchaserCreateOrUpdateService][updatePurchaser] purchaser with reference: ${updateRequest.purchaserResourceRef} has not been updated." +
+                  s" ReturnId=${updateRequest.returnResourceRef}")
+              Future.unit
+            }
             _ <- updateOrCreateCompanyDetails(backendConnector, userAnswers, purchaser, updateRequest.purchaserResourceRef)
           } yield Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())
             .flashing("purchaserUpdated" -> purchaserService.createPurchaserName(purchaser).map(_.fullName).getOrElse(""))
@@ -82,6 +92,14 @@ class PurchaserCreateOrUpdateService extends LoggingUtil {
           for {
             updatePurchaserRequest <- UpdatePurchaserRequest.from(userAnswers, mainPurchaser.copy(isRepresentedByAgent = if value then Some("yes") else Some("no")))
             updatePurchaserReturn  <- backendConnector.updatePurchaser(updatePurchaserRequest)
+            _ <- {
+              logger.debug(s"[PurchaserCreateOrUpdateService][updateIsRepresentedByAgent] update purchaser request: $updatePurchaserRequest")
+              if updatePurchaserReturn.updated then
+                infoLog(s"[PurchaserCreateOrUpdateService][updateIsRepresentedByAgent] purchaser has been successfully updated with isRepresentedByAgent. ReturnId=${updatePurchaserRequest.returnResourceRef}")
+              else
+                warnLog(s"[PurchaserCreateOrUpdateService][updateIsRepresentedByAgent] purchaser has not been updated. ReturnId=${updatePurchaserRequest.returnResourceRef}")
+              Future.unit
+            }
             _                      <- deletePurchaserAgentIfRequired(backendConnector, value, hasPurchaserAgentDetails, userAnswers)
           } yield Right(updatePurchaserReturn.updated)
 

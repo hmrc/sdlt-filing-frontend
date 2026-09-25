@@ -17,6 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
+import connectors.StampDutyLandTaxConnector
 import controllers.actions.*
 import forms.DeleteReturnFormProvider
 import models.{DeleteReturnRequest, UserAnswers}
@@ -25,9 +26,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.land.LandService
 import services.purchaser.PurchaserService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.FullName
+import utils.{FullName, LoggingUtil}
 import views.html.DeleteReturnView
-import connectors.StampDutyLandTaxConnector
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,7 +45,7 @@ class DeleteReturnController @Inject()(
                                         val controllerComponents: MessagesControllerComponents,
                                         view: DeleteReturnView
                                       )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendBaseController with I18nSupport {
+  extends FrontendBaseController with I18nSupport with LoggingUtil {
 
   val form = formProvider()
 
@@ -65,7 +65,15 @@ class DeleteReturnController @Inject()(
               case Some(id) =>
                 stampDutyLandTaxConnector
                   .deleteReturn(DeleteReturnRequest(storn = request.userAnswers.storn, returnResourceRef = id))
-                  .map(_ => Redirect(appConfig.sdltManagementRedirectUrl))
+                  .map { response =>
+                    logger.debug(s"[DeleteReturnController][onSubmit] delete return request: $DeleteReturnRequest")
+                    if response.deleted then
+                      infoLog(s"[DeleteReturnController][onSubmit] return with ReturnId=$id has been successfully deleted.")
+                    else
+                      warnLog(s"[DeleteReturnController][onSubmit] return with ReturnId=$id has not been deleted.")
+
+                    Redirect(appConfig.sdltManagementRedirectUrl)
+                  }
               case None =>
                 Future.successful(Redirect(controllers.routes.NoReturnReferenceController.onPageLoad()))
             }
