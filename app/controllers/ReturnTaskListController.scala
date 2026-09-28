@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions.*
 import models.{GetReturnByRefRequest, UserAnswers}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
 import services.FullReturnService
 import services.land.LandService
@@ -28,6 +28,8 @@ import services.pdf.PDFGenerationService
 import services.purchaser.PurchaserService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.FullName
+import viewmodels.submission.SubmissionState
+import viewmodels.submission.SubmissionState.*
 import viewmodels.tasklist.*
 import views.html.ReturnTaskListView
 
@@ -63,21 +65,38 @@ class ReturnTaskListController @Inject()(
           userAnswers  = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = request.storn)
           _           <- sessionRepository.set(userAnswers)
         } yield {
-          val maybeSubmissionObject = userAnswers.fullReturn.flatMap(_.submission)
-          val purchaserName: Option[String] = {
-            purchaserService.getMainPurchaser(userAnswers).flatMap { purchaser => purchaser.companyName.orElse(
-              FullName.optionalFullName(purchaser.forename1, purchaser.forename2, purchaser.surname))
-            }
-          }
-          val landAddress1: Option[String] = landService.getMainLand(userAnswers).flatMap(_.address1)
+          submissionRedirect(userAnswers).getOrElse {
+            val purchaserName: Option[String] =
+              purchaserService.getMainPurchaser(userAnswers).flatMap { purchaser =>
+                purchaser.companyName.orElse(
+                  FullName.optionalFullName(purchaser.forename1, purchaser.forename2, purchaser.surname)
+                )
+              }
+            val landAddress1: Option[String] = landService.getMainLand(userAnswers).flatMap(_.address1)
 
-          if(maybeSubmissionObject.isDefined) {
-            Redirect(controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad())
-          } else {
             Ok(view(purchaserName, landAddress1, taskListBuilder.sections(userAnswers): _*))
           }
         }
       }
+  }
+
+  private def submissionRedirect(userAnswers: UserAnswers): Option[Result] = {
+    val submission       = userAnswers.fullReturn.flatMap(_.submission)
+    val submissionStatus = submission.flatMap(_.submissionStatus)
+
+    SubmissionState.parse(submissionStatus) match {
+      case Some(AwaitingConfirmation) =>
+        Some(Redirect(controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad()))
+
+      case Some(Submitted) | Some(SubmittedNoReceipt) =>
+        Some(Redirect(controllers.submission.routes.SubmissionCompleteController.onPageLoad()))
+
+      case Some(SubmissionFailed) =>
+        Some(Redirect(controllers.submission.routes.SubmissionFailedController.onPageLoad()))
+        
+      case _ =>
+        None
+    }
   }
 
   def downloadPdf: Action[AnyContent] = (activatedIdentify andThen getData).async {

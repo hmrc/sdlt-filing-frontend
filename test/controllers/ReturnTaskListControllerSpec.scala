@@ -22,6 +22,7 @@ import models.*
 import org.mockito.ArgumentMatchers.{any, argThat, eq as eqTo}
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.Application
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -39,6 +40,12 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
   val testStorn = "TESTSTORN"
   val testGetReturnByRefRequest: GetReturnByRefRequest = GetReturnByRefRequest(returnResourceRef = testReturnId, storn = testStorn)
   val testFullReturn = completeFullReturn.copy(submission = None)
+
+  val awaitingConfirmationStatus = "ACCEPTED"
+  val submittedStatus            = "SUBMITTED"
+  val submittedNoReceiptStatus   = "SUBMITTED_NO_RECEIPT"
+  val submissionFailedStatus     = "DEPARTMENTAL_ERROR"
+  val reSubmitStatus             = "STARTED"
 
   "ReturnTaskList Controller" - {
 
@@ -1000,11 +1007,11 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           content must include("Tax calculation")
         }
       }
-      
+
       "must render view with Tax Calculation section and hint when previous sections incomplete" in {
         val mockFullReturnService = mock[FullReturnService]
         val mockSessionRepository = mock[SessionRepository]
-        
+
         val fullReturn = testFullReturn.copy(land = None)
 
         when(mockFullReturnService.getFullReturn(any())(any(), any()))
@@ -1015,8 +1022,8 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
         val application = applicationBuilder(
           userAnswers = Some(emptyUserAnswers.copy(
-            returnId = Some(testReturnId), 
-            storn = testStorn, 
+            returnId = Some(testReturnId),
+            storn = testStorn,
             fullReturn = Some(fullReturn))))
           .overrides(
             bind[FullReturnService].toInstance(mockFullReturnService),
@@ -1349,6 +1356,123 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
           val content = contentAsString(result)
           content must include("Submit your return")
           content must include("You must complete all previous sections before starting")
+        }
+      }
+
+      "submission state" - {
+
+        def withSubmissionStatus(status: Option[String]): FullReturn =
+          testFullReturn.copy(submission = Some(Submission(submissionStatus = status)))
+
+        def buildApp(fullReturn: FullReturn, mockSessionRepository: SessionRepository): Application = {
+          val mockFullReturnService = mock[FullReturnService]
+
+          when(mockFullReturnService.getFullReturn(eqTo(testGetReturnByRefRequest))(any(), any()))
+            .thenReturn(Future.successful(fullReturn))
+
+          when(mockSessionRepository.set(any[UserAnswers]))
+            .thenReturn(Future.successful(true))
+
+          applicationBuilder(userAnswers = Some(emptyUserAnswers.copy(returnId = Some(testReturnId), storn = testStorn)))
+            .overrides(
+              bind[FullReturnService].toInstance(mockFullReturnService),
+              bind[SessionRepository].toInstance(mockSessionRepository)
+            )
+            .build()
+        }
+
+        "must return OK and render the task list when a submission exists with no status" in {
+          val mockSessionRepository = mock[SessionRepository]
+          val application = buildApp(withSubmissionStatus(None), mockSessionRepository)
+
+          running(application) {
+            val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+            val result = route(application, request).value
+
+            status(result) mustEqual OK
+            contentAsString(result) must include("About the purchaser")
+          }
+        }
+
+        "must return OK and render the task list when the submission is in ReSubmit state" in {
+          val mockSessionRepository = mock[SessionRepository]
+          val application = buildApp(withSubmissionStatus(Some(reSubmitStatus)), mockSessionRepository)
+
+          running(application) {
+            val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+            val result = route(application, request).value
+
+            status(result) mustEqual OK
+            contentAsString(result) must include("About the purchaser")
+          }
+        }
+
+        "must redirect to SubmissionAwaitingConfirmation when the submission is awaiting confirmation" in {
+          val mockSessionRepository = mock[SessionRepository]
+          val application = buildApp(withSubmissionStatus(Some(awaitingConfirmationStatus)), mockSessionRepository)
+
+          running(application) {
+            val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result) mustBe Some(controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad().url)
+          }
+        }
+
+        "must redirect to SubmissionComplete when the submission is submitted" in {
+          val mockSessionRepository = mock[SessionRepository]
+          val application = buildApp(withSubmissionStatus(Some(submittedStatus)), mockSessionRepository)
+
+          running(application) {
+            val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result) mustBe Some(controllers.submission.routes.SubmissionCompleteController.onPageLoad().url)
+          }
+        }
+
+        "must redirect to SubmissionComplete when the submission is submitted with no receipt" in {
+          val mockSessionRepository = mock[SessionRepository]
+          val application = buildApp(withSubmissionStatus(Some(submittedNoReceiptStatus)), mockSessionRepository)
+
+          running(application) {
+            val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result) mustBe Some(controllers.submission.routes.SubmissionCompleteController.onPageLoad().url)
+          }
+        }
+
+        "must redirect to SubmissionFailed when the submission has failed" in {
+          val mockSessionRepository = mock[SessionRepository]
+          val application = buildApp(withSubmissionStatus(Some(submissionFailedStatus)), mockSessionRepository)
+
+          running(application) {
+            val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result) mustBe Some(controllers.submission.routes.SubmissionFailedController.onPageLoad().url)
+          }
+        }
+
+        "must still refresh the session with the latest return before redirecting" in {
+          val mockSessionRepository = mock[SessionRepository]
+          val fullReturn = withSubmissionStatus(Some(submittedStatus))
+          val application = buildApp(fullReturn, mockSessionRepository)
+
+          running(application) {
+            val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            verify(mockSessionRepository, times(1)).set(argThat[UserAnswers] { userAnswers =>
+              userAnswers.fullReturn.contains(fullReturn)
+            })
+          }
         }
       }
     }
