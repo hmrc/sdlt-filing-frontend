@@ -94,7 +94,7 @@ class EnterAnnualRentVatController @Inject()(
     val annualStartingRent: Option[BigDecimal] = Try(userAnswers.get(AnnualStartingRentPage).map(BigDecimal(_))).toOption.flatten
 
     def validateAnnualRentVat(annualRentVat: String): Boolean =
-      annualStartingRent.forall(_ >= BigDecimal(annualRentVat))
+      annualStartingRent.forall(_ > BigDecimal(annualRentVat))
 
     formProvider(validateAnnualRentVat)
   }
