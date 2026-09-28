@@ -28,7 +28,8 @@ class AnnualStartingRentFormProviderSpec extends StringFieldBehaviours {
   val maxValueKey = "lease.annualStartingRent.error.maximum"
   val maxLength = 13
 
-  val form = new AnnualStartingRentFormProvider()()
+  val form = new AnnualStartingRentFormProvider()(_ => true)
+  val formWithInvalidAnnualRentVat = new AnnualStartingRentFormProvider()(_ => false)
 
   ".value" - {
 
@@ -73,6 +74,11 @@ class AnnualStartingRentFormProviderSpec extends StringFieldBehaviours {
         val result = form.bind(Map(fieldName -> v))
         result.value mustEqual Some("300.00")
       }
+    }
+
+    "must fail with invalid annual starting rent error when the predicate is false" in {
+      val result = formWithInvalidAnnualRentVat.bind(Map(fieldName -> "300"))
+      result.errors must contain only FormError(fieldName, "lease.annualStartingRent.error.annualStartingRentInvalid", Seq.empty)
     }
   }
 }
