@@ -19,7 +19,9 @@ package config
 import com.google.inject.{Inject, Singleton}
 import play.api.Configuration
 import play.api.i18n.Lang
+import models.requests.IdentifierRequest
 import play.api.mvc.RequestHeader
+import uk.gov.hmrc.auth.core.AffinityGroup
 
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration) {
@@ -136,4 +138,16 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   
   def businessTaxAccountRedirectUrl: String =
     s"$businessTaxAccountHost/business-account"
+
+  lazy val useRateLimitedAllowList: Boolean = configuration.get[Boolean]("splitter.trafficSplitEnabled")
+  lazy val splitterServiceName: String      = configuration.get[String]("splitter.serviceName")
+  lazy val splitterAllowListName: String    = configuration.get[String]("splitter.allowListName")
+
+  def legacySdltServiceUrl(request: IdentifierRequest[?]): String =
+    val urlBase      = configuration.get[String]("urls.legacySdltServiceUrl")
+    val userTypeText = request.affinityGroup match {
+      case AffinityGroup.Agent => "agent"
+      case _                   => "org"
+    }
+    s"$urlBase/$userTypeText/${request.storn}"
 }

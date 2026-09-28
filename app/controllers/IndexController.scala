@@ -16,38 +16,59 @@
 
 package controllers
 
+import config.FrontendAppConfig
+import connectors.RateLimitedAllowListConnector
 import controllers.actions.IdentifierAction
 import models.UserAnswers
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Results}
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IndexController @Inject() (
                                   val controllerComponents: MessagesControllerComponents,
                                   identify: IdentifierAction,
-                                  sessionRepository: SessionRepository
+                                  sessionRepository: SessionRepository,
+                                  config: FrontendAppConfig,
+                                  rateLimitedAllowListConnector: RateLimitedAllowListConnector
                                 )(implicit ec: ExecutionContext)
   extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(returnId: Option[String] = None): Action[AnyContent] = identify.async { implicit request =>
-    returnId match
-      case Some(id) => {
-        val userAnswers = UserAnswers(id = request.userId, returnId = Some(id), storn = request.storn)
-        sessionRepository.set(userAnswers).map { _ =>
-          Results.Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
-        }
-      }
-      case _ =>  {
-        val userAnswers = UserAnswers(id = request.userId, returnId = None, storn = request.storn)
-          sessionRepository.set(userAnswers).map { _ =>
-          Results.Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
-        }
+    checkAllowList(config.useRateLimitedAllowList, config.splitterAllowListName, request.storn)
+      .flatMap {
+        case false =>
+          Future.successful(Results.Redirect(config.legacySdltServiceUrl(request)))
+
+        case true =>
+          returnId match
+            case Some(id) => {
+              val userAnswers = UserAnswers(id = request.userId, returnId = Some(id), storn = request.storn)
+              sessionRepository.set(userAnswers).map { _ =>
+                Results.Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
+              }
+            }
+            case _ =>  {
+              val userAnswers = UserAnswers(id = request.userId, returnId = None, storn = request.storn)
+                sessionRepository.set(userAnswers).map { _ =>
+                Results.Redirect(controllers.preliminary.routes.BeforeStartReturnController.onPageLoad())
+              }
+            }
       }
   }
+
+  private def checkAllowList(useRateLimitedAllowList: Boolean, allowListName: String, storn: String)(
+    implicit hc: HeaderCarrier
+  ): Future[Boolean] =
+    if (useRateLimitedAllowList) {
+      rateLimitedAllowListConnector.checkAllowList(allowListName, storn)
+    } else {
+      Future.successful(true)
+    }
 }

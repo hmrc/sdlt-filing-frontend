@@ -43,8 +43,8 @@ class AuthenticatedActivatedIdentifierAction @Inject()(
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    authorised().retrieve(Retrievals.internalId and Retrievals.allEnrolments) {
-      case Some(internalId) ~ enrolments =>
+    authorised().retrieve(Retrievals.internalId and Retrievals.allEnrolments and Retrievals.affinityGroup) {
+      case Some(internalId) ~ enrolments ~ Some(affinityGroup) =>
 
         val sdltEnrol: Option[Enrolment] =
           enrolments.getEnrolment("IR-SDLT-AGENT")
@@ -56,7 +56,7 @@ class AuthenticatedActivatedIdentifierAction @Inject()(
             if(enrol.isActivated){
               stornIdOpt match {
                 case Some(stornId) =>
-                  block(IdentifierRequest(request, internalId, storn = stornId))
+                  block(IdentifierRequest(request, internalId, storn = stornId, affinityGroup = affinityGroup))
                 case None =>
                   //TODO get error page for this
                   Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
@@ -68,8 +68,10 @@ class AuthenticatedActivatedIdentifierAction @Inject()(
             Future.successful(Redirect(routes.NoSdltEnrolmentErrorPageController.onPageLoad()))
         }
 
-      case None ~ _ =>
+      case None ~ _ ~ _ =>
         Future.failed(new UnauthorizedException("Unable to retrieve internal Id"))
+      case _ =>
+        Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
     }.recover {
       case _: NoActiveSession =>
         Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
@@ -90,7 +92,7 @@ class SessionActivatedIdentifierAction @Inject()(
 
     hc.sessionId match {
       case Some(session) =>
-        block(IdentifierRequest(request, session.value, session.value))
+        block(IdentifierRequest(request, session.value, session.value, AffinityGroup.Organisation))
       case None =>
         Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
     }

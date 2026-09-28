@@ -57,7 +57,7 @@ class AuthenticatedIdentifierAction @Inject()(
 
             stornIdOpt match {
               case Some(stornId) =>
-                block(IdentifierRequest(request, internalId, storn = stornId))
+                block(IdentifierRequest(request, internalId, storn = stornId, affinityGroup = affinityGroup))
               case None =>
                 //TODO get error page for this
                 Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
@@ -92,7 +92,7 @@ class AuthenticatedIdentifierAction @Inject()(
 
     hc.sessionId match {
       case Some(session) =>
-        block(IdentifierRequest(request, session.value, session.value))
+        block(IdentifierRequest(request, session.value, session.value, AffinityGroup.Organisation))
       case None =>
         Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
     }
