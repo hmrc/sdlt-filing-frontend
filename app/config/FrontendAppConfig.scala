@@ -136,4 +136,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   
   def businessTaxAccountRedirectUrl: String =
     s"$businessTaxAccountHost/business-account"
+
+  lazy val useRateLimitedAllowList: Boolean = configuration.get[Boolean]("splitter.trafficSplitEnabled")
+  lazy val splitterServiceName: String      = configuration.get[String]("splitter.serviceName")
+  lazy val splitterAllowListName: String    = configuration.get[String]("splitter.allowListName")
+  lazy val legacySdltServiceUrl: String     = configuration.get[String]("urls.legacySdltServiceUrl")
 }
