@@ -14,9 +14,18 @@
  * limitations under the License.
  */
 
-package models.requests
+package stubs
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.AffinityGroup
+import com.github.tomakehurst.wiremock.client.WireMock.*
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import play.api.libs.json.{JsValue, Json}
+import utils.WireMockHelper
 
-case class IdentifierRequest[A] (request: Request[A], userId: String, storn: String, affinityGroup: AffinityGroup) extends WrappedRequest[A](request)
+trait AllowListStub { this: WireMockHelper =>
+
+  def stubCheckAllowList(service: String, feature: String)(status: Int, body: JsValue = Json.obj()): StubMapping =
+    server.stubFor(
+      post(urlEqualTo(s"/rate-limited-allow-list/services/$service/features/$feature"))
+        .willReturn(aResponse().withStatus(status).withBody(body.toString))
+    )
+}

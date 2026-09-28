@@ -45,7 +45,7 @@ class ActivatedIdentifierActionSpec extends SpecBase {
         Enrolment("IR-OTHER", Seq(), "activated")
       ))
 
-      Future.successful(new~(internalId, enrolments).asInstanceOf[A])
+      Future.successful(new~(new~(internalId, enrolments), Some(AffinityGroup.Organisation)).asInstanceOf[A])
     }
   }
 
@@ -58,7 +58,7 @@ class ActivatedIdentifierActionSpec extends SpecBase {
         Enrolment("IR-SDLT-AGENT", Seq(EnrolmentIdentifier(key = "STORN" , value = "value")), "activated")
       ))
 
-      Future.successful(new~(internalId, enrolments).asInstanceOf[A])
+      Future.successful(new~(new~(internalId, enrolments), Some(AffinityGroup.Organisation)).asInstanceOf[A])
     }
   }
 
@@ -71,7 +71,7 @@ class ActivatedIdentifierActionSpec extends SpecBase {
         Enrolment("IR-SDLT-AGENT", Seq(EnrolmentIdentifier(key = "STORN", value = "value")), "pending")
       ))
 
-      Future.successful(new~(internalId, enrolments).asInstanceOf[A])
+      Future.successful(new~(new~(internalId, enrolments), Some(AffinityGroup.Organisation)).asInstanceOf[A])
     }
   }
 
