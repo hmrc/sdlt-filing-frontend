@@ -18,9 +18,9 @@ package controllers.lease
 
 import controllers.actions.*
 import forms.lease.AnnualStartingRentFormProvider
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
-import pages.lease.AnnualStartingRentPage
+import pages.lease.{AnnualStartingRentPage, EnterAnnualRentVatPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -31,6 +31,7 @@ import services.lease.LeaseService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 @Singleton
 class AnnualStartingRentController @Inject()(
@@ -47,10 +48,9 @@ class AnnualStartingRentController @Inject()(
                                         view: AnnualStartingRentView
                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  val form: Form[String] = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck) {
     implicit request =>
+      val form = buildForm(request.userAnswers)
       
       leaseService.leaseFlowValidationCheck(request.userAnswers) match {
         case Some(redirect) => Redirect(redirect)
@@ -65,6 +65,7 @@ class AnnualStartingRentController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen statusCheck).async {
     implicit request =>
+      val form = buildForm(request.userAnswers)
 
       form.bindFromRequest().fold(
         formWithErrors =>
@@ -76,5 +77,14 @@ class AnnualStartingRentController @Inject()(
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(AnnualStartingRentPage, mode, updatedAnswers))
       )
+  }
+
+  private def buildForm(userAnswers: UserAnswers): Form[String] = {
+    val annualRentVat: Option[BigDecimal] = Try(userAnswers.get(EnterAnnualRentVatPage).map(BigDecimal(_))).toOption.flatten
+
+    def validateAnnualStartingRent(annualStartingRent: String): Boolean =
+      annualRentVat.forall(_ < BigDecimal(annualStartingRent))
+
+    formProvider(validateAnnualStartingRent)
   }
 }

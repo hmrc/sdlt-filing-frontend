@@ -24,7 +24,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.lease.EnterAnnualRentVatPage
+import pages.lease.{AnnualStartingRentPage, EnterAnnualRentVatPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -40,7 +40,7 @@ class EnterAnnualRentVatControllerSpec extends SpecBase with MockitoSugar {
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new EnterAnnualRentVatFormProvider()
-  val form: Form[String] = formProvider()
+  val form: Form[String] = formProvider(_ => true)
 
   lazy val enterAnnualRentVatRoute: String = controllers.lease.routes.EnterAnnualRentVatController.onPageLoad(NormalMode).url
 
@@ -64,7 +64,7 @@ class EnterAnnualRentVatControllerSpec extends SpecBase with MockitoSugar {
 
   "EnterAnnualRentVat Controller" - {
 
-    "ust return OK and the correct view for a GET when transaction type is L - Grant of Lease" in {
+    "must return OK and the correct view for a GET when transaction type is L - Grant of Lease" in {
 
       val application = applicationBuilder(userAnswers = Some(userAnswersGrantOfLease)).build()
 
@@ -186,6 +186,26 @@ class EnterAnnualRentVatControllerSpec extends SpecBase with MockitoSugar {
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
+
+        val view = application.injector.instanceOf[EnterAnnualRentVatView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+      }
+    }
+
+    "must return a Bad Request and errors when annual rent VAT is greater than starting rent" in {
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersGrantOfLease.set(AnnualStartingRentPage, "999").success.value)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, enterAnnualRentVatRoute)
+            .withFormUrlEncodedBody(("value", "1000"))
+
+        val boundForm = form.bind(Map("value" -> "1000")).withError("value", "lease.enterAnnualRentVat.error.annualRentVatInvalid")
 
         val view = application.injector.instanceOf[EnterAnnualRentVatView]
 

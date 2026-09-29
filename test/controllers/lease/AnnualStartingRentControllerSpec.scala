@@ -25,7 +25,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.lease.AnnualStartingRentPage
+import pages.lease.{AnnualStartingRentPage, EnterAnnualRentVatPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -41,7 +41,7 @@ class AnnualStartingRentControllerSpec extends SpecBase with MockitoSugar {
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new AnnualStartingRentFormProvider()
-  val form: Form[String] = formProvider()
+  val form: Form[String] = formProvider(_ => true)
 
   lazy val annualStartingRentRoute: String = controllers.lease.routes.AnnualStartingRentController.onPageLoad(NormalMode).url
 
@@ -155,6 +155,26 @@ class AnnualStartingRentControllerSpec extends SpecBase with MockitoSugar {
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
+
+        val view = application.injector.instanceOf[AnnualStartingRentView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+      }
+    }
+
+    "must return a Bad Request and errors when annual rent VAT is greater than starting rent" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.set(EnterAnnualRentVatPage, "1000").success.value)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, annualStartingRentRoute)
+            .withFormUrlEncodedBody(("value", "999"))
+
+        val boundForm = form.bind(Map("value" -> "999")).withError("value", "lease.annualStartingRent.error.annualStartingRentInvalid")
 
         val view = application.injector.instanceOf[AnnualStartingRentView]
 

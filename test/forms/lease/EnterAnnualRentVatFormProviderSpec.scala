@@ -28,7 +28,8 @@ class EnterAnnualRentVatFormProviderSpec extends StringFieldBehaviours {
   val maxValueKey = "lease.enterAnnualRentVat.error.maximum"
   val maxLength = 14
 
-  val form = new EnterAnnualRentVatFormProvider()()
+  val form = new EnterAnnualRentVatFormProvider()(_ => true)
+  val formWithInvalidAnnualRentVat = new EnterAnnualRentVatFormProvider()(_ => false)
 
   ".value" - {
 
@@ -75,5 +76,9 @@ class EnterAnnualRentVatFormProviderSpec extends StringFieldBehaviours {
       }
     }
 
+    "must fail with invalid annual rent VAT error when the predicate is false" in {
+      val result = formWithInvalidAnnualRentVat.bind(Map(fieldName -> "300"))
+      result.errors must contain only FormError(fieldName, "lease.enterAnnualRentVat.error.annualRentVatInvalid", Seq.empty)
+    }
   }
 }

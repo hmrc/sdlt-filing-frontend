@@ -25,7 +25,7 @@ class AnnualStartingRentFormProvider @Inject() extends Mappings {
 
   private val maxValue = BigDecimal(99999999L)
 
-  def apply(): Form[String] =
+  def apply(annualStartingRentValidated: String => Boolean): Form[String] =
     Form(
       "value" -> wholeNumberCurrency(
         requiredKey = "lease.annualStartingRent.error.required",
@@ -34,5 +34,8 @@ class AnnualStartingRentFormProvider @Inject() extends Mappings {
         maxValueKey = "lease.annualStartingRent.error.maximum",
         maxValue = maxValue
       )
+        .verifying(
+          isPredicateTrue(annualStartingRentValidated, "lease.annualStartingRent.error.annualStartingRentInvalid")
+        )
     )
 }
