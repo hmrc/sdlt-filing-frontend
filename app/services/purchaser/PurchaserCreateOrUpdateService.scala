@@ -17,7 +17,7 @@
 package services.purchaser
 
 import connectors.StampDutyLandTaxConnector
-import models.purchaser.{CreateCompanyDetailsRequest, CreatePurchaserRequest, UpdateCompanyDetailsRequest, UpdatePurchaserRequest}
+import models.purchaser.{CreateCompanyDetailsRequest, CreatePurchaserRequest, DeleteCompanyDetailsRequest, UpdateCompanyDetailsRequest, UpdatePurchaserRequest}
 import models.{AgentType, DeleteReturnAgentRequest, Purchaser, ReturnVersionUpdateRequest, UserAnswers}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}
@@ -62,7 +62,7 @@ class PurchaserCreateOrUpdateService extends LoggingUtil {
                   s" ReturnId=${updateRequest.returnResourceRef}")
               Future.unit
             }
-            _ <- updateOrCreateCompanyDetails(backendConnector, userAnswers, purchaser, updateRequest.purchaserResourceRef)
+            _ <- updateCompanyDetails(backendConnector, userAnswers, purchaser, updateRequest.purchaserResourceRef)
           } yield Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())
             .flashing("purchaserUpdated" -> purchaserService.createPurchaserName(purchaser).map(_.fullName).getOrElse(""))
       }
@@ -144,12 +144,12 @@ class PurchaserCreateOrUpdateService extends LoggingUtil {
           warnLog(s"[PurchaserCreateOrUpdateService][createPurchaser] purchaser has not been created." +
             s" PurchaserId=${createPurchaserReturn.purchaserId}. ReturnId=${createRequest.returnResourceRef}")
       }
-      _                     <- updateOrCreateCompanyDetails(backendConnector, userAnswers, purchaser, createPurchaserReturn.purchaserResourceRef)
+      _                     <- updateCompanyDetails(backendConnector, userAnswers, purchaser, createPurchaserReturn.purchaserResourceRef)
     } yield Redirect(controllers.purchaser.routes.PurchaserOverviewController.onPageLoad())
       .flashing("purchaserCreated" -> purchaserService.createPurchaserName(purchaser).map(_.fullName).getOrElse(""))
   }
   
-  private def updateOrCreateCompanyDetails(backendConnector: StampDutyLandTaxConnector,
+  private def updateCompanyDetails(backendConnector: StampDutyLandTaxConnector,
                                            userAnswers: UserAnswers,
                                            purchaser: Purchaser,
                                            purchaserResourceRef: String)
@@ -168,25 +168,33 @@ class PurchaserCreateOrUpdateService extends LoggingUtil {
             updateCompanyDetailsRequest <- UpdateCompanyDetailsRequest.from(userAnswers, purchaserResourceRef)
             updateCompanyDetailsReturn <- backendConnector.updateCompanyDetails(updateCompanyDetailsRequest)
           } yield {
-            logger.debug(s"[PurchaserCreateOrUpdateService][updateOrCreateCompanyDetails] update company details request: $updateCompanyDetailsRequest")
+            logger.debug(s"[PurchaserCreateOrUpdateService][updateCompanyDetails] update company details request: $updateCompanyDetailsRequest")
             if updateCompanyDetailsReturn.updated then
-              infoLog(s"[PurchaserCreateOrUpdateService][updateOrCreateCompanyDetails] company details have been successfully updated. ReturnId=${updateCompanyDetailsRequest.returnResourceRef}")
+              infoLog(s"[PurchaserCreateOrUpdateService][updateCompanyDetails] company details have been successfully updated. ReturnId=${updateCompanyDetailsRequest.returnResourceRef}")
             else
-              warnLog(s"[PurchaserCreateOrUpdateService][updateOrCreateCompanyDetails] company details have not been updated. ReturnId=${updateCompanyDetailsRequest.returnResourceRef}")
+              warnLog(s"[PurchaserCreateOrUpdateService][updateCompanyDetails] company details have not been updated. ReturnId=${updateCompanyDetailsRequest.returnResourceRef}")
           }
         } else {
           for {
             createCompanyDetailsRequest <- CreateCompanyDetailsRequest.from(userAnswers, purchaserResourceRef)
             createCompanyDetailsReturn <- backendConnector.createCompanyDetails(createCompanyDetailsRequest)
           } yield {
-            logger.debug(s"[PurchaserCreateOrUpdateService][updateOrCreateCompanyDetails] create company details request: $createCompanyDetailsRequest")
+            logger.debug(s"[PurchaserCreateOrUpdateService][updateCompanyDetails] create company details request: $createCompanyDetailsRequest")
             if !createCompanyDetailsReturn.companyDetailsId.isBlank then
-              infoLog(s"[PurchaserCreateOrUpdateService][updateOrCreateCompanyDetails] company details have been successfully created." +
+              infoLog(s"[PurchaserCreateOrUpdateService][updateCompanyDetails] company details have been successfully created." +
                 s" CompanyDetailsId=${createCompanyDetailsReturn.companyDetailsId}. ReturnId=${createCompanyDetailsRequest.returnResourceRef}") 
             else  
-              warnLog(s"[PurchaserCreateOrUpdateService][updateOrCreateCompanyDetails] company details have not been created." +
+              warnLog(s"[PurchaserCreateOrUpdateService][updateCompanyDetails] company details have not been created." +
                 s" CompanyDetailsId=${createCompanyDetailsReturn.companyDetailsId}. ReturnId=${createCompanyDetailsRequest.returnResourceRef}")
           }
+        }
+      } else if (!isCompany && isMainPurchaser && companyDetailsExists) {
+        for {
+          deleteCompanyDetailsRequest <- DeleteCompanyDetailsRequest.from(userAnswers)
+          deleteCompanyDetailsReturn <- backendConnector.deleteCompanyDetails(deleteCompanyDetailsRequest)
+        } yield {
+          if deleteCompanyDetailsReturn.deleted then
+            logger.info(s"[PurchaserCreateOrUpdateService][updateCompanyDetails] successfully deleted company details")
         }
       } else {
         Future.unit
