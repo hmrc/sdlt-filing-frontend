@@ -21,6 +21,8 @@ import models.FullReturn
 import play.api.i18n.Messages
 import utils.LeaseHelper
 import viewmodels.tasklist.TaskListSections.allComplete
+import viewmodels.submission.SubmissionState
+import viewmodels.submission.SubmissionState._
 
 object SubmissionTaskList {
 
@@ -39,9 +41,18 @@ object SubmissionTaskList {
 
   def buildSubmissionRow(fullReturn: FullReturn, readyToSubmit: Boolean)
                         (implicit appConfig: FrontendAppConfig): TaskListSectionRow = {
-    val url = fullReturn.submission match {
-      case Some(submission) if submission.submissionID.isDefined =>
+    val submissionStatus = fullReturn.submission.flatMap(_.submissionStatus)
+
+    val url = SubmissionState.parse(submissionStatus) match {
+      case Some(AwaitingConfirmation) =>
+        controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad().url
+
+      case Some(Submitted) | Some(SubmittedNoReceipt) =>
         controllers.submission.routes.SubmissionCompleteController.onPageLoad().url
+
+      case Some(SubmissionFailed) =>
+        controllers.submission.routes.SubmissionFailedController.onPageLoad().url
+
       case _ =>
         controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad().url
     }

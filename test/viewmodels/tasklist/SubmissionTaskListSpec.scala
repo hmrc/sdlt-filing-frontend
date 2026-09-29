@@ -19,6 +19,7 @@ package viewmodels.tasklist
 import base.SpecBase
 import config.FrontendAppConfig
 import constants.FullReturnConstants.*
+import models.FullReturn
 import play.api.i18n.Messages
 import play.api.test.Helpers.running
 
@@ -28,6 +29,11 @@ class SubmissionTaskListSpec extends SpecBase {
   private val fullReturnIncompleteSubmission = fullReturnComplete.copy(
     submission = Some(completeSubmission.copy(submissionID = None)))
   private val fullReturnMissingSubmission = fullReturnComplete.copy(submission = None)
+
+  private def fullReturnWithStatus(status: Option[String]): FullReturn =
+    fullReturnComplete.copy(submission = Some(completeSubmission.copy(submissionStatus = status)))
+
+  private val fullReturnSubmitted = fullReturnWithStatus(Some("SUBMITTED"))
 
   private val completeRow: TaskListSectionRow =
     TaskListSectionRow("some.key", "some/url", "someTagId", TLCompleted)
@@ -109,21 +115,85 @@ class SubmissionTaskListSpec extends SpecBase {
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
+          val fullReturnIncompleteSubmission = fullReturnComplete.copy(
+            submission = Some(completeSubmission.copy(submissionID = None, submissionStatus = None))
+          )
+
           val result = SubmissionTaskList.buildSubmissionRow(fullReturnIncompleteSubmission, readyToSubmit = true)
 
           result.url mustBe controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad().url
         }
       }
 
-      "must have Submission Success page url when submission is complete" in {
+      "must have Submission Before You Start url when submission ID is present but status is empty" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val result = SubmissionTaskList.buildSubmissionRow(fullReturnComplete, readyToSubmit = true)
+          val result = SubmissionTaskList.buildSubmissionRow(fullReturnWithStatus(None), readyToSubmit = true)
+
+          result.url mustBe controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad().url
+        }
+      }
+
+      "must have Submission Before You Start url when submission status is STARTED (ReSubmit)" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = SubmissionTaskList.buildSubmissionRow(fullReturnWithStatus(Some("STARTED")), readyToSubmit = true)
+
+          result.url mustBe controllers.submission.routes.SubmissionBeforeYouStartController.onPageLoad().url
+        }
+      }
+
+      "must have Submission Success page url when submission status is SUBMITTED" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = SubmissionTaskList.buildSubmissionRow(fullReturnSubmitted, readyToSubmit = true)
 
           result.url mustBe controllers.submission.routes.SubmissionCompleteController.onPageLoad().url
+        }
+      }
+
+      "must have Submission Success page url when submission status is SUBMITTED_NO_RECEIPT" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = SubmissionTaskList.buildSubmissionRow(fullReturnWithStatus(Some("SUBMITTED_NO_RECEIPT")), readyToSubmit = true)
+
+          result.url mustBe controllers.submission.routes.SubmissionCompleteController.onPageLoad().url
+        }
+      }
+
+      "must have Submission Awaiting Confirmation url when submission status is ACCEPTED" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = SubmissionTaskList.buildSubmissionRow(fullReturnWithStatus(Some("ACCEPTED")), readyToSubmit = true)
+
+          result.url mustBe controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad().url
+        }
+      }
+
+      "must have Submission Failed url when submission status is DEPARTMENTAL_ERROR" in {
+        val application = applicationBuilder().build()
+
+        running(application) {
+          implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          val result = SubmissionTaskList.buildSubmissionRow(fullReturnWithStatus(Some("DEPARTMENTAL_ERROR")), readyToSubmit = true)
+
+          result.url mustBe controllers.submission.routes.SubmissionFailedController.onPageLoad().url
         }
       }
 
@@ -193,14 +263,14 @@ class SubmissionTaskListSpec extends SpecBase {
     }
 
     "integration" - {
-      "must build complete TaskListSection with 'Complete' row when submission present and preceding sections complete" in {
+      "must build complete TaskListSection with 'Complete' row when submission is submitted and preceding sections complete" in {
         val application = applicationBuilder().build()
 
         running(application) {
           implicit val messagesInstance: Messages = messages(application)
           implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          val section = SubmissionTaskList.build(fullReturnComplete, completeSections)
+          val section = SubmissionTaskList.build(fullReturnSubmitted, completeSections)
           val row = section.rows.head
 
           section.heading mustBe messagesInstance("tasklist.submissionQuestion.heading")
