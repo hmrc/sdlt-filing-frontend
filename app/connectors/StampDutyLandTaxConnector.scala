@@ -23,7 +23,7 @@ import models.prelimQuestions.PrelimReturn
 import models.purchaser.*
 import models.ukResidency.*
 import models.vendor.*
-import org.slf4j.{Logger, LoggerFactory}
+import utils.LoggingUtil
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import play.api.mvc.Request
@@ -42,9 +42,7 @@ import play.api.http.Status._
 
 class StampDutyLandTaxConnector @Inject()(val http: HttpClientV2,
                                           val config: FrontendAppConfig)
-                                         (implicit ec: ExecutionContext) {
-
-  private lazy val logger: Logger = LoggerFactory.getLogger(getClass)
+                                         (implicit ec: ExecutionContext) extends LoggingUtil {
 
   private lazy val sdltStubBase: String = config.baseUrl("stamp-duty-land-tax-stub") + "/stamp-duty-land-tax-stub"
   private lazy val sdltBackendBase: String = config.baseUrl("stamp-duty-land-tax") + "/stamp-duty-land-tax"
