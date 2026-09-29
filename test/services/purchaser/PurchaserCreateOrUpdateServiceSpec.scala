@@ -663,43 +663,89 @@ class PurchaserCreateOrUpdateServiceSpec extends SpecBase with MockitoSugar {
 
       "when the purchaser is a main purchaser" - {
         "when purchaser type is Individual" - {
-          "must successfully update purchaser when version update succeeds and returns new version" in {
-            val mockBackendConnector = mock[StampDutyLandTaxConnector]
-            val mockPurchaserService = mock[PurchaserService]
-            val service = new PurchaserCreateOrUpdateService()
+          "when company details do not exist" - {
+            "must successfully update purchaser when version update succeeds and returns new version" in {
+              val mockBackendConnector = mock[StampDutyLandTaxConnector]
+              val mockPurchaserService = mock[PurchaserService]
+              val service = new PurchaserCreateOrUpdateService()
 
-            val userAnswers = createMainPurchaserIndividualUserAnswers(
-              fullReturn = Some(createFullReturn(
-                returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))),
-                purchasers = Seq(
-                  createPurchaser(
-                    purchaserID = Some(testmainPurchaserID),
-                    isCompany = Some("no"),
-                    purchaserResourceRef = Some(testPurchaserResourceRef),
-                    nextPurchaserID = Some(testNextPurchaserId)
+              val userAnswers = createMainPurchaserIndividualUserAnswers(
+                fullReturn = Some(createFullReturn(
+                  returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))),
+                  purchasers = Seq(
+                    createPurchaser(
+                      purchaserID = Some(testmainPurchaserID),
+                      isCompany = Some("no"),
+                      purchaserResourceRef = Some(testPurchaserResourceRef),
+                      nextPurchaserID = Some(testNextPurchaserId)
+                    )
                   )
-                )
-              ))
-            )
+                ))
+              )
 
-            val returnVersionResponse = ReturnVersionUpdateReturn(
-              newVersion = Some(2)
-            )
+              val returnVersionResponse = ReturnVersionUpdateReturn(
+                newVersion = Some(2)
+              )
 
-            when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
-              .thenReturn(Future.successful(returnVersionResponse))
-            when(mockBackendConnector.updatePurchaser(any())(any(), any()))
-              .thenReturn(Future.successful(testUpdatePurchaserReturn))
-            when(mockPurchaserService.createPurchaserName(any())).thenReturn(Some(purchaserName))
+              when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+                .thenReturn(Future.successful(returnVersionResponse))
+              when(mockBackendConnector.updatePurchaser(any())(any(), any()))
+                .thenReturn(Future.successful(testUpdatePurchaserReturn))
+              when(mockPurchaserService.createPurchaserName(any())).thenReturn(Some(purchaserName))
 
-            val result = service.updatePurchaser(mockBackendConnector, mockPurchaserService, userAnswers).futureValue
+              val result = service.updatePurchaser(mockBackendConnector, mockPurchaserService, userAnswers).futureValue
 
-            status(Future.successful(result)) mustEqual SEE_OTHER
-            redirectLocation(Future.successful(result)).value mustEqual
-              controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
+              status(Future.successful(result)) mustEqual SEE_OTHER
+              redirectLocation(Future.successful(result)).value mustEqual
+                controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
 
-            verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
-            verify(mockBackendConnector, times(1)).updatePurchaser(any())(any(), any())
+              verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
+              verify(mockBackendConnector, times(1)).updatePurchaser(any())(any(), any())
+            }
+          }
+          "when company details exist" - {
+            "must successfully update purchaser when version update succeeds and returns new version and delete company details" in {
+              val mockBackendConnector = mock[StampDutyLandTaxConnector]
+              val mockPurchaserService = mock[PurchaserService]
+              val service = new PurchaserCreateOrUpdateService()
+
+              val userAnswers = createMainPurchaserIndividualUserAnswers(
+                fullReturn = Some(createFullReturn(
+                  returnInfo = Some(createFullReturnInfo(Some(testmainPurchaserID))),
+                  purchasers = Seq(
+                    createPurchaser(
+                      purchaserID = Some(testmainPurchaserID),
+                      isCompany = Some("no"),
+                      purchaserResourceRef = Some(testPurchaserResourceRef),
+                      nextPurchaserID = Some(testNextPurchaserId)
+                    )
+                  ),
+                  companyDetails = Some(createCompanyDetails(testmainPurchaserID))
+                ))
+              )
+
+              val returnVersionResponse = ReturnVersionUpdateReturn(
+                newVersion = Some(2)
+              )
+
+              when(mockBackendConnector.updateReturnVersion(any())(any(), any()))
+                .thenReturn(Future.successful(returnVersionResponse))
+              when(mockBackendConnector.updatePurchaser(any())(any(), any()))
+                .thenReturn(Future.successful(testUpdatePurchaserReturn))
+              when(mockPurchaserService.createPurchaserName(any())).thenReturn(Some(purchaserName))
+              when(mockBackendConnector.deleteCompanyDetails(any())(any(), any()))
+                .thenReturn(Future.successful(DeleteCompanyDetailsReturn(true)))
+
+              val result = service.updatePurchaser(mockBackendConnector, mockPurchaserService, userAnswers).futureValue
+
+              status(Future.successful(result)) mustEqual SEE_OTHER
+              redirectLocation(Future.successful(result)).value mustEqual
+                controllers.purchaser.routes.PurchaserOverviewController.onPageLoad().url
+
+              verify(mockBackendConnector, times(1)).updateReturnVersion(any())(any(), any())
+              verify(mockBackendConnector, times(1)).updatePurchaser(any())(any(), any())
+              verify(mockBackendConnector, times(1)).deleteCompanyDetails(any())(any(), any())
+            }
           }
         }
 
