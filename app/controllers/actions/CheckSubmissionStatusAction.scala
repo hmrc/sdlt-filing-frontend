@@ -26,35 +26,32 @@ import viewmodels.submission.SubmissionState._
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckSubmissionStatusAction @Inject()(
-  implicit val executionContext: ExecutionContext
-) extends ActionFilter[DataRequest] {
+                                             implicit val executionContext: ExecutionContext
+                                           ) extends ActionFilter[DataRequest] {
 
   override protected def filter[A](request: DataRequest[A]): Future[Option[Result]] = {
-    val submissionStatus = request.userAnswers.fullReturn.flatMap(_.submission).flatMap(_.submissionStatus)
-    val submissionExists = request.userAnswers.fullReturn.flatMap(_.submission).isDefined
-    val submissionState = SubmissionState.parse(submissionStatus)
+    val submission       = request.userAnswers.fullReturn.flatMap(_.submission)
+    val submissionStatus = submission.flatMap(_.submissionStatus)
 
-    submissionState match {
-      case _ if(!submissionExists) =>
-        Future.successful(None)
+    if (submission.isEmpty || submissionStatus.isEmpty) {
+      Future.successful(None)
+    } else {
+      SubmissionState.parse(submissionStatus) match {
+        case Some(ReSubmit) =>
+          Future.successful(None)
 
-      case _ if submissionExists && submissionStatus.isEmpty =>
-        Future.successful(Some(Redirect(controllers.submission.routes.ResubmitYourReturnController.onPageLoad)))
+        case Some(AwaitingConfirmation) =>
+          Future.successful(Some(Redirect(controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad())))
 
-      case Some(ReSubmit) =>
-        Future.successful(Some(Redirect(controllers.submission.routes.ResubmitYourReturnController.onPageLoad)))
+        case Some(Submitted) | Some(SubmittedNoReceipt) =>
+          Future.successful(Some(Redirect(controllers.submission.routes.SubmissionCompleteController.onPageLoad())))
 
-      case Some(AwaitingConfirmation) =>
-        Future.successful(Some(Redirect(controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad())))
+        case Some(SubmissionFailed) =>
+          Future.successful(Some(Redirect(controllers.submission.routes.SubmissionFailedController.onPageLoad())))
 
-      case Some(Submitted) | Some(SubmittedNoReceipt) =>
-        Future.successful(Some(Redirect(controllers.submission.routes.SubmissionCompleteController.onPageLoad())))
-
-      case Some(SubmissionFailed) =>
-        Future.successful(Some(Redirect(controllers.submission.routes.SubmissionFailedController.onPageLoad())))
-
-      case _ =>
-        Future.successful(Some(Redirect(controllers.submission.routes.ResubmitYourReturnController.onPageLoad)))
+        case _ =>
+          Future.successful(Some(Redirect(controllers.submission.routes.ResubmitYourReturnController.onPageLoad)))
+      }
     }
   }
 }

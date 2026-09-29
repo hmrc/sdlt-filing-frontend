@@ -35,6 +35,11 @@ class CheckSubmissionStatusActionSpec extends SpecBase with MockitoSugar {
     def callFilter[A](request: DataRequest[A]): Future[Option[Result]] = filter(request)
   }
 
+  private def userAnswersWithStatus(status: Option[String]): UserAnswers =
+    emptyUserAnswers.copy(fullReturn = Some(completeFullReturn.copy(
+      submission = Some(completeSubmission.copy(submissionStatus = status))
+    )))
+
   "CheckSubmissionAction" - {
 
     "must allow request to continue when submission object does not exists" in {
@@ -49,44 +54,18 @@ class CheckSubmissionStatusActionSpec extends SpecBase with MockitoSugar {
       result mustBe None
     }
 
-    "must redirect to resubmit your return page when submission exists but submission status is empty" in {
-      val fullReturnWithNoSubmittedStatus = completeFullReturn.copy(
-        submission = Some(completeSubmission.copy(
-          submissionStatus = None
-        ))
-      )
-
+    "must allow request to continue when submission exists but submission status is empty" in {
       val action = new Harness()
-      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNoSubmittedStatus))
-      val result = action.callFilter(DataRequest(FakeRequest(), "id", userAnswers = userAnswers)).futureValue
+      val result = action.callFilter(DataRequest(FakeRequest(), "id", userAnswers = userAnswersWithStatus(None))).futureValue
 
-      result mustBe defined
-      val redirectResult = result.value
-
-      redirectResult.header.status mustEqual SEE_OTHER
-
-      redirectResult.header.headers("Location") mustEqual
-        controllers.submission.routes.ResubmitYourReturnController.onPageLoad.url
+      result mustBe None
     }
 
-    "must redirect to resubmit your return page when submission status is STARTED" in {
-      val fullReturn = completeFullReturn.copy(
-        submission = Some(completeSubmission.copy(
-          submissionStatus = Some("STARTED")
-        ))
-      )
-
+    "must allow request to continue when submission status is STARTED (ReSubmit)" in {
       val action = new Harness()
-      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
-      val result = action.callFilter(DataRequest(FakeRequest(), "id", userAnswers = userAnswers)).futureValue
+      val result = action.callFilter(DataRequest(FakeRequest(), "id", userAnswers = userAnswersWithStatus(Some("STARTED")))).futureValue
 
-      result mustBe defined
-      val redirectResult = result.value
-
-      redirectResult.header.status mustEqual SEE_OTHER
-
-      redirectResult.header.headers("Location") mustEqual
-        controllers.submission.routes.ResubmitYourReturnController.onPageLoad.url
+      result mustBe None
     }
 
     "must redirect to submission awaiting confirmation page when submission status is ACCEPTED" in {
