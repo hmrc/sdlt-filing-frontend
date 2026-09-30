@@ -249,6 +249,11 @@ object CrossFlowProjections:
   def isTransactionType(ua: UserAnswers, code: String): Boolean =
     transactionType(ua).contains(code)
 
+  def isGrantOfLease(ua: UserAnswers): Boolean =
+    ua.get(TypeOfTransactionPage) match
+      case Some(t) => t == models.prelimQuestions.TransactionType.GrantOfLease
+      case None    => isTransactionType(ua, GrantOfLease)
+
   def annualRentOver1000Answered(ua: UserAnswers): Boolean = {
     val committedAnswered =
       committedLease(ua).flatMap(_.isAnnualRentOver1000).exists(_.trim.nonEmpty)

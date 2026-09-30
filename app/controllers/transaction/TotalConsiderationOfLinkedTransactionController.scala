@@ -83,7 +83,7 @@ class TotalConsiderationOfLinkedTransactionController @Inject()(
     def validateTotalConsideration(totalLinkedConsideration: String): Boolean = {
       if (isTransactionNonLeased) {
         if totalConsideration.exists(_ < 0) then false
-        else if totalConsideration.exists(_ > BigDecimal(totalLinkedConsideration)) then false
+        else if totalConsideration.exists(_ >= BigDecimal(totalLinkedConsideration)) then false
         else true
       } else {
         true

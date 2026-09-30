@@ -147,6 +147,28 @@ class TransactionVatAmountControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "must return a Bad Request and errors when VAT included in total consideration is equal to total consideration value" in {
+      val userAnswers = emptyUserAnswers
+        .set(TotalConsiderationOfTransactionPage, "10").success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, transactionVatAmountRoute)
+            .withFormUrlEncodedBody(("value", "10"))
+
+        val boundForm = form.bind(Map("value" -> "10")).withError("value", "transaction.vatAmount.error.vatIncludedInTotalConsideration")
+
+        val view = application.injector.instanceOf[TransactionVatAmountView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+      }
+    }
+
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()

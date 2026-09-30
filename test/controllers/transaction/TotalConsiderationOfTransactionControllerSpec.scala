@@ -148,6 +148,51 @@ class TotalConsiderationOfTransactionControllerSpec extends SpecBase with Mockit
       }
     }
 
+    "must return a Bad Request and errors when VAT included in total consideration is equal to total consideration value" in {
+      val userAnswers  = emptyUserAnswers
+        .set(TransactionVatAmountPage, "10").success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, totalConsiderationOfTransactionRoute)
+            .withFormUrlEncodedBody(("value", "10"))
+
+        val boundForm = form.bind(Map("value" -> "10")).withError("value", "transaction.totalConsiderationOfTransaction.error.vatIncludedInTotalConsideration")
+
+        val view = application.injector.instanceOf[TotalConsiderationOfTransactionView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+      }
+    }
+
+    "must return a Bad Request and errors when non leased and total consideration is equal to total consideration of linked transaction" in {
+      val userAnswers = emptyUserAnswers
+        .set(TypeOfTransactionPage, TransactionType.ConveyanceTransfer).success.value
+        .set(TotalConsiderationOfLinkedTransactionPage, "10").success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, totalConsiderationOfTransactionRoute)
+            .withFormUrlEncodedBody(("value", "10"))
+
+        val boundForm = form.bind(Map("value" -> "10")).withError("value", "transaction.totalConsiderationOfTransaction.error.totalConsideration")
+
+        val view = application.injector.instanceOf[TotalConsiderationOfTransactionView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+      }
+    }
+
     "must return a Bad Request and errors when non leased and total consideration is greater than total consideration of linked transaction" in {
       val userAnswers = emptyUserAnswers
         .set(TypeOfTransactionPage, TransactionType.ConveyanceTransfer).success.value

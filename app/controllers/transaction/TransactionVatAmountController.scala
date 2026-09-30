@@ -79,7 +79,7 @@ class TransactionVatAmountController @Inject()(
     val totalConsideration: Option[BigDecimal] = userAnswers.get(TotalConsiderationOfTransactionPage).map(BigDecimal(_))
 
     def validateVatIncludedInConsideration(vat: String): Boolean =
-      !totalConsideration.exists(BigDecimal(vat) > _)
+      !totalConsideration.exists(BigDecimal(vat) >= _)
 
     formProvider(validateVatIncludedInConsideration)
   }
