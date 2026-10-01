@@ -186,7 +186,7 @@ object F28FtbCap500k extends GuardRule:
   private val Cap: BigDecimal = 500000
 
   protected def appliesTo(ua: UserAnswers): Boolean =
-    isClaimingRelief(ua) && isReason(ua, "32") && (inWindowBeforeFtbStart(ua) || in500kWindow(ua))
+    isClaimingRelief(ua) && isReason(ua, "32") && isGrantOfLease(ua) && (inWindowBeforeFtbStart(ua) || in500kWindow(ua))
 
   protected def isValid(ua: UserAnswers): Boolean =
     totalPremium(ua).forall(_ <= Cap) && in500kWindow(ua)
@@ -228,7 +228,7 @@ object F28FtbCap625k extends GuardRule:
   private val Cap: BigDecimal = 625000
 
   protected def appliesTo(ua: UserAnswers): Boolean =
-    isClaimingRelief(ua) && isReason(ua, "32") && in625kWindow(ua)
+    isClaimingRelief(ua) && isReason(ua, "32") && isGrantOfLease(ua) && in625kWindow(ua)
 
   protected def isValid(ua: UserAnswers): Boolean =
     totalPremium(ua).forall(_ <= Cap)
@@ -267,10 +267,10 @@ object F28FtbCap500kTotalConsideration extends GuardRule:
   private val Cap: BigDecimal = 500000
 
   protected def appliesTo(ua: UserAnswers): Boolean =
-    isClaimingRelief(ua) && isReason(ua, "32") && in500kWindow(ua)
+    isClaimingRelief(ua) && isReason(ua, "32") && !isGrantOfLease(ua) && (inWindowBeforeFtbStart(ua) || in500kWindow(ua))
 
   protected def isValid(ua: UserAnswers): Boolean =
-    totalConsideration(ua).forall(_ <= Cap)
+    totalConsideration(ua).forall(_ <= Cap) && in500kWindow(ua)
 
   protected def messageKey = "crossflow.relief.firstTimeBuyer.over500k.totalConsideration"
 
@@ -279,6 +279,11 @@ object F28FtbCap500kTotalConsideration extends GuardRule:
       val inOriginalWindow = !d.isBefore(Dates.ftbStart) && d.isBefore(Dates.ftbCap625FromSept2022)
       val inPost2025Window = !d.isBefore(Dates.ftbCap500FromApril2025)
       inOriginalWindow || inPost2025Window
+    }
+
+  private def inWindowBeforeFtbStart(ua: UserAnswers): Boolean =
+    effectiveDate(ua).exists { d =>
+      d.isBefore(Dates.ftbStart)
     }
 
 
@@ -295,7 +300,7 @@ object F28FtbCap625kTotalConsideration extends GuardRule:
   private val Cap: BigDecimal = 625000
 
   protected def appliesTo(ua: UserAnswers): Boolean =
-    isClaimingRelief(ua) && isReason(ua, "32") && in625kWindow(ua)
+    isClaimingRelief(ua) && isReason(ua, "32") && !isGrantOfLease(ua) && in625kWindow(ua)
 
   protected def isValid(ua: UserAnswers): Boolean =
     totalConsideration(ua).forall(_ <= Cap)

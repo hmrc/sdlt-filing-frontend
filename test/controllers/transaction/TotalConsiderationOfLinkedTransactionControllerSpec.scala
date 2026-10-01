@@ -149,6 +149,29 @@ class TotalConsiderationOfLinkedTransactionControllerSpec extends SpecBase with 
       }
     }
 
+    "must return a Bad Request and errors when non leased and total consideration is equal to total consideration of linked transaction" in {
+      val userAnswers = emptyUserAnswers
+        .set(TypeOfTransactionPage, TransactionType.ConveyanceTransfer).success.value
+        .set(TotalConsiderationOfTransactionPage, "10").success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, totalConsiderationOfLinkedTransactionRoute)
+            .withFormUrlEncodedBody(("value", "10"))
+
+        val boundForm = form.bind(Map("value" -> "10")).withError("value", "transaction.totalConsiderationOfLinkedTransaction.error.totalConsideration")
+
+        val view = application.injector.instanceOf[TotalConsiderationOfLinkedTransactionView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+      }
+    }
+
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()

@@ -82,13 +82,13 @@ class TotalConsiderationOfTransactionController @Inject()(
     val linkedTransactionConsideration: Option[BigDecimal] = userAnswers.get(TotalConsiderationOfLinkedTransactionPage).map(BigDecimal(_))
 
     def validateVatIncludedInConsideration(totalConsideration: String): Boolean =
-      !vat.exists(_ > BigDecimal(totalConsideration))
+      !vat.exists(_ >= BigDecimal(totalConsideration))
 
     def validateTotalConsideration(totalConsideration: String): Boolean = {
       val totalConNum = BigDecimal(totalConsideration)
       if (isTransactionNonLeased) {
         if totalConNum < 0 then false
-        else if linkedTransactionConsideration.exists(totalConNum > _) then false
+        else if linkedTransactionConsideration.exists(totalConNum >= _) then false
         else true
       } else {
         true
