@@ -18,9 +18,10 @@ package controllers.submission
 
 import controllers.actions.*
 import models.Mode
-import pages.submission.WhoAreYouSubmittingForPage
+import pages.submission.{AwaitingSubmissionPage, WhoAreYouSubmittingForPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import services.submission.ChrisSubmissionService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -28,7 +29,7 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.submission.DeclarationView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DeclarationController @Inject()(
@@ -37,10 +38,11 @@ class DeclarationController @Inject()(
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        resubmissionCheck: ResubmissionCheckAction,
+                                       sessionRepository: SessionRepository,
                                        chrisSubmissionService: ChrisSubmissionService,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: DeclarationView
-                                     ) extends FrontendBaseController with I18nSupport {
+                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (activatedIdentify andThen getData andThen requireData andThen resubmissionCheck) {
     implicit request =>
@@ -60,8 +62,17 @@ class DeclarationController @Inject()(
         request.userAnswers.get(WhoAreYouSubmittingForPage) match {
 
           case Some(_) =>
-            chrisSubmissionService.submitInBackground(request.userAnswers)
-            Future.successful(Redirect(controllers.submission.routes.LoadingScreenController.show))
+            if (!request.userAnswers.get(AwaitingSubmissionPage).contains(true)) {
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(AwaitingSubmissionPage, true))
+                _ <- sessionRepository.set(updatedAnswers)
+              } yield {
+                chrisSubmissionService.submitInBackground(updatedAnswers)
+                Redirect(controllers.submission.routes.LoadingScreenController.show)
+              }
+            } else {
+              Future.successful(Redirect(controllers.submission.routes.LoadingScreenController.show))
+            }
 
           case None =>
             Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))

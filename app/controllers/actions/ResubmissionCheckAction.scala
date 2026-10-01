@@ -19,11 +19,12 @@ package controllers.actions
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import models.requests.DataRequest
+import pages.submission.AwaitingSubmissionPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionFilter, Result}
 import viewmodels.submission.SubmissionState
-import viewmodels.submission.SubmissionState._
+import viewmodels.submission.SubmissionState.*
 import viewmodels.tasklist.TaskListBuilder
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,28 +44,33 @@ class ResubmissionCheckAction @Inject()(
     val submissionState = SubmissionState.parse(submissionStatus)
 
     val allComplete: Boolean = taskListBuilder.allComplete(request.userAnswers)
+    val awaitingSubmission = request.userAnswers.get(AwaitingSubmissionPage).getOrElse(false)
 
-    submissionState match {
-      case Some(ReSubmit) =>
-        Future.successful(None)
+    if (awaitingSubmission) {
+      Future.successful(Some(Redirect(controllers.submission.routes.LoadingScreenController.show)))
+    } else {
+      submissionState match {
+        case Some(ReSubmit) =>
+          Future.successful(None)
 
-      case _ if submissionExists && submissionStatus.isEmpty =>
-        Future.successful(None)
+        case _ if submissionExists && submissionStatus.isEmpty =>
+          Future.successful(None)
 
-      case Some(AwaitingConfirmation) =>
-        Future.successful(Some(Redirect(controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad())))
+        case Some(AwaitingConfirmation) =>
+          Future.successful(Some(Redirect(controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad())))
 
-      case Some(Submitted) | Some(SubmittedNoReceipt) =>
-        Future.successful(Some(Redirect(controllers.submission.routes.SubmissionCompleteController.onPageLoad())))
+        case Some(Submitted) | Some(SubmittedNoReceipt) =>
+          Future.successful(Some(Redirect(controllers.submission.routes.SubmissionCompleteController.onPageLoad())))
 
-      case Some(SubmissionFailed) =>
-        Future.successful(Some(Redirect(controllers.submission.routes.SubmissionFailedController.onPageLoad())))
+        case Some(SubmissionFailed) =>
+          Future.successful(Some(Redirect(controllers.submission.routes.SubmissionFailedController.onPageLoad())))
 
-      case _ if !allComplete =>
-        Future.successful(Some(Redirect(controllers.routes.ReturnTaskListController.onPageLoad())))
+        case _ if !allComplete =>
+          Future.successful(Some(Redirect(controllers.routes.ReturnTaskListController.onPageLoad())))
 
-      case _ =>
-        Future.successful(None)
+        case _ =>
+          Future.successful(None)
+      }
     }
   }
 }

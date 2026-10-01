@@ -20,7 +20,7 @@ import connectors.StampDutyLandTaxConnector
 import models.submission.{SubmissionResponse, SubmitRequest}
 import models.ukResidency.DeleteResidencyRequest
 import models.{FullReturn, Purchaser, UserAnswers, Vendor}
-import pages.submission.{EmailConfirmationPage, SubmissionFailedPage}
+import pages.submission.{AwaitingSubmissionPage, EmailConfirmationPage, SubmissionFailedPage}
 import play.api.mvc.Request
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
@@ -80,6 +80,7 @@ class ChrisSubmissionService @Inject()(connector: StampDutyLandTaxConnector,
     submit(userAnswers).onComplete {
       case Success(response) =>
         logger.debug(s"[ChrisSubmissionService][submitInBackground] completed: $response")
+        clearAwaitingSubmission(userAnswers)
         response match {
           case _: SubmissionResponse.Submitted | _: SubmissionResponse.Acknowledged | _: SubmissionResponse.Retryable =>
             clearSubmissionFailed(userAnswers)
@@ -89,9 +90,20 @@ class ChrisSubmissionService @Inject()(connector: StampDutyLandTaxConnector,
 
       case Failure(e) =>
         logger.error("[ChrisSubmissionService][submitInBackground] submit failed", e)
+        clearAwaitingSubmission(userAnswers)
         flagSubmissionFailed(userAnswers)
     }
 
+  private def clearAwaitingSubmission(userAnswers: UserAnswers): Unit =
+    if (userAnswers.get(AwaitingSubmissionPage).contains(true)) {
+      userAnswers.remove(AwaitingSubmissionPage).fold(
+        errs => logger.error(s"[ChrisSubmissionService] could not clear AwaitingSubmissionPage: $errs"),
+        ua => sessionRepository.set(ua).recover {
+          case re => logger.error("[ChrisSubmissionService] failed to persist cleared AwaitingSubmissionPage", re)
+        }
+      )
+    }
+  
   private def flagSubmissionFailed(userAnswers: UserAnswers): Unit =
     userAnswers.set(SubmissionFailedPage, true).fold(
       errs => logger.error(s"[ChrisSubmissionService] could not set SubmissionFailedPage: $errs"),

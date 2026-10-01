@@ -20,14 +20,18 @@ import base.SpecBase
 import constants.FullReturnConstants.{completeFullReturn, incompleteFullReturn}
 import models.{Submission, UserAnswers}
 import models.submission.WhoAreYouSubmittingFor
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{never, verify}
+import org.mockito.Mockito.{never, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.submission.WhoAreYouSubmittingForPage
+import pages.submission.{AwaitingSubmissionPage, WhoAreYouSubmittingForPage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import repositories.SessionRepository
 import services.submission.ChrisSubmissionService
+
+import scala.concurrent.Future
 
 class DeclarationControllerSpec extends SpecBase with MockitoSugar {
 
@@ -192,11 +196,43 @@ class DeclarationControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must submit in the background and redirect to the loading screen when WhoAreYouSubmittingFor is set for POST" in {
+    "must submit in the background, set awaiting submission flag to true, and redirect to the loading screen when WhoAreYouSubmittingFor is set for POST" in {
+
+      val mockChrisSubmissionService = mock[ChrisSubmissionService]
+      val mockSessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val answers = testUserAnswers.set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.Myself).success.value
+
+      val application = applicationBuilder(userAnswers = Some(answers))
+        .overrides(bind[ChrisSubmissionService].toInstance(mockChrisSubmissionService))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, submitRoute)
+
+        val result = route(application, request).value
+        
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual controllers.submission.routes.LoadingScreenController.show.url
+
+        verify(mockChrisSubmissionService).submitInBackground(any[UserAnswers])(any(), any())
+        val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(uaCaptor.capture())
+
+        uaCaptor.getValue.get(AwaitingSubmissionPage) mustBe Some(true)
+      }
+    }
+
+    "must redirect to the loading screen and NOT submit when awaiting submission flag is true for POST" in {
 
       val mockChrisSubmissionService = mock[ChrisSubmissionService]
 
-      val answers = testUserAnswers.set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.Myself).success.value
+      val answers = testUserAnswers
+        .set(WhoAreYouSubmittingForPage, WhoAreYouSubmittingFor.Myself).success.value
+        .set(AwaitingSubmissionPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(answers))
         .overrides(bind[ChrisSubmissionService].toInstance(mockChrisSubmissionService))
@@ -211,7 +247,7 @@ class DeclarationControllerSpec extends SpecBase with MockitoSugar {
 
         redirectLocation(result).value mustEqual controllers.submission.routes.LoadingScreenController.show.url
 
-        verify(mockChrisSubmissionService).submitInBackground(any[UserAnswers])(any(), any())
+        verify(mockChrisSubmissionService, never()).submitInBackground(any[UserAnswers])(any(), any())
       }
     }
   }

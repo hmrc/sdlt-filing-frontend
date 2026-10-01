@@ -26,7 +26,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{never, verify, when}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.submission.{EmailConfirmationPage, SubmissionFailedPage}
+import pages.submission.{AwaitingSubmissionPage, EmailConfirmationPage, SubmissionFailedPage}
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import repositories.SessionRepository
@@ -219,6 +219,30 @@ class ChrisSubmissionServiceSpec extends SpecBase with MockitoSugar with ScalaFu
         verify(sessionRepository, org.mockito.Mockito.timeout(1000)).set(flaggedAnswersMatcher)
         verify(connector, never()).submit(any[SubmitRequest])(any[HeaderCarrier], any[Request[_]])
       }
+
+      "must clear the awaiting submission flag when submit is successful" in new Setup {
+        when(connector.submit(any[SubmitRequest])(any[HeaderCarrier], any[Request[_]]))
+          .thenReturn(Future.successful(SubmissionResponse.Retryable(returnId)))
+
+        val flaggedAnswers: UserAnswers =
+          baseAnswers(fullReturn = Some(noAgentReturn)).set(AwaitingSubmissionPage, true).success.value
+
+        service.submitInBackground(flaggedAnswers)
+
+        verify(sessionRepository, org.mockito.Mockito.timeout(1000)).set(clearedAnswersMatcher)
+      }
+
+      "must clear the awaiting submission flag when submit fails" in new Setup {
+        when(connector.submit(any[SubmitRequest])(any[HeaderCarrier], any[Request[_]]))
+          .thenReturn(Future.failed(new RuntimeException("boom")))
+
+        val flaggedAnswers: UserAnswers =
+          baseAnswers(fullReturn = Some(noAgentReturn)).set(AwaitingSubmissionPage, true).success.value
+
+        service.submitInBackground(flaggedAnswers)
+
+        verify(sessionRepository, org.mockito.Mockito.timeout(1000)).set(clearedAnswersMatcher)
+      }
     }
   }
 
@@ -251,6 +275,7 @@ class ChrisSubmissionServiceSpec extends SpecBase with MockitoSugar with ScalaFu
     def clearedAnswersMatcher: UserAnswers =
       org.mockito.ArgumentMatchers.argThat[UserAnswers] { ua =>
         ua.get(SubmissionFailedPage).isEmpty
+        ua.get(AwaitingSubmissionPage).isEmpty
       }
   }
 }

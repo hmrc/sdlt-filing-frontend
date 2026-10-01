@@ -21,9 +21,11 @@ import constants.FullReturnConstants.{completeFullReturn, completeSubmission}
 import models.requests.DataRequest
 import models.UserAnswers
 import org.scalatestplus.mockito.MockitoSugar
+import pages.submission.AwaitingSubmissionPage
 import play.api.mvc.*
 import play.api.test.Helpers.*
 import play.api.test.FakeRequest
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -181,6 +183,23 @@ class CheckSubmissionStatusActionSpec extends SpecBase with MockitoSugar {
 
       redirectResult.header.headers("Location") mustEqual
         controllers.submission.routes.ResubmitYourReturnController.onPageLoad.url
+    }
+
+    "must redirect to loading screen page when awaitingSubmission is true" in {
+      val fullReturnWithNoSubmission = completeFullReturn.copy(
+        submission = None
+      )
+      val action = new Harness()
+      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithNoSubmission)).set(AwaitingSubmissionPage, true).success.value
+      val result = action.callFilter(DataRequest(FakeRequest(), "id", userAnswers = userAnswers)).futureValue
+
+      result mustBe defined
+      val redirectResult = result.value
+
+      redirectResult.header.status mustEqual SEE_OTHER
+
+      redirectResult.header.headers("Location") mustEqual
+        controllers.submission.routes.LoadingScreenController.show.url
     }
   }
 }
