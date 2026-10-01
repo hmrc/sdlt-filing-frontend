@@ -24,6 +24,7 @@ import models.requests.DataRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
+import pages.submission.AwaitingSubmissionPage
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.*
 import play.api.test.FakeRequest
@@ -42,6 +43,25 @@ class ResubmissionCheckActionSpec extends SpecBase with MockitoSugar {
   }
 
   "ResubmissionCheckAction" - {
+
+    "must redirect to loading screen when awaiting submission flag is true" in {
+      val userAnswers = emptyUserAnswers.copy(fullReturn = Some(completeFullReturn)).set(AwaitingSubmissionPage, true).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val messagesApi = application.injector.instanceOf[MessagesApi]
+        implicit val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+        val taskListBuilder = mock[TaskListBuilder]
+        when(taskListBuilder.allComplete(any[UserAnswers])(any[Messages], any[FrontendAppConfig])).thenReturn(true)
+
+        val action = new Harness(messagesApi, appConfig, taskListBuilder)
+        val result = action.callFilter(DataRequest(FakeRequest(), "id", userAnswers = userAnswers)).futureValue
+        val redirectResult = result.value
+
+        redirectResult.header.status mustEqual SEE_OTHER
+        redirectResult.header.headers("Location") mustEqual controllers.submission.routes.LoadingScreenController.show.url
+      }
+    }
 
     "must allow request to continue when submission status is STARTED" in {
       val application = applicationBuilder().build()

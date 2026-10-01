@@ -22,6 +22,7 @@ import models.*
 import org.mockito.ArgumentMatchers.{any, argThat, eq as eqTo}
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
+import pages.submission.AwaitingSubmissionPage
 import play.api.Application
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -1404,6 +1405,20 @@ class ReturnTaskListControllerSpec extends SpecBase with MockitoSugar {
 
             status(result) mustEqual OK
             contentAsString(result) must include("About the purchaser")
+          }
+        }
+
+        "must redirect to loading screen when awaiting submission flag is true" in {
+          val userAnswers = emptyUserAnswers.copy(returnId = Some(testReturnId), fullReturn = Some(completeFullReturn))
+            .set(AwaitingSubmissionPage, true).success.value
+          val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+          running(application) {
+            val request = FakeRequest(GET, routes.ReturnTaskListController.onPageLoad(None).url)
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result) mustBe Some(controllers.submission.routes.LoadingScreenController.show.url)
           }
         }
 

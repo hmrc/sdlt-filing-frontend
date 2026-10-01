@@ -18,10 +18,11 @@ package controllers.actions
 
 import com.google.inject.Inject
 import models.requests.DataRequest
+import pages.submission.AwaitingSubmissionPage
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionFilter, Result}
 import viewmodels.submission.SubmissionState
-import viewmodels.submission.SubmissionState._
+import viewmodels.submission.SubmissionState.*
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -32,8 +33,12 @@ class CheckSubmissionStatusAction @Inject()(
   override protected def filter[A](request: DataRequest[A]): Future[Option[Result]] = {
     val submission       = request.userAnswers.fullReturn.flatMap(_.submission)
     val submissionStatus = submission.flatMap(_.submissionStatus)
+    val awaitingSubmission = request.userAnswers.get(AwaitingSubmissionPage).getOrElse(false)
 
-    if (submission.isEmpty || submissionStatus.isEmpty) {
+    if (awaitingSubmission) {
+      Future.successful(Some(Redirect(controllers.submission.routes.LoadingScreenController.show)))
+    }
+    else if (submission.isEmpty || submissionStatus.isEmpty) {
       Future.successful(None)
     } else {
       SubmissionState.parse(submissionStatus) match {

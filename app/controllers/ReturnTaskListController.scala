@@ -19,7 +19,9 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions.*
 import models.{GetReturnByRefRequest, UserAnswers}
+import pages.submission.AwaitingSubmissionPage
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
 import services.FullReturnService
@@ -60,21 +62,26 @@ class ReturnTaskListController @Inject()(
       effectiveReturnId.fold(
         Future.successful(Redirect(controllers.routes.NoReturnReferenceController.onPageLoad()))
       ) { id =>
-        for {
-          fullReturn  <- fullReturnService.getFullReturn(GetReturnByRefRequest(returnResourceRef = id, storn = request.storn))
-          userAnswers  = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = request.storn)
-          _           <- sessionRepository.set(userAnswers)
-        } yield {
-          submissionRedirect(userAnswers).getOrElse {
-            val purchaserName: Option[String] =
-              purchaserService.getMainPurchaser(userAnswers).flatMap { purchaser =>
-                purchaser.companyName.orElse(
-                  FullName.optionalFullName(purchaser.forename1, purchaser.forename2, purchaser.surname)
-                )
-              }
-            val landAddress1: Option[String] = landService.getMainLand(userAnswers).flatMap(_.address1)
+        val awaitingSubmission = request.userAnswers.flatMap(_.get(AwaitingSubmissionPage)).getOrElse(false)
+        if (awaitingSubmission) {
+          Future.successful(Redirect(controllers.submission.routes.LoadingScreenController.show))
+        } else {
+          for {
+            fullReturn <- fullReturnService.getFullReturn(GetReturnByRefRequest(returnResourceRef = id, storn = request.storn))
+            userAnswers = UserAnswers(id = request.userId, returnId = Some(id), fullReturn = Some(fullReturn), storn = request.storn)
+            _ <- sessionRepository.set(userAnswers)
+          } yield {
+            submissionRedirect(userAnswers).getOrElse {
+              val purchaserName: Option[String] =
+                purchaserService.getMainPurchaser(userAnswers).flatMap { purchaser =>
+                  purchaser.companyName.orElse(
+                    FullName.optionalFullName(purchaser.forename1, purchaser.forename2, purchaser.surname)
+                  )
+                }
+              val landAddress1: Option[String] = landService.getMainLand(userAnswers).flatMap(_.address1)
 
-            Ok(view(purchaserName, landAddress1, taskListBuilder.sections(userAnswers): _*))
+              Ok(view(purchaserName, landAddress1, taskListBuilder.sections(userAnswers): _*))
+            }
           }
         }
       }
