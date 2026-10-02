@@ -18,11 +18,16 @@ package controllers.actions
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import models.{GetReturnByRefRequest, UserAnswers}
 import models.requests.DataRequest
 import pages.submission.AwaitingSubmissionPage
-import play.api.i18n.MessagesApi
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionFilter, Result}
+import play.api.mvc.{ActionFilter, Request, Result}
+import repositories.SessionRepository
+import services.FullReturnService
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import viewmodels.submission.SubmissionState
 import viewmodels.submission.SubmissionState.*
 import viewmodels.tasklist.TaskListBuilder
@@ -32,45 +37,69 @@ import scala.concurrent.{ExecutionContext, Future}
 class ResubmissionCheckAction @Inject()(
                                          messagesApi: MessagesApi,
                                          appConfig: FrontendAppConfig,
-                                         taskListBuilder: TaskListBuilder
+                                         taskListBuilder: TaskListBuilder,
+                                         fullReturnService: FullReturnService,
+                                         sessionRepository: SessionRepository
                                        )(implicit val executionContext: ExecutionContext) extends ActionFilter[DataRequest] {
 
-  override protected def filter[A](request: DataRequest[A]): Future[Option[Result]] = {
-    implicit val messages: play.api.i18n.Messages = messagesApi.preferred(request)
+  override protected def filter[A](dataRequest: DataRequest[A]): Future[Option[Result]] = {
+    implicit val messages: Messages = messagesApi.preferred(dataRequest)
     implicit val implicitAppConfig: FrontendAppConfig = appConfig
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(dataRequest, dataRequest.session)
+    implicit val request: Request[_] = dataRequest
 
-    val submissionStatus = request.userAnswers.fullReturn.flatMap(_.submission).flatMap(_.submissionStatus)
-    val submissionExists = request.userAnswers.fullReturn.flatMap(_.submission).isDefined
-    val submissionState = SubmissionState.parse(submissionStatus)
-
-    val allComplete: Boolean = taskListBuilder.allComplete(request.userAnswers)
-    val awaitingSubmission = request.userAnswers.get(AwaitingSubmissionPage).getOrElse(false)
+    val awaitingSubmission = dataRequest.userAnswers.get(AwaitingSubmissionPage).getOrElse(false)
 
     if (awaitingSubmission) {
       Future.successful(Some(Redirect(controllers.submission.routes.LoadingScreenController.show)))
     } else {
-      submissionState match {
-        case Some(ReSubmit) =>
-          Future.successful(None)
+      refreshUserAnswers(dataRequest.userAnswers).map(checkStatus)
+    }
+  }
 
-        case _ if submissionExists && submissionStatus.isEmpty =>
-          Future.successful(None)
+  private def refreshUserAnswers(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, request: Request[_]): Future[UserAnswers] =
+    userAnswers.returnId match {
+      case Some(ref) =>
+        (for {
+          fullReturn <- fullReturnService.getFullReturn(GetReturnByRefRequest(returnResourceRef = ref, storn = userAnswers.storn))
+          updated     = userAnswers.copy(fullReturn = Some(fullReturn))
+          _          <- sessionRepository.set(updated)
+        } yield updated)
+          .recover { case _ => userAnswers }
 
-        case Some(AwaitingConfirmation) =>
-          Future.successful(Some(Redirect(controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad())))
+      case None =>
+        Future.successful(userAnswers)
+    }
 
-        case Some(Submitted) | Some(SubmittedNoReceipt) =>
-          Future.successful(Some(Redirect(controllers.submission.routes.SubmissionCompleteController.onPageLoad())))
+  private def checkStatus(userAnswers: UserAnswers)
+                         (implicit messages: Messages, appConfig: FrontendAppConfig): Option[Result] = {
+    val submission       = userAnswers.fullReturn.flatMap(_.submission)
+    val submissionStatus = submission.flatMap(_.submissionStatus)
+    val submissionExists = submission.isDefined
+    val submissionState  = SubmissionState.parse(submissionStatus)
+    val allComplete      = taskListBuilder.allComplete(userAnswers)
 
-        case Some(SubmissionFailed) =>
-          Future.successful(Some(Redirect(controllers.submission.routes.SubmissionFailedController.onPageLoad())))
+    submissionState match {
+      case Some(ReSubmit) =>
+        None
 
-        case _ if !allComplete =>
-          Future.successful(Some(Redirect(controllers.routes.ReturnTaskListController.onPageLoad())))
+      case _ if submissionExists && submissionStatus.isEmpty =>
+        None
 
-        case _ =>
-          Future.successful(None)
-      }
+      case Some(AwaitingConfirmation) =>
+        Some(Redirect(controllers.submission.routes.SubmissionAwaitingConfirmationController.onPageLoad()))
+
+      case Some(Submitted) | Some(SubmittedNoReceipt) =>
+        Some(Redirect(controllers.submission.routes.SubmissionCompleteController.onPageLoad()))
+
+      case Some(SubmissionFailed) =>
+        Some(Redirect(controllers.submission.routes.SubmissionFailedController.onPageLoad()))
+
+      case _ if !allComplete =>
+        Some(Redirect(controllers.routes.ReturnTaskListController.onPageLoad()))
+
+      case _ =>
+        None
     }
   }
 }

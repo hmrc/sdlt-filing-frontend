@@ -29,6 +29,8 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.*
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import repositories.SessionRepository
+import services.FullReturnService
 import viewmodels.tasklist.TaskListBuilder
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -37,8 +39,8 @@ import scala.concurrent.Future
 
 class ResubmissionCheckActionSpec extends SpecBase with MockitoSugar {
 
-  class Harness(messagesApi: MessagesApi, appConfig: FrontendAppConfig, taskListBuilder: TaskListBuilder)
-    extends ResubmissionCheckAction(messagesApi, appConfig, taskListBuilder) {
+  class Harness(messagesApi: MessagesApi, appConfig: FrontendAppConfig, fullReturnService: FullReturnService, taskListBuilder: TaskListBuilder, sessionRepository: SessionRepository)
+    extends ResubmissionCheckAction(messagesApi, appConfig, taskListBuilder, fullReturnService, sessionRepository) {
     def callFilter[A](request: DataRequest[A]): Future[Option[Result]] = filter(request)
   }
 
@@ -54,7 +56,9 @@ class ResubmissionCheckActionSpec extends SpecBase with MockitoSugar {
         val taskListBuilder = mock[TaskListBuilder]
         when(taskListBuilder.allComplete(any[UserAnswers])(any[Messages], any[FrontendAppConfig])).thenReturn(true)
 
-        val action = new Harness(messagesApi, appConfig, taskListBuilder)
+        val fullReturnService = mock[FullReturnService]
+        val sessionRepository = mock[SessionRepository]
+        val action = new Harness(messagesApi, appConfig, fullReturnService, taskListBuilder, sessionRepository)
         val result = action.callFilter(DataRequest(FakeRequest(), "id", userAnswers = userAnswers)).futureValue
         val redirectResult = result.value
 
@@ -78,7 +82,9 @@ class ResubmissionCheckActionSpec extends SpecBase with MockitoSugar {
           ))
         )
 
-        val action = new Harness(messagesApi, appConfig, taskListBuilder)
+        val fullReturnService = mock[FullReturnService]
+        val sessionRepository = mock[SessionRepository]
+        val action = new Harness(messagesApi, appConfig, fullReturnService, taskListBuilder, sessionRepository)
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
         val result = action.callFilter(DataRequest(FakeRequest(), "id", userAnswers = userAnswers)).futureValue
 
@@ -101,7 +107,9 @@ class ResubmissionCheckActionSpec extends SpecBase with MockitoSugar {
           ))
         )
 
-        val action = new Harness(messagesApi, appConfig, taskListBuilder)
+        val fullReturnService = mock[FullReturnService]
+        val sessionRepository = mock[SessionRepository]
+        val action = new Harness(messagesApi, appConfig, fullReturnService, taskListBuilder, sessionRepository)
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
         val result = action.callFilter(DataRequest(FakeRequest(), "id", userAnswers = userAnswers)).futureValue
 
@@ -124,7 +132,9 @@ class ResubmissionCheckActionSpec extends SpecBase with MockitoSugar {
           ))
         )
 
-        val action = new Harness(messagesApi, appConfig, taskListBuilder)
+        val fullReturnService = mock[FullReturnService]
+        val sessionRepository = mock[SessionRepository]
+        val action = new Harness(messagesApi, appConfig, fullReturnService, taskListBuilder, sessionRepository)
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturn))
         val result = action.callFilter(DataRequest(FakeRequest(), "id", userAnswers = userAnswers)).futureValue
 
@@ -152,7 +162,9 @@ class ResubmissionCheckActionSpec extends SpecBase with MockitoSugar {
             submissionStatus = Some("SUBMITTED")
           ))
         )
-        val action = new Harness(messagesApi, appConfig, taskListBuilder)
+        val fullReturnService = mock[FullReturnService]
+        val sessionRepository = mock[SessionRepository]
+        val action = new Harness(messagesApi, appConfig, fullReturnService, taskListBuilder, sessionRepository)
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithSubmittedStatus))
         val result = action.callFilter(DataRequest(FakeRequest(), "id", userAnswers = userAnswers)).futureValue
 
@@ -180,7 +192,9 @@ class ResubmissionCheckActionSpec extends SpecBase with MockitoSugar {
             submissionStatus = Some("SUBMITTED_NO_RECEIPT")
           ))
         )
-        val action = new Harness(messagesApi, appConfig, taskListBuilder)
+        val fullReturnService = mock[FullReturnService]
+        val sessionRepository = mock[SessionRepository]
+        val action = new Harness(messagesApi, appConfig, fullReturnService, taskListBuilder, sessionRepository)
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithSubmittedStatus))
         val result = action.callFilter(DataRequest(FakeRequest(), "id", userAnswers = userAnswers)).futureValue
 
@@ -208,7 +222,9 @@ class ResubmissionCheckActionSpec extends SpecBase with MockitoSugar {
             submissionStatus = Some("DEPARTMENTAL_ERROR")
           ))
         )
-        val action = new Harness(messagesApi, appConfig, taskListBuilder)
+        val fullReturnService = mock[FullReturnService]
+        val sessionRepository = mock[SessionRepository]
+        val action = new Harness(messagesApi, appConfig, fullReturnService, taskListBuilder, sessionRepository)
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithSubmittedStatus))
         val result = action.callFilter(DataRequest(FakeRequest(), "id", userAnswers = userAnswers)).futureValue
 
@@ -236,7 +252,9 @@ class ResubmissionCheckActionSpec extends SpecBase with MockitoSugar {
             submissionStatus = Some("FATAL_ERROR")
           ))
         )
-        val action = new Harness(messagesApi, appConfig, taskListBuilder)
+        val fullReturnService = mock[FullReturnService]
+        val sessionRepository = mock[SessionRepository]
+        val action = new Harness(messagesApi, appConfig, fullReturnService, taskListBuilder, sessionRepository)
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithSubmittedStatus))
         val result = action.callFilter(DataRequest(FakeRequest(), "id", userAnswers = userAnswers)).futureValue
 
@@ -264,7 +282,9 @@ class ResubmissionCheckActionSpec extends SpecBase with MockitoSugar {
             submissionStatus = Some("BANANA")
           ))
         )
-        val action = new Harness(messagesApi, appConfig, taskListBuilder)
+        val fullReturnService = mock[FullReturnService]
+        val sessionRepository = mock[SessionRepository]
+        val action = new Harness(messagesApi, appConfig, fullReturnService, taskListBuilder, sessionRepository)
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnWithSubmittedStatus))
         val result = action.callFilter(DataRequest(FakeRequest(), "id", userAnswers = userAnswers)).futureValue
 
@@ -287,7 +307,9 @@ class ResubmissionCheckActionSpec extends SpecBase with MockitoSugar {
             submissionStatus = Some("BANANA")
           ))
         )
-        val action = new Harness(messagesApi, appConfig, taskListBuilder)
+        val fullReturnService = mock[FullReturnService]
+        val sessionRepository = mock[SessionRepository]
+        val action = new Harness(messagesApi, appConfig, fullReturnService, taskListBuilder, sessionRepository)
         val userAnswers = emptyUserAnswers.copy(fullReturn = Some(fullReturnIncomplete))
         val result = action.callFilter(DataRequest(FakeRequest(), "id", userAnswers = userAnswers)).futureValue
 
@@ -310,7 +332,9 @@ class ResubmissionCheckActionSpec extends SpecBase with MockitoSugar {
         val taskListBuilder = mock[TaskListBuilder]
         when(taskListBuilder.allComplete(any[UserAnswers])(any[Messages], any[FrontendAppConfig])).thenReturn(false)
 
-        val action = new Harness(messagesApi, appConfig, taskListBuilder)
+        val fullReturnService = mock[FullReturnService]
+        val sessionRepository = mock[SessionRepository]
+        val action = new Harness(messagesApi, appConfig, fullReturnService, taskListBuilder, sessionRepository)
         val userAnswers = emptyUserAnswers.copy(fullReturn = None)
         val result = action.callFilter(DataRequest(FakeRequest(), "id", userAnswers = userAnswers)).futureValue
 

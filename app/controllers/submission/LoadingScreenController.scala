@@ -20,10 +20,11 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.StampDutyLandTaxConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.GetReturnByRefRequest
+import models.{GetReturnByRefRequest, UserAnswers}
 import pages.submission.SubmissionFailedPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -38,6 +39,7 @@ class LoadingScreenController @Inject()(
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,
                                          connector: StampDutyLandTaxConnector,
+                                         sessionRepository: SessionRepository,
                                          taskListBuilder: TaskListBuilder,
                                          view: LoadingScreenView,
                                          val controllerComponents: MessagesControllerComponents
@@ -65,7 +67,7 @@ class LoadingScreenController @Inject()(
       } else if (request.userAnswers.get(SubmissionFailedPage).contains(true)) {
         Future.successful(Redirect(controllers.submission.routes.SubmissionFailedController.onPageLoad()))
       } else {
-        latestStatus(request.userAnswers.storn, request.userAnswers.returnId).map {
+        latestStatus(request.userAnswers, request.userAnswers.returnId).map {
           case Some(s) if SucceededStatuses.contains(s) =>
             Redirect(controllers.submission.routes.SubmissionCompleteController.onPageLoad())
           case Some(s) if Acknowledged.contains(s) =>
@@ -87,18 +89,21 @@ class LoadingScreenController @Inject()(
       if (request.userAnswers.get(SubmissionFailedPage).contains(true)) {
         Future.successful(Ok)
       } else {
-        latestStatus(request.userAnswers.storn, request.userAnswers.returnId).map { status =>
+        latestStatus(request.userAnswers, request.userAnswers.returnId).map { status =>
           if (isInProgress(status)) NoContent else Ok
         }
       }
   }
 
-  private def latestStatus(storn: String, returnId: Option[String])
+  private def latestStatus(userAnswers: UserAnswers, returnId: Option[String])
                           (implicit hc: HeaderCarrier, request: Request[_]): Future[Option[String]] =
     returnId match {
       case Some(ref) =>
-        connector.getFullReturn(GetReturnByRefRequest(ref, storn))
-          .map(_.submission.flatMap(_.submissionStatus).map(_.toUpperCase))
+        (for {
+          fullReturn <- connector.getFullReturn(GetReturnByRefRequest(returnResourceRef = ref, storn = userAnswers.storn))
+          updatedUserAnswers = userAnswers.copy(fullReturn = Some(fullReturn))
+          _          <- sessionRepository.set(updatedUserAnswers)
+        } yield fullReturn.submission.flatMap(_.submissionStatus).map(_.toUpperCase))
           .recover { case _ => None }
       case None =>
         Future.successful(None)
