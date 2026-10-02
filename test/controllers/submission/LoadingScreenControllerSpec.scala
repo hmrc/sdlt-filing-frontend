@@ -19,15 +19,17 @@ package controllers.submission
 import base.SpecBase
 import connectors.StampDutyLandTaxConnector
 import constants.FullReturnConstants.{completeFullReturn, incompleteFullReturn}
-import models.{FullReturn, GetReturnByRefRequest, Submission}
+import models.{FullReturn, GetReturnByRefRequest, Submission, UserAnswers}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.submission.SubmissionFailedPage
 import play.api.inject.bind
 import play.api.mvc.{Call, Request}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.submission.LoadingScreenView
 
@@ -272,6 +274,38 @@ class LoadingScreenControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual OK
+        }
+      }
+
+      "must refresh fullReturn" in {
+        val oldFullReturn = fullReturnWithStatus(None)
+        val newFullReturn = fullReturnWithStatus(Some("SUBMITTED"))
+
+        val oldUserAnswers = emptyUserAnswers.copy(returnId = Some("ret-123"), Some(oldFullReturn))
+        val newUserAnswers = oldUserAnswers.copy(fullReturn = Some(newFullReturn))
+
+        val mockSessionRepository = mock[SessionRepository]
+        val mockConnector = mock[StampDutyLandTaxConnector]
+        when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
+        when(mockConnector.getFullReturn(any[GetReturnByRefRequest])(any[HeaderCarrier], any[Request[_]]))
+          .thenReturn(Future.successful(newFullReturn))
+
+        val application = applicationBuilder(userAnswers = Some(oldUserAnswers))
+          .overrides(
+            bind[StampDutyLandTaxConnector].toInstance(connectorReturning(Some("SUBMITTED"))),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.submission.routes.LoadingScreenController.query.url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+          val uaCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
+          verify(mockSessionRepository).set(uaCaptor.capture())
+          uaCaptor.getValue mustBe newUserAnswers
         }
       }
     }
